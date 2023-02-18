@@ -531,9 +531,6 @@ void MSYS_UpdateMouseRegion(void) {
 
         // if( region->uiFlags & MSYS_REGION_ENABLED )
         //	region->uiFlags |= BUTTON_DIRTY;
-#ifndef JA2
-        VideoRemoveToolTip();
-#endif
       }
 
       MSYS_CurrRegion->FastHelpTimer = gsFastHelpDelay;
@@ -561,10 +558,6 @@ void MSYS_UpdateMouseRegion(void) {
 #endif
           MSYS_CurrRegion->uiFlags &= (~MSYS_GOT_BACKGROUND);
           MSYS_CurrRegion->uiFlags |= MSYS_FASTHELP_RESET;
-
-#ifndef JA2
-          VideoRemoveToolTip();
-#endif
 
           // if( b->uiFlags & BUTTON_ENABLED )
           //	b->uiFlags |= BUTTON_DIRTY;
@@ -672,9 +665,6 @@ void MSYS_UpdateMouseRegion(void) {
 
               // if( b->uiFlags & BUTTON_ENABLED )
               //	b->uiFlags |= BUTTON_DIRTY;
-#ifndef JA2
-              VideoRemoveToolTip();
-#endif
             }
 
             // Kris: Nov 31, 1999 -- Added support for double click events.
@@ -865,9 +855,6 @@ void MSYS_RemoveRegion(MOUSE_REGION *region) {
 
   // Get rid of the FastHelp text (if applicable)
   if (region->FastHelpText) {
-#ifndef JA2
-    if (region->uiFlags & MSYS_FASTHELP) VideoRemoveToolTip();
-#endif
     MemFree(region->FastHelpText);
   }
   region->FastHelpText = NULL;

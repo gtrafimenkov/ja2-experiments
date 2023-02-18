@@ -5,28 +5,8 @@
 #include "SGP/Debug.h"
 #include "SGP/Timer.h"
 #include "SGP/Types.h"
-#include "SysGlobals.h"
-
-#if defined(JA2) || defined(UTIL)
 #include "SGP/Video.h"
-#endif
-
-#ifndef JA2
-#include "GameLoop.h"
-#include "SGP/DBMan.h"
-#include "SGP/English.h"
-#include "SGP/FileMan.h"
-#include "SGP/Font.h"
-#include "SGP/Input.h"
-#include "SGP/Line.h"
-#include "SGP/MemMan.h"
-#include "SGP/MutexManager.h"
-#include "SGP/PCX.h"
-#include "SGP/Random.h"
-#include "SGP/Shading.h"
-#include "SGP/SoundMan.h"
-#include "SGP/VObject.h"
-#endif
+#include "SysGlobals.h"
 
 #ifdef __cplusplus
 extern "C" {

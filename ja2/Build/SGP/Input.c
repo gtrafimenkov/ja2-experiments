@@ -21,13 +21,6 @@ extern UINT16 gsKeyTranslationTable[1024];
 
 extern BOOLEAN gfApplicationActive;
 
-#ifndef JA2
-
-#undef GetCursorPos
-#define GetCursorPos SGPMouseGetPos
-
-#endif
-
 // The gfKeyState table is used to track which of the keys is up or down at any one time. This is
 // used while polling the interface.
 
@@ -94,12 +87,7 @@ void AdjustMouseForWindowOrigin(void);
 // These are the hook functions for both keyboard and mouse
 
 LRESULT CALLBACK KeyboardHandler(int Code, WPARAM wParam, LPARAM lParam) {
-#ifndef JA2
-  if ((Code < 0) || (!gfApplicationActive))
-#else
-  if (Code < 0)
-#endif
-  {  // Do not handle this message, pass it on to another window
+  if (Code < 0) {  // Do not handle this message, pass it on to another window
     return CallNextHookEx(ghKeyboardHook, Code, wParam, lParam);
   }
 
@@ -775,11 +763,9 @@ void KeyUp(UINT32 usParam, UINT32 uiParam) {  // Are we RELEASING one of SHIFT, 
         if (usParam == SNAPSHOT) {
           // DB this used to be keyed to SCRL_LOCK
           // which I believe Luis gave the wrong value
-          //#ifndef JA2
           if (_KeyDown(CTRL))
             VideoCaptureToggle();
           else
-            //#endif
             PrintScreen();
         } else {
           // No special keys have been pressed
@@ -1035,13 +1021,7 @@ void RedirectToString(UINT16 usInputCharacter) {
         gpCurrentStringDescriptor->usStringOffset = 0;
         gpCurrentStringDescriptor->usLastCharacter = usInputCharacter;
         break;
-#ifndef JA2
-        // Stupid definition causes problems with headers that use the keyword END -- DB
-      case KEY_END
-#else
-      case END
-#endif
-          :  // Go to the end of the input string
+      case END:  // Go to the end of the input string
         gpCurrentStringDescriptor->usStringOffset =
             gpCurrentStringDescriptor->usCurrentStringLength;
         gpCurrentStringDescriptor->usLastCharacter = usInputCharacter;

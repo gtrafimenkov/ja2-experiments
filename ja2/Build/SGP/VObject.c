@@ -634,18 +634,7 @@ BOOLEAN BltVideoObjectToBuffer(UINT16 *pBuffer, UINT32 uiDestPitchBYTES, HVOBJEC
       // Switch based on flags given
       do {
         if (gbPixelDepth == 16) {
-#ifndef JA2
-          if (fBltFlags & VO_BLT_MIRROR_Y) {
-            if (!BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect))
-              Blt8BPPDataTo16BPPBufferTransMirror(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
-                                                  iDestY, usIndex);
-            // CLipping version not done -- DB
-            //								Blt8BPPDataTo16BPPBufferTransMirrorClip(
-            // pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect);
-            break;
-          } else
-#endif
-              if (fBltFlags & VO_BLT_SRCTRANSPARENCY) {
+          if (fBltFlags & VO_BLT_SRCTRANSPARENCY) {
             if (BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect))
               Blt8BPPDataTo16BPPBufferTransparentClip(pBuffer, uiDestPitchBYTES, hSrcVObject,
                                                       iDestX, iDestY, usIndex, &ClippingRect);

@@ -209,11 +209,6 @@ BOOLEAN InitializeStandardGamingPlatform(HINSTANCE hInstance, int sCommandShow) 
   // First, initialize the registry keys.
   InitializeRegistryKeys("Wizardry8", "Wizardry8key");
 
-  // For rendering DLLs etc.
-#ifndef JA2
-  AddSubdirectoryToPath("DLL");
-#endif
-
   // Second, read in settings
   GetRuntimeSettings();
 
@@ -330,20 +325,6 @@ BOOLEAN InitializeStandardGamingPlatform(HINSTANCE hInstance, int sCommandShow) 
 }
 
 void ShutdownStandardGamingPlatform(void) {
-#ifndef JA2
-  static BOOLEAN Reenter = FALSE;
-
-  //
-  // Prevent multiple reentry into this function
-  //
-
-  if (Reenter == FALSE) {
-    Reenter = TRUE;
-  } else {
-    return;
-  }
-#endif
-
   //
   // Shut down the different components of the SGP
   //
@@ -533,10 +514,6 @@ void SGPExit(void) {
   if (strlen(gzErrorMsg)) {
     MessageBox(NULL, gzErrorMsg, "Error", MB_OK | MB_ICONERROR);
   }
-
-#ifndef JA2
-  VideoDumpMemoryLeaks();
-#endif
 }
 
 void GetRuntimeSettings() {

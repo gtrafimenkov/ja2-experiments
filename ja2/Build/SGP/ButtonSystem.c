@@ -3161,12 +3161,6 @@ void DrawGenericButton(GUI_BUTTON *b) {
   // The 3x2 size was a bit limiting. JA2 should default to the original
   // size, unchanged
 
-#ifndef JA2
-  pTrav = &(BPic->pETRLEObject[0]);
-  iBorderHeight = (INT32)pTrav->usHeight;
-  iBorderWidth = (INT32)pTrav->usWidth;
-#endif
-
   // Compute the number of button "chunks" needed to be blitted
   width = b->Area.RegionBottomRightX - b->Area.RegionTopLeftX;
   height = b->Area.RegionBottomRightY - b->Area.RegionTopLeftY;

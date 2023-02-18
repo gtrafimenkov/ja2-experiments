@@ -1046,10 +1046,6 @@ BYTE *LockVideoSurfaceBuffer(HVSURFACE hVSurface, UINT32 *pPitch) {
   Assert(hVSurface != NULL);
   Assert(pPitch != NULL);
 
-#ifndef JA2
-  if (hVSurface == ghFrameBuffer) return (LockFrameBuffer(pPitch));
-#endif
-
   DDLockSurface((LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData, NULL, &SurfaceDescription, 0, NULL);
 
   *pPitch = SurfaceDescription.lPitch;
@@ -1059,13 +1055,6 @@ BYTE *LockVideoSurfaceBuffer(HVSURFACE hVSurface, UINT32 *pPitch) {
 
 void UnLockVideoSurfaceBuffer(HVSURFACE hVSurface) {
   Assert(hVSurface != NULL);
-
-#ifndef JA2
-  if (hVSurface == ghFrameBuffer) {
-    UnlockFrameBuffer();
-    return;
-  }
-#endif
 
   DDUnlockSurface((LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData, NULL);
 
@@ -1672,31 +1661,6 @@ BOOLEAN BltVideoSurfaceToVideoSurface(HVSURFACE hDestVSurface, HVSURFACE hSrcVSu
       UnLockVideoSurfaceBuffer(hDestVSurface);
       return (TRUE);
     }
-// For testing with non-DDraw blitting, uncomment to test -- DB
-#ifndef JA2
-    else {
-      if ((pSrcSurface16 = (UINT16 *)LockVideoSurfaceBuffer(hSrcVSurface, &uiSrcPitch)) == NULL) {
-        DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-                   String("Failed on lock of 16BPP surface for blitting"));
-        return (FALSE);
-      }
-
-      if ((pDestSurface16 = (UINT16 *)LockVideoSurfaceBuffer(hDestVSurface, &uiDestPitch)) ==
-          NULL) {
-        UnLockVideoSurfaceBuffer(hSrcVSurface);
-        DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-                   String("Failed on lock of 16BPP dest surface for blitting"));
-        return (FALSE);
-      }
-
-      Blt16BPPTo16BPP(pDestSurface16, uiDestPitch, pSrcSurface16, uiSrcPitch, iDestX, iDestY,
-                      SrcRect.left, SrcRect.top, uiWidth, uiHeight);
-      UnLockVideoSurfaceBuffer(hSrcVSurface);
-      UnLockVideoSurfaceBuffer(hDestVSurface);
-      return (TRUE);
-    }
-#endif
-
     CHECKF(BltVSurfaceUsingDD(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &SrcRect));
 
   } else if (hDestVSurface->ubBitDepth == 8 && hSrcVSurface->ubBitDepth == 8) {
