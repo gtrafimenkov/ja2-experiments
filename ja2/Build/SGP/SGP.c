@@ -6,9 +6,13 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include "BuildDefines.h"
 #include "GameLoop.h"
+#include "Intro.h"
 #include "JA2Splash.h"
+#include "Laptop/Laptop.h"
 #include "Local.h"
+#include "SGP/ExceptionHandling.h"
 #include "SGP/FileMan.h"
 #include "SGP/Font.h"
 #include "SGP/Input.h"
@@ -17,40 +21,23 @@
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
-#include "Utils/Utilities.h"
-#ifdef JA2
-#include "JA2Splash.h"
-#include "Utils/TimerControl.h"
-#endif
-#if !defined(JA2) && !defined(UTIL)
-#include "GameData.h"  // for MoveTimer() [Wizardry specific]
-#endif
-
-#include "SGP/ExceptionHandling.h"
-#include "SGP/Input.h"
-#include "Tactical/InterfacePanels.h"
-#include "dbt.h"
-#include "zmouse.h"
-
-#ifdef JA2
-#include "BuildDefines.h"
-#include "Intro.h"
-#endif
-#include "Laptop/Laptop.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
 #include "Strategic/MapScreenInterfaceMap.h"
+#include "Tactical/InterfacePanels.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
+#include "Utils/TimerControl.h"
+#include "Utils/Utilities.h"
+#include "dbt.h"
+#include "zmouse.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 
 extern UINT32 MemDebugCounter;
-#ifdef JA2
 extern BOOLEAN gfPauseDueToPlayerGamePause;
-#endif
 
 extern BOOLEAN CheckIfGameCdromIsInCDromDrive();
 extern void QueueEvent(UINT16 ubInputEvent, UINT32 usParam, UINT32 uiParam);
@@ -79,9 +66,7 @@ BOOLEAN gfCapturingVideo = FALSE;
 
 HINSTANCE ghInstance;
 
-#ifdef JA2
 void ProcessJa2CommandLineBeforeInitialization(CHAR8 *pCommandLine);
-#endif
 
 // Global Variable Declarations
 #ifdef WINDOWED_MODE
@@ -125,7 +110,6 @@ INT32 FAR PASCAL WindowProcedure(HWND hWindow, UINT16 Message, WPARAM wParam, LP
       break;
     }
 
-#ifdef JA2
 #ifdef WINDOWED_MODE
     case WM_MOVE:
 
@@ -134,143 +118,11 @@ INT32 FAR PASCAL WindowProcedure(HWND hWindow, UINT16 Message, WPARAM wParam, LP
       ClientToScreen(hWindow, (LPPOINT)&rcWindow + 1);
       break;
 #endif
-#else
-    case WM_MOUSEMOVE:
-      break;
-
-    case WM_SIZING: {
-      LPRECT lpWindow;
-      INT32 iWidth, iHeight, iX, iY;
-      BOOLEAN fWidthByHeight = FALSE, fHoldRight = FALSE;
-
-      lpWindow = (LPRECT)lParam;
-
-      iWidth = lpWindow->right - lpWindow->left;
-      iHeight = lpWindow->bottom - lpWindow->top;
-      iX = (lpWindow->left + lpWindow->right) / 2;
-      iY = (lpWindow->top + lpWindow->bottom) / 2;
-
-      switch (wParam) {
-        case WMSZ_BOTTOMLEFT:
-          fHoldRight = TRUE;
-        case WMSZ_BOTTOM:
-        case WMSZ_BOTTOMRIGHT:
-          if (iHeight < SCREEN_HEIGHT) {
-            lpWindow->bottom = lpWindow->top + SCREEN_HEIGHT;
-            iHeight = SCREEN_HEIGHT;
-          }
-          fWidthByHeight = TRUE;
-          break;
-
-        case WMSZ_TOPLEFT:
-          fHoldRight = TRUE;
-        case WMSZ_TOP:
-        case WMSZ_TOPRIGHT:
-          if (iHeight < SCREEN_HEIGHT) {
-            lpWindow->top = lpWindow->bottom - SCREEN_HEIGHT;
-            iHeight = SCREEN_HEIGHT;
-          }
-          fWidthByHeight = TRUE;
-          break;
-
-        case WMSZ_LEFT:
-          if (iWidth < SCREEN_WIDTH) {
-            lpWindow->left = lpWindow->right - SCREEN_WIDTH;
-            iWidth = SCREEN_WIDTH;
-          }
-          break;
-
-        case WMSZ_RIGHT:
-          if (iWidth < SCREEN_WIDTH) {
-            lpWindow->right = lpWindow->left + SCREEN_WIDTH;
-            iWidth = SCREEN_WIDTH;
-          }
-      }
-
-      // Calculate width as a factor of height
-      if (fWidthByHeight) {
-        iWidth = iHeight * SCREEN_WIDTH / SCREEN_HEIGHT;
-        //				lpWindow->left = iX - iWidth/2;
-        //				lpWindow->right = iX + iWidth / 2;
-        if (fHoldRight)
-          lpWindow->left = lpWindow->right - iWidth;
-        else
-          lpWindow->right = lpWindow->left + iWidth;
-      } else  // Calculate height as a factor of width
-      {
-        iHeight = iWidth * SCREEN_HEIGHT / SCREEN_WIDTH;
-        //				lpWindow->top = iY - iHeight/2;
-        //				lpWindow->bottom = iY + iHeight/2;
-        lpWindow->bottom = lpWindow->top + iHeight;
-      }
-
-      /*
-                              switch(wParam)
-                              {
-                                      case WMSZ_BOTTOM:
-                                      case WMSZ_BOTTOMLEFT:
-                                      case WMSZ_BOTTOMRIGHT:
-                                              if(iHeight < SCREEN_HEIGHT)
-                                                      lpWindow->bottom=lpWindow->top+SCREEN_HEIGHT;
-                              }
-
-                              switch(wParam)
-                              {
-                                      case WMSZ_TOP:
-                                      case WMSZ_TOPLEFT:
-                                      case WMSZ_TOPRIGHT:
-                                              if(iHeight < SCREEN_HEIGHT)
-                                                      lpWindow->top=lpWindow->bottom-SCREEN_HEIGHT;
-                              }
-
-                              switch(wParam)
-                              {
-                                      case WMSZ_BOTTOMLEFT:
-                                      case WMSZ_LEFT:
-                                      case WMSZ_TOPLEFT:
-                                              if(iWidth < SCREEN_WIDTH)
-                                                      lpWindow->left=lpWindow->right-SCREEN_WIDTH;
-                              }
-
-                              switch(wParam)
-                              {
-                                      case WMSZ_BOTTOMRIGHT:
-                                      case WMSZ_RIGHT:
-                                      case WMSZ_TOPRIGHT:
-                                              if(iWidth < SCREEN_WIDTH)
-                                                      lpWindow->right=lpWindow->left+SCREEN_WIDTH;
-                              }
-      */
-    } break;
-
-    case WM_SIZE: {
-      UINT16 nWidth = LOWORD(lParam);   // width of client area
-      UINT16 nHeight = HIWORD(lParam);  // height of client area
-
-      if (nWidth && nHeight) {
-        switch (wParam) {
-          case SIZE_MAXIMIZED:
-            VideoFullScreen(TRUE);
-            break;
-
-          case SIZE_RESTORED:
-            VideoResizeWindow();
-            break;
-        }
-      }
-    } break;
-
-    case WM_MOVE: {
-      INT32 xPos = (INT32)LOWORD(lParam);  // horizontal position
-      INT32 yPos = (INT32)HIWORD(lParam);  // vertical position
-    } break;
-#endif
 
     case WM_ACTIVATEAPP:
       switch (wParam) {
         case TRUE:  // We are restarting DirectDraw
           if (fRestore == TRUE) {
-#ifdef JA2
             RestoreVideoManager();
             RestoreVideoSurfaces();  // Restore any video surfaces
 
@@ -278,34 +130,14 @@ INT32 FAR PASCAL WindowProcedure(HWND hWindow, UINT16 Message, WPARAM wParam, LP
             if (!gfPauseDueToPlayerGamePause) {
               PauseTime(FALSE);
             }
-#else
-            if (!VideoInspectorIsEnabled()) {
-              RestoreVideoManager();
-              RestoreVideoSurfaces();  // Restore any video surfaces
-            }
 
-            MoveTimer(TIMER_RESUME);
-#endif
             gfApplicationActive = TRUE;
           }
           break;
         case FALSE:  // We are suspending direct draw
-#ifdef JA2
                      // pause the JA2 Global clock
           PauseTime(TRUE);
           SuspendVideoManager();
-#else
-#ifndef UTIL
-          if (!VideoInspectorIsEnabled()) SuspendVideoManager();
-#endif
-#endif
-          // suspend movement timer, to prevent timer crash if delay becomes long
-          // * it doesn't matter whether the 3-D engine is actually running or not, or if it's even
-          // been initialized
-          // * restore is automatic, no need to do anything on reactivation
-#if !defined(JA2) && !defined(UTIL)
-          MoveTimer(TIMER_SUSPEND);
-#endif
 
           gfApplicationActive = FALSE;
           fRestore = TRUE;
@@ -401,14 +233,12 @@ BOOLEAN InitializeStandardGamingPlatform(HINSTANCE hInstance, int sCommandShow) 
     return FALSE;
   }
 
-#ifdef JA2
   FastDebugMsg("Initializing Mutex Manager");
   // Initialize the Dirty Rectangle Manager
   if (InitializeMutexManager() == FALSE) {  // We were unable to initialize the game
     FastDebugMsg("FAILED : Initializing Mutex Manager");
     return FALSE;
   }
-#endif
 
   FastDebugMsg("Initializing File Manager");
   // Initialize the File Manager
@@ -449,9 +279,7 @@ BOOLEAN InitializeStandardGamingPlatform(HINSTANCE hInstance, int sCommandShow) 
     return FALSE;
   }
 
-#ifdef JA2
   InitJA2SplashScreen();
-#endif
 
   // Make sure we start up our local clock (in milliseconds)
   // We don't need to check for a return value here since so far its always TRUE
@@ -550,9 +378,7 @@ void ShutdownStandardGamingPlatform(void) {
   ShutdownInputManager();
   ShutdownContainers();
   ShutdownFileManager();
-#ifdef JA2
   ShutdownMutexManager();
-#endif
 
 #ifdef EXTREME_MEMORY_DEBUGGING
   DumpMemoryInfoIntoFile("ExtremeMemoryDump.txt", FALSE);
@@ -610,29 +436,19 @@ int PASCAL HandledWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pC
   ghInstance = hInstance;
 
   // Copy commandline!
-#ifdef JA2
   strncpy(gzCommandLine, pCommandLine, 100);
   gzCommandLine[99] = '\0';
 
   // Process the command line BEFORE initialization
   ProcessJa2CommandLineBeforeInitialization(pCommandLine);
-#else
-  ProcessCommandLine(pCommandLine);
-#endif
 
   // Mem Usage
   giStartMem = MemGetFree() / 1024;
 
-#ifdef JA2
   // Handle Check for CD
   if (!HandleJA2CDCheck()) {
     return (0);
   }
-#else
-
-  if (!RunSetup()) return (0);
-
-#endif
 
   ShowCursor(FALSE);
 
@@ -642,10 +458,8 @@ int PASCAL HandledWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pC
     return 0;
   }
 
-#ifdef JA2
 #ifdef ENGLISH
   SetIntroType(INTRO_SPLASH);
-#endif
 #endif
 
   gfApplicationActive = TRUE;
