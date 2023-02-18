@@ -1234,7 +1234,7 @@ void HandleNotifyPlayerCanAffordInsurance(SOLDIERTYPE *pSoldier, UINT8 ubLength,
   swprintf(sString, ARR_SIZE(sString), zMarksMapScreenText[10], pSoldier->name, sStringA, ubLength);
 
   // Set the length to the global variable ( so we know how long the contract is in the callback )
-  gubContractLength = ubLength;
+  gubContractLength1 = ubLength;
   gpInsuranceSoldier = pSoldier;
 
   // Remember the soldier aswell

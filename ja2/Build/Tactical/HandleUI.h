@@ -57,6 +57,8 @@ typedef enum {
 
 } UI_MODE;
 
+struct TAG_UI_EVENT;
+
 typedef UINT32 (*UI_HANDLEFNC)(struct TAG_UI_EVENT *);
 
 typedef struct TAG_UI_EVENT {

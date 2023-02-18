@@ -1778,7 +1778,7 @@ void DrawCharacterInfo(INT16 sCharNumber) {
     wcscpy(sString, gMercProfiles[usMercProfileID].zName);
   }
 
-  FindFontCenterCoordinates(CHAR_NAME_X, CHAR_NAME_Y, CHAR_NAME_WID, CHAR_NAME_HEI, sString,
+  FindFontCenterCoordinates(CHAR_NAME_X, CHAR_NAME_Y1, CHAR_NAME_WID, CHAR_NAME_HEI, sString,
                             CHAR_FONT, &usX, &usY);
   DrawString(sString, usX, usY, CHAR_FONT);
 

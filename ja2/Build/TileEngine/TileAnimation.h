@@ -39,7 +39,7 @@ typedef struct TAG_anitile {
   UINT32 uiFlags;           // flags struct
   UINT32 uiTimeLastUpdate;  // Stuff for animated tiles
 
-  LEVELNODE *pLevelNode;
+  struct TAG_level_node *pLevelNode;
   UINT8 ubLevelID;
   INT16 sCurrentFrame;
   INT16 sStartFrame;
@@ -72,6 +72,8 @@ typedef struct TAG_anitile {
 
 } ANITILE;
 
+struct TAG_level_node;
+
 typedef struct TAG_anitile_params {
   UINT32 uiFlags;      // flags struct
   UINT8 ubLevelID;     // Level ID for rendering layer
@@ -84,8 +86,8 @@ typedef struct TAG_anitile_params {
   INT16 sZ;            // World Z ( optional )
   INT16 sGridNo;       // World GridNo
 
-  LEVELNODE *pGivenLevelNode;  // Levelnode for existing tile ( optional )
-  CHAR8 zCachedFile[100];      // Filename for cached tile name ( optional )
+  struct TAG_level_node *pGivenLevelNode;  // Levelnode for existing tile ( optional )
+  CHAR8 zCachedFile[100];                  // Filename for cached tile name ( optional )
 
   UINT8 ubOwner;           // UBID for the owner
   UINT8 ubKeyFrame1;       // Key frame 1

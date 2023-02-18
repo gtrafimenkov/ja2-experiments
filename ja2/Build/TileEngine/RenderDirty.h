@@ -21,6 +21,8 @@
 
 // STRUCTURES
 
+struct _VIDEO_OVERLAY;
+
 // Callback for topmost blitters
 typedef void (*OVERLAY_CALLBACK)(struct _VIDEO_OVERLAY *);
 

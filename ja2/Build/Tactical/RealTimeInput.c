@@ -25,6 +25,7 @@
 #include "Tactical/HandleUI.h"
 #include "Tactical/Interface.h"
 #include "Tactical/InterfaceCursors.h"
+#include "Tactical/InterfaceDialogue.h"
 #include "Tactical/InterfaceItems.h"
 #include "Tactical/MercEntering.h"
 #include "Tactical/OppList.h"
@@ -40,7 +41,6 @@
 #include "Tactical/StrategicExitGUI.h"
 #include "Tactical/UICursors.h"
 #include "Tactical/WorldItems.h"
-#include "Tactical/interfaceDialogue.h"
 #include "TileEngine/Environment.h"
 #include "TileEngine/ExplosionControl.h"
 #include "TileEngine/InteractiveTiles.h"
@@ -573,7 +573,7 @@ void QueryRTLeftButton(UINT32 *puiNewEvent) {
 																										SOLDIERTYPE *		pTeamSoldier;
 																										INT32						cnt;
 																										SOLDIERTYPE			*pFirstSoldier = NULL;
-																										
+
 																										// OK, loop through all guys who are 'multi-selected' and
 																										// check if our currently selected guy is amoung the
 																										// lucky few.. if not, change to a guy who is...

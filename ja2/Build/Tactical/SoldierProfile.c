@@ -39,7 +39,6 @@
 #include "Tactical/Squads.h"
 #include "Tactical/TacticalSave.h"
 #include "Tactical/Weapons.h"
-#include "Tactical/interfaceDialogue.h"
 #include "TacticalAI/AI.h"
 #include "TileEngine/Environment.h"
 #include "TileEngine/InteractiveTiles.h"

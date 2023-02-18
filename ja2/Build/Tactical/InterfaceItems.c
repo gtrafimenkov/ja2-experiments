@@ -4477,7 +4477,7 @@ BOOLEAN HandleItemPointerClick(UINT16 usMapPos) {
 
 BOOLEAN ItemCursorInLobRange(UINT16 usMapPos) {
   // Draw item depending on distance from buddy
-  if (GetRangeFromGridNoDiff(usMapPos, gpItemPointerSoldier->sGridNo) > MIN_LOB_RANGE) {
+  if (GetRangeFromGridNoDiff(usMapPos, gpItemPointerSoldier->sGridNo) > 4) {
     return (FALSE);
   } else {
     return (TRUE);

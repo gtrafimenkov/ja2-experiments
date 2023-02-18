@@ -37,6 +37,7 @@
 #include "Tactical/HandleUIPlan.h"
 #include "Tactical/Interface.h"
 #include "Tactical/InterfaceCursors.h"
+#include "Tactical/InterfaceDialogue.h"
 #include "Tactical/InterfaceItems.h"
 #include "Tactical/InterfacePanels.h"
 #include "Tactical/LOS.h"

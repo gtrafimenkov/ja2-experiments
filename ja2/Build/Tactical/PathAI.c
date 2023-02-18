@@ -475,7 +475,7 @@ INT32 FindBestPath(SOLDIERTYPE *s, INT16 sDestination, INT8 ubLevel, INT16 usMov
   INT32 iWaterToWater;
   UINT8 ubCurAPCost, ubAPCost;
   UINT8 ubNewAPCost = 0;
-#ifdef VEHICLE
+#ifdef VEHICLE_DEF
   // BOOLEAN fTurnSlow = FALSE;
   // BOOLEAN fReverse = FALSE; // stuff for vehicles turning
   BOOLEAN fMultiTile, fVehicle;
@@ -644,7 +644,7 @@ INT32 FindBestPath(SOLDIERTYPE *s, INT16 sDestination, INT8 ubLevel, INT16 usMov
   guiTotalPathChecks++;
 #endif
 
-#ifdef VEHICLE
+#ifdef VEHICLE_DEF
 
   fMultiTile = ((s->uiStatusFlags & SOLDIER_MULTITILE) != 0);
   if (fMultiTile) {
@@ -790,7 +790,7 @@ INT32 FindBestPath(SOLDIERTYPE *s, INT16 sDestination, INT8 ubLevel, INT16 usMov
     }
 #endif
 
-#ifdef VEHICLE
+#ifdef VEHICLE_DEF
     /*
     if (fTurnSlow)
     {
@@ -850,7 +850,7 @@ INT32 FindBestPath(SOLDIERTYPE *s, INT16 sDestination, INT8 ubLevel, INT16 usMov
     // contemplate a new path in each direction
     // for ( iCnt = iLoopStart; iCnt != iLoopEnd; iCnt = (iCnt + iLoopIncrement) % MAXDIR )
     for (iCnt = iLoopStart;;) {
-#ifdef VEHICLE
+#ifdef VEHICLE_DEF
       /*
       if (fTurnSlow)
       {
@@ -1191,7 +1191,7 @@ INT32 FindBestPath(SOLDIERTYPE *s, INT16 sDestination, INT8 ubLevel, INT16 usMov
         }
       }
 
-#ifdef VEHICLE
+#ifdef VEHICLE_DEF
       if (fMultiTile) {
         // vehicle test for obstacles: prevent movement to next tile if
         // a tile covered by the vehicle in that position & direction

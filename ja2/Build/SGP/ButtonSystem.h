@@ -92,6 +92,8 @@ extern "C" {
 
 extern UINT32 ButtonDestBuffer;
 
+struct _GUI_BUTTON;
+
 // GUI_BUTTON callback function type
 typedef void (*GUI_CALLBACK)(struct _GUI_BUTTON *, INT32);
 

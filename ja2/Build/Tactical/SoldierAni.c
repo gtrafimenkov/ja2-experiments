@@ -3491,7 +3491,7 @@ BOOLEAN HandleUnjamAnimation(SOLDIERTYPE *pSoldier) {
 							{
 								// CHECK IF WE HAVE AN ATTACKER, TAKE OPPOSITE DIRECTION!
 								if ( pSoldier->ubAttackerID != NOBODY )
-								{ 
+								{
 									// Find direction!
 									bTestDirection = (INT8)GetDirectionFromGridNo( MercPtrs[ pSoldier->ubAttackerID ]->sGridNo, pSoldier );
 									fForceDirection = TRUE;

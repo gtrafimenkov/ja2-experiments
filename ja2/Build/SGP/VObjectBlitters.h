@@ -1,6 +1,7 @@
 #ifndef __VOBJECT_BLITTERS
 #define __VOBJECT_BLITTERS
 
+#include "Rect.h"
 #include "SGP/Shading.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"

@@ -29,7 +29,6 @@
 #include "Tactical/TeamTurns.h"
 #include "Tactical/Vehicles.h"
 #include "Tactical/Weapons.h"
-#include "Tactical/interfaceDialogue.h"
 #include "TacticalAI/AI.h"
 #include "TacticalAI/AIInternals.h"
 #include "TacticalAI/AIList.h"

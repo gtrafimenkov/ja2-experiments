@@ -1,3 +1,5 @@
+#pragma once
+
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Tactical/AnimationControl.h"

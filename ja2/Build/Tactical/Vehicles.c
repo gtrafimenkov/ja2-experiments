@@ -14,7 +14,6 @@
 #include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicMovement.h"
 #include "Strategic/StrategicPathing.h"
-#include "String.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/Interface.h"
 #include "Tactical/InterfaceControl.h"

@@ -2876,7 +2876,8 @@ void RenderSoldierCellHealth(SOLDIERCELL *pCell) {
     pStr = zHealthStr[cnt];
   } else {
     wcscpy(str, pCell->pSoldier->name);
-    pStr = _wcsupr(str);
+    // pStr = _wcsupr(str);
+    pStr = str;
     usColor = FONT_BLACK;
   }
 

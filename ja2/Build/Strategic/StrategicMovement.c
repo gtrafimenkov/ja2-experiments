@@ -1213,11 +1213,11 @@ BOOLEAN AttemptToMergeSeparatedGroups(GROUP *pGroup, BOOLEAN fDecrementTraversal
 					if( curr->ubSectorX == pGroup->ubSectorX && curr->ubSectorY == pGroup->ubSectorY &&
 						curr->pPlayerList->pSoldier->bSectorZ == pGroup->pPlayerList->pSoldier->bSectorZ )
 					{ //This group is in the same sector as us
-						if( curr->pPlayerList->pSoldier->bAssignment == pGroup->pPlayerList->pSoldier->ubDesiredSquadAssignment || 
+						if( curr->pPlayerList->pSoldier->bAssignment == pGroup->pPlayerList->pSoldier->ubDesiredSquadAssignment ||
 							  curr->pPlayerList->pSoldier->ubDesiredSquadAssignment == pGroup->pPlayerList->pSoldier->ubDesiredSquadAssignment )
 						{ //This group is the one we want to join (or has the same desire)!
 							pSoldier = pGroup->pPlayerList->pSoldier;
-							
+
 							//First, set up flags for the current group to not relocate and walk in sector (they are already there)
 							pPlayer = curr->pPlayerList;
 							while( pPlayer )

@@ -135,7 +135,7 @@ extern INT8 gbFirstApproachFlags[4];
 
 extern UINT8 gubTeamPenalty;
 
-extern void ShutdownNPCQuotes(void);
+void ShutdownNPCQuotes(void);
 
 extern void SetQuoteRecordAsUsed(UINT8 ubNPC, UINT8 ubRecord);
 
@@ -162,7 +162,7 @@ extern BOOLEAN ReloadAllQuoteFiles(void);
 extern BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile);
 BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, UINT32 uiSaveGameVersion);
 
-extern void TriggerFriendWithHostileQuote(UINT8 ubNPC);
+void TriggerFriendWithHostileQuote(UINT8 ubNPC);
 
 extern void ReplaceLocationInNPCDataFromProfileID(UINT8 ubNPC, INT16 sOldGridNo, INT16 sNewGridNo);
 

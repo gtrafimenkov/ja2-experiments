@@ -29,7 +29,6 @@
 #include "Tactical/SoldierTile.h"
 #include "Tactical/TacticalSave.h"
 #include "Tactical/Weapons.h"
-#include "Tactical/interfaceDialogue.h"
 #include "TacticalAI/AI.h"
 #include "TacticalAI/QuestDebug.h"
 #include "TileEngine/IsometricUtils.h"

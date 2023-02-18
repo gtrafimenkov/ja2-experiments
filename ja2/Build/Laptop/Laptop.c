@@ -104,14 +104,6 @@ enum {
   FILES_REGION,
 };
 
-struct rgbcolor {
-  UINT8 ubRed;
-  UINT8 ubGreen;
-  UINT8 ubBlue;
-};
-
-typedef struct rgbcolor RGBCOLOR;
-
 RGBCOLOR GlowColors[] = {
     {0, 0, 0},   {25, 0, 0},  {50, 0, 0},  {75, 0, 0},  {100, 0, 0}, {125, 0, 0},
     {150, 0, 0}, {175, 0, 0}, {200, 0, 0}, {225, 0, 0}, {250, 0, 0},

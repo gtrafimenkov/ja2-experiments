@@ -36,7 +36,6 @@
 #include "Tactical/StructureWrap.h"
 #include "Tactical/Weapons.h"
 #include "Tactical/WorldItems.h"
-#include "Tactical/interfaceDialogue.h"
 #include "TacticalAI/AI.h"
 #include "TileEngine/InteractiveTiles.h"
 #include "TileEngine/IsometricUtils.h"

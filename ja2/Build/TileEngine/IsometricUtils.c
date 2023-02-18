@@ -268,8 +268,6 @@ BOOLEAN GetMouseMapPos(INT16 *psMapPos) {
   }
 }
 
-BOOLEAN GetMouseMapPos(UINT16 *p) { return GetMouseMapPos((INT16 *)p); }
-
 BOOLEAN ConvertMapPosToWorldTileCenter(UINT16 usMapPos, INT16 *psXPos, INT16 *psYPos) {
   INT16 sWorldX, sWorldY;
   INT16 sCellX, sCellY;
@@ -350,12 +348,6 @@ void GetWorldXYAbsoluteScreenXY(INT32 sWorldCellX, INT32 sWorldCellY, INT16 *psW
   // Subtract screen center
   *psWorldScreenX = sScreenCenterX + gsCX - gsTLX;
   *psWorldScreenY = sScreenCenterY + gsCY - gsTLY;
-}
-
-void GetFromAbsoluteScreenXYWorldXY(UINT32 *psWorldCellX, UINT32 *psWorldCellY, INT16 sWorldScreenX,
-                                    INT16 sWorldScreenY) {
-  GetFromAbsoluteScreenXYWorldXY((INT32 *)psWorldCellX, (INT32 *)psWorldCellY, sWorldScreenX,
-                                 sWorldScreenY);
 }
 
 void GetFromAbsoluteScreenXYWorldXY(INT32 *psWorldCellX, INT32 *psWorldCellY, INT16 sWorldScreenX,
