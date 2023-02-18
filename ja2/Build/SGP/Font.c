@@ -9,18 +9,14 @@
 
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
+#include "SGP/HImage.h"
 #include "SGP/MemMan.h"
 #include "SGP/PCX.h"
 #include "SGP/SGP.h"
 #include "SGP/Types.h"
-
-#if defined(JA2) || defined(UTIL)
-#include "SGP/Video.h"
-#endif
-
-#include "SGP/HImage.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/Video.h"
 
 //*******************************************************
 //
@@ -850,12 +846,7 @@ UINT32 gprintfDirty(INT32 x, INT32 y, STR16 pFontString, ...) {
   // Unlock buffer
   UnLockVideoSurface(FontDestBuffer);
 
-#if defined(JA2) || defined(UTIL)
   InvalidateRegion(x, y, x + StringPixLength(string, FontDefault), y + GetFontHeight(FontDefault));
-#else
-  InvalidateRegion(x, y, x + StringPixLength(string, FontDefault), y + GetFontHeight(FontDefault),
-                   INVAL_SRC_TRANS);
-#endif
 
   return (0);
 }

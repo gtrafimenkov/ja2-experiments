@@ -1,9 +1,6 @@
 #include "SGP/CursorControl.h"
 
-#if defined(JA2) || defined(UTIL)
 #include "SGP/Video.h"
-#endif
-
 #include "SGP/WCheck.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

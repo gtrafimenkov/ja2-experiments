@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <windows.h>
 
+#include "SGP/ButtonSoundControl.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
@@ -20,15 +21,12 @@
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
-#if defined(JA2) || defined(UTIL)
-#include "SGP/ButtonSoundControl.h"
 #include "SGP/Video.h"
 #include "Utils/WordWrap.h"
 #ifdef _JA2_RENDER_DIRTY
 #include "TileEngine/RenderDirty.h"
 #include "Utils/FontControl.h"
 #include "Utils/Utilities.h"
-#endif
 #endif
 
 // ATE: Added to let Wiz default creating mouse regions with no cursor, JA2 default to a cursor (
