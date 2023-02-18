@@ -233,7 +233,6 @@ BYTE *LockVideoSurface(UINT32 uiVSurface, UINT32 *puiPitch) {
   //
   // Check if given backbuffer or primary buffer
   //
-#ifdef JA2
   if (uiVSurface == PRIMARY_SURFACE) {
     return (BYTE *)LockPrimarySurface(puiPitch);
   }
@@ -241,7 +240,6 @@ BYTE *LockVideoSurface(UINT32 uiVSurface, UINT32 *puiPitch) {
   if (uiVSurface == BACKBUFFER) {
     return (BYTE *)LockBackBuffer(puiPitch);
   }
-#endif
 
   if (uiVSurface == FRAME_BUFFER) {
     return (BYTE *)LockFrameBuffer(puiPitch);
@@ -279,7 +277,6 @@ void UnLockVideoSurface(UINT32 uiVSurface) {
   //
   // Check if given backbuffer or primary buffer
   //
-#ifdef JA2
   if (uiVSurface == PRIMARY_SURFACE) {
     UnlockPrimarySurface();
     return;
@@ -289,7 +286,6 @@ void UnLockVideoSurface(UINT32 uiVSurface) {
     UnlockBackBuffer();
     return;
   }
-#endif
 
   if (uiVSurface == FRAME_BUFFER) {
     UnlockFrameBuffer();
@@ -432,7 +428,6 @@ BOOLEAN SetPrimaryVideoSurfaces() {
   //
   // Get Primary surface
   //
-#ifdef JA2
   pSurface = GetPrimarySurfaceObject();
   CHECKF(pSurface != NULL);
 
@@ -457,8 +452,6 @@ BOOLEAN SetPrimaryVideoSurfaces() {
 
   ghMouseBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
   CHECKF(ghMouseBuffer != NULL);
-
-#endif
 
   //
   // Get frame buffer surface
@@ -701,11 +694,9 @@ HVSURFACE CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   UINT8 ubBitDepth;
   UINT32 fMemUsage;
 
-  //#ifdef JA2
   UINT32 uiRBitMask;
   UINT32 uiGBitMask;
   UINT32 uiBBitMask;
-  //#endif
 
   // Clear the memory
   memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
@@ -719,11 +710,7 @@ HVSURFACE CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   //
   // The description structure contains memory usage flag
   //
-#ifdef JA2
   fMemUsage = VSurfaceDesc->fCreateFlags;
-#else
-  fMemUsage = VSURFACE_SYSTEM_MEM_USAGE;
-#endif
 
   //
   // Check creation options
@@ -799,16 +786,10 @@ HVSURFACE CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
 
       // We're using pixel formats too -- DB/Wiz
 
-      //#ifdef JA2
       CHECKF(GetPrimaryRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask));
       PixelFormat.dwRBitMask = uiRBitMask;
       PixelFormat.dwGBitMask = uiGBitMask;
       PixelFormat.dwBBitMask = uiBBitMask;
-      //#else
-      //			PixelFormat.dwRBitMask = 0xf800;
-      //			PixelFormat.dwGBitMask = 0x7e0;
-      //			PixelFormat.dwBBitMask = 0x1f;
-      //#endif
       break;
 
     default:

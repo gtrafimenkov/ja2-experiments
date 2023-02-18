@@ -114,17 +114,10 @@ LRESULT CALLBACK KeyboardHandler(int Code, WPARAM wParam, LPARAM lParam) {
   return TRUE;
 }
 
-#ifdef JA2
-
 LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
   UINT32 uiParam;
 
-#ifndef JA2
-  if ((Code < 0) || (!gfApplicationActive))
-#else
-  if (Code < 0)
-#endif
-  {  // Do not handle this message, pass it on to another window
+  if (Code < 0) {  // Do not handle this message, pass it on to another window
     return CallNextHookEx(ghMouseHook, Code, wParam, lParam);
   }
 
@@ -197,89 +190,6 @@ LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
   }
   return TRUE;
 }
-
-#else
-
-// Wizardry mouse hander
-
-LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
-  UINT32 uiParam;
-  UINT32 uiXPos, uiYPos;
-  RECT rcClient;
-  BOOLEAN fOutsideClient = FALSE;
-  static BOOLEAN fResizing = FALSE;
-  LRESULT Result;
-
-  uiXPos = (((MOUSEHOOKSTRUCT *)lParam)->pt).x;
-  uiYPos = (((MOUSEHOOKSTRUCT *)lParam)->pt).y;
-
-  if (!VideoIsFullScreen()) {
-    if (wParam == WM_NCLBUTTONDOWN) fResizing = TRUE;
-
-    VideoGetClientRect(&rcClient);
-    if ((uiXPos < (UINT32)rcClient.left) || (uiXPos > (UINT32)rcClient.right) ||
-        (uiYPos < (UINT32)rcClient.top) || (uiYPos > (UINT32)rcClient.bottom))
-      fOutsideClient = TRUE;
-  }
-
-  if ((Code < 0) || (!gfApplicationActive) || fOutsideClient ||
-      fResizing) {  // Do not handle this message, pass it on to another window
-    Result = CallNextHookEx(ghMouseHook, Code, wParam, lParam);
-
-    if ((wParam == WM_LBUTTONUP) || (wParam == WM_NCLBUTTONUP)) fResizing = FALSE;
-
-    return (Result);
-  }
-
-  switch (wParam) {
-    case WM_LBUTTONUP:
-    case WM_LBUTTONDOWN:
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONUP:
-    case WM_MOUSEMOVE:
-      if (VideoIsFullScreen()) {
-        gusMouseXPos = (UINT16)(uiXPos);
-        gusMouseYPos = (UINT16)(uiYPos);
-      } else {
-        gusMouseXPos = (UINT16)(uiXPos - rcClient.left);
-        gusMouseYPos = (UINT16)(uiYPos - rcClient.top);
-      }
-      uiParam = (UINT32)gusMouseYPos << 16 | (UINT32)gusMouseXPos;
-      // Set that we have input
-      gfSGPInputReceived = TRUE;
-      break;
-  }
-
-  if (wParam == WM_MOUSEWHEEL) {
-    return (FALSE);
-  }
-
-  switch (wParam) {
-    case WM_LBUTTONDOWN:
-      gfLeftButtonState = TRUE;
-      QueueEvent(LEFT_BUTTON_DOWN, 0, uiParam);
-      break;
-    case WM_LBUTTONUP:
-      gfLeftButtonState = FALSE;
-      QueueEvent(LEFT_BUTTON_UP, 0, uiParam);
-      break;
-    case WM_RBUTTONDOWN:
-      gfRightButtonState = TRUE;
-      QueueEvent(RIGHT_BUTTON_DOWN, 0, uiParam);
-      break;
-    case WM_RBUTTONUP:
-      gfRightButtonState = FALSE;
-      QueueEvent(RIGHT_BUTTON_UP, 0, uiParam);
-      break;
-    case WM_MOUSEMOVE:
-      if (gfTrackMousePos) QueueEvent(MOUSE_POS, 0, uiParam);
-      break;
-  }
-
-  return (TRUE);
-}
-
-#endif
 
 BOOLEAN InitializeInputManager(void) {
   // Link to debugger
