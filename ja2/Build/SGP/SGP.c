@@ -52,18 +52,6 @@ void GetRuntimeSettings();
 int PASCAL HandledWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandLine,
                           int sCommandShow);
 
-#if !defined(JA2) && !defined(UTILS)
-void ProcessCommandLine(CHAR8 *pCommandLine);
-BOOLEAN RunSetup(void);
-
-// Should the game immediately load the quick save at startup?
-BOOLEAN gfLoadAtStartup = FALSE;
-BOOLEAN gfUsingBoundsChecker = FALSE;
-CHAR8 *gzStringDataOverride = NULL;
-BOOLEAN gfCapturingVideo = FALSE;
-
-#endif
-
 HINSTANCE ghInstance;
 
 void ProcessJa2CommandLineBeforeInitialization(CHAR8 *pCommandLine);
@@ -155,28 +143,14 @@ INT32 FAR PASCAL WindowProcedure(HWND hWindow, UINT16 Message, WPARAM wParam, LP
       break;
 
     case WM_SETFOCUS:
-#if !defined(JA2) && !defined(UTIL)
-      if (!VideoInspectorIsEnabled()) RestoreVideoManager();
-      gfApplicationActive = TRUE;
-//			RestrictMouseToXYXY(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-#else
       RestoreCursorClipRect();
-#endif
-
       break;
 
     case WM_KILLFOCUS:
-#if !defined(JA2) && !defined(UTIL)
-      if (!VideoInspectorIsEnabled()) SuspendVideoManager();
-
-      gfApplicationActive = FALSE;
-      FreeMouseCursor();
-#endif
       // Set a flag to restore surfaces once a WM_ACTIVEATEAPP is received
       fRestore = TRUE;
       break;
 
-#if defined(JA2)
 #ifndef JA2DEMO
     case WM_DEVICECHANGE: {
       DEV_BROADCAST_HDR *pHeader = (DEV_BROADCAST_HDR *)lParam;
@@ -191,7 +165,6 @@ INT32 FAR PASCAL WindowProcedure(HWND hWindow, UINT16 Message, WPARAM wParam, LP
         }
       }
     } break;
-#endif
 #endif
 
     default:
@@ -495,20 +468,6 @@ void SGPExit(void) {
   fAlreadyExiting = TRUE;
   gfProgramIsRunning = FALSE;
 
-// Wizardry only
-#if !defined(JA2) && !defined(UTIL)
-  if (gfGameInitialized) {
-// ARM: if in DEBUG mode & we've ShutdownWithErrorBox, don't unload screens and release data structs
-// to permit easier debugging
-#ifdef _DEBUG
-    if (gfIgnoreMessages) {
-      fUnloadScreens = FALSE;
-    }
-#endif
-    GameloopExit(fUnloadScreens);
-  }
-#endif
-
   ShutdownStandardGamingPlatform();
   ShowCursor(TRUE);
   if (strlen(gzErrorMsg)) {
@@ -536,59 +495,6 @@ void ShutdownWithErrorBox(CHAR8 *pcMessage) {
 
   exit(0);
 }
-
-#if !defined(JA2) && !defined(UTILS)
-
-void ProcessCommandLine(CHAR8 *pCommandLine) {
-  CHAR8 cSeparators[] = "\t =";
-  CHAR8 *pCopy = NULL, *pToken;
-
-  pCopy = (CHAR8 *)MemAlloc(strlen(pCommandLine) + 1);
-
-  Assert(pCopy);
-  if (!pCopy) return;
-
-  memcpy(pCopy, pCommandLine, strlen(pCommandLine) + 1);
-
-  pToken = strtok(pCopy, cSeparators);
-  while (pToken) {
-    if (!_strnicmp(pToken, "/NOSOUND", 8)) {
-      SoundEnableSound(FALSE);
-    } else if (!_strnicmp(pToken, "/INSPECTOR", 10)) {
-      VideoInspectorEnable();
-    } else if (!_strnicmp(pToken, "/VIDEOCFG", 9)) {
-      pToken = strtok(NULL, cSeparators);
-      VideoSetConfigFile(pToken);
-    } else if (!_strnicmp(pToken, "/LOAD", 5)) {
-      gfLoadAtStartup = TRUE;
-    } else if (!_strnicmp(pToken, "/WINDOW", 7)) {
-      VideoFullScreen(FALSE);
-    } else if (!_strnicmp(pToken, "/BC", 7)) {
-      gfUsingBoundsChecker = TRUE;
-    } else if (!_strnicmp(pToken, "/CAPTURE", 7)) {
-      gfCapturingVideo = TRUE;
-    } else if (!_strnicmp(pToken, "/NOOCT", 6)) {
-      NoOct();
-    } else if (!_strnicmp(pToken, "/STRINGDATA", 11)) {
-      pToken = strtok(NULL, cSeparators);
-      gzStringDataOverride = (CHAR8 *)MemAlloc(strlen(pToken) + 1);
-      strcpy(gzStringDataOverride, pToken);
-    }
-
-    pToken = strtok(NULL, cSeparators);
-  }
-
-  MemFree(pCopy);
-}
-
-BOOLEAN RunSetup(void) {
-  if (!FileExists(VideoGetConfigFile()))
-    _spawnl(_P_WAIT, "3DSetup.EXE", "3DSetup.EXE", VideoGetConfigFile(), NULL);
-
-  return (FileExists(VideoGetConfigFile()));
-}
-
-#endif
 
 void ProcessJa2CommandLineBeforeInitialization(CHAR8 *pCommandLine) {
   CHAR8 cSeparators[] = "\t =";

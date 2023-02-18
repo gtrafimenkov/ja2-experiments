@@ -21,10 +21,8 @@
 #include "SGP/Line.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
-#if (defined(JA2) || defined(UTIL))
 #include "SGP/Video.h"
 #define BASE_REGION_FLAGS (MSYS_REGION_ENABLED | MSYS_SET_CURSOR)
-#endif
 #ifdef _JA2_RENDER_DIRTY
 #include "TileEngine/RenderDirty.h"
 #include "Utils/FontControl.h"

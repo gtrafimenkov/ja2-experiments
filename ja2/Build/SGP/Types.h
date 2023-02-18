@@ -23,13 +23,8 @@
 
 // HEY WIZARDRY DUDES, JA2 ISN'T THE ONLY PROGRAM WE COMPILE! :-)
 
-#if defined(JA2) || defined(UTILS)
 typedef unsigned int UINT32;
 typedef signed int INT32;
-#else
-typedef unsigned int UINT32;
-typedef int INT32;
-#endif
 
 // integers
 typedef unsigned char UINT8;
