@@ -1,3 +1,4 @@
+#include "Cheats.h"
 #include "Strategic/PreBattleInterface.h"
 
 #include <stdio.h>

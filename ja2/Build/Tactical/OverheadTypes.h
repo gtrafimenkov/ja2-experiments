@@ -3,6 +3,7 @@
 // GLOBAL HEADER FOR DATA, TYPES FOR TACTICAL ENGINE
 
 #include "SGP/Types.h"
+#include "BuildDefines.h"
 
 #define REFINE_AIM_1 0
 #define REFINE_AIM_MID1 1

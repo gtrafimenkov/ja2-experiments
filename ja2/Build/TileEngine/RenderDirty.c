@@ -1,3 +1,4 @@
+#include "Utils/FontControl.h"
 #include "TileEngine/RenderDirty.h"
 
 #include <errno.h>
