@@ -146,7 +146,6 @@ UINT32 InitializeJA2(void) {
 
   DetermineRGBDistributionSettings();
 
-#ifdef JA2BETAVERSION
 #ifdef JA2EDITOR
 
   // UNCOMMENT NEXT LINE TO ALLOW FORCE UPDATES...
@@ -154,7 +153,6 @@ UINT32 InitializeJA2(void) {
   if (gfMustForceUpdateAllMaps) {
     ApologizeOverrideAndForceUpdateEverything();
   }
-#endif
 #endif
 
 #ifdef JA2BETAVERSION
@@ -180,7 +178,6 @@ UINT32 InitializeJA2(void) {
   }
 #endif
 
-#ifdef JA2BETAVERSION
 #ifdef JA2EDITOR
   // CHECK COMMANDLINE FOR SPECIAL UTILITY
   if (!strcmp(gzCommandLine, "-EDITORAUTO")) {
@@ -207,7 +204,6 @@ UINT32 InitializeJA2(void) {
     gGameOptions.fGunNut = TRUE;
     return (GAME_SCREEN);
   }
-#endif
 #endif
 
   return (INIT_SCREEN);
