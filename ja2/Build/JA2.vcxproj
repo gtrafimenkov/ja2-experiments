@@ -61,7 +61,7 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDebug|Win32'">..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDebug|Win32'">.\ReleaseWithDebug\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDebug|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\..\..\..\ja2-installed\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)-vanilla-dbg</TargetName>
