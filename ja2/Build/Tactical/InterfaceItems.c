@@ -1995,7 +1995,7 @@ BOOLEAN InternalInitItemDescriptionBox(OBJECTTYPE *pObject, INT16 sX, INT16 sY, 
 
   if (ITEM_PROS_AND_CONS(gpItemDescObject->usItem)) {
     if (guiCurrentItemDescriptionScreen == MAP_SCREEN) {
-      sProsConsIndent = __max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
+      sProsConsIndent = max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
                               StringPixLength(gzConsLabel, ITEMDESC_FONT)) +
                         10;
       for (cnt = 0; cnt < 2; cnt++) {
@@ -2028,7 +2028,7 @@ BOOLEAN InternalInitItemDescriptionBox(OBJECTTYPE *pObject, INT16 sX, INT16 sY, 
       }
 
     } else {
-      sProsConsIndent = __max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
+      sProsConsIndent = max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
                               StringPixLength(gzConsLabel, ITEMDESC_FONT)) +
                         10;
       for (cnt = 0; cnt < 2; cnt++) {
@@ -2658,7 +2658,7 @@ void RenderItemDescriptionBox() {
       SetFontShadow(ITEMDESC_FONTSHADOW3);
       mprintf((INT16)MAP_ITEMDESC_PROS_START_X, (INT16)MAP_ITEMDESC_PROS_START_Y, gzProsLabel);
 
-      sProsConsIndent = __max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
+      sProsConsIndent = max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
                               StringPixLength(gzConsLabel, ITEMDESC_FONT)) +
                         10;
 
@@ -3160,7 +3160,7 @@ void RenderItemDescriptionBox() {
       SetFontShadow(ITEMDESC_FONTSHADOW3);
       mprintf((INT16)ITEMDESC_PROS_START_X, (INT16)ITEMDESC_PROS_START_Y, gzProsLabel);
 
-      sProsConsIndent = __max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
+      sProsConsIndent = max(StringPixLength(gzProsLabel, ITEMDESC_FONT),
                               StringPixLength(gzConsLabel, ITEMDESC_FONT)) +
                         10;
 

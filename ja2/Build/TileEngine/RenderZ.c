@@ -130,7 +130,7 @@ INT16 gsRDistToCenterY, gsRDistToCenterX;
   {                                                                      \
     GetMapXYWorldY(sMapX, sMapY, sWorldY);                               \
                                                                          \
-    sZLevel = __max(((sWorldY - 80) * Z_SUBLAYERS) + SHADOW_Z_LEVEL, 0); \
+    sZLevel = max(((sWorldY - 80) * Z_SUBLAYERS) + SHADOW_Z_LEVEL, 0); \
   }
 
 #define SoldierZLevel(pSoldier, sMapX, sMapY)                                            \
