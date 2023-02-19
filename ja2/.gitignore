@@ -7,7 +7,6 @@
 *.ncb
 *.pdb
 *.suo
-*.user
 Debug
 Release
 ReleaseWithDebug
