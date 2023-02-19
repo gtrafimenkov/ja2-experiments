@@ -1833,10 +1833,10 @@ void DisplayOnScreenNumber(BOOLEAN fErase) {
 
     if (bLoopNum != 10) {
       bNum = bLoopNum;
-      swprintf(zTempString, L"%2d", bNum);
+      swprintf(zTempString, ARR_SIZE(zTempString), L"%2d", bNum);
     } else {
       bNum = 0;
-      swprintf(zTempString, L"%2d", bNum);
+      swprintf(zTempString, ARR_SIZE(zTempString), L"%2d", bNum);
     }
 
     if (!fErase)

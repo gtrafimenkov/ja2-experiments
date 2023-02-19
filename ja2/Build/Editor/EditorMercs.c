@@ -806,7 +806,7 @@ void DisplayEditMercWindow(void) {
     ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 117, iYPos + 111 + (20 * x), iXPos + 116 + 29,
                               iYPos + 111 + (20 * x) + 18, usFillColorTextBk);
 
-    swprintf(TempString, L"%d", iEditStat[x]);
+    swprintf(TempString, ARR_SIZE(TempString), L"%d", iEditStat[x]);
     iXOff = (30 - StringPixLength(TempString, FONT12POINT1)) / 2;
     gprintf(iXPos + 118 + iXOff, iYPos + 114 + (20 * x), L"%s", TempString);
   }
