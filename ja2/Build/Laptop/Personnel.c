@@ -1,7 +1,5 @@
 #include "Laptop/Personnel.h"
 
-#include <windows.h>
-
 #include "GameLoop.h"
 #include "Laptop/AIMMembers.h"
 #include "Laptop/Finances.h"

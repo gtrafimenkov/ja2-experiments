@@ -19,7 +19,7 @@
 //
 //**************************************************************************
 
-#include <windows.h>
+// #include <windows.h>
 
 #include "SGP/Types.h"
 
@@ -66,7 +66,9 @@
 #define FILE_ATTRIBUTES_TEMPORARY FILE_ATTRIBUTE_TEMPORARY
 #define FILE_ATTRIBUTES_DIRECTORY FILE_ATTRIBUTE_DIRECTORY
 
-typedef FILETIME SGP_FILETIME;
+struct SGP_FILETIME_tag;
+typedef struct SGP_FILETIME_tag SGP_FILETIME;
+// typedef FILETIME SGP_FILETIME;
 
 //**************************************************************************
 //
@@ -150,7 +152,7 @@ BOOLEAN FileIsOlderThanFile(CHAR8 *pcFileName1, CHAR8 *pcFileName2, UINT32 ulNum
 //	Pass in the Fileman file handle of an OPEN file and it will return..
 //		if its a Real File, the return will be the handle of the REAL file
 //		if its a LIBRARY file, the return will be the handle of the LIBRARY
-HANDLE GetRealFileHandleFromFileManFileHandle(HWFILE hFile);
+// HANDLE GetRealFileHandleFromFileManFileHandle(HWFILE hFile);
 
 BOOLEAN AddSubdirectoryToPath(CHAR8 *pDirectory);
 

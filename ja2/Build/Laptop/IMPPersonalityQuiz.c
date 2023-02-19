@@ -1,7 +1,5 @@
 #include "Laptop/IMPPersonalityQuiz.h"
 
-#include <windows.h>
-
 #include "Laptop/CharProfile.h"
 #include "Laptop/IMPCompileCharacter.h"
 #include "Laptop/IMPHomePage.h"
