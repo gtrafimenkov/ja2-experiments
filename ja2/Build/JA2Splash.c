@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "FileMan.h"
 #include "MainMenuScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/LibraryDataBasePub.h"
@@ -8,7 +9,6 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "Utils/TimerControl.h"
-#include "fileman.h"
 #include "platform.h"
 
 UINT32 guiSplashFrameFade = 10;

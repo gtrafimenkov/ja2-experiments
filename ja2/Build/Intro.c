@@ -1,5 +1,6 @@
 #include "Intro.h"
 
+#include "FileMan.h"
 #include "GameScreen.h"
 #include "Intro.h"
 #include "MainMenuScreen.h"
@@ -24,7 +25,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 extern STR16 gzIntroScreen[];
 

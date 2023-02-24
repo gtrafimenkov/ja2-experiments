@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "SGP/Debug.h"
 #include "SGP/Random.h"
@@ -58,7 +59,6 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Utilities.h"
-#include "fileman.h"
 #include "platfrom_strings.h"
 
 // MODULE FOR EXPLOSIONS

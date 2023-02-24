@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <windows.h>
 
+#include "FileMan.h"
 #include "Laptop/AIMMembers.h"
 #include "MessageBoxScreen.h"
 #include "SGP/English.h"
@@ -37,7 +38,6 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 //#ifdef JA2BETAVERSION
 

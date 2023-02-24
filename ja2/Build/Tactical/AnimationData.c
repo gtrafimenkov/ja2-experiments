@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "JAScreens.h"
 #include "SGP/Debug.h"
 #include "SGP/WCheck.h"
@@ -15,7 +16,6 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/DebugControl.h"
 #include "Utils/Utilities.h"
-#include "fileman.h"
 
 #define EMPTY_SLOT -1
 #define TO_INIT 0

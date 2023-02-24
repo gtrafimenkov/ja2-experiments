@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 #define QUEST_DEBUG_FILE "QuestDebug.txt"
 

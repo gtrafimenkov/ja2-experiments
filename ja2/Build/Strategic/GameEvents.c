@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
@@ -9,7 +10,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 
 #ifdef JA2TESTVERSION
 

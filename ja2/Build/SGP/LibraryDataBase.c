@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/MemMan.h"
 #include "SGP/WCheck.h"
-#include "fileman.h"
 #include "platform.h"
 #include "platfrom_strings.h"
 

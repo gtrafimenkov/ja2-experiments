@@ -5,6 +5,7 @@
 #include <windows.h>
 
 #include "Cheats.h"
+#include "FileMan.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "GameVersion.h"
@@ -95,7 +96,6 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 #include "platform.h"
 
 BOOLEAN fFirstTimeInMapScreen = TRUE;

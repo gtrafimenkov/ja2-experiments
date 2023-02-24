@@ -7,6 +7,7 @@
 #include <windowsx.h>
 
 #include "BuildDefines.h"
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "Intro.h"
 #include "JA2Splash.h"
@@ -31,7 +32,6 @@
 #include "Utils/Utilities.h"
 #include "Video_win.h"
 #include "dbt.h"
-#include "fileman.h"
 #include "platform.h"
 #include "platfrom_strings.h"
 #include "zmouse.h"

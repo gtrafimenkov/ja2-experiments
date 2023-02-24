@@ -23,10 +23,10 @@
 #include <stdlib.h>
 #include <windows.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
-#include "fileman.h"
 
 //**************************************************************************
 //

@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "BuildDefines.h"
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
@@ -76,7 +77,6 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
-#include "fileman.h"
 
 #define MAX_ON_DUTY_SOLDIERS 6
 

@@ -1,5 +1,6 @@
 #include "Strategic/QueenCommand.h"
 
+#include "FileMan.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
@@ -36,7 +37,6 @@
 #include "TileEngine/MapEdgepoints.h"
 #include "TileEngine/RenderWorld.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 #ifdef JA2BETAVERSION
 extern BOOLEAN gfClearCreatureQuest;

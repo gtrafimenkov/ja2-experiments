@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "FileMan.h"
 #include "GameVersion.h"
 #include "SGP/Types.h"
-#include "fileman.h"
 #include "platform.h"
 #include "platform_win.h"
 

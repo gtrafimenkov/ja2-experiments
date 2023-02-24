@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "BuildDefines.h"
+#include "FileMan.h"
 #include "JAScreens.h"
 #include "Local.h"
 #include "SGP/Font.h"
@@ -23,7 +24,6 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 #include "mbstring.h"
 
 typedef struct {

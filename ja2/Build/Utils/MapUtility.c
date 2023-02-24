@@ -1,6 +1,7 @@
 #include "Utils/MapUtility.h"
 
 #include "Editor/LoadScreen.h"
+#include "FileMan.h"
 #include "SGP/English.h"
 #include "SGP/Line.h"
 #include "SGP/SGP.h"
@@ -14,7 +15,6 @@
 #include "TileEngine/WorldDef.h"
 #include "Utils/FontControl.h"
 #include "Utils/STIConvert.h"
-#include "fileman.h"
 #include "platform.h"
 
 #ifdef JA2EDITOR

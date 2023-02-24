@@ -4,6 +4,7 @@
 
 #include "Editor/EditorUndo.h"
 #include "Editor/Smooth.h"
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/Types.h"
 #include "Strategic/Quests.h"
@@ -19,7 +20,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 
 BOOLEAN gfLoadingExitGrids = FALSE;
 

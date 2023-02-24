@@ -1,5 +1,6 @@
 #include "Credits.h"
 
+#include "FileMan.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
@@ -17,7 +18,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 // local Defines
 enum {

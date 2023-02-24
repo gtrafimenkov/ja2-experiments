@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "Editor/SmoothingUtils.h"
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -35,7 +36,6 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 
 DOOR_STATUS *gpDoorStatus = NULL;
 UINT8 gubNumDoorStatus = 0;

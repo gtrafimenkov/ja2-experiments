@@ -1,6 +1,7 @@
 #include "Strategic/GameClock.h"
 
 #include "FadeScreen.h"
+#include "FileMan.h"
 #include "GameScreen.h"
 #include "JAScreens.h"
 #include "SGP/SGP.h"
@@ -25,7 +26,6 @@
 #include "Utils/Message.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
-#include "fileman.h"
 
 //#define DEBUG_GAME_CLOCK
 

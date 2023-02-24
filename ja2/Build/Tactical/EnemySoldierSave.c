@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "Editor/EditorMercs.h"
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -26,7 +27,6 @@
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 BOOLEAN CountNumberOfElitesRegularsAdminsAndCreaturesFromEnemySoldiersTempFile(
     UINT8 *pubNumElites, UINT8 *pubNumRegulars, UINT8 *pubNumAdmins, UINT8 *pubNumCreatures);

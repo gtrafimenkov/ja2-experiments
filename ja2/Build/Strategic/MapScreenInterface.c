@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
@@ -52,7 +53,6 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 // inventory pool position on screen
 #define MAP_INVEN_POOL_X 300

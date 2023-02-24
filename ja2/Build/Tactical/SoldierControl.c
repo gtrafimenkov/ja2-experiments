@@ -6,6 +6,7 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "FileMan.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
@@ -84,7 +85,6 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
-#include "fileman.h"
 
 extern INT16 DirIncrementer[8];
 

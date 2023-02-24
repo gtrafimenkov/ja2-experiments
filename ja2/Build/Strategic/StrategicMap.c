@@ -7,6 +7,7 @@
 #include <time.h>
 
 #include "FadeScreen.h"
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
@@ -91,7 +92,6 @@
 #include "Utils/MusicControl.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 
 // Used by PickGridNoToWalkIn
 #define MAX_ATTEMPTS 200

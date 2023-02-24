@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "Laptop/Email.h"
 #include "Laptop/Laptop.h"
 #include "SGP/Debug.h"
@@ -15,7 +16,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 #include "platform.h"
 
 #define TOP_X 0 + LAPTOP_SCREEN_UL_X

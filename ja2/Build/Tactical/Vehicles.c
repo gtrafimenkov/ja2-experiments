@@ -1,5 +1,6 @@
 #include "Tactical/Vehicles.h"
 
+#include "FileMan.h"
 #include "JAScreens.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
@@ -35,7 +36,6 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 
 INT8 gubVehicleMovementGroups[MAX_VEHICLES];
 

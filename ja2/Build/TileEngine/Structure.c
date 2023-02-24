@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/MemMan.h"
@@ -21,7 +22,6 @@
 #include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
-#include "fileman.h"
 
 // Kris:
 #ifdef JA2EDITOR

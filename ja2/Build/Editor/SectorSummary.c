@@ -9,6 +9,7 @@
 #include "Editor/EditorTaskbarUtils.h"
 #include "Editor/LoadScreen.h"
 #include "Editor/SummaryInfo.h"
+#include "FileMan.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
@@ -30,7 +31,6 @@
 #include "Utils/Text.h"
 #include "Utils/TextInput.h"
 #include "Utils/TimerControl.h"
-#include "fileman.h"
 #include "platform.h"
 
 extern BOOLEAN gfOverheadMapDirty;

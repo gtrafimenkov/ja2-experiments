@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/WCheck.h"
 #include "Tactical/AnimationData.h"
@@ -15,7 +16,6 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/DebugControl.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 // Defines for Anim inst reading, taken from orig Jagged
 #define ANIMFILENAME "BINARYDATA\\ja2bin.dat"

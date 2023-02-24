@@ -1,5 +1,6 @@
 #include "Tactical/DialogueControl.h"
 
+#include "FileMan.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
@@ -54,7 +55,6 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 #define DIALOGUESIZE 480
 #define QUOTE_MESSAGE_SIZE 520

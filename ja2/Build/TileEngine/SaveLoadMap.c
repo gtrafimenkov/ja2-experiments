@@ -1,5 +1,6 @@
 #include "TileEngine/SaveLoadMap.h"
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "SGP/Debug.h"
 #include "SGP/Types.h"
@@ -15,7 +16,6 @@
 #include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 #define NUM_REVEALED_BYTES 3200
 

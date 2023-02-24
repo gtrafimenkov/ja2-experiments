@@ -4,6 +4,7 @@
 #include <windows.h>
 
 #include "FadeScreen.h"
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
@@ -39,7 +40,6 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 BOOLEAN gfSchedulesHosed = FALSE;
 extern UINT32 guiBrokenSaveGameVersion;

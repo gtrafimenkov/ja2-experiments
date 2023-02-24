@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/WCheck.h"
 #include "SysGlobals.h"
@@ -13,7 +14,6 @@
 #include "TileEngine/TileDef.h"
 #include "TileEngine/TileSurface.h"
 #include "Utils/DebugControl.h"
-#include "fileman.h"
 #include "platform.h"
 #include "platfrom_strings.h"
 

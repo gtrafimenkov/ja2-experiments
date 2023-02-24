@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "Laptop/AIM.h"
 #include "Laptop/History.h"
@@ -51,7 +52,6 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/EventPump.h"
 #include "Utils/TimerControl.h"
-#include "fileman.h"
 
 #ifdef JA2EDITOR
 extern BOOLEAN gfProfileDataLoaded;

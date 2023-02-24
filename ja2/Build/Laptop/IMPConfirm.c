@@ -1,5 +1,6 @@
 #include "Laptop/IMPConfirm.h"
 
+#include "FileMan.h"
 #include "Laptop/CharProfile.h"
 #include "Laptop/Email.h"
 #include "Laptop/Finances.h"
@@ -28,7 +29,6 @@
 #include "Utils/EncryptedFile.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 #define IMP_MERC_FILE "IMP.dat"
 

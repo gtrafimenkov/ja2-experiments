@@ -1,5 +1,6 @@
 #include "Strategic/Quests.h"
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "Laptop/BobbyRMailOrder.h"
 #include "Laptop/History.h"
@@ -27,7 +28,6 @@
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/RenderFun.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 #define TESTQUESTS
 

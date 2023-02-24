@@ -1,5 +1,6 @@
 #include "Laptop/Finances.h"
 
+#include "FileMan.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
 #include "SGP/Debug.h"
@@ -16,7 +17,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 #include "platform.h"
 
 // the global defines

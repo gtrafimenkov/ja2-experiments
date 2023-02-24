@@ -246,7 +246,7 @@
     <ClCompile Include="AniViewScreen.c" />
     <ClCompile Include="Credits.c" />
     <ClCompile Include="FadeScreen.c" />
-    <ClCompile Include="fileman.c" />
+    <ClCompile Include="FileMan.c" />
     <ClCompile Include="GameInitOptionsScreen.c" />
     <ClCompile Include="GameLoop.c" />
     <ClCompile Include="GameScreen.c" />

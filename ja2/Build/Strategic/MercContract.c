@@ -1,5 +1,6 @@
 #include "Strategic/MercContract.h"
 
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "GameScreen.h"
 #include "JAScreens.h"
@@ -35,7 +36,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 
 void CalculateMedicalDepositRefund(SOLDIERTYPE *pSoldier);
 void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(SOLDIERTYPE *pSoldier,

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
@@ -69,7 +70,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 #define ITEMDESC_FONT BLOCKFONT2
 #define ITEMDESC_FONTSHADOW1 MILITARY_SHADOW

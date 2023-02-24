@@ -2,6 +2,7 @@
 
 #include <math.h>
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "SGP/Random.h"
@@ -32,7 +33,6 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
-#include "fileman.h"
 
 #define SCRIPT_DELAY 10
 #define AIR_RAID_SAY_QUOTE_TIME 3000

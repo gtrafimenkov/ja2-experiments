@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/ImpTGA.h"
 #include "SGP/PCX.h"
@@ -11,7 +12,6 @@
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"
-#include "fileman.h"
 #include "platfrom_strings.h"
 
 // This is the color substituted to keep a 24bpp -> 16bpp color

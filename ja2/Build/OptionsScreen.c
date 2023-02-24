@@ -2,6 +2,7 @@
 
 #include <windows.h>
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "LanguageDefines.h"
 #include "SGP/Debug.h"
@@ -37,7 +38,6 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 /////////////////////////////////
 //

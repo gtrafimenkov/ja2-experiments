@@ -19,6 +19,7 @@
 #include "Editor/NewSmooth.h"
 #include "Editor/SectorSummary.h"
 #include "Editor/SelectWin.h"
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "MessageBoxScreen.h"
 #include "SGP/English.h"
@@ -38,7 +39,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/TextInput.h"
-#include "fileman.h"
 #include "platform.h"
 #include "platfrom_strings.h"
 

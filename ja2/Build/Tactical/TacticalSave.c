@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "FileMan.h"
 #include "GameVersion.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
@@ -44,7 +45,6 @@
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 #include "platform.h"
 
 BOOLEAN gfWasInMeanwhile = FALSE;

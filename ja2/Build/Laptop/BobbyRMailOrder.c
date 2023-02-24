@@ -1,5 +1,6 @@
 #include "Laptop/BobbyRMailOrder.h"
 
+#include "FileMan.h"
 #include "Laptop/BobbyR.h"
 #include "Laptop/BobbyRGuns.h"
 #include "Laptop/Finances.h"
@@ -22,7 +23,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 typedef struct {
   STR16 psCityLoc;

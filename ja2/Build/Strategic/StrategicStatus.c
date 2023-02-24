@@ -2,6 +2,7 @@
 
 #include <memory.h>
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "Laptop/Email.h"
 #include "Laptop/History.h"
@@ -12,7 +13,6 @@
 #include "Tactical/Campaign.h"
 #include "Tactical/InventoryChoosing.h"
 #include "Tactical/SoldierProfile.h"
-#include "fileman.h"
 
 STRATEGIC_STATUS gStrategicStatus;
 

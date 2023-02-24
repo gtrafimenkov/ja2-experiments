@@ -1,5 +1,6 @@
 #include "TacticalAI/NPC.h"
 
+#include "FileMan.h"
 #include "Laptop/Finances.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -37,7 +38,6 @@
 #include "Utils/Message.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
-#include "fileman.h"
 
 #ifdef JA2TESTVERSION
 #include "Strategic/QuestDebugSystem.h"

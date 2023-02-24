@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include "Cheats.h"
+#include "FileMan.h"
 #include "GameVersion.h"
 #include "HelpScreen.h"
 #include "LanguageDefines.h"
@@ -25,7 +26,6 @@
 #include "Utils/MusicControl.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
-#include "fileman.h"
 
 #define GAME_SETTINGS_FILE "..\\Ja2.set"
 

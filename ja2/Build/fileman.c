@@ -1,4 +1,4 @@
-#include "fileman.h"
+#include "FileMan.h"
 
 #include <stdio.h>
 

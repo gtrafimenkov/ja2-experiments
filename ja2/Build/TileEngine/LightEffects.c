@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
@@ -24,7 +25,6 @@
 #include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 #define NUM_LIGHT_EFFECT_SLOTS 25
 

@@ -1,5 +1,6 @@
 #include "Tactical/WorldItems.h"
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "SGP/Debug.h"
 #include "SGP/Random.h"
@@ -26,7 +27,6 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
-#include "fileman.h"
 
 // Global dynamic array of all of the items in a loaded map.
 WORLDITEM *gWorldItems = NULL;

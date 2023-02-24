@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "Editor/EditorTaskbarUtils.h"
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/English.h"
@@ -32,7 +33,6 @@
 #include "Utils/TextInput.h"
 #include "Utils/TimerControl.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 #ifdef JA2BETAVERSION
 

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "LanguageDefines.h"
 #include "Laptop/AIM.h"
@@ -43,7 +44,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 
 //
 //******  Defines  ******

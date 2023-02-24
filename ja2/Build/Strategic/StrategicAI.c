@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
@@ -32,7 +33,6 @@
 #include "TileEngine/ExplosionControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
-#include "fileman.h"
 
 #define SAI_VERSION 29
 

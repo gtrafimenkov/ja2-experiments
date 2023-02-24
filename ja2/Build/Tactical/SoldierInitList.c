@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "Editor/EditorMercs.h"
+#include "FileMan.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/Random.h"
@@ -36,7 +37,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
-#include "fileman.h"
 
 BOOLEAN gfOriginalList = TRUE;
 

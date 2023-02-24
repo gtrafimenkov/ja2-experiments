@@ -6,6 +6,7 @@
 #include <wchar.h>
 #include <windows.h>
 
+#include "FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/HImage.h"
 #include "SGP/MemMan.h"
@@ -15,7 +16,6 @@
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
 #include "SGP/Video.h"
-#include "fileman.h"
 
 //*******************************************************
 //

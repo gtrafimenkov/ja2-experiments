@@ -1,5 +1,6 @@
 #include "Strategic/CreatureSpreading.h"
 
+#include "FileMan.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
@@ -27,7 +28,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
-#include "fileman.h"
 
 #ifdef JA2BETAVERSION
 BOOLEAN gfClearCreatureQuest = FALSE;

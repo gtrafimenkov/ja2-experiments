@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include "Cheats.h"
+#include "FileMan.h"
 #include "GameLoop.h"
 #include "HelpScreen.h"
 #include "Laptop/AIM.h"
@@ -81,7 +82,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "fileman.h"
 #include "platform.h"
 
 // icons text id's
