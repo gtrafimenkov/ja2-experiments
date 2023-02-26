@@ -1,6 +1,6 @@
 #include "Strategic/Quests.h"
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameSettings.h"
 #include "Laptop/BobbyRMailOrder.h"
 #include "Laptop/History.h"

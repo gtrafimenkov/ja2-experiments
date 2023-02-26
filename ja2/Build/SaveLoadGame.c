@@ -5,7 +5,7 @@
 #include <windows.h>
 
 #include "Cheats.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "GameVersion.h"

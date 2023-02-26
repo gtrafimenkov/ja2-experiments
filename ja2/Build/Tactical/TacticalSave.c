@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameVersion.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"

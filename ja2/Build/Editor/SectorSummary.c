@@ -9,7 +9,7 @@
 #include "Editor/EditorTaskbarUtils.h"
 #include "Editor/LoadScreen.h"
 #include "Editor/SummaryInfo.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"

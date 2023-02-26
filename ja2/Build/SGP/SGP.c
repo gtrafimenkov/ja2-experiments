@@ -7,7 +7,7 @@
 #include <windowsx.h>
 
 #include "BuildDefines.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameLoop.h"
 #include "Intro.h"
 #include "JA2Splash.h"

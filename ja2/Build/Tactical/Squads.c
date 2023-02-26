@@ -1,6 +1,6 @@
 #include "Tactical/Squads.h"
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "JAScreens.h"
 #include "SGP/Types.h"
 #include "Strategic/Assignments.h"

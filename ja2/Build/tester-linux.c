@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Ja2Libs.h"
 #include "SGP/LibraryDataBase.h"
 #include "SGP/Types.h"

@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"

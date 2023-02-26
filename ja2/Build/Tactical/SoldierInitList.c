@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #include "Editor/EditorMercs.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/Random.h"

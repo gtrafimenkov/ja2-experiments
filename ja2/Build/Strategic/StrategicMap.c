@@ -7,7 +7,7 @@
 #include <time.h>
 
 #include "FadeScreen.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameLoop.h"
 #include "GameScreen.h"
 #include "GameSettings.h"

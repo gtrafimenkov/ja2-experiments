@@ -6,7 +6,7 @@
 #include <string.h>
 #include <wchar.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "JAScreens.h"

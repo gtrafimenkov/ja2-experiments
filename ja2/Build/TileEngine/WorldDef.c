@@ -10,7 +10,7 @@
 #include "Editor/EditorMapInfo.h"
 #include "Editor/Smooth.h"
 #include "Editor/SummaryInfo.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "JAScreens.h"
 #include "SGP/Debug.h"
 #include "SGP/MouseSystem.h"

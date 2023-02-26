@@ -20,7 +20,7 @@
 
 #include <string.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/HImage.h"
 #include "SGP/MemMan.h"

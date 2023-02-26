@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameVersion.h"
 #include "SGP/Types.h"
 #include "platform.h"

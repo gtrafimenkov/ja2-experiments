@@ -4,7 +4,7 @@
 
 #include "Editor/EditorUndo.h"
 #include "Editor/Smooth.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/Types.h"
 #include "Strategic/Quests.h"

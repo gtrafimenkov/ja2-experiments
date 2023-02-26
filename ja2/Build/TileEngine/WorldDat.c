@@ -4,7 +4,7 @@
 #include <string.h>
 #include <wchar.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SysGlobals.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/TileSurface.h"

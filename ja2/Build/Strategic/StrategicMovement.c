@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <stdlib.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "SGP/Debug.h"

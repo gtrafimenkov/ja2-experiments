@@ -19,7 +19,7 @@
 #include "Editor/NewSmooth.h"
 #include "Editor/SectorSummary.h"
 #include "Editor/SelectWin.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameLoop.h"
 #include "MessageBoxScreen.h"
 #include "SGP/English.h"

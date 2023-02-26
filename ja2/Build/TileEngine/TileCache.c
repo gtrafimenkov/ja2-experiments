@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/WCheck.h"
 #include "SysGlobals.h"

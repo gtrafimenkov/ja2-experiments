@@ -1,6 +1,6 @@
 #include "TileEngine/SaveLoadMap.h"
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameSettings.h"
 #include "SGP/Debug.h"
 #include "SGP/Types.h"

@@ -4884,7 +4884,7 @@ BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, UINT32 *uiIndex, UINT
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"

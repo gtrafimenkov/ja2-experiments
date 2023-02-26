@@ -5,7 +5,7 @@
 #include "Editor/EditSys.h"
 #include "Editor/EditorMercs.h"
 #include "Editor/RoadSmoothing.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "JA2.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"

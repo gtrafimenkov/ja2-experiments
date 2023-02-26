@@ -3,7 +3,7 @@
 #include <windows.h>
 
 #include "Cheats.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameVersion.h"
 #include "HelpScreen.h"
 #include "LanguageDefines.h"

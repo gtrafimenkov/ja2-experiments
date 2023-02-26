@@ -1,7 +1,7 @@
 #include "Utils/MapUtility.h"
 
 #include "Editor/LoadScreen.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/English.h"
 #include "SGP/Line.h"
 #include "SGP/SGP.h"

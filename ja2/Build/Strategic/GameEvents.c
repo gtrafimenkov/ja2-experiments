@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"

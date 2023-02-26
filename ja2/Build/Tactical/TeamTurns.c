@@ -1,6 +1,6 @@
 #include "Tactical/TeamTurns.h"
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Timer.h"
 #include "SGP/Types.h"
 #include "Strategic/GameClock.h"

@@ -4,7 +4,7 @@
 #include <time.h>
 #include <windows.h>
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/SGP.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"

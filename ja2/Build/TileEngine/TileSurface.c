@@ -4,7 +4,7 @@
 #include <time.h>
 
 #include "Editor/Smooth.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Debug.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Video.h"

@@ -1,7 +1,7 @@
 #include "Strategic/GameClock.h"
 
 #include "FadeScreen.h"
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameScreen.h"
 #include "JAScreens.h"
 #include "SGP/SGP.h"

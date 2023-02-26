@@ -1,6 +1,6 @@
 #include "Tactical/CivQuotes.h"
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "MessageBoxScreen.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"

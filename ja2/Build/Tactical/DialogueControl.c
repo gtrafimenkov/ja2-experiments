@@ -1,6 +1,6 @@
 #include "Tactical/DialogueControl.h"
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "JAScreens.h"

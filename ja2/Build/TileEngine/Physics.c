@@ -1,6 +1,6 @@
 #include "TileEngine/Physics.h"
 
-#include "FileMan.h"
+#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/WCheck.h"
