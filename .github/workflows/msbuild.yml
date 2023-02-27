@@ -51,11 +51,11 @@ jobs:
 
     - name: Run Tests
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: .\ja2\${{ matrix.config }}\tester.exe
+      run: .\${{ matrix.config }}\tester.exe
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
       with:
         name: ja2-vanilla-exe
-        path: ja2/*.exe
-        retention-days: 14
+        path: Release/ja2-win32.exe
+        retention-days: 2
