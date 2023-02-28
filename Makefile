@@ -17,7 +17,7 @@ CXX	= g++
 CFLAG = -fPIC
 # COMPILE_FLAGS = -c -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
 # COMPILE_FLAGS = -c -Wall --std=c17 -DFORCE_ASSERTS_ON -I./ja2lib
-COMPILE_FLAGS = -c --std=c17 -DFORCE_ASSERTS_ON -I./ja2lib
+COMPILE_FLAGS = -c --std=gnu17 -DFORCE_ASSERTS_ON -I./ja2lib
 
 TARGET_ARCH    ?=
 ifeq "$(TARGET_ARCH)" ""
@@ -30,6 +30,14 @@ JA2LIB_SOURCES := $(shell find ja2lib -name '*.c')
 JA2LIB_OBJS0   := $(filter %.o, $(JA2LIB_SOURCES:.c=.o) $(JA2LIB_SOURCES:.cc=.o) $(JA2LIB_SOURCES:.cpp=.o))
 JA2LIB_OBJS    := $(addprefix $(BUILD_DIR)/,$(JA2LIB_OBJS0))
 
+DUMMY_PLATFORM_SOURCES := $(shell find platform-dummy -name '*.c')
+DUMMY_PLATFORM_OBJS0   := $(filter %.o, $(DUMMY_PLATFORM_SOURCES:.c=.o) $(DUMMY_PLATFORM_SOURCES:.cc=.o) $(DUMMY_PLATFORM_SOURCES:.cpp=.o))
+DUMMY_PLATFORM_OBJS    := $(addprefix $(BUILD_DIR)/,$(DUMMY_PLATFORM_OBJS0))
+
+LINUX_PLATFORM_SOURCES := $(shell find platform-linux -name '*.c')
+LINUX_PLATFORM_OBJS0   := $(filter %.o, $(LINUX_PLATFORM_SOURCES:.c=.o) $(LINUX_PLATFORM_SOURCES:.cc=.o) $(LINUX_PLATFORM_SOURCES:.cpp=.o))
+LINUX_PLATFORM_OBJS    := $(addprefix $(BUILD_DIR)/,$(LINUX_PLATFORM_OBJS0))
+
 LIBS         := -lpthread
 # LIBS         += -lgtest
 
@@ -37,12 +45,23 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)
 	$(CC)  $(CFLAG) $(COMPILE_FLAGS) $(COVERAGE_FLAGS) -o $@ $<
 
-ja2lib.a: $(JA2LIB_OBJS)
-	ar rcs ja2lib.a $(JA2LIB_OBJS)
+libs: $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/dummy-platform.a
 
-tester-linux: $(JA2LIB_OBJS)
+$(BUILD_DIR)/ja2lib.a: $(JA2LIB_OBJS)
+	@echo building $@
+	@ar rcs $@ $^
+
+$(BUILD_DIR)/dummy-platform.a: $(DUMMY_PLATFORM_OBJS)
+	@echo building $@
+	@ar rcs $@ $^
+
+$(BUILD_DIR)/linux-platform.a: $(LINUX_PLATFORM_OBJS)
+	@echo building $@
+	@ar rcs $@ $^
+
+tester-linux: $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/linux-platform.a
 	$(CXX) $(CFLAG) $(COVERAGE_FLAGS) -o tester-linux \
-		$(JA2LIB_OBJS) \
+		$^ \
 		$(LIBS)
 
 test-linux: tester-linux
