@@ -5,6 +5,7 @@
 #include "SGP/Types.h"
 
 struct SOLDIERTYPE;
+struct VObject;
 
 /****************************************************************************************
  * JA2 Lighting Module
