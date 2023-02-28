@@ -207,16 +207,6 @@ extern INT32 ghContractBox;
 extern INT32 ghMoveBox;
 // extern INT32 ghUpdateBox;
 
-extern struct MOUSE_REGION gAssignmentScreenMaskRegion;
-
-extern struct MOUSE_REGION gAssignmentMenuRegion[];
-extern struct MOUSE_REGION gTrainingMenuRegion[];
-extern struct MOUSE_REGION gAttributeMenuRegion[];
-extern struct MOUSE_REGION gSquadMenuRegion[];
-extern struct MOUSE_REGION gContractMenuRegion[];
-extern struct MOUSE_REGION gRemoveMercAssignRegion[];
-extern struct MOUSE_REGION gVehicleMenuRegion[];
-
 extern BOOLEAN fShownContractMenu;
 extern BOOLEAN fShownAssignmentMenu;
 extern BOOLEAN fShowRepairMenu;
