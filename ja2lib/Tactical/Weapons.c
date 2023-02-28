@@ -2,6 +2,7 @@
 
 #include <math.h>
 
+#include "Tactical/Menptr.h"
 #include "GameSettings.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
