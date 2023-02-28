@@ -51,6 +51,7 @@
 #include "Tactical/Items.h"
 #include "Tactical/Keys.h"
 #include "Tactical/MapInformation.h"
+#include "Tactical/Menptr.h"
 #include "Tactical/Morale.h"
 #include "Tactical/OppList.h"
 #include "Tactical/OverheadTypes.h"

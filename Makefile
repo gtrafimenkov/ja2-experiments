@@ -12,10 +12,11 @@ format-modified:
 # linux build
 ###################################################################
 
-CCd	= gcc
+CC = gcc
 CXX	= g++
-CFLAGd	= -fPIC
-COMPILE_FLAGS	= -c -Wall -Werror -DJA2 -DFORCE_ASSERTS_ON -DPRECOMPILEDHEADERS -I./ja2lib
+CFLAG = -fPIC
+# COMPILE_FLAGS = -c -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
+COMPILE_FLAGS = -c -Wall --std=c17 -DFORCE_ASSERTS_ON -I./ja2lib
 
 TARGET_ARCH    ?=
 ifeq "$(TARGET_ARCH)" ""
@@ -23,7 +24,8 @@ BUILD_DIR      := tmp/default
 else
 BUILD_DIR      := tmp/$(TARGET_ARCH)
 endif
-MAIN_SOURCES := $(shell grep -l "// build:linux" -r ja2)
+# MAIN_SOURCES := $(shell grep -l "// build:linux" -r ja2lib)
+MAIN_SOURCES := $(shell find ja2lib -name '*.c')
 MAIN_OBJS0   := $(filter %.o, $(MAIN_SOURCES:.c=.o) $(MAIN_SOURCES:.cc=.o) $(MAIN_SOURCES:.cpp=.o))
 MAIN_OBJS    := $(addprefix $(BUILD_DIR)/,$(MAIN_OBJS0))
 

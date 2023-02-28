@@ -77,6 +77,7 @@
 #include "Tactical/InterfaceUtils.h"
 #include "Tactical/Items.h"
 #include "Tactical/MapInformation.h"
+#include "Tactical/Menptr.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierCreate.h"
 #include "Tactical/SoldierMacros.h"

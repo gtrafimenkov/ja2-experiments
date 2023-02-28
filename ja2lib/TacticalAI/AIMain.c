@@ -17,6 +17,7 @@
 #include "Tactical/InterfacePanels.h"
 #include "Tactical/Items.h"
 #include "Tactical/LOS.h"
+#include "Tactical/Menptr.h"
 #include "Tactical/OppList.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/OverheadTypes.h"

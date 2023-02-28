@@ -7,6 +7,7 @@
 #include "Tactical/AnimationControl.h"
 #include "Tactical/Interface.h"
 #include "Tactical/LOS.h"
+#include "Tactical/Menptr.h"
 #include "Tactical/OppList.h"
 #include "Tactical/PathAI.h"
 #include "Tactical/SoldierControl.h"
