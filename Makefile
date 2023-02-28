@@ -16,10 +16,10 @@ format-modified:
 
 CC = gcc
 CXX	= g++
-CFLAG = -fPIC
+CFLAG = -fPIC --std=gnu17 -DFORCE_ASSERTS_ON -I./ja2lib
+CXXFLAG = -fPIC --std=gnu++17 -DFORCE_ASSERTS_ON -I./ja2lib
 # COMPILE_FLAGS = -c -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
 # COMPILE_FLAGS = -c -Wall --std=c17 -DFORCE_ASSERTS_ON -I./ja2lib
-COMPILE_FLAGS = --std=gnu17 -DFORCE_ASSERTS_ON -I./ja2lib
 
 TARGET_ARCH    ?=
 ifeq "$(TARGET_ARCH)" ""
@@ -53,6 +53,16 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)
 	@$(CC) $(CFLAG) -c $(COMPILE_FLAGS) -o $@ $<
 
+$(BUILD_DIR)/%.o: %.cc
+	@echo .. compiling $<
+	@mkdir -p $$(dirname $@)
+	@$(CXX) $(CXXFLAG) -c $(COMPILE_FLAGS) -o $@ $<
+
+$(BUILD_DIR)/%.o: %.cpp
+	@echo .. compiling $<
+	@mkdir -p $$(dirname $@)
+	@$(CXX) $(CXXFLAG) -c $(COMPILE_FLAGS) -o $@ $<
+
 libs: $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/dummy-platform.a
 
 $(BUILD_DIR)/ja2lib.a: $(JA2LIB_OBJS)
@@ -74,9 +84,13 @@ $(BUILD_DIR)/bin/linux-tester: linux-tester/main.c $(BUILD_DIR)/linux-platform.a
 	@mkdir -p $(BUILD_DIR)/bin
 	@$(CC) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@
 
+run-linux-tester: $(BUILD_DIR)/bin/linux-tester
+	@cp $(BUILD_DIR)/bin/linux-tester ../ja2-installed
+	@cd ../ja2-installed && ./linux-tester
+
 tester-bin: $(BUILD_DIR)/bin/tester
 
-$(BUILD_DIR)/bin/tester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a
+$(BUILD_DIR)/bin/tester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/linux-platform.a
 	@echo .. building $@
 	@mkdir -p $(BUILD_DIR)/bin
 	@$(CXX) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@ -lgtest_main -lgtest -lpthread
