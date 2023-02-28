@@ -24,5 +24,3 @@ int main() {
   printf("locale:          %d\n", locale);
   printf("? exists cursors\\THROWB.STI:   %d\n", FileMan_Exists("cursors\\THROWB.STI"));
 }
-
-// build:linux

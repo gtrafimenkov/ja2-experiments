@@ -1,5 +1,7 @@
 CLANG_FORMATTER ?= clang-format-13
 
+.PHONY: format format-modified tester-linux-bin tester-bin run-linux-tester run-tester
+
 format:
 	find . \( -iname '*.c' -o -iname '*.cc' -o -iname '*.cpp' -o -iname '*.h' \) \
 		| xargs $(CLANG_FORMATTER) -i --style=file
@@ -17,7 +19,7 @@ CXX	= g++
 CFLAG = -fPIC
 # COMPILE_FLAGS = -c -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
 # COMPILE_FLAGS = -c -Wall --std=c17 -DFORCE_ASSERTS_ON -I./ja2lib
-COMPILE_FLAGS = -c --std=gnu17 -DFORCE_ASSERTS_ON -I./ja2lib
+COMPILE_FLAGS = --std=gnu17 -DFORCE_ASSERTS_ON -I./ja2lib
 
 TARGET_ARCH    ?=
 ifeq "$(TARGET_ARCH)" ""
@@ -29,6 +31,10 @@ endif
 JA2LIB_SOURCES := $(shell find ja2lib -name '*.c')
 JA2LIB_OBJS0   := $(filter %.o, $(JA2LIB_SOURCES:.c=.o) $(JA2LIB_SOURCES:.cc=.o) $(JA2LIB_SOURCES:.cpp=.o))
 JA2LIB_OBJS    := $(addprefix $(BUILD_DIR)/,$(JA2LIB_OBJS0))
+
+TESTER_PLATFORM_SOURCES := $(shell find tester -name '*.c' -o -name '*.cc' -o -name '*.cpp')
+TESTER_PLATFORM_OBJS0   := $(filter %.o, $(TESTER_PLATFORM_SOURCES:.c=.o) $(TESTER_PLATFORM_SOURCES:.cc=.o) $(TESTER_PLATFORM_SOURCES:.cpp=.o))
+TESTER_PLATFORM_OBJS    := $(addprefix $(BUILD_DIR)/,$(TESTER_PLATFORM_OBJS0))
 
 DUMMY_PLATFORM_SOURCES := $(shell find platform-dummy -name '*.c')
 DUMMY_PLATFORM_OBJS0   := $(filter %.o, $(DUMMY_PLATFORM_SOURCES:.c=.o) $(DUMMY_PLATFORM_SOURCES:.cc=.o) $(DUMMY_PLATFORM_SOURCES:.cpp=.o))
@@ -42,32 +48,42 @@ LIBS         := -lpthread
 # LIBS         += -lgtest
 
 $(BUILD_DIR)/%.o: %.c
+	@echo .. compiling $<
 	@mkdir -p $$(dirname $@)
-	$(CC)  $(CFLAG) $(COMPILE_FLAGS) $(COVERAGE_FLAGS) -o $@ $<
+	@$(CC) $(CFLAG) -c $(COMPILE_FLAGS) -o $@ $<
 
 libs: $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/dummy-platform.a
 
 $(BUILD_DIR)/ja2lib.a: $(JA2LIB_OBJS)
-	@echo building $@
+	@echo .. building $@
 	@ar rcs $@ $^
 
 $(BUILD_DIR)/dummy-platform.a: $(DUMMY_PLATFORM_OBJS)
-	@echo building $@
+	@echo .. building $@
 	@ar rcs $@ $^
 
 $(BUILD_DIR)/linux-platform.a: $(LINUX_PLATFORM_OBJS)
-	@echo building $@
+	@echo .. building $@
 	@ar rcs $@ $^
 
-tester-linux: $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/linux-platform.a
-	$(CXX) $(CFLAG) $(COVERAGE_FLAGS) -o tester-linux \
-		$^ \
-		$(LIBS)
+linux-tester-bin: $(BUILD_DIR)/linux-tester
 
-test-linux: tester-linux
-	cp ./tester-linux ../ja2-installed
-	cd ../ja2-installed && ./tester-linux
+$(BUILD_DIR)/linux-tester: linux-tester/main.c $(BUILD_DIR)/linux-platform.a $(BUILD_DIR)/ja2lib.a
+	@echo .. building $@
+	@$(CC) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@
+
+tester-bin: $(BUILD_DIR)/tester
+
+$(BUILD_DIR)/tester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a
+	@echo .. building $@
+	@$(CXX) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@ -lgtest_main -lgtest -lpthread
+
+run-tester: $(BUILD_DIR)/tester
+	./$(BUILD_DIR)/tester
 
 ###################################################################
 #
 ###################################################################
+
+install-build-dependencies-deb:
+	sudo apt install clang-format-13 libgtest-dev
