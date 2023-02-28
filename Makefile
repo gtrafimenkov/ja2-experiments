@@ -27,6 +27,7 @@ BUILD_DIR      := tmp/default
 else
 BUILD_DIR      := tmp/$(TARGET_ARCH)
 endif
+
 # JA2LIB_SOURCES := $(shell grep -l "// build:linux" -r ja2lib)
 JA2LIB_SOURCES := $(shell find ja2lib -name '*.c')
 JA2LIB_OBJS0   := $(filter %.o, $(JA2LIB_SOURCES:.c=.o) $(JA2LIB_SOURCES:.cc=.o) $(JA2LIB_SOURCES:.cpp=.o))
@@ -66,20 +67,22 @@ $(BUILD_DIR)/linux-platform.a: $(LINUX_PLATFORM_OBJS)
 	@echo .. building $@
 	@ar rcs $@ $^
 
-linux-tester-bin: $(BUILD_DIR)/linux-tester
+linux-tester-bin: $(BUILD_DIR)/bin/linux-tester
 
-$(BUILD_DIR)/linux-tester: linux-tester/main.c $(BUILD_DIR)/linux-platform.a $(BUILD_DIR)/ja2lib.a
+$(BUILD_DIR)/bin/linux-tester: linux-tester/main.c $(BUILD_DIR)/linux-platform.a $(BUILD_DIR)/ja2lib.a
 	@echo .. building $@
+	@mkdir -p $(BUILD_DIR)/bin
 	@$(CC) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@
 
-tester-bin: $(BUILD_DIR)/tester
+tester-bin: $(BUILD_DIR)/bin/tester
 
-$(BUILD_DIR)/tester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a
+$(BUILD_DIR)/bin/tester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a
 	@echo .. building $@
+	@mkdir -p $(BUILD_DIR)/bin
 	@$(CXX) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@ -lgtest_main -lgtest -lpthread
 
-run-tester: $(BUILD_DIR)/tester
-	./$(BUILD_DIR)/tester
+run-tester: $(BUILD_DIR)/bin/tester
+	./$(BUILD_DIR)/bin/tester
 
 ###################################################################
 #
