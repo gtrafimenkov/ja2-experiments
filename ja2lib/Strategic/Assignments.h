@@ -5,6 +5,8 @@
 
 #include "SGP/Types.h"
 
+struct GROUP;
+struct MOUSE_REGION;
 struct SOLDIERTYPE;
 
 // this distinguishes whether we're only looking for patients healable THIS HOUR (those that have
