@@ -2,7 +2,6 @@
 
 #include <math.h>
 
-#include "Tactical/Menptr.h"
 #include "GameSettings.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
@@ -20,6 +19,7 @@
 #include "Tactical/Interface.h"
 #include "Tactical/Items.h"
 #include "Tactical/LOS.h"
+#include "Tactical/Menptr.h"
 #include "Tactical/Morale.h"
 #include "Tactical/OppList.h"
 #include "Tactical/Overhead.h"
