@@ -25,10 +25,10 @@ BUILD_DIR      := tmp/default
 else
 BUILD_DIR      := tmp/$(TARGET_ARCH)
 endif
-# MAIN_SOURCES := $(shell grep -l "// build:linux" -r ja2lib)
-MAIN_SOURCES := $(shell find ja2lib -name '*.c')
-MAIN_OBJS0   := $(filter %.o, $(MAIN_SOURCES:.c=.o) $(MAIN_SOURCES:.cc=.o) $(MAIN_SOURCES:.cpp=.o))
-MAIN_OBJS    := $(addprefix $(BUILD_DIR)/,$(MAIN_OBJS0))
+# JA2LIB_SOURCES := $(shell grep -l "// build:linux" -r ja2lib)
+JA2LIB_SOURCES := $(shell find ja2lib -name '*.c')
+JA2LIB_OBJS0   := $(filter %.o, $(JA2LIB_SOURCES:.c=.o) $(JA2LIB_SOURCES:.cc=.o) $(JA2LIB_SOURCES:.cpp=.o))
+JA2LIB_OBJS    := $(addprefix $(BUILD_DIR)/,$(JA2LIB_OBJS0))
 
 LIBS         := -lpthread
 # LIBS         += -lgtest
@@ -37,9 +37,12 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)
 	$(CC)  $(CFLAG) $(COMPILE_FLAGS) $(COVERAGE_FLAGS) -o $@ $<
 
-tester-linux: $(MAIN_OBJS)
+ja2lib.a: $(JA2LIB_OBJS)
+	ar rcs ja2lib.a $(JA2LIB_OBJS)
+
+tester-linux: $(JA2LIB_OBJS)
 	$(CXX) $(CFLAG) $(COVERAGE_FLAGS) -o tester-linux \
-		$(MAIN_OBJS) \
+		$(JA2LIB_OBJS) \
 		$(LIBS)
 
 test-linux: tester-linux
