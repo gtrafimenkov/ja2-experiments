@@ -2566,12 +2566,12 @@ BlitDoneLine:
 
 BlitDone:
   }
-
-  return (TRUE);
-}
 #else
   // Linux: NOT IMPLEMENTED
 #endif
+
+  return (TRUE);
+}
 
 /**********************************************************************************************
  Blt8BPPDataTo16BPPBufferTransShadowZNB
