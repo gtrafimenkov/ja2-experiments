@@ -61,6 +61,7 @@ static FIXEDPT gqStandardWindowTopHeight = INT32_TO_FIXEDPT(WINDOW_TOP_HEIGHT_UN
 UINT32 FPMult32(UINT32 uiA, UINT32 uiB) {
   UINT32 uiResult;
 
+#ifdef _WINDOWS
   __asm {
     // Load the 32-bit registers with the two values
 		mov		eax, uiA
@@ -83,6 +84,9 @@ UINT32 FPMult32(UINT32 uiA, UINT32 uiB) {
         // Put the result into a returnable variable
 		mov		uiResult, eax
   }
+#else
+  // Linux: NOT IMPLEMENTED
+#endif
 
   return (uiResult);
 }
