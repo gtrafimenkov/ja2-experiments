@@ -33,9 +33,9 @@ JA2LIB_SOURCES := $(shell find ja2lib -name '*.c')
 JA2LIB_OBJS0   := $(filter %.o, $(JA2LIB_SOURCES:.c=.o) $(JA2LIB_SOURCES:.cc=.o) $(JA2LIB_SOURCES:.cpp=.o))
 JA2LIB_OBJS    := $(addprefix $(BUILD_DIR)/,$(JA2LIB_OBJS0))
 
-TESTER_PLATFORM_SOURCES := $(shell find tester -name '*.c' -o -name '*.cc' -o -name '*.cpp')
-TESTER_PLATFORM_OBJS0   := $(filter %.o, $(TESTER_PLATFORM_SOURCES:.c=.o) $(TESTER_PLATFORM_SOURCES:.cc=.o) $(TESTER_PLATFORM_SOURCES:.cpp=.o))
-TESTER_PLATFORM_OBJS    := $(addprefix $(BUILD_DIR)/,$(TESTER_PLATFORM_OBJS0))
+UNITTESTER_SOURCES := $(shell find unittester -name '*.c' -o -name '*.cc' -o -name '*.cpp')
+UNITTESTER_OBJS0   := $(filter %.o, $(UNITTESTER_SOURCES:.c=.o) $(UNITTESTER_SOURCES:.cc=.o) $(UNITTESTER_SOURCES:.cpp=.o))
+UNITTESTER_OBJS    := $(addprefix $(BUILD_DIR)/,$(UNITTESTER_OBJS0))
 
 DUMMY_PLATFORM_SOURCES := $(shell find platform-dummy -name '*.c')
 DUMMY_PLATFORM_OBJS0   := $(filter %.o, $(DUMMY_PLATFORM_SOURCES:.c=.o) $(DUMMY_PLATFORM_SOURCES:.cc=.o) $(DUMMY_PLATFORM_SOURCES:.cpp=.o))
@@ -91,7 +91,7 @@ run-linux-bin: $(BUILD_DIR)/bin/ja2-linux
 
 unittester-bin: $(BUILD_DIR)/bin/unittester
 
-$(BUILD_DIR)/bin/unittester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/linux-platform.a
+$(BUILD_DIR)/bin/unittester: $(UNITTESTER_OBJS) $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/linux-platform.a
 	@echo .. building $@
 	@mkdir -p $(BUILD_DIR)/bin
 	@$(CXX) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@ -lgtest_main -lgtest -lpthread
