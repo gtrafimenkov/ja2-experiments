@@ -34,7 +34,6 @@
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
     <ClCompile Include="bugfixes.cpp" />
-    <ClCompile Include="dummy-platform.c" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
