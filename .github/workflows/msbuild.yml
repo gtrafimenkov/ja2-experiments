@@ -51,7 +51,7 @@ jobs:
 
     - name: Run Tests
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: .\${{ matrix.config }}\tester.exe
+      run: .\${{ matrix.config }}\unittester.exe
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
