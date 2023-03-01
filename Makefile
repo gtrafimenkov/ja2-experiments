@@ -1,6 +1,6 @@
 CLANG_FORMATTER ?= clang-format-13
 
-.PHONY: format format-modified tester-linux-bin tester-bin run-linux-tester run-tester
+.PHONY: format format-modified linux-bin run-linux-bin unittester-bin run-unittester
 
 format:
 	find . \( -iname '*.c' -o -iname '*.cc' -o -iname '*.cpp' -o -iname '*.h' \) \
@@ -79,7 +79,7 @@ $(BUILD_DIR)/linux-platform.a: $(LINUX_PLATFORM_OBJS)
 
 linux-bin: $(BUILD_DIR)/bin/ja2-linux
 
-$(BUILD_DIR)/bin/ja2-linux: linux-tester/main.c $(BUILD_DIR)/linux-platform.a $(BUILD_DIR)/ja2lib.a
+$(BUILD_DIR)/bin/ja2-linux: bin-linux/main.c $(BUILD_DIR)/linux-platform.a $(BUILD_DIR)/ja2lib.a
 	@echo .. building $@
 	@mkdir -p $(BUILD_DIR)/bin
 	@$(CC) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@
@@ -89,15 +89,15 @@ run-linux-bin: $(BUILD_DIR)/bin/ja2-linux
 	@echo -----------------------------------------------------------------
 	@cd ../ja2-installed && ./ja2-linux
 
-tester-bin: $(BUILD_DIR)/bin/tester
+unittester-bin: $(BUILD_DIR)/bin/unittester
 
-$(BUILD_DIR)/bin/tester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/linux-platform.a
+$(BUILD_DIR)/bin/unittester: $(TESTER_PLATFORM_OBJS) $(BUILD_DIR)/ja2lib.a $(BUILD_DIR)/linux-platform.a
 	@echo .. building $@
 	@mkdir -p $(BUILD_DIR)/bin
 	@$(CXX) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@ -lgtest_main -lgtest -lpthread
 
-run-tester: $(BUILD_DIR)/bin/tester
-	./$(BUILD_DIR)/bin/tester
+run-unittester: $(BUILD_DIR)/bin/unittester
+	./$(BUILD_DIR)/bin/unittester
 
 ###################################################################
 #
