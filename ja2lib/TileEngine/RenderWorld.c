@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <wchar.h>
 
 #include "Editor/EditSys.h"
@@ -53,8 +54,7 @@
 #include "TileEngine/RenderZ.c"
 ///////////////////////////
 
-extern CHAR8 gDebugStr[128];
-extern BOOLEAN fLandLayerDirty = TRUE;
+BOOLEAN fLandLayerDirty = TRUE;
 
 extern INT16 gsVIEWPORT_START_X;
 extern INT16 gsVIEWPORT_START_Y;

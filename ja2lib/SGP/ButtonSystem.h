@@ -12,6 +12,7 @@
 #include "SGP/Types.h"
 
 struct VObject;
+struct _GUI_BUTTON;
 
 // Moved here from Button System.c by DB 99/01/07
 // Names of the default generic button image files.

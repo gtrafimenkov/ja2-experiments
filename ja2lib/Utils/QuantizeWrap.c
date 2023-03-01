@@ -1,5 +1,7 @@
 #include "Utils/QuantizeWrap.h"
 
+#include <string.h>
+
 #include "SGP/HImage.h"
 #include "SGP/Types.h"
 #include "TileEngine/PhysMath.h"

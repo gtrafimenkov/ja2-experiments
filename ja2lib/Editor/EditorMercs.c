@@ -97,7 +97,7 @@ enum {
   NUM_SCHEDULE_INSTRUCTIONS
 };
 
-extern BOOLEAN gfSingleAction = FALSE;
+BOOLEAN gfSingleAction = FALSE;
 BOOLEAN gfUseScheduleData2 = FALSE;
 UINT8 gubCurrentScheduleActionIndex = 0;
 SCHEDULENODE gCurrSchedule;

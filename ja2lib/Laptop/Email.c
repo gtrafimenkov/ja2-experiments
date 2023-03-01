@@ -1,5 +1,7 @@
 #include "Laptop/Email.h"
 
+#include <string.h>
+
 #include "Laptop/AIMMembers.h"
 #include "Laptop/Finances.h"
 #include "Laptop/IMPCompileCharacter.h"

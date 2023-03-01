@@ -1,6 +1,7 @@
 #include "SGP/Shading.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "SGP/Debug.h"
 #include "SGP/HImage.h"

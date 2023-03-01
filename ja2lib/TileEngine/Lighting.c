@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <wchar.h>
 
 #include "Editor/EditSys.h"
