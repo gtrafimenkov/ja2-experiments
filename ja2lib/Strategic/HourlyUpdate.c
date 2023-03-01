@@ -28,10 +28,6 @@ void HourlyCheckIfSlayAloneSoHeCanLeave();
 void UpdateRegenCounters(void);
 
 void HandleMinuteUpdate() {
-#ifdef JA2DEMO
-  // hourly update of hated/liked mercs
-  UpdateBuddyAndHatedCounters();
-#endif
 }
 
 // This function gets called every hour, on the hour.

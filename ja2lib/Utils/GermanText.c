@@ -2828,10 +2828,6 @@ STR16 pMessageStrings[] = {
     L"mit ALT+S",
     L"offen",
     L"zu",
-#ifdef JA2DEMO
-    L"Hier unten sind Sie fertig. Vielleicht sollten Sie mit Gabby reden.",
-    L"Vielleicht hätten Sie ihn besser nicht getötet.",
-#endif
     L"Ihr Festplattenspeicher ist knapp. Sie haben lediglich %sMB frei und Jagged Alliance 2 "
     L"benötigt %sMB.",
     L"%s von AIM angeheuert",
@@ -2886,18 +2882,6 @@ STR16 pMessageStrings[] = {
     L"Noch tiefere Ebenen gibt es nicht...",
     L"Gewölbeebene %d betreten...",
     L"Gewölbe verlassen...",
-
-#ifdef JA2DEMO
-
-    // For the demo, the sector exit interface, you'll be able to split your teams up, but the demo
-    // has this feature disabled. This string is fast help text that appears over "single" button.
-    L"In der Vollversion können Sie Ihr Team\naufteilen, aber nicht in der Demo.",
-
-    // The overhead map is a map of the entire sector, which you can go into anytime, except in the
-    // demo.
-    L"Overhead-Karte steht in der Demo nicht zur Verfügung.",
-
-#endif
 
     L"s",  // used in the shop keeper inteface to mark the ownership of the item eg Red's gun
     L"Autoscrolling AUS.",

@@ -839,10 +839,6 @@ BOOLEAN RecruitRPC(UINT8 ubCharNum) {
     }
   }
 
-#ifdef JA2DEMO
-  HandleEndDemoInCreatureLevel();
-#endif
-
   if (ubCharNum == IRA) {
     // trigger 0th PCscript line
     TriggerNPCRecord(IRA, 0);

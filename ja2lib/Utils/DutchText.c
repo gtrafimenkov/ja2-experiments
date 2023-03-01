@@ -3013,10 +3013,6 @@ STR16 pMessageStrings[] = {
     L"ALT+S.",
     L"Geopend",
     L"Gesloten",
-#ifdef JA2DEMO
-    L"Je bent hier klaar. Misschien moet je eens naar Gabby gaan.",
-    L"Jammer dat je hem gedood hebt.",
-#endif
     L"Schijfruimte raakt op. Er is slects %s MB vrij en Jagged Alliance 2 heeft %s MB nodig.",
     L"%s ingehuurd van AIM",
     L"%s heeft %s gevangen.",      //'Merc name' has caught 'item' -- let SirTech know if name comes
@@ -3067,18 +3063,6 @@ STR16 pMessageStrings[] = {
     L"Er zijn geen lagere niveaus...",
     L"Betreden basisniveau %d...",
     L"Verlaten basisniveau...",
-
-#ifdef JA2DEMO
-
-    // For the demo, the sector exit interface, you'll be able to split your teams up, but the demo
-    // has this feature disabled.  This string is fast help text that appears over "single" button.
-    L"In het volledige spel is het mogelijk je\nteam te splitsen, echter niet in de demo.",
-
-    // The overhead map is a map of the entire sector, which you can go into anytime, except in the
-    // demo.
-    L"Overzichtkaart niet mogelijk in demo.",
-
-#endif
 
     L"'s",  // used in the shop keeper inteface to mark the ownership of the item eg Red's gun
     L"Volgmodus UIT.",

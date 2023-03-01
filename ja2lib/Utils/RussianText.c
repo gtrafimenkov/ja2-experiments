@@ -2798,10 +2798,6 @@ STR16 pMessageStrings[] = {
     L"Эта ячейка-для быстрого сохранения экранов игры (ALT+S).",
     L"Открыто",
     L"Закрыто",
-#ifdef JA2DEMO
-    L"Вас всех разгромили. Может стоит повидаться с Габби?",
-    L"Очень плохо,что ты убил его.",
-#endif
     L"У вас кончается дисковое пространство. У вас осталось %sМБ свободных,а для АЛЬЯНСА 2 "
     L"требуется %sMБ.",
     L"Нанят %s из AIM",
@@ -2852,18 +2848,6 @@ STR16 pMessageStrings[] = {
     L"Ниже уровней нет...",
     L"Входим в подвальный уровень %d...",
     L"Уходим из подвала...",
-
-#ifdef JA2DEMO
-
-    // For the demo, the sector exit interface, you'll be able to split your teams up, but the demo
-    // has this feature disabled.  This string is fast help text that appears over "single" button.
-    L"В полной игре вы сможете разделять\nкоманду, но не в демо версии.",
-
-    // The overhead map is a map of the entire sector, which you can go into anytime, except in the
-    // demo.
-    L"Общая карта в демо-версии отсутствует.",
-
-#endif
 
     L".",  // used in the shop keeper inteface to mark the ownership of the item eg Red's gun
     L"ВЫКЛЮЧЕНО.",

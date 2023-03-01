@@ -2924,10 +2924,6 @@ pMessageStrings[] = {
     L"kombinacją klawiszy ALT+S.",
     L"Otw.",
     L"Zamkn.",
-#ifdef JA2DEMO
-    L"Tu już wszystko załatwione. Może czas spotkać się z Gabby'm.",
-    L"Nie trzeba było go zabijać.",
-#endif
     L"Brak miejsca na dysku twardym.  Na dysku wolne jest %s MB, a wymagane jest "
     L"przynajmniej %s MB.",
     L"Najęto - %s z A.I.M.",
@@ -2984,20 +2980,6 @@ pMessageStrings[] = {
     L"Nie ma już niższych poziomów...",
     L"Wejście na %d poziom pod ziemią...",
     L"Wyjście z podziemii...",
-
-#ifdef JA2DEMO
-
-    // For the demo, the sector exit interface, you'll be able to split your teams up,
-    // but the demo has this feature disabled.  This string is fast help text that
-    // appears over "single" button.
-    L"W pełnej wersji gry będzie można dzielić oddziały,\nale w wersji demo jest to "
-    L"niemożliwe.",
-
-    // The overhead map is a map of the entire sector, which you can go into anytime,
-    // except in the demo.
-    L"Ogólna mapa sektora jest niedostępna w wersji demo.",
-
-#endif
 
     L" - ",  // used in the shop keeper inteface to mark the ownership of the item eg
              // Red's gun

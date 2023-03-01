@@ -964,11 +964,6 @@ void DumpSectorDifficultyInfo(void);
 void DumpItemsList(void);
 #endif
 
-#ifdef JA2DEMO
-// void MapScreenDemoOkBoxCallback( UINT8 bExitValue );
-void DisplayExitToTacticalGlowDuringDemo(void);
-#endif
-
 // the tries to select a mapscreen character by his soldier ID
 BOOLEAN SetInfoChar(UINT8 ubID) {
   INT8 bCounter;
@@ -3508,10 +3503,6 @@ UINT32 MapScreenHandle(void) {
     GlowItem();
   }
 
-#ifdef JA2DEMO
-  DisplayExitToTacticalGlowDuringDemo();
-#endif
-
   if (fShowMapScreenHelpText) {
     // display map screen fast help
     DisplayMapScreenFastHelpList();
@@ -4351,11 +4342,6 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
             return;
           }
 
-#ifdef JA2DEMO
-          HandleLeavingOfMapScreenDuringDemo();
-          return;
-#else
-
           if (gfInChangeArrivalSectorMode) {
             CancelChangeArrivalSectorMode();
             MapScreenMessage(FONT_MCOLOR_LTYELLOW, MSG_MAP_UI_POSITION_MIDDLE, pBullseyeStrings[3]);
@@ -4734,24 +4720,6 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
           break;
 
         case 'b':
-          /*
-                                                  #ifndef JA2DEMO
-                                                          // CTRL-B: make player's perception of all
-             sectors correct! if( ( fCtrl )&&( CHEATER_CHEAT_LEVEL( ) ) )
-                                                          {
-                                                                  for ( sMapX = 1; sMapX <= 16;
-             sMapX++ )
-                                                                  {
-                                                                          for ( sMapY = 1; sMapY <=
-             16; sMapY++ )
-                                                                          {
-                                                                                  MakePlayerPerceptionOfSectorControlCorrect(
-             sMapX, sMapY, 0 );
-                                                                          }
-                                                                  }
-                                                          }
-                                                  #endif
-          */
           break;
 
         case 'c':
@@ -4797,7 +4765,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
             }
           }
           break;
-#endif
+
         case 'h':
 #ifdef JA2TESTVERSION
           if (fAlt) {
@@ -6527,20 +6495,11 @@ void CreateMouseRegionsForTeamList(void) {
       sYAdd = 0;
     }
 
-#ifdef JA2DEMO
-    // name region across the whole width of the team panel at HIGHEST priority, thus overriding the
-    // others
-    MSYS_DefineRegion(&gTeamListNameRegion[sCounter], NAME_X,
-                      (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), 236,
-                      (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd), MSYS_PRIORITY_HIGHEST,
-                      MSYS_NO_CURSOR, TeamListInfoRegionMvtCallBack, TeamListInfoRegionBtnCallBack);
-#else
     // name region
     MSYS_DefineRegion(&gTeamListNameRegion[sCounter], NAME_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), NAME_X + NAME_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd), MSYS_PRIORITY_NORMAL,
                       MSYS_NO_CURSOR, TeamListInfoRegionMvtCallBack, TeamListInfoRegionBtnCallBack);
-#endif
 
     // assignment region
     MSYS_DefineRegion(&gTeamListAssignmentRegion[sCounter], ASSIGN_X,
@@ -7451,16 +7410,6 @@ void RenderTeamRegionBackground(void) {
 
   // restore background for area
   RestoreExternBackgroundRect(0, 107, 261 - 0, 359 - 107);
-
-#ifdef JA2DEMO
-  if ((fShowingMapDisableBox == FALSE) && (IsMapScreenHelpTextUp() == FALSE)) {
-    //	fShowingMapDisableBox = TRUE;
-    // restore background for area
-
-    // DoMapMessageBox( MSG_BOX_BASIC_STYLE, pMapErrorString[ 14 ], MAP_SCREEN, MSG_BOX_FLAG_OK,
-    // MapScreenDemoOkBoxCallback );
-  }
-#endif
 
   MapscreenMarkButtonsDirty();
 
@@ -9178,23 +9127,6 @@ void MapScreenDefaultOkBoxCallback(UINT8 bExitValue) {
   return;
 }
 
-#ifdef JA2DEMO
-/*
-void MapScreenDemoOkBoxCallback( UINT8 bExitValue )
-{
-        // yes, load the game
-  if( ( bExitValue == MSG_BOX_RETURN_OK ) || ( bExitValue == MSG_BOX_RETURN_NO ) )
-        {
-
-                fShowingMapDisableBox = FALSE;
-                //SetPendingNewScreen( GAME_SCREEN );
-        }
-
-        return;
-}
-*/
-#endif
-
 void MapSortBtnCallback(GUI_BUTTON *btn, INT32 reason) {
   INT32 iValue = 0;
 
@@ -9564,40 +9496,6 @@ void DisplayIconsForMercsAsleep(void) {
   }
   return;
 }
-
-#ifdef JA2DEMO
-
-void DisplayExitToTacticalGlowDuringDemo(void) {
-  static INT32 iColorNum = 10;
-  static BOOLEAN fDelta = FALSE;
-  UINT16 usColor = 0;
-  UINT32 uiDestPitchBYTES;
-  UINT8 *pDestBuf;
-
-  // if not ready to change glow phase yet, leave
-  if (!gfGlowTimerExpired) return;
-
-  // change direction of glow?
-  if ((iColorNum == 0) || (iColorNum == 10)) {
-    fDelta = !fDelta;
-  }
-
-  // increment color
-  if (!fDelta)
-    iColorNum++;
-  else
-    iColorNum--;
-
-  usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
-                                  GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
-  SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
-  RectangleDraw(TRUE, 496, 409, 528, 442, usColor, pDestBuf);
-  InvalidateRegion(495, 408, 529 + 1, 442 + 1);
-  UnLockVideoSurface(FRAME_BUFFER);
-}
-
-#endif
 
 // Kris:  Added this function to blink the email icon on top of the laptop button whenever we are in
 //       mapscreen and we have new email to read.
