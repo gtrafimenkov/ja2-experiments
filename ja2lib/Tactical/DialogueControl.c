@@ -84,9 +84,9 @@ typedef struct {
   INT8 bUIHandlerID;
   INT32 iFaceIndex;
   INT32 iTimeStamp;
-  UINT32 uiSpecialEventFlag;
-  UINT32 uiSpecialEventData;
-  UINT32 uiSpecialEventData2;
+  uintptr_t uiSpecialEventFlag;
+  uintptr_t uiSpecialEventData;
+  uintptr_t uiSpecialEventData2;
   UINT32 uiSpecialEventData3;
   UINT32 uiSpecialEventData4;
   BOOLEAN fFromSoldier;
@@ -1046,7 +1046,7 @@ BOOLEAN DelayedTacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 us
 }
 
 BOOLEAN TacticalCharacterDialogueWithSpecialEvent(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNum,
-                                                  UINT32 uiFlag, UINT32 uiData1, UINT32 uiData2) {
+                                                  UINT32 uiFlag, uintptr_t uiData1, UINT32 uiData2) {
   if (pSoldier->ubProfile == NO_PROFILE) {
     return (FALSE);
   }
@@ -1167,7 +1167,7 @@ BOOLEAN TacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNu
 
 BOOLEAN CharacterDialogueWithSpecialEvent(UINT8 ubCharacterNum, UINT16 usQuoteNum, INT32 iFaceIndex,
                                           UINT8 bUIHandlerID, BOOLEAN fFromSoldier,
-                                          BOOLEAN fDelayed, UINT32 uiFlag, UINT32 uiData1,
+                                          BOOLEAN fDelayed, UINT32 uiFlag, uintptr_t uiData1,
                                           UINT32 uiData2) {
   DIALOGUE_Q_STRUCT *QItem;
 
@@ -1263,7 +1263,7 @@ BOOLEAN CharacterDialogue(UINT8 ubCharacterNum, UINT16 usQuoteNum, INT32 iFaceIn
   return (TRUE);
 }
 
-BOOLEAN SpecialCharacterDialogueEvent(UINT32 uiSpecialEventFlag, UINT32 uiSpecialEventData1,
+BOOLEAN SpecialCharacterDialogueEvent(uintptr_t uiSpecialEventFlag, uintptr_t uiSpecialEventData1,
                                       UINT32 uiSpecialEventData2, UINT32 uiSpecialEventData3,
                                       INT32 iFaceIndex, UINT8 bUIHandlerID) {
   DIALOGUE_Q_STRUCT *QItem;
