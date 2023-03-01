@@ -18,9 +18,10 @@ Other branches contain different experiments.
 ```
 ja2lib             - platform-independent part of the game code
 platform-linux     - platform code for Linux
-win32              - platform code for win32 + windows binary
-tester             - an application to run unit tests
-bin-linux          - sources to build Linux binary of the game (not implemented)
+platform-win32     - platform code for win32
+bin-win32          - project to build the game binary for Windows
+bin-linux          - project to build Linux binary of the game (not implemented)
+unittester         - an application to run unit tests
 ```
 
 ## How to build
