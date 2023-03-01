@@ -77,16 +77,17 @@ $(BUILD_DIR)/linux-platform.a: $(LINUX_PLATFORM_OBJS)
 	@echo .. building $@
 	@ar rcs $@ $^
 
-linux-tester-bin: $(BUILD_DIR)/bin/linux-tester
+linux-bin: $(BUILD_DIR)/bin/ja2-linux
 
-$(BUILD_DIR)/bin/linux-tester: linux-tester/main.c $(BUILD_DIR)/linux-platform.a $(BUILD_DIR)/ja2lib.a
+$(BUILD_DIR)/bin/ja2-linux: linux-tester/main.c $(BUILD_DIR)/linux-platform.a $(BUILD_DIR)/ja2lib.a
 	@echo .. building $@
 	@mkdir -p $(BUILD_DIR)/bin
 	@$(CC) $(CFLAG) $(COMPILE_FLAGS) $^ -o $@
 
-run-linux-tester: $(BUILD_DIR)/bin/linux-tester
-	@cp $(BUILD_DIR)/bin/linux-tester ../ja2-installed
-	@cd ../ja2-installed && ./linux-tester
+run-linux-bin: $(BUILD_DIR)/bin/ja2-linux
+	@cp $(BUILD_DIR)/bin/ja2-linux ../ja2-installed
+	@echo -----------------------------------------------------------------
+	@cd ../ja2-installed && ./ja2-linux
 
 tester-bin: $(BUILD_DIR)/bin/tester
 

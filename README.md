@@ -13,6 +13,16 @@ with following changes:
 
 Other branches contain different experiments.
 
+## Project structure
+
+```
+ja2lib             - platform-independent part of the game code
+platform-linux     - platform code for Linux
+win32              - platform code for win32 + windows binary
+tester             - an application to run unit tests
+bin-linux          - sources to build Linux binary of the game (not implemented)
+```
+
 ## How to build
 
 - open the solution in Visual Studio 2022

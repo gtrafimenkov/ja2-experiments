@@ -10,22 +10,18 @@ int main() {
   char CurrentDir[100];
   char DataDir[200];
 
-  printf("10 %s\n", "1");
-  printf("20 %hs\n", "1");
-  printf("30 %ls\n", L"1");
+  Plat_GetExecutableDirectory(CurrentDir, sizeof(CurrentDir));
 
-  // Plat_GetExecutableDirectory(CurrentDir, sizeof(CurrentDir));
+  snprintf(DataDir, sizeof(DataDir), "%s/Data", CurrentDir);
+  printf("data dir: %s\n", DataDir);
+  if (!Plat_SetCurrentDirectory(DataDir)) {
+    printf("error: failed to switch to data dir\n");
+    return 1;
+  }
+  InitializeFileDatabase();
+  FileMan_Initialize();
 
-  // snprintf(DataDir, sizeof(DataDir), "%s/Data", CurrentDir);
-  // printf("data dir: %s\n", DataDir);
-  // if (!Plat_SetCurrentDirectory(DataDir)) {
-  //   printf("error: failed to switch to data dir\n");
-  //   return 1;
-  // }
-  // InitializeFileDatabase();
-  // FileMan_Initialize();
-
-  // int locale = DetectLocale();
-  // printf("locale:          %d\n", locale);
-  // printf("? exists cursors\\THROWB.STI:   %d\n", FileMan_Exists("cursors\\THROWB.STI"));
+  int locale = DetectLocale();
+  printf("locale:          %d\n", locale);
+  printf("? exists cursors\\THROWB.STI:   %d\n", FileMan_Exists("cursors\\THROWB.STI"));
 }
