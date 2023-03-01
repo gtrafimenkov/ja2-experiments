@@ -10,7 +10,6 @@
 #include "GameLoop.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
-#include "JA2DemoAds.h"
 #include "JAScreens.h"
 #include "Laptop/History.h"
 #include "LoadingScreen.h"
@@ -325,11 +324,6 @@ UINT32 UndergroundTacticalTraversalTime(
   return 0xffffffff;
 }
 
-#ifdef JA2DEMOADS
-extern void DoDemoIntroduction();
-extern BOOLEAN gfDemoIntro;
-#endif
-
 void BeginLoadScreen() {
   SGPRect SrcRect, DstRect;
   UINT32 uiStartTime, uiCurrTime;
@@ -337,14 +331,6 @@ void BeginLoadScreen() {
   UINT32 uiTimeRange;
   INT32 iLastShadePercentage;
   UINT8 ubLoadScreenID;
-
-#ifdef JA2DEMOADS
-  if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
-    DoDemoIntroduction();
-  } else {
-    gfDemoIntro = TRUE;
-  }
-#endif
 
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
 
