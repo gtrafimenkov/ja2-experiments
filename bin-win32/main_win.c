@@ -4,7 +4,6 @@
 #include <windows.h>
 #include <zmouse.h>
 
-#include "Res/Resource.h"
 #include "BuildDefines.h"
 #include "GameLoop.h"
 #include "Globals.h"
@@ -12,6 +11,7 @@
 #include "JA2Splash.h"
 #include "Laptop/Laptop.h"
 #include "Local.h"
+#include "Res/Resource.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/FileMan.h"
 #include "SGP/Font.h"
@@ -220,12 +220,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
   ShowCursor(FALSE);
 
   // Inititialize the SGP
-  struct PlatformInitParams params = {
-    hInstance,
-    (UINT16)sCommandShow,
-    (void *)WindowProcedure,
-    IDI_ICON1
-    };
+  struct PlatformInitParams params = {hInstance, (UINT16)sCommandShow, (void *)WindowProcedure,
+                                      IDI_ICON1};
   if (InitializeStandardGamingPlatform(&params) == FALSE) {
     return 0;
   }
