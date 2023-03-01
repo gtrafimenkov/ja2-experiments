@@ -104,4 +104,7 @@ run-unittester: $(BUILD_DIR)/bin/unittester
 ###################################################################
 
 install-build-dependencies-deb:
+	sudo apt install -y libgtest-dev
+
+install-dev-dependencies-deb:
 	sudo apt install clang-format-13 libgtest-dev
