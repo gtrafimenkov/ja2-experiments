@@ -617,7 +617,7 @@ BOOLEAN CreateSoldierCommon(UINT8 ubBodyType, struct SOLDIERTYPE *pSoldier, UINT
 
   if (pSoldier->ubBodyType == QUEENMONSTER) {
     pSoldier->iPositionSndID =
-        NewPositionSnd(NOWHERE, POSITION_SOUND_FROM_SOLDIER, (UINT32)pSoldier, QUEEN_AMBIENT_NOISE);
+        NewPositionSnd(NOWHERE, POSITION_SOUND_FROM_SOLDIER, pSoldier, QUEEN_AMBIENT_NOISE);
   }
 
   // ANYTHING AFTER HERE CAN FAIL
