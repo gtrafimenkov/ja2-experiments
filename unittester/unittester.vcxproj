@@ -44,6 +44,9 @@
     <ProjectReference Include="..\ja2lib\ja2lib.vcxproj">
       <Project>{1e5a01aa-c47e-4c14-ad20-9e152e321ae0}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\platform-dummy\platform-dummy.vcxproj">
+      <Project>{1c513705-38f0-4eca-866b-1d50a13ec65d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
