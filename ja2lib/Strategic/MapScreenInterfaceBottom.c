@@ -319,7 +319,6 @@ BOOLEAN CreateButtonsForMapScreenInterfaceBottom(void) {
   guiMapBottomExitButtonsImage[MAP_EXIT_TO_TACTICAL] =
       LoadButtonImage("INTERFACE\\map_border_buttons.sti", -1, 7, -1, 16, -1);
 
-#ifndef JA2DEMO
   guiMapBottomExitButtons[MAP_EXIT_TO_TACTICAL] =
       QuickCreateButton(guiMapBottomExitButtonsImage[MAP_EXIT_TO_TACTICAL], 496, 410, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
@@ -332,22 +331,6 @@ BOOLEAN CreateButtonsForMapScreenInterfaceBottom(void) {
       QuickCreateButton(guiMapBottomExitButtonsImage[MAP_EXIT_TO_OPTIONS], 458, 372, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
                         (GUI_CALLBACK)BtnOptionsFromMapScreenCallback);
-#else
-
-  // tactical
-  guiMapBottomExitButtons[MAP_EXIT_TO_TACTICAL] =
-      QuickCreateButton(guiMapBottomExitButtonsImage[MAP_EXIT_TO_TACTICAL], 496, 410, BUTTON_TOGGLE,
-                        MSYS_PRIORITY_HIGHEST, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnTacticalCallback);
-
-  // options
-  guiMapBottomExitButtonsImage[MAP_EXIT_TO_OPTIONS] =
-      LoadButtonImage("INTERFACE\\map_border_buttons.sti", -1, 18, -1, 19, -1);
-  guiMapBottomExitButtons[MAP_EXIT_TO_OPTIONS] =
-      QuickCreateButton(guiMapBottomExitButtonsImage[MAP_EXIT_TO_OPTIONS], 458, 372, BUTTON_TOGGLE,
-                        MSYS_PRIORITY_HIGHEST, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnOptionsFromMapScreenCallback);
-#endif
 
   SetButtonFastHelpText(guiMapBottomExitButtons[0], pMapScreenBottomFastHelp[0]);
   SetButtonFastHelpText(guiMapBottomExitButtons[1], pMapScreenBottomFastHelp[1]);
@@ -379,8 +362,6 @@ BOOLEAN CreateButtonsForMapScreenInterfaceBottom(void) {
   SetButtonCursor(guiMapBottomTimeButtons[1], MSYS_NO_CURSOR);
 
   // scroll buttons
-#ifndef JA2DEMO
-
   guiMapMessageScrollButtonsImage[MAP_SCROLL_MESSAGE_UP] =
       LoadButtonImage("INTERFACE\\map_screen_bottom_arrows.sti", 11, 4, -1, 6, -1);
   guiMapMessageScrollButtons[MAP_SCROLL_MESSAGE_UP] = QuickCreateButton(
@@ -394,27 +375,6 @@ BOOLEAN CreateButtonsForMapScreenInterfaceBottom(void) {
       guiMapMessageScrollButtonsImage[MAP_SCROLL_MESSAGE_DOWN], 331, 452, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGHEST - 1, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
       (GUI_CALLBACK)BtnMessageDownMapScreenCallback);
-
-#else
-
-  guiMapMessageScrollButtonsImage[MAP_SCROLL_MESSAGE_UP] =
-      LoadButtonImage("INTERFACE\\map_screen_bottom_arrows.sti", 11, 4, -1, 6, -1);
-  guiMapMessageScrollButtons[MAP_SCROLL_MESSAGE_UP] = QuickCreateButton(
-      guiMapMessageScrollButtonsImage[MAP_SCROLL_MESSAGE_UP], 331, 371, BUTTON_TOGGLE,
-      MSYS_PRIORITY_HIGHEST, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
-      (GUI_CALLBACK)BtnMessageUpMapScreenCallback);
-
-  guiMapMessageScrollButtonsImage[MAP_SCROLL_MESSAGE_DOWN] =
-      LoadButtonImage("INTERFACE\\map_screen_bottom_arrows.sti", 12, 5, -1, 7, -1);
-  guiMapMessageScrollButtons[MAP_SCROLL_MESSAGE_DOWN] = QuickCreateButton(
-      guiMapMessageScrollButtonsImage[MAP_SCROLL_MESSAGE_DOWN], 331, 452, BUTTON_TOGGLE,
-      MSYS_PRIORITY_HIGHEST, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
-      (GUI_CALLBACK)BtnMessageDownMapScreenCallback);
-
-  // build demo mouse regions
-  BuildDemoMouseRegionsForHelpText();
-
-#endif
 
   SetButtonFastHelpText(guiMapMessageScrollButtons[0], pMapScreenBottomFastHelp[5]);
   SetButtonFastHelpText(guiMapMessageScrollButtons[1], pMapScreenBottomFastHelp[6]);

@@ -2738,28 +2738,20 @@ UINT32 MapScreenHandle(void) {
       vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
       // Grab the Map image
 
-#ifndef JA2DEMO
       strcpy(vs_desc.ImageFile, "INTERFACE\\b_map.pcx");
       CHECKF(AddVideoSurface(&vs_desc, &guiBIGMAP));
-#endif
 
       strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
       CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
 
-#ifndef JA2DEMO
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
       CHECKF(AddVideoObject(&VObjectDesc, &guiSAMICON));
 
-#endif
-      // VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-      // FilenameForBPP("INTERFACE\\s_map.sti", VObjectDesc.ImageFile);
-      // CHECKF( AddVideoObject( &VObjectDesc, &guiMAP ) );
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
       CHECKF(AddVideoObject(&VObjectDesc, &guiMAPCURSORS));
 
-#ifndef JA2DEMO
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\Mine_1.sti", VObjectDesc.ImageFile);
       CHECKF(AddVideoObject(&VObjectDesc, &guiSubLevel1));
@@ -2771,14 +2763,6 @@ UINT32 MapScreenHandle(void) {
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\Mine_3.sti", VObjectDesc.ImageFile);
       CHECKF(AddVideoObject(&VObjectDesc, &guiSubLevel3));
-#endif
-      // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-      // FilenameForBPP("INTERFACE\\addonslcp.sti", VObjectDesc.ImageFile);
-      // CHECKF(AddVideoObject(&VObjectDesc, &guiCORNERADDONS));
-
-      // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-      // FilenameForBPP("INTERFACE\\mapborder.sti", VObjectDesc.ImageFile);
-      // CHECKF(AddVideoObject(&VObjectDesc, &guiMAPBORDER));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\sleepicon.sti", VObjectDesc.ImageFile);
@@ -2787,20 +2771,10 @@ UINT32 MapScreenHandle(void) {
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\charinfo.sti", VObjectDesc.ImageFile);
       CHECKF(AddVideoObject(&VObjectDesc, &guiCHARINFO));
-      /*strcpy(vs_desc.ImageFile, "INTERFACE\\playlist3.pcx");
-      CHECKF(AddVideoSurface( &vs_desc, &guiCHARLIST ));*/
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\newgoldpiece3.sti", VObjectDesc.ImageFile);
       CHECKF(AddVideoObject(&VObjectDesc, &guiCHARLIST));
-
-      // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-      // FilenameForBPP("INTERFACE\\mapbordercorner.sti", VObjectDesc.ImageFile);
-      // CHECKF(AddVideoObject(&VObjectDesc, &guiMAPCORNER));
-
-      // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-      // FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
-      // CHECKF(AddVideoObject(&VObjectDesc, &guiPOPUPBORDERS));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\boxes.sti", VObjectDesc.ImageFile);
@@ -4273,10 +4247,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
   INT8 bSquadNumber;
   UINT8 ubGroupId = 0;
   BOOLEAN fCtrl, fAlt;
-
-#ifndef JA2DEMO
   INT16 sMapX, sMapY;
-#endif
 
   fCtrl = _KeyDown(CTRL);
   fAlt = _KeyDown(ALT);
@@ -4792,17 +4763,8 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
           //					fShowMapScreenHelpText = TRUE;
           break;
 
-#ifndef JA2DEMO
         case 'i':
 #ifdef JA2TESTVERSION
-          /*
-                                                          if( fAlt )
-                                                          {
-                                                                  InitializeMines();
-                                                                  fMapPanelDirty = TRUE;
-                                                          }
-                                                          else
-          */
           if (fCtrl) {
             fDisableJustForIan = !fDisableJustForIan;
           } else {
@@ -4876,12 +4838,10 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 
         case 'p':
 #ifdef JA2TESTVERSION
-#ifndef JA2DEMO
           if (fCtrl) {
             // CTRL-P: Display player's highest progress percentage
             DumpSectorDifficultyInfo();
           }
-#endif
 #endif
 
 #ifdef JA2TESTVERSION
@@ -5053,7 +5013,6 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
             DisplayGameSettings();
           }
           break;
-#endif
         case 'w':
           // only handle border button keyboard equivalents if the button is visible!
           if (!fShowMapInventoryPool) {
@@ -5250,26 +5209,17 @@ void EndMapScreen(BOOLEAN fDuringFade) {
   if (fPreLoadedMapGraphics == FALSE) {
     DeleteMapBottomGraphics();
 
-#ifndef JA2DEMO
     DeleteVideoObjectFromIndex(guiSubLevel1);
     DeleteVideoObjectFromIndex(guiSubLevel2);
     DeleteVideoObjectFromIndex(guiSubLevel3);
-#endif
     DeleteVideoObjectFromIndex(guiSleepIcon);
     DeleteVideoObjectFromIndex(guiMAPCURSORS);
-    // DeleteVideoObjectFromIndex(guiMAPBORDER);
     DeleteVideoObjectFromIndex(guiCHARLIST);
-    // DeleteVideoObjectFromIndex(guiCORNERADDONS);
-    // DeleteVideoObjectFromIndex(guiMAPCORNER);
-    // DeleteVideoObjectFromIndex(guiPOPUPBORDERS);
     DeleteVideoObjectFromIndex(guiCHARINFO);
     DeleteVideoObjectFromIndex(guiCHARICONS);
     DeleteVideoObjectFromIndex(guiCROSS);
-#ifndef JA2DEMO
     DeleteVideoSurfaceFromIndex(guiBIGMAP);
-    //	DeleteVideoSurfaceFromIndex(guiPOPUPTEX);
     DeleteVideoObjectFromIndex(guiSAMICON);
-#endif
     DeleteVideoObjectFromIndex(guiMAPINV);
     DeleteVideoObjectFromIndex(guiMapInvSecondHandBlockout);
     DeleteVideoObjectFromIndex(guiULICONS);
@@ -5353,7 +5303,6 @@ void EndMapScreen(BOOLEAN fDuringFade) {
   UpdatePausedStatesDueToTimeCompression();
 
   if (!gfDontStartTransitionFromLaptop) {
-#ifndef JA2DEMO
     VOBJECT_DESC VObjectDesc;
     UINT32 uiLaptopOn;
 
@@ -5370,7 +5319,6 @@ void EndMapScreen(BOOLEAN fDuringFade) {
     EndFrameBufferRender();
     DeleteVideoObjectFromIndex(uiLaptopOn);
     RefreshScreen(NULL);
-#endif
   }
 
   // Kris:  Removes the pre battle interface, but only if it exists.
@@ -5431,7 +5379,6 @@ BOOLEAN GetMapXY(INT16 sX, INT16 sY, INT16 *psMapWorldX, INT16 *psMapWorldY) {
 }
 
 void RenderMapHighlight(INT16 sMapX, INT16 sMapY, UINT16 usLineColor, BOOLEAN fStationary) {
-#ifndef JA2DEMO
   INT16 sScreenX, sScreenY;
   UINT32 uiDestPitchBYTES;
   UINT8 *pDestBuf;
@@ -5439,37 +5386,13 @@ void RenderMapHighlight(INT16 sMapX, INT16 sMapY, UINT16 usLineColor, BOOLEAN fS
   Assert((sMapX >= 1) && (sMapX <= 16));
   Assert((sMapY >= 1) && (sMapY <= 16));
 
-  /*
-          if((fZoomFlag)&&((sMapX > MAP_WORLD_X-1)||(sMapY> MAP_WORLD_Y-1)))
-     return;
-  */
-
   // if we are not allowed to highlight, leave
   if ((IsTheCursorAllowedToHighLightThisSector(sMapX, sMapY) == FALSE) && (fZoomFlag == FALSE)) {
     return;
   }
-  /*
-          else if( ( IsTheCursorAllowedToHighLightThisSector( sMapX , sMapY ) == FALSE )&&(
-    fZoomFlag == TRUE ) && ( fStationary == TRUE ) )
-          {
-                  return;
-          }
-          else if( ( IsTheCursorAllowedToHighLightThisSector( ( INT16 ) ( ( ( iZoomX ) / (
-    MAP_GRID_X * 2 ) ) + sMapX / 2 ) ,( INT16 ) ( ( ( iZoomY ) / ( MAP_GRID_Y * 2 ) ) + sMapY / 2 )
-    ) == FALSE ) && ( fZoomFlag == TRUE ) &&( fStationary == FALSE ) )
-    {
-                  return;
-          }
-  */
 
   //	if((!fStationary)||(!fZoomFlag))
   { GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY); }
-  /*
-    else
-          {
-      GetScreenXYFromMapXYStationary( sMapX, sMapY, &sScreenX, &sScreenY );
-          }
-  */
 
   // blit in the highlighted sector
   pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
@@ -5484,8 +5407,6 @@ void RenderMapHighlight(INT16 sMapX, INT16 sMapY, UINT16 usLineColor, BOOLEAN fS
 
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
   UnLockVideoSurface(FRAME_BUFFER);
-
-#endif
 }
 
 void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
@@ -6684,8 +6605,6 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
     }
   }
 
-#ifndef JA2DEMO
-
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     if (IsMapScreenHelpTextUp()) {
       // stop mapscreen text
@@ -6728,7 +6647,6 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
       gfRenderPBInterface = TRUE;
     }
   }
-#endif
 }
 
 void TeamListInfoRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
@@ -8841,24 +8759,15 @@ void HandleRemovalOfPreLoadedMapGraphics(void) {
     DeleteMapBottomGraphics();
     DeleteVideoObjectFromIndex(guiMAPCURSORS);
     DeleteVideoObjectFromIndex(guiSleepIcon);
-
-    // DeleteVideoObjectFromIndex(guiMAPBORDER);
     DeleteVideoObjectFromIndex(guiCHARLIST);
-    // DeleteVideoObjectFromIndex(guiCORNERADDONS);
-    // DeleteVideoObjectFromIndex(guiMAPCORNER);
-    //	DeleteVideoObjectFromIndex(guiPOPUPBORDERS);
     DeleteVideoObjectFromIndex(guiCHARINFO);
     DeleteVideoObjectFromIndex(guiCHARICONS);
     DeleteVideoObjectFromIndex(guiCROSS);
-#ifndef JA2DEMO
     DeleteVideoSurfaceFromIndex(guiBIGMAP);
     DeleteVideoObjectFromIndex(guiSubLevel1);
     DeleteVideoObjectFromIndex(guiSubLevel2);
     DeleteVideoObjectFromIndex(guiSubLevel3);
-
-    //	DeleteVideoSurfaceFromIndex(guiPOPUPTEX);
     DeleteVideoObjectFromIndex(guiSAMICON);
-#endif
     DeleteVideoObjectFromIndex(guiMAPINV);
     DeleteVideoObjectFromIndex(guiMapInvSecondHandBlockout);
     DeleteVideoObjectFromIndex(guiULICONS);
@@ -9000,37 +8909,19 @@ void CreateDestroyMapCharacterScrollButtons(void) {
     giCharInfoButtonImage[0] =
         LoadButtonImage("INTERFACE\\map_screen_bottom_arrows.sti", 11, 4, -1, 6, -1);
 
-#ifndef JA2DEMO
-
     // set the button value
     giCharInfoButton[0] = QuickCreateButton(
         giCharInfoButtonImage[0], 67, 69, BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 5,
         BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)PrevInventoryMapBtnCallback);
-#else
 
-    // set the button value
-    giCharInfoButton[0] = QuickCreateButton(
-        giCharInfoButtonImage[0], 67, 69, BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
-        BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)PrevInventoryMapBtnCallback);
-
-#endif
     // set the button image
     giCharInfoButtonImage[1] =
         LoadButtonImage("INTERFACE\\map_screen_bottom_arrows.sti", 12, 5, -1, 7, -1);
 
-#ifndef JA2DEMO
     // set the button value
     giCharInfoButton[1] = QuickCreateButton(
         giCharInfoButtonImage[1], 67, 87, BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 5,
         BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)NextInventoryMapBtnCallback);
-
-#else
-    // set the button value
-    giCharInfoButton[1] = QuickCreateButton(
-        giCharInfoButtonImage[1], 67, 87, BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
-        BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)NextInventoryMapBtnCallback);
-
-#endif
 
     SetButtonFastHelpText(giCharInfoButton[0], pMapScreenPrevNextCharButtonHelpText[0]);
     SetButtonFastHelpText(giCharInfoButton[1], pMapScreenPrevNextCharButtonHelpText[1]);

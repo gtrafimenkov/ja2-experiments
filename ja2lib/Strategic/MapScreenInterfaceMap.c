@@ -663,7 +663,6 @@ void HandleShowingOfEnemiesWithMilitiaOn(void) {
 }
 
 UINT32 DrawMap(void) {
-#ifndef JA2DEMO
   struct VSurface *hSrcVSurface;
   UINT32 uiDestPitchBYTES;
   UINT32 uiSrcPitchBYTES;
@@ -672,12 +671,6 @@ UINT32 DrawMap(void) {
   SGPRect clip;
   INT16 cnt, cnt2;
   INT32 iCounter = 0;
-#else
-  DrawMapForDemo();
-  return (TRUE);
-#endif
-
-#ifndef JA2DEMO
 
   if (!iCurrentMapSectorZ) {
     pDestBuf = (UINT16 *)LockVideoSurface(guiSAVEBUFFER, &uiDestPitchBYTES);
@@ -699,13 +692,6 @@ UINT32 DrawMap(void) {
       clip.iRight = clip.iLeft + MAP_VIEW_WIDTH + 2;
       clip.iTop = iZoomY - 3;
       clip.iBottom = clip.iTop + MAP_VIEW_HEIGHT - 1;
-
-      /*
-      clip.iLeft=clip.iLeft - 1;
-      clip.iRight=clip.iLeft + MapScreenRect.iRight - MapScreenRect.iLeft;
-      clip.iTop=iZoomY - 1;
-      clip.iBottom=clip.iTop + MapScreenRect.iBottom - MapScreenRect.iTop;
-      */
 
       if (clip.iBottom > hSrcVSurface->usHeight) {
         clip.iBottom = hSrcVSurface->usHeight;
@@ -826,19 +812,6 @@ UINT32 DrawMap(void) {
       ShowTeamAndVehicles(SHOW_TEAMMATES | SHOW_VEHICLES);
     else
       HandleShowingOfEnemiesWithMilitiaOn();
-
-    /*
-                    if((fShowTeamFlag)&&(fShowVehicleFlag))
-                     ShowTeamAndVehicles(SHOW_TEAMMATES | SHOW_VEHICLES);
-                    else if(fShowTeamFlag)
-                            ShowTeamAndVehicles(SHOW_TEAMMATES);
-                    else if(fShowVehicleFlag)
-                            ShowTeamAndVehicles(SHOW_VEHICLES);
-                    else
-                    {
-                            HandleShowingOfEnemiesWithMilitiaOn( );
-                    }
-    */
   }
 
   if (fShowItemsFlag) {
@@ -846,10 +819,6 @@ UINT32 DrawMap(void) {
   }
 
   DisplayLevelString();
-
-  // RestoreClipRegionToFullScreen( );
-
-#endif  // !JA2DEMO
 
   return (TRUE);
 }

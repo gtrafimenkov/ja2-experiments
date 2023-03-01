@@ -178,7 +178,6 @@ BOOLEAN LoadMercProfiles(void) {
     // Default is the ubCharNum
     gMercProfiles[uiLoop].ubFaceIndex = (UINT8)uiLoop;
 
-#ifndef JA2DEMO
     if (!gGameOptions.fGunNut) {
       // CJC: replace guns in profile if they aren't available
       for (uiLoop2 = 0; uiLoop2 < NUM_INV_SLOTS; uiLoop2++) {
@@ -205,7 +204,6 @@ BOOLEAN LoadMercProfiles(void) {
       }
 
     }  // end of if not gun nut
-#endif
 
     // ATE: Calculate some inital attractiveness values for buddy's inital equipment...
     // Look for gun and armour
@@ -260,9 +258,7 @@ BOOLEAN LoadMercProfiles(void) {
   FileMan_Close(fptr);
 
 // decide which terrorists are active
-#ifndef JA2DEMO
   DecideActiveTerrorists();
-#endif
 
   // initialize mercs' status
   StartSomeMercsOnAssignment();
