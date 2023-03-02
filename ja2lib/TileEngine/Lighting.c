@@ -2195,15 +2195,13 @@ BOOLEAN CalcTranslucentWalls(INT16 iX, INT16 iY) {
 BOOLEAN LightGreenTile(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
   struct LEVELNODE *pStruct, *pLand;
   UINT32 uiTile;
-  BOOLEAN fRerender = FALSE, fHitWall = FALSE, fThroughWall = FALSE;
+  BOOLEAN fHitWall = FALSE;
   TILE_ELEMENT *TileElem;
 
   Assert(gpWorldLevelData != NULL);
 
   uiTile = MAPROWCOLTOPOS(sY, sX);
   pStruct = gpWorldLevelData[uiTile].pStructHead;
-
-  if ((sX < sSrcX) || (sY < sSrcY)) fThroughWall = TRUE;
 
   while (pStruct != NULL) {
     TileElem = &(gTileDatabase[pStruct->usIndex]);
@@ -2216,7 +2214,6 @@ BOOLEAN LightGreenTile(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
         fHitWall = TRUE;
         if (sX >= sSrcX) {
           pStruct->uiFlags |= LEVELNODE_REVEAL;
-          fRerender = TRUE;
         }
         break;
 
@@ -2225,15 +2222,12 @@ BOOLEAN LightGreenTile(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
         fHitWall = TRUE;
         if (sY >= sSrcY) {
           pStruct->uiFlags |= LEVELNODE_REVEAL;
-          fRerender = TRUE;
         }
         break;
     }
     pStruct = pStruct->pNext;
   }
 
-  // if(fRerender)
-  //{
   pLand = gpWorldLevelData[uiTile].pLandHead;
   while (pLand != NULL) {
     pLand->ubShadeLevel = 0;
@@ -2242,7 +2236,6 @@ BOOLEAN LightGreenTile(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
 
   gpWorldLevelData[uiTile].uiFlags |= MAPELEMENT_REDRAW;
   SetRenderFlags(RENDER_FLAG_MARKED);
-  //}
 
   return (fHitWall);
 }
@@ -2290,7 +2283,7 @@ BOOLEAN LightShowRays(INT16 iX, INT16 iY, BOOLEAN fReset) {
 BOOLEAN LightHideGreen(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
   struct LEVELNODE *pStruct, *pLand;
   UINT32 uiTile;
-  BOOLEAN fRerender = FALSE, fHitWall = FALSE;
+  BOOLEAN fHitWall = FALSE;
   TILE_ELEMENT *TileElem;
 
   Assert(gpWorldLevelData != NULL);
@@ -2309,7 +2302,6 @@ BOOLEAN LightHideGreen(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
         fHitWall = TRUE;
         if (sX >= sSrcX) {
           pStruct->uiFlags &= (~LEVELNODE_REVEAL);
-          fRerender = TRUE;
         }
         break;
 
@@ -2318,15 +2310,12 @@ BOOLEAN LightHideGreen(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
         fHitWall = TRUE;
         if (sY >= sSrcY) {
           pStruct->uiFlags &= (~LEVELNODE_REVEAL);
-          fRerender = TRUE;
         }
         break;
     }
     pStruct = pStruct->pNext;
   }
 
-  // if(fRerender)
-  //{
   pLand = gpWorldLevelData[uiTile].pLandHead;
   while (pLand != NULL) {
     pLand->ubShadeLevel = pLand->ubNaturalShadeLevel;
@@ -2335,7 +2324,6 @@ BOOLEAN LightHideGreen(INT16 sX, INT16 sY, INT16 sSrcX, INT16 sSrcY) {
 
   gpWorldLevelData[uiTile].uiFlags |= MAPELEMENT_REDRAW;
   SetRenderFlags(RENDER_FLAG_MARKED);
-  //}
 
   return (fHitWall);
 }
