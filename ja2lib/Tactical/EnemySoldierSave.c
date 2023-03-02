@@ -1011,7 +1011,6 @@ BOOLEAN NewWayOfLoadingEnemySoldiersFromTempFile() {
               sSectorX, sSectorY, bSectorZ);
 #endif
       goto FAIL_LOAD;
-
     }
   } else {
   }

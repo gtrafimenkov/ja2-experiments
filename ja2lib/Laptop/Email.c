@@ -4362,9 +4362,9 @@ void PreProcessEmail(EmailPtr pMail) {
 
     // more than one page
     // for( iCounter = 0; iCounter < giNumberOfPagesToCurrentEmail; iCounter++ )
-    while ((pTempRecord =
-               GetFirstRecordOnThisPage(pTempList, MESSAGE_FONT, MESSAGE_WIDTH, MESSAGE_GAP,
-                                        iCounter, MAX_EMAIL_MESSAGE_PAGE_SIZE))) {
+    while (
+        (pTempRecord = GetFirstRecordOnThisPage(pTempList, MESSAGE_FONT, MESSAGE_WIDTH, MESSAGE_GAP,
+                                                iCounter, MAX_EMAIL_MESSAGE_PAGE_SIZE))) {
       iYPositionOnPage = 0;
 
       pEmailPageInfo[iCounter].pFirstRecord = pTempRecord;

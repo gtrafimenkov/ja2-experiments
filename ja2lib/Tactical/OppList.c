@@ -168,98 +168,98 @@ INT8 gbLookDistance[8][8] = {
 
     /* NORTH      */
     {
-      STRAIGHT,
-    ANGLE,
-    SIDE,
-    SBEHIND,
-    BEHIND,
-    SBEHIND,
-    SIDE,
-    ANGLE,
+        STRAIGHT,
+        ANGLE,
+        SIDE,
+        SBEHIND,
+        BEHIND,
+        SBEHIND,
+        SIDE,
+        ANGLE,
     },
 
     /* NORTHEAST  */
     {
-      ANGLE,
-    STRAIGHT,
-    ANGLE,
-    SIDE,
-    SBEHIND,
-    BEHIND,
-    SBEHIND,
-    SIDE,
+        ANGLE,
+        STRAIGHT,
+        ANGLE,
+        SIDE,
+        SBEHIND,
+        BEHIND,
+        SBEHIND,
+        SIDE,
     },
 
     /* EAST       */
     {
-      SIDE,
-    ANGLE,
-    STRAIGHT,
-    ANGLE,
-    SIDE,
-    SBEHIND,
-    BEHIND,
-    SBEHIND,
+        SIDE,
+        ANGLE,
+        STRAIGHT,
+        ANGLE,
+        SIDE,
+        SBEHIND,
+        BEHIND,
+        SBEHIND,
     },
 
     /* SOUTHEAST  */
     {
-      SBEHIND,
-    SIDE,
-    ANGLE,
-    STRAIGHT,
-    ANGLE,
-    SIDE,
-    SBEHIND,
-    BEHIND,
+        SBEHIND,
+        SIDE,
+        ANGLE,
+        STRAIGHT,
+        ANGLE,
+        SIDE,
+        SBEHIND,
+        BEHIND,
     },
 
     /* SOUTH      */
     {
-      BEHIND,
-    SBEHIND,
-    SIDE,
-    ANGLE,
-    STRAIGHT,
-    ANGLE,
-    SIDE,
-    SBEHIND,
+        BEHIND,
+        SBEHIND,
+        SIDE,
+        ANGLE,
+        STRAIGHT,
+        ANGLE,
+        SIDE,
+        SBEHIND,
     },
 
     /* SOUTHWEST  */
     {
-      SBEHIND,
-    BEHIND,
-    SBEHIND,
-    SIDE,
-    ANGLE,
-    STRAIGHT,
-    ANGLE,
-    SIDE,
+        SBEHIND,
+        BEHIND,
+        SBEHIND,
+        SIDE,
+        ANGLE,
+        STRAIGHT,
+        ANGLE,
+        SIDE,
     },
 
     /* WEST       */
     {
-      SIDE,
-    SBEHIND,
-    BEHIND,
-    SBEHIND,
-    SIDE,
-    ANGLE,
-    STRAIGHT,
-    ANGLE,
+        SIDE,
+        SBEHIND,
+        BEHIND,
+        SBEHIND,
+        SIDE,
+        ANGLE,
+        STRAIGHT,
+        ANGLE,
     },
 
     /* NORTHWEST  */
     {
-      ANGLE,
-    SIDE,
-    SBEHIND,
-    BEHIND,
-    SBEHIND,
-    SIDE,
-    ANGLE,
-    STRAIGHT,
+        ANGLE,
+        SIDE,
+        SBEHIND,
+        BEHIND,
+        SBEHIND,
+        SIDE,
+        ANGLE,
+        STRAIGHT,
     },
 
 };
@@ -2390,7 +2390,6 @@ void UpdatePublic(UINT8 ubTeam, UINT8 ubID, INT8 bNewOpplist, INT16 sGridno, INT
           !(pSoldier->uiStatusFlags & SOLDIER_GASSED)) {
         // if soldier isn't aware of guynum, give him another chance to see
         if (pSoldier->bOppList[ubID] == NOT_HEARD_OR_SEEN) {
-
           // whether successful or not, whack newOppCnt.  Since this is a
           // delayed reaction to a radio call, there's no chance of interrupt!
           pSoldier->bNewOppCnt = 0;

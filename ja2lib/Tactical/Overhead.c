@@ -259,18 +259,12 @@ CHAR8 gzDirectionStr[][30] = {"NORTHEAST", "EAST", "SOUTHEAST", "SOUTH",
 
 // TEMP VALUES FOR TEAM DEAFULT POSITIONS
 UINT8 bDefaultTeamRanges[MAXTEAMS][2] = {
-    {0,
-    19},  // 20  US
-    {20,
-    51},  // 32  ENEMY
-    {52,
-    83},  // 32    CREATURE
-    {84,
-    115},  // 32    REBELS ( OUR GUYS )
-    {116,
-    MAX_NUM_SOLDIERS - 1},  // 32  CIVILIANS
-    {MAX_NUM_SOLDIERS,
-    TOTAL_SOLDIERS - 1}  // PLANNING SOLDIERS
+    {0, 19},                                // 20  US
+    {20, 51},                               // 32  ENEMY
+    {52, 83},                               // 32    CREATURE
+    {84, 115},                              // 32    REBELS ( OUR GUYS )
+    {116, MAX_NUM_SOLDIERS - 1},            // 32  CIVILIANS
+    {MAX_NUM_SOLDIERS, TOTAL_SOLDIERS - 1}  // PLANNING SOLDIERS
 };
 
 COLORVAL bDefaultTeamColors[MAXTEAMS] = {FROMRGB(255, 255, 0),   FROMRGB(255, 0, 0),
@@ -4444,7 +4438,6 @@ void HandlePlayerServices(struct SOLDIERTYPE *pTeamSoldier) {
     // Check for different events!
     // FOR DOING AID
     if (pTeamSoldier->usAnimState == GIVING_AID) {
-
       // Get victim pointer
       usSoldierIndex = WhoIsThere2(pTeamSoldier->sTargetGridNo, pTeamSoldier->bLevel);
 
@@ -5636,8 +5629,8 @@ BOOLEAN CheckForLosingEndOfBattle() {
            cnt++, pTeamSoldier++) {
         // Are we active and in sector.....
         if (pTeamSoldier->bActive && pTeamSoldier->bInSector) {
-          if ((pTeamSoldier->bLife != 0 && pTeamSoldier->bLife < OKLIFE) || AM_AN_EPC(pTeamSoldier) ||
-              AM_A_ROBOT(pTeamSoldier)) {
+          if ((pTeamSoldier->bLife != 0 && pTeamSoldier->bLife < OKLIFE) ||
+              AM_AN_EPC(pTeamSoldier) || AM_A_ROBOT(pTeamSoldier)) {
             // Captured EPCs or ROBOTS will be kiiled in capture routine....
             if (!fDoCapture) {
               // Kill!

@@ -738,7 +738,7 @@ void DrawHistoryRecordsText(void) {
   if (!pCurHistory) return;
 
   // loop through record list
-  for (int iCounter=0; iCounter < NUM_RECORDS_PER_PAGE; iCounter++) {
+  for (int iCounter = 0; iCounter < NUM_RECORDS_PER_PAGE; iCounter++) {
     if (pCurHistory->ubColor == 0) {
       SetFontForeground(FONT_BLACK);
     } else {

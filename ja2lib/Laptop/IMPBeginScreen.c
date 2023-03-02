@@ -1010,7 +1010,6 @@ void Print8CharacterOnlyString(void) {
 }
 
 BOOLEAN CheckCharacterInputForEgg(void) {
-
 #ifndef JA2BETAVERSION
   return (FALSE);
 #else

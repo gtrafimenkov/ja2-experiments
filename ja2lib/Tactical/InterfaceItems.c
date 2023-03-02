@@ -399,24 +399,30 @@ typedef struct {
 } INV_HELPTEXT;
 
 INV_DESC_STATS gWeaponStats[] = {
-    {202, 25,  83}, {202, 15,  83}, {202, 15,  83}, {265, 40,  20},
-    {202, 40, 32},  {202, 50, 32},  {265, 50, 20},  {234, 50, 0},  {290, 50, 0},
+    {202, 25, 83}, {202, 15, 83}, {202, 15, 83}, {265, 40, 20}, {202, 40, 32},
+    {202, 50, 32}, {265, 50, 20}, {234, 50, 0},  {290, 50, 0},
 };
 
 // displayed AFTER the mass/weight/"Kg" line
 INV_DESC_STATS gMoneyStats[] = {
-    {202, 14, 78}, {212, 25, 78}, {202, 40, 78}, {212, 51, 78},
+    {202, 14, 78},
+    {212, 25, 78},
+    {202, 40, 78},
+    {212, 51, 78},
 };
 
 // displayed AFTER the mass/weight/"Kg" line
 INV_DESC_STATS gMapMoneyStats[] = {
-    {51, 97, 45}, {61, 107, 75}, {51, 125, 45}, {61, 135, 70},
+    {51, 97, 45},
+    {61, 107, 75},
+    {51, 125, 45},
+    {61, 135, 70},
 };
 
 INV_DESC_STATS gMapWeaponStats[] = {
-    {72 - 20,      20 + 80 + 8, 80}, {72 - 20, 20 + 80 - 2, 80}, { 72 - 20, 20 + 80 - 2, 80},
-    {72 + 65 - 20, 40 + 80 + 4, 21}, {72 - 20, 40 + 80 + 4, 30}, { 72 - 20, 53 + 80 + 2, 30},
-    {72 + 65 - 20, 53 + 80 + 2, 25}, {86,      53 + 80 + 2, 0},  { 145,     53 + 80 + 2, 0},
+    {72 - 20, 20 + 80 + 8, 80},      {72 - 20, 20 + 80 - 2, 80}, {72 - 20, 20 + 80 - 2, 80},
+    {72 + 65 - 20, 40 + 80 + 4, 21}, {72 - 20, 40 + 80 + 4, 30}, {72 - 20, 53 + 80 + 2, 30},
+    {72 + 65 - 20, 53 + 80 + 2, 25}, {86, 53 + 80 + 2, 0},       {145, 53 + 80 + 2, 0},
 };
 
 INV_ATTACHXY gItemDescAttachmentsXY[] = {
@@ -433,10 +439,12 @@ INV_ATTACHXY gMapItemDescAttachmentsXY[] = {
 
 SGPRect gItemDescProsConsRects[] =
     {  // NB the left value is calculated based on the width of the 'pros' and 'cons' labels
-        {0, 111, 313, 118}, {0, 119, 313, 126}};
+        {0, 111, 313, 118},
+        {0, 119, 313, 126}};
 
 SGPRect gMapItemDescProsConsRects[] = {
-    {0, 231, 313, 238}, {0, 239, 313, 246},
+    {0, 231, 313, 238},
+    {0, 239, 313, 246},
 };
 
 INV_HELPTEXT gItemDescHelpText = {
@@ -451,44 +459,169 @@ BOOLEAN gfItemDescHelpTextOffset = FALSE;
 
 // ARRAY FOR INV PANEL INTERFACE ITEM POSITIONS (sX,sY get set via InitInvSlotInterface() )
 INV_REGIONS gSMInvData[] = {
-    { FALSE, INV_BAR_DX, INV_BAR_DY, HEAD_INV_SLOT_WIDTH, HEAD_INV_SLOT_HEIGHT,
-    0,     0,  }, // HELMETPOS
-    { FALSE, INV_BAR_DX, INV_BAR_DY, VEST_INV_SLOT_WIDTH, VEST_INV_SLOT_HEIGHT,
-    0,     0,  }, // VESTPOS
-    { FALSE, INV_BAR_DX, INV_BAR_DY, LEGS_INV_SLOT_WIDTH, LEGS_INV_SLOT_HEIGHT,
-    0,     0,  }, // LEGPOS,
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // HEAD1POS
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // HEAD2POS
-    { TRUE,  INV_BAR_DX, INV_BAR_DY, BIG_INV_SLOT_WIDTH,  BIG_INV_SLOT_HEIGHT,
-    0,     0,  }, // HANDPOS,
-    { TRUE,  INV_BAR_DX, INV_BAR_DY, BIG_INV_SLOT_WIDTH,  BIG_INV_SLOT_HEIGHT,
-    0,     0,  }, // SECONDHANDPOS
-    { TRUE,  INV_BAR_DX, INV_BAR_DY, BIG_INV_SLOT_WIDTH,  BIG_INV_SLOT_HEIGHT,
-    0,     0,  }, // BIGPOCK1
-    { TRUE,  INV_BAR_DX, INV_BAR_DY, BIG_INV_SLOT_WIDTH,  BIG_INV_SLOT_HEIGHT,
-    0,     0,  }, // BIGPOCK2
-    { TRUE,  INV_BAR_DX, INV_BAR_DY, BIG_INV_SLOT_WIDTH,  BIG_INV_SLOT_HEIGHT,
-    0,     0,  }, // BIGPOCK3
-    { TRUE,  INV_BAR_DX, INV_BAR_DY, BIG_INV_SLOT_WIDTH,  BIG_INV_SLOT_HEIGHT,
-    0,     0,  }, // BIGPOCK4
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // SMALLPOCK1
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // SMALLPOCK2
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // SMALLPOCK3
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // SMALLPOCK4
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // SMALLPOCK5
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // SMALLPOCK6
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0,  }, // SMALLPOCK7
-    { FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH,   SM_INV_SLOT_HEIGHT,
-    0,     0  }, // SMALLPOCK8
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        HEAD_INV_SLOT_WIDTH,
+        HEAD_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // HELMETPOS
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        VEST_INV_SLOT_WIDTH,
+        VEST_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // VESTPOS
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        LEGS_INV_SLOT_WIDTH,
+        LEGS_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // LEGPOS,
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // HEAD1POS
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // HEAD2POS
+    {
+        TRUE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        BIG_INV_SLOT_WIDTH,
+        BIG_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // HANDPOS,
+    {
+        TRUE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        BIG_INV_SLOT_WIDTH,
+        BIG_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // SECONDHANDPOS
+    {
+        TRUE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        BIG_INV_SLOT_WIDTH,
+        BIG_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // BIGPOCK1
+    {
+        TRUE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        BIG_INV_SLOT_WIDTH,
+        BIG_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // BIGPOCK2
+    {
+        TRUE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        BIG_INV_SLOT_WIDTH,
+        BIG_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // BIGPOCK3
+    {
+        TRUE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        BIG_INV_SLOT_WIDTH,
+        BIG_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // BIGPOCK4
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // SMALLPOCK1
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // SMALLPOCK2
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // SMALLPOCK3
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // SMALLPOCK4
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // SMALLPOCK5
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },  // SMALLPOCK6
+    {
+        FALSE,
+        INV_BAR_DX,
+        INV_BAR_DY,
+        SM_INV_SLOT_WIDTH,
+        SM_INV_SLOT_HEIGHT,
+        0,
+        0,
+    },                                                                             // SMALLPOCK7
+    {FALSE, INV_BAR_DX, INV_BAR_DY, SM_INV_SLOT_WIDTH, SM_INV_SLOT_HEIGHT, 0, 0},  // SMALLPOCK8
 };
 
 typedef struct {
@@ -1174,7 +1307,6 @@ BOOLEAN HandleCompatibleAmmoUIForMapScreen(struct SOLDIERTYPE *pSoldier, INT32 b
           ValidAttachment(pTestObject->usItem, pObject->usItem) ||
           ValidLaunchable(pTestObject->usItem, pObject->usItem) ||
           ValidLaunchable(pObject->usItem, pTestObject->usItem)) {
-
         if (fOn != gbCompatibleAmmo[cnt]) {
           fFound = TRUE;
         }
@@ -1251,7 +1383,6 @@ BOOLEAN HandleCompatibleAmmoUIForMapInventory(struct SOLDIERTYPE *pSoldier, INT3
         ValidAttachment(pTestObject->usItem, pObject->usItem) ||
         ValidLaunchable(pTestObject->usItem, pObject->usItem) ||
         ValidLaunchable(pObject->usItem, pTestObject->usItem)) {
-
       if (fOn != fMapInventoryItemCompatable[cnt]) {
         fFound = TRUE;
       }
@@ -1351,7 +1482,6 @@ BOOLEAN InternalHandleCompatibleAmmoUI(struct SOLDIERTYPE *pSoldier, struct OBJE
         ValidAttachment(pTestObject->usItem, pObject->usItem) ||
         ValidLaunchable(pTestObject->usItem, pObject->usItem) ||
         ValidLaunchable(pObject->usItem, pTestObject->usItem)) {
-
       if (fOn != gbCompatibleAmmo[cnt]) {
         fFound = TRUE;
       }
