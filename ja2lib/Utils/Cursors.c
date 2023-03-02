@@ -111,13 +111,26 @@ struct CursorFileData CursorFileDatabase[] = {
 void RaiseMouseToLevel(INT8 bLevel) { gsGlobalCursorYOffset = gsMouseGlobalYOffsets[bLevel]; }
 
 CursorData CursorDatabase[] = {
-    {C_MISC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0,      0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+    {{{C_MISC, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}},
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0},
 
-    {C_TRINGS, 6, 0, HIDE_SUBCURSOR, HIDE_SUBCURSOR,
-     //{ C_TRINGS,				6, 0, CENTER_SUBCURSOR, CENTER_SUBCURSOR,
-     C_ACTIONMODE, 0, 0, CENTER_SUBCURSOR, CENTER_SUBCURSOR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 2, CENTER_CURSOR, CENTER_CURSOR, 0, 0, 0, 0},
+    {{C_TRINGS, 6, 0, HIDE_SUBCURSOR, HIDE_SUBCURSOR},
+     {C_ACTIONMODE, 0, 0, CENTER_SUBCURSOR, CENTER_SUBCURSOR},
+     {0, 0, 0, 0, 0},
+     {0, 0, 0, 0, 0},
+     {0, 0, 0, 0, 0, 2},
+     CENTER_CURSOR,
+     CENTER_CURSOR,
+     0,
+     0,
+     0,
+     0},
 
     // TARGET ( NORMAL W/ RINGS )
     {C_ACTIONMODERED,
