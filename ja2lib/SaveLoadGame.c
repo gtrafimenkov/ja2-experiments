@@ -453,15 +453,6 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
 
   sprintf(saveDir, "%S", pMessageStrings[MSG_SAVEDIRECTORY]);
 
-#ifdef JA2BETAVERSION
-#ifndef CRIPPLED_VERSION
-  AssertMsg(uiSizeOfGeneralInfo == 1024,
-            String("Saved General info is NOT 1024, it is %d.  DF 1.", uiSizeOfGeneralInfo));
-  AssertMsg(sizeof(LaptopSaveInfoStruct) == 7440,
-            String("LaptopSaveStruct is NOT 7440, it is %d.  DF 1.", sizeof(LaptopSaveInfoStruct)));
-#endif
-#endif
-
   if (ubSaveGameID >= NUM_SAVE_GAMES && ubSaveGameID != SAVE__ERROR_NUM &&
       ubSaveGameID != SAVE__END_TURN_NUM)
     return (FALSE);  // ddd
@@ -1117,11 +1108,6 @@ BOOLEAN LoadSavedGame(UINT8 ubSavedGameID) {
   ZeroAnimSurfaceCounts();
 
   ShutdownNPCQuotes();
-
-#ifdef JA2BETAVERSION
-  AssertMsg(uiSizeOfGeneralInfo == 1024,
-            String("Saved General info is NOT 1024, it is %d.  DF 1.", uiSizeOfGeneralInfo));
-#endif
 
   // is it a valid save number
   if (ubSavedGameID >= NUM_SAVE_GAMES) {
@@ -2093,11 +2079,6 @@ BOOLEAN LoadSavedGame(UINT8 ubSavedGameID) {
 
   // Reset the shadow
   SetFontShadow(DEFAULT_SHADOW);
-
-#ifdef JA2BETAVERSION
-  AssertMsg(uiSizeOfGeneralInfo == 1024,
-            String("Saved General info is NOT 1024, it is %d.  DF 1.", uiSizeOfGeneralInfo));
-#endif
 
   // if we succesfully LOADED! the game, mark this entry as the last saved game file
   gGameSettings.bLastSavedGameSlot = ubSavedGameID;

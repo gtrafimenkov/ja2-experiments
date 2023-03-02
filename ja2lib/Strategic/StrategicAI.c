@@ -3519,18 +3519,8 @@ void SendReinforcementsForGarrison(INT32 iDstGarrisonID, UINT16 usDefencePoints,
     gGarrisonGroup[iDstGarrisonID].ubPendingGroupID = pGroup->ubGroupID;
 
     if (ubNumExtraReinforcements) {
-#ifdef JA2BETAVERSION
-      LogStrategicEvent("%d troops have been sent from palace to stage assault near sector %c%d",
-                        ubGroupSize, ubDstSectorY + 'A' - 1, ubDstSectorX);
-#endif
-
       MoveSAIGroupToSector(&pGroup, gGarrisonGroup[iDstGarrisonID].ubSectorID, STAGE, STAGING);
     } else {
-#ifdef JA2BETAVERSION
-      LogStrategicEvent("%d troops have been sent from palace to garrison sector %c%d", ubGroupSize,
-                        ubDstSectorY + 'A' - 1, ubDstSectorX);
-#endif
-
       MoveSAIGroupToSector(&pGroup, gGarrisonGroup[iDstGarrisonID].ubSectorID, STAGE,
                            REINFORCEMENTS);
     }
@@ -3595,31 +3585,11 @@ void SendReinforcementsForGarrison(INT32 iDstGarrisonID, UINT16 usDefencePoints,
       gGarrisonGroup[iDstGarrisonID].ubPendingGroupID = pGroup->ubGroupID;
       if (ubNumExtraReinforcements) {
         pGroup->pEnemyGroup->ubPendingReinforcements = ubNumExtraReinforcements;
-
-#ifdef JA2BETAVERSION
-        LogStrategicEvent(
-            "%d troops have been sent from sector %c%d to stage assault near sector %c%d",
-            ubGroupSize, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX, ubDstSectorY + 'A' - 1,
-            ubDstSectorX);
-#endif
-
         MoveSAIGroupToSector(&pGroup, gGarrisonGroup[iDstGarrisonID].ubSectorID, STAGE, STAGING);
       } else {
-#ifdef JA2BETAVERSION
-        LogStrategicEvent("%d troops have been sent from sector %c%d to garrison sector %c%d",
-                          ubGroupSize, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX,
-                          ubDstSectorY + 'A' - 1, ubDstSectorX);
-#endif
-
         MoveSAIGroupToSector(&pGroup, gGarrisonGroup[iDstGarrisonID].ubSectorID, STAGE,
                              REINFORCEMENTS);
       }
-
-#ifdef JA2BETAVERSION
-      LogStrategicEvent(
-          "%d troops have been sent from garrison sector %c%d to patrol area near sector %c%d",
-          ubGroupSize, ubSrcSectorY + 'A' - 1, ubSrcSectorX, ubDstSectorY + 'A' - 1, ubDstSectorX);
-#endif
 
       ValidateWeights(19);
       return;

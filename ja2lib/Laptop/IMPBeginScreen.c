@@ -1212,6 +1212,7 @@ BOOLEAN CheckCharacterInputForEgg(void) {
     iPortraitNumber = 2;
 
     // DEF: temp
+    MERC_HIRE_STRUCT HireMercStruct;
     HireMercStruct.sSectorX = gsMercArriveSectorX;
     HireMercStruct.sSectorY = gsMercArriveSectorY;
     HireMercStruct.bSectorZ = 0;

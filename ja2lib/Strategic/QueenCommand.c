@@ -713,6 +713,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
       case SOLDIER_CLASS_ELITE:
 #ifdef JA2BETAVERSION
         if (!pGroup->pEnemyGroup->ubNumElites) {
+          wchar_t str[100];
           swprintf(
               str, ARR_SIZE(str),
               L"Enemy elite killed with ubGroupID of %d, but the group doesn't contain elites!",
@@ -743,6 +744,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
       case SOLDIER_CLASS_ARMY:
 #ifdef JA2BETAVERSION
         if (!pGroup->pEnemyGroup->ubNumTroops) {
+          wchar_t str[100];
           swprintf(
               str, ARR_SIZE(str),
               L"Enemy troop killed with ubGroupID of %d, but the group doesn't contain elites!",
@@ -773,6 +775,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
       case SOLDIER_CLASS_ADMINISTRATOR:
 #ifdef JA2BETAVERSION
         if (!pGroup->pEnemyGroup->ubNumAdmins) {
+          wchar_t str[100];
           swprintf(str, ARR_SIZE(str),
                    L"Enemy administrator killed with ubGroupID of %d, but the group doesn't "
                    L"contain elites!",
