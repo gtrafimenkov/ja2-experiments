@@ -1796,7 +1796,7 @@ void INVRenderItem(UINT32 uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJECTT
                  ShortItemNames[pObject->usAttachItem[ubStatusIndex - RENDER_ITEM_ATTACHMENT1]]);
       }
 
-      fLineSplit = WrapString(pStr, pStr2, WORD_WRAP_INV_WIDTH, ITEM_FONT);
+      fLineSplit = WrapString(pStr, pStr2, ARR_SIZE(pStr2), WORD_WRAP_INV_WIDTH, ITEM_FONT);
 
       VarFindFontCenterCoordinates(sX, sY, sWidth, sHeight, ITEM_FONT, &sFontX, &sFontY, pStr);
       sFontY = sY + 1;
