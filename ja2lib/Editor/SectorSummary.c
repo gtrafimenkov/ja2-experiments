@@ -1718,8 +1718,8 @@ BOOLEAN HandleSummaryInput(InputAtom *pEvent) {
 
 void CreateGlobalSummary() {
   FILE *fp;
-  STRING512 Dir;
-  STRING512 ExecDir;
+  char Dir[300];
+  char ExecDir[256];
 
   DebugPrint("Generating GlobalSummary Information...\n");
 
