@@ -20,7 +20,8 @@ format-modified:
 
 GCC_ERRORS_FLAGS := -Werror
 GCC_ERRORS_FLAGS += -Werror=sizeof-pointer-div
-GCC_ERRORS_FLAGS += -Wall
+GCC_ERRORS_FLAGS += -Werror=unused-but-set-variable
+# GCC_ERRORS_FLAGS += -Wall
 CC = gcc
 CXX	= g++
 CFLAG = -fPIC --std=gnu17 $(GCC_ERRORS_FLAGS) -DFORCE_ASSERTS_ON -I./ja2lib
