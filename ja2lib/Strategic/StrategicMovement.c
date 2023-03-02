@@ -837,11 +837,11 @@ void PrepareForPreBattleInterface(struct GROUP *pPlayerDialogGroup,
   // Set music
   SetMusicMode(MUSIC_TACTICAL_ENEMYPRESENT);
 
-  if (gfTacticalTraversal && pInitiatingBattleGroup == gpTacticalTraversalGroup ||
-      pInitiatingBattleGroup && !pInitiatingBattleGroup->fPlayer &&
-          pInitiatingBattleGroup->ubSectorX == gWorldSectorX &&
-          pInitiatingBattleGroup->ubSectorY == gWorldSectorY &&
-          !gbWorldSectorZ) {  // At least say quote....
+  if ((gfTacticalTraversal && pInitiatingBattleGroup == gpTacticalTraversalGroup) ||
+      (pInitiatingBattleGroup && !pInitiatingBattleGroup->fPlayer &&
+       pInitiatingBattleGroup->ubSectorX == gWorldSectorX &&
+       pInitiatingBattleGroup->ubSectorY == gWorldSectorY &&
+       !gbWorldSectorZ)) {  // At least say quote....
     if (ubNumMercs > 0) {
       if (pPlayerDialogGroup->uiFlags & GROUPFLAG_JUST_RETREATED_FROM_BATTLE) {
         gfCantRetreatInPBI = TRUE;
@@ -1329,16 +1329,16 @@ void GroupArrivedAtSector(UINT8 ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fNev
   // First check if the group arriving is going to queue another battle.
   // NOTE:  We can't have more than one battle ongoing at a time.
   if (fExceptionQueue ||
-      fCheckForBattle && gTacticalStatus.fEnemyInSector &&
-          FindMovementGroupInSector((UINT8)gWorldSectorX, (UINT8)gWorldSectorY, TRUE) &&
-          (pGroup->ubNextX != gWorldSectorX || pGroup->ubNextY != gWorldSectorY ||
-           gbWorldSectorZ > 0) ||
+      (fCheckForBattle && gTacticalStatus.fEnemyInSector &&
+       FindMovementGroupInSector((UINT8)gWorldSectorX, (UINT8)gWorldSectorY, TRUE) &&
+       (pGroup->ubNextX != gWorldSectorX || pGroup->ubNextY != gWorldSectorY ||
+        gbWorldSectorZ > 0)) ||
       AreInMeanwhile() ||
       // KM : Aug 11, 1999 -- Patch fix:  Added additional checks to prevent a 2nd battle in the
       // case
       //     where the player is involved in a potential battle with bloodcats/civilians
-      fCheckForBattle && HostileCiviliansPresent() ||
-      fCheckForBattle && HostileBloodcatsPresent()) {
+      (fCheckForBattle && HostileCiviliansPresent()) ||
+      (fCheckForBattle && HostileBloodcatsPresent())) {
     // QUEUE BATTLE!
     // Delay arrival by a random value ranging from 3-5 minutes, so it doesn't get the player
     // too suspicious after it happens to him a few times, which, by the way, is a rare occurrence.
