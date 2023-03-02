@@ -1264,7 +1264,7 @@ BOOLEAN CharacterDialogue(UINT8 ubCharacterNum, UINT16 usQuoteNum, INT32 iFaceIn
 }
 
 BOOLEAN SpecialCharacterDialogueEvent(uintptr_t uiSpecialEventFlag, uintptr_t uiSpecialEventData1,
-                                      UINT32 uiSpecialEventData2, UINT32 uiSpecialEventData3,
+                                      uintptr_t uiSpecialEventData2, UINT32 uiSpecialEventData3,
                                       INT32 iFaceIndex, UINT8 bUIHandlerID) {
   DIALOGUE_Q_STRUCT *QItem;
 

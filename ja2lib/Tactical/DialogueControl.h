@@ -264,7 +264,7 @@ BOOLEAN CharacterDialogue(UINT8 ubCharacterNum, UINT16 usQuoteNum, INT32 iFaceIn
 
 // A special event can be setup which can be queued with other speech
 BOOLEAN SpecialCharacterDialogueEvent(uintptr_t uiSpecialEventFlag, uintptr_t uiSpecialEventData1,
-                                      UINT32 uiSpecialEventData2, UINT32 uiSpecialEventData3,
+                                      uintptr_t uiSpecialEventData2, UINT32 uiSpecialEventData3,
                                       INT32 iFaceIndex, UINT8 bUIHandlerID);
 
 // Same as above, for triggers, with extra param to hold approach value

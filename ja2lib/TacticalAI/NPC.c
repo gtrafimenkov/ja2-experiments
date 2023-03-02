@@ -1282,7 +1282,7 @@ void ResetOncePerConvoRecordsForAllNPCsInLoadedSector(void) {
   }
 }
 
-void ReturnItemToPlayerIfNecessary(UINT8 ubMerc, INT8 bApproach, UINT32 uiApproachData,
+void ReturnItemToPlayerIfNecessary(UINT8 ubMerc, INT8 bApproach, uintptr_t uiApproachData,
                                    NPCQuoteInfo *pQuotePtr) {
   struct OBJECTTYPE *pObj;
   struct SOLDIERTYPE *pSoldier;
@@ -1304,7 +1304,7 @@ void ReturnItemToPlayerIfNecessary(UINT8 ubMerc, INT8 bApproach, UINT32 uiApproa
   }
 }
 
-void Converse(UINT8 ubNPC, UINT8 ubMerc, INT8 bApproach, UINT32 uiApproachData) {
+void Converse(UINT8 ubNPC, UINT8 ubMerc, INT8 bApproach, uintptr_t uiApproachData) {
   NPCQuoteInfo QuoteInfo;
   NPCQuoteInfo *pQuotePtr = &(QuoteInfo);
   NPCQuoteInfo *pNPCQuoteInfoArray = NULL;
