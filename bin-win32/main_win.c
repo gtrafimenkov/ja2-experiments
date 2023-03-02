@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <zmouse.h>
 
+#include "StrUtils.h"
 #include "BuildDefines.h"
 #include "GameLoop.h"
 #include "Globals.h"
@@ -209,8 +210,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
   ghInstance = hInstance;
 
   // Copy commandline!
-  strncpy(gzCommandLine, pCommandLine, 100);
-  gzCommandLine[99] = '\0';
+  strcopy(gzCommandLine, ARR_SIZE(gzCommandLine), pCommandLine);
 
   // Process the command line BEFORE initialization
   ProcessJa2CommandLineBeforeInitialization(pCommandLine);

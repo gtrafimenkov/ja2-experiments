@@ -4,11 +4,11 @@
 #include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "StrUtils.h"
 #include "SGP/Types.h"
 #include "platform.h"
 
@@ -23,8 +23,7 @@ void Plat_FileBaseName(const char *path, char *outputBuf, u32 bufSize) {
   }
   const char *fileName = basename(copy);
 
-  strncpy(outputBuf, fileName, bufSize);
-  outputBuf[bufSize - 1] = 0;
+  strcopy(outputBuf, bufSize, fileName);
 
   free(copy);
 }
@@ -95,8 +94,7 @@ BOOLEAN Plat_GetExecutableDirectory(char *buf, u16 bufSize) {
   }
 
   const char *path = dirname(result);
-  strncpy(buf, path, bufSize);
-  buf[bufSize - 1] = 0;
+  strcopy(buf, bufSize, path);
   return TRUE;
 }
 

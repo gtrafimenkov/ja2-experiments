@@ -2,6 +2,7 @@
 
 #include <windows.h>
 
+#include "StrUtils.h"
 #include "SGP/Debug.h"
 #include "SGP/Timer.h"
 #include "platform.h"
@@ -19,8 +20,7 @@ BOOLEAN Plat_GetExecutableDirectory(char *buf, u16 bufSize) {
   }
 
   // Now get directory
-  strncpy(buf, ModuleFilename, bufSize);
-  buf[bufSize - 1] = 0;
+  strcopy(buf, bufSize, ModuleFilename);
 
   for (cnt = strlen(buf) - 1; cnt >= 0; cnt--) {
     if (buf[cnt] == '\\') {

@@ -1082,8 +1082,7 @@ void Plat_FileBaseName(const char *path, char *outputBuf, u32 bufSize) {
 
   _splitpath(path, sDrive, sPath, sName, sExt);
 
-  strncpy(outputBuf, sName, bufSize);
-  outputBuf[bufSize - 1] = 0;
+  strcopy(outputBuf, bufSize, sName);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
