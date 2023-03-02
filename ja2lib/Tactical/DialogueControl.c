@@ -886,8 +886,9 @@ void HandleDialogue() {
         CHAR16 wTempString[128];
 
         // tell player about stat increase
-        BuildStatChangeString(wTempString, pSoldier->name, (BOOLEAN)QItem->uiSpecialEventData,
-                              (INT16)QItem->uiSpecialEventData2, (UINT8)QItem->uiSpecialEventData3);
+        BuildStatChangeString(wTempString, ARR_SIZE(wTempString), pSoldier->name,
+                              (BOOLEAN)QItem->uiSpecialEventData, (INT16)QItem->uiSpecialEventData2,
+                              (UINT8)QItem->uiSpecialEventData3);
         ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, wTempString);
       }
     } else if (QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_UNSET_ARRIVES_FLAG) {
