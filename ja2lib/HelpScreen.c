@@ -616,22 +616,6 @@ BOOLEAN EnterHelpScreen() {
       ButtonList[gHelpScreenDontShowHelpAgainToggle]->uiFlags &= ~BUTTON_CLICKED_ON;
   }
 
-  /*
-          ///creatre a region for the text that says ' [ x ] click to continue seeing ....'
-          iStartLoc = HELPSCREEN_RECORD_SIZE * HLP_TXT_CONSTANT_FOOTER;
-          LoadEncryptedDataFromFile(HELPSCREEN_FILE, zText, iStartLoc, HELPSCREEN_RECORD_SIZE );
-
-          usWidth = StringPixLength( zText, HELP_SCREEN_TEXT_BODY_FONT );
-          usHeight = GetFontHeight( HELP_SCREEN_TEXT_BODY_FONT );
-
-  /*
-          MSYS_DefineRegion( &HelpScreenDontShowHelpAgainToggleTextRegion, usPosX, usPosY,
-  (UINT16)(usPosX+usWidth), (UINT16)(usPosY+usHeight), MSYS_PRIORITY_HIGHEST-1,
-                                                           gHelpScreen.usCursor, MSYS_NO_CALLBACK,
-  HelpScreenDontShowHelpAgainToggleTextRegionCallBack ); MSYS_AddRegion(
-  &HelpScreenDontShowHelpAgainToggleTextRegion );
-  */
-
   // load the help screen background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\HelpScreen.sti", VObjectDesc.ImageFile);
