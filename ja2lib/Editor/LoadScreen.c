@@ -928,7 +928,7 @@ void FDlgDwnCallback(GUI_BUTTON *butn, INT32 reason) {
 }
 
 BOOLEAN ExtractFilenameFromFields() {
-  Get16BitStringFromField(0, gzFilename);
+  Get16BitStringFromField(0, gzFilename, ARR_SIZE(gzFilename));
   return ValidFilename();
 }
 

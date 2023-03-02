@@ -63,6 +63,7 @@ typedef struct TEXTINPUTNODE {
   UINT16 usInputType;
   UINT8 ubMaxChars;
   STR16 szString;
+  size_t szStringBufSize;
   UINT8 ubStrLen;
   BOOLEAN fEnabled;
   BOOLEAN fUserField;
@@ -246,15 +247,17 @@ void AddTextInputField(INT16 sLeft, INT16 sTop, INT16 sWidth, INT16 sHeight, INT
   // All 24hourclock inputtypes have 6 characters.  01:23 (null terminated)
   if (usInputType == INPUTTYPE_EXCLUSIVE_24HOURCLOCK) ubMaxChars = 6;
   // Allocate and copy the string.
-  pNode->szString = (STR16)MemAlloc((ubMaxChars + 1) * sizeof(CHAR16));
+  size_t bufSize = (ubMaxChars + 1);
+  pNode->szString = (STR16)MemAlloc(bufSize * sizeof(CHAR16));
+  pNode->szStringBufSize = bufSize;
   Assert(pNode->szString);
   if (szInitText) {
     pNode->ubStrLen = (UINT8)wcslen(szInitText);
     Assert(pNode->ubStrLen <= ubMaxChars);
-    swprintf(pNode->szString, ARR_SIZE(pNode->szString), szInitText);
+    swprintf(pNode->szString, pNode->szStringBufSize, szInitText);
   } else {
     pNode->ubStrLen = 0;
-    swprintf(pNode->szString, ARR_SIZE(pNode->szString), L"");
+    swprintf(pNode->szString, pNode->szStringBufSize, L"");
   }
   pNode->ubMaxChars = ubMaxChars;  // max string length
 
@@ -324,6 +327,7 @@ void RemoveTextInputField(UINT8 ubField) {
       if (curr->szString) {
         MemFree(curr->szString);
         curr->szString = NULL;
+        curr->szStringBufSize = 0;
         MSYS_RemoveRegion(&curr->region);
       }
       MemFree(curr);
@@ -357,10 +361,10 @@ void SetInputFieldStringWith16BitString(UINT8 ubField, STR16 szNewText) {
       if (szNewText) {
         curr->ubStrLen = (UINT8)wcslen(szNewText);
         Assert(curr->ubStrLen <= curr->ubMaxChars);
-        swprintf(curr->szString, ARR_SIZE(curr->szString), szNewText);
+        swprintf(curr->szString, curr->szStringBufSize, szNewText);
       } else if (!curr->fUserField) {
         curr->ubStrLen = 0;
-        swprintf(curr->szString, ARR_SIZE(curr->szString), L"");
+        swprintf(curr->szString, curr->szStringBufSize, L"");
       } else {
         AssertMsg(0, String("Attempting to illegally set text into user field %d", curr->ubID));
       }
@@ -378,10 +382,10 @@ void SetInputFieldStringWith8BitString(CHAR8 ubField, STR8 szNewText) {
       if (szNewText) {
         curr->ubStrLen = (UINT8)strlen(szNewText);
         Assert(curr->ubStrLen <= curr->ubMaxChars);
-        swprintf(curr->szString, ARR_SIZE(curr->szString), L"%S", szNewText);
+        swprintf(curr->szString, curr->szStringBufSize, L"%S", szNewText);
       } else if (!curr->fUserField) {
         curr->ubStrLen = 0;
-        swprintf(curr->szString, ARR_SIZE(curr->szString), L"");
+        swprintf(curr->szString, curr->szStringBufSize, L"");
       } else {
         AssertMsg(0, String("Attempting to illegally set text into user field %d", curr->ubID));
       }
@@ -391,26 +395,12 @@ void SetInputFieldStringWith8BitString(CHAR8 ubField, STR8 szNewText) {
   }
 }
 
-// Allows external functions to access the strings within the fields at anytime.
-void Get8BitStringFromField(UINT8 ubField, STR8 szString) {
+void Get16BitStringFromField(UINT8 ubField, STR16 szString, size_t bufSize) {
   TEXTINPUTNODE *curr;
   curr = gpTextInputHead;
   while (curr) {
     if (curr->ubID == ubField) {
-      sprintf(szString, "%S", curr->szString);
-      return;
-    }
-    curr = curr->next;
-  }
-  szString[0] = '\0';
-}
-
-void Get16BitStringFromField(UINT8 ubField, STR16 szString) {
-  TEXTINPUTNODE *curr;
-  curr = gpTextInputHead;
-  while (curr) {
-    if (curr->ubID == ubField) {
-      swprintf(szString, ARR_SIZE(szString), curr->szString);
+      swprintf(szString, bufSize, curr->szString);
       return;
     }
     curr = curr->next;
@@ -424,7 +414,7 @@ INT32 GetNumericStrictValueFromField(UINT8 ubField) {
   STR16 ptr;
   CHAR16 str[20];
   INT32 total;
-  Get16BitStringFromField(ubField, str);
+  Get16BitStringFromField(ubField, str, ARR_SIZE(str));
   // Blank string, so return -1
   if (str[0] == '\0') return -1;
   // Convert the string to a number.  Don't trust other functions.  This will
@@ -453,13 +443,13 @@ void SetInputFieldStringWithNumericStrictValue(UINT8 ubField, INT32 iNumber) {
       if (curr->fUserField)
         AssertMsg(0, String("Attempting to illegally set text into user field %d", curr->ubID));
       if (iNumber < 0)  // negative number converts to blank string
-        swprintf(curr->szString, ARR_SIZE(curr->szString), L"");
+        swprintf(curr->szString, curr->szStringBufSize, L"");
       else {
         INT32 iMax = (INT32)pow(10.0, curr->ubMaxChars);
         if (iNumber > iMax)  // set string to max value based on number of chars.
-          swprintf(curr->szString, ARR_SIZE(curr->szString), L"%d", iMax - 1);
+          swprintf(curr->szString, curr->szStringBufSize, L"%d", iMax - 1);
         else  // set string to the number given
-          swprintf(curr->szString, ARR_SIZE(curr->szString), L"%d", iNumber);
+          swprintf(curr->szString, curr->szStringBufSize, L"%d", iNumber);
       }
       curr->ubStrLen = (UINT8)wcslen(curr->szString);
       return;

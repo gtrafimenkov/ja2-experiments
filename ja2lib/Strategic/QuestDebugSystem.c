@@ -2561,7 +2561,7 @@ BOOLEAN CreateDestroyDisplayTextEntryBox(UINT8 ubAction, STR16 pString,
       gfRedrawQuestDebugSystem = TRUE;
 
       // get the striong from the text field
-      Get16BitStringFromField(0, zText);
+      Get16BitStringFromField(0, zText, ARR_SIZE(zText));
 
       // if the text is not null
       if (zText[0] != '\0') {

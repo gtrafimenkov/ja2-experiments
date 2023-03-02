@@ -882,7 +882,7 @@ void GetSaveLoadScreenUserInput() {
           if (gfSaveGame) {
             bActiveTextField = (INT8)GetActiveFieldID();
             if (bActiveTextField && bActiveTextField != -1) {
-              Get16BitStringFromField((UINT8)bActiveTextField, gzGameDescTextField);
+              Get16BitStringFromField((UINT8)bActiveTextField, gzGameDescTextField, ARR_SIZE(gzGameDescTextField));
               SetActiveField(0);
 
               DestroySaveLoadTextInputBoxes();
@@ -922,7 +922,7 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
 
     bActiveTextField = (INT8)GetActiveFieldID();
     if (bActiveTextField && bActiveTextField != -1) {
-      Get16BitStringFromField((UINT8)bActiveTextField, gzGameDescTextField);
+      Get16BitStringFromField((UINT8)bActiveTextField, gzGameDescTextField, ARR_SIZE(gzGameDescTextField));
     }
 
     // if there is save game in the slot, ask for confirmation before overwriting
@@ -1526,7 +1526,7 @@ void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
         } else {
           bActiveTextField = (INT8)GetActiveFieldID();
           if (bActiveTextField && bActiveTextField != -1) {
-            Get16BitStringFromField((UINT8)bActiveTextField, gzGameDescTextField);
+            Get16BitStringFromField((UINT8)bActiveTextField, gzGameDescTextField, ARR_SIZE(gzGameDescTextField));
             SetActiveField(0);
 
             DestroySaveLoadTextInputBoxes();

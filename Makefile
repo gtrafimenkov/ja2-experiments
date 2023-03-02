@@ -18,12 +18,13 @@ format-modified:
 # linux build
 ###################################################################
 
+# GCC_ERRORS_FLAGS := -Wall -Werror
+GCC_ERRORS_FLAGS := -Werror
+GCC_ERRORS_FLAGS += -Werror=sizeof-pointer-div
 CC = gcc
 CXX	= g++
-CFLAG = -fPIC --std=gnu17 -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
-CXXFLAG = -fPIC --std=gnu++17 -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
-# COMPILE_FLAGS = -c -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
-# COMPILE_FLAGS = -c -Wall --std=c17 -DFORCE_ASSERTS_ON -I./ja2lib
+CFLAG = -fPIC --std=gnu17 $(GCC_ERRORS_FLAGS) -DFORCE_ASSERTS_ON -I./ja2lib
+CXXFLAG = -fPIC --std=gnu++17 $(GCC_ERRORS_FLAGS) -DFORCE_ASSERTS_ON -I./ja2lib
 
 TARGET_ARCH    ?=
 ifeq "$(TARGET_ARCH)" ""
