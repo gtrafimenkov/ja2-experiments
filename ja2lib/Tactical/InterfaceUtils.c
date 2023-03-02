@@ -3,7 +3,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "StrUtils.h"
 #include "JAScreens.h"
 #include "SGP/HImage.h"
 #include "SGP/Line.h"
@@ -13,6 +12,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "StrUtils.h"
 #include "Tactical/Faces.h"
 #include "Tactical/Interface.h"
 #include "Tactical/InterfaceControl.h"

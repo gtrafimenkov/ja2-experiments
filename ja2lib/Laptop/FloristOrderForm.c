@@ -1031,7 +1031,8 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(UINT8 ubDropDownMode) {
 
       // if its the personel sentiment field
       if (ubTextFieldID == 1) {
-        Get16BitStringFromField(ubTextFieldID, gsSentimentTextField, ARR_SIZE(gsSentimentTextField));
+        Get16BitStringFromField(ubTextFieldID, gsSentimentTextField,
+                                ARR_SIZE(gsSentimentTextField));
       } else if (ubTextFieldID == 2) {
         // else its the name field
         Get16BitStringFromField(ubTextFieldID, gsNameTextField, ARR_SIZE(gsNameTextField));
@@ -1271,7 +1272,8 @@ void HandleFloristOrderKeyBoardInput() {
 
           // if its the personel sentiment field
           if (ubTextFieldID == 1) {
-            Get16BitStringFromField(ubTextFieldID, gsSentimentTextField, ARR_SIZE(gsSentimentTextField));
+            Get16BitStringFromField(ubTextFieldID, gsSentimentTextField,
+                                    ARR_SIZE(gsSentimentTextField));
           } else if (ubTextFieldID == 2) {
             // else its the name field
             Get16BitStringFromField(ubTextFieldID, gsNameTextField, ARR_SIZE(gsNameTextField));

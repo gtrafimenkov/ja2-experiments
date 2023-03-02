@@ -942,8 +942,7 @@ void ProcessHistoryTransactionString(STR16 pString, size_t bufSize, HistoryUnitP
                  gMercProfiles[pHistory->ubSecondCode].zName);
 #ifdef JA2BETAVERSION
       else {
-        swprintf(pString, bufSize, pHistoryStrings[HISTORY_MERC_KILLED],
-                 L"ERROR!!!  NO_PROFILE");
+        swprintf(pString, bufSize, pHistoryStrings[HISTORY_MERC_KILLED], L"ERROR!!!  NO_PROFILE");
       }
 #endif
       break;
@@ -957,8 +956,7 @@ void ProcessHistoryTransactionString(STR16 pString, size_t bufSize, HistoryUnitP
       swprintf(pString, bufSize, pHistoryStrings[HISTORY_SETTLED_ACCOUNTS_AT_MERC]);
       break;
     case HISTORY_ACCEPTED_ASSIGNMENT_FROM_ENRICO:
-      swprintf(pString, bufSize,
-               pHistoryStrings[HISTORY_ACCEPTED_ASSIGNMENT_FROM_ENRICO]);
+      swprintf(pString, bufSize, pHistoryStrings[HISTORY_ACCEPTED_ASSIGNMENT_FROM_ENRICO]);
       break;
     case (HISTORY_CHARACTER_GENERATED):
       swprintf(pString, bufSize, pHistoryStrings[HISTORY_CHARACTER_GENERATED]);

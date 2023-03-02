@@ -8,8 +8,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "StrUtils.h"
 #include "SGP/Types.h"
+#include "StrUtils.h"
 #include "platform.h"
 
 BOOLEAN Plat_DeleteFile(const char *filename) { return unlink(filename) == 0; }

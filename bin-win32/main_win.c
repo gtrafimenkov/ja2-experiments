@@ -4,7 +4,6 @@
 #include <windows.h>
 #include <zmouse.h>
 
-#include "StrUtils.h"
 #include "BuildDefines.h"
 #include "GameLoop.h"
 #include "Globals.h"
@@ -25,6 +24,7 @@
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
+#include "StrUtils.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
 #include "Strategic/MapScreenInterfaceMap.h"

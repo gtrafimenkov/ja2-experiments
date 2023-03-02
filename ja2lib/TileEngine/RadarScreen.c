@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "StrUtils.h"
 #include "Globals.h"
 #include "JAScreens.h"
 #include "SGP/ButtonSystem.h"
@@ -16,6 +15,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "StrUtils.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterfaceMapInventory.h"
 #include "Strategic/Meanwhile.h"

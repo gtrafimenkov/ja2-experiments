@@ -1076,7 +1076,8 @@ void DisplayItemNameAndInfo(UINT16 usPosY, UINT16 usIndex, UINT16 usBobbyIndex, 
   LoadEncryptedDataFromFile(BOBBYRDESCFILE, sText, uiStartLoc, BOBBYR_ITEM_DESC_NAME_SIZE);
 
   if (StringPixLength(sText, BOBBYR_ITEM_NAME_TEXT_FONT) > (BOBBYR_GRID_PIC_WIDTH - 6))
-    ReduceStringLength(sText, ARR_SIZE(sText), BOBBYR_GRID_PIC_WIDTH - 6, BOBBYR_ITEM_NAME_TEXT_FONT);
+    ReduceStringLength(sText, ARR_SIZE(sText), BOBBYR_GRID_PIC_WIDTH - 6,
+                       BOBBYR_ITEM_NAME_TEXT_FONT);
 
   DrawTextToScreen(sText, BOBBYR_ITEM_NAME_X, (UINT16)(usPosY + BOBBYR_ITEM_NAME_Y_OFFSET), 0,
                    BOBBYR_ITEM_NAME_TEXT_FONT, BOBBYR_ITEM_NAME_TEXT_COLOR, FONT_MCOLOR_BLACK,

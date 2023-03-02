@@ -408,7 +408,8 @@ void ProcessMercEditing() {
             ubPaletteRep = (UINT8)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
 
           SET_PALETTEREP_ID(pSoldier->PantsPal, gpPalRep[ubPaletteRep].ID);
-          memcpy(gpSelected->pDetailedPlacement->PantsPal, pSoldier->PantsPal, sizeof(PaletteRepID));
+          memcpy(gpSelected->pDetailedPlacement->PantsPal, pSoldier->PantsPal,
+                 sizeof(PaletteRepID));
           CreateSoldierPalettes(pSoldier);
           break;
         case 7:
@@ -421,7 +422,8 @@ void ProcessMercEditing() {
             ubPaletteRep = (UINT8)iEditColorStart[ubType];
 
           SET_PALETTEREP_ID(pSoldier->PantsPal, gpPalRep[ubPaletteRep].ID);
-          memcpy(gpSelected->pDetailedPlacement->PantsPal, pSoldier->PantsPal, sizeof(PaletteRepID));
+          memcpy(gpSelected->pDetailedPlacement->PantsPal, pSoldier->PantsPal,
+                 sizeof(PaletteRepID));
           CreateSoldierPalettes(pSoldier);
           break;
       }
@@ -994,10 +996,14 @@ void MercsToggleColorModeCallback(GUI_BUTTON *btn, INT32 reason) {
     {
       EnableEditorButtons(FIRST_MERCS_COLOR_BUTTON, LAST_MERCS_COLOR_BUTTON);
       gpSelected->pDetailedPlacement->fVisible = TRUE;
-      memcpy(gpSelected->pDetailedPlacement->HeadPal, gpSelected->pSoldier->HeadPal, sizeof(PaletteRepID));
-      memcpy(gpSelected->pDetailedPlacement->SkinPal, gpSelected->pSoldier->SkinPal, sizeof(PaletteRepID));
-      memcpy(gpSelected->pDetailedPlacement->VestPal, gpSelected->pSoldier->VestPal, sizeof(PaletteRepID));
-      memcpy(gpSelected->pDetailedPlacement->PantsPal, gpSelected->pSoldier->PantsPal, sizeof(PaletteRepID));
+      memcpy(gpSelected->pDetailedPlacement->HeadPal, gpSelected->pSoldier->HeadPal,
+             sizeof(PaletteRepID));
+      memcpy(gpSelected->pDetailedPlacement->SkinPal, gpSelected->pSoldier->SkinPal,
+             sizeof(PaletteRepID));
+      memcpy(gpSelected->pDetailedPlacement->VestPal, gpSelected->pSoldier->VestPal,
+             sizeof(PaletteRepID));
+      memcpy(gpSelected->pDetailedPlacement->PantsPal, gpSelected->pSoldier->PantsPal,
+             sizeof(PaletteRepID));
     } else  // button is unchecked.
     {
       DisableEditorButtons(FIRST_MERCS_COLOR_BUTTON, LAST_MERCS_COLOR_BUTTON);

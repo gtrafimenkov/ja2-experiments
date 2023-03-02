@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "StrUtils.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
 #include "SGP/ImpTGA.h"
@@ -13,6 +12,7 @@
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"
+#include "StrUtils.h"
 #include "platform_strings.h"
 
 // This is the color substituted to keep a 24bpp -> 16bpp color
@@ -37,7 +37,7 @@ typedef union {
   UINT32 uiValue;
 } SplitUINT32;
 
-HIMAGE CreateImage(const char* ImageFile, UINT16 fContents) {
+HIMAGE CreateImage(const char *ImageFile, UINT16 fContents) {
   HIMAGE hImage = NULL;
   SGPFILENAME Extension;
   CHAR8 ExtensionSep[] = ".";
@@ -83,7 +83,8 @@ HIMAGE CreateImage(const char* ImageFile, UINT16 fContents) {
 
   // Determine if resource exists before creating image structure
   if (!FileMan_Exists(imageFileCopy)) {
-    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2, String("Resource file %s does not exist.", imageFileCopy));
+    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2,
+               String("Resource file %s does not exist.", imageFileCopy));
     return (NULL);
   }
 

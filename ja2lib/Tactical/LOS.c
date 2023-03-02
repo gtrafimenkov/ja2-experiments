@@ -1508,7 +1508,8 @@ BOOLEAN SoldierToSoldierLineOfSightTimingTest(struct SOLDIERTYPE *pStartSoldier,
     fprintf(OutFile, "DEBUG: ");
 #endif
     char buf[100];
-    snprintf(buf, ARR_SIZE(buf), "Time for %d calls is %d milliseconds\n", uiLoopLimit, uiEndTime - uiStartTime);
+    snprintf(buf, ARR_SIZE(buf), "Time for %d calls is %d milliseconds\n", uiLoopLimit,
+             uiEndTime - uiStartTime);
     fprintf(OutFile, "%s", buf);
     fclose(OutFile);
   }

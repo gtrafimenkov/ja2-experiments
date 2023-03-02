@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "StrUtils.h"
 #include "BuildDefines.h"
 #include "Editor/EditScreen.h"
 #include "Editor/EditorDefines.h"
@@ -20,6 +19,7 @@
 #include "SGP/VObjectBlitters.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
+#include "StrUtils.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/MapInformation.h"
 #include "Tactical/SoldierCreate.h"

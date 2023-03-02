@@ -2,9 +2,9 @@
 
 #include <windows.h>
 
-#include "StrUtils.h"
 #include "SGP/Debug.h"
 #include "SGP/Timer.h"
+#include "StrUtils.h"
 #include "platform.h"
 
 /////////////////////////////////////////////////////////////////////////////////
