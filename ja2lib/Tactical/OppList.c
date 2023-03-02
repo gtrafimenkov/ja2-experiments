@@ -166,7 +166,9 @@ INT8 gbLookDistance[8][8] = {
     //                   NORTH    | NORTHEAST  |   EAST   |  SOUTHEAST  |   SOUTH  |  SOUTHWEST  |
     //                   WEST    |  NORTHWEST
 
-    /* NORTH      */ STRAIGHT,
+    /* NORTH      */
+    {
+      STRAIGHT,
     ANGLE,
     SIDE,
     SBEHIND,
@@ -174,8 +176,11 @@ INT8 gbLookDistance[8][8] = {
     SBEHIND,
     SIDE,
     ANGLE,
+    },
 
-    /* NORTHEAST  */ ANGLE,
+    /* NORTHEAST  */
+    {
+      ANGLE,
     STRAIGHT,
     ANGLE,
     SIDE,
@@ -183,8 +188,11 @@ INT8 gbLookDistance[8][8] = {
     BEHIND,
     SBEHIND,
     SIDE,
+    },
 
-    /* EAST       */ SIDE,
+    /* EAST       */
+    {
+      SIDE,
     ANGLE,
     STRAIGHT,
     ANGLE,
@@ -192,8 +200,11 @@ INT8 gbLookDistance[8][8] = {
     SBEHIND,
     BEHIND,
     SBEHIND,
+    },
 
-    /* SOUTHEAST  */ SBEHIND,
+    /* SOUTHEAST  */
+    {
+      SBEHIND,
     SIDE,
     ANGLE,
     STRAIGHT,
@@ -201,8 +212,11 @@ INT8 gbLookDistance[8][8] = {
     SIDE,
     SBEHIND,
     BEHIND,
+    },
 
-    /* SOUTH      */ BEHIND,
+    /* SOUTH      */
+    {
+      BEHIND,
     SBEHIND,
     SIDE,
     ANGLE,
@@ -210,8 +224,11 @@ INT8 gbLookDistance[8][8] = {
     ANGLE,
     SIDE,
     SBEHIND,
+    },
 
-    /* SOUTHWEST  */ SBEHIND,
+    /* SOUTHWEST  */
+    {
+      SBEHIND,
     BEHIND,
     SBEHIND,
     SIDE,
@@ -219,8 +236,11 @@ INT8 gbLookDistance[8][8] = {
     STRAIGHT,
     ANGLE,
     SIDE,
+    },
 
-    /* WEST       */ SIDE,
+    /* WEST       */
+    {
+      SIDE,
     SBEHIND,
     BEHIND,
     SBEHIND,
@@ -228,8 +248,11 @@ INT8 gbLookDistance[8][8] = {
     ANGLE,
     STRAIGHT,
     ANGLE,
+    },
 
-    /* NORTHWEST  */ ANGLE,
+    /* NORTHWEST  */
+    {
+      ANGLE,
     SIDE,
     SBEHIND,
     BEHIND,
@@ -237,6 +260,7 @@ INT8 gbLookDistance[8][8] = {
     SIDE,
     ANGLE,
     STRAIGHT,
+    },
 
 };
 
@@ -2893,9 +2917,6 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, UINT8 ubAbout, UINT8 ubTeamToR
               revealedEnemies++;
               fContactSeen = TRUE;
             } else {
-              if (MercPtrs[0]->bLife < 10) {
-                int i = 0;
-              }
             }
           }
 
