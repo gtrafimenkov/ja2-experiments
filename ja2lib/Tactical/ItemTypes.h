@@ -225,11 +225,13 @@ typedef struct
 
 // item flag combinations
 
-#define IF_STANDARD_GUN                                                                    \
-  (ITEM_DAMAGEABLE | ITEM_WATER_DAMAGES | ITEM_REPAIRABLE | ITEM_SHOW_STATUS | ITEM_METAL | ITEM_SINKS)
+#define IF_STANDARD_GUN                                                                     \
+  (ITEM_DAMAGEABLE | ITEM_WATER_DAMAGES | ITEM_REPAIRABLE | ITEM_SHOW_STATUS | ITEM_METAL | \
+   ITEM_SINKS)
 #define IF_TWOHANDED_GUN (IF_STANDARD_GUN | ITEM_TWO_HANDED)
-#define IF_STANDARD_BLADE                                                                  \
-  (ITEM_DAMAGEABLE | ITEM_WATER_DAMAGES | ITEM_REPAIRABLE | ITEM_SHOW_STATUS | ITEM_METAL | ITEM_SINKS)
+#define IF_STANDARD_BLADE                                                                   \
+  (ITEM_DAMAGEABLE | ITEM_WATER_DAMAGES | ITEM_REPAIRABLE | ITEM_SHOW_STATUS | ITEM_METAL | \
+   ITEM_SINKS)
 #define IF_STANDARD_ARMOUR (ITEM_DAMAGEABLE | ITEM_REPAIRABLE | ITEM_SHOW_STATUS | ITEM_SINKS)
 #define IF_STANDARD_KIT (ITEM_DAMAGEABLE | ITEM_SHOW_STATUS | ITEM_SINKS)
 #define IF_STANDARD_CLIP (ITEM_SINKS | ITEM_METAL)

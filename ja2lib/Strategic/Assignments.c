@@ -115,11 +115,12 @@ REPAIR_PASS_SLOTS_TYPE gRepairPassSlotList[NUM_REPAIR_PASS_TYPES] = {
     // in
     // this
     // pass
-    {/* hands and armor */ 5, {HANDPOS, SECONDHANDPOS, VESTPOS, HELMETPOS, LEGPOS, -1, -1, -1, -1, -1, -1, -1}},
+    {/* hands and armor */ 5,
+     {HANDPOS, SECONDHANDPOS, VESTPOS, HELMETPOS, LEGPOS, -1, -1, -1, -1, -1, -1, -1}},
     {/* headgear */ 2, {HEAD1POS, HEAD2POS, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}},
-    {/* pockets */ 12, {BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS, SMALLPOCK1POS,
-     SMALLPOCK2POS, SMALLPOCK3POS, SMALLPOCK4POS, SMALLPOCK5POS, SMALLPOCK6POS, SMALLPOCK7POS,
-     SMALLPOCK8POS}},
+    {/* pockets */ 12,
+     {BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS, SMALLPOCK1POS, SMALLPOCK2POS,
+      SMALLPOCK3POS, SMALLPOCK4POS, SMALLPOCK5POS, SMALLPOCK6POS, SMALLPOCK7POS, SMALLPOCK8POS}},
 };
 
 // PopUp Box Handles
@@ -840,7 +841,6 @@ BOOLEAN CanCharacterRepairButDoesntHaveARepairkit(struct SOLDIERTYPE *pSoldier) 
 // can character be assigned as repairman?
 // check that character is alive, oklife, has repair skill, and equipment, etc.
 BOOLEAN CanCharacterRepair(struct SOLDIERTYPE *pSoldier) {
-
   if (!BasicCanCharacterAssignment(pSoldier, TRUE)) {
     return (FALSE);
   }
@@ -1335,7 +1335,6 @@ BOOLEAN CanCharacterPractise(struct SOLDIERTYPE *pSoldier) {
 }
 
 BOOLEAN CanCharacterTrainTeammates(struct SOLDIERTYPE *pSoldier) {
-
   // can character train at all
   if (CanCharacterPractise(pSoldier) == FALSE) {
     // nope
@@ -2165,7 +2164,6 @@ HEALABLE_EVER, FALSE, FALSE ) == TRUE )
 BOOLEAN CanSoldierBeHealedByDoctor(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pDoctor,
                                    BOOLEAN fIgnoreAssignment, BOOLEAN fThisHour,
                                    BOOLEAN fSkipKitCheck, BOOLEAN fSkipSkillCheck) {
-
   // must be an active guy
   if (pSoldier->bActive == FALSE) {
     return (FALSE);

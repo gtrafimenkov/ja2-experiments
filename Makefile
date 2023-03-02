@@ -19,7 +19,6 @@ format-modified:
 ###################################################################
 
 GCC_ERRORS_FLAGS := -Werror
-GCC_ERRORS_FLAGS += -Werror=sizeof-pointer-div
 GCC_ERRORS_FLAGS += -Wall
 CC = gcc
 CXX	= g++

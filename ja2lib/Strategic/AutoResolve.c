@@ -3954,7 +3954,7 @@ void ProcessBattleFrame() {
       INT32 cnt;
       if ((iTimeSlice != 0x7fffffff && GetJA2Clock() > gpAR->uiCurrTime + 17) ||
           (!gpAR->fInstantFinish &&
-              iAttacksThisFrame > (gpAR->ubMercs + gpAR->ubCivs + gpAR->ubEnemies) / 4)) {
+           iAttacksThisFrame > (gpAR->ubMercs + gpAR->ubCivs + gpAR->ubEnemies) / 4)) {
         // We have spent too much time in here.  In order to
         // maintain 60FPS, we will
         // leave now, which will allow for updating of the graphics (and mouse cursor),
@@ -3965,7 +3965,8 @@ void ProcessBattleFrame() {
         return;
       }
     CONTINUE_BATTLE:
-      if ((IsBattleOver() || gubEnemyEncounterCode != CREATURE_ATTACK_CODE) && AttemptPlayerCapture())
+      if ((IsBattleOver() || gubEnemyEncounterCode != CREATURE_ATTACK_CODE) &&
+          AttemptPlayerCapture())
         return;
 
       iRandom = PreRandom(iTotal);
