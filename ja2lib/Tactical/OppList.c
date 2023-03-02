@@ -2326,27 +2326,6 @@ void RemoveManAsTarget(struct SOLDIERTYPE *pSoldier) {
     }
   }
 
-  /*
-
-   for (ubLoop = 0,pOpponent = Menptr; ubLoop < MAXMERCS; ubLoop++,pOpponent++)
-    {
-     // if the target is a true opponent and currently seen by this merc
-     if (!pSoldier->bNeutral && !pSoldier->bNeutral &&
-         (pOpponent->bOppList[ubTarget] == SEEN_CURRENTLY)
-
-                           )
-                           ///*** UNTIL ANDREW GETS THE SIDE PARAMETERS WORKING
-         // && (pSoldier->side != pOpponent->side))
-      {
-       RemoveOneOpponent(pOpponent);
-      }
-
-     UpdatePersonal(pOpponent,ubTarget,NOT_HEARD_OR_SEEN,NOWHERE,0);
-
-     gbSeenOpponents[ubLoop][ubTarget] = FALSE;
-    }
-  */
-
   ResetLastKnownLocs(pSoldier);
 
   if (gTacticalStatus.Team[pSoldier->bTeam].ubLastMercToRadio == ubTarget)
@@ -2356,7 +2335,7 @@ void RemoveManAsTarget(struct SOLDIERTYPE *pSoldier) {
 void UpdatePublic(UINT8 ubTeam, UINT8 ubID, INT8 bNewOpplist, INT16 sGridno, INT8 bLevel) {
   INT32 cnt;
   INT8 *pbPublOL;
-  UINT8 ubTeamMustLookAgain = FALSE, ubMadeDifference = FALSE;
+  UINT8 ubTeamMustLookAgain = FALSE;
   struct SOLDIERTYPE *pSoldier;
 
   pbPublOL = &(gbPublicOpplist[ubTeam][ubID]);
@@ -2387,9 +2366,6 @@ void UpdatePublic(UINT8 ubTeam, UINT8 ubID, INT8 bNewOpplist, INT16 sGridno, INT
           !(pSoldier->uiStatusFlags & SOLDIER_GASSED)) {
         // if soldier isn't aware of guynum, give him another chance to see
         if (pSoldier->bOppList[ubID] == NOT_HEARD_OR_SEEN) {
-          if (ManLooksForMan(pSoldier, MercPtrs[ubID], UPDATEPUBLIC))
-            // then he actually saw guynum because of our new public knowledge
-            ubMadeDifference = TRUE;
 
           // whether successful or not, whack newOppCnt.  Since this is a
           // delayed reaction to a radio call, there's no chance of interrupt!
@@ -2777,9 +2753,7 @@ void OurTeamSeesSomeone(struct SOLDIERTYPE *pSoldier, INT8 bNumReRevealed, INT8 
 void RadioSightings(struct SOLDIERTYPE *pSoldier, UINT8 ubAbout, UINT8 ubTeamToRadioTo) {
   struct SOLDIERTYPE *pOpponent;
   INT32 iLoop;
-  UINT8 start, end, revealedEnemies = 0, unknownEnemies = 0, stillUnseen = TRUE;
-  UINT8 scrollToGuynum = NOBODY, sightedHatedOpponent = FALSE;
-  // UINT8 	oppIsCivilian;
+  UINT8 start, end, revealedEnemies = 0, unknownEnemies = 0;
   INT8 *pPersOL, *pbPublOL;  //,dayQuote;
   BOOLEAN fContactSeen;
   BOOLEAN fSawCreatureForFirstTime = FALSE;
@@ -2846,7 +2820,6 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, UINT8 ubAbout, UINT8 ubTeamToR
     // if we know about this opponent's location for any reason
     if ((pOpponent->bVisible >= 0) || gbShowEnemies) {
       // and he can see us, then gotta figure we KNOW that he can see us
-      if (pOpponent->bOppList[pSoldier->ubID] == SEEN_CURRENTLY) stillUnseen = FALSE;
     }
 
     // if we personally don't know a thing about this opponent
@@ -2890,7 +2863,6 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, UINT8 ubAbout, UINT8 ubTeamToR
         !((pOpponent->bSide == pSoldier->bSide) || pOpponent->bNeutral)) {
       // used by QueueDayMessage() to scroll to one of the new enemies
       // scroll to the last guy seen, unless we see a hated guy, then use him!
-      if (!sightedHatedOpponent) scrollToGuynum = pOpponent->ubID;
 
       // don't care whether and how many new enemies are seen if everyone visible
       // and he's healthy enough to be a threat (so is worth talking about)
@@ -3030,7 +3002,7 @@ void DebugSoldierPage1() {
   struct SOLDIERTYPE *pSoldier;
   UINT16 usSoldierIndex;
   UINT32 uiMercFlags;
-  UINT16 usMapPos;
+  INT16 usMapPos;
   UINT8 ubLine = 0;
 
   if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
@@ -3210,7 +3182,7 @@ void DebugSoldierPage2() {
   struct SOLDIERTYPE *pSoldier;
   UINT16 usSoldierIndex;
   UINT32 uiMercFlags;
-  UINT16 usMapPos;
+  INT16 usMapPos;
   TILE_ELEMENT TileElem;
   struct LEVELNODE *pNode;
   UINT8 ubLine;
@@ -3468,7 +3440,7 @@ void DebugSoldierPage3() {
   struct SOLDIERTYPE *pSoldier;
   UINT16 usSoldierIndex;
   UINT32 uiMercFlags;
-  UINT16 usMapPos;
+  INT16 usMapPos;
   UINT8 ubLine;
 
   if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
