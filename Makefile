@@ -20,8 +20,8 @@ format-modified:
 
 CC = gcc
 CXX	= g++
-CFLAG = -fPIC --std=gnu17 -Werror -DFORCE_ASSERTS_ON -I./ja2lib
-CXXFLAG = -fPIC --std=gnu++17 -Werror -DFORCE_ASSERTS_ON -I./ja2lib
+CFLAG = -fPIC --std=gnu17 -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
+CXXFLAG = -fPIC --std=gnu++17 -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
 # COMPILE_FLAGS = -c -Wall -Werror -DFORCE_ASSERTS_ON -I./ja2lib
 # COMPILE_FLAGS = -c -Wall --std=c17 -DFORCE_ASSERTS_ON -I./ja2lib
 
