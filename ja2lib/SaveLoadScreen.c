@@ -1297,7 +1297,7 @@ BOOLEAN LoadSavedGameHeader(INT8 bEntry, SAVED_GAME_HEADER *pSaveGameHeader) {
 
   // make sure the entry is valid
   if (bEntry < 0 || bEntry > NUM_SAVE_GAMES) {
-    memset(&pSaveGameHeader, 0, sizeof(SAVED_GAME_HEADER));
+    memset(pSaveGameHeader, 0, sizeof(SAVED_GAME_HEADER));
     return (FALSE);
   }
 
@@ -1341,7 +1341,7 @@ BOOLEAN LoadSavedGameHeader(INT8 bEntry, SAVED_GAME_HEADER *pSaveGameHeader) {
       return (FALSE);
     }
   } else {
-    memset(&pSaveGameHeader, 0, sizeof(SAVED_GAME_HEADER));
+    memset(pSaveGameHeader, 0, sizeof(SAVED_GAME_HEADER));
 #ifdef JA2BETAVERSION
     wcscpy(pSaveGameHeader->sSavedGameDesc,
            L"ERROR loading saved game header, file doesn't exist!!");
