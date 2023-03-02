@@ -1197,7 +1197,7 @@ void DrawSubject(INT32 iCounter, STR16 pSubject, BOOLEAN fRead) {
   if (fRead) {
     // if the subject will be too long, cap it, and add the '...'
     if (StringPixLength(pTempSubject, MESSAGE_FONT) >= SUBJECT_WIDTH - 10) {
-      ReduceStringLength(pTempSubject, SUBJECT_WIDTH - 10, MESSAGE_FONT);
+      ReduceStringLength(pTempSubject, ARR_SIZE(pTempSubject), SUBJECT_WIDTH - 10, MESSAGE_FONT);
     }
 
     // display string subject
@@ -1207,7 +1207,7 @@ void DrawSubject(INT32 iCounter, STR16 pSubject, BOOLEAN fRead) {
   } else {
     // if the subject will be too long, cap it, and add the '...'
     if (StringPixLength(pTempSubject, FONT10ARIALBOLD) >= SUBJECT_WIDTH - 10) {
-      ReduceStringLength(pTempSubject, SUBJECT_WIDTH - 10, FONT10ARIALBOLD);
+      ReduceStringLength(pTempSubject, ARR_SIZE(pTempSubject), SUBJECT_WIDTH - 10, FONT10ARIALBOLD);
     }
 
     // display string subject

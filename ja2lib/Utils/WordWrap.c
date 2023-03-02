@@ -1687,7 +1687,7 @@ FileStringPtr GetFirstStringOnThisPage(FileStringPtr RecordList, UINT32 uiFont, 
   return (CurrentRecord);
 }
 
-BOOLEAN ReduceStringLength(STR16 pString, UINT32 uiWidthToFitIn, UINT32 uiFont) {
+BOOLEAN ReduceStringLength(STR16 pString, size_t bufSize, UINT32 uiWidthToFitIn, UINT32 uiFont) {
   wchar_t OneChar[2];
   CHAR16 zTemp[1024];
   wchar_t zStrDots[16];
@@ -1746,7 +1746,7 @@ BOOLEAN ReduceStringLength(STR16 pString, UINT32 uiWidthToFitIn, UINT32 uiFont) 
   }
 
   // combine the temp string and the '...' to form the finished string
-  swprintf(pString, ARR_SIZE(pString), L"%s%s", zTemp, zStrDots);
+  swprintf(pString, bufSize, L"%s%s", zTemp, zStrDots);
 
   return (TRUE);
 }

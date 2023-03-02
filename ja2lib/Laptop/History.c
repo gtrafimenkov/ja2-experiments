@@ -794,7 +794,7 @@ void DrawHistoryRecordsText(void) {
       FindFontCenterCoordinates(RECORD_DATE_X + RECORD_DATE_WIDTH, 0, RECORD_LOCATION_WIDTH + 10, 0,
                                 sString, HISTORY_TEXT_FONT, &sX, &sY);
 
-      ReduceStringLength(sString, RECORD_LOCATION_WIDTH + 10, HISTORY_TEXT_FONT);
+      ReduceStringLength(sString, ARR_SIZE(sString), RECORD_LOCATION_WIDTH + 10, HISTORY_TEXT_FONT);
 
       mprintf(sX, RECORD_Y + (iCounter * (BOX_HEIGHT)) + 3, sString);
     }

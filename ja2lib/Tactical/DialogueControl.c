@@ -2012,7 +2012,7 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
         GetSectorIDString(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ, zTownIDString,
                           ARR_SIZE(zTownIDString), FALSE);
 
-        ReduceStringLength(zTownIDString, 64, BLOCKFONT2);
+        ReduceStringLength(zTownIDString, ARR_SIZE(zTownIDString), 64, BLOCKFONT2);
 
         VarFindFontCenterCoordinates((INT16)(pBlitter->sX + 12), (INT16)(pBlitter->sY + 68), 73, 9,
                                      BLOCKFONT2, &sFontX, &sFontY, L"%s", zTownIDString);

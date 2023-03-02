@@ -1496,7 +1496,7 @@ void DisplayFactList() {
       wcscpy(sTemp, FactDescText[usLoop1]);
 
       if (StringPixLength(sTemp, QUEST_DBS_FONT_DYNAMIC_TEXT) > QUEST_DBS_SECOND_TITLE_COL_WIDTH) {
-        ReduceStringLength(sTemp, QUEST_DBS_SECOND_TITLE_COL_WIDTH, QUEST_DBS_FONT_DYNAMIC_TEXT);
+        ReduceStringLength(sTemp, ARR_SIZE(sTemp), QUEST_DBS_SECOND_TITLE_COL_WIDTH, QUEST_DBS_FONT_DYNAMIC_TEXT);
       }
 
       //			DisplayWrappedString( QUEST_DBS_SECOND_COL_TITLE_X, usPosY,
