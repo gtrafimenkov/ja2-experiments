@@ -4343,7 +4343,6 @@ void MakeNoise(UINT8 ubNoiseMaker, INT16 sGridNo, INT8 bLevel, UINT8 ubTerrType,
 
 void OurNoise(UINT8 ubNoiseMaker, INT16 sGridNo, INT8 bLevel, UINT8 ubTerrType, UINT8 ubVolume,
               UINT8 ubNoiseType) {
-  INT8 bSendNoise = FALSE;
   struct SOLDIERTYPE *pSoldier;
 
 #ifdef BYPASSNOISE
@@ -5853,7 +5852,6 @@ BOOLEAN ArmyKnowsOfPlayersPresence(void) {
 }
 
 BOOLEAN MercSeesCreature(struct SOLDIERTYPE *pSoldier) {
-  BOOLEAN fSeesCreature = FALSE;
   UINT8 ubID;
 
   if (pSoldier->bOppCnt > 0) {
