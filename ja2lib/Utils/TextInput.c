@@ -640,11 +640,11 @@ BOOLEAN HandleTextInput(InputAtom *Event) {
 		}
 	}
 #endif
-  if (Event->usKeyState & ALT_DOWN || Event->usKeyState & CTRL_DOWN && Event->usParam != DEL)
+  if (Event->usKeyState & ALT_DOWN || (Event->usKeyState & CTRL_DOWN && Event->usParam != DEL))
     return FALSE;
   // F1-F12 regardless of state are processed externally as well.
-  if (Event->usParam >= F1 && Event->usParam <= F12 ||
-      Event->usParam >= SHIFT_F1 && Event->usParam <= SHIFT_F12) {
+  if ((Event->usParam >= F1 && Event->usParam <= F12) ||
+      (Event->usParam >= SHIFT_F1 && Event->usParam <= SHIFT_F12)) {
     return FALSE;
   }
   if (Event->usParam == '%' ||
@@ -803,10 +803,10 @@ BOOLEAN HandleTextInput(InputAtom *Event) {
         // Handle special characters
         if (type & INPUTTYPE_SPECIAL) {
           // More can be added, but not all of the fonts support these
-          if (key >= 0x21 && key <= 0x2f ||  // ! " # $ % & ' ( ) * + , - . /
-              key >= 0x3a && key <= 0x40 ||  // : ; < = > ? @
-              key >= 0x5b && key <= 0x5f ||  // [ \ ] ^ _
-              key >= 0x7b && key <= 0x7d)    // { | }
+          if ((key >= 0x21 && key <= 0x2f) ||  // ! " # $ % & ' ( ) * + , - . /
+              (key >= 0x3a && key <= 0x40) ||  // : ; < = > ? @
+              (key >= 0x5b && key <= 0x5f) ||  // [ \ ] ^ _
+              (key >= 0x7b && key <= 0x7d))    // { | }
           {
             AddChar(key);
             return TRUE;
@@ -821,8 +821,8 @@ BOOLEAN HandleTextInput(InputAtom *Event) {
 void HandleExclusiveInput(UINT32 uiKey) {
   switch (gpActive->usInputType) {
     case INPUTTYPE_EXCLUSIVE_DOSFILENAME:  // dos file names
-      if (uiKey >= 'A' && uiKey <= 'Z' || uiKey >= 'a' && uiKey <= 'z' ||
-          uiKey >= '0' && uiKey <= '9' || uiKey == '_' || uiKey == '.') {
+      if ((uiKey >= 'A' && uiKey <= 'Z') || (uiKey >= 'a' && uiKey <= 'z') ||
+          (uiKey >= '0' && uiKey <= '9') || (uiKey == '_' || uiKey == '.')) {
         if (!gubCursorPos && uiKey >= '0' &&
             uiKey <= '9') {  // can't begin a new filename with a number
           return;
@@ -1403,11 +1403,11 @@ UINT16 GetExclusive24HourTimeValueFromField(UINT8 ubField) {
     if (curr->ubID == ubField) {
       if (curr->usInputType != INPUTTYPE_EXCLUSIVE_24HOURCLOCK) return 0xffff;  // illegal!
       // First validate the hours 00-23
-      if (curr->szString[0] == '2' && curr->szString[1] >= '0' &&  // 20-23
-              curr->szString[1] <= '3' ||
-          curr->szString[0] >= '0' && curr->szString[0] <= '1' &&  // 00-19
+      if ((curr->szString[0] == '2' && curr->szString[1] >= '0' &&  // 20-23
+              curr->szString[1] <= '3') ||
+          (curr->szString[0] >= '0' && curr->szString[0] <= '1' &&  // 00-19
               curr->szString[1] >= '0' &&
-              curr->szString[1] <= '9') {  // Next, validate the colon, and the minutes 00-59
+              curr->szString[1] <= '9')) {  // Next, validate the colon, and the minutes 00-59
         if (curr->szString[2] == ':' && curr->szString[5] == 0 &&    //	:
             curr->szString[3] >= '0' && curr->szString[3] <= '5' &&  // 0-5
             curr->szString[4] >= '0' && curr->szString[4] <= '9')    // 0-9
