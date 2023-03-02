@@ -2051,7 +2051,7 @@ BOOLEAN DoQuickSave() {
           }
   */
 
-  if (!SaveGame(0, gzGameDescTextField)) {
+  if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
 
@@ -2105,7 +2105,7 @@ BOOLEAN IsThereAnySavedGameFiles() {
 }
 
 void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue) {
-  if (!SaveGame(0, gzGameDescTextField)) {
+  if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
 
@@ -2118,7 +2118,7 @@ void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue) {
 void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_OK) {
     // If the game failed to save
-    if (!SaveGame(gbSelectedSaveLocation, gzGameDescTextField)) {
+    if (!SaveGame(gbSelectedSaveLocation, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
       // Unset the fact that we are saving a game
       gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
 
@@ -2230,7 +2230,7 @@ void SaveGameToSlotNum() {
   MarkButtonsDirty();
   RenderButtons();
 
-  if (!SaveGame(gbSelectedSaveLocation, gzGameDescTextField)) {
+  if (!SaveGame(gbSelectedSaveLocation, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
 
