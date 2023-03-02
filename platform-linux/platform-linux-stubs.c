@@ -70,9 +70,9 @@ UINT32 FileMan_GetSize(HWFILE hFile) { return 0; }
 
 BOOLEAN Plat_DirectoryExists(const char *pcDirectory) { return FALSE; }
 
-BOOLEAN Plat_RemoveDirectory(STRING512 pcDirectory, BOOLEAN fRecursive) { return FALSE; }
+BOOLEAN Plat_RemoveDirectory(const char *pcDirectory, BOOLEAN fRecursive) { return FALSE; }
 
-BOOLEAN Plat_EraseDirectory(STRING512 pcDirectory) { return FALSE; }
+BOOLEAN Plat_EraseDirectory(const char *pcDirectory) { return FALSE; }
 
 BOOLEAN Plat_GetFileFirst(CHAR8 *pSpec, struct GetFile *pGFStruct) { return FALSE; }
 
