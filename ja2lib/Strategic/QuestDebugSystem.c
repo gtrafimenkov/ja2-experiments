@@ -3148,7 +3148,7 @@ void NpcRecordLogging(UINT8 ubApproach, STR pStringA, ...) {
   HWFILE hFile;
   UINT32 uiByteWritten;
   va_list argptr;
-  char TempString[1024];
+  char TempString[1000];
   char DestString[1024];
 
   TempString[0] = '\0';
@@ -3179,7 +3179,7 @@ void NpcRecordLogging(UINT8 ubApproach, STR pStringA, ...) {
     return;
   }
 
-  sprintf(DestString, "\n\t\t%s", TempString);
+  snprintf(DestString, ARR_SIZE(DestString), "\n\t\t%s", TempString);
 
   // append to file
   if (!FileMan_Write(hFile, DestString, strlen(DestString), &uiByteWritten)) {

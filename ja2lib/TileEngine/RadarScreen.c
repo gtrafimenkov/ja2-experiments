@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "StrUtils.h"
 #include "Globals.h"
 #include "JAScreens.h"
 #include "SGP/ButtonSystem.h"
@@ -87,11 +88,11 @@ BOOLEAN InitRadarScreen() {
 
 BOOLEAN LoadRadarScreenBitmap(CHAR8 *aFilename) {
   VOBJECT_DESC VObjectDesc;
-  CHAR8 zFilename[260];
+  CHAR8 zFilename[90];
   INT32 cnt;
   struct VObject *hVObject;
 
-  strcpy(zFilename, aFilename);
+  strcopy(zFilename, ARR_SIZE(zFilename), aFilename);
 
   // If we have loaded, remove old one
   if (fImageLoaded) {

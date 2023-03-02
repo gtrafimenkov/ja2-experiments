@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "StrUtils.h"
 #include "JAScreens.h"
 #include "SGP/HImage.h"
 #include "SGP/Line.h"
@@ -78,7 +79,7 @@ BOOLEAN LoadCarPortraitValues(void) {
   }
   for (iCounter = 0; iCounter < NUMBER_CAR_PORTRAITS; iCounter++) {
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    sprintf(VObjectDesc.ImageFile, pbCarPortraitFileNames[iCounter]);
+    strcopy(VObjectDesc.ImageFile, sizeof(VObjectDesc.ImageFile), pbCarPortraitFileNames[iCounter]);
     CHECKF(AddVideoObject(&VObjectDesc, &giCarPortraits[iCounter]));
   }
   return (TRUE);
