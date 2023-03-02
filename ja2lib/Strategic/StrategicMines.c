@@ -97,26 +97,12 @@ HEAD_MINER_TYPE gHeadMinerData[NUM_HEAD_MINERS] = {
     // external
     // face
     // graphic
-    {FRED, 17, 18, 27, 26, MINER_FRED_EXTERNAL_FACE},
-    {MATT, -1, 18, 32, 31, MINER_MATT_EXTERNAL_FACE},
-    {OSWALD, 14, 15, 24, 23, MINER_OSWALD_EXTERNAL_FACE},
-    {CALVIN, 14, 15, 24, 23, MINER_CALVIN_EXTERNAL_FACE},
-    {CARL, 14, 15, 24, 23, MINER_CARL_EXTERNAL_FACE},
+    {FRED, {17, 18, 27, 26}, MINER_FRED_EXTERNAL_FACE},
+    {MATT, {-1, 18, 32, 31}, MINER_MATT_EXTERNAL_FACE},
+    {OSWALD, {14, 15, 24, 23}, MINER_OSWALD_EXTERNAL_FACE},
+    {CALVIN, {14, 15, 24, 23}, MINER_CALVIN_EXTERNAL_FACE},
+    {CARL, {14, 15, 24, 23}, MINER_CARL_EXTERNAL_FACE},
 };
-
-/* gradual monster infestation concept was ditched, now simply IN PRODUCTION or SHUT DOWN
-
-// percentage of workers working depends on level of mine infestation
-UINT8 gubMonsterMineInfestation[]={
-        100,
-        99,
-        95,
-        70,
-        30,
-        1,
-        0,
-};
-*/
 
 // the static NPC dialogue faces
 extern UINT32 uiExternalStaticNPCFaces[];
