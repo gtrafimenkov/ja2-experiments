@@ -1648,7 +1648,8 @@ BOOLEAN SaveVehicleInformationToSaveGameFile(HWFILE hFile) {
           // soldier. ! When reloading, this bogus pointer is converted to a byte to contain the id
           // of the soldier so ! we can get the REAL pointer to the soldier
           TempVehicle.pPassengers[ubPassengerCnt] =
-              (struct SOLDIERTYPE *)((uintptr_t)pVehicleList[cnt].pPassengers[ubPassengerCnt]->ubProfile);
+              (struct SOLDIERTYPE
+                   *)((uintptr_t)pVehicleList[cnt].pPassengers[ubPassengerCnt]->ubProfile);
         }
       }
 

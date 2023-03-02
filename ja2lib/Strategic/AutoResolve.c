@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 
-#include "platform_strings.h"
 #include "Cheats.h"
 #include "GameLoop.h"
 #include "GameScreen.h"
@@ -61,6 +60,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/WordWrap.h"
+#include "platform_strings.h"
 
 //#define INVULNERABILITY
 

@@ -1046,7 +1046,8 @@ BOOLEAN DelayedTacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 us
 }
 
 BOOLEAN TacticalCharacterDialogueWithSpecialEvent(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNum,
-                                                  UINT32 uiFlag, uintptr_t uiData1, UINT32 uiData2) {
+                                                  UINT32 uiFlag, uintptr_t uiData1,
+                                                  UINT32 uiData2) {
   if (pSoldier->ubProfile == NO_PROFILE) {
     return (FALSE);
   }

@@ -1369,8 +1369,7 @@ void Converse(UINT8 ubNPC, UINT8 ubMerc, INT8 bApproach, uintptr_t uiApproachDat
 
       if (pProfile->ubLastDateSpokenTo > 0) {
         uiDay = GetWorldDay();
-        if (uiDay > pProfile->ubLastDateSpokenTo)
-        {
+        if (uiDay > pProfile->ubLastDateSpokenTo) {
           NPCConsiderTalking(ubNPC, ubMerc, APPROACH_SPECIAL_INITIAL_QUOTE, 0, pNPCQuoteInfoArray,
                              &pQuotePtr, &ubRecordNum);
           if (pQuotePtr != NULL) {

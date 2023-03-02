@@ -696,7 +696,7 @@ typedef struct {
   INT16 sGridNo;
   INT32 iSoundSampleID;
   INT32 iSoundToPlay;
-  void* uiData;
+  void *uiData;
   BOOLEAN fAllocated;
   BOOLEAN fInActive;
 } POSITIONSND;

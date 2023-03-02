@@ -4,6 +4,8 @@ CLANG_FORMATTER ?= clang-format-13
 
 build: linux-bin unittester-bin
 
+test: run-unittester
+
 format:
 	find . \( -iname '*.c' -o -iname '*.cc' -o -iname '*.cpp' -o -iname '*.h' \) \
 		| xargs $(CLANG_FORMATTER) -i --style=file
