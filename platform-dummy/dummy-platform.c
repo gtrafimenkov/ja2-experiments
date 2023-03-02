@@ -52,7 +52,7 @@ u32 Plat_SetFilePointer(SYS_FILE_HANDLE handle, i32 distance, int seekType) { re
 
 UINT32 Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom() { return 0; }
 
-BOOLEAN Plat_CreateDirectory(STRING512 pcDirectory) { return FALSE; }
+BOOLEAN Plat_CreateDirectory(const char * pcDirectory) { return FALSE; }
 
 BOOLEAN Plat_GetFileIsReadonly(const struct GetFile *gfs) { return FALSE; }
 

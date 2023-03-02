@@ -38,7 +38,7 @@ BOOLEAN Plat_GetCurrentDirectory(STRING512 pcDirectory);
 BOOLEAN Plat_SetCurrentDirectory(STR pcDirectory);
 
 BOOLEAN Plat_DirectoryExists(const char *pcDirectory);
-BOOLEAN Plat_CreateDirectory(STRING512 pcDirectory);
+BOOLEAN Plat_CreateDirectory(const char * pcDirectory);
 
 BOOLEAN Plat_RemoveDirectory(STRING512 pcDirectory, BOOLEAN fRecursive);
 BOOLEAN Plat_EraseDirectory(STRING512 pcDirectory);

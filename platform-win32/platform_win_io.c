@@ -101,7 +101,7 @@ static UINT32 GetFreeSpaceOnHardDrive(STR pzDriveLetter) {
   return (uiBytesFree);
 }
 
-BOOLEAN Plat_CreateDirectory(STRING512 pcDirectory) { return CreateDirectory(pcDirectory, NULL); }
+BOOLEAN Plat_CreateDirectory(const char * pcDirectory) { return CreateDirectory(pcDirectory, NULL); }
 
 // GetFile file attributes
 #define FILE_IS_READONLY 1

@@ -36,7 +36,7 @@ BOOLEAN Plat_GetCurrentDirectory(STRING512 pcDirectory) { return FALSE; }
 
 UINT32 Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom() { return 0; }
 
-BOOLEAN Plat_CreateDirectory(STRING512 pcDirectory) { return FALSE; }
+BOOLEAN Plat_CreateDirectory(const char * pcDirectory) { return FALSE; }
 
 BOOLEAN Plat_GetFileIsReadonly(const struct GetFile *gfs) { return FALSE; }
 

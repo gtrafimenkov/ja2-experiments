@@ -111,5 +111,8 @@ run-unittester: $(BUILD_DIR)/bin/unittester
 install-build-dependencies-deb:
 	sudo apt install -y libgtest-dev
 
+install-build-dependencies-yum:
+	sudo yum install -y gtest-devel
+
 install-dev-dependencies-deb:
 	sudo apt install clang-format-13 libgtest-dev
