@@ -10,6 +10,11 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 
+// since some of the code is not complied on Linux
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
 BOOLEAN ShadesCalculateTables(struct SGPPaletteEntry *p8BPPPalette);
 BOOLEAN ShadesCalculatePalette(struct SGPPaletteEntry *pSrcPalette,
                                struct SGPPaletteEntry *pDestPalette, UINT16 usRed, UINT16 usGreen,
@@ -291,3 +296,5 @@ BOOLEAN Set8BitModePalette(struct SGPPaletteEntry *pPal) {
   Set8BPPPalette(pPal);
   return (TRUE);
 }
+
+#pragma GCC diagnostic pop

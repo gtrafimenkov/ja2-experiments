@@ -444,7 +444,6 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
   HWFILE hFile = 0;
   SAVED_GAME_HEADER SaveGameHeader;
   CHAR8 zSaveGameName[512];
-  UINT32 uiSizeOfGeneralInfo = sizeof(GENERAL_SAVE_INFO);
   CHAR8 saveDir[100];
   BOOLEAN fPausedStateBeforeSaving = gfGamePaused;
   BOOLEAN fLockPauseStateBeforeSaving = gfLockPauseState;
@@ -595,8 +594,6 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
   wcscpy(SaveGameHeader.sSavedGameDesc, pGameDesc);
   strcpy(SaveGameHeader.zGameVersionNumber, czVersionNumber);
 
-  SaveGameHeader.uiFlags;
-
   // The following will be used to quickly access info to display in the save/load screen
   SaveGameHeader.uiDay = GetWorldDay();
   SaveGameHeader.ubHour = (UINT8)GetWorldHour();
@@ -608,63 +605,6 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
   // Get the sector value to save.
   GetBestPossibleSectorXYZValues(&SaveGameHeader.sSectorX, &SaveGameHeader.sSectorY,
                                  &SaveGameHeader.bSectorZ);
-
-  /*
-
-          //if the current sector is valid
-          if( gfWorldLoaded )
-          {
-                  SaveGameHeader.sSectorX = gWorldSectorX;
-                  SaveGameHeader.sSectorY = gWorldSectorY;
-                  SaveGameHeader.bSectorZ = gbWorldSectorZ;
-          }
-          else if( Squad[ iCurrentTacticalSquad ][ 0 ] && iCurrentTacticalSquad != NO_CURRENT_SQUAD
-  )
-          {
-  //		if( Squad[ iCurrentTacticalSquad ][ 0 ]->bAssignment != IN_TRANSIT )
-                  {
-                          SaveGameHeader.sSectorX = Squad[ iCurrentTacticalSquad ][ 0 ]->sSectorX;
-                          SaveGameHeader.sSectorY = Squad[ iCurrentTacticalSquad ][ 0 ]->sSectorY;
-                          SaveGameHeader.bSectorZ = Squad[ iCurrentTacticalSquad ][ 0 ]->bSectorZ;
-                  }
-          }
-          else
-          {
-                  INT16					sSoldierCnt;
-                  struct SOLDIERTYPE		*pSoldier;
-                  INT16					bLastTeamID;
-                  INT8					bCount=0;
-                  BOOLEAN				fFoundAMerc=FALSE;
-
-                  // Set locator to first merc
-                  sSoldierCnt = gTacticalStatus.Team[ gbPlayerNum ].bFirstID;
-                  bLastTeamID = gTacticalStatus.Team[ gbPlayerNum ].bLastID;
-
-                  for ( pSoldier = MercPtrs[ sSoldierCnt ]; sSoldierCnt <= bLastTeamID;
-  sSoldierCnt++,pSoldier++)
-                  {
-                          if( pSoldier->bActive )
-                          {
-                                  if ( pSoldier->bAssignment != IN_TRANSIT &&
-  !pSoldier->fBetweenSectors)
-                                  {
-                                          SaveGameHeader.sSectorX = pSoldier->sSectorX;
-                                          SaveGameHeader.sSectorY = pSoldier->sSectorY;
-                                          SaveGameHeader.bSectorZ = pSoldier->bSectorZ;
-                                          fFoundAMerc = TRUE;
-                                          break;
-                                  }
-                          }
-                  }
-
-                  if( !fFoundAMerc )
-                  {
-                          SaveGameHeader.sSectorX = gWorldSectorX;
-                          SaveGameHeader.sSectorY = gWorldSectorY;
-                          SaveGameHeader.bSectorZ = gbWorldSectorZ;
-                  }
-          }
-  */
 
   SaveGameHeader.ubNumOfMercsOnPlayersTeam = NumberOfMercsOnPlayerTeam();
   SaveGameHeader.iCurrentBalance = LaptopSaveInfo.iCurrentBalance;
@@ -1157,8 +1097,6 @@ BOOLEAN LoadSavedGame(UINT8 ubSavedGameID) {
   INT16 sLoadSectorY;
   INT8 bLoadSectorZ;
   CHAR8 zSaveGameName[512];
-  UINT32 uiSizeOfGeneralInfo = sizeof(GENERAL_SAVE_INFO);
-
   UINT32 uiRelStartPerc;
   UINT32 uiRelEndPerc;
 
@@ -2861,9 +2799,7 @@ BOOLEAN LoadFilesFromSavedGame(STR pSrcFileName, HWFILE hFile) {
 
 BOOLEAN SaveEmailToSavedGame(HWFILE hFile) {
   UINT32 uiNumOfEmails = 0;
-  UINT32 uiSizeOfEmails = 0;
   EmailPtr pEmail = pEmailList;
-  EmailPtr pTempEmail = NULL;
   UINT32 cnt;
   UINT32 uiStringLength = 0;
   UINT32 uiNumBytesWritten = 0;
@@ -2875,8 +2811,6 @@ BOOLEAN SaveEmailToSavedGame(HWFILE hFile) {
     pEmail = pEmail->Next;
     uiNumOfEmails++;
   }
-
-  uiSizeOfEmails = sizeof(Email) * uiNumOfEmails;
 
   // write the number of email messages
   FileMan_Write(hFile, &uiNumOfEmails, sizeof(UINT32), &uiNumBytesWritten);
@@ -4157,7 +4091,6 @@ void GetBestPossibleSectorXYZValues(INT16 *psSectorX, INT16 *psSectorY, INT8 *pb
     INT16 sSoldierCnt;
     struct SOLDIERTYPE *pSoldier;
     INT16 bLastTeamID;
-    INT8 bCount = 0;
     BOOLEAN fFoundAMerc = FALSE;
 
     // Set locator to first merc
