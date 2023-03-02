@@ -18,6 +18,9 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+
 #define NUM_MOUSE_LEVELS 2
 
 INT16 gsMouseGlobalYOffsets[NUM_MOUSE_LEVELS] = {0, 50};
@@ -4950,3 +4953,5 @@ void SyncPairedCursorFrames(UINT32 uiSrcIndex, UINT32 uiDestIndex) {
 	}
 #endif
 }
+
+#pragma GCC diagnostic pop
