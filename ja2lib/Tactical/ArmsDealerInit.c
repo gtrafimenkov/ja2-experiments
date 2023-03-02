@@ -16,8 +16,10 @@
 #include "Tactical/Weapons.h"
 #include "Utils/Message.h"
 
+#ifdef __GCC
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
 
 // To reduce memory fragmentation from frequent MemRealloc(), we allocate memory for more than one
 // special slot each time we run out of space.  Odds are that if we need one, we'll need another
@@ -2506,4 +2508,6 @@ UINT32 CalculateMinutesClosedBetween(UINT8 ubArmsDealer, UINT32 uiStartTime, UIN
   return (uiMinutesClosed);
 }
 
+#ifdef __GCC
 #pragma GCC diagnostic pop
+#endif

@@ -11,10 +11,12 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 
+#ifdef __GCC
 // since some of the code is not complied on Linux
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
 
 SGPRect ClippingRect = {0, 0, 640, 480};
 UINT32 guiTranslucentMask = 0x3def;  // 0x7bef;		// mask for halving 5,6,5
@@ -10304,4 +10306,6 @@ BlitDone:
   return (TRUE);
 }
 
+#ifdef __GCC
 #pragma GCC diagnostic pop
+#endif

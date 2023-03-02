@@ -39,10 +39,12 @@
 #include "Utils/Message.h"
 #include "Utils/Text.h"
 
+#ifdef __GCC
 // since some of the code is not complied on Linux
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
 
 #define STEPS_FOR_BULLET_MOVE_TRAILS 10
 #define STEPS_FOR_BULLET_MOVE_SMALL_TRAILS 5
@@ -4414,4 +4416,6 @@ BOOLEAN CalculateLOSNormal(struct STRUCTURE *pStructure, INT8 bLOSX, INT8 bLOSY,
   }
 }
 
+#ifdef __GCC
 #pragma GCC diagnostic pop
+#endif

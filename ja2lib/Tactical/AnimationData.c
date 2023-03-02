@@ -19,8 +19,10 @@
 #include "Utils/DebugControl.h"
 #include "Utils/Utilities.h"
 
+#ifdef __GCC
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
 
 #define EMPTY_SLOT -1
 #define TO_INIT 0
@@ -4519,4 +4521,6 @@ void ZeroAnimSurfaceCounts() {
   memset(gbAnimUsageHistory, 0, sizeof(gbAnimUsageHistory));
 }
 
+#ifdef __GCC
 #pragma GCC diagnostic pop
+#endif

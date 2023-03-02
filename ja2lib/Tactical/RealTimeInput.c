@@ -56,8 +56,10 @@
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
 
+#ifdef __GCC
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch"
+#endif
 
 extern UIKEYBOARD_HOOK gUIKeyboardHook;
 extern BOOLEAN fRightButtonDown;
@@ -1276,4 +1278,6 @@ void GetRTMousePositionInput(UINT32 *puiNewEvent) {
   }
 }
 
+#ifdef __GCC
 #pragma GCC diagnostic pop
+#endif

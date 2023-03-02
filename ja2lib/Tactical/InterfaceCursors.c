@@ -36,8 +36,10 @@ static UINT32 guiLooseCursorTimeOfLastUpdate = 0;
 void HandleLooseCursorDraw();
 void HandleLooseCursorHide();
 
+#ifdef __GCC
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
 
 UICursor gUICursors[NUM_UI_CURSORS] = {
     NO_UICURSOR,
@@ -647,7 +649,9 @@ UICursor gUICursors[NUM_UI_CURSORS] = {
 
 };
 
+#ifdef __GCC
 #pragma GCC diagnostic pop
+#endif
 
 UINT32 guiCurUICursor = NO_UICURSOR;
 UINT32 guiOldUICursor = NO_UICURSOR;

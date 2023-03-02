@@ -17,8 +17,10 @@
 #include "Utils/DebugControl.h"
 #include "Utils/Message.h"
 
+#ifdef __GCC
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
 
 // Defines for Anim inst reading, taken from orig Jagged
 #define ANIMFILENAME "BINARYDATA\\ja2bin.dat"
@@ -5749,4 +5751,6 @@ UINT16 GetSoldierAnimationSurface(struct SOLDIERTYPE *pSoldier, UINT16 usAnimSta
   return (usAnimSurface);
 }
 
+#ifdef __GCC
 #pragma GCC diagnostic pop
+#endif
