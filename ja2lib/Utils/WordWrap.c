@@ -139,7 +139,6 @@ WRAPPED_STRING *LineWrap(UINT32 ulFont, UINT16 usLineWidthPixels,
   va_list argptr;
   BOOLEAN fDone = FALSE;
   UINT16 usCurrentWidthPixels = 0;
-  UINT16 usCurrentLineWidthPixels = 0;
   wchar_t OneChar[2];
   BOOLEAN fNewLine = FALSE;
   BOOLEAN fTheStringIsToLong = FALSE;
@@ -462,7 +461,6 @@ BOOLEAN DrawTextToScreen(STR16 pStr, UINT16 usLocX, UINT16 usLocY, UINT16 usWidt
 UINT16 IanDisplayWrappedString(UINT16 usPosX, UINT16 usPosY, UINT16 usWidth, UINT8 ubGap,
                                UINT32 uiFont, UINT8 ubColor, STR16 pString, UINT8 ubBackGroundColor,
                                BOOLEAN fDirty, UINT32 uiFlags) {
-  UINT16 usHeight;
   UINT16 usSourceCounter = 0, usDestCounter = 0, usWordLengthPixels, usLineLengthPixels = 0,
          usPhraseLengthPixels = 0;
   UINT16 usLinesUsed = 1, usLocalWidth = usWidth;
@@ -472,8 +470,6 @@ UINT16 IanDisplayWrappedString(UINT16 usPosX, UINT16 usPosY, UINT16 usWidth, UIN
   BOOLEAN fBoldOn = FALSE;
 
   CHAR16 zLineString[128] = L"", zWordString[64] = L"";
-
-  usHeight = WFGetFontHeight(uiFont);
 
   do {
     // each character goes towards building a new word
@@ -955,7 +951,6 @@ INT16 IanDisplayWrappedStringToPages(UINT16 usPosX, UINT16 usPosY, UINT16 usWidt
                                      UINT8 ubGap, UINT32 uiFont, UINT8 ubColor, STR16 pString,
                                      UINT8 ubBackGroundColor, BOOLEAN fDirty, UINT32 uiFlags,
                                      BOOLEAN *fOnLastPageFlag) {
-  UINT16 usHeight;
   UINT16 usSourceCounter = 0, usDestCounter = 0, usWordLengthPixels, usLineLengthPixels = 0,
          usPhraseLengthPixels = 0;
   UINT16 usLinesUsed = 1, usLocalWidth = usWidth;
@@ -963,10 +958,7 @@ INT16 IanDisplayWrappedStringToPages(UINT16 usPosX, UINT16 usPosY, UINT16 usWidt
   UINT16 usJustification = LEFT_JUSTIFIED, usLocalPosX = usPosX;
   UINT8 ubLocalColor = ubColor;
   BOOLEAN fBoldOn = FALSE;
-  UINT32 iTotalHeight = 0;
   CHAR16 zLineString[640] = L"", zWordString[640] = L"";
-
-  usHeight = WFGetFontHeight(uiFont);
 
   // identical to ianwordwrap, but this one lets the user to specify the page they want to display,
   // if the text takes more than one page multiple calls to this function will allow one to work out
@@ -1263,18 +1255,13 @@ INT16 IanDisplayWrappedStringToPages(UINT16 usPosX, UINT16 usPosY, UINT16 usWidt
 UINT16 IanWrappedStringHeight(UINT16 usPosX, UINT16 usPosY, UINT16 usWidth, UINT8 ubGap,
                               UINT32 uiFont, UINT8 ubColor, STR16 pString, UINT8 ubBackGroundColor,
                               BOOLEAN fDirty, UINT32 uiFlags) {
-  UINT16 usHeight;
   UINT16 usSourceCounter = 0, usDestCounter = 0, usWordLengthPixels, usLineLengthPixels = 0,
          usPhraseLengthPixels = 0;
   UINT16 usLinesUsed = 1, usLocalWidth = usWidth;
   UINT32 uiLocalFont = uiFont;
   UINT16 usJustification = LEFT_JUSTIFIED, usLocalPosX = usPosX;
-  UINT8 ubLocalColor = ubColor;
   BOOLEAN fBoldOn = FALSE;
-  UINT32 iTotalHeight = 0;
   CHAR16 zLineString[640] = L"", zWordString[640] = L"";
-
-  usHeight = WFGetFontHeight(uiFont);
 
   // simply a cut and paste operation on Ian Display Wrapped, but will not write string to screen
   // since this all we want to do, everything IanWrapped will do but without displaying string
@@ -1416,13 +1403,6 @@ UINT16 IanWrappedStringHeight(UINT16 usPosX, UINT16 usPosY, UINT16 usWidth, UINT
 
           case TEXT_CODE_NEWCOLOR:
 
-            // the new color value is the next character in the word
-            if (zWordString[1] != TEXT_SPACE && zWordString[1] < 256)
-              ubLocalColor = (UINT8)zWordString[1];
-
-            ubLocalColor = 184;
-            ;
-
             // calc length of what we just wrote
             usPhraseLengthPixels = WFStringPixLength(zLineString, uiLocalFont);
 
@@ -1458,9 +1438,6 @@ UINT16 IanWrappedStringHeight(UINT16 usPosX, UINT16 usPosY, UINT16 usWidth, UINT
 
             // erase word string
             memset(zWordString, 0, sizeof(zWordString));
-
-            // change color back to default color
-            ubLocalColor = ubColor;
 
             // reset dest char counter
             usDestCounter = 0;
