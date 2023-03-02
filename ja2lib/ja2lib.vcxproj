@@ -181,7 +181,7 @@
     <ClCompile Include="Strategic\StrategicTownReputation.c" />
     <ClCompile Include="Strategic\StrategicTurns.c" />
     <ClCompile Include="Strategic\TownMilitia.c" />
-    <ClInclude Include="StrUtils.c" />
+    <ClCompile Include="StrUtils.c" />
     <ClCompile Include="SysGlobals.c" />
     <ClCompile Include="TacticalAI\AIList.c" />
     <ClCompile Include="TacticalAI\AIMain.c" />
