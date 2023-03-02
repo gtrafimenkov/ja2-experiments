@@ -56,7 +56,7 @@ BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry *pPalette, SGPFILENAM
 BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, UINT8 ubXPos, UINT8 ubYPos, UINT32 uiDestSurface) {
   UINT16 us16BPPColor;
   UINT32 cnt1;
-  UINT8 ubSize, ubType;
+  UINT8 ubSize;
   INT16 sTLX, sTLY, sBRX, sBRY;
   UINT8 ubPaletteRep;
 

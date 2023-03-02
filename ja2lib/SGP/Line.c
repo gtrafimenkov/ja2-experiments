@@ -117,7 +117,7 @@ BOOLEAN Clip2D(int *ix0, int *iy0, int *ix1, int *iy1) {
 
 /* Draws a line between the specified endpoints in color Color. */
 void LineDraw(BOOLEAN fClip, int XStart, int YStart, int XEnd, int YEnd, short Color,
-              char *ScreenPtr) {
+              UINT8 *ScreenPtr) {
   int Temp, AdjUp, AdjDown, ErrorTerm, XAdvance, XDelta, YDelta;
   int WholeStep, InitialPixelCount, FinalPixelCount, i, RunLength;
   int ScreenWidth = giImageWidth / 2;
