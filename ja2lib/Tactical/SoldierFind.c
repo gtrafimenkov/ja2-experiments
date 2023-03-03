@@ -182,7 +182,6 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
   BOOLEAN fSoldierFound = FALSE;
   INT16 sXMapPos, sYMapPos, sScreenX, sScreenY;
   INT16 sMaxScreenMercY, sHeighestMercScreenY = -32000;
-  BOOLEAN fDoFull;
   UINT8 ubBestMerc = NOBODY;
   UINT16 usAnimSurface;
   INT32 iMercScreenX, iMercScreenY;
@@ -223,19 +222,23 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
           }
         }
 
+        BOOLEAN fDoFull;
+
         // If we are selective.... do our own guys FULL and other with gridno!
         // First look for owned soldiers, by way of the full method
         if (uiFlags & FIND_SOLDIER_GRIDNO) {
           fDoFull = FALSE;
-        } else if (uiFlags & FIND_SOLDIER_SELECTIVE) {
-          if (pSoldier->ubID >= gTacticalStatus.Team[gbPlayerNum].bFirstID &&
-              pSoldier->ubID <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
-            fDoFull = TRUE;
-          } else {
-            fDoFull = FALSE;
-          }
         } else {
-          fDoFull = TRUE;
+          if (uiFlags & FIND_SOLDIER_SELECTIVE) {
+            if (pSoldier->ubID >= gTacticalStatus.Team[gbPlayerNum].bFirstID &&
+                pSoldier->ubID <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
+              fDoFull = TRUE;
+            } else {
+              fDoFull = FALSE;
+            }
+          } else {
+            fDoFull = TRUE;
+          }
         }
 
         if (fDoFull) {

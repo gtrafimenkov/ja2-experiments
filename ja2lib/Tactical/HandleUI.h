@@ -1,6 +1,7 @@
 #ifndef _HANDLE_UI_
 #define _HANDLE_UI_
 
+#include "MouseInput.h"
 #include "SGP/Input.h"
 
 struct SOLDIERTYPE;
@@ -237,7 +238,7 @@ extern UINT32 guiUIFullTargetFlags;
 extern BOOLEAN gfUIConfirmExitArrows;
 extern INT16 gsJumpOverGridNo;
 
-UINT32 HandleTacticalUI(void);
+UINT32 HandleTacticalUI(const struct MouseInput mouse);
 UINT32 UIHandleEndTurn(UI_EVENT *pUIEvent);
 
 extern BOOLEAN gfUIShowCurIntTile;
@@ -278,7 +279,7 @@ void GetMercClimbDirection(UINT8 ubSoldierID, BOOLEAN *pfGoDown, BOOLEAN *pfGoUp
 
 void ToggleHandCursorMode(UINT32 *puiNewEvent);
 void ToggleTalkCursorMode(UINT32 *puiNewEvent);
-void ToggleLookCursorMode(UINT32 *puiNewEvent);
+void ToggleLookCursorMode(UINT32 *puiNewEvent, const struct MouseInput mouse);
 
 void UIHandleSoldierStanceChange(UINT8 ubSoldierID, INT8 bNewStance);
 void GetCursorMovementFlags(UINT32 *puiCursorFlags);
@@ -298,8 +299,8 @@ BOOLEAN HandleTalkInit();
 
 BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustForConfirm);
 
-void SetUIBusy(UINT8 ubID);
-void UnSetUIBusy(UINT8 ubID);
+void SetUIBusy(UINT8 ubID, const struct MouseInput mouse);
+void UnSetUIBusy(UINT8 ubID, const struct MouseInput mouse);
 
 UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent);
 

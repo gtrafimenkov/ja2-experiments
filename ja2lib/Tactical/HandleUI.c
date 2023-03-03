@@ -155,7 +155,7 @@ UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent);
 UINT32 UIHandleMChangeToAction(UI_EVENT *pUIEvent);
 UINT32 UIHandleMCycleMovement(UI_EVENT *pUIEvent);
 UINT32 UIHandleMCycleMoveAll(UI_EVENT *pUIEvent);
-UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent);
+static UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 UINT32 UIHandleMChangeToHandMode(UI_EVENT *pUIEvent);
 
 UINT32 UIHandlePOPUPMSG(UI_EVENT *pUIEvent);
@@ -607,12 +607,12 @@ BOOLEAN gfUIForceReExamineCursorData = FALSE;
 BOOLEAN gfUIFullTargetFound;
 UINT16 gusUIFullTargetID;
 
-void SetUIMouseCursor();
+static void SetUIMouseCursor(const struct MouseInput mouse);
 void ClearEvent(UI_EVENT *pUIEvent);
 UINT8 GetAdjustedAnimHeight(UINT8 ubAnimHeight, INT8 bChange);
 
 // MAIN TACTICAL UI HANDLER
-UINT32 HandleTacticalUI(void) {
+UINT32 HandleTacticalUI(const struct MouseInput mouse) {
   UINT32 ReturnVal = GAME_SCREEN;
   UINT32 uiNewEvent;
   INT16 usMapPos;
@@ -728,13 +728,13 @@ UINT32 HandleTacticalUI(void) {
   if (GetMouseMapPos(&usMapPos)) {
     // Look for soldier full
     if (FindSoldier(usMapPos, &gusUIFullTargetID, &guiUIFullTargetFlags,
-                    (FINDSOLDIERSAMELEVEL(gsInterfaceLevel)))) {
+                    (FINDSOLDIERSAMELEVEL(gsInterfaceLevel)), mouse)) {
       gfUIFullTargetFound = TRUE;
     }
 
     // Look for soldier selective
     if (FindSoldier(usMapPos, &gusUISelectiveTargetID, &guiUISelectiveTargetFlags,
-                    FINDSOLDIERSELECTIVESAMELEVEL(gsInterfaceLevel))) {
+                    FINDSOLDIERSELECTIVESAMELEVEL(gsInterfaceLevel), mouse)) {
       gfUISelectiveTargetFound = TRUE;
     }
   }
@@ -817,7 +817,7 @@ UINT32 HandleTacticalUI(void) {
   }
 
   // Will set the cursor but only if different
-  SetUIMouseCursor();
+  SetUIMouseCursor(mouse);
 
   // ATE: Check to reset selected guys....
   if (gTacticalStatus.fAtLeastOneGuyOnMultiSelect) {
@@ -832,7 +832,7 @@ UINT32 HandleTacticalUI(void) {
   return (ReturnVal);
 }
 
-void SetUIMouseCursor() {
+static void SetUIMouseCursor(const struct MouseInput mouse) {
   UINT32 uiCursorFlags;
   UINT32 uiTraverseTimeInMinutes;
   BOOLEAN fForceUpdateNewCursor = FALSE;
@@ -1773,7 +1773,7 @@ UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent) {
           sActionGridNo =
               FindAdjacentGridEx(pSoldier, sIntTileGridNo, &ubDirection, NULL, FALSE, TRUE);
           if (sActionGridNo != -1) {
-            SetUIBusy(pSoldier->ubID);
+            SetUIBusy(pSoldier->ubID, mouse);
 
             // Set dest gridno
             sDestGridNo = sActionGridNo;
@@ -1791,7 +1791,7 @@ UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent) {
           }
         }
 
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
 
         if ((gTacticalStatus.uiFlags & REALTIME) || !(gTacticalStatus.uiFlags & INCOMBAT)) {
           // RESET MOVE FAST FLAG
@@ -1901,7 +1901,7 @@ UINT32 UIHandleMCycleMovement(UI_EVENT *pUIEvent) {
 
 UINT32 UIHandleCOnTerrain(UI_EVENT *pUIEvent) { return (GAME_SCREEN); }
 
-UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT32 iPosDiff;
   static UINT16 gusAnchorMouseY;
@@ -2670,14 +2670,14 @@ void ToggleTalkCursorMode(UINT32 *puiNewEvent) {
   }
 }
 
-void ToggleLookCursorMode(UINT32 *puiNewEvent) {
+void ToggleLookCursorMode(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   // Toggle modes
   if (gCurrentUIMode == LOOKCURSOR_MODE) {
     guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
   } else {
     guiPendingOverrideEvent = LC_CHANGE_TO_LOOK;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
   }
 }
 
@@ -3900,7 +3900,7 @@ UINT32 UIHandleLCLook(UI_EVENT *pUIEvent) {
     }
 
     if (MakeSoldierTurn(pSoldier, sXPos, sYPos)) {
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
     }
   }
   return (GAME_SCREEN);
@@ -4054,7 +4054,7 @@ UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent) {
     }
 
     guiPendingOverrideEvent = M_ON_TERRAIN;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     // ATE: Only if NOT in conversation!
     if (!(gTacticalStatus.uiFlags & ENGAGED_IN_CONV)) {
@@ -4428,7 +4428,7 @@ UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent) {
     return (GAME_SCREEN);
   }
 
-  SetUIBusy(pSoldier->ubID);
+  SetUIBusy(pSoldier->ubID, mouse);
 
   // OK, Start jumping!
   // Remove any previous actions
@@ -4498,7 +4498,7 @@ UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent) {
       SetCurrentCursorFromDatabase(gUICursors[guiNewUICursor].usFreeCursorName);
     }
     guiPendingOverrideEvent = M_ON_TERRAIN;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     TurnOffTeamsMuzzleFlashes(gbPlayerNum);
 
@@ -4793,23 +4793,23 @@ BOOLEAN HandleTalkInit() {
   return (FALSE);
 }
 
-void SetUIBusy(UINT8 ubID) {
+void SetUIBusy(UINT8 ubID, const struct MouseInput mouse) {
   if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED) &&
       (gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
     if (gusSelectedSoldier == ubID) {
       guiPendingOverrideEvent = LA_BEGINUIOURTURNLOCK;
-      HandleTacticalUI();
+      HandleTacticalUI(mouse);
     }
   }
 }
 
-void UnSetUIBusy(UINT8 ubID) {
+void UnSetUIBusy(UINT8 ubID, const struct MouseInput mouse) {
   if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED) &&
       (gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
     if (!gTacticalStatus.fUnLockUIAfterHiddenInterrupt) {
       if (gusSelectedSoldier == ubID) {
         guiPendingOverrideEvent = LA_ENDUIOUTURNLOCK;
-        HandleTacticalUI();
+        HandleTacticalUI(mouse);
 
         // Set grace period...
         gTacticalStatus.uiTactialTurnLimitClock = GetJA2Clock();

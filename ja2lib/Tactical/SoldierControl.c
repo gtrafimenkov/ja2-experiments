@@ -3701,7 +3701,7 @@ void ChangeSoldierStance(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredStance) {
   }
 
   // Set UI Busy
-  SetUIBusy(pSoldier->ubID);
+  SetUIBusy(pSoldier->ubID, mouse);
 
   // ATE: If we are an NPC, cower....
   if (pSoldier->ubBodyType >= FATCIV && pSoldier->ubBodyType <= KIDCIV) {
@@ -5120,7 +5120,7 @@ void BeginSoldierClimbUpRoof(struct SOLDIERTYPE *pSoldier) {
     if (EnoughPoints(pSoldier, GetAPsToClimbRoof(pSoldier, FALSE), 0, TRUE)) {
       if (pSoldier->bTeam == gbPlayerNum) {
         // OK, SET INTERFACE FIRST
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
       }
 
       pSoldier->sTempNewGridNo =
@@ -6109,7 +6109,7 @@ void BeginSoldierClimbDownRoof(struct SOLDIERTYPE *pSoldier) {
     if (EnoughPoints(pSoldier, GetAPsToClimbRoof(pSoldier, TRUE), 0, TRUE)) {
       if (pSoldier->bTeam == gbPlayerNum) {
         // OK, SET INTERFACE FIRST
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
       }
 
       pSoldier->sTempNewGridNo =
@@ -7801,7 +7801,7 @@ void ContinueMercMovement(struct SOLDIERTYPE *pSoldier) {
 
       AdjustNoAPToFinishMove(pSoldier, FALSE);
 
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
 
       // OK, try and get a path to out dest!
       EVENT_InternalGetNewSoldierPath(pSoldier, sGridNo, pSoldier->usUIMovementMode, FALSE, TRUE);
@@ -8793,7 +8793,7 @@ void MercStealFromMerc(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarget
              String("!!!!!!! Starting STEAL attack, attack count now %d",
                     gTacticalStatus.ubAttackBusyCount));
 
-    SetUIBusy(pSoldier->ubID);
+    SetUIBusy(pSoldier->ubID, mouse);
   }
 }
 

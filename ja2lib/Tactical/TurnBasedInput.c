@@ -3484,7 +3484,7 @@ INT8 CheckForAndHandleHandleVehicleInteractiveClick(struct SOLDIERTYPE *pSoldier
             }
 
             // OK, set UI
-            SetUIBusy(pSoldier->ubID);
+            SetUIBusy(pSoldier->ubID, mouse);
             // guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
 
             return (-1);
@@ -3702,7 +3702,7 @@ INT8 HandleMoveModeInteractiveClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
           if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
             fContinue = FALSE;
 
-            SetUIBusy(pSoldier->ubID);
+            SetUIBusy(pSoldier->ubID, mouse);
 
             if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED)) {
               // puiNewEvent = C_WAIT_FOR_CONFIRM;

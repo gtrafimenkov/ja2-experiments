@@ -2770,9 +2770,7 @@ void BtnLookCallback(GUI_BUTTON *btn, INT32 reason) {
     btn->uiFlags |= BUTTON_CLICKED_ON;
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
-
-    ToggleLookCursorMode(NULL);
-
+    ToggleLookCursorMode(mouse);
   } else if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
   }
