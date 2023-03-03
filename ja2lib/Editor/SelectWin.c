@@ -801,7 +801,7 @@ DisplayList *TrashList(DisplayList *pNode) {
 //
 //	Displays the current selection window
 //
-void RenderSelectionWindow(void) {
+void RenderSelectionWindow(const struct MouseInput mouse) {
   GUI_BUTTON *button;
   INT32 iSX, iSY, iEX, iEY;
   UINT16 usFillColor;
@@ -959,7 +959,7 @@ void SelWinClkCallback(GUI_BUTTON *button, INT32 reason) {
 
 // When a selection window is up, the file information of the picture will display
 // at the top of the screen.
-void DisplaySelectionWindowGraphicalInformation() {
+void DisplaySelectionWindowGraphicalInformation(const struct MouseInput mouse) {
   DisplayList *pNode;
   BOOLEAN fDone;
   // UINT16 usObjIndex, usIndex;

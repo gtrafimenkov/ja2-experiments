@@ -21,7 +21,7 @@ extern void CreateJA2SelectionWindow(INT16 sWhat);
 extern void InitJA2SelectionWindow(void);
 extern void ShutdownJA2SelectionWindow(void);
 extern void RemoveJA2SelectionWindow(void);
-extern void RenderSelectionWindow(void);
+extern void RenderSelectionWindow(const struct MouseInput mouse);
 extern void DrawSelections(void);
 
 extern void SelWinClkCallback(GUI_BUTTON *button, INT32 reason);
@@ -109,7 +109,7 @@ void RestoreSelectionList(void);
 void SaveSelectionList(void);
 BOOLEAN ClearSelectionList(void);
 
-void DisplaySelectionWindowGraphicalInformation();
+void DisplaySelectionWindowGraphicalInformation(const struct MouseInput mouse);
 
 extern INT32 iCurBank;
 extern Selections *pSelList;

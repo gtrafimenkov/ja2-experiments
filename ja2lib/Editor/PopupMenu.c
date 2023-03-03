@@ -279,7 +279,7 @@ void RenderPopupMenu() {
 // This private function of PopupMenuHandle determines which menu entry
 // is highlighted based on the mouse cursor position.  Returns 0 if the
 // mouse is out of the menu region.
-UINT8 GetPopupIndexFromMousePosition() {
+static UINT8 GetPopupIndexFromMousePosition(const struct MouseInput mouse) {
   UINT8 ubNumEntriesDown;
   UINT16 usRelX;
   UINT8 ubCount;
@@ -305,7 +305,7 @@ UINT8 GetPopupIndexFromMousePosition() {
   return 0;  // mouse not in valid region.
 }
 
-void PopupMenuHandle() {
+void PopupMenuHandle(const struct MouseInput mouse) {
   InputAtom InputEvent;
 
   if (gPopup.ubActiveType == POPUP_ACTIVETYPE_NOT_YET_DETERMINED) {
@@ -333,12 +333,12 @@ void PopupMenuHandle() {
   }
   if (!gPopup.fUseKeyboardInfoUntilMouseMoves) {
     // check menu entry based on mouse position
-    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition();
+    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition(mouse);
   } else if (mouse.x != gPopup.usLastMouseX || mouse.y != gPopup.usLastMouseY) {
     // The keyboard determined the last entry, but the mouse has moved,
     // so use the mouse to determine the new entry.
     gPopup.fUseKeyboardInfoUntilMouseMoves = FALSE;
-    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition();
+    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition(mouse);
   }
   // Check terminating conditions for persistant states.
   if (gfLeftButtonState && gPopup.ubActiveType == POPUP_ACTIVETYPE_PERSISTANT)
@@ -347,7 +347,7 @@ void PopupMenuHandle() {
       (!gfLeftButtonState && gPopup.ubActiveType == POPUP_ACTIVETYPE_NONPERSISTANT)) {
     // Selection conditions via mouse have been met whether the mouse is in the
     // menu region or not.
-    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition();
+    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition(mouse);
     if (gPopup.ubSelectedIndex) {
       ProcessPopupMenuSelection();
     }
@@ -422,7 +422,7 @@ void ProcessPopupMenuSelection() {
   }
 }
 
-BOOLEAN ProcessPopupMenuIfActive() {
+BOOLEAN ProcessPopupMenuIfActive(const struct MouseInput mouse) {
   if (!gPopup.fActive && !fWaitingForLButtonRelease) return FALSE;
   if (fWaitingForLButtonRelease) {
     if (!gfLeftButtonState) {
@@ -431,7 +431,7 @@ BOOLEAN ProcessPopupMenuIfActive() {
     }
     return TRUE;
   }
-  PopupMenuHandle();
+  PopupMenuHandle(mouse);
   RenderPopupMenu();
   InvalidateRegion(gPopup.usLeft, gPopup.usTop, gPopup.usRight, gPopup.usBottom);
   ExecuteBaseDirtyRectQueue();

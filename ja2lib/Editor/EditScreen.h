@@ -21,7 +21,6 @@ BOOLEAN CheckForFences(void);
 void ShowLightPositionHandles(void);
 void RemoveLightPositionHandles(void);
 
-extern BOOLEAN DoWindowSelection(void);
 extern void RemoveTempMouseCursorObject(void);
 extern BOOLEAN DrawTempMouseCursorObject(void);
 extern void ShowCurrentDrawingMode(void);
@@ -35,8 +34,6 @@ void FindTilesetComments(void);
 void GetMasterList(void);
 
 void HandleJA2ToolbarSelection(void);
-UINT32 PerformSelectedAction(void);
-UINT32 WaitForSelectionWindowResponse(void);
 UINT32 WaitForMessageBoxResponse(UINT32 uiCurrentScreen);
 UINT32 WaitForHelpScreenResponse(void);
 

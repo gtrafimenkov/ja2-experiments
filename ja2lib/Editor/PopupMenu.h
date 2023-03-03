@@ -6,6 +6,7 @@
 #define __POPUPMENU_H
 
 #include "BuildDefines.h"
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 /*
@@ -87,11 +88,11 @@ extern UINT16 *popupMenuStrings[5];
 
 // These are the two main functions that outside users would call.
 void InitPopupMenu(INT32 iButtonID, UINT8 ubPopupMenuID, UINT8 ubDirection);
-BOOLEAN ProcessPopupMenuIfActive();
+BOOLEAN ProcessPopupMenuIfActive(const struct MouseInput mouse);
 
 // Internal functions that handled by ProcessPopupMenuIfActive
 void RenderPopupMenu();
-void PopupMenuHandle();
+void PopupMenuHandle(const struct MouseInput mouse);
 void ProcessPopupMenuSelection();
 
 #endif
