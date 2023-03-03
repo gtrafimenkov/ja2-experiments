@@ -2662,7 +2662,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   // This determines if the help screen should be active
   if (ShouldTheHelpScreenComeUp(HelpScreenDetermineWhichMapScreenHelpToShow(), FALSE)) {
     // handle the help screen
-    HelpScreenHandler();
+    HelpScreenHandler(gameInput->mouse);
     return (MAP_SCREEN);
   }
 
@@ -4138,7 +4138,8 @@ UINT32 HandleMapUI() {
         if (gfBlitBattleSectorLocator && sMapX == gubPBSectorX && sMapY == gubPBSectorY &&
             iCurrentMapSectorZ == gubPBSectorZ) {  // Bring up a non-persistant version of mapscreen
                                                    // if the user clicks on the sector where a
-          // battle is taking place.
+                                                   // battle is taking place.
+          const struct MouseInput mouse = XXX_GetMouseInput();
           InitPreBattleInterface(NULL, FALSE, mouse);
           return (MAP_SCREEN);
         }
@@ -6358,6 +6359,7 @@ void BlitBackgroundToSaveBuffer(void) {
     ForceButtonUnDirty(giMapContractButton);
     ForceButtonUnDirty(giCharInfoButton[0]);
     ForceButtonUnDirty(giCharInfoButton[1]);
+    const struct MouseInput mouse = XXX_GetMouseInput();
     RenderPreBattleInterface(mouse);
   }
 
@@ -7034,7 +7036,7 @@ void TeamListContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReas
       fTeamPanelDirty = TRUE;
     }
 
-    ContractRegionBtnCallback(pRegion, iReason);
+    ContractRegionBtnCallback(pRegion, iReason, mouse);
   }
 
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {

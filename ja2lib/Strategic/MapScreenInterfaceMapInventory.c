@@ -144,8 +144,9 @@ extern UINT16 gusExternVoSubIndex;
 extern struct MOUSE_REGION gMPanelRegion;
 
 // map inventory callback
-void MapInvenPoolSlots(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MapInvenPoolSlotsMove(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MapInvenPoolSlots(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MapInvenPoolSlotsMove(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
 void CreateMapInventoryPoolSlots(void);
 void DestroyMapInventoryPoolSlots(void);
 void CreateMapInventoryButtons(void);
@@ -646,7 +647,8 @@ void DestroyMapInventoryPoolSlots(void) {
   MSYS_RemoveRegion(&MapInventoryPoolMask);
 }
 
-void MapInvenPoolSlotsMove(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MapInvenPoolSlotsMove(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   INT32 iCounter = 0;
 
   iCounter = MSYS_GetRegionUserData(pRegion, 0);
@@ -665,7 +667,7 @@ void MapInvenPoolSlotsMove(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void MapInvenPoolSlots(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MapInvenPoolSlots(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment screen mask region
   INT32 iCounter = 0;
   INT32 iOldNumberOfObjects = 0;

@@ -5381,7 +5381,8 @@ void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
 void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse);
 void CalculateItemPickupMenuDimensions();
-void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 // STUFF FOR POPUP ITEM INFO BOX
 void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel) { gItemPickupMenu.fDirtyLevel = fDirtyLevel; }
@@ -6117,7 +6118,8 @@ void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     // OK, goto team panel....
     ToggleTacticalPanels();

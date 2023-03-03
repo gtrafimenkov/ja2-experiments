@@ -4043,7 +4043,7 @@ void NotifyPlayerOfBloodcatBattle(UINT8 ubSectorX, UINT8 ubSectorY) {
   if (guiCurrentScreen == MAP_SCREEN) {  // Force render mapscreen (need to update the position of
                                          // the group before the dialog appears.
     fMapPanelDirty = TRUE;
-    MapScreenHandle();
+    MapScreenHandle(XXX_GetMouseInput());
     InvalidateScreen();
     RefreshScreen(NULL);
   }
