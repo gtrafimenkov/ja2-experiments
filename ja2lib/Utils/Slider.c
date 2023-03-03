@@ -249,6 +249,7 @@ void RenderAllSliderBars() {
   if (gfLeftButtonState && gpCurrentSlider != NULL) {
     UINT16 usPosY = 0;
 
+    const struct MouseInput mouse = XXX_GetMouseInput();
     if (mouse.y < gpCurrentSlider->usPosY)
       usPosY = 0;
     else

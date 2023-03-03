@@ -5030,6 +5030,7 @@ void RequestDecreaseInTimeCompression(void) {
     // check that we can
     if (!AllowedToTimeCompress()) {
       // not allowed to compress time
+      const struct MouseInput mouse = XXX_GetMouseInput();
       TellPlayerWhyHeCantCompressTime(mouse);
       return;
     }

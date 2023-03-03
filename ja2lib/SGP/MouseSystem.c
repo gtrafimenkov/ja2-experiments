@@ -508,7 +508,8 @@ void MSYS_UpdateMouseRegion(void) {
       // the mouse has left the old region
       if (MSYS_PrevRegion->uiFlags & MSYS_MOVE_CALLBACK &&
           MSYS_PrevRegion->uiFlags & MSYS_REGION_ENABLED)
-        (*(MSYS_PrevRegion->MovementCallback))(MSYS_PrevRegion, MSYS_CALLBACK_REASON_LOST_MOUSE);
+        (*(MSYS_PrevRegion->MovementCallback))(MSYS_PrevRegion, MSYS_CALLBACK_REASON_LOST_MOUSE,
+                                               XXX_GetMouseInput());
     }
   }
 
@@ -530,7 +531,8 @@ void MSYS_UpdateMouseRegion(void) {
           //	b->uiFlags |= BUTTON_DIRTY;
         }
         if (MSYS_CurrRegion->uiFlags & MSYS_REGION_ENABLED) {
-          (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_GAIN_MOUSE);
+          (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_GAIN_MOUSE,
+                                                 XXX_GetMouseInput());
         }
       }
 
@@ -572,7 +574,8 @@ void MSYS_UpdateMouseRegion(void) {
 
       if (MSYS_CurrRegion->uiFlags & MSYS_REGION_ENABLED &&
           MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK && MSYS_Action & MSYS_DO_MOVE) {
-        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE);
+        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE,
+                                               XXX_GetMouseInput());
       }
 
       // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
@@ -669,7 +672,8 @@ void MSYS_UpdateMouseRegion(void) {
               }
             }
 
-            (*(MSYS_CurrRegion->ButtonCallback))(MSYS_CurrRegion, ButtonReason);
+            (*(MSYS_CurrRegion->ButtonCallback))(MSYS_CurrRegion, ButtonReason,
+                                                 XXX_GetMouseInput());
           }
         }
       }
@@ -693,7 +697,8 @@ void MSYS_UpdateMouseRegion(void) {
       MSYS_CurrRegion->RelativeYPos = MSYS_CurrentMY - MSYS_CurrRegion->RegionTopLeftY;
 
       if ((MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK) && (MSYS_Action & MSYS_DO_MOVE)) {
-        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE);
+        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE,
+                                               XXX_GetMouseInput());
       }
 
       MSYS_Action &= (~MSYS_DO_MOVE);

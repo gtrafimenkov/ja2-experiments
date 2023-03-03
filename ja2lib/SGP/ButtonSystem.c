@@ -3363,7 +3363,7 @@ void BtnGenericMouseMoveButtonCallback(GUI_BUTTON *btn, INT32 reason) {
 
 void ReleaseAnchorMode() {
   if (!gpAnchoredButton) return;
-
+  const struct MouseInput mouse = XXX_GetMouseInput();
   if (mouse.x < gpAnchoredButton->Area.RegionTopLeftX ||
       mouse.x > gpAnchoredButton->Area.RegionBottomRightX ||
       mouse.y < gpAnchoredButton->Area.RegionTopLeftY ||

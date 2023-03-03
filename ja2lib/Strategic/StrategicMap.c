@@ -2213,6 +2213,7 @@ void JumpIntoAdjacentSector(UINT8 ubTacticalDirection, UINT8 ubJumpCode, INT16 s
 
     // Lock UI!
     guiPendingOverrideEvent = LU_BEGINUILOCK;
+    const struct MouseInput mouse = XXX_GetMouseInput();
     HandleTacticalUI(mouse);
   }
 }
@@ -2779,6 +2780,7 @@ void DoneFadeOutAdjacentSector() {
     }
     SetActionToDoOnceMercsGetToLocation(WAIT_FOR_MERCS_TO_WALKON_SCREEN, ubNum, 0, 0, 0);
     guiPendingOverrideEvent = LU_BEGINUILOCK;
+    const struct MouseInput mouse = XXX_GetMouseInput();
     HandleTacticalUI(mouse);
 
     // Unset flag here.....
