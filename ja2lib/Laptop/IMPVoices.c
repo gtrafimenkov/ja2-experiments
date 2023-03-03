@@ -52,7 +52,8 @@ void RenderVoiceIndex(void);
 void BtnIMPVoicesNextCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPVoicesPreviousCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPVoicesDoneCallback(GUI_BUTTON *btn, INT32 reason);
-void IMPPortraitRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+static void IMPPortraitRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse);
 
 void EnterIMPVoices(void) {
   fVoiceAVisited = FALSE;
@@ -358,7 +359,8 @@ void DestroyIMPVoiceMouseRegions(void) {
   return;
 }
 
-void IMPPortraitRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+static void IMPPortraitRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse) {
   // callback handler for imp portrait region button events
 
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
