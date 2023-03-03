@@ -199,7 +199,7 @@ void HandleCharProfile() {
       HandleIMPAttributeEntrance();
       break;
     case (IMP_ATTRIBUTE_PAGE):
-      HandleIMPAttributeSelection();
+      HandleIMPAttributeSelection(XXX_GetMouseInput());
       break;
     case (IMP_ATTRIBUTE_FINISH):
       HandleIMPAttributeFinish();

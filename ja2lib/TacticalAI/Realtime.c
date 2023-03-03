@@ -201,5 +201,6 @@ void RTHandleAI(struct SOLDIERTYPE *pSoldier) {
   NPCDoesAct(pSoldier);
 
   // perform the chosen action
-  pSoldier->bActionInProgress = ExecuteAction(pSoldier);  // if started, mark us as busy
+  pSoldier->bActionInProgress =
+      ExecuteAction(pSoldier, XXX_GetMouseInput());  // if started, mark us as busy
 }

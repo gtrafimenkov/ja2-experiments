@@ -1701,7 +1701,7 @@ UINT32 LaptopScreenHandle(const struct GameInput *gameInput) {
   // This determines if the help screen should be active
   if (ShouldTheHelpScreenComeUp(HELP_SCREEN_LAPTOP, FALSE)) {
     // handle the help screen
-    HelpScreenHandler();
+    HelpScreenHandler(XXX_GetMouseInput());
     return (LAPTOP_SCREEN);
   }
 
