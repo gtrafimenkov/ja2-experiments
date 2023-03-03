@@ -35,7 +35,7 @@ BOOLEAN Plat_GetExecutableDirectory(char *buf, u16 bufSize);
 UINT32 Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom();
 
 BOOLEAN Plat_GetCurrentDirectory(STRING512 pcDirectory);
-BOOLEAN Plat_SetCurrentDirectory(STR pcDirectory);
+BOOLEAN Plat_SetCurrentDirectory(const char *pcDirectory);
 
 BOOLEAN Plat_DirectoryExists(const char *pcDirectory);
 BOOLEAN Plat_CreateDirectory(const char *pcDirectory);
