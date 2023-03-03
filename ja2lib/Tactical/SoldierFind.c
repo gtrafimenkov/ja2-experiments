@@ -50,6 +50,8 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
+#define FIND_SOLDIER_GRIDNO 0x000000004
+
 BOOLEAN IsGridNoInScreenRect(INT16 sGridNo, SGPRect *pRect);
 BOOLEAN IsPointInScreenRect(INT16 sXPos, INT16 sYPos, SGPRect *pRect);
 void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, SGPRect *pRect);
@@ -165,6 +167,11 @@ UINT32 GetSoldierFindFlags(UINT16 ubID) {
 
 extern BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObject, UINT16 usIndex,
                                                       INT32 iTextX, INT32 iTestY);
+
+BOOLEAN FindSoldierGridNo(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
+  struct MouseInput dummyMousePos = {0, 0};
+  return FindSoldier(sGridNo, pusSoldierIndex, pMercFlags, FIND_SOLDIER_GRIDNO, dummyMousePos);
+}
 
 // THIS FUNCTION IS CALLED FAIRLY REGULARLY
 BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
@@ -291,10 +298,6 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
                   continue;
                 }
               }
-            }
-
-            // If thgis is from a gridno, use mouse pos!
-            if (pSoldier->sGridNo == sGridNo) {
             }
 
             // Only break here if we're not creating a stack of these fellas
@@ -507,8 +510,8 @@ void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, SGPRect *pRect) {
   }
 
   // pTrav = &(gAnimSurfaceDatabase[ usAnimSurface ].hVideoObject->pETRLEObject[
-  // pSoldier->usAniFrame ] ); usHeight				= (UINT32)pTrav->usHeight; usWidth
-  // = (UINT32)pTrav->usWidth;
+  // pSoldier->usAniFrame ] ); usHeight				= (UINT32)pTrav->usHeight;
+  // usWidth = (UINT32)pTrav->usWidth;
 
   pRect->iLeft = sMercScreenX;
   pRect->iTop = sMercScreenY;

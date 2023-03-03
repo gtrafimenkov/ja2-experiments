@@ -1833,7 +1833,7 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) 
       }
 #endif
       iRetCode = HandleItem(pSoldier, pSoldier->usActionData, pSoldier->bTargetLevel,
-                            pSoldier->inv[HANDPOS].usItem, FALSE, mouse);
+                            pSoldier->inv[HANDPOS].usItem, FALSE);
       if (iRetCode != ITEM_HANDLE_OK) {
         if (iRetCode !=
             ITEM_HANDLE_BROKEN)  // if the item broke, this is 'legal' and doesn't need reporting
@@ -1966,8 +1966,8 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) 
 
     case AI_ACTION_GIVE_AID:  // help injured/dying friend
       // pSoldier->usUIMovementMode = RUNNING;
-      iRetCode = HandleItem(pSoldier, pSoldier->usActionData, 0, pSoldier->inv[HANDPOS].usItem,
-                            FALSE, mouse);
+      iRetCode =
+          HandleItem(pSoldier, pSoldier->usActionData, 0, pSoldier->inv[HANDPOS].usItem, FALSE);
       if (iRetCode != ITEM_HANDLE_OK) {
 #ifdef JA2BETAVERSION
         ScreenMsg(

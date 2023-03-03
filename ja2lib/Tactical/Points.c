@@ -990,7 +990,7 @@ void GetAPChargeForShootOrStabWRTGunRaises(struct SOLDIERTYPE *pSoldier, INT16 s
     // OK, get a direction and see if we need to turn...
     if (ubAddTurningCost) {
       // Given a gridno here, check if we are on a guy - if so - get his gridno
-      if (FindSoldier(sGridNo, &usTargID, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
+      if (FindSoldierGridNo(sGridNo, &usTargID, &uiMercFlags)) {
         sGridNo = MercPtrs[usTargID]->sGridNo;
       }
 
@@ -1076,7 +1076,7 @@ UINT8 MinAPsToShootOrStab(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 ubA
 
   if (sGridNo != NOWHERE) {
     // Given a gridno here, check if we are on a guy - if so - get his gridno
-    if (FindSoldier(sGridNo, &usTargID, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
+    if (FindSoldierGridNo(sGridNo, &usTargID, &uiMercFlags)) {
       sGridNo = MercPtrs[usTargID]->sGridNo;
     }
   }
@@ -1693,7 +1693,7 @@ INT16 MinAPsToThrow(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 ubAddTurn
 
   if (sGridNo != NOWHERE) {
     // Given a gridno here, check if we are on a guy - if so - get his gridno
-    if (FindSoldier(sGridNo, &usTargID, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
+    if (FindSoldierGridNo(sGridNo, &usTargID, &uiMercFlags)) {
       sGridNo = MercPtrs[usTargID]->sGridNo;
     }
 

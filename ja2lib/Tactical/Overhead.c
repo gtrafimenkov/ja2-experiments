@@ -3816,8 +3816,7 @@ BOOLEAN TeamMemberNear(INT8 bTeam, INT16 sGridNo, INT32 iRange) {
 }
 
 INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
-                         INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor,
-                         const struct MouseInput mouse) {
+                         INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor) {
   // psAdjustedGridNo gets the original gridno or the new one if updated
   // It will ONLY be updated IF we were over a merc, ( it's updated to their gridno )
   // pubDirection gets the direction to the final gridno
@@ -3898,7 +3897,7 @@ INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pub
   }
 
   if (fForceToPerson) {
-    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
+    if (FindSoldierGridNo(sGridNo, &usSoldierIndex, &uiMercFlags)) {
       sGridNo = MercPtrs[usSoldierIndex]->sGridNo;
       if (psAdjustedGridNo != NULL) {
         *psAdjustedGridNo = sGridNo;
@@ -4058,8 +4057,7 @@ INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pub
 }
 
 INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
-                               INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor,
-                               const struct MouseInput mouse) {
+                               INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor) {
   // This function works in a similar way as FindAdjacentGridEx, but looks for a location 2 tiles
   // away
 
@@ -4102,7 +4100,7 @@ INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
   }
 
   if (fForceToPerson) {
-    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
+    if (FindSoldierGridNo(sGridNo, &usSoldierIndex, &uiMercFlags)) {
       sGridNo = MercPtrs[usSoldierIndex]->sGridNo;
       if (psAdjustedGridNo != NULL) {
         *psAdjustedGridNo = sGridNo;
@@ -6058,7 +6056,7 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
 
           // Fire back!
           HandleItem(pTarget, pSoldier->sGridNo, pSoldier->bLevel, pTarget->inv[HANDPOS].usItem,
-                     FALSE, mouse);
+                     FALSE);
         }
       }
 

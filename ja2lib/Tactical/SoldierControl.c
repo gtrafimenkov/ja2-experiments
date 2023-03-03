@@ -7216,7 +7216,7 @@ void EVENT_SoldierEnterVehicle(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
   UINT32 uiMercFlags;
   UINT16 usSoldierIndex;
 
-  if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
+  if (FindSoldierGridNo(sGridNo, &usSoldierIndex, &uiMercFlags)) {
     pTSoldier = MercPtrs[usSoldierIndex];
 
     // Enter vehicle...

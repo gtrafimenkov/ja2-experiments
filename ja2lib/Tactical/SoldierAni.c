@@ -69,7 +69,7 @@
 
 #define NO_JUMP 0
 #define MAX_ANIFRAMES_PER_FLASH 2
-//#define		TIME_FOR_RANDOM_ANIM_CHECK	10
+// #define		TIME_FOR_RANDOM_ANIM_CHECK	10
 #define TIME_FOR_RANDOM_ANIM_CHECK 2
 
 BOOLEAN gfLastMercTalkedAboutKillingID = NOBODY;
@@ -1485,8 +1485,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
             UINT32 uiMercFlags;
             UINT16 usSoldierIndex;
 
-            if (FindSoldier(pSoldier->sTargetGridNo, &usSoldierIndex, &uiMercFlags,
-                            FIND_SOLDIER_GRIDNO)) {
+            if (FindSoldierGridNo(pSoldier->sTargetGridNo, &usSoldierIndex, &uiMercFlags)) {
               GetSoldier(&pTSoldier, usSoldierIndex);
 
               // IF WE ARE AN ANIMAL, CAR, MONSTER, DONT'T DODGE
@@ -3144,8 +3143,8 @@ BOOLEAN CheckForAndHandleSoldierDeath(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfM
   return (FALSE);
 }
 
-//#define TESTFALLBACK
-//#define TESTFALLFORWARD
+// #define TESTFALLBACK
+// #define TESTFALLFORWARD
 
 void CheckForAndHandleSoldierIncompacitated(struct SOLDIERTYPE *pSoldier) {
   INT16 sNewGridNo;

@@ -7,7 +7,6 @@
 struct SOLDIERTYPE;
 
 #define FIND_SOLDIER_FULL 0x000000002
-#define FIND_SOLDIER_GRIDNO 0x000000004
 #define FIND_SOLDIER_SAMELEVEL 0x000000008
 #define FIND_SOLDIER_SELECTIVE 0x000000020
 #define FIND_SOLDIER_BEGINSTACK 0x000000040
@@ -32,6 +31,7 @@ BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
                              const struct MouseInput mouse);
 BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
                                       const struct MouseInput mouse);
+BOOLEAN FindSoldierGridNo(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags);
 BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
                     const struct MouseInput mouse);
 struct SOLDIERTYPE *SimpleFindSoldier(INT16 sGridNo, INT8 bLevel);

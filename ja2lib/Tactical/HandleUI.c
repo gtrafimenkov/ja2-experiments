@@ -2206,10 +2206,10 @@ void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarge
   }
 
   if (pSoldier->bWeaponMode == WM_ATTACHED) {
-    iHandleReturn = HandleItem(pSoldier, sTargetGridNo, bTargetLevel, UNDER_GLAUNCHER, TRUE, mouse);
+    iHandleReturn = HandleItem(pSoldier, sTargetGridNo, bTargetLevel, UNDER_GLAUNCHER, TRUE);
   } else {
-    iHandleReturn = HandleItem(pSoldier, sTargetGridNo, bTargetLevel, pSoldier->inv[HANDPOS].usItem,
-                               TRUE, mouse);
+    iHandleReturn =
+        HandleItem(pSoldier, sTargetGridNo, bTargetLevel, pSoldier->inv[HANDPOS].usItem, TRUE);
   }
 
   if (iHandleReturn < 0) {
