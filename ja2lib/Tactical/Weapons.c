@@ -730,7 +730,7 @@ BOOLEAN FireWeapon(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   if (sTargetGridNo == pSoldier->sGridNo) {
     // FREE UP NPC!
     DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - attack on own gridno!"));
-    FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
+    FreeUpAttacker((UINT8)pSoldier->ubID);
     return (FALSE);
   }
 
@@ -1329,7 +1329,7 @@ BOOLEAN UseBlade(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
       }
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                String("@@@@@@@ Freeing up attacker - missed in knife attack"));
-      FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
+      FreeUpAttacker((UINT8)pSoldier->ubID);
     }
 
     if (PTR_OURTEAM && pSoldier->ubTargetID != NOBODY) {
@@ -1366,7 +1366,7 @@ BOOLEAN UseBlade(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   } else {
     DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
              String("@@@@@@@ Freeing up attacker - missed in knife attack"));
-    FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
+    FreeUpAttacker((UINT8)pSoldier->ubID);
   }
 
   // possibly reduce monster smell
@@ -1511,7 +1511,7 @@ BOOLEAN UseHandToHand(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo, BOOLEAN
 #ifdef JA2BETAVERSION
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - steal"));
 #endif
-      FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
+      FreeUpAttacker((UINT8)pSoldier->ubID);
 
     } else {
       // ATE/CC: if doing ninja spin kick (only), automatically make it a hit
@@ -1575,7 +1575,7 @@ BOOLEAN UseHandToHand(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo, BOOLEAN
       } else {
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - missed in HTH attack"));
-        FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
+        FreeUpAttacker((UINT8)pSoldier->ubID);
       }
     }
   }
@@ -1797,7 +1797,7 @@ static BOOLEAN DoSpecialEffectAmmoMiss(UINT8 ubAttackerID, INT16 sGridNo, INT16 
         RemoveBullet(iBullet);
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - bullet hit structure - explosive ammo"));
-        FreeUpAttacker((UINT8)ubAttackerID, mouse);
+        FreeUpAttacker((UINT8)ubAttackerID);
       }
     }
 
@@ -2004,7 +2004,7 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
       RemoveBullet(iBullet);
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                String("@@@@@@@ Freeing up attacker - monster attack hit structure"));
-      FreeUpAttacker((UINT8)ubAttackerID, mouse);
+      FreeUpAttacker((UINT8)ubAttackerID);
 
       // PlayJA2Sample( SPIT_RICOCHET , RATE_11025, uiMissVolume, 1, SoundDir( sGridNo ) );
       break;
@@ -2033,7 +2033,7 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
         RemoveBullet(iBullet);
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - knife attack hit structure"));
-        FreeUpAttacker((UINT8)ubAttackerID, mouse);
+        FreeUpAttacker((UINT8)ubAttackerID);
       }
   }
 
@@ -2057,7 +2057,7 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
         RemoveBullet(iBullet);
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - bullet hit same structure twice"));
-        FreeUpAttacker((UINT8)ubAttackerID, mouse);
+        FreeUpAttacker((UINT8)ubAttackerID);
       }
     } else {
       if (!fStopped || !DoSpecialEffectAmmoMiss(ubAttackerID, sGridNo, sXPos, sYPos, sZPos, FALSE,

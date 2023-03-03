@@ -385,8 +385,7 @@ void HandleFencePartnerCheck(INT16 sStructGridNo) {
 static BOOLEAN ExplosiveDamageStructureAtGridNo(
     struct STRUCTURE *pCurrent, struct STRUCTURE **ppNextCurrent, INT16 sGridNo, INT16 sWoundAmt,
     UINT32 uiDist, BOOLEAN *pfRecompileMovementCosts, BOOLEAN fOnlyWalls,
-    BOOLEAN fSubSequentMultiTilesTransitionDamage, UINT8 ubOwner, INT8 bLevel,
-    const struct MouseInput mouse) {
+    BOOLEAN fSubSequentMultiTilesTransitionDamage, UINT8 ubOwner, INT8 bLevel) {
   INT16 sX, sY;
   struct STRUCTURE *pBase, *pWallStruct, *pAttached, *pAttachedBase;
   struct LEVELNODE *pNode = NULL, *pNewNode = NULL, *pAttachedNode;
@@ -429,7 +428,7 @@ static BOOLEAN ExplosiveDamageStructureAtGridNo(
     // Spray corpse in a fine mist....
     if (uiDist <= 1) {
       // Remove corpse...
-      VaporizeCorpse(sGridNo, pCurrent->usStructureID, mouse);
+      VaporizeCorpse(sGridNo, pCurrent->usStructureID);
     }
   } else if (!(pCurrent->fFlags & STRUCTURE_PERSON)) {
     // Damage structure!
@@ -966,7 +965,7 @@ static void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
                                   BOOLEAN *pfRecompileMovementCosts, BOOLEAN fOnlyWalls,
                                   INT8 bMultiStructSpecialFlag,
                                   BOOLEAN fSubSequentMultiTilesTransitionDamage, UINT8 ubOwner,
-                                  INT8 bLevel, const struct MouseInput mouse) {
+                                  INT8 bLevel) {
   struct STRUCTURE *pCurrent, *pNextCurrent, *pStructure;
   struct STRUCTURE *pBaseStructure;
   INT16 sDesiredLevel;
@@ -1018,7 +1017,7 @@ static void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
     if (pCurrent->sCubeOffset == sDesiredLevel) {
       fExplodeDamageReturn = ExplosiveDamageStructureAtGridNo(
           pCurrent, &pNextCurrent, sGridNo, sWoundAmt, uiDist, pfRecompileMovementCosts, fOnlyWalls,
-          0, ubOwner, bLevel, mouse);
+          0, ubOwner, bLevel);
 
       // Are we overwritting damage due to multi-tile...?
       if (fExplodeDamageReturn) {
@@ -1061,12 +1060,10 @@ static void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
                   // If we just damaged it, use same damage value....
                   if (fMultiStructSpecialFlag) {
                     ExplosiveDamageGridNo(sNewGridNo2, sWoundAmt, uiDist, pfRecompileMovementCosts,
-                                          fOnlyWalls, bMultiStructSpecialFlag, 1, ubOwner, bLevel,
-                                          mouse);
+                                          fOnlyWalls, bMultiStructSpecialFlag, 1, ubOwner, bLevel);
                   } else {
                     ExplosiveDamageGridNo(sNewGridNo2, sWoundAmt, uiDist, pfRecompileMovementCosts,
-                                          fOnlyWalls, bMultiStructSpecialFlag, 2, ubOwner, bLevel,
-                                          mouse);
+                                          fOnlyWalls, bMultiStructSpecialFlag, 2, ubOwner, bLevel);
                   }
 
                   {
@@ -1096,8 +1093,7 @@ static void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
 
 static BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBombGridNo,
                                       INT16 sWoundAmt, INT16 sBreathAmt, UINT32 uiDist,
-                                      UINT16 usItem, INT16 sSubsequent,
-                                      const struct MouseInput mouse) {
+                                      UINT16 usItem, INT16 sSubsequent) {
   struct SOLDIERTYPE *pSoldier;
   INT16 sNewWoundAmt = 0;
   UINT8 ubDirection;
@@ -1251,7 +1247,7 @@ BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive
 
 static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16 usItem,
                          UINT8 ubOwner, INT16 sSubsequent, BOOLEAN *pfMercHit, INT8 bLevel,
-                         INT32 iSmokeEffectID, const struct MouseInput mouse) {
+                         INT32 iSmokeEffectID) {
   INT16 sWoundAmt = 0, sBreathAmt = 0, sStructDmgAmt;
   UINT8 ubPerson;
   struct SOLDIERTYPE *pSoldier;
@@ -1359,14 +1355,14 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
       }
 
       ExplosiveDamageGridNo(sGridNo, sStructDmgAmt, uiDist, &fRecompileMovementCosts, FALSE, -1, 0,
-                            ubOwner, bLevel, mouse);
+                            ubOwner, bLevel);
 
       // ATE: Look for damage to walls ONLY for next two gridnos
       sNewGridNo = NewGridNo(sGridNo, DirectionInc(NORTH));
 
       if (GridNoOnVisibleWorldTile(sNewGridNo)) {
         ExplosiveDamageGridNo(sNewGridNo, sStructDmgAmt, uiDist, &fRecompileMovementCosts, TRUE, -1,
-                              0, ubOwner, bLevel, mouse);
+                              0, ubOwner, bLevel);
       }
 
       // ATE: Look for damage to walls ONLY for next two gridnos
@@ -1374,7 +1370,7 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
 
       if (GridNoOnVisibleWorldTile(sNewGridNo)) {
         ExplosiveDamageGridNo(sNewGridNo, sStructDmgAmt, uiDist, &fRecompileMovementCosts, TRUE, -1,
-                              0, ubOwner, bLevel, mouse);
+                              0, ubOwner, bLevel);
       }
     }
 
@@ -1412,7 +1408,7 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
       // don't hurt anyone who is already dead & waiting to be removed
       if ((ubPerson = WhoIsThere2(sGridNo, bLevel)) != NOBODY) {
         DamageSoldierFromBlast(ubPerson, ubOwner, sBombGridNo, sWoundAmt, sBreathAmt, uiDist,
-                               usItem, sSubsequent, mouse);
+                               usItem, sSubsequent);
       }
 
       if (bLevel == 1) {
@@ -1422,11 +1418,11 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
             if ((sBreathAmt / 2) > 20) {
               DamageSoldierFromBlast(
                   ubPerson, ubOwner, sBombGridNo, (INT16)Random((sWoundAmt / 2) - 20),
-                  (INT16)Random((sBreathAmt / 2) - 20), uiDist, usItem, sSubsequent, mouse);
+                  (INT16)Random((sBreathAmt / 2) - 20), uiDist, usItem, sSubsequent);
             } else {
               DamageSoldierFromBlast(ubPerson, ubOwner, sBombGridNo,
                                      (INT16)Random((sWoundAmt / 2) - 20), 1, uiDist, usItem,
-                                     sSubsequent, mouse);
+                                     sSubsequent);
             }
           }
         }
@@ -1633,7 +1629,7 @@ void GetRayStopInfo(UINT32 uiNewSpot, UINT8 ubDir, INT8 bLevel, BOOLEAN fSmokeEf
 }
 
 void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, BOOLEAN fSubsequent,
-                  INT8 bLevel, INT32 iSmokeEffectID, const struct MouseInput mouse) {
+                  INT8 bLevel, INT32 iSmokeEffectID) {
   INT32 uiNewSpot, uiTempSpot, uiBranchSpot, cnt, branchCnt;
   INT32 uiTempRange, ubBranchRange;
   UINT8 ubDir, ubBranchDir, ubKeepGoing;
@@ -1668,7 +1664,7 @@ void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, B
 
   // first, affect main spot
   if (ExpAffect(sGridNo, sGridNo, 0, usItem, ubOwner, fSubsequent, &fAnyMercHit, bLevel,
-                iSmokeEffectID, mouse)) {
+                iSmokeEffectID)) {
     fRecompileMovement = TRUE;
   }
 
@@ -1702,7 +1698,7 @@ void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, B
         // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("Explosion affects %d", uiNewSpot) );
         // ok, do what we do here...
         if (ExpAffect(sGridNo, (INT16)uiNewSpot, cnt / 2, usItem, ubOwner, fSubsequent,
-                      &fAnyMercHit, bLevel, iSmokeEffectID, mouse)) {
+                      &fAnyMercHit, bLevel, iSmokeEffectID)) {
           fRecompileMovement = TRUE;
         }
 
@@ -1736,20 +1732,10 @@ void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, B
                 // ok, do what we do here
                 // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("Explosion affects %d", uiNewSpot) );
                 if (ExpAffect(sGridNo, (INT16)uiNewSpot, (INT16)((cnt + branchCnt) / 2), usItem,
-                              ubOwner, fSubsequent, &fAnyMercHit, bLevel, iSmokeEffectID, mouse)) {
+                              ubOwner, fSubsequent, &fAnyMercHit, bLevel, iSmokeEffectID)) {
                   fRecompileMovement = TRUE;
                 }
                 uiBranchSpot = uiNewSpot;
-              }
-              // else
-              {
-                // check if it's ANY door, and if so, affect that spot so it's damaged
-                //   if (RealDoorAt(uiNewSpot))
-                //	 {
-                //      ExpAffect(sGridNo,uiNewSpot,cnt,ubReason,fSubsequent);
-                //	 }
-                // blocked, break out of the the sub-branch loop
-                //	 break;
               }
             }
 

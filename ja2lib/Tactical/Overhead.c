@@ -6075,8 +6075,7 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
 }
 
 static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker,
-                                                         UINT8 ubTargetID,
-                                                         const struct MouseInput mouse) {
+                                                         UINT8 ubTargetID) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
@@ -6339,40 +6338,36 @@ static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCa
   return (pTarget);
 }
 
-struct SOLDIERTYPE *ReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker,
-                                          const struct MouseInput mouse) {
+struct SOLDIERTYPE *ReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker) {
   if (ubID == NOBODY) {
-    return (InternalReduceAttackBusyCount(ubID, fCalledByAttacker, NOBODY, mouse));
+    return (InternalReduceAttackBusyCount(ubID, fCalledByAttacker, NOBODY));
   } else {
-    return (
-        InternalReduceAttackBusyCount(ubID, fCalledByAttacker, MercPtrs[ubID]->ubTargetID, mouse));
+    return (InternalReduceAttackBusyCount(ubID, fCalledByAttacker, MercPtrs[ubID]->ubTargetID));
   }
 }
 
-struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID, const struct MouseInput mouse) {
+struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
 
-  return (ReduceAttackBusyCount(ubID, TRUE, mouse));
+  return (ReduceAttackBusyCount(ubID, TRUE));
 }
 
-struct SOLDIERTYPE *FreeUpAttackerGivenTarget(UINT8 ubID, UINT8 ubTargetID,
-                                              const struct MouseInput mouse) {
+struct SOLDIERTYPE *FreeUpAttackerGivenTarget(UINT8 ubID, UINT8 ubTargetID) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
 
-  return (InternalReduceAttackBusyCount(ubID, TRUE, ubTargetID, mouse));
+  return (InternalReduceAttackBusyCount(ubID, TRUE, ubTargetID));
 }
 
-struct SOLDIERTYPE *ReduceAttackBusyGivenTarget(UINT8 ubID, UINT8 ubTargetID,
-                                                const struct MouseInput mouse) {
+struct SOLDIERTYPE *ReduceAttackBusyGivenTarget(UINT8 ubID, UINT8 ubTargetID) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
 
-  return (InternalReduceAttackBusyCount(ubID, FALSE, ubTargetID, mouse));
+  return (InternalReduceAttackBusyCount(ubID, FALSE, ubTargetID));
 }
 
 void StopMercAnimation(BOOLEAN fStop) {

@@ -982,7 +982,7 @@ void EVENT_FireSoldierWeapon(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo);
 void EVENT_SoldierGotHit(struct SOLDIERTYPE *pSoldier, UINT16 usWeaponIndex, INT16 ubDamage,
                          INT16 sBreathLoss, UINT16 bDirection, UINT16 sRange, UINT8 ubAttackerID,
                          UINT8 ubSpecial, UINT8 ubHitLocation, INT16 sSubsequent,
-                         INT16 sLocationGridNo, const struct MouseInput mouse);
+                         INT16 sLocationGridNo);
 void EVENT_SoldierBeginBladeAttack(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 ubDirection);
 void EVENT_SoldierBeginPunchAttack(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 ubDirection);
 void EVENT_SoldierBeginFirstAid(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 ubDirection);

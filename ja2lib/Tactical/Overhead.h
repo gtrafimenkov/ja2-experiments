@@ -267,7 +267,7 @@ void CycleThroughKnownEnemies();
 
 BOOLEAN CheckForEndOfCombatMode(BOOLEAN fIncrementTurnsNotSeen);
 
-struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID, const struct MouseInput mouse);
+struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID);
 
 BOOLEAN PlayerTeamFull();
 

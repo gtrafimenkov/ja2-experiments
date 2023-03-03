@@ -422,7 +422,7 @@ void AirRaidLookForDive() {
     if ((gTacticalStatus.uiFlags & INCOMBAT)) {
       if (giNumGridNosMovedThisTurn == 0) {
         // Free up attacker...
-        FreeUpAttacker(gpRaidSoldier->ubID, mouse);
+        FreeUpAttacker(gpRaidSoldier->ubID);
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("!!!!!!! Tried to free up attacker AIR RAID NO DIVE, attack count now %d",
                         gTacticalStatus.ubAttackBusyCount));
@@ -690,7 +690,7 @@ void DoDive() {
       if (giNumGridNosMovedThisTurn >= 6) {
         if ((gTacticalStatus.uiFlags & INCOMBAT)) {
           // Free up attacker...
-          FreeUpAttacker(gpRaidSoldier->ubID, mouse);
+          FreeUpAttacker(gpRaidSoldier->ubID);
           DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                    String("!!!!!!! Tried to free up attacker AIR RAID DIVE DONE FOR THIS TURN, "
                           "attack count now %d",
@@ -816,7 +816,7 @@ void DoBombing() {
         if (giNumGridNosMovedThisTurn >= 6) {
           if ((gTacticalStatus.uiFlags & INCOMBAT)) {
             // Free up attacker...
-            FreeUpAttacker(gpRaidSoldier->ubID, mouse);
+            FreeUpAttacker(gpRaidSoldier->ubID);
             DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                      String("!!!!!!! Tried to free up attacker AIR RAID BOMB ATTACK DONE FOR THIS "
                             "TURN, attack count now %d",
@@ -931,7 +931,7 @@ void HandleAirRaid() {
 
           if ((gTacticalStatus.uiFlags & INCOMBAT)) {
             // Free up attacker...
-            FreeUpAttacker(gpRaidSoldier->ubID, mouse);
+            FreeUpAttacker(gpRaidSoldier->ubID);
             DebugMsg(
                 TOPIC_JA2, DBG_LEVEL_3,
                 String(
@@ -949,7 +949,7 @@ void HandleAirRaid() {
 
           if ((gTacticalStatus.uiFlags & INCOMBAT)) {
             // Free up attacker...
-            FreeUpAttacker(gpRaidSoldier->ubID, mouse);
+            FreeUpAttacker(gpRaidSoldier->ubID);
             DebugMsg(
                 TOPIC_JA2, DBG_LEVEL_3,
                 String(

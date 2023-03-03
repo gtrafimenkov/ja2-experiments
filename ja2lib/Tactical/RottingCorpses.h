@@ -151,7 +151,7 @@ INT16 FindNearestAvailableGridNoForCorpse(ROTTING_CORPSE_DEFINITION *pCorpseDef,
 void HandleRottingCorpses();
 void AddCrowToCorpse(ROTTING_CORPSE *pCorpse);
 
-void VaporizeCorpse(INT16 sGridNo, UINT16 usStructureID, const struct MouseInput mouse);
+void VaporizeCorpse(INT16 sGridNo, UINT16 usStructureID);
 void CorpseHit(INT16 sGridNo, UINT16 usStructureID);
 
 void HandleCrowLeave(struct SOLDIERTYPE *pSoldier);
