@@ -431,11 +431,12 @@ static FILE *debug_txt_file = NULL;
 
 static void openDebugTxt() {
   if (debug_txt_file == NULL) {
-    char path[200];
-    if (!Plat_GetExecutableDirectory(path, ARR_SIZE(path))) {
+    char dir[200];
+    char path[256];
+    if (!Plat_GetExecutableDirectory(dir, ARR_SIZE(dir))) {
       return;
     }
-    strncat(path, "\\debug.txt", ARR_SIZE(path));
+    snprintf(path, ARR_SIZE(path), "%s%c%s", dir, FS_SEPARATOR, "debug.txt");
     debug_txt_file = fopen(path, "wt");
   }
 }

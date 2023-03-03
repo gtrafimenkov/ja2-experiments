@@ -10,6 +10,12 @@
 // Files
 /////////////////////////////////////////////////////////////////////////////////
 
+#ifdef WIN32
+#define FS_SEPARATOR '\\'
+#else
+#define FS_SEPARATOR '/'
+#endif
+
 // Handler to underlying OS file handle.
 typedef void *SYS_FILE_HANDLE;
 
