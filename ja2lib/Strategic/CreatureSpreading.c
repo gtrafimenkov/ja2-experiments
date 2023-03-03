@@ -43,7 +43,7 @@ extern UINT32 uiMeanWhileFlags;
 //								XXX_VALUE + Random( 1 + XXX_BONUS )
 
 // The start day random bonus that the queen begins
-//#define EASY_QUEEN_START_DAY								10
+// #define EASY_QUEEN_START_DAY								10
 ////easy start day 10-13 #define EASY_QUEEN_START_BONUS 3 #define NORMAL_QUEEN_START_DAY 8
 // //normal start day 8-10 #define NORMAL_QUEEN_START_BONUS
 // 2 #define HARD_QUEEN_START_DAY								7
@@ -413,7 +413,7 @@ void InitCreatureQuest() {
   AddEveryDayStrategicEvent(EVENT_CREATURE_NIGHT_PLANNING, 1320, 0);
 
   // Got to give the queen some early protection, so do some creature spreading.
-  while (i--) {  //# times spread is based on difficulty, and the values in the defines.
+  while (i--) {  // # times spread is based on difficulty, and the values in the defines.
     SpreadCreatures();
   }
 }
@@ -849,11 +849,11 @@ void CreatureAttackTown(
   SectorInfo[ubSectorID].ubDayOfLastCreatureAttack = (UINT8)GetWorldDay();
   switch (gubCreatureBattleCode) {
     case CREATURE_BATTLE_CODE_PREBATTLEINTERFACE:
-      InitPreBattleInterface(NULL, TRUE);
+      InitPreBattleInterface(NULL, TRUE, mouse);
       break;
     case CREATURE_BATTLE_CODE_AUTORESOLVE:
       gfAutomaticallyStartAutoResolve = TRUE;
-      InitPreBattleInterface(NULL, TRUE);
+      InitPreBattleInterface(NULL, TRUE, mouse);
       break;
     case CREATURE_BATTLE_CODE_TACTICALLYADD:
       PrepareCreaturesForBattle();

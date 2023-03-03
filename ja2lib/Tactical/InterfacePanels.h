@@ -112,4 +112,8 @@ void FinishAnySkullPanelAnimations();
 UINT8 FindNextMercInTeamPanel(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForLessOKLife,
                               BOOLEAN fOnlyRegularMercs);
 
+
+extern void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                           const struct MouseInput mouse);
+
 #endif

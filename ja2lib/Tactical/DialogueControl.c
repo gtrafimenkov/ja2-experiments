@@ -531,7 +531,7 @@ void HandleDialogue() {
 
       if (gpCurrentTalkingFace->uiFlags & FACE_TRIGGER_PREBATTLE_INT) {
         UnLockPauseState();
-        InitPreBattleInterface((struct GROUP *)gpCurrentTalkingFace->uiUserData1, TRUE);
+        InitPreBattleInterface((struct GROUP *)gpCurrentTalkingFace->uiUserData1, TRUE, mouse);
         // Reset flag!
         gpCurrentTalkingFace->uiFlags &= (~FACE_TRIGGER_PREBATTLE_INT);
       }
@@ -771,7 +771,7 @@ void HandleDialogue() {
 
     if (QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_TRIGGERPREBATTLEINTERFACE) {
       UnLockPauseState();
-      InitPreBattleInterface((struct GROUP *)QItem->uiSpecialEventData, TRUE);
+      InitPreBattleInterface((struct GROUP *)QItem->uiSpecialEventData, TRUE, mouse);
     }
     if (QItem->uiSpecialEventFlag & DIALOGUE_ADD_EVENT_FOR_SOLDIER_UPDATE_BOX) {
       INT32 iReason = 0;

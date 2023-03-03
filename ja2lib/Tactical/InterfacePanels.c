@@ -488,9 +488,6 @@ void EnemyIndicatorClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
 void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, INT16 sX, INT16 sY, UINT8 ubPanelNum,
                           BOOLEAN fDirty);
 
-// keyring stuff
-void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-
 void UpdateSelectedSoldier(UINT16 usSoldierID, BOOLEAN fSelect);
 
 void CheckForFacePanelStartAnims(struct SOLDIERTYPE *pSoldier, INT16 sPanelX, INT16 sPanelY);
@@ -4220,7 +4217,8 @@ void BeginKeyPanelFromKeyShortcut() {
   InitKeyRingPopup(pSoldier, 0, sStartYPosition, sWidth, sHeight);
 }
 
-void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier = NULL;
   INT16 sStartYPosition = 0;
   INT16 sWidth = 0, sHeight = 0;

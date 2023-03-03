@@ -613,7 +613,6 @@ extern struct path *pTempCharacterPath;
 extern struct path *pTempHelicopterPath;
 
 extern BOOLEAN gfAutoAIAware;
-extern void HandlePreBattleInterfaceStates();
 
 // the title for the contract button on the character info panel in the upper left portion of the
 // mapscreen
@@ -829,8 +828,6 @@ void MAPInvMoveCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
 
 void InvmaskRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
 void TrashCanBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-
-extern void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
 
 // handle talking
 void HandleSpontanousTalking(void);
@@ -3508,7 +3505,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
     }
   }
 
-  HandlePreBattleInterfaceStates();
+  HandlePreBattleInterfaceStates(gameInput->mouse);
 
   if (gfHotKeyEnterSector) {
     gfHotKeyEnterSector = FALSE;
@@ -3999,19 +3996,6 @@ UINT32 HandleMapUI() {
 
       // Get Current mouse position
       if (GetMouseMapXY(&sMapX, &sMapY)) {
-        /*
-                                        if( fZoomFlag == TRUE )
-                                        {
-                                                // convert to zoom out coords from screen coords
-                              sMapX = ( INT16 )( iZoomX / MAP_GRID_X + sMapX ) / 2;
-                              sMapY = ( INT16 )( iZoomY / MAP_GRID_Y + sMapY ) / 2;
-                                                //sMapX = ( INT16 ) ( ( ( iZoomX ) / ( MAP_GRID_X *
-           2) ) + sMapX / 2 );
-                                                //sMapX = ( INT16 ) ( ( ( iZoomY ) / ( MAP_GRID_Y *
-           2) ) + sMapY / 2 );
-                                        }
-        */
-
         // not zoomed out, make sure this is a valid sector
         if (IsTheCursorAllowedToHighLightThisSector(sMapX, sMapY) == FALSE) {
           // do nothing, return
@@ -4133,7 +4117,7 @@ UINT32 HandleMapUI() {
             iCurrentMapSectorZ == gubPBSectorZ) {  // Bring up a non-persistant version of mapscreen
                                                    // if the user clicks on the sector where a
           // battle is taking place.
-          InitPreBattleInterface(NULL, FALSE);
+          InitPreBattleInterface(NULL, FALSE, mouse);
           return (MAP_SCREEN);
         }
 
@@ -6348,7 +6332,7 @@ void BlitBackgroundToSaveBuffer(void) {
     ForceButtonUnDirty(giMapContractButton);
     ForceButtonUnDirty(giCharInfoButton[0]);
     ForceButtonUnDirty(giCharInfoButton[1]);
-    RenderPreBattleInterface();
+    RenderPreBattleInterface(mouse);
   }
 
   // now render lower panel
@@ -8355,21 +8339,6 @@ void CreateDestroyTrashCanRegion(void) {
     SetRegionFastHelpText(&gTrashCanRegion, pMiscMapScreenMouseRegionHelpText[1]);
 
     InitMapKeyRingInterface(KeyRingItemPanelButtonCallback);
-    /*
-                    giMapInvNextImage=  LoadButtonImage( "INTERFACE\\inventory_buttons.sti"
-       ,-1,20,-1,22,-1 ); giMapInvNext= QuickCreateButton( giMapInvNextImage, ( 2 ), ( 79 ) ,
-                                                                                    BUTTON_TOGGLE,
-       MSYS_PRIORITY_HIGHEST - 1, ( GUI_CALLBACK )BtnGenericMouseMoveButtonCallback, (
-       GUI_CALLBACK)NextInventoryMapBtnCallback );
-
-
-                    giMapInvPrevImage=  LoadButtonImage( "INTERFACE\\inventory_buttons.sti"
-       ,-1,21,-1,23,-1 ); giMapInvPrev= QuickCreateButton( giMapInvPrevImage, ( 30 ) , ( 79 ),
-                                                                                    BUTTON_TOGGLE,
-       MSYS_PRIORITY_HIGHEST - 1, ( GUI_CALLBACK )BtnGenericMouseMoveButtonCallback, (
-       GUI_CALLBACK)PrevInventoryMapBtnCallback );
-
-            */
 
     // reset the compatable item array at this point
     ResetCompatibleItemArray();
@@ -8878,7 +8847,7 @@ void CreateDestroyMapCharacterScrollButtons(void) {
   }
 }
 
-void TellPlayerWhyHeCantCompressTime(void) {
+void TellPlayerWhyHeCantCompressTime(const struct MouseInput mouse) {
   // if we're locked into paused time compression by some event that enforces that
   if (PauseStateLocked()) {
 #ifdef JA2BETAVERSION
@@ -8939,7 +8908,7 @@ void TellPlayerWhyHeCantCompressTime(void) {
     } else {
       // The NEW non-persistant PBI is used instead of a dialog box explaining why we can't compress
       // time.
-      InitPreBattleInterface(NULL, FALSE);
+      InitPreBattleInterface(NULL, FALSE, mouse);
     }
   } else if (PlayerGroupIsInACreatureInfestedMine()) {
     DoMapMessageBox(MSG_BOX_BASIC_STYLE, gzLateLocalizedString[28], MAP_SCREEN, MSG_BOX_FLAG_OK,
@@ -10633,11 +10602,6 @@ void RestoreMapSectorCursor(INT16 sMapX, INT16 sMapY) {
 
   sScreenY -= 1;
 
-  /*
-          if(fZoomFlag)
-                  RestoreExternBackgroundRect( ((INT16)( sScreenX - MAP_GRID_X )), ((INT16)(
-     sScreenY - MAP_GRID_Y )), DMAP_GRID_ZOOM_X, DMAP_GRID_ZOOM_Y); else
-  */
   RestoreExternBackgroundRect(sScreenX, sScreenY, DMAP_GRID_X, DMAP_GRID_Y);
 }
 

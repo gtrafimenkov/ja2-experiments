@@ -130,7 +130,7 @@ BOOLEAN gfRenderPBInterface;
 BOOLEAN gfPBButtonsHidden;
 BOOLEAN fDisableMapInterfaceDueToBattle = FALSE;
 
-void DoTransitionFromMapscreenToPreBattleInterface();
+static void DoTransitionFromMapscreenToPreBattleInterface(const struct MouseInput mouse);
 
 BOOLEAN gfBlinkHeader;
 
@@ -247,7 +247,8 @@ void ValidateAndCorrectInBattleCounters(struct GROUP *pLocGroup) {
 }
 #endif
 
-void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) {
+void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI,
+                            const struct MouseInput mouse) {
   VOBJECT_DESC VObjectDesc;
   INT32 i;
   UINT8 ubGroupID = 0;
@@ -677,10 +678,10 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
 
   SetMusicMode(MUSIC_TACTICAL_ENEMYPRESENT);
 
-  DoTransitionFromMapscreenToPreBattleInterface();
+  DoTransitionFromMapscreenToPreBattleInterface(mouse);
 }
 
-void DoTransitionFromMapscreenToPreBattleInterface() {
+static void DoTransitionFromMapscreenToPreBattleInterface(const struct MouseInput mouse) {
   SGPRect DstRect, PBIRect;
   UINT32 uiStartTime, uiCurrTime;
   INT32 iPercentage, iFactor;
@@ -721,7 +722,7 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     gfEnterAutoResolveMode = FALSE;
   }
   // render the prebattle interface
-  RenderPreBattleInterface();
+  RenderPreBattleInterface(mouse);
 
   gfIgnoreAllInput = TRUE;
 
@@ -879,7 +880,7 @@ void RenderPBHeader(INT32 *piX, INT32 *piWidth) {
   *piWidth = width;
 }
 
-void RenderPreBattleInterface() {
+void RenderPreBattleInterface(const struct MouseInput mouse) {
   struct VObject *hVObject;
   INT32 i, x, y, line, width;
   CHAR16 str[100];
@@ -1804,14 +1805,14 @@ void LogBattleResults(UINT8 ubVictoryCode) {
   }
 }
 
-void HandlePreBattleInterfaceStates() {
+void HandlePreBattleInterfaceStates(const struct MouseInput mouse) {
   if (gfEnteringMapScreenToEnterPreBattleInterface && !gfEnteringMapScreen) {
     gfEnteringMapScreenToEnterPreBattleInterface = FALSE;
     if (!gfUsePersistantPBI) {
-      InitPreBattleInterface(NULL, FALSE);
+      InitPreBattleInterface(NULL, FALSE, mouse);
       gfUsePersistantPBI = TRUE;
     } else {
-      InitPreBattleInterface(gpBattleGroup, TRUE);
+      InitPreBattleInterface(gpBattleGroup, TRUE, mouse);
     }
   } else if (gfDelayAutoResolveStart && gfPreBattleInterfaceActive) {
     gfDelayAutoResolveStart = FALSE;

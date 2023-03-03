@@ -31,7 +31,7 @@
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
 
-//#define DEBUG_GAME_CLOCK
+// #define DEBUG_GAME_CLOCK
 
 extern BOOLEAN gfFadeOut;
 
@@ -329,7 +329,7 @@ void StartTimeCompression(void) {
     // check that we can start compressing
     if (!AllowedToTimeCompress()) {
       // not allowed to compress time
-      TellPlayerWhyHeCantCompressTime();
+      TellPlayerWhyHeCantCompressTime(mouse);
       return;
     }
 
@@ -368,7 +368,7 @@ void IncreaseGameTimeCompressionRate() {
     // check that we can
     if (!AllowedToTimeCompress()) {
       // not allowed to compress time
-      TellPlayerWhyHeCantCompressTime();
+      TellPlayerWhyHeCantCompressTime(mouse);
       return;
     }
 
@@ -389,7 +389,7 @@ void DecreaseGameTimeCompressionRate() {
     // check that we can
     if (!AllowedToTimeCompress()) {
       // not allowed to compress time
-      TellPlayerWhyHeCantCompressTime();
+      TellPlayerWhyHeCantCompressTime(mouse);
       return;
     }
 
@@ -424,7 +424,7 @@ void SetGameTimeCompressionLevel(UINT32 uiCompressionRate) {
     // check that we can
     if (!AllowedToTimeCompress()) {
       // not allowed to compress time
-      TellPlayerWhyHeCantCompressTime();
+      TellPlayerWhyHeCantCompressTime(mouse);
       return;
     }
   }

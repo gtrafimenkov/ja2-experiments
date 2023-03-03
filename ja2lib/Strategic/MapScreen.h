@@ -1,6 +1,7 @@
 #ifndef __MAPSCREEN_H
 #define __MAPSCREEN_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 struct SOLDIERTYPE;
@@ -28,7 +29,7 @@ typedef enum {
 } Towns;
 
 #define FIRST_TOWN OMERTA
-//#define PALACE			NUM_TOWNS
+// #define PALACE			NUM_TOWNS
 
 extern BOOLEAN fCharacterInfoPanelDirty;
 extern BOOLEAN fTeamPanelDirty;
@@ -53,7 +54,7 @@ BOOLEAN CanToggleSelectedCharInventory(void);
 
 BOOLEAN CanExtendContractForCharSlot(INT8 bCharNumber);
 
-void TellPlayerWhyHeCantCompressTime(void);
+void TellPlayerWhyHeCantCompressTime(const struct MouseInput mouse);
 
 void ChangeSelectedInfoChar(INT8 bCharNumber, BOOLEAN fResetSelectedList);
 

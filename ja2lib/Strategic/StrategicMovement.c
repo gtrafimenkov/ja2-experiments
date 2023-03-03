@@ -885,7 +885,7 @@ void PrepareForPreBattleInterface(struct GROUP *pPlayerDialogGroup,
   } else {
     // ATE: What if we have unconscious guys, etc....
     // We MUST start combat, but donot play quote...
-    InitPreBattleInterface(pInitiatingBattleGroup, TRUE);
+    InitPreBattleInterface(pInitiatingBattleGroup, TRUE, mouse);
   }
 }
 
