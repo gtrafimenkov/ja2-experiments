@@ -1,6 +1,7 @@
 #ifndef __SOLDIER_FIND_H
 #define __SOLDIER_FIND_H
 
+#include "GameInput.h"
 #include "SGP/Types.h"
 
 struct SOLDIERTYPE;
@@ -27,12 +28,15 @@ struct SOLDIERTYPE;
 #define FINDSOLDIERSELECTIVESAMELEVEL(l) \
   (((FIND_SOLDIER_SELECTIVE | FIND_SOLDIER_SAMELEVEL) | (l << 16)))
 
-BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags);
-BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags);
-BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags);
+BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
+                             const struct MouseInput mouse);
+BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
+                                      const struct MouseInput mouse);
+BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
+                    const struct MouseInput mouse);
 struct SOLDIERTYPE *SimpleFindSoldier(INT16 sGridNo, INT8 bLevel);
 
-BOOLEAN CycleSoldierFindStack(UINT16 usMapPos);
+BOOLEAN CycleSoldierFindStack(UINT16 usMapPos, const struct MouseInput mouse);
 
 BOOLEAN GridNoOnScreen(INT16 sGridNo);
 

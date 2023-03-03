@@ -65,7 +65,7 @@ enum {
 #define CRDT_FLAG__START_SECTION 0x00000002
 #define CRDT_FLAG__END_SECTION 0x00000004
 
-//#define		CRDT_NAME_OF_CREDIT_FILE
+// #define		CRDT_NAME_OF_CREDIT_FILE
 //"BINARYDATA\\Credits.txt"
 #define CRDT_NAME_OF_CREDIT_FILE "BINARYDATA\\Credits.edt"
 
@@ -346,7 +346,7 @@ UINT32 CreditScreenInit(void) {
   return (1);
 }
 
-UINT32 CreditScreenHandle(void) {
+UINT32 CreditScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfCreditsScreenEntry) {

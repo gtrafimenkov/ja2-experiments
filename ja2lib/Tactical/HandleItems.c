@@ -72,8 +72,6 @@ ITEM_POOL_LOCATOR FlashItemSlots[NUM_ITEM_FLASH_SLOTS];
 UINT32 guiNumFlashItemSlots = 0;
 
 struct LEVELNODE *AddItemGraphicToWorld(INVTYPE *pItem, INT16 sGridNo, UINT8 ubLevel);
-INT8 GetListMouseHotSpot(INT16 sLargestLineWidth, INT8 bNumItemsListed, INT16 sFontX, INT16 sFontY,
-                         INT8 bCurStart);
 void RemoveItemGraphicFromWorld(INVTYPE *pItem, INT16 sGridNo, UINT8 ubLevel,
                                 struct LEVELNODE *pLevelNode);
 
@@ -1551,7 +1549,7 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
 }
 
 void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGridNo,
-                             INT8 bZLevel) {
+                             INT8 bZLevel, const struct MouseInput mouse) {
   struct ITEM_POOL *pItemPool;
   UINT16 usNum;
 
@@ -1612,7 +1610,7 @@ void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
               // Freeze guy!
               pSoldier->fPauseAllAnimation = TRUE;
 
-              InitializeItemPickupMenu(pSoldier, sGridNo, pItemPool, 0, 0, bZLevel);
+              InitializeItemPickupMenu(pSoldier, sGridNo, pItemPool, 0, 0, bZLevel, mouse);
 
               guiPendingOverrideEvent = G_GETTINGITEM;
             } else {
@@ -2600,7 +2598,7 @@ extern void HandleAnyMercInSquadHasCompatibleStuff(UINT8 ubSquad, struct OBJECTT
                                                    BOOLEAN fReset);
 
 BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bCommand, INT8 bZLevel,
-                         INT16 sXPos, INT16 sYPos) {
+                         const struct MouseInput mouse) {
   INT16 sY;
   struct ITEM_POOL *pTempItemPool;
   CHAR16 pStr[100];
@@ -2699,12 +2697,12 @@ BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bComm
   }
 
   // Determine where our mouse is!
-  if (sXPos > (640 - sLargestLineWidth)) {
-    sFontX = sXPos - sLargestLineWidth;
+  if (mouse.x > (640 - sLargestLineWidth)) {
+    sFontX = mouse.x - sLargestLineWidth;
   } else {
-    sFontX = sXPos + 15;
+    sFontX = mouse.x + 15;
   }
-  sFontY = sYPos;
+  sFontY = mouse.y;
 
   // Move up if over interface....
   if ((sFontY + sHeight) > 340) {
@@ -2799,42 +2797,6 @@ BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bComm
   }
 
   return (fSelectionDone);
-}
-
-INT8 GetListMouseHotSpot(INT16 sLargestLineWidth, INT8 bNumItemsListed, INT16 sFontX, INT16 sFontY,
-                         INT8 bCurStart) {
-  INT16 cnt = 0;
-  INT16 sTestX1, sTestX2, sTestY1, sTestY2;
-  INT16 sLineHeight;
-  INT8 gbCurrentItemSel = -1;
-  INT8 bListedItems;
-
-  sLineHeight = GetFontHeight(SMALLFONT1) - 2;
-
-  sTestX1 = sFontX;
-  sTestX2 = sFontX + sLargestLineWidth;
-
-  bListedItems = (bNumItemsListed - bCurStart);
-
-  if (gusMouseXPos < sTestX1 || gusMouseXPos > sTestX2) {
-    gbCurrentItemSel = -1;
-  } else {
-    // Determine where mouse is!
-    for (cnt = 0; cnt < bListedItems; cnt++) {
-      sTestY1 = sFontY + (sLineHeight * cnt);
-      sTestY2 = sFontY + (sLineHeight * (cnt + 1));
-
-      if (gusMouseYPos > sTestY1 && gusMouseYPos < sTestY2) {
-        gbCurrentItemSel = (INT8)cnt;
-        break;
-      }
-    }
-  }
-
-  // OFFSET START
-  gbCurrentItemSel += bCurStart;
-
-  return (gbCurrentItemSel);
 }
 
 void SetItemPoolLocator(struct ITEM_POOL *pItemPool) {

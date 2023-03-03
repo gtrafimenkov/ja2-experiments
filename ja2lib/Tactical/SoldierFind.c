@@ -77,13 +77,15 @@ BOOLEAN gfHandleStack = FALSE;
 extern BOOLEAN gUIActionModeChangeDueToMouseOver;
 extern UINT32 guiUITargetSoldierId;
 
-BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
+BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
+                             const struct MouseInput mouse) {
   INT16 sMapPos;
 
   *pMercFlags = 0;
 
   if (GetMouseMapPos(&sMapPos)) {
-    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel))) {
+    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
+                    mouse)) {
       return (TRUE);
     }
   }
@@ -91,13 +93,15 @@ BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
   return (FALSE);
 }
 
-BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
+BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
+                                      const struct MouseInput mouse) {
   INT16 sMapPos;
 
   *pMercFlags = 0;
 
   if (GetMouseMapPos(&sMapPos)) {
-    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel))) {
+    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
+                    mouse)) {
       return (TRUE);
     }
   }
@@ -163,7 +167,8 @@ extern BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObjec
                                                       INT32 iTextX, INT32 iTestY);
 
 // THIS FUNCTION IS CALLED FAIRLY REGULARLY
-BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags) {
+BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
+                    const struct MouseInput mouse) {
   UINT32 cnt;
   struct SOLDIERTYPE *pSoldier;
   SGPRect aRect;
@@ -233,14 +238,9 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
           // Get XY From gridno
           ConvertGridNoToXY(sGridNo, &sXMapPos, &sYMapPos);
 
-          // Get screen XY pos from map XY
-          // Be carefull to convert to cell cords
-          // CellXYToScreenXY( (INT16)((sXMapPos*CELL_X_SIZE)), (INT16)((sYMapPos*CELL_Y_SIZE)),
-          // &sScreenX, &sScreenY);
-
           // Set mouse stuff
-          sScreenX = gusMouseXPos;
-          sScreenY = gusMouseYPos;
+          sScreenX = mouse.x;
+          sScreenY = mouse.y;
 
           if (IsPointInScreenRect(sScreenX, sScreenY, &aRect)) {
             fInScreenRect = TRUE;
@@ -381,14 +381,14 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
   return (FALSE);
 }
 
-BOOLEAN CycleSoldierFindStack(UINT16 usMapPos) {
+BOOLEAN CycleSoldierFindStack(UINT16 usMapPos, const struct MouseInput mouse) {
   UINT16 usSoldierIndex;
   UINT32 uiMercFlags;
 
   // Have we initalized for this yet?
   if (!gfHandleStack) {
     if (FindSoldier(usMapPos, &usSoldierIndex, &uiMercFlags,
-                    FINDSOLDIERSAMELEVEL(gsInterfaceLevel) | FIND_SOLDIER_BEGINSTACK)) {
+                    FINDSOLDIERSAMELEVEL(gsInterfaceLevel) | FIND_SOLDIER_BEGINSTACK, mouse)) {
       gfHandleStack = TRUE;
     }
   }

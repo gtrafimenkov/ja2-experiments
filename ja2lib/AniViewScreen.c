@@ -67,7 +67,7 @@ UINT32 AniEditScreenInit(void) { return TRUE; }
 
 UINT32 AniEditScreenShutdown(void) { return TRUE; }
 
-UINT32 AniEditScreenHandle(void) {
+UINT32 AniEditScreenHandle(const struct GameInput *gameInput) {
   InputAtom InputEvent;
   static BOOLEAN fFirstTime = TRUE;
   static UINT16 usOldState;

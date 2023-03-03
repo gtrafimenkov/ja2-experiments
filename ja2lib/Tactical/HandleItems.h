@@ -1,6 +1,7 @@
 #ifndef __HANDLE_ITEMS_H
 #define __HANDLE_ITEMS_H
 
+#include "GameInput.h"
 #include "SGP/Types.h"
 #include "Tactical/WorldItems.h"
 
@@ -77,7 +78,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
                  BOOLEAN fFromUI);
 void SoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGridNo, INT8 bZLevel);
 void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGridNo,
-                             INT8 bZLevel);
+                             INT8 bZLevel, const struct MouseInput mouse);
 void HandleFlashingItems();
 
 BOOLEAN SoldierDropItem(struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObj);
@@ -106,7 +107,7 @@ struct OBJECTTYPE *InternalAddItemToPool(INT16 *psGridNo, struct OBJECTTYPE *pOb
 INT16 AdjustGridNoForItemPlacement(struct SOLDIERTYPE *pSoldier, INT16 sGridNo);
 BOOLEAN GetItemPool(UINT16 usMapPos, struct ITEM_POOL **ppItemPool, UINT8 ubLevel);
 BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bCommand, INT8 bZLevel,
-                         INT16 sXPos, INT16 sYPos);
+                         const struct MouseInput mouse);
 BOOLEAN RemoveItemFromPool(INT16 sGridNo, INT32 iItemIndex, UINT8 ubLevel);
 BOOLEAN ItemExistsAtLocation(INT16 sGridNo, INT32 iItemIndex, UINT8 ubLevel);
 BOOLEAN MoveItemPools(INT16 sStartPos, INT16 sEndPos);

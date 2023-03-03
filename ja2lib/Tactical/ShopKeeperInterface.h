@@ -17,12 +17,12 @@ enum {
 };
 
 #define ARMS_INV_ITEM_SELECTED 0x00000001  // The item has been placed into the offer area
-//#define	ARMS_INV_PLAYERS_ITEM_SELECTED						0x00000002
+// #define	ARMS_INV_PLAYERS_ITEM_SELECTED						0x00000002
 //// The source location for the item has been selected
 #define ARMS_INV_PLAYERS_ITEM_HAS_VALUE \
   0x00000004  // The Players item is worth something to this dealer
-//#define	ARMS_INV_ITEM_HIGHLIGHTED
-// 0x00000008			// If the items is highlighted
+// #define	ARMS_INV_ITEM_HIGHLIGHTED
+//  0x00000008			// If the items is highlighted
 #define ARMS_INV_ITEM_NOT_REPAIRED_YET \
   0x00000010                                // The item is in for repairs but not repaired yet
 #define ARMS_INV_ITEM_REPAIRED 0x00000020   // The item is repaired
@@ -67,7 +67,7 @@ extern INVENTORY_IN_SLOT gMoveingItem;
 extern struct OBJECTTYPE *pShopKeeperItemDescObject;
 
 UINT32 ShopKeeperScreenInit(void);
-UINT32 ShopKeeperScreenHandle(void);
+UINT32 ShopKeeperScreenHandle(const struct GameInput *gameInput);
 UINT32 ShopKeeperScreenShutdown(void);
 
 void EnterShopKeeperInterfaceScreen(UINT8 ubArmsDealer);

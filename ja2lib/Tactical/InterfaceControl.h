@@ -1,6 +1,7 @@
 #ifndef __INTERFACE_CONTROL_H
 #define __INTERFACE_CONTROL_H
 
+#include "GameInput.h"
 #include "SGP/Types.h"
 
 #define INTERFACE_MAPSCREEN 0x00000001
@@ -14,7 +15,7 @@ void SetTacticalInterfaceFlags(UINT32 uiFlags);
 
 void SetUpInterface();
 void ResetInterface();
-void RenderTopmostTacticalInterface();
+void RenderTopmostTacticalInterface(const struct MouseInput mouse);
 void RenderTacticalInterface();
 
 void StartViewportOverlays();

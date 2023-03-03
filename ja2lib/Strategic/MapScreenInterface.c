@@ -1152,7 +1152,8 @@ void HandleDisplayOfSelectedMercArrows(void) {
   return;
 }
 
-void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ) {
+void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ,
+                                       const struct MouseInput mouse) {
   // handle display of item pop up for this sector
   // check if anyone alive in this sector
   struct ITEM_POOL *pItemPool = NULL;
@@ -1171,7 +1172,7 @@ void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ) {
           (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bLife >= OKLIFE)) {
         // valid character
         InitializeItemPickupMenu(&(Menptr[gCharactersList[bSelectedInfoChar].usSolID]), NOWHERE,
-                                 pItemPool, MAP_INVEN_POOL_X, MAP_INVEN_POOL_Y, -1);
+                                 pItemPool, MAP_INVEN_POOL_X, MAP_INVEN_POOL_Y, -1, mouse);
         fWasInited = TRUE;
 
         CreateScreenMaskForInventoryPoolPopUp();

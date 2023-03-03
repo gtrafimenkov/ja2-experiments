@@ -442,7 +442,7 @@ void RenderRubberBanding() {
   UnLockVideoSurface(FRAME_BUFFER);
 }
 
-void RenderTopmostTacticalInterface() {
+void RenderTopmostTacticalInterface(const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   UINT32 cnt;
   static UINT32 uiBogTarget = 0;
@@ -649,8 +649,7 @@ void RenderTopmostTacticalInterface() {
           bZLevel = GetZLevelOfItemPoolGivenStructure(sActionGridNo, pSoldier->bLevel, pStructure);
 
           if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
-            DrawItemPoolList(pItemPool, gfUIOverItemPoolGridNo, ITEMLIST_DISPLAY, bZLevel,
-                             gusMouseXPos, gusMouseYPos);
+            DrawItemPoolList(pItemPool, gfUIOverItemPoolGridNo, ITEMLIST_DISPLAY, bZLevel, mouse);
 
             // ATE: If over items, remove locator....
             RemoveFlashItemSlot(pItemPool);
@@ -681,8 +680,7 @@ void RenderTopmostTacticalInterface() {
             bZLevel = GetZLevelOfItemPoolGivenStructure(sActionGridNo, bCheckLevel, pStructure);
 
             if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
-              DrawItemPoolList(pItemPool, gfUIOverItemPoolGridNo, ITEMLIST_DISPLAY, bZLevel,
-                               gusMouseXPos, gusMouseYPos);
+              DrawItemPoolList(pItemPool, gfUIOverItemPoolGridNo, ITEMLIST_DISPLAY, bZLevel, mouse);
 
               // ATE: If over items, remove locator....
               RemoveFlashItemSlot(pItemPool);

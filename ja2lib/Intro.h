@@ -1,10 +1,11 @@
 #ifndef _INTRO__C_
 #define _INTRO__C_
 
+#include "GameInput.h"
 #include "SGP/Types.h"
 
 UINT32 IntroScreenShutdown(void);
-UINT32 IntroScreenHandle(void);
+UINT32 IntroScreenHandle(const struct GameInput *gameInput);
 UINT32 IntroScreenInit(void);
 
 // enums used for when the intro screen can come up, used with 'gbIntroScreenMode'

@@ -3343,7 +3343,7 @@ void DrawObjectsBasedOnSelectionRegion() {
 extern void AutoLoadMap();
 
 // The main loop of the editor.
-UINT32 EditScreenHandle(void) {
+UINT32 EditScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiRetVal;
   BOOLEAN fShowingCursor;
   StartFrameBufferRender();

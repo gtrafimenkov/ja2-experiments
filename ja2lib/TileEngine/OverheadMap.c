@@ -411,8 +411,7 @@ void HandleOverheadMap() {
         bZLevel = GetZLevelOfItemPoolGivenStructure(sActionGridNo, 0, pStructure);
 
         if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
-          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, gusMouseXPos,
-                           gusMouseYPos);
+          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, mouse);
 
           gfOverItemPool = TRUE;
           gsOveritemPoolGridNo = pItemPool->sGridNo;
@@ -423,8 +422,9 @@ void HandleOverheadMap() {
         INT8 bZLevel = 0;
 
         if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
-          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, gusMouseXPos,
-                           (UINT16)(gusMouseYPos - 5));
+          struct MouseInput adjusted = mouse;
+          adjusted.y -= 5;
+          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, adjusted);
 
           gfOverItemPool = TRUE;
           gsOveritemPoolGridNo = pItemPool->sGridNo;

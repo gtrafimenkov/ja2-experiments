@@ -1,6 +1,7 @@
 #ifndef __INTERFACE_ITEMS_H
 #define __INTERFACE_ITEMS_H
 
+#include "GameInput.h"
 #include "SGP/MouseSystem.h"
 #include "Tactical/HandleItems.h"
 #include "Tactical/Items.h"
@@ -39,7 +40,7 @@ typedef struct {
 // Itempickup stuff
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
                                  struct ITEM_POOL *pItemPool, INT16 sScreenX, INT16 sScreenY,
-                                 INT8 bZLevel);
+                                 INT8 bZLevel, const struct MouseInput mouse);
 void RenderItemPickupMenu();
 void RemoveItemPickupMenu();
 void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel);

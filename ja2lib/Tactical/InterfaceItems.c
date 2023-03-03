@@ -5379,7 +5379,7 @@ void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel) { gItemPickupMenu.fDirtyLevel =
 
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
                                  struct ITEM_POOL *pItemPool, INT16 sScreenX, INT16 sScreenY,
-                                 INT8 bZLevel) {
+                                 INT8 bZLevel, const struct MouseInput mouse) {
   VOBJECT_DESC VObjectDesc;
   CHAR8 ubString[48];
   struct ITEM_POOL *pTempItemPool;
@@ -5448,8 +5448,8 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
   {
     // First get mouse xy screen location
     if (sGridNo != NOWHERE) {
-      sX = gusMouseXPos;
-      sY = gusMouseYPos;
+      sX = mouse.x;
+      sY = mouse.y;
     } else {
       sX = sScreenX;
       sY = sScreenY;

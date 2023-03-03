@@ -213,8 +213,8 @@
 // contract
 #define CONTRACT_X 185
 #define CONTRACT_Y 50
-//#define CONTRACT_WIDTH  63
-//#define CONTRACT_HEIGHT 10
+// #define CONTRACT_WIDTH  63
+// #define CONTRACT_HEIGHT 10
 
 // trash can
 #define TRASH_CAN_X 176
@@ -315,8 +315,8 @@
 #define SOLDIER_PIC_Y 20
 #define SOLDIER_HAND_X 6
 #define SOLDIER_HAND_Y 81
-//#define	TM_INV_WIDTH								58
-//#define	TM_INV_HEIGHT								23
+// #define	TM_INV_WIDTH								58
+// #define	TM_INV_HEIGHT								23
 
 #define CLOCK_X 554
 #define CLOCK_Y 459
@@ -2632,7 +2632,7 @@ UINT32 MapScreenShutdown(void) {
   return TRUE;
 }
 
-UINT32 MapScreenHandle(void) {
+UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiNewScreen;
   VSURFACE_DESC vs_desc;
   VOBJECT_DESC VObjectDesc;
@@ -3331,7 +3331,7 @@ UINT32 MapScreenHandle(void) {
   //	RenderMapBorderCorner( );
 
   // handle display of inventory pop up
-  HandleDisplayOfItemPopUpForSector(9, 1, 0);
+  HandleDisplayOfItemPopUpForSector(9, 1, 0, gameInput->mouse);
 
   // Display Framerate
   DisplayFrameRate();

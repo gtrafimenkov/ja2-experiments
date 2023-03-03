@@ -336,7 +336,7 @@ extern BOOLEAN ValidateSoldierInitLinks(UINT8 ubCode);
 extern BOOLEAN gfDoDialogOnceGameScreenFadesIn;
 #endif
 
-UINT32 MainGameScreenHandle(void) {
+UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiNewScreen = GAME_SCREEN;
 
   // DO NOT MOVE THIS FUNCTION CALL!!!
@@ -591,7 +591,7 @@ UINT32 MainGameScreenHandle(void) {
 #endif
 
   // Render Interface
-  RenderTopmostTacticalInterface();
+  RenderTopmostTacticalInterface(gameInput->mouse);
 
 #ifdef JA2TESTVERSION
   if (gTacticalStatus.uiFlags & ENGAGED_IN_CONV) {

@@ -8,6 +8,7 @@
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
+#include "SGP/InputMousePos.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
 #include "SGP/Video.h"

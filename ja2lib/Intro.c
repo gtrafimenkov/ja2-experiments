@@ -120,7 +120,7 @@ UINT32 IntroScreenInit(void) {
 
 UINT32 IntroScreenShutdown(void) { return (1); }
 
-UINT32 IntroScreenHandle(void) {
+UINT32 IntroScreenHandle(const struct GameInput *gameInput) {
   if (gfIntroScreenEntry) {
     EnterIntroScreen();
     gfIntroScreenEntry = FALSE;

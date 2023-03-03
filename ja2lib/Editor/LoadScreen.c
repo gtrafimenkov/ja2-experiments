@@ -248,7 +248,7 @@ UINT32 ProcessLoadSaveScreenMessageBoxResult() {
   return LOADSAVE_SCREEN;
 }
 
-UINT32 LoadSaveScreenHandle(void) {
+UINT32 LoadSaveScreenHandle(const struct GameInput *gameInput) {
   struct FileDialogList *FListNode;
   INT32 x;
   InputAtom DialogEvent;

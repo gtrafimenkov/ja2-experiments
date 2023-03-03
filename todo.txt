@@ -1,0 +1,3 @@
+          // Set mouse stuff
+          sScreenX = gusMouseXPos;
+          sScreenY = gusMouseYPos;
