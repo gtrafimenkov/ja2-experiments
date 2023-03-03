@@ -446,7 +446,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   }
 
   if (InOverheadMap()) {
-    HandleOverheadMap();
+    HandleOverheadMap(gameInput->mouse);
     return (GAME_SCREEN);
   }
 

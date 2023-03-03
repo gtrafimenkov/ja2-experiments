@@ -1,14 +1,14 @@
 #ifndef _MOUSE_SYSTEM_H_
 #define _MOUSE_SYSTEM_H_
 
+#include "MouseInput.h"
 #include "SGP/MouseSystemMacros.h"
 #include "SGP/Types.h"
 
 struct MOUSE_REGION;
 
-typedef void (*MOUSE_CALLBACK)(struct MOUSE_REGION *,
-                               INT32);           // Define MOUSE_CALLBACK type as pointer to void
-typedef void (*MOUSE_HELPTEXT_DONE_CALLBACK)();  // the help is done callback
+typedef void (*MOUSE_CALLBACK)(struct MOUSE_REGION *, INT32, const struct MouseInput mouse);
+typedef void (*MOUSE_HELPTEXT_DONE_CALLBACK)();
 
 struct MOUSE_REGION {
   UINT16 IDNumber;       // Region's ID number, set by mouse system

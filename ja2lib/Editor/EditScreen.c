@@ -3373,7 +3373,7 @@ UINT32 EditScreenHandle(const struct GameInput *gameInput) {
   }
 
   if (InOverheadMap() && !gfSummaryWindowActive) {
-    HandleOverheadMap();
+    HandleOverheadMap(gameInput->mouse);
   }
 
   // Calculate general mouse information
