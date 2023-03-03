@@ -50,6 +50,10 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
+static BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY,
+                              BOOLEAN fForceAdjust, BOOLEAN fCheckOnly,
+                              const struct MouseInput mouse);
+
 #ifdef __GCC
 // since some of the code is not complied on Linux
 #pragma GCC diagnostic push
@@ -432,8 +436,6 @@ void ExamineZBufferForHiddenTiles(INT16 sStartPointX_M, INT16 sStartPointY_M, IN
 // void ReRenderWorld(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom);
 void ClearMarkedTiles(void);
 void CorrectRenderCenter(INT16 sRenderX, INT16 sRenderY, INT16 *pSNewX, INT16 *pSNewY);
-void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScrollYIncrement);
-
 void CalcRenderParameters(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom);
 void ResetRenderParameters();
 
@@ -2083,7 +2085,8 @@ void DeleteFromWorld(UINT16 usTileIndex, UINT32 uiRenderTiles, UINT16 usIndex) {
 // memcpy's the background to the new scroll position, and renders the missing strip
 // via the RenderStaticWorldRect. Dynamic stuff will be updated on the next frame
 // by the normal render cycle
-void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScrollYIncrement) {
+static void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScrollYIncrement,
+                             const struct MouseInput mouse) {
   // RestoreBackgroundRects();
 
   if (!gfDoVideoScroll) {
@@ -2091,7 +2094,7 @@ void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScroll
     memset(gpZBuffer, LAND_Z_LEVEL, 1280 * gsVIEWPORT_END_Y);
 
     RenderStaticWorldRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-                          gsVIEWPORT_END_Y, FALSE);
+                          gsVIEWPORT_END_Y, FALSE, mouse);
 
     FreeBackgroundRectType(BGND_FLAG_ANIMATED);
   } else {
@@ -2170,10 +2173,6 @@ void RenderWorld() {
     }
   }
 
-  // RenderStaticWorldRect( gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y ); AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y ); return;
-
   // #if 0
 
   if (gRenderFlags & RENDER_FLAG_FULL) {
@@ -2190,7 +2189,7 @@ void RenderWorld() {
 
     if ((gRenderFlags & RENDER_FLAG_NOZ)) {
       RenderStaticWorldRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-                            gsVIEWPORT_END_Y, FALSE);
+                            gsVIEWPORT_END_Y, FALSE, mouse);
     } else {
       RenderStaticWorld();
     }
@@ -2231,12 +2230,6 @@ void RenderWorld() {
 
 #endif
 
-  // #endif
-
-  // RenderStaticWorldRect( gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y ); AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y );
-
   if (gRenderFlags & RENDER_FLAG_MARKED) ClearMarkedTiles();
 
   if (gRenderFlags & RENDER_FLAG_CHECKZ && !(gTacticalStatus.uiFlags & NOHIDE_REDUNDENCY)) {
@@ -2270,7 +2263,7 @@ void RenderWorld() {
 // Determine WorldIntersectionPoint and the starting block from these
 // Then render away!
 void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
-                           BOOLEAN fDynamicsToo) {
+                           BOOLEAN fDynamicsToo, const struct MouseInput mouse) {
   UINT32 uiLevelFlags[10];
   UINT16 sLevelIDs[10];
 
@@ -2286,20 +2279,20 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   sLevelIDs[0] = RENDER_STATIC_LAND;
   // sLevelIDs[1]		= RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   // #if 0
 
   uiLevelFlags[0] = TILES_STATIC_OBJECTS;
   sLevelIDs[0] = RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   if (gRenderFlags & RENDER_FLAG_SHADOWS) {
     uiLevelFlags[0] = TILES_STATIC_SHADOWS;
     sLevelIDs[0] = RENDER_STATIC_SHADOWS;
     RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-                gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+                gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
   }
 
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2313,7 +2306,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   sLevelIDs[3] = RENDER_STATIC_TOPMOST;
 
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 4, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 4, uiLevelFlags, sLevelIDs, mouse);
 
   // ATE: Do obsucred layer!
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2321,15 +2314,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   uiLevelFlags[1] = TILES_STATIC_ONROOF;
   sLevelIDs[1] = RENDER_STATIC_ONROOF;
   RenderTiles(TILES_OBSCURED, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S,
-              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs);
-
-  // uiLevelFlags[0] = TILES_DYNAMIC_MERCS;
-  // uiLevelFlags[1] = TILES_DYNAMIC_HIGHMERCS;
-
-  // sLevelIDs[0]    = RENDER_DYNAMIC_MERCS;
-  // sLevelIDs[1]		= RENDER_DYNAMIC_HIGHMERCS;
-  // RenderTiles( 0, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S, gsEndXS,
-  // gsEndYS, 1, uiLevelFlags, sLevelIDs );
+              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs, mouse);
 
   if (fDynamicsToo) {
     // DYNAMICS
@@ -2353,7 +2338,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
     sLevelIDs[7] = RENDER_DYNAMIC_HIGHMERCS;
     sLevelIDs[8] = RENDER_DYNAMIC_ONROOF;
     RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-                gsLEndYS, 9, uiLevelFlags, sLevelIDs);
+                gsLEndYS, 9, uiLevelFlags, sLevelIDs, mouse);
 
     SumAddiviveLayerOptimization();
   }
@@ -2387,18 +2372,18 @@ void RenderStaticWorld() {
   sLevelIDs[0] = RENDER_STATIC_LAND;
   // sLevelIDs[1]		= RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_OBJECTS;
   sLevelIDs[0] = RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   if (gRenderFlags & RENDER_FLAG_SHADOWS) {
     uiLevelFlags[0] = TILES_STATIC_SHADOWS;
     sLevelIDs[0] = RENDER_STATIC_SHADOWS;
     RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-                gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+                gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
   }
 
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2412,7 +2397,7 @@ void RenderStaticWorld() {
   sLevelIDs[3] = RENDER_STATIC_TOPMOST;
 
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 4, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 4, uiLevelFlags, sLevelIDs, mouse);
 
   // ATE: Do obsucred layer!
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2420,7 +2405,7 @@ void RenderStaticWorld() {
   uiLevelFlags[1] = TILES_STATIC_ONROOF;
   sLevelIDs[1] = RENDER_STATIC_ONROOF;
   RenderTiles(TILES_OBSCURED, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S,
-              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs);
+              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs, mouse);
 
   AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_WINDOW_START_Y, gsVIEWPORT_END_X,
                    gsVIEWPORT_WINDOW_END_Y);
@@ -2445,34 +2430,34 @@ void RenderMarkedWorld(void) {
   sLevelIDs[0] = RENDER_STATIC_LAND;
   sLevelIDs[1] = RENDER_STATIC_OBJECTS;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 2, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 2, uiLevelFlags, sLevelIDs, mouse);
 
   if (gRenderFlags & RENDER_FLAG_SHADOWS) {
     uiLevelFlags[0] = TILES_STATIC_SHADOWS;
     sLevelIDs[0] = RENDER_STATIC_SHADOWS;
     RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-                gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+                gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
   }
 
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
   sLevelIDs[0] = RENDER_STATIC_STRUCTS;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_ROOF;
   sLevelIDs[0] = RENDER_STATIC_ROOF;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_ONROOF;
   sLevelIDs[0] = RENDER_STATIC_ONROOF;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_TOPMOST;
   sLevelIDs[0] = RENDER_STATIC_TOPMOST;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_WINDOW_START_Y, gsVIEWPORT_END_X,
                    gsVIEWPORT_WINDOW_END_Y);
@@ -2539,7 +2524,7 @@ void RenderDynamicWorld() {
   }
 
   RenderTiles(TILES_DIRTY, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, ubNumLevels, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, ubNumLevels, uiLevelFlags, sLevelIDs, mouse);
 
 #ifdef JA2EDITOR
   if (!gfEditMode && !gfAniEditMode)
@@ -2565,7 +2550,7 @@ void RenderDynamicWorld() {
   sLevelIDs[4] = RENDER_DYNAMIC_STRUCTS;
 
   RenderTiles(0, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S, gsEndXS,
-              gsEndYS, 5, uiLevelFlags, sLevelIDs);
+              gsEndYS, 5, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_DYNAMIC_ROOF;
   uiLevelFlags[1] = TILES_DYNAMIC_HIGHMERCS;
@@ -2576,14 +2561,14 @@ void RenderDynamicWorld() {
   sLevelIDs[2] = RENDER_DYNAMIC_ONROOF;
 
   RenderTiles(0, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S, gsEndXS,
-              gsEndYS, 3, uiLevelFlags, sLevelIDs);
+              gsEndYS, 3, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_DYNAMIC_TOPMOST;
   sLevelIDs[0] = RENDER_DYNAMIC_TOPMOST;
 
   // ATE: check here for mouse over structs.....
   RenderTiles(TILES_DYNAMIC_CHECKFOR_INT_TILE, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S,
-              gsStartPointY_S, gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsStartPointY_S, gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   SumAddiviveLayerOptimization();
 
@@ -3159,17 +3144,12 @@ void InitRenderParams(UINT8 ubRestrictionID) {
 
   gusNormalItemOutlineColor = Get16BPPColor(FROMRGB(255, 255, 255));
   gusYellowItemOutlineColor = Get16BPPColor(FROMRGB(255, 255, 0));
-
-  // NOW GET DISTANCE SPANNING WORLD LIMITS IN WORLD COORDS
-  // FromScreenToCellCoordinates( ( gTopRightWorldLimitX - gTopLeftWorldLimitX ), (
-  // gTopRightWorldLimitY - gTopLeftWorldLimitY ), &gsWorldSpanX, &gsWorldSpanY );
-
-  // CALCULATE 16BPP COLORS FOR ITEMS
 }
 
 // Appy? HEahehahehahehae.....
-BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY, BOOLEAN fForceAdjust,
-                       BOOLEAN fCheckOnly) {
+static BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY,
+                              BOOLEAN fForceAdjust, BOOLEAN fCheckOnly,
+                              const struct MouseInput mouse) {
   BOOLEAN fScrollGood = FALSE;
   BOOLEAN fOutLeft = FALSE;
   BOOLEAN fOutRight = FALSE;
@@ -6412,41 +6392,13 @@ void SetMercGlowFast() {
 
 void SetMercGlowNormal() { gpGlowFramePointer = gsGlowFrames; }
 
-#if 0
-		if ( gAnimControl[ pSoldier->usAnimState ].uiFlags & ANIM_MOVING )
-		{
-			if ( sZOffsetY > 0 )
-			{
-				sZOffsetY++;
-			}
-			if ( sZOffsetX > 0 )
-			{
-				sZOffsetX++;
-			}
-		}
-
-		sZOffsetX = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetX;\
-			sZOffsetY = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetY;\
-
-
-	if ( ( pSoldier->uiStatusFlags & SOLDIER_MULTITILE ) )\
-	{\
-		sZOffsetX = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetX;\
-		sZOffsetY = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetY;\
-\
-		GetMapXYWorldY( sMapX + sZOffsetX, sMapY + sZOffsetY, sWorldY );\
-	}\
-	else
-
-#endif
-
-void SetRenderCenter(INT16 sNewX, INT16 sNewY) {
+void SetRenderCenter(INT16 sNewX, INT16 sNewY, const struct MouseInput mouse) {
   if (gfIgnoreScrolling == 1) {
     return;
   }
 
   // Apply these new coordinates to the renderer!
-  ApplyScrolling(sNewX, sNewY, TRUE, FALSE);
+  ApplyScrolling(sNewX, sNewY, TRUE, FALSE, mouse);
 
   // Set flag to ignore scrolling this frame
   gfIgnoreScrollDueToCenterAdjust = TRUE;

@@ -2842,33 +2842,7 @@ void EndTopMessage() {
       gTacticalStatus.fInTopMessage = FALSE;
 
       SetRenderFlags(RENDER_FLAG_FULL);
-      // RenderStaticWorldRect( 0, 0, 640, 20, TRUE );
-      // gsVIEWPORT_WINDOW_START_Y = 20;
-
-      // Copy into save buffer...
-      // BltFx.SrcRect.iLeft = 0;
-      // BltFx.SrcRect.iTop  = 0;
-      // BltFx.SrcRect.iRight = 640;
-      // BltFx.SrcRect.iBottom = 20;
-
-      // BltVideoSurface( guiSAVEBUFFER, FRAME_BUFFER, 0,
-      //															 0,
-      // 0,
-      // VS_BLT_SRCSUBRECT, &BltFx );
     }
-    // else
-    //{
-    // Render to save buffer
-    //	CreateTopMessage( guiSAVEBUFFER, gTopMessageTypes[ 0 ], gzTopMessageStrings[ 0 ] );
-    //}
-
-    // Animate up...
-    // gTopMessage.bAnimate = 1;
-    // Set time of last update
-    // gTopMessage.uiTimeOfLastUpdate = GetJA2Clock( ) + 150;
-
-    // Handle first frame now...
-    // HandleTopMessages( );
   }
 }
 

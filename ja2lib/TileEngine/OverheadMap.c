@@ -1130,7 +1130,7 @@ void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
     // Get new proposed center location.
     GetFromAbsoluteScreenXYWorldXY(&uiCellX, &uiCellY, sWorldScreenX, sWorldScreenY);
 
-    SetRenderCenter((INT16)uiCellX, (INT16)uiCellY);
+    SetRenderCenter((INT16)uiCellX, (INT16)uiCellY, mouse);
 
     KillOverheadMap();
 

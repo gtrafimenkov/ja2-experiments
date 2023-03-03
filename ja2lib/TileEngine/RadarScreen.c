@@ -39,7 +39,8 @@
 
 extern INT32 iCurrentMapSectorZ;
 
-void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY);
+static void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY,
+                                             const struct MouseInput mouse);
 
 // render the squad list
 void RenderSquadList(void);
@@ -189,7 +190,7 @@ void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       sRadarX = pRegion->RelativeXPos - (RADAR_WINDOW_WIDTH / 2);
       sRadarY = pRegion->RelativeYPos - (RADAR_WINDOW_HEIGHT / 2);
 
-      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY);
+      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY, mouse);
 
       SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -211,7 +212,7 @@ void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       sRadarX = pRegion->RelativeXPos - (RADAR_WINDOW_WIDTH / 2);
       sRadarY = pRegion->RelativeYPos - (RADAR_WINDOW_HEIGHT / 2);
 
-      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY);
+      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY, mouse);
     } else {
       KillOverheadMap();
     }
@@ -460,7 +461,8 @@ void RenderRadarScreen() {
   return;
 }
 
-void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY) {
+static void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY,
+                                             const struct MouseInput mouse) {
   INT16 sScreenX, sScreenY;
   INT16 sTempX_W, sTempY_W;
   INT16 sNewCenterWorldX, sNewCenterWorldY;
@@ -497,7 +499,7 @@ void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY) {
   sNewCenterWorldX = (INT16)(gCenterWorldX + sTempX_W);
   sNewCenterWorldY = (INT16)(gCenterWorldY + sTempY_W);
 
-  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY);
+  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY, mouse);
 }
 
 void DisableRadarScreenRender(void) {

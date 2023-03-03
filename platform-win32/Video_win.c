@@ -1156,11 +1156,8 @@ void ScrollJA2Background(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScr
 
     for (cnt = 0; cnt < usNumStrips; cnt++) {
       RenderStaticWorldRect((INT16)StripRegions[cnt].left, (INT16)StripRegions[cnt].top,
-                            (INT16)StripRegions[cnt].right, (INT16)StripRegions[cnt].bottom, TRUE);
-      // Optimize Redundent tiles too!
-      // ExamineZBufferRect( (INT16)StripRegions[ cnt ].left, (INT16)StripRegions[ cnt ].top,
-      // (INT16)StripRegions[ cnt ].right, (INT16)StripRegions[ cnt ].bottom );
-
+                            (INT16)StripRegions[cnt].right, (INT16)StripRegions[cnt].bottom, TRUE,
+                            mouse);
       do {
         ReturnCode = IDirectDrawSurface2_SGPBltFast(
             pDest, StripRegions[cnt].left, StripRegions[cnt].top, gpFrameBuffer,
@@ -4270,21 +4267,13 @@ struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurfac
   return (hVSurface);
 }
 
-struct VSurface *GetPrimaryVideoSurface() {
-  return (ghPrimary);
-}
+struct VSurface *GetPrimaryVideoSurface() { return (ghPrimary); }
 
-struct VSurface *GetBackBufferVideoSurface() {
-  return (ghBackBuffer);
-}
+struct VSurface *GetBackBufferVideoSurface() { return (ghBackBuffer); }
 
-struct VSurface *GetFrameBufferVideoSurface() {
-  return (ghFrameBuffer);
-}
+struct VSurface *GetFrameBufferVideoSurface() { return (ghFrameBuffer); }
 
-struct VSurface *GetMouseBufferVideoSurface() {
-  return (ghMouseBuffer);
-}
+struct VSurface *GetMouseBufferVideoSurface() { return (ghMouseBuffer); }
 
 // UTILITY FUNCTIONS FOR BLITTING
 

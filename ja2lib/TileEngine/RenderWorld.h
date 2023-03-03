@@ -1,6 +1,7 @@
 #ifndef __RENDERWORLD_H
 #define __RENDERWORLD_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 struct VObject;
@@ -155,15 +156,12 @@ BOOLEAN ConcealWalls(INT16 sX, INT16 sY, INT16 sRadius);
 BOOLEAN RevealWalls(INT16 sX, INT16 sY, INT16 sRadius);
 void ConcealAllWalls(void);
 
-BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY, BOOLEAN fForceAdjust,
-                       BOOLEAN fCheckOnly);
-
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClip(UINT16 *pBuffer, UINT32 uiDestPitchBYTES,
                                               UINT16 *pZBuffer, UINT16 usZValue,
                                               struct VObject *hSrcVObject, INT32 iX, INT32 iY,
                                               UINT16 usIndex, SGPRect *clipregion);
 
-void RenderStaticWorldRect(INT16, INT16, INT16, INT16, BOOLEAN);
+void RenderStaticWorldRect(INT16, INT16, INT16, INT16, BOOLEAN, const struct MouseInput mouse);
 void RenderMarkedWorld(void);
 void RenderDynamicMercWorld(void);
 
@@ -177,7 +175,7 @@ void DirtyWorldRender();
 void SetMercGlowFast();
 void SetMercGlowNormal();
 
-void SetRenderCenter(INT16 sNewX, INT16 sNewY);
+void SetRenderCenter(INT16 sNewX, INT16 sNewY, const struct MouseInput mouse);
 
 #ifdef _DEBUG
 void RenderFOVDebug();

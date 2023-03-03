@@ -2458,7 +2458,7 @@ void LocateSoldier(UINT16 usID, BOOLEAN fSetLocator) {
     sNewCenterWorldX = (INT16)pSoldier->dXPos;
     sNewCenterWorldY = (INT16)pSoldier->dYPos;
 
-    SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY);
+    SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY, mouse);
 
     // Plot new path!
     gfPlotNewMovement = TRUE;
@@ -2484,7 +2484,7 @@ void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce) {
     return;
   }
 
-  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY);
+  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY, mouse);
 }
 
 void LocateGridNo(UINT16 sGridNo) { InternalLocateGridNo(sGridNo, FALSE); }
