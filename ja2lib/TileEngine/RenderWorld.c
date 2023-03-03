@@ -50,6 +50,8 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
+static void RenderDynamicWorld(const struct MouseInput mouse);
+
 static BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY,
                               BOOLEAN fForceAdjust, BOOLEAN fCheckOnly,
                               const struct MouseInput mouse);
@@ -2118,7 +2120,7 @@ static void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 
 // Coordinates for the window from that using the following functions
 // For coordinate transformations
 
-void RenderWorld() {
+void RenderWorld(const struct MouseInput mouse) {
   TILE_ELEMENT *TileElem;
   TILE_ANIMATION_DATA *pAnimData;
   UINT32 cnt = 0;
@@ -2204,7 +2206,7 @@ void RenderWorld() {
 
   if (gfScrollInertia == FALSE || (gRenderFlags & RENDER_FLAG_NOZ) ||
       (gRenderFlags & RENDER_FLAG_FULL) || (gRenderFlags & RENDER_FLAG_MARKED)) {
-    RenderDynamicWorld();
+    RenderDynamicWorld(mouse);
   }
 
   if (gfScrollInertia) {
@@ -2465,7 +2467,7 @@ void RenderMarkedWorld(void) {
   ResetRenderParameters();
 }
 
-void RenderDynamicWorld() {
+static void RenderDynamicWorld(const struct MouseInput mouse) {
   UINT8 ubNumLevels;
   UINT32 uiLevelFlags[10];
   UINT16 sLevelIDs[10];
@@ -2575,9 +2577,9 @@ void RenderDynamicWorld() {
   ResetRenderParameters();
 }
 
-BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sScrollYStep,
-                               INT16 *psTempRenderCenterX, INT16 *psTempRenderCenterY,
-                               BOOLEAN fCheckOnly) {
+static BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sScrollYStep,
+                                      INT16 *psTempRenderCenterX, INT16 *psTempRenderCenterY,
+                                      BOOLEAN fCheckOnly, const struct MouseInput mouse) {
   BOOLEAN fAGoodMove = FALSE, fMovedPos = FALSE;
   INT16 sTempX_W, sTempY_W;
   BOOLEAN fUpOK, fLeftOK;
@@ -2592,13 +2594,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2606,13 +2608,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2620,13 +2622,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2634,13 +2636,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2649,13 +2651,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check left
     FromScreenToCellCoordinates((INT16)-sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fLeftOK && fUpOK) {
       FromScreenToCellCoordinates((INT16)-sScrollXStep, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2664,7 +2666,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UPLEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UPLEFT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fUpOK) {
@@ -2675,7 +2677,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fLeftOK) {
@@ -2686,7 +2688,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2696,13 +2698,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check right
     FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fUpOK && fRightOK) {
       FromScreenToCellCoordinates((INT16)sScrollXStep, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2711,7 +2713,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UPRIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UPRIGHT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fUpOK) {
@@ -2722,7 +2724,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep, mouse);
       }
     } else if (fRightOK) {
       fAGoodMove = TRUE;
@@ -2732,7 +2734,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2742,13 +2744,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check left.....
     FromScreenToCellCoordinates((INT16)-sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fLeftOK && fDownOK) {
       fAGoodMove = TRUE;
@@ -2767,7 +2769,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep, mouse);
       }
     } else if (fDownOK) {
       FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2776,7 +2778,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2786,13 +2788,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check down
     FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fDownOK && fRightOK) {
       FromScreenToCellCoordinates((INT16)sScrollXStep, (INT16)sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2801,7 +2803,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWNRIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWNRIGHT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fDownOK) {
@@ -2811,7 +2813,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep, mouse);
       }
     } else if (fRightOK) {
       FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
@@ -2820,7 +2822,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2831,7 +2833,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
   return (fAGoodMove);
 }
 
-void ScrollWorld() {
+void ScrollWorld(const struct MouseInput mouse) {
   UINT32 ScrollFlags = 0;
   BOOLEAN fDoScroll = FALSE, fMovedPos = FALSE, fAGoodMove = FALSE;
   INT16 sTempRenderCenterX, sTempRenderCenterY;
@@ -2996,7 +2998,7 @@ void ScrollWorld() {
     }
 
     fAGoodMove = HandleScrollDirections(ScrollFlags, sScrollXStep, sScrollYStep,
-                                        &sTempRenderCenterX, &sTempRenderCenterY, TRUE);
+                                        &sTempRenderCenterX, &sTempRenderCenterY, TRUE, mouse);
   }
 
   // Has this been an OK scroll?
@@ -3024,7 +3026,7 @@ void ScrollWorld() {
 
       // Now we actually begin our scrolling
       HandleScrollDirections(ScrollFlags, sScrollXStep, sScrollYStep, &sTempRenderCenterX,
-                             &sTempRenderCenterY, FALSE);
+                             &sTempRenderCenterY, FALSE, mouse);
     }
   } else {
     // ATE: Also if scroll pending never got to scroll....

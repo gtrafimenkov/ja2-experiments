@@ -460,7 +460,7 @@ BOOLEAN EditModeShutdown(void) {
   if (gfWorldLoaded) {
     ClearRenderFlags(RENDER_FLAG_SAVEOFF);
     MarkWorldDirty();
-    RenderWorld();
+    RenderWorld(mouse);
   }
 
   InvalidateScreen();
@@ -1197,15 +1197,9 @@ void HandleJA2ToolbarSelection(void) {
   iEditorToolbarState = TBAR_MODE_NONE;
 }
 
-//----------------------------------------------------------------------------------------------
-//	HandleKeyboardShortcuts
-//
-//	Select action to be taken based on the user's current key press (if any)
-//
-
 extern INT8 gbCurrSelect;
 extern void DeleteSelectedMercsItem();
-void HandleKeyboardShortcuts() {
+static void HandleKeyboardShortcuts(const struct MouseInput mouse) {
   static BOOLEAN fShowTrees = TRUE;
   while (DequeueEvent(&EditorInputEvent)) {
     if (!HandleSummaryInput(&EditorInputEvent) && !HandleTextInput(&EditorInputEvent) &&
@@ -1299,7 +1293,7 @@ void HandleKeyboardShortcuts() {
 
           case ESC:
             if (InOverheadMap()) {
-              KillOverheadMap();
+              KillOverheadMap(mouse);
             }
             if (iDrawMode == DRAW_MODE_SCHEDULEACTION) {
               CancelCurrentScheduleAction();
@@ -1606,7 +1600,7 @@ void HandleKeyboardShortcuts() {
             if (!InOverheadMap())
               GoIntoOverheadMap();
             else
-              KillOverheadMap();
+              KillOverheadMap(mouse);
             break;
 
           case 'l':
@@ -1693,7 +1687,7 @@ void HandleKeyboardShortcuts() {
 
           case 'x':
             if (EditorInputEvent.usKeyState & ALT_DOWN) {
-              if (InOverheadMap()) KillOverheadMap();
+              if (InOverheadMap()) KillOverheadMap(mouse);
               if (gfEditingDoor) KillDoorEditing();
               iCurrentAction = ACTION_QUIT_GAME;
               return;
@@ -3408,7 +3402,7 @@ UINT32 EditScreenHandle(const struct GameInput *gameInput) {
   // Handle scrolling of the map if needed
   if (!gfGotoGridNoUI && iDrawMode != DRAW_MODE_SHOW_TILESET && !gfSummaryWindowActive &&
       !gfEditingDoor && !gfNoScroll && !InOverheadMap())
-    ScrollWorld();
+    ScrollWorld(gameInput->mouse);
 
   iCurrentAction = ACTION_NULL;
 
@@ -3441,7 +3435,7 @@ UINT32 EditScreenHandle(const struct GameInput *gameInput) {
   }
 
   // The default here for the renderer is to just do dynamic stuff...
-  if (!gfSummaryWindowActive && !gfEditingDoor && !InOverheadMap()) RenderWorld();
+  if (!gfSummaryWindowActive && !gfEditingDoor && !InOverheadMap()) RenderWorld(mouse);
 
   DisplayWayPoints();
 
@@ -3453,7 +3447,7 @@ UINT32 EditScreenHandle(const struct GameInput *gameInput) {
   HandleJA2ToolbarSelection();
 
   // Handle keyboard shortcuts / selections
-  HandleKeyboardShortcuts();
+  HandleKeyboardShortcuts(gameInput->mouse);
 
   // Perform action based on current selection
   if ((uiRetVal = PerformSelectedAction()) != EDIT_SCREEN) return (uiRetVal);

@@ -35,7 +35,6 @@ void FindTilesetComments(void);
 void GetMasterList(void);
 
 void HandleJA2ToolbarSelection(void);
-void HandleKeyboardShortcuts();
 UINT32 PerformSelectedAction(void);
 UINT32 WaitForSelectionWindowResponse(void);
 UINT32 WaitForMessageBoxResponse(UINT32 uiCurrentScreen);

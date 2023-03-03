@@ -661,7 +661,7 @@ void KillTacticalPlacementGUI() {
   SetCurrentInterfacePanel((UINT8)gsCurInterfacePanel);
 
   // Leave the overhead map.
-  KillOverheadMap();
+  KillOverheadMap(mouse);
   // Recreate the tactical panel.
   MSYS_EnableRegion(&gRadarRegion);
   SetCurrentInterfacePanel(TEAM_PANEL);

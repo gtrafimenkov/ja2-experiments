@@ -214,13 +214,13 @@ void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
 
       AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY, mouse);
     } else {
-      KillOverheadMap();
+      KillOverheadMap(mouse);
     }
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_DWN) {
     if (!InOverheadMap()) {
       GoIntoOverheadMap();
     } else {
-      KillOverheadMap();
+      KillOverheadMap(mouse);
     }
   }
 }

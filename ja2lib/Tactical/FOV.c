@@ -366,7 +366,7 @@ void RevealRoofsAndItems(struct SOLDIERTYPE *pSoldier, UINT32 itemsToo, BOOLEAN 
       memset(gubFOVDebugInfoInfo, 0, sizeof(gubFOVDebugInfoInfo));
 
       SetRenderFlags(RENDER_FLAG_FULL);
-      RenderWorld();
+      RenderWorld(mouse);
     }
 #endif
 
@@ -751,4 +751,4 @@ void RevealRoofsAndItems(struct SOLDIERTYPE *pSoldier, UINT32 itemsToo, BOOLEAN 
   // LookForDoors(pSoldier,UNAWARE);
 }
 
-//#endif
+// #endif

@@ -275,7 +275,7 @@ BUILDING* GenerateBuilding(INT16 sDesiredSpot) {
   /*
   #ifdef ROOF_DEBUG
           SetRenderFlags( RENDER_FLAG_FULL );
-          RenderWorld();
+          RenderWorld(mouse);
           RenderCoverDebug( );
           InvalidateScreen( );
           EndFrameBufferRender();

@@ -100,7 +100,7 @@ UINT32 AniEditScreenHandle(const struct GameInput *gameInput) {
   /////////////////////////////////////////////////////
   StartFrameBufferRender();
 
-  RenderWorld();
+  RenderWorld(mouse);
 
   ExecuteBaseDirtyRectQueue();
 

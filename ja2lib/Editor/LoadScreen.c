@@ -220,7 +220,7 @@ UINT32 ProcessLoadSaveScreenMessageBoxResult() {
       }
     }
     MarkWorldDirty();
-    RenderWorld();
+    RenderWorld(mouse);
     gfDeleteFile = FALSE;
     iFDlgState = DIALOG_NONE;
     return LOADSAVE_SCREEN;
@@ -479,7 +479,7 @@ void RemoveFileDialog(void) {
   EnableEditorTaskbar();
   KillTextInputMode();
   MarkWorldDirty();
-  RenderWorld();
+  RenderWorld(mouse);
   EndFrameBufferRender();
 }
 

@@ -539,7 +539,7 @@ void HandleOverheadUI(const struct MouseInput mouse) {
         case (ESC):
         case (INSERT):
 
-          KillOverheadMap();
+          KillOverheadMap(mouse);
           break;
 
         case ('x'):
@@ -552,10 +552,10 @@ void HandleOverheadUI(const struct MouseInput mouse) {
   }
 }
 
-void KillOverheadMap() {
+void KillOverheadMap(const struct MouseInput mouse) {
   gfInOverheadMap = FALSE;
   SetRenderFlags(RENDER_FLAG_FULL);
-  RenderWorld();
+  RenderWorld(mouse);
 
   MSYS_RemoveRegion(&OverheadRegion);
   MSYS_RemoveRegion(&OverheadBackgroundRegion);
@@ -1132,10 +1132,10 @@ void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
 
     SetRenderCenter((INT16)uiCellX, (INT16)uiCellY, mouse);
 
-    KillOverheadMap();
+    KillOverheadMap(mouse);
 
   } else if (reason & MSYS_CALLBACK_REASON_RBUTTON_DWN) {
-    KillOverheadMap();
+    KillOverheadMap(mouse);
   }
 }
 

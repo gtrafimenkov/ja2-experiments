@@ -568,11 +568,11 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   }
 
   // Handle Scroll Of World
-  ScrollWorld();
+  ScrollWorld(gameInput->mouse);
 
   // SetRenderFlags( RENDER_FLAG_FULL );
 
-  RenderWorld();
+  RenderWorld(mouse);
 
   if (gRenderOverride != NULL) {
     gRenderOverride();
@@ -828,7 +828,7 @@ void HandleModalTactical() {
 
   RestoreBackgroundRects();
 
-  RenderWorld();
+  RenderWorld(mouse);
   RenderRadarScreen();
   ExecuteVideoOverlays();
 

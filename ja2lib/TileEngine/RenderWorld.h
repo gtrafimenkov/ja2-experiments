@@ -124,16 +124,15 @@ extern BOOLEAN fLandLayerDirty;
 extern BOOLEAN gfIgnoreScrollDueToCenterAdjust;
 
 // FUNCTIONS
-void ScrollWorld();
+void ScrollWorld(const struct MouseInput mouse);
 void InitRenderParams(UINT8 ubRestrictionID);
-void RenderWorld();
+void RenderWorld(const struct MouseInput mouse);
 
 void ResetLayerOptimizing(void);
 void ResetSpecificLayerOptimizing(UINT32 uiRowFlag);
 
 // Routines of RenderWorld
 extern void RenderStaticWorld();
-extern void RenderDynamicWorld();
 void CopyRenderBuffer();
 
 void SetRenderFlags(UINT32 uiFlags);

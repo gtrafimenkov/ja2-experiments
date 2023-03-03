@@ -14,7 +14,7 @@ void HandleOverheadMap(const struct MouseInput mouse);
 BOOLEAN InOverheadMap();
 void GoIntoOverheadMap();
 void HandleOverheadUI(const struct MouseInput mouse);
-void KillOverheadMap();
+void KillOverheadMap(const struct MouseInput mouse);
 
 void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
                                  const struct MouseInput mouse);
