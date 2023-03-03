@@ -8,7 +8,7 @@ struct MouseInput {
   uint16_t y;
 };
 
-struct MouseInput XXX_GetMouseInput();
+extern struct MouseInput XXX_GetMouseInput();
 // extern UINT16 gusMouseXPos;  // X position of the mouse on screen
 // extern UINT16 gusMouseYPos;  // y position of the mouse on screen
 

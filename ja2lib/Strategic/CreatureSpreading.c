@@ -846,6 +846,7 @@ void CreatureAttackTown(
     return;
   }
 
+  const struct MouseInput mouse = XXX_GetMouseInput();
   SectorInfo[ubSectorID].ubDayOfLastCreatureAttack = (UINT8)GetWorldDay();
   switch (gubCreatureBattleCode) {
     case CREATURE_BATTLE_CODE_PREBATTLEINTERFACE:

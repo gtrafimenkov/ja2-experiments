@@ -2148,6 +2148,7 @@ void CalcPositionOfNewScrollBoxLocation() {
   INT16 sStartPosOfScrollArea =
       gpActiveListBox->usScrollPosY + gpActiveListBox->usScrollArrowHeight;
 
+  const struct MouseInput mouse = XXX_GetMouseInput();
   sMouseYPos = mouse.y;
 
   // if we have to scroll

@@ -885,6 +885,7 @@ void PrepareForPreBattleInterface(struct GROUP *pPlayerDialogGroup,
   } else {
     // ATE: What if we have unconscious guys, etc....
     // We MUST start combat, but donot play quote...
+    const struct MouseInput mouse = XXX_GetMouseInput();
     InitPreBattleInterface(pInitiatingBattleGroup, TRUE, mouse);
   }
 }
@@ -4043,7 +4044,7 @@ void NotifyPlayerOfBloodcatBattle(UINT8 ubSectorX, UINT8 ubSectorY) {
   if (guiCurrentScreen == MAP_SCREEN) {  // Force render mapscreen (need to update the position of
                                          // the group before the dialog appears.
     fMapPanelDirty = TRUE;
-    MapScreenHandle(XXX_GetMouseInput());
+    MapScreenHandle(XXX_GetGameInput());
     InvalidateScreen();
     RefreshScreen(NULL);
   }

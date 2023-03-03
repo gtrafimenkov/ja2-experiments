@@ -1,5 +1,5 @@
-#ifndef __INPUT_MOUSE_POS
-#define __INPUT_MOUSE_POS
+#ifndef __GAME_INPUT_H
+#define __GAME_INPUT_H
 
 #include <stdint.h>
 
@@ -8,5 +8,7 @@
 struct GameInput {
   struct MouseInput mouse;
 };
+
+extern struct GameInput* XXX_GetGameInput();
 
 #endif
