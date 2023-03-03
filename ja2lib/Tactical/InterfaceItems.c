@@ -5387,13 +5387,12 @@ void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason);
 void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel) { gItemPickupMenu.fDirtyLevel = fDirtyLevel; }
 
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
-                                 struct ITEM_POOL *pItemPool, INT16 sScreenX, INT16 sScreenY,
-                                 INT8 bZLevel, const struct MouseInput mouse) {
+                                 struct ITEM_POOL *pItemPool, struct Point16 point, INT8 bZLevel) {
   VOBJECT_DESC VObjectDesc;
   CHAR8 ubString[48];
   struct ITEM_POOL *pTempItemPool;
   INT32 cnt;
-  INT16 sCenX, sCenY, sX, sY, sCenterYVal;
+  INT16 sCenX, sCenY, sCenterYVal;
 
   // Erase other menus....
   EraseInterfaceMenus(TRUE);
@@ -5454,16 +5453,9 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
   CalculateItemPickupMenuDimensions();
 
   // Get XY
+  i16 sX = point.x;
+  i16 sY = point.y;
   {
-    // First get mouse xy screen location
-    if (sGridNo != NOWHERE) {
-      sX = mouse.x;
-      sY = mouse.y;
-    } else {
-      sX = sScreenX;
-      sY = sScreenY;
-    }
-
     // CHECK FOR LEFT/RIGHT
     if ((sX + gItemPickupMenu.sWidth) > 640) {
       sX = 640 - gItemPickupMenu.sWidth - ITEMPICK_START_X_OFFSET;
@@ -6145,16 +6137,6 @@ void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       // Toggle selection... ONLY IF LEGAL!!
       gItemPickupMenu.pfSelectedArray[uiItemPos + gItemPickupMenu.ubScrollAnchor] =
           !gItemPickupMenu.pfSelectedArray[uiItemPos + gItemPickupMenu.ubScrollAnchor];
-
-      // OK, pickup item....
-      // gItemPickupMenu.fHandled = TRUE;
-
-      // pTempItemPool = gItemPickupMenu.ItemPoolSlots[ gItemPickupMenu.bCurSelect -
-      // gItemPickupMenu.ubScrollAnchor ];
-
-      // Tell our soldier to pickup this item!
-      // SoldierGetItemFromWorld( gItemPickupMenu.pSoldier, pTempItemPool->iItemIndex,
-      // gItemPickupMenu.sGridNo, gItemPickupMenu.bZLevel );
     }
 
     // Loop through all and set /unset OK

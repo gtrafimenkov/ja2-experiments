@@ -1176,8 +1176,9 @@ void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ,
           (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bActive) &&
           (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bLife >= OKLIFE)) {
         // valid character
+        struct Point16 point = {MAP_INVEN_POOL_X, MAP_INVEN_POOL_Y};
         InitializeItemPickupMenu(&(Menptr[gCharactersList[bSelectedInfoChar].usSolID]), NOWHERE,
-                                 pItemPool, MAP_INVEN_POOL_X, MAP_INVEN_POOL_Y, -1, mouse);
+                                 pItemPool, point, -1);
         fWasInited = TRUE;
 
         CreateScreenMaskForInventoryPoolPopUp();

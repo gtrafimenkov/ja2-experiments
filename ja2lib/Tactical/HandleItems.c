@@ -1608,9 +1608,8 @@ void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
             if (usNum != 0) {
               // Freeze guy!
               pSoldier->fPauseAllAnimation = TRUE;
-
-              InitializeItemPickupMenu(pSoldier, sGridNo, pItemPool, 0, 0, bZLevel, mouse);
-
+              struct Point16 point = {mouse.x, mouse.y};
+              InitializeItemPickupMenu(pSoldier, sGridNo, pItemPool, point, bZLevel);
               guiPendingOverrideEvent = G_GETTINGITEM;
             } else {
               DoMercBattleSound(pSoldier, BATTLE_SOUND_NOTHING);

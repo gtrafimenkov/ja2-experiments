@@ -39,8 +39,7 @@ typedef struct {
 
 // Itempickup stuff
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
-                                 struct ITEM_POOL *pItemPool, INT16 sScreenX, INT16 sScreenY,
-                                 INT8 bZLevel, const struct MouseInput mouse);
+                                 struct ITEM_POOL *pItemPool, struct Point16 point, INT8 bZLevel);
 void RenderItemPickupMenu();
 void RemoveItemPickupMenu();
 void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel);

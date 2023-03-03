@@ -1131,7 +1131,7 @@ static BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBomb
 
   if (ubOwner != NOBODY && MercPtrs[ubOwner]->bTeam == gbPlayerNum &&
       pSoldier->bTeam != gbPlayerNum) {
-    ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION, mouse);
+    ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION);
   }
 
   return (TRUE);
@@ -1139,7 +1139,7 @@ static BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBomb
 
 BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive, INT16 sSubsequent,
                          BOOLEAN fRecompileMovementCosts, INT16 sWoundAmt, INT16 sBreathAmt,
-                         UINT8 ubOwner, const struct MouseInput mouse) {
+                         UINT8 ubOwner) {
   INT8 bPosOfMask = NO_SLOT;
 
   if (!pSoldier->bActive || !pSoldier->bInSector || !pSoldier->bLife || AM_A_ROBOT(pSoldier)) {
@@ -1243,7 +1243,7 @@ BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive
 
     if (ubOwner != NOBODY && MercPtrs[ubOwner]->bTeam == gbPlayerNum &&
         pSoldier->bTeam != gbPlayerNum) {
-      ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION, mouse);
+      ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION);
     }
   }
   return (fRecompileMovementCosts);
@@ -1378,19 +1378,6 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
       }
     }
 
-    // Add burn marks to ground randomly....
-    if (Random(50) < 15 && uiDist == 1) {
-      // if ( !TypeRangeExistsInObjectLayer( sGridNo, FIRSTEXPLDEBRIS, SECONDEXPLDEBRIS,
-      // &usObjectIndex ) )
-      //{
-      //	GetTileIndexFromTypeSubIndex( SECONDEXPLDEBRIS, (UINT16)( Random( 10 ) + 1 ),
-      //&usTileIndex ); 	AddObjectToHead( sGridNo, usTileIndex );
-
-      //	SetRenderFlags(RENDER_FLAG_FULL);
-
-      //}
-    }
-
     // NB radius can be 0 so cannot divide it by 2 here
     if (!fStunEffect && (uiDist * 2 <= pExplosive->ubRadius)) {
       GetItemPool(sGridNo, &pItemPool, bLevel);
@@ -1453,7 +1440,7 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
 
       fRecompileMovementCosts =
           DishOutGasDamage(pSoldier, pExplosive, sSubsequent, fRecompileMovementCosts, sWoundAmt,
-                           sBreathAmt, ubOwner, mouse);
+                           sBreathAmt, ubOwner);
     }
 
     (*pfMercHit) = TRUE;

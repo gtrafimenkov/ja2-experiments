@@ -1791,7 +1791,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
                            (INT16)(pExplosive->ubDamage + (UINT8)PreRandom(pExplosive->ubDamage)),
                            (INT16)(100 * (pExplosive->ubStunDamage +
                                           (INT16)PreRandom((pExplosive->ubStunDamage / 2)))),
-                           NOBODY, mouse);
+                           NOBODY);
         }
       }
 
@@ -5934,7 +5934,7 @@ void HandleSuppressionFire(UINT8 ubTargetedMerc, UINT8 ubCausedAttacker) {
 }
 
 BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE **ppTarget,
-                                      INT8 bReason, const struct MouseInput mouse) {
+                                      INT8 bReason) {
   INT16 sTargetXPos, sTargetYPos;
   BOOLEAN fEnterCombat = TRUE;
   struct SOLDIERTYPE *pTarget = *ppTarget;
@@ -6174,8 +6174,7 @@ static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCa
       // stuff that only applies to when we attack
       if (pTarget->ubBodyType != CROW) {
         if (pSoldier->bTeam == gbPlayerNum) {
-          fEnterCombat =
-              ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK, mouse);
+          fEnterCombat = ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK);
           if (!fEnterCombat) {
             DebugMsg(TOPIC_JA2, DBG_LEVEL_3, ">>Not entering combat as a result of PC attack");
           }

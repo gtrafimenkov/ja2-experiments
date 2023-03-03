@@ -301,7 +301,7 @@ void MakeCivHostile(struct SOLDIERTYPE *pSoldier, INT8 bNewSide);
 #define REASON_EXPLOSION 2
 
 BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE **ppTarget,
-                                      INT8 bReason, const struct MouseInput mouse);
+                                      INT8 bReason);
 
 INT16 FindAdjacentPunchTarget(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTargetSoldier,
                               INT16 *psAdjustedTargetGridNo, UINT8 *pubDirection);
