@@ -1013,7 +1013,7 @@ UINT32 AIViewerScreenInit() {
   return TRUE;
 }
 
-UINT32 AIViewerScreenHandle() {
+UINT32 AIViewerScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   RestoreBackgroundRects();

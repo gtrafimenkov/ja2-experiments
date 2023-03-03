@@ -1,6 +1,7 @@
 #ifndef __RADAR_SCREEN_H
 #define __RADAR_SCREEN_H
 
+#include "MouseInput.h"
 #include "Tactical/Interface.h"
 
 // RADAR MOUSE REGION STUFF

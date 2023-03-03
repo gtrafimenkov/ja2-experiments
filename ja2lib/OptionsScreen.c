@@ -248,7 +248,7 @@ UINT32 OptionsScreenInit() {
   return (TRUE);
 }
 
-UINT32 OptionsScreenHandle() {
+UINT32 OptionsScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfOptionsScreenEntry) {

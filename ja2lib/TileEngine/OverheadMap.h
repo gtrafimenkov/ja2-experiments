@@ -13,7 +13,7 @@ void RenderOverheadMap(INT16 sStartPointX_M, INT16 sStartPointY_M, INT16 sStartP
 void HandleOverheadMap(const struct MouseInput mouse);
 BOOLEAN InOverheadMap();
 void GoIntoOverheadMap();
-void HandleOverheadUI();
+void HandleOverheadUI(const struct MouseInput mouse);
 void KillOverheadMap();
 
 void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
@@ -24,5 +24,8 @@ void CalculateRestrictedMapCoords(INT8 bDirection, INT16 *psX1, INT16 *psY1, INT
 void CalculateRestrictedScaleFactors(INT16 *pScaleX, INT16 *pScaleY);
 
 void TrashOverheadMap();
+
+BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo, const struct MouseInput mouse);
+BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo, const struct MouseInput mouse);
 
 #endif

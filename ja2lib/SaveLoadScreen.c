@@ -285,7 +285,7 @@ UINT32 SaveLoadScreenInit() {
   return (TRUE);
 }
 
-UINT32 SaveLoadScreenHandle() {
+UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfSaveLoadScreenEntry) {

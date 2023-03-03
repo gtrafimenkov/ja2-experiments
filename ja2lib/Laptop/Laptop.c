@@ -1614,7 +1614,7 @@ void HandleLapTopHandles() {
 
 extern BOOLEAN gfPrintFrameBuffer;
 
-UINT32 LaptopScreenHandle() {
+UINT32 LaptopScreenHandle(const struct GameInput *gameInput) {
   // User just changed modes.  This is determined by the button callbacks
   // created in LaptopScreenInit()
 

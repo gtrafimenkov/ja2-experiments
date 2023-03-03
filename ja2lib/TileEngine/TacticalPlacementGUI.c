@@ -50,7 +50,6 @@ enum { DONE_BUTTON, SPREAD_BUTTON, GROUP_BUTTON, CLEAR_BUTTON, NUM_TP_BUTTONS };
 UINT32 iTPButtons[NUM_TP_BUTTONS];
 
 extern BOOLEAN gfOverheadMapDirty;
-extern BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo);
 
 UINT8 gubDefaultButton = CLEAR_BUTTON;
 BOOLEAN gfTacticalPlacementGUIActive = FALSE;
@@ -855,7 +854,8 @@ void HandleTacticalPlacementClicksInOverheadMap(struct MOUSE_REGION *reg, INT32 
                                                    // new closest map edgepoint of his side.
     if (gfValidCursor) {
       if (gbSelectedMercID != -1) {
-        if (GetOverheadMouseGridNo(&sGridNo)) {  // we have clicked within a valid part of the map.
+        if (GetOverheadMouseGridNo(&sGridNo, mouse)) {
+          // we have clicked within a valid part of the map.
           BeginMapEdgepointSearch();
 
           if (gubDefaultButton == GROUP_BUTTON) {  // We are placing a whole group.

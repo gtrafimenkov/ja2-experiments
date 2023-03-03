@@ -672,7 +672,7 @@ UINT32 ShopKeeperScreenInit() {
   return (TRUE);
 }
 
-UINT32 ShopKeeperScreenHandle() {
+UINT32 ShopKeeperScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfSKIScreenEntry) {

@@ -1,12 +1,13 @@
 #ifndef _IMP_ATTRIBUTE_SELECTION_H
 #define _IMP_ATTRIBUTE_SELECTION_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 void EnterIMPAttributeSelection(void);
 void RenderIMPAttributeSelection(void);
 void ExitIMPAttributeSelection(void);
-void HandleIMPAttributeSelection(void);
+void HandleIMPAttributeSelection(const struct MouseInput mouse);
 
 void RenderAttributeBoxes(void);
 

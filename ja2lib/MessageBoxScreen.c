@@ -848,7 +848,7 @@ UINT32 ExitMsgBox(INT8 ubExitCode) {
 
 UINT32 MessageBoxScreenInit() { return (TRUE); }
 
-UINT32 MessageBoxScreenHandle() {
+UINT32 MessageBoxScreenHandle(const struct GameInput *gameInput) {
   InputAtom InputEvent;
 
   if (gfNewMessageBox) {

@@ -87,19 +87,15 @@ INT16 gsStartRestrictedX, gsStartRestrictedY;
 BOOLEAN gfOverItemPool = FALSE;
 INT16 gsOveritemPoolGridNo;
 
-void HandleOverheadUI();
 void MoveOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
                                 const struct MouseInput mouse);
 void DeleteOverheadDB();
-static BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo,
-                                                           const struct MouseInput mouse);
 
 extern BOOLEAN AnyItemsVisibleOnLevel(struct ITEM_POOL *pItemPool, INT8 bZLevel);
 extern void HandleAnyMercInSquadHasCompatibleStuff(UINT8 ubSquad, struct OBJECTTYPE *pObject,
                                                    BOOLEAN fReset);
 
 // Isometric utilities (for overhead stuff only)
-BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo);
 void GetOverheadScreenXYFromGridNo(INT16 sGridNo, INT16 *psScreenX, INT16 *psScreenY);
 void CopyOverheadDBShadetablesFromTileset();
 
@@ -373,7 +369,7 @@ void HandleOverheadMap(const struct MouseInput mouse) {
         return;
       }
     } else {
-      HandleOverheadUI();
+      HandleOverheadUI(mouse);
 
       if (!gfInOverheadMap) {
         return;
@@ -395,7 +391,7 @@ void HandleOverheadMap(const struct MouseInput mouse) {
 
     HandleAnyMercInSquadHasCompatibleStuff((INT8)CurrentSquad(), NULL, TRUE);
 
-    if (GetOverheadMouseGridNo(&usMapPos)) {
+    if (GetOverheadMouseGridNo(&usMapPos, mouse)) {
       // ATE: Find the closest item pool within 5 tiles....
       if (GetClosestItemPool(usMapPos, &pItemPool, 1, 0)) {
         struct STRUCTURE *pStructure = NULL;
@@ -433,7 +429,7 @@ void HandleOverheadMap(const struct MouseInput mouse) {
       }
     }
 
-    if (GetOverheadMouseGridNoForFullSoldiersGridNo(&usMapPos)) {
+    if (GetOverheadMouseGridNoForFullSoldiersGridNo(&usMapPos, mouse)) {
       if (GetClosestMercInOverheadMap(usMapPos, &pSoldier, 1)) {
         if (pSoldier->bTeam == gbPlayerNum) {
           gfUIHandleSelectionAboveGuy = TRUE;
@@ -520,13 +516,13 @@ void GoIntoOverheadMap() {
   }
 }
 
-void HandleOverheadUI() {
+void HandleOverheadUI(const struct MouseInput mouse) {
   InputAtom InputEvent;
   INT16 sMousePos = 0;
   UINT8 ubID;
 
   // CHECK FOR MOUSE OVER REGIONS...
-  if (GetOverheadMouseGridNo(&sMousePos)) {
+  if (GetOverheadMouseGridNo(&sMousePos, mouse)) {
     // Look quickly for a soldier....
     ubID = QuickFindSoldier(sMousePos);
 
@@ -1159,7 +1155,7 @@ void GetOverheadScreenXYFromGridNo(INT16 sGridNo, INT16 *psScreenX, INT16 *psScr
   //*psScreenY -= gpWorldLevelData[ sGridNo ].sHeight / 5;
 }
 
-BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo) {
+BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo, const struct MouseInput mouse) {
   INT32 uiCellX, uiCellY;
   INT16 sWorldScreenX, sWorldScreenY;
 
@@ -1188,8 +1184,8 @@ BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo) {
   }
 }
 
-static BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo,
-                                                           const struct MouseInput mouse) {
+BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo,
+                                                    const struct MouseInput mouse) {
   INT32 uiCellX, uiCellY;
   INT16 sWorldScreenX, sWorldScreenY;
 

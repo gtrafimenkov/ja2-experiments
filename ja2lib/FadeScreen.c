@@ -231,7 +231,7 @@ void BeginFade(UINT32 uiExitScreen, INT8 bFadeValue, INT8 bType, UINT32 uiDelay)
 
 UINT32 FadeScreenInit() { return (TRUE); }
 
-UINT32 FadeScreenHandle() {
+UINT32 FadeScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiTime;
 
   if (!gfFadeInitialized) {

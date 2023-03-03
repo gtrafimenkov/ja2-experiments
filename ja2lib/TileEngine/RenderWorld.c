@@ -426,17 +426,6 @@ UINT8 RenderFXStartIndex[] = {
     TOPMOST_START_INDEX,  // DYNAMIC TOPMOST
 };
 
-// INT16 gsCoordArray[ 500 ][ 500 ][ 4 ];
-// INT16 gsCoordArrayX;
-// INT16 gsCoordArrayY;
-
-// void SetRenderGlobals( INT16 sStartPointX_M, INT16 sStartPointY_M, INT16 sStartPointX_S, INT16
-// sStartPointY_S, INT16 sEndXS, INT16 sEndYS ); void TempRenderTiles(UINT32 uiFlags, INT16
-// sStartPointX_M, INT16 sStartPointY_M, INT16 sStartPointX_S, INT16 sStartPointY_S, INT16 sEndXS,
-// INT16 sEndYS ); void TempRenderTiles(UINT32 uiFlags, INT16 sStartPointX_M, INT16 sStartPointY_M,
-// INT16 sStartPointX_S, INT16 sStartPointY_S, INT16 sEndXS, INT16 sEndYS, UINT8 ubNumLevels, UINT32
-// *puiLevels );
-
 void ExamineZBufferForHiddenTiles(INT16 sStartPointX_M, INT16 sStartPointY_M, INT16 sStartPointX_S,
                                   INT16 sStartPointY_S, INT16 sEndXS, INT16 sEndYS);
 
@@ -622,9 +611,10 @@ void RenderSetShadows(BOOLEAN fShadows) {
     gRenderFlags &= (~RENDER_FLAG_SHADOWS);
 }
 
-void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT32 iStartPointX_S,
-                 INT32 iStartPointY_S, INT32 iEndXS, INT32 iEndYS, UINT8 ubNumLevels,
-                 UINT32 *puiLevels, UINT16 *psLevelIDs) {
+static void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M,
+                        INT32 iStartPointX_S, INT32 iStartPointY_S, INT32 iEndXS, INT32 iEndYS,
+                        UINT8 ubNumLevels, UINT32 *puiLevels, UINT16 *psLevelIDs,
+                        const struct MouseInput mouse) {
   // #if 0
 
   struct LEVELNODE *pNode;  //, *pLand, *pStruct; //*pObject, *pTopmost, *pMerc;
@@ -793,7 +783,7 @@ void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT
             // Experimental!
             if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
               if (fCheckForMouseDetections && gpWorldLevelData[uiTileIndex].pStructHead != NULL) {
-                LogMouseOverInteractiveTile((INT16)uiTileIndex);
+                LogMouseOverInteractiveTile((INT16)uiTileIndex, mouse);
               }
             }
 

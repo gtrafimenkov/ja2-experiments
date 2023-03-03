@@ -430,7 +430,7 @@ void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, INT16 sXPos
 
 void CompileInteractiveTiles() {}
 
-void LogMouseOverInteractiveTile(INT16 sGridNo) {
+void LogMouseOverInteractiveTile(INT16 sGridNo, const struct MouseInput mouse) {
   SGPRect aRect;
   INT16 sXMapPos, sYMapPos, sScreenX, sScreenY;
   struct LEVELNODE *pNode;
@@ -911,7 +911,7 @@ BlitDone:
   return (fDataFound);
 }
 
-BOOLEAN ShouldCheckForMouseDetections() {
+BOOLEAN ShouldCheckForMouseDetections(const struct MouseInput mouse) {
   BOOLEAN fOK = FALSE;
 
   if (gsINTOldRenderCenterX != gsRenderCenterX || gsINTOldRenderCenterY != gsRenderCenterY ||

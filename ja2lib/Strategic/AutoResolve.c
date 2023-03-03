@@ -592,7 +592,7 @@ UINT32 AutoResolveScreenShutdown() {
   return TRUE;
 }
 
-UINT32 AutoResolveScreenHandle() {
+UINT32 AutoResolveScreenHandle(const struct GameInput *gameInput) {
   RestoreBackgroundRects();
 
   if (!gpAR) {

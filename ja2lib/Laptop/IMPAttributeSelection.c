@@ -214,7 +214,7 @@ void ExitIMPAttributeSelection(void) {
   return;
 }
 
-void HandleIMPAttributeSelection(void) {
+void HandleIMPAttributeSelection(const struct MouseInput mouse) {
   // review mode, do not allow changes
   if (fReviewStats) {
     return;
@@ -1281,7 +1281,7 @@ void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     fSlideIsActive = TRUE;
     SliderRegionButtonCallback(&pSliderRegions[MSYS_GetRegionUserData(pRegion, 0)],
-                               MSYS_CALLBACK_REASON_LBUTTON_REPEAT);
+                               MSYS_CALLBACK_REASON_LBUTTON_REPEAT, mouse);
   }
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fSlideIsActive = FALSE;

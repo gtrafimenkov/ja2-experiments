@@ -675,7 +675,7 @@ UINT32 QuestDebugScreenInit() {
   return (TRUE);
 }
 
-UINT32 QuestDebugScreenHandle() {
+UINT32 QuestDebugScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfQuestDebugEntry) {
