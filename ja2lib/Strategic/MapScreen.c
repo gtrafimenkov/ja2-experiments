@@ -769,7 +769,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void);
 void DetermineIfContractMenuCanBeShown(void);
 void ContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                const struct MouseInput mouse);
-void ContractRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                const struct MouseInput mouse);
 void HandleShadingOfLinesForContractMenu(void);
 
@@ -804,33 +804,33 @@ void HandleContractTimeFlashForMercThatIsAboutLeave(void);
 // team list
 void TeamListInfoRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                    const struct MouseInput mouse);
-void TeamListInfoRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListInfoRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                    const struct MouseInput mouse);
 void TeamListAssignmentRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                          const struct MouseInput mouse);
-void TeamListAssignmentRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListAssignmentRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                          const struct MouseInput mouse);
 void TeamListDestinationRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                           const struct MouseInput mouse);
-void TeamListDestinationRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListDestinationRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                           const struct MouseInput mouse);
 void TeamListContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                        const struct MouseInput mouse);
-void TeamListContractRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                        const struct MouseInput mouse);
 void TeamListSleepRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse);
-void TeamListSleepRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListSleepRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse);
 
 void FaceRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse);
-void FaceRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void FaceRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse);
 
 void ItemRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse);
-void ItemRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse);
 
 // mapscreen mouse region screen mask btn callback
@@ -838,12 +838,12 @@ void MapScreenMarkRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse);
 
 // inventory mvt and click callbacks
-void MAPInvMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void MAPInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MAPInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                          const struct MouseInput mouse);
-void MAPInvClickCamoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MAPInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                              const struct MouseInput mouse);
-void MAPInvMoveCamoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MAPInvMoveCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                             const struct MouseInput mouse);
 
 void InvmaskRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
@@ -5806,14 +5806,14 @@ void HandleCursorOverRifleAmmo() {
   }
 }
 
-void MAPInvClickCamoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MAPInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                              const struct MouseInput mouse) {}
 
-void MAPInvMoveCamoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MAPInvMoveCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                             const struct MouseInput mouse) {}
 
 // this is Map Screen's version of SMInvMoveCallback()
-void MAPInvMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MAPInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                         const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   UINT32 uiHandPos;
@@ -5869,7 +5869,7 @@ BOOLEAN MAPInternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, UINT8 ubSt
 }
 
 // this is Map Screen's version of SMInvClickCallback()
-void MAPInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                          const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   UINT32 uiHandPos;
@@ -5964,7 +5964,7 @@ void MAPInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
           gfDeductPoints = fDeductPoints;
 
           DoScreenIndependantMessageBox( Message[ STR_MERGE_ITEMS ], MSG_BOX_FLAG_YESNO,
-          MergeMessageBoxCallBack ); return;
+          MergeMessageBoxCallback ); return;
           */
         }
         // else handle normally
@@ -6383,20 +6383,20 @@ void CreateMouseRegionsForTeamList(void) {
     MSYS_DefineRegion(&gTeamListNameRegion[sCounter], NAME_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), NAME_X + NAME_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd), MSYS_PRIORITY_NORMAL,
-                      MSYS_NO_CURSOR, TeamListInfoRegionMvtCallBack, TeamListInfoRegionBtnCallback);
+                      MSYS_NO_CURSOR, TeamListInfoRegionMvtCallback, TeamListInfoRegionBtnCallback);
 
     // assignment region
     MSYS_DefineRegion(&gTeamListAssignmentRegion[sCounter], ASSIGN_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), ASSIGN_X + ASSIGN_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListAssignmentRegionMvtCallBack,
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListAssignmentRegionMvtCallback,
                       TeamListAssignmentRegionBtnCallback);
 
     // location region (same function as name regions, so uses the same callbacks)
     MSYS_DefineRegion(&gTeamListLocationRegion[sCounter], LOC_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), LOC_X + LOC_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListInfoRegionMvtCallBack,
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListInfoRegionMvtCallback,
                       TeamListInfoRegionBtnCallback);
 
     // destination region
@@ -6404,21 +6404,21 @@ void CreateMouseRegionsForTeamList(void) {
         &gTeamListDestinationRegion[sCounter], DEST_ETA_X,
         (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), DEST_ETA_X + DEST_ETA_WIDTH,
         (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd), MSYS_PRIORITY_NORMAL + 1,
-        MSYS_NO_CURSOR, TeamListDestinationRegionMvtCallBack, TeamListDestinationRegionBtnCallback);
+        MSYS_NO_CURSOR, TeamListDestinationRegionMvtCallback, TeamListDestinationRegionBtnCallback);
 
     // contract region
     MSYS_DefineRegion(&gTeamListContractRegion[sCounter], TIME_REMAINING_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd),
                       TIME_REMAINING_X + TIME_REMAINING_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListContractRegionMvtCallBack,
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListContractRegionMvtCallback,
                       TeamListContractRegionBtnCallback);
 
     // contract region
     MSYS_DefineRegion(&gTeamListSleepRegion[sCounter], SLEEP_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), SLEEP_X + SLEEP_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListSleepRegionMvtCallBack,
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListSleepRegionMvtCallback,
                       TeamListSleepRegionBtnCallback);
 
     MSYS_SetRegionUserData(&gTeamListNameRegion[sCounter], 0, sCounter);
@@ -6614,7 +6614,7 @@ void TeamListInfoRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void TeamListInfoRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListInfoRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                    const struct MouseInput mouse) {
   INT32 iValue = 0;
 
@@ -6721,7 +6721,7 @@ void TeamListAssignmentRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iRe
   }
 }
 
-void TeamListAssignmentRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListAssignmentRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                          const struct MouseInput mouse) {
   INT32 iValue = 0;
 
@@ -6869,7 +6869,7 @@ void TeamListDestinationRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iR
   }
 }
 
-void TeamListDestinationRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListDestinationRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                           const struct MouseInput mouse) {
   INT32 iValue = -1;
 
@@ -6971,7 +6971,7 @@ void TeamListSleepRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void TeamListSleepRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListSleepRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse) {
   INT32 iValue = -1;
 
@@ -7043,7 +7043,7 @@ void TeamListContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReas
   }
 }
 
-void TeamListContractRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TeamListContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                        const struct MouseInput mouse) {
   INT32 iValue = -1;
 
@@ -7452,7 +7452,7 @@ void ContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void ContractRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                const struct MouseInput mouse) {
   // mvt callback handler for contract region
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -8021,7 +8021,7 @@ void FaceRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void FaceRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void FaceRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse) {
   if (bSelectedInfoChar == -1) {
     fShowFaceHightLight = FALSE;
@@ -8046,7 +8046,7 @@ void ItemRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void ItemRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse) {
   if (!CanToggleSelectedCharInventory()) {
     fShowItemHighLight = FALSE;
@@ -8132,7 +8132,7 @@ void DestroyTheItemInCursor() {
   gpItemPointer = NULL;
 }
 
-void TrashItemMessageBoxCallBack(UINT8 bExitValue) {
+void TrashItemMessageBoxCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // find the item and get rid of it
 
@@ -8160,16 +8160,16 @@ void TrashCanBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       // set up for mapscreen
       if (gpItemPointer->ubMission) {
         DoMapMessageBox(MSG_BOX_BASIC_STYLE, pTrashItemText[1], MAP_SCREEN, MSG_BOX_FLAG_YESNO,
-                        TrashItemMessageBoxCallBack);
+                        TrashItemMessageBoxCallback);
       } else {
         DoMapMessageBox(MSG_BOX_BASIC_STYLE, pTrashItemText[0], MAP_SCREEN, MSG_BOX_FLAG_YESNO,
-                        TrashItemMessageBoxCallBack);
+                        TrashItemMessageBoxCallback);
       }
     }
   }
 }
 
-void TrashCanMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TrashCanMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                           const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {
     if (gMPanelRegion.Cursor == EXTERN_CURSOR) {

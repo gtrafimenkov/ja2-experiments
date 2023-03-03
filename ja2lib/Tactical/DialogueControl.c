@@ -177,8 +177,10 @@ UINT32 guiDialogueLastQuoteDelay = 0;
 
 void CheckForStopTimeQuotes(UINT16 usQuoteNum);
 
-void TextOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void FaceOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void TextOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void FaceOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
 
 // Handler functions for tactical ui diaplay
 void HandleTacticalTextUI(INT32 iFaceIndex, struct SOLDIERTYPE *pSoldier, CHAR16 *zQuoteStr);
@@ -823,7 +825,7 @@ void HandleDialogue() {
 
           // popup a message stating the player doesnt have enough money
           DoSkiMessageBox(MSG_BOX_BASIC_STYLE, zText, SHOPKEEPER_SCREEN, MSG_BOX_FLAG_OK,
-                          ConfirmDontHaveEnoughForTheDealerMessageBoxCallBack);
+                          ConfirmDontHaveEnoughForTheDealerMessageBoxCallback);
           break;
         case (1):
           // if the player is trading items
@@ -834,7 +836,7 @@ void HandleDialogue() {
 
           // ask them if we should deduct money out the players account to cover the difference
           DoSkiMessageBox(MSG_BOX_BASIC_STYLE, zText, SHOPKEEPER_SCREEN, MSG_BOX_FLAG_YESNO,
-                          ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallBack);
+                          ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback);
 
           break;
         case (2):
@@ -845,7 +847,7 @@ void HandleDialogue() {
 
           // ask them if we should deduct money out the players account to cover the difference
           DoSkiMessageBox(MSG_BOX_BASIC_STYLE, zText, SHOPKEEPER_SCREEN, MSG_BOX_FLAG_YESNO,
-                          ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallBack);
+                          ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback);
           break;
         case (3):
           // this means a dialogue event is in progress
@@ -2251,7 +2253,8 @@ void SayQuote58FromNearbyMercInSector(INT16 sGridNo, INT8 bDistance, UINT16 usQu
   }
 }
 
-void TextOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TextOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -2273,7 +2276,8 @@ void TextOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const
   }
 }
 
-void FaceOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void FaceOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -2344,7 +2348,7 @@ void CheckForStopTimeQuotes(UINT16 usQuoteNum) {
   }
 }
 
-void SetStopTimeQuoteCallback(MODAL_HOOK pCallBack) { gModalDoneCallback = pCallBack; }
+void SetStopTimeQuoteCallback(MODAL_HOOK pCallback) { gModalDoneCallback = pCallback; }
 
 BOOLEAN IsMercSayingDialogue(UINT8 ubProfileID) {
   if (gpCurrentTalkingFace != NULL && gubCurrentTalkingID == ubProfileID) {

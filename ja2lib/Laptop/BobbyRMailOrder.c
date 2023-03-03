@@ -332,7 +332,7 @@ void RemovePurchasedItemsFromBobbyRayInventory();
 BOOLEAN IsAnythingPurchasedFromBobbyRayPage();
 void DrawGoldRectangle(INT8 bCityNum);
 UINT32 CalcCostFromWeightOfPackage(UINT8 ubTypeOfService);
-void ConfirmBobbyRPurchaseMessageBoxCallBack(UINT8 bExitValue);
+void ConfirmBobbyRPurchaseMessageBoxCallback(UINT8 bExitValue);
 void PurchaseBobbyOrder();
 UINT32 CalcPackageTotalWeight();
 void DisplayPackageWeight();
@@ -792,13 +792,13 @@ void BtnBobbyRAcceptOrderCallback(GUI_BUTTON *btn, INT32 reason) {
         if (gbSelectedCity == BR_DRASSEN &&
             !StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_B13)].fEnemyControlled) {
           // Quick hack to bypass the confirmation box
-          ConfirmBobbyRPurchaseMessageBoxCallBack(MSG_BOX_RETURN_YES);
+          ConfirmBobbyRPurchaseMessageBoxCallback(MSG_BOX_RETURN_YES);
         } else {
           // else pop up a confirmation box
           swprintf(zTemp, ARR_SIZE(zTemp), BobbyROrderFormText[BOBBYR_CONFIRM_DEST],
                    pDeliveryLocationStrings[gbSelectedCity]);
           DoLapTopMessageBox(MSG_BOX_LAPTOP_DEFAULT, zTemp, LAPTOP_SCREEN, MSG_BOX_FLAG_YESNO,
-                             ConfirmBobbyRPurchaseMessageBoxCallBack);
+                             ConfirmBobbyRPurchaseMessageBoxCallback);
         }
       }
     }
@@ -2086,7 +2086,7 @@ void AddJohnsGunShipment() {
   AddNewBobbyRShipment(Temp, BR_DRASSEN, bDaysAhead, FALSE, 0);
 }
 
-void ConfirmBobbyRPurchaseMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmBobbyRPurchaseMessageBoxCallback(UINT8 bExitValue) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_YES) {
     PurchaseBobbyOrder();

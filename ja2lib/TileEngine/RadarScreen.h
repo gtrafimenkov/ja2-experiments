@@ -4,8 +4,10 @@
 #include "Tactical/Interface.h"
 
 // RADAR MOUSE REGION STUFF
-void RadarRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void RadarRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 BOOLEAN LoadRadarScreenBitmap(CHAR8 *aFilename);
 

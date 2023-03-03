@@ -68,8 +68,8 @@ INT32 giAutoBandagesSoldierFaces[2 * MAX_CHARACTER_COUNT];
 // has the button for autobandage end been setup yet
 BOOLEAN fAutoEndBandageButtonCreated = FALSE;
 
-void BeginAutoBandageCallBack(UINT8 bExitValue);
-void CancelAutoBandageCallBack(UINT8 bExitValue);
+void BeginAutoBandageCallback(UINT8 bExitValue);
+void CancelAutoBandageCallback(UINT8 bExitValue);
 
 // the update box for autobandaging mercs
 void CreateTerminateAutoBandageButton(INT16 sX, INT16 sY);
@@ -138,7 +138,7 @@ void BeginAutoBandage() {
     } else {
       // Confirm if we want to start or not....
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[BEGIN_AUTOBANDAGE_PROMPT_STR], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, BeginAutoBandageCallBack, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, BeginAutoBandageCallback, NULL);
     }
   }
 }
@@ -461,7 +461,7 @@ void AutoBandage(BOOLEAN fStart) {
   ResetAllMercSpeeds();
 }
 
-void BeginAutoBandageCallBack(UINT8 bExitValue) {
+void BeginAutoBandageCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     fRestoreBackgroundForMessageBox = TRUE;
     AutoBandage(TRUE);

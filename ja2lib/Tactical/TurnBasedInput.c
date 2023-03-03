@@ -3622,7 +3622,7 @@ void HandleHandCursorClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
 
 extern BOOLEAN AnyItemsVisibleOnLevel(struct ITEM_POOL *pItemPool, INT8 bZLevel);
 
-void ExchangeMessageBoxCallBack(UINT8 bExitValue) {
+void ExchangeMessageBoxCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     SwapMercPositions(gpExchangeSoldier1, gpExchangeSoldier2);
   }
@@ -3675,7 +3675,7 @@ INT8 HandleMoveModeInteractiveClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
 
           // Do message box...
           // DoMessageBox( MSG_BOX_BASIC_STYLE, TacticalStr[ EXCHANGE_PLACES_REQUESTER ],
-          // GAME_SCREEN, ( UINT8 )MSG_BOX_FLAG_YESNO, ExchangeMessageBoxCallBack, NULL );
+          // GAME_SCREEN, ( UINT8 )MSG_BOX_FLAG_YESNO, ExchangeMessageBoxCallback, NULL );
           SwapMercPositions(gpExchangeSoldier1, gpExchangeSoldier2);
         }
       }

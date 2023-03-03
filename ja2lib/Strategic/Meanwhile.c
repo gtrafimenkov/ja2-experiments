@@ -93,7 +93,7 @@ INT16 gsOldCurInterfacePanel = 0;
 BOOLEAN gfWorldWasLoaded = FALSE;
 UINT8 ubCurrentMeanWhileId = 0;
 
-void BeginMeanwhileCallBack(UINT8 bExitValue);
+void BeginMeanwhileCallback(UINT8 bExitValue);
 void DoneFadeOutMeanwhile(void);
 void DoneFadeInMeanwhile(void);
 void DoneFadeOutMeanwhileOnceDone(void);
@@ -335,10 +335,10 @@ void BringupMeanwhileBox() {
 #endif
   {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, MSG_BOX_FLAG_OKSKIP,
-                 BeginMeanwhileCallBack, NULL);
+                 BeginMeanwhileCallback, NULL);
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, (UINT8)MSG_BOX_FLAG_OK,
-                 BeginMeanwhileCallBack, NULL);
+                 BeginMeanwhileCallback, NULL);
   }
 }
 
@@ -550,7 +550,7 @@ void DoneFadeInMeanwhile() {
   }
 }
 
-void BeginMeanwhileCallBack(UINT8 bExitValue) {
+void BeginMeanwhileCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_OK || bExitValue == MSG_BOX_RETURN_YES) {
     gTacticalStatus.uiFlags |= ENGAGED_IN_CONV;
     // Increment reference count...

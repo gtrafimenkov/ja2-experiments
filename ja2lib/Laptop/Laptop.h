@@ -24,7 +24,8 @@ BOOLEAN LeaveLapTopScreen();
 void SetLaptopExitScreen(UINT32 uiExitScreen);
 void SetLaptopNewGameFlag();
 UINT32 DrawLapTopIcons();
-void LapTopScreenCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void LapTopScreenCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse);
 void HandleRightButtonUpEvent(void);
 BOOLEAN DoLapTopMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT8 ubFlags,
                            MSGBOX_CALLBACK ReturnCallback);
@@ -44,7 +45,7 @@ BOOLEAN InitLaptopAndLaptopScreens();
 // clear out all tempf iles from laptop
 void ClearOutTempLaptopFiles(void);
 
-void HaventMadeImpMercEmailCallBack();
+void HaventMadeImpMercEmailCallback();
 
 extern UINT32 guiCurrentLaptopMode;
 extern UINT32 guiPreviousLaptopMode;

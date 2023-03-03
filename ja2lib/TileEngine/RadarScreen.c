@@ -45,7 +45,7 @@ void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY);
 void RenderSquadList(void);
 
 // squad list mvt + btn callback
-void TacticalSquadListMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TacticalSquadListMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse);
 void TacticalSquadListBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse);
@@ -174,7 +174,7 @@ void MoveRadarScreen() {
   MSYS_AddRegion(&gRadarRegion);
 }
 
-void RadarRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                              const struct MouseInput mouse) {
   INT16 sRadarX, sRadarY;
 
@@ -196,7 +196,7 @@ void RadarRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void RadarRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                const struct MouseInput mouse) {
   INT16 sRadarX, sRadarY;
 
@@ -670,7 +670,7 @@ void RenderSquadList(void) {
   }
 }
 
-void TacticalSquadListMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void TacticalSquadListMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse) {
   INT32 iValue = -1;
 

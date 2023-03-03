@@ -483,9 +483,9 @@ void BlitMineText(INT16 sMapX, INT16 sMapY);
 extern BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY);
 INT16 GetBaseSectorForCurrentTown(void);
 void RenderIconsPerSectorForSelectedTown(void);
-void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                 const struct MouseInput mouse);
-void MilitiaRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MilitiaRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                const struct MouseInput mouse);
 void CreateDestroyMilitiaSectorButtons(void);
 void ShowHighLightedSectorOnMilitiaMap(void);
@@ -4758,7 +4758,7 @@ void ShowHighLightedSectorOnMilitiaMap(void) {
   return;
 }
 
-void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                 const struct MouseInput mouse) {
   INT32 iValue = 0;
 
@@ -4781,7 +4781,7 @@ void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void MilitiaRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MilitiaRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                const struct MouseInput mouse) {
   INT32 iValue = 0;
 

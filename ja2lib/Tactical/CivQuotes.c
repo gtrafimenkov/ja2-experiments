@@ -107,7 +107,7 @@ BOOLEAN GetCivQuoteText(UINT8 ubCivQuoteID, UINT8 ubEntryID, CHAR16 *zQuote) {
   return (TRUE);
 }
 
-void SurrenderMessageBoxCallBack(UINT8 ubExitValue) {
+void SurrenderMessageBoxCallback(UINT8 ubExitValue) {
   struct SOLDIERTYPE *pTeamSoldier;
   INT32 cnt = 0;
 
@@ -161,7 +161,7 @@ void ShutDownQuoteBox(BOOLEAN fForce) {
     // do we need to do anything at the end of the civ quote?
     if (gCivQuoteData.pCiv && gCivQuoteData.pCiv->bAction == AI_ACTION_OFFER_SURRENDER) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_SURRENDER], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, SurrenderMessageBoxCallBack, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, SurrenderMessageBoxCallback, NULL);
     }
   }
 }
@@ -247,7 +247,8 @@ void RenderCivQuoteBoxOverlay(VIDEO_OVERLAY *pBlitter) {
   }
 }
 
-void QuoteOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void QuoteOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {

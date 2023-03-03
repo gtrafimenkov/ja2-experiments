@@ -233,8 +233,10 @@ INT16 gsCurInterfacePanel = TEAM_PANEL;
 void BtnPositionCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnMovementCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason);
-void MovementMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void DoorMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
+void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
 
 UINT32 CalcUIMessageDuration(STR16 wString);
 
@@ -2666,7 +2668,7 @@ void CreateTopMessage(UINT32 uiSurface, UINT8 ubType, CHAR16 *psString) {
   gfTopMessageDirty = TRUE;
 }
 
-void TurnExpiredCallBack(UINT8 bExitValue) {
+void TurnExpiredCallback(UINT8 bExitValue) {
   // End turn...
   UIHandleEndTurn(NULL);
 }
@@ -2683,7 +2685,7 @@ void CheckForAndHandleEndPlayerTimeLimit() {
 
           // OK, set message that time limit has expired....
           // DoMessageBox( MSG_BOX_BASIC_STYLE, L"Turn has Expired!", GAME_SCREEN, ( UINT8
-          // )MSG_BOX_FLAG_OK, TurnExpiredCallBack, NULL );
+          // )MSG_BOX_FLAG_OK, TurnExpiredCallback, NULL );
 
           // End turn...
           UIHandleEndTurn(NULL);
@@ -2980,13 +2982,15 @@ void InitPlayerUIBar(BOOLEAN fInterrupt) {
   }
 }
 
-void MovementMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     CancelMovementMenu();
   }
 }
 
-void DoorMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     CancelOpenDoorMenu();
   }

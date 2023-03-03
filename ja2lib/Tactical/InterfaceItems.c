@@ -269,7 +269,7 @@ CHAR16 gzItemCons[SIZE_ITEM_CONS];
 CHAR16 gzFullItemPros[SIZE_ITEM_PROS];
 CHAR16 gzFullItemCons[SIZE_ITEM_PROS];
 CHAR16 gzFullItemTemp[SIZE_ITEM_PROS];  // necessary, unfortunately
-void ItemDescCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 INT16 gsInvDescX;
 INT16 gsInvDescY;
 UINT8 gubItemDescStatusIndex;
@@ -303,7 +303,7 @@ MoneyLoc gMapMoneyButtonLoc = {174, 115};
 // show the description
 extern BOOLEAN fShowInventoryFlag;
 
-void ItemDescAttachmentsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                  const struct MouseInput mouse);
 void ItemDescAmmoCallback(GUI_BUTTON *btn, INT32 reason);
 
@@ -2507,14 +2507,14 @@ void DoAttachment(void) {
   gfReEvaluateEveryonesNothingToDo = TRUE;
 }
 
-void PermanantAttachmentMessageBoxCallBack(UINT8 ubExitValue) {
+void PermanantAttachmentMessageBoxCallback(UINT8 ubExitValue) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     DoAttachment();
   }
   // else do nothing
 }
 
-void ItemDescAttachmentsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                  const struct MouseInput mouse) {
   UINT32 uiItemPos;
   static BOOLEAN fRightDown = FALSE;
@@ -2543,7 +2543,7 @@ void ItemDescAttachmentsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
             ValidAttachment(gpItemPointer->usItem, gpItemDescObject->usItem)) {
           DoScreenIndependantMessageBox(Message[STR_PERMANENT_ATTACHMENT],
                                         (UINT8)MSG_BOX_FLAG_YESNO,
-                                        PermanantAttachmentMessageBoxCallBack);
+                                        PermanantAttachmentMessageBoxCallback);
           return;
         }
 
@@ -5122,10 +5122,10 @@ BOOLEAN LoadTileGraphicForItem(INVTYPE *pItem, UINT32 *puiVo) {
   return (TRUE);
 }
 
-void ItemDescMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemDescMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                           const struct MouseInput mouse) {}
 
-void ItemDescCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fRightDown = FALSE, fLeftDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -5376,9 +5376,9 @@ void ItemPickupAll(GUI_BUTTON *btn, INT32 reason);
 void ItemPickupOK(GUI_BUTTON *btn, INT32 reason);
 void ItemPickupCancel(GUI_BUTTON *btn, INT32 reason);
 void SetupPickupPage(INT8 bPage);
-void ItemPickMenuMouseMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                    const struct MouseInput mouse);
-void ItemPickMenuMouseClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse);
 void CalculateItemPickupMenuDimensions();
 void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason);
@@ -6076,7 +6076,7 @@ void ItemPickupCancel(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void ItemPickMenuMouseMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                    const struct MouseInput mouse) {
   UINT32 uiItemPos;
   struct ITEM_POOL *pTempItemPool;
@@ -6132,7 +6132,7 @@ void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void ItemPickMenuMouseClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse) {
   INT32 uiItemPos;
   UINT8 cnt;

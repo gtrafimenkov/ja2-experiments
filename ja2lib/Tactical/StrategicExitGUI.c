@@ -43,18 +43,18 @@ void AllMoveCallback(GUI_BUTTON *btn, INT32 reason);
 void OKCallback(GUI_BUTTON *btn, INT32 reason);
 void CancelCallback(GUI_BUTTON *btn, INT32 reason);
 
-void SectorExitBackgroundCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SectorExitBackgroundCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse);
 
 void SingleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                           const struct MouseInput mouse);
 void AllRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void LoadRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SingleRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SingleRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                               const struct MouseInput mouse);
-void AllRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void AllRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse);
-void LoadRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void LoadRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                             const struct MouseInput mouse);
 
 typedef struct {
@@ -814,7 +814,7 @@ void CancelCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void SectorExitBackgroundCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SectorExitBackgroundCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     // gMsgBox.bHandled = MSG_BOX_RETURN_NO;
@@ -841,7 +841,7 @@ void LoadRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void SingleRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SingleRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                               const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_MOVE) {
     gExitDialog.fSingleMoveHilighted = TRUE;
@@ -850,7 +850,7 @@ void SingleRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void AllRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void AllRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                            const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_MOVE) {
     gExitDialog.fAllMoveHilighted = TRUE;
@@ -859,7 +859,7 @@ void AllRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void LoadRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void LoadRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                             const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_MOVE) {
     gExitDialog.fGotoSectorHilighted = TRUE;

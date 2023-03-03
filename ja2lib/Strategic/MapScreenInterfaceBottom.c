@@ -192,7 +192,7 @@ void BtnTimeCompressLessMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnMessageDownMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnMessageUpMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 
-static void MapScreenMessageScrollBarCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+static void MapScreenMessageScrollBarCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                               const struct MouseInput mouse);
 
 // FUNCTIONS
@@ -819,14 +819,14 @@ void CreateMapScreenBottomMessageScrollBarRegion(void) {
   MSYS_DefineRegion(&gMapMessageScrollBarRegion, MESSAGE_SCROLL_AREA_START_X,
                     MESSAGE_SCROLL_AREA_START_Y, MESSAGE_SCROLL_AREA_END_X,
                     MESSAGE_SCROLL_AREA_END_Y, MSYS_PRIORITY_NORMAL, MSYS_NO_CURSOR,
-                    MSYS_NO_CALLBACK, MapScreenMessageScrollBarCallBack);
+                    MSYS_NO_CALLBACK, MapScreenMessageScrollBarCallback);
 }
 
 void DeleteMapScreenBottomMessageScrollRegion(void) {
   MSYS_RemoveRegion(&gMapMessageScrollBarRegion);
 }
 
-static void MapScreenMessageScrollBarCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+static void MapScreenMessageScrollBarCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                               const struct MouseInput mouse) {
   UINT8 ubMouseYOffset;
   UINT8 ubDesiredSliderOffset;

@@ -592,7 +592,8 @@ void SaveSeenAndUnseenItems(void) {
 }
 
 // the screen mask bttn callaback...to disable the inventory and lock out the map itself
-void MapInvenPoolScreenMaskCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MapInvenPoolScreenMaskCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if ((iReason & MSYS_CALLBACK_REASON_RBUTTON_UP)) {
     fShowMapInventoryPool = FALSE;
   }

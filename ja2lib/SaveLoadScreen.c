@@ -242,21 +242,21 @@ void InitSaveLoadScreenTextInputBoxes();
 void DestroySaveLoadTextInputBoxes();
 void SetSelection(UINT8 ubNewSelection);
 UINT8 CompareSaveGameVersion(INT8 bSaveGameID);
-void LoadSavedGameWarningMessageBoxCallBack(UINT8 bExitValue);
-void LoadSavedGameDeleteAllSaveGameMessageBoxCallBack(UINT8 bExitValue);
+void LoadSavedGameWarningMessageBoxCallback(UINT8 bExitValue);
+void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue);
 void DeleteAllSaveGameFile();
 void DisplayOnScreenNumber(BOOLEAN fErase);
 
 void DisableSelectedSlot();
 
-void ConfirmSavedGameMessageBoxCallBack(UINT8 bExitValue);
-void ConfirmLoadSavedGameMessageBoxCallBack(UINT8 bExitValue);
-// void			FailedSavingGameCallBack( UINT8 bExitValue );
-void FailedLoadingGameCallBack(UINT8 bExitValue);
+void ConfirmSavedGameMessageBoxCallback(UINT8 bExitValue);
+void ConfirmLoadSavedGameMessageBoxCallback(UINT8 bExitValue);
+// void			FailedSavingGameCallback( UINT8 bExitValue );
+void FailedLoadingGameCallback(UINT8 bExitValue);
 void SetSaveLoadExitScreen(UINT32 uiScreen);
 
-void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue);
-void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack(UINT8 bExitValue);
+void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue);
+void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue);
 
 void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue);
 void ClearSelectedSaveSlot();
@@ -426,7 +426,7 @@ BOOLEAN EnterSaveLoadScreen() {
       gbSelectedSaveLocation = gGameSettings.bLastSavedGameSlot;
 
       // load the saved game
-      ConfirmLoadSavedGameMessageBoxCallBack(MSG_BOX_RETURN_YES);
+      ConfirmLoadSavedGameMessageBoxCallback(MSG_BOX_RETURN_YES);
     } else {  // else the save isnt valid, so dont load it
       gfLoadGameUponEntry = FALSE;
     }
@@ -937,7 +937,7 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
       swprintf(sText, ARR_SIZE(sText), zSaveLoadText[SLG_CONFIRM_SAVE], bSaveGameID);
 
       DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, sText, SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                           ConfirmSavedGameMessageBoxCallBack);
+                           ConfirmSavedGameMessageBoxCallback);
     } else {
       // else do NOT put up a confirmation
 
@@ -951,15 +951,15 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
       if (ubRetVal == SLS_GAME_VERSION_OUT_OF_DATE) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_GAME_VERSION_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallBack);
+                             LoadSavedGameWarningMessageBoxCallback);
       } else if (ubRetVal == SLS_SAVED_GAME_VERSION_OUT_OF_DATE) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVED_GAME_VERSION_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallBack);
+                             LoadSavedGameWarningMessageBoxCallback);
       } else {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_BOTH_GAME_AND_SAVED_GAME_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallBack);
+                             LoadSavedGameWarningMessageBoxCallback);
       }
     } else {
       /*
@@ -970,7 +970,7 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
          bSaveGameID );
 
                               DoSaveLoadMessageBox( MSG_BOX_BASIC_STYLE, sText, SAVE_LOAD_SCREEN,
-         MSG_BOX_FLAG_YESNO, ConfirmLoadSavedGameMessageBoxCallBack );
+         MSG_BOX_FLAG_YESNO, ConfirmLoadSavedGameMessageBoxCallback );
       */
       // Setup up the fade routines
       StartFadeOutForSaveLoadScreen();
@@ -1774,7 +1774,7 @@ UINT8 CompareSaveGameVersion(INT8 bSaveGameID) {
   return (ubRetVal);
 }
 
-void LoadSavedGameWarningMessageBoxCallBack(UINT8 bExitValue) {
+void LoadSavedGameWarningMessageBoxCallback(UINT8 bExitValue) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // Setup up the fade routines
@@ -1786,11 +1786,11 @@ void LoadSavedGameWarningMessageBoxCallBack(UINT8 bExitValue) {
     // ask if the user wants to delete all the saved game files
     DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_DELETE_ALL_SAVE_GAMES],
                          SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                         LoadSavedGameDeleteAllSaveGameMessageBoxCallBack);
+                         LoadSavedGameDeleteAllSaveGameMessageBoxCallback);
   }
 }
 
-void LoadSavedGameDeleteAllSaveGameMessageBoxCallBack(UINT8 bExitValue) {
+void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue) {
   // yes, Delete all the save game files
   if (bExitValue == MSG_BOX_RETURN_YES) {
     DeleteAllSaveGameFile();
@@ -1879,7 +1879,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
       gfSchedulesHosed = TRUE;
       if (!LoadSavedGame(gbSelectedSaveLocation)) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                             SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallBack);
+                             SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback);
         NextLoopCheckForEnoughFreeHardDriveSpace();
       } else {
         gfSchedulesHosed = FALSE;
@@ -1888,7 +1888,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
       gfSchedulesHosed = FALSE;
     } else {
       DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                           SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallBack);
+                           SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback);
       NextLoopCheckForEnoughFreeHardDriveSpace();
     }
   } else {
@@ -1972,7 +1972,7 @@ void DisableSelectedSlot() {
   ClearSelectedSaveSlot();
 }
 
-void ConfirmSavedGameMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmSavedGameMessageBoxCallback(UINT8 bExitValue) {
   Assert(gbSelectedSaveLocation != -1);
 
   // yes, load the game
@@ -1981,7 +1981,7 @@ void ConfirmSavedGameMessageBoxCallBack(UINT8 bExitValue) {
   }
 }
 
-void ConfirmLoadSavedGameMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmLoadSavedGameMessageBoxCallback(UINT8 bExitValue) {
   Assert(gbSelectedSaveLocation != -1);
 
   // yes, load the game
@@ -2010,7 +2010,7 @@ void ErrorDetectedInSaveCallback(UINT8 bValue) {
 }
 #endif
 
-void FailedLoadingGameCallBack(UINT8 bExitValue) {
+void FailedLoadingGameCallback(UINT8 bExitValue) {
   // yes
   if (bExitValue == MSG_BOX_RETURN_OK) {
     // if the current screen is tactical
@@ -2051,9 +2051,9 @@ BOOLEAN DoQuickSave() {
 
                   if( guiPreviousOptionScreen == MAP_SCREEN )
                           DoMapMessageBox( MSG_BOX_BASIC_STYLE, zText, MAP_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack ); else DoMessageBox(
+     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback ); else DoMessageBox(
      MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack, NULL );
+     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback, NULL );
 
                   return( FALSE );
           }
@@ -2112,7 +2112,7 @@ BOOLEAN IsThereAnySavedGameFiles() {
   return (FALSE);
 }
 
-void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue) {
+void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue) {
   if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
@@ -2123,7 +2123,7 @@ void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue) {
   }
 }
 
-void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack(UINT8 bExitValue) {
+void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_OK) {
     // If the game failed to save
     if (!SaveGame(gbSelectedSaveLocation, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
@@ -2225,7 +2225,7 @@ void SaveGameToSlotNum() {
      zSizeNeeded );
 
                   DoSaveLoadMessageBox( MSG_BOX_BASIC_STYLE, zText, SAVE_LOAD_SCREEN,
-     MSG_BOX_FLAG_OK, NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack );
+     MSG_BOX_FLAG_OK, NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback );
 
                   return;
           }

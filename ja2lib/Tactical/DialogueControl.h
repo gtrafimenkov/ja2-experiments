@@ -316,7 +316,7 @@ void SetEngagedInConvFromPCAction(struct SOLDIERTYPE *pSoldier);
 extern UINT32 guiDialogueLastQuoteTime;
 extern UINT32 guiDialogueLastQuoteDelay;
 
-void SetStopTimeQuoteCallback(MODAL_HOOK pCallBack);
+void SetStopTimeQuoteCallback(MODAL_HOOK pCallback);
 
 BOOLEAN DialogueActive();
 

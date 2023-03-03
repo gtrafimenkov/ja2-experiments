@@ -2209,7 +2209,7 @@ BOOLEAN CanMercBeAvailableYet(UINT8 ubMercToCheck) {
   return (FALSE);
 }
 
-void NewMercsAvailableAtMercSiteCallBack() {
+void NewMercsAvailableAtMercSiteCallback() {
   BOOLEAN fSendEmail = FALSE;
   //	if( GetMercIDFromMERCArray( LaptopSaveInfo.gubLastMercIndex ) == BUBBA )
   {

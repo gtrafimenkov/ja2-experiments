@@ -58,7 +58,8 @@ void ContractMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void LieMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void NOMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void NumberedMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
-void MsgBoxClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
 UINT32 ExitMsgBox(INT8 ubExitCode);
 UINT16 GetMSgBoxButtonWidth(INT32 iButtonImage);
 
@@ -599,7 +600,8 @@ INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 u
   return (iId);
 }
 
-void MsgBoxClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   /// if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP)
   //{
   //	gMsgBox.bHandled = MSG_BOX_RETURN_NO;

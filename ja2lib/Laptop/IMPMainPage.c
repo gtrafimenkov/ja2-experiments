@@ -49,7 +49,7 @@ void BtnIMPMainPagePortraitCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPMainPageVoiceCallback(GUI_BUTTON *btn, INT32 reason);
 void ShadeUnSelectableButtons(void);
 void UpDateIMPMainPageButtons(void);
-void BeginMessageBoxCallBack(UINT8 bExitValue);
+void BeginMessageBoxCallback(UINT8 bExitValue);
 void DestoryMouseRegionsForIMPMainPageBasedOnCharGenStatus(void);
 void CreateMouseRegionsForIMPMainPageBasedOnCharGenStatus(void);
 void IMPMainPageNotSelectableBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
@@ -315,16 +315,16 @@ void BtnIMPMainPageBeginCallback(GUI_BUTTON *btn, INT32 reason) {
       if (iCurrentProfileMode > 2) {
         // too far along, restart
         DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pImpPopUpStrings[1], LAPTOP_SCREEN,
-                           MSG_BOX_FLAG_YESNO, BeginMessageBoxCallBack);
+                           MSG_BOX_FLAG_YESNO, BeginMessageBoxCallback);
 
       } else {
         if (LaptopSaveInfo.iCurrentBalance < COST_OF_PROFILE) {
           DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pImpPopUpStrings[3], LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                             BeginMessageBoxCallBack);
+                             BeginMessageBoxCallback);
 
         } else if (NumberOfMercsOnPlayerTeam() >= 18) {
           DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pImpPopUpStrings[5], LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                             BeginMessageBoxCallBack);
+                             BeginMessageBoxCallback);
         } else {
           // change name
           iCurrentImpPage = IMP_BEGIN;
@@ -509,7 +509,7 @@ void UpDateIMPMainPageButtons(void) {
   return;
 }
 
-void BeginMessageBoxCallBack(UINT8 bExitValue) {
+void BeginMessageBoxCallback(UINT8 bExitValue) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     iCurrentImpPage = IMP_BEGIN;
@@ -574,7 +574,7 @@ void IMPMainPageNotSelectableBtnCallback(struct MOUSE_REGION *pRegion, INT32 iRe
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pImpPopUpStrings[4], LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                       BeginMessageBoxCallBack);
+                       BeginMessageBoxCallback);
   }
 
   return;

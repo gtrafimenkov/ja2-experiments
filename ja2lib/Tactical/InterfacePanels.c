@@ -326,7 +326,7 @@ void HandlePlayerTeamMemberDeathAfterSkullAnimation(struct SOLDIERTYPE *pSoldier
 void EnableButtonsForInItemBox(BOOLEAN fDisable);
 void ConfirmationToDepositMoneyToPlayersAccount(UINT8 ubExitValue);
 
-void MergeMessageBoxCallBack(UINT8 ubExitValue);
+void MergeMessageBoxCallback(UINT8 ubExitValue);
 
 UINT8 gubHandPos;
 UINT16 gusOldItemIndex;
@@ -445,14 +445,20 @@ INT8 gbStanceButPos[2][3][3] = {
 // Mouse button and region callbacks
 // void BtnPositionCallback( GUI_BUTTON *btn, INT32 reason );
 // void BtnMovementCallback( GUI_BUTTON *btn, INT32 reason );
-void SelectedMercButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SelectedMercButtonMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SelectedMercEnemyIndicatorCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SMInvMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SMInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SMInvClickCamoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SMInvMoveCammoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SMInvMoneyButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectedMercButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void SelectedMercButtonMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
+void SelectedMercEnemyIndicatorCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                        const struct MouseInput mouse);
+void SMInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SMInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SMInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
+void SMInvMoveCammoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
+void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
 
 // SINGLE MERC PANEL BUTTON CALLBACKS
 void BtnStealthModeCallback(GUI_BUTTON *btn, INT32 reason);
@@ -472,18 +478,25 @@ void BtnOptionsCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnBurstModeCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnLookCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnPositionShowCallback(GUI_BUTTON *btn, INT32 reason);
-void InvPanelButtonClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void InvPanelButtonClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
 
 // TEAM PANEL BUTTON CALLBACKS
 void BtnEndTurnCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnRostermodeCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnSquadCallback(GUI_BUTTON *btn, INT32 reason);
-void MercFacePanelCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void MercFacePanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void TMFirstHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void TMClickFirstHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void TMClickSecondHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void EnemyIndicatorClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MercFacePanelCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
+void MercFacePanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
+void TMFirstHandInvCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
+void TMClickFirstHandInvCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
+void TMClickSecondHandInvCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
+void EnemyIndicatorClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
 
 void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, INT16 sX, INT16 sY, UINT8 ubPanelNum,
                           BOOLEAN fDirty);
@@ -1703,7 +1716,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
 
     // if we are in the shop keeper interface
     if (guiTacticalInterfaceFlags & INTERFACE_SHOPKEEP_INTERFACE)
-      SetRegionHelpEndCallback(&gSM_SELMERCBarsRegion, SkiHelpTextDoneCallBack);
+      SetRegionHelpEndCallback(&gSM_SELMERCBarsRegion, SkiHelpTextDoneCallback);
 
     // display AP
     if (!(gpSMCurrentMerc->uiStatusFlags & SOLDIER_DEAD)) {
@@ -1795,7 +1808,7 @@ void UpdateStatColor(UINT32 uiTimer, BOOLEAN fIncrease) {
   }
 }
 
-void SMInvMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SMInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT32 uiHandPos;
 
   uiHandPos = MSYS_GetRegionUserData(pRegion, 0);
@@ -1825,7 +1838,8 @@ void SMInvMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct
   }
 }
 
-void InvPanelButtonClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void InvPanelButtonClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }
@@ -1834,7 +1848,8 @@ void InvPanelButtonClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, co
   }
 }
 
-void SMInvMoveCammoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SMInvMoveCammoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   } else if (iReason == MSYS_CALLBACK_REASON_GAIN_MOUSE) {
@@ -1850,7 +1865,8 @@ void SMInvMoveCammoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const s
   }
 }
 
-void SMInvClickCamoCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SMInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   BOOLEAN fGoodAPs;
 
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
@@ -2031,7 +2047,8 @@ BOOLEAN UIHandleItemPlacement(UINT8 ubHandPos, UINT16 usOldItemIndex, UINT16 usN
   }
 }
 
-void SMInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SMInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                        const struct MouseInput mouse) {
   UINT32 uiHandPos;
   // Copyies of values
   UINT16 usOldItemIndex, usNewItemIndex;
@@ -2175,10 +2192,10 @@ void SMInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struc
               FreeMouseCursor();
 
               DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_MERGE_ITEMS], SHOPKEEPER_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallBack, NULL);
+                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL);
             } else
               DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_MERGE_ITEMS], GAME_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallBack, NULL);
+                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL);
             return;
           }
           // else handle normally
@@ -2304,7 +2321,7 @@ void SMInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struc
   }
 }
 
-void MergeMessageBoxCallBack(UINT8 ubExitValue) {
+void MergeMessageBoxCallback(UINT8 ubExitValue) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     AttachObject(gpItemPointerSoldier, &(gpSMCurrentMerc->inv[gubHandPos]), gpItemPointer);
 
@@ -2363,7 +2380,8 @@ void HandleMouseOverSoldierFaceForContMove(struct SOLDIERTYPE *pSoldier, BOOLEAN
   fInterfacePanelDirty = DIRTYLEVEL2;
 }
 
-void SelectedMercButtonMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectedMercButtonMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (gpSMCurrentMerc == NULL) {
     return;
   }
@@ -2375,7 +2393,8 @@ void SelectedMercButtonMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void SelectedMercButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectedMercButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   struct SOLDIERTYPE *pVehicle;
 
   if (gpSMCurrentMerc == NULL) {
@@ -2423,7 +2442,8 @@ void SelectedMercButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, con
   }
 }
 
-void SelectedMercEnemyIndicatorCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectedMercEnemyIndicatorCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                        const struct MouseInput mouse) {
   if (gpSMCurrentMerc == NULL) {
     return;
   }
@@ -3358,7 +3378,8 @@ void HandleMouseOverTeamFaceForContMove(BOOLEAN fOn) {
   }
 }
 
-void MercFacePanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MercFacePanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   UINT8 ubID, ubSoldierID;
   struct SOLDIERTYPE *pSoldier;
 
@@ -3393,7 +3414,8 @@ void MercFacePanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, cons
   }
 }
 
-void EnemyIndicatorClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void EnemyIndicatorClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   UINT8 ubID, ubSoldierID;
 
   ubID = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
@@ -3433,7 +3455,8 @@ void EnemyIndicatorClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, co
   }
 }
 
-void MercFacePanelCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MercFacePanelCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   UINT8 ubID, ubSoldierID;
   struct SOLDIERTYPE *pVehicle;
 
@@ -3825,7 +3848,8 @@ void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, INT16 sX, INT16 sY, UINT
   }
 }
 
-void TMFirstHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TMFirstHandInvCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   UINT8 ubID, ubSoldierID;
 
   ubID = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
@@ -3861,7 +3885,8 @@ void TMFirstHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const s
   }
 }
 
-void TMClickFirstHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TMClickFirstHandInvCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   UINT8 ubID, ubSoldierID;
   UINT16 usOldHandItem;
 
@@ -3891,7 +3916,8 @@ void TMClickFirstHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, co
   }
 }
 
-void TMClickSecondHandInvCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TMClickSecondHandInvCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   UINT8 ubID, ubSoldierID;
   UINT16 usOldHandItem;
 
@@ -4267,7 +4293,8 @@ void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void KeyRingSlotInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void KeyRingSlotInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   UINT32 uiKeyRing;
   // Copyies of values
   UINT16 usOldItemIndex;
@@ -4544,7 +4571,8 @@ void EnableButtonsForInItemBox(BOOLEAN fEnable) {
   }
 }
 
-void SMInvMoneyButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   } else if (iReason == MSYS_CALLBACK_REASON_LBUTTON_DWN) {

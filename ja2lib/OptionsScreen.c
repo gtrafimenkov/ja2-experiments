@@ -221,12 +221,12 @@ void HandleOptionsScreen();
 void GetOptionsScreenUserInput();
 void SetOptionsExitScreen(UINT32 uiExitScreen);
 
-void SoundFXSliderChangeCallBack(INT32 iNewValue);
-void SpeechSliderChangeCallBack(INT32 iNewValue);
-void MusicSliderChangeCallBack(INT32 iNewValue);
+void SoundFXSliderChangeCallback(INT32 iNewValue);
+void SpeechSliderChangeCallback(INT32 iNewValue);
+void MusicSliderChangeCallback(INT32 iNewValue);
 // BOOLEAN		DoOptionsMessageBox( UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
 // UINT8 ubFlags, MSGBOX_CALLBACK ReturnCallback );
-void ConfirmQuitToMainMenuMessageBoxCallBack(UINT8 bExitValue);
+void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue);
 void HandleSliderBarMovementSounds();
 void HandleOptionToggle(UINT8 ubButton, BOOLEAN fState, BOOLEAN fDown, BOOLEAN fPlaySound);
 void HandleHighLightedText(BOOLEAN fHighLight);
@@ -515,21 +515,21 @@ BOOLEAN EnterOptionsScreen() {
   // Add a slider bar for the Sound Effects
   guiSoundEffectsSliderID = AddSlider(
       SLIDER_VERTICAL_STEEL, CURSOR_NORMAL, OPT_SOUND_EFFECTS_SLIDER_X, OPT_SOUND_EFFECTS_SLIDER_Y,
-      OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SoundFXSliderChangeCallBack, 0);
+      OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SoundFXSliderChangeCallback, 0);
   AssertMsg(guiSoundEffectsSliderID, "Failed to AddSlider");
   SetSliderValue(guiSoundEffectsSliderID, GetSoundEffectsVolume());
 
   // Add a slider bar for the Speech
   guiSpeechSliderID =
       AddSlider(SLIDER_VERTICAL_STEEL, CURSOR_NORMAL, OPT_SPEECH_SLIDER_X, OPT_SPEECH_SLIDER_Y,
-                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SpeechSliderChangeCallBack, 0);
+                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SpeechSliderChangeCallback, 0);
   AssertMsg(guiSpeechSliderID, "Failed to AddSlider");
   SetSliderValue(guiSpeechSliderID, GetSpeechVolume());
 
   // Add a slider bar for the Music
   guiMusicSliderID =
       AddSlider(SLIDER_VERTICAL_STEEL, CURSOR_NORMAL, OPT_MUSIC_SLIDER_X, OPT_MUSIC_SLIDER_Y,
-                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, MusicSliderChangeCallBack, 0);
+                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, MusicSliderChangeCallback, 0);
   AssertMsg(guiMusicSliderID, "Failed to AddSlider");
   SetSliderValue(guiMusicSliderID, MusicGetVolume());
 
@@ -870,7 +870,7 @@ void BtnOptQuitCallback(GUI_BUTTON *btn, INT32 reason) {
 
     // Confirm the Exit to the main menu screen
     DoOptionsMessageBox(MSG_BOX_BASIC_STYLE, zOptionsText[OPT_RETURN_TO_MAIN], OPTIONS_SCREEN,
-                        MSG_BOX_FLAG_YESNO, ConfirmQuitToMainMenuMessageBoxCallBack);
+                        MSG_BOX_FLAG_YESNO, ConfirmQuitToMainMenuMessageBoxCallback);
 
     ///		SetOptionsExitScreen( MAINMENU_SCREEN );
 
@@ -981,19 +981,19 @@ void HandleOptionToggle(UINT8 ubButton, BOOLEAN fState, BOOLEAN fDown, BOOLEAN f
   }
 }
 
-void SoundFXSliderChangeCallBack(INT32 iNewValue) {
+void SoundFXSliderChangeCallback(INT32 iNewValue) {
   SetSoundEffectsVolume(iNewValue);
 
   guiSoundFxSliderMoving = GetJA2Clock();
 }
 
-void SpeechSliderChangeCallBack(INT32 iNewValue) {
+void SpeechSliderChangeCallback(INT32 iNewValue) {
   SetSpeechVolume(iNewValue);
 
   guiSpeechSliderMoving = GetJA2Clock();
 }
 
-void MusicSliderChangeCallBack(INT32 iNewValue) { MusicSetVolume(iNewValue); }
+void MusicSliderChangeCallback(INT32 iNewValue) { MusicSetVolume(iNewValue); }
 
 BOOLEAN DoOptionsMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                     UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
@@ -1026,7 +1026,7 @@ BOOLEAN DoOptionsMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
   return ((giOptionsMessageBox != -1));
 }
 
-void ConfirmQuitToMainMenuMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue) {
   // yes, Quit to main menu
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gfEnteredFromMapScreen = FALSE;

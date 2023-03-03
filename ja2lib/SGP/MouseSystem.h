@@ -145,7 +145,7 @@ INT32 MSYS_Init(void);
 void MSYS_Shutdown(void);
 void MSYS_DefineRegion(struct MOUSE_REGION *region, UINT16 tlx, UINT16 tly, UINT16 brx, UINT16 bry,
                        INT8 priority, UINT16 crsr, MOUSE_CALLBACK movecallback,
-                       MOUSE_CALLBACK buttoncallback);
+                       MOUSE_CALLBACK ButtonCallback);
 void MSYS_ChangeRegionCursor(struct MOUSE_REGION *region, UINT16 crsr);
 INT32 MSYS_AddRegion(struct MOUSE_REGION *region);
 void MSYS_RemoveRegion(struct MOUSE_REGION *region);

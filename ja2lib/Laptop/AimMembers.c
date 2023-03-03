@@ -543,7 +543,7 @@ void DisplayDots(UINT16 usNameX, UINT16 usNameY, UINT16 usStatX, STR16 pString);
 
 void DelayMercSpeech(UINT8 ubMercID, UINT16 usQuoteNum, UINT16 usDelay, BOOLEAN fNewQuote,
                      BOOLEAN fReset);
-void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallBack(UINT8 bExitValue);
+void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallback(UINT8 bExitValue);
 void DisplayAimMemberClickOnFaceHelpText();
 
 // ppp
@@ -2444,17 +2444,17 @@ void DisplayTextForMercFaceVideoPopUp(STR16 pString) {
 
 void SelectShutUpMercRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                     const struct MouseInput mouse) {
-  BOOLEAN fInCallBack = TRUE;
+  BOOLEAN fInCallback = TRUE;
 
-  if (fInCallBack) {
+  if (fInCallback) {
     if (iReason & MSYS_CALLBACK_REASON_INIT) {
     } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
       gfStopMercFromTalking = TRUE;
     } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
-      fInCallBack = FALSE;
+      fInCallback = FALSE;
 
       gfStopMercFromTalking = TRUE;
-      fInCallBack = TRUE;
+      fInCallback = TRUE;
     }
   }
 }
@@ -4108,7 +4108,7 @@ void DisplayPopUpBoxExplainingMercArrivalLocationAndTime() {
 
   // display the message box
   DoLapTopMessageBox(MSG_BOX_LAPTOP_DEFAULT, szLocAndTime, LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                     DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallBack);
+                     DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallback);
 
   // reset the id of the last merc
   LaptopSaveInfo.sLastHiredMerc.iIdOfMerc = -1;
@@ -4117,7 +4117,7 @@ void DisplayPopUpBoxExplainingMercArrivalLocationAndTime() {
   LaptopSaveInfo.sLastHiredMerc.fHaveDisplayedPopUpInLaptop = TRUE;
 }
 
-void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallBack(UINT8 bExitValue) {
+void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallback(UINT8 bExitValue) {
   // unset the flag so the msgbox WONT dislay its save buffer
   gfDontOverRideSaveBuffer = FALSE;
 

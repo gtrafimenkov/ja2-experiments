@@ -132,7 +132,7 @@ void BtnInsContractPrevButtonCallback(GUI_BUTTON *btn, INT32 reason);
 UINT32 guiInsContractPrevBackButton;
 
 INT32 guiInsContractNextButtonImage;
-void BtnInsContractNextButtonCallBack(GUI_BUTTON *btn, INT32 reason);
+void BtnInsContractNextButtonCallback(GUI_BUTTON *btn, INT32 reason);
 UINT32 guiInsContractNextBackButton;
 
 // Graphic for Accept, Clear button for form 1
@@ -156,13 +156,13 @@ INT8 GetNumberOfHireMercsStartingFromID(UINT8 ubStartMercID);
 // INT32			CalculateInsuranceCost( struct SOLDIERTYPE *pSoldier, BOOLEAN
 // fHaveInsurance
 // );
-void InsuranceContractUserTextFieldCallBack(UINT8 ubID, BOOLEAN fEntering);
+void InsuranceContractUserTextFieldCallback(UINT8 ubID, BOOLEAN fEntering);
 INT8 CountInsurableMercs();
 void DisableInsuranceContractNextPreviousbuttons();
 void CreateDestroyInsuranceContractFormButtons(BOOLEAN fCreate);
 void HandleAcceptButton(UINT8 ubSoldierID, UINT8 ubFormID);
 FLOAT DiffFromNormRatio(INT16 sThisValue, INT16 sNormalValue);
-void InsContractNoMercsPopupCallBack(UINT8 bExitValue);
+void InsContractNoMercsPopupCallback(UINT8 bExitValue);
 void BuildInsuranceArray();
 BOOLEAN MercIsInsurable(struct SOLDIERTYPE *pSoldier);
 // UINT32		GetContractLengthForFormNumber( UINT8 ubFormID );
@@ -242,7 +242,7 @@ BOOLEAN EnterInsuranceContract() {
       guiInsContractNextButtonImage, InsContractText[INS_CONTRACT_NEXT], INS_FONT_BIG,
       INS_FONT_COLOR, INS_FONT_SHADOW, INS_FONT_COLOR, INS_FONT_SHADOW, TEXT_CJUSTIFIED,
       INS_INFO_RIGHT_ARROW_BUTTON_X, INS_INFO_RIGHT_ARROW_BUTTON_Y, BUTTON_TOGGLE,
-      MSYS_PRIORITY_HIGH, DEFAULT_MOVE_CALLBACK, BtnInsContractNextButtonCallBack);
+      MSYS_PRIORITY_HIGH, DEFAULT_MOVE_CALLBACK, BtnInsContractNextButtonCallback);
   SetButtonCursor(guiInsContractNextBackButton, CURSOR_WWW);
   SpecifyButtonTextOffsets(guiInsContractNextBackButton, 18, 16, FALSE);
 
@@ -397,12 +397,12 @@ void RenderInsuranceContract() {
       // Display Error Message, all aim mercs are on short contract
       GetInsuranceText(INS_MLTI_ALL_AIM_MERCS_ON_SHORT_CONTRACT, sText);
       DoLapTopMessageBox(MSG_BOX_RED_ON_WHITE, sText, LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                         InsContractNoMercsPopupCallBack);
+                         InsContractNoMercsPopupCallback);
     } else {
       // Display Error Message, no valid mercs
       GetInsuranceText(INS_MLTI_NO_QUALIFIED_MERCS, sText);
       DoLapTopMessageBox(MSG_BOX_RED_ON_WHITE, sText, LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                         InsContractNoMercsPopupCallBack);
+                         InsContractNoMercsPopupCallback);
     }
   }
 
@@ -439,7 +439,7 @@ void BtnInsContractPrevButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void BtnInsContractNextButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void BtnInsContractNextButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     btn->uiFlags |= BUTTON_CLICKED_ON;
     InvalidateRegion(btn->Area.RegionTopLeftX, btn->Area.RegionTopLeftY,
@@ -1136,7 +1136,7 @@ FLOAT DiffFromNormRatio(INT16 sThisValue, INT16 sNormalValue) {
   return (flRatio);
 }
 
-void InsContractNoMercsPopupCallBack(UINT8 bExitValue) {
+void InsContractNoMercsPopupCallback(UINT8 bExitValue) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_OK) {
     guiCurrentLaptopMode = LAPTOP_MODE_INSURANCE;

@@ -270,7 +270,7 @@ extern STR16 pBullseyeStrings[];
 extern void HandleRPCDescription();
 
 #ifdef CRIPPLED_VERSION
-void CrippledVersionFailureToLoadMapCallBack(UINT8 bExitValue);
+void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue);
 void CrippledVersionFailureToLoadMapCheck();
 #endif
 
@@ -521,7 +521,7 @@ BOOLEAN InitStrategicEngine() {
   // town distances are pre-calculated and read in from a data file
   // since it takes quite a while to plot strategic paths between all pairs of town sectors...
 
-//#define RECALC_TOWN_DISTANCES
+// #define RECALC_TOWN_DISTANCES
 #ifdef RECALC_TOWN_DISTANCES
   CalcDistancesBetweenTowns();
   WriteOutDistancesBetweenTowns();
@@ -1327,12 +1327,12 @@ BOOLEAN EnterSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
 #endif
 
   // CreateProgressBar( 0, 160, 380, 480, 400 );
-  //#ifdef JA2TESTVERSION
+  // #ifdef JA2TESTVERSION
   //	//add more detailed progress bar
   //	DefineProgressBarPanel( 0, 65, 79, 94, 130, 350, 510, 430 );
   //	swprintf( str, L"Loading map:  %S", bFilename );
   //	SetProgressBarTitle( 0, str, FONT12POINT1, FONT_BLACK, FONT_BLACK );
-  //#endif
+  // #endif
   if (!LoadWorld(bFilename)) {
     return (FALSE);
   }
@@ -4338,10 +4338,10 @@ void CrippledVersionFailureToLoadMapCheck() {
   swprintf(zString,
            L"Error! Sorry, you must stay between sectors A and E in this limited press version.");
 
-  DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionFailureToLoadMapCallBack);
+  DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionFailureToLoadMapCallback);
 }
 
-void CrippledVersionFailureToLoadMapCallBack(UINT8 bExitValue) {
+void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue) {
   // clean up the code
   ReStartingGame();
 

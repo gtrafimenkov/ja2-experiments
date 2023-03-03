@@ -343,11 +343,12 @@ void RenderPersonnel(void);
 void RenderPersonnelStats(INT32 iId, INT32 iSlot);
 BOOLEAN RenderPersonnelFace(INT32 iId, INT32 iSlot, BOOLEAN fDead, BOOLEAN fFired, BOOLEAN fOther);
 BOOLEAN RenderPersonnelPictures(void);
-void LeftButtonCallBack(GUI_BUTTON *btn, INT32 reason);
-void RightButtonCallBack(GUI_BUTTON *btn, INT32 reason);
-void LeftFFButtonCallBack(GUI_BUTTON *btn, INT32 reason);
-void RightFFButtonCallBack(GUI_BUTTON *btn, INT32 reason);
-void PersonnelPortraitCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void LeftButtonCallback(GUI_BUTTON *btn, INT32 reason);
+void RightButtonCallback(GUI_BUTTON *btn, INT32 reason);
+void LeftFFButtonCallback(GUI_BUTTON *btn, INT32 reason);
+void RightFFButtonCallback(GUI_BUTTON *btn, INT32 reason);
+void PersonnelPortraitCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 void CreatePersonnelButtons(void);
 void DeletePersonnelButtons(void);
 void DisplayHeader(void);
@@ -382,11 +383,13 @@ INT32 GetNumberOfLeftOnPastTeam(void);
 INT32 GetNumberOfDeadOnPastTeam(void);
 void DisplayStateOfPastTeamMembers(void);
 void CreateDestroyCurrentDepartedMouseRegions(void);
-void PersonnelCurrentTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void PersonnelDepartedTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void PersonnelCurrentTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
+void PersonnelDepartedTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
 void CreateDestroyButtonsForDepartedTeamList(void);
-void DepartedDownCallBack(GUI_BUTTON *btn, INT32 reason);
-void DepartedUpCallBack(GUI_BUTTON *btn, INT32 reason);
+void DepartedDownCallback(GUI_BUTTON *btn, INT32 reason);
+void DepartedUpCallback(GUI_BUTTON *btn, INT32 reason);
 void DisplayPastMercsPortraits(void);
 BOOLEAN DisplayPortraitOfPastMerc(INT32 iId, INT32 iCounter, BOOLEAN fDead, BOOLEAN fFired,
                                   BOOLEAN fOther);
@@ -406,7 +409,8 @@ void EnableDisableInventoryScrollButtons(void);
 void PersonnelINVStartButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void EmployementInfoButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void PersonnelStatStartButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void HandleSliderBarClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void HandleSliderBarClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
 INT32 GetNumberOfMercsDeadOrAliveOnPlayersTeam(void);
 
 void RenderSliderBarForPersonnelInventory(void);
@@ -991,39 +995,39 @@ void CreatePersonnelButtons(void) {
   giPersonnelButton[0] =
       QuickCreateButton(giPersonnelButtonImage[0], PREV_MERC_FACE_X, MERC_FACE_SCROLL_Y,
                         BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)LeftButtonCallBack);
+                        (GUI_CALLBACK)LeftButtonCallback);
 
   // right button
   giPersonnelButtonImage[1] = LoadButtonImage("LAPTOP\\personnelbuttons.sti", -1, 2, -1, 3, -1);
   giPersonnelButton[1] =
       QuickCreateButton(giPersonnelButtonImage[1], NEXT_MERC_FACE_X, MERC_FACE_SCROLL_Y,
                         BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)RightButtonCallBack);
+                        (GUI_CALLBACK)RightButtonCallback);
 
   /*
   // left button
   giPersonnelButtonImage[0]=  LoadButtonImage( "LAPTOP\\arrows.sti" ,-1,0,-1,1,-1 );
   giPersonnelButton[0] = QuickCreateButton( giPersonnelButtonImage[0], LEFT_BUTTON_X, BUTTON_Y,
                                                                           BUTTON_TOGGLE,
-  MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)LeftButtonCallBack);
+  MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)LeftButtonCallback);
 
   // right button
   giPersonnelButtonImage[1]=  LoadButtonImage( "LAPTOP\\arrows.sti" ,-1,6,-1,7,-1 );
   giPersonnelButton[1] = QuickCreateButton( giPersonnelButtonImage[1], RIGHT_BUTTON_X, BUTTON_Y,
                                                                           BUTTON_TOGGLE,
-  MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)RightButtonCallBack);
+  MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)RightButtonCallback);
 
   // left FF button
   giPersonnelButtonImage[2]=  LoadButtonImage( "LAPTOP\\arrows.sti" ,-1,3,-1,4,-1 );
   giPersonnelButton[2] = QuickCreateButton( giPersonnelButtonImage[2], LEFT_BUTTON_X, BUTTON_Y + 22,
                                                                           BUTTON_TOGGLE,
-  MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)LeftFFButtonCallBack);
+  MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)LeftFFButtonCallback);
 
   // right ff button
   giPersonnelButtonImage[3]=  LoadButtonImage( "LAPTOP\\arrows.sti" ,-1,9,-1,10,-1 );
   giPersonnelButton[3] = QuickCreateButton( giPersonnelButtonImage[3], RIGHT_BUTTON_X, BUTTON_Y +
   22, BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback,
-  (GUI_CALLBACK)RightFFButtonCallBack);
+  (GUI_CALLBACK)RightFFButtonCallback);
 */
   // set up cursors
   SetButtonCursor(giPersonnelButton[0], CURSOR_LAPTOP_SCREEN);
@@ -1047,7 +1051,7 @@ void DeletePersonnelButtons(void) {
   return;
 }
 
-void LeftButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void LeftButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (!(btn->uiFlags & BUTTON_ENABLED)) return;
 
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -1066,7 +1070,7 @@ void LeftButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void LeftFFButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void LeftFFButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (!(btn->uiFlags & BUTTON_ENABLED)) return;
 
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -1089,7 +1093,7 @@ void LeftFFButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void RightButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void RightButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (!(btn->uiFlags & BUTTON_ENABLED)) return;
 
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -1108,7 +1112,7 @@ void RightButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void RightFFButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void RightFFButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (!(btn->uiFlags & BUTTON_ENABLED)) return;
 
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -2063,7 +2067,8 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
   return (TRUE);
 }
 
-void PersonnelPortraitCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void PersonnelPortraitCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   INT32 iPortraitId = 0;
   INT32 iOldPortraitId;
 
@@ -4070,7 +4075,8 @@ void CreateDestroyCurrentDepartedMouseRegions(void) {
   return;
 }
 
-void PersonnelCurrentTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void PersonnelCurrentTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fCurrentTeamMode = TRUE;
 
@@ -4090,7 +4096,8 @@ void PersonnelCurrentTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, c
   }
 }
 
-void PersonnelDepartedTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void PersonnelDepartedTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fCurrentTeamMode = FALSE;
 
@@ -4120,14 +4127,14 @@ void CreateDestroyButtonsForDepartedTeamList(void) {
     giPersonnelButton[4] =
         QuickCreateButton(giPersonnelButtonImage[4], PERS_DEPARTED_UP_X, PERS_DEPARTED_UP_Y,
                           BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-                          BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)DepartedUpCallBack);
+                          BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)DepartedUpCallback);
 
     // right button
     giPersonnelButtonImage[5] = LoadButtonImage("LAPTOP\\departuresbuttons.sti", -1, 1, -1, 3, -1);
     giPersonnelButton[5] =
         QuickCreateButton(giPersonnelButtonImage[5], PERS_DEPARTED_UP_X, PERS_DEPARTED_DOWN_Y,
                           BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-                          BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)DepartedDownCallBack);
+                          BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)DepartedDownCallback);
 
     // set up cursors for these buttons
     SetButtonCursor(giPersonnelButton[4], CURSOR_LAPTOP_SCREEN);
@@ -4145,7 +4152,7 @@ void CreateDestroyButtonsForDepartedTeamList(void) {
   }
 }
 
-void DepartedUpCallBack(GUI_BUTTON *btn, INT32 reason) {
+void DepartedUpCallback(GUI_BUTTON *btn, INT32 reason) {
   if (!(btn->uiFlags & BUTTON_ENABLED)) return;
 
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -4164,7 +4171,7 @@ void DepartedUpCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void DepartedDownCallBack(GUI_BUTTON *btn, INT32 reason) {
+void DepartedDownCallback(GUI_BUTTON *btn, INT32 reason) {
   if (!(btn->uiFlags & BUTTON_ENABLED)) return;
 
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -5095,7 +5102,8 @@ void FindPositionOfPersInvSlider(void) {
   guiSliderPosition = uiCurrentInventoryIndex * sSizeOfEachSubRegion;
 }
 
-void HandleSliderBarClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void HandleSliderBarClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   INT32 iValue = 0;
   INT32 iNumberOfItems = 0;
   INT16 sSizeOfEachSubRegion = 0;

@@ -96,7 +96,7 @@ BOOLEAN NPCOpenThing(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor);
 UINT16 gusDialogueMessageBoxType;
 
 void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType);
-void DialogueMessageBoxCallBack(UINT8 ubExitValue);
+void DialogueMessageBoxCallback(UINT8 ubExitValue);
 void CarmenLeavesSectorCallback(void);
 
 #define TALK_PANEL_FACE_X 6
@@ -139,13 +139,19 @@ void CarmenLeavesSectorCallback(void);
 #define CHANCE_FOR_DOCTOR_TO_SAY_RANDOM_QUOTE 20
 
 // NPC talk panel UI stuff
-void TalkPanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void TalkPanelClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void TextRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void TalkPanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
+void TalkPanelClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
+void TextRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
 
-void TalkPanelBaseRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void TalkPanelNameRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void TalkPanelNameRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void TalkPanelBaseRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
+void TalkPanelNameRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                     const struct MouseInput mouse);
+void TalkPanelNameRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
 void DoneTalkingButtonClickCallback(GUI_BUTTON *btn, INT32 reason);
 
 void CalculatePopupTextPosition(INT16 sWidth, INT16 sHeight);
@@ -155,7 +161,7 @@ BOOLEAN InternalInitiateConversation(struct SOLDIERTYPE *pDestSoldier,
                                      struct SOLDIERTYPE *pSrcSoldier, INT8 bApproach,
                                      uintptr_t uiApproachData);
 
-extern void EndGameMessageBoxCallBack(UINT8 ubExitValue);
+extern void EndGameMessageBoxCallback(UINT8 ubExitValue);
 extern INT16 FindNearestOpenableNonDoor(INT16 sStartGridNo);
 extern void RecalculateOppCntsDueToBecomingNeutral(struct SOLDIERTYPE *pSoldier);
 
@@ -847,7 +853,8 @@ void RenderTalkingMenu() {
   gTalkPanel.fDirtyLevel = 0;
 }
 
-void TalkPanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TalkPanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   UINT32 uiItemPos;
 
   uiItemPos = MSYS_GetRegionUserData(pRegion, 0);
@@ -862,7 +869,8 @@ void TalkPanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const st
   }
 }
 
-void TalkPanelClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TalkPanelClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   UINT32 uiItemPos;
   BOOLEAN fDoConverse = TRUE;
   uiItemPos = MSYS_GetRegionUserData(pRegion, 0);
@@ -925,7 +933,8 @@ void TalkPanelClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const s
   }
 }
 
-void TalkPanelBaseRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TalkPanelBaseRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -945,7 +954,8 @@ void TalkPanelBaseRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReaso
   }
 }
 
-void TalkPanelNameRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TalkPanelNameRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // Donot do this if we are talking already
     if (!gFacesData[gTalkPanel.iFaceIndex].fTalking) {
@@ -956,7 +966,8 @@ void TalkPanelNameRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReaso
   }
 }
 
-void TalkPanelNameRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TalkPanelNameRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                     const struct MouseInput mouse) {
   // Donot do this if we are talking already
   if (gFacesData[gTalkPanel.iFaceIndex].fTalking) {
     return;
@@ -3223,7 +3234,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
       case NPC_ACTION_END_DEMO:
         DeleteTalkingMenu();
         // hack!!
-        EndGameMessageBoxCallBack(MSG_BOX_RETURN_YES);
+        EndGameMessageBoxCallback(MSG_BOX_RETURN_YES);
         break;
 
       case NPC_ACTION_SEND_ENRICO_MIGUEL_EMAIL:
@@ -3868,7 +3879,7 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
                  gMercProfiles[ubProfileID].zNickname);
       }
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_ASK_ABOUT_PAYING_RPC:
     case NPC_ACTION_ASK_ABOUT_PAYING_RPC_WITH_DAILY_SALARY:
@@ -3878,12 +3889,12 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[HIRE_PROMPT],
                gMercProfiles[ubProfileID].zNickname, zTemp2);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_DARREN_REQUESTOR:
     case NPC_ACTION_FIGHT_AGAIN_REQUESTOR:
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[BOXING_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, DialogueMessageBoxCallBack, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_BUY_LEATHER_KEVLAR_VEST:
       swprintf(zTemp2, ARR_SIZE(zTemp2), L"%d", Item[LEATHER_JACKET_W_KEVLAR].usPrice);
@@ -3891,16 +3902,16 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[BUY_VEST_PROMPT],
                ItemNames[LEATHER_JACKET_W_KEVLAR], zTemp2);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_PROMPT_PLAYER_TO_LIE:
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[YESNOLIE_STR], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNOLIE, DialogueMessageBoxCallBack, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNOLIE, DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_MEDICAL_REQUESTOR_2:
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[FREE_MEDICAL_PROMPT]);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_MEDICAL_REQUESTOR:
       iTemp = (INT32)CalcMedicalCost(ubProfileID);
@@ -3914,7 +3925,7 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[PAY_MONEY_PROMPT], zTemp2);
 
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_BUY_VEHICLE_REQUESTOR:
       swprintf(zTemp2, ARR_SIZE(zTemp2), L"%ld", 10000);
@@ -3922,24 +3933,24 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[PAY_MONEY_PROMPT], zTemp2);
 
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_TRIGGER_MARRY_DARYL_PROMPT:
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[MARRY_DARYL_PROMPT]);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     case NPC_ACTION_KROTT_REQUESTOR:
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[SPARE_KROTT_PROMPT]);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallBack, NULL);
+                   DialogueMessageBoxCallback, NULL);
       break;
     default:
       break;
   }
 }
 
-void DialogueMessageBoxCallBack(UINT8 ubExitValue) {
+void DialogueMessageBoxCallback(UINT8 ubExitValue) {
   UINT8 ubProfile;
   struct SOLDIERTYPE *pSoldier;
 
@@ -4285,7 +4296,8 @@ BOOLEAN NPCOpenThing(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor) {
   return (TRUE);
 }
 
-void TextRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void TextRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {

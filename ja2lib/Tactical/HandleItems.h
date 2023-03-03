@@ -149,7 +149,7 @@ INT8 GetLargestZLevelOfItemPool(struct ITEM_POOL *pItemPool);
 
 BOOLEAN NearbyGroundSeemsWrong(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
                                BOOLEAN fCheckAroundGridno, UINT16 *psProblemGridNo);
-void MineSpottedDialogueCallBack(void);
+void MineSpottedDialogueCallback(void);
 
 extern INT16 gsBoobyTrapGridNo;
 extern struct SOLDIERTYPE *gpBoobyTrapSoldier;

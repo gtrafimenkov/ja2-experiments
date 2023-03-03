@@ -210,9 +210,9 @@ void DoneFadeInForExitGameInitOptionScreen(void);
 BOOLEAN DoGioMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
                         MSGBOX_CALLBACK ReturnCallback);
 void DisplayMessageToUserAboutGameDifficulty();
-void ConfirmGioDifSettingMessageBoxCallBack(UINT8 bExitValue);
+void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue);
 BOOLEAN DisplayMessageToUserAboutIronManMode();
-void ConfirmGioIronManMessageBoxCallBack(UINT8 bExitValue);
+void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue);
 
 // ppp
 
@@ -1025,22 +1025,22 @@ void DisplayMessageToUserAboutGameDifficulty() {
     case 0:
       DoGioMessageBox(MSG_BOX_BASIC_STYLE, zGioDifConfirmText[GIO_CFS_NOVICE],
                       GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                      ConfirmGioDifSettingMessageBoxCallBack);
+                      ConfirmGioDifSettingMessageBoxCallback);
       break;
     case 1:
       DoGioMessageBox(MSG_BOX_BASIC_STYLE, zGioDifConfirmText[GIO_CFS_EXPERIENCED],
                       GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                      ConfirmGioDifSettingMessageBoxCallBack);
+                      ConfirmGioDifSettingMessageBoxCallback);
       break;
     case 2:
       DoGioMessageBox(MSG_BOX_BASIC_STYLE, zGioDifConfirmText[GIO_CFS_EXPERT],
                       GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                      ConfirmGioDifSettingMessageBoxCallBack);
+                      ConfirmGioDifSettingMessageBoxCallback);
       break;
   }
 }
 
-void ConfirmGioDifSettingMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gubGameOptionScreenHandler = GIO_EXIT;
   }
@@ -1053,7 +1053,7 @@ BOOLEAN DisplayMessageToUserAboutIronManMode() {
   if (ubIronManMode) {
     DoGioMessageBox(MSG_BOX_BASIC_STYLE, gzIronManModeWarningText[IMM__IRON_MAN_MODE_WARNING_TEXT],
                     GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                    ConfirmGioIronManMessageBoxCallBack);
+                    ConfirmGioIronManMessageBoxCallback);
 
     return (TRUE);
   }
@@ -1061,7 +1061,7 @@ BOOLEAN DisplayMessageToUserAboutIronManMode() {
   return (FALSE);
 }
 
-void ConfirmGioIronManMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gubGameOptionScreenHandler = GIO_IRON_MAN_MODE;
   } else {

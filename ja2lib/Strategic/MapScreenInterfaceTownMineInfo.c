@@ -83,8 +83,8 @@ void AddInventoryButtonForMapPopUpBox(void);
 void RemoveInventoryButtonForMapPopUpBox(void);
 
 // callback to turn on sector invneotry list
-void MapTownMineInventoryButtonCallBack(GUI_BUTTON *btn, INT32 reason);
-void MapTownMineExitButtonCallBack(GUI_BUTTON *btn, INT32 reason);
+void MapTownMineInventoryButtonCallback(GUI_BUTTON *btn, INT32 reason);
+void MapTownMineExitButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void MinWidthOfTownMineInfoBox(void);
 
 void DisplayTownInfo(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
@@ -727,7 +727,7 @@ void AddInventoryButtonForMapPopUpBox(void) {
       guiMapButtonInventoryImage[0], pMapPopUpInventoryText[0], BLOCKFONT2, FONT_WHITE, FONT_BLACK,
       FONT_WHITE, FONT_BLACK, TEXT_CJUSTIFIED, (INT16)(sX), (INT16)(sY), BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGHEST - 1, DEFAULT_MOVE_CALLBACK,
-      (GUI_CALLBACK)MapTownMineInventoryButtonCallBack);
+      (GUI_CALLBACK)MapTownMineInventoryButtonCallback);
 
   sX = sX + sWidthA + (pDimensions.iRight - sTotalBoxWidth) / 3;
   sY = pPosition.iY + pDimensions.iBottom - ((BOX_BUTTON_HEIGHT + 5));
@@ -738,7 +738,7 @@ void AddInventoryButtonForMapPopUpBox(void) {
       CreateIconAndTextButton(guiMapButtonInventoryImage[1], pMapPopUpInventoryText[1], BLOCKFONT2,
                               FONT_WHITE, FONT_BLACK, FONT_WHITE, FONT_BLACK, TEXT_CJUSTIFIED,
                               (INT16)(sX), (INT16)(sY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-                              DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)MapTownMineExitButtonCallBack);
+                              DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)MapTownMineExitButtonCallback);
 
   // delete video object
   DeleteVideoObjectFromIndex(uiObject);
@@ -765,7 +765,7 @@ void RemoveInventoryButtonForMapPopUpBox(void) {
   return;
 }
 
-void MapTownMineInventoryButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void MapTownMineInventoryButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     btn->uiFlags |= (BUTTON_CLICKED_ON);
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
@@ -788,7 +788,7 @@ void MapTownMineInventoryButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void MapTownMineExitButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void MapTownMineExitButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     btn->uiFlags |= (BUTTON_CLICKED_ON);
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {

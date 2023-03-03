@@ -26,7 +26,7 @@ usWidth
 usNumberOfIncrements
 sPriority
 SliderChangeCallback
-        void SliderChangeCallBack( INT32 iNewValue )
+        void SliderChangeCallback( INT32 iNewValue )
 */
 
 INT32 AddSlider(UINT8 ubStyle, UINT16 usCursor, UINT16 usPosX, UINT16 usPosY, UINT16 usWidth,

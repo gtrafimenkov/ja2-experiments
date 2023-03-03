@@ -245,7 +245,7 @@ void FlowerOrderDisplayShippingLocationCity();
 void InitFlowerOrderTextInputBoxes();
 void DestroyFlowerOrderTextInputBoxes();
 void HandleFloristOrderKeyBoardInput();
-void FlowerOrderUserTextFieldCallBack(UINT8 ubID, BOOLEAN fEntering);
+void FlowerOrderUserTextFieldCallback(UINT8 ubID, BOOLEAN fEntering);
 
 void GameInitFloristOrderForm() {}
 
@@ -1239,7 +1239,7 @@ void InitFlowerOrderTextInputBoxes() {
   SetTextInputHilitedColors(FONT_WHITE, 2, 141);
   SetCursorColor(Get16BPPColor(FROMRGB(0, 0, 0)));
 
-  AddUserInputField(FlowerOrderUserTextFieldCallBack);
+  AddUserInputField(FlowerOrderUserTextFieldCallback);
 
   if (gbCurrentlySelectedCard != -1) {
     // Get and display the card saying
@@ -1309,7 +1309,7 @@ void HandleFloristOrderKeyBoardInput() {
   }
 }
 
-void FlowerOrderUserTextFieldCallBack(UINT8 ubID, BOOLEAN fEntering) {
+void FlowerOrderUserTextFieldCallback(UINT8 ubID, BOOLEAN fEntering) {
   if (fEntering) {
     //		SetActiveField(1);
   }

@@ -124,9 +124,11 @@ void SetGeneratedCharacterAttributes(void);
 void BtnIMPAttributeFinishCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPAttributeSliderLeftCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPAttributeSliderRightCallback(GUI_BUTTON *btn, INT32 reason);
-void SliderRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SliderBarRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void StatAtZeroBoxCallBack(UINT8 bExitValue);
+void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
+void StatAtZeroBoxCallback(UINT8 bExitValue);
 
 void EnterIMPAttributeSelection(void) {
   // set attributes and skills
@@ -299,7 +301,7 @@ void HandleIMPAttributeSelection(void) {
   }
   if (fSkillAtZeroWarning == TRUE) {
     DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pSkillAtZeroWarning[0], LAPTOP_SCREEN, MSG_BOX_FLAG_YESNO,
-                       StatAtZeroBoxCallBack);
+                       StatAtZeroBoxCallback);
     fSkillAtZeroWarning = FALSE;
   }
   return;
@@ -1117,7 +1119,8 @@ void DestroySlideBarMouseRegions(void) {
   return;
 }
 
-void SliderRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   INT32 iCurrentAttributeValue = 0;
   INT32 iNewAttributeValue = 0;
   INT32 iAttributeDelta = 0;
@@ -1273,7 +1276,8 @@ void SliderRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, con
   }
 }
 
-void SliderBarRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     fSlideIsActive = TRUE;
     SliderRegionButtonCallback(&pSliderRegions[MSYS_GetRegionUserData(pRegion, 0)],
@@ -1409,7 +1413,7 @@ void SetGeneratedCharacterAttributes(void) {
   return;
 }
 
-void StatAtZeroBoxCallBack(UINT8 bExitValue) {
+void StatAtZeroBoxCallback(UINT8 bExitValue) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     MarkButtonsDirty();

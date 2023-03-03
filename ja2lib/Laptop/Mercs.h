@@ -81,7 +81,7 @@ extern BOOLEAN gfJustHiredAMercMerc;
 
 void InitializeNumDaysMercArrive();
 
-void NewMercsAvailableAtMercSiteCallBack();
+void NewMercsAvailableAtMercSiteCallback();
 
 void CalcAproximateAmountPaidToSpeck();
 

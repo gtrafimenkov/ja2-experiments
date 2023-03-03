@@ -354,18 +354,18 @@ UINT8 gubRenderHelpScreenTwiceInaRow = 0;
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenFullScreenMask;
-// void SelectHelpTextFullScreenMaskCallBack(struct MOUSE_REGION * pRegion, INT32 iReason );
+// void SelectHelpTextFullScreenMaskCallback(struct MOUSE_REGION * pRegion, INT32 iReason );
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenScrollArea;
 void SelectHelpScrollAreaMovementCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                           const struct MouseInput mouse);
-void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SelectHelpScrollAreaCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse);
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenScrollAreaArrows;
-void SelectHelpScrollAreaArrowsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SelectHelpScrollAreaArrowsCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                         const struct MouseInput mouse);
 
 // checkbox to toggle show help again toggle
@@ -2171,7 +2171,7 @@ void CreateScrollAreaButtons() {
   MSYS_DefineRegion(&gHelpScreenScrollArea, usPosX, (UINT16)iPosY, (UINT16)(usPosX + usWidth),
                     (UINT16)(iPosY + HLP_SCRN__HEIGHT_OF_SCROLL_AREA), MSYS_PRIORITY_HIGHEST,
                     gHelpScreen.usCursor, SelectHelpScrollAreaMovementCallback,
-                    SelectHelpScrollAreaCallBack);
+                    SelectHelpScrollAreaCallback);
   MSYS_AddRegion(&gHelpScreenScrollArea);
 
   guiHelpScreenScrollArrowImage[0] =
@@ -2247,7 +2247,7 @@ void CalculateHeightAndPositionForHelpScreenScrollBox(INT32 *piHeightOfScrollBox
   if (piTopOfScrollBox != NULL) *piTopOfScrollBox = iTopPosScrollBox;
 }
 
-void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SelectHelpScrollAreaCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {

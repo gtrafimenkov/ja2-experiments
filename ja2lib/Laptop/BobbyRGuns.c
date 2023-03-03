@@ -231,9 +231,9 @@ void UnPurchaseBobbyRayItem(UINT16 usItemNumber);
 UINT32 CalculateTotalPurchasePrice();
 void DisableBobbyRButtons();
 void CalcFirstIndexForPage(STORE_INVENTORY *pInv, UINT32 uiItemClass);
-void OutOfStockMessageBoxCallBack(UINT8 bExitValue);
+void OutOfStockMessageBoxCallback(UINT8 bExitValue);
 UINT8 CheckPlayersInventoryForGunMatchingGivenAmmoID(INT16 sItemID);
-void BobbyrRGunsHelpTextDoneCallBack(void);
+void BobbyrRGunsHelpTextDoneCallback(void);
 #ifdef JA2BETAVERSION
 void ReportBobbyROrderError(UINT16 usItemNumber, UINT8 ubPurchaseNum, UINT8 ubQtyOnHand,
                             UINT8 ubNumPurchasing);
@@ -568,7 +568,7 @@ BOOLEAN DisplayItemInfo(UINT32 uiItemClass) {
 
     // Display a popup saying we are out of stock
     DoLapTopMessageBox(MSG_BOX_LAPTOP_DEFAULT, BobbyRText[BOBBYR_NO_MORE_STOCK], LAPTOP_SCREEN,
-                       MSG_BOX_FLAG_OK, OutOfStockMessageBoxCallBack);
+                       MSG_BOX_FLAG_OK, OutOfStockMessageBoxCallback);
     return (TRUE);
   }
 
@@ -1257,7 +1257,7 @@ void CreateMouseRegionForBigImage(UINT16 usPosY, UINT8 ubCount, INT16 *pItemNumb
       zItemName[0] = '\0';
 
     SetRegionFastHelpText(&gSelectedBigImageRegion[i], zItemName);
-    SetRegionHelpEndCallback(&gSelectedBigImageRegion[i], BobbyrRGunsHelpTextDoneCallBack);
+    SetRegionHelpEndCallback(&gSelectedBigImageRegion[i], BobbyrRGunsHelpTextDoneCallback);
 
     usPosY += BOBBYR_GRID_OFFSET;
   }
@@ -1605,7 +1605,7 @@ void CalcFirstIndexForPage(STORE_INVENTORY *pInv, UINT32 uiItemClass) {
   }
 }
 
-void OutOfStockMessageBoxCallBack(UINT8 bExitValue) {
+void OutOfStockMessageBoxCallback(UINT8 bExitValue) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_OK) {
     //		guiCurrentLaptopMode  = LAPTOP_MODE_BOBBY_R;
@@ -1640,7 +1640,7 @@ UINT8 CheckPlayersInventoryForGunMatchingGivenAmmoID(INT16 sItemID) {
   return (ubItemCount);
 }
 
-void BobbyrRGunsHelpTextDoneCallBack(void) {
+void BobbyrRGunsHelpTextDoneCallback(void) {
   fReDrawScreenFlag = TRUE;
   fPausedReDrawScreenFlag = TRUE;
 }

@@ -340,7 +340,7 @@ void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion);
 
 void AddStringsToMoveBox(void);
 void CreatePopUpBoxForMovementBox(void);
-void MoveMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                          const struct MouseInput mouse);
 void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                          const struct MouseInput mouse);
@@ -3281,7 +3281,7 @@ void ClearMouseRegionsForMoveBox(void) {
   return;
 }
 
-void MoveMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                          const struct MouseInput mouse) {
   // mvt callback handler for move box line regions
   INT32 iValue = -1;

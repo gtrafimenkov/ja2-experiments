@@ -564,9 +564,9 @@ void CalcPositionOfNewScrollBoxLocation();
 void DisplaySelectedListBox();
 void DisplaySelectedNPC();
 void DisplaySelectedItem();
-void TextEntryBox(STR16 pString, TEXT_ENTRY_CALLBACK TextEntryCallBack);
+void TextEntryBox(STR16 pString, TEXT_ENTRY_CALLBACK TextEntryCallback);
 BOOLEAN CreateDestroyDisplayTextEntryBox(UINT8 ubAction, STR16 pString,
-                                         TEXT_ENTRY_CALLBACK TextEntryCallBack);
+                                         TEXT_ENTRY_CALLBACK TextEntryCallback);
 void InitQuestDebugTextInputBoxes();
 void DestroyQuestDebugTextInputBoxes();
 void AddNPCToGridNo(INT32 iGridNo);
@@ -2436,7 +2436,7 @@ void BtnQuestDebugStartMercTalkingButtonButtonCallback(GUI_BUTTON *btn, INT32 re
 }
 
 BOOLEAN CreateDestroyDisplayTextEntryBox(UINT8 ubAction, STR16 pString,
-                                         TEXT_ENTRY_CALLBACK EntryCallBack) {
+                                         TEXT_ENTRY_CALLBACK EntryCallback) {
   static BOOLEAN fMouseRegionCreated = FALSE;
   static wchar_t zString[256];
   static TEXT_ENTRY_CALLBACK TextEntryCallback;
@@ -2473,7 +2473,7 @@ BOOLEAN CreateDestroyDisplayTextEntryBox(UINT8 ubAction, STR16 pString,
 
       InitQuestDebugTextInputBoxes();
 
-      TextEntryCallback = EntryCallBack;
+      TextEntryCallback = EntryCallback;
     } break;
 
     case QD_DROP_DOWN_CANCEL:
@@ -2570,8 +2570,8 @@ void BtnQuestDebugTextEntryOkBtnButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void TextEntryBox(STR16 pString, TEXT_ENTRY_CALLBACK TextEntryCallBack) {
-  CreateDestroyDisplayTextEntryBox(QD_DROP_DOWN_CREATE, pString, TextEntryCallBack);
+void TextEntryBox(STR16 pString, TEXT_ENTRY_CALLBACK TextEntryCallback) {
+  CreateDestroyDisplayTextEntryBox(QD_DROP_DOWN_CREATE, pString, TextEntryCallback);
   gubTextEntryAction = QD_DROP_DOWN_DISPLAY;
 }
 

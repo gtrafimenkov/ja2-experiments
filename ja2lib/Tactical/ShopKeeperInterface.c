@@ -588,7 +588,7 @@ BOOLEAN RemoveRepairItemFromDealersOfferArea(INT8 bSlot);
 INT8 GetInvSlotOfUnfullMoneyInMercInventory(struct SOLDIERTYPE *pSoldier);
 void ClearPlayersOfferSlot(INT32 ubSlotToClear);
 void ClearArmsDealerOfferSlot(INT32 ubSlotToClear);
-void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallBack(UINT8 bExitValue);
+void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue);
 BOOLEAN DoSkiMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT8 ubFlags,
                         MSGBOX_CALLBACK ReturnCallback);
 BOOLEAN WillShopKeeperRejectObjectsFromPlayer(INT8 bDealerId, INT8 bSlotId);
@@ -3118,7 +3118,7 @@ void SetSkiRegionHelpText(INVENTORY_IN_SLOT *pInv, struct MOUSE_REGION *pRegion,
   BuildItemHelpTextString(zHelpText, ARR_SIZE(zHelpText), pInv, ubScreenArea);
 
   SetRegionFastHelpText(pRegion, zHelpText);
-  SetRegionHelpEndCallback(pRegion, SkiHelpTextDoneCallBack);
+  SetRegionHelpEndCallback(pRegion, SkiHelpTextDoneCallback);
 }
 
 void SetSkiFaceRegionHelpText(INVENTORY_IN_SLOT *pInv, struct MOUSE_REGION *pRegion,
@@ -3140,10 +3140,10 @@ void SetSkiFaceRegionHelpText(INVENTORY_IN_SLOT *pInv, struct MOUSE_REGION *pReg
   }
 
   SetRegionFastHelpText(pRegion, zHelpText);
-  SetRegionHelpEndCallback(pRegion, SkiHelpTextDoneCallBack);
+  SetRegionHelpEndCallback(pRegion, SkiHelpTextDoneCallback);
 }
 
-void SkiHelpTextDoneCallBack(void) { gubSkiDirtyLevel = SKI_DIRTY_LEVEL2; }
+void SkiHelpTextDoneCallback(void) { gubSkiDirtyLevel = SKI_DIRTY_LEVEL2; }
 
 INT8 AddItemToPlayersOfferArea(UINT8 ubProfileID, INVENTORY_IN_SLOT *pInvSlot,
                                INT8 bSlotIdInOtherLocation) {
@@ -5422,7 +5422,7 @@ BOOLEAN DoSkiMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UIN
   return ((giSKIMessageBox != -1));
 }
 
-void ConfirmDontHaveEnoughForTheDealerMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmDontHaveEnoughForTheDealerMessageBoxCallback(UINT8 bExitValue) {
   // simply redraw the panel
   if (bExitValue == MSG_BOX_RETURN_OK) {
     gubSkiDirtyLevel = SKI_DIRTY_LEVEL2;
@@ -5434,7 +5434,7 @@ void ConfirmDontHaveEnoughForTheDealerMessageBoxCallBack(UINT8 bExitValue) {
   return;
 }
 
-void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue) {
   // yes, deduct the money
   if (bExitValue == MSG_BOX_RETURN_YES) {
     UINT32 uiPlayersOfferAreaValue = CalculateTotalPlayersValue();

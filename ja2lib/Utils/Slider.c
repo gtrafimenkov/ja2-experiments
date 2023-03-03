@@ -78,7 +78,7 @@ UINT32 guiSliderBoxImage = 0;
 // ggg
 
 // Mouse regions for the currently selected save game
-void SelectedSliderButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SelectedSliderButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse);
 void SelectedSliderMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
                                     const struct MouseInput mouse);
@@ -196,7 +196,7 @@ INT32 AddSlider(UINT8 ubStyle, UINT16 usCursor, UINT16 usPosX, UINT16 usPosY, UI
                         (UINT16)(usPosX - pNewSlider->usWidth / 2), usPosY,
                         (UINT16)(usPosX + pNewSlider->usWidth / 2),
                         (UINT16)(pNewSlider->usPosY + pNewSlider->usHeight), sPriority, usCursor,
-                        SelectedSliderMovementCallback, SelectedSliderButtonCallBack);
+                        SelectedSliderMovementCallback, SelectedSliderButtonCallback);
       MSYS_SetRegionUserData(&pNewSlider->ScrollAreaMouseRegion, 1, pNewSlider->uiSliderID);
       break;
 
@@ -211,7 +211,7 @@ INT32 AddSlider(UINT8 ubStyle, UINT16 usCursor, UINT16 usPosX, UINT16 usPosY, UI
                         (UINT16)(usPosY - DEFUALT_SLIDER_SIZE),
                         (UINT16)(pNewSlider->usPosX + pNewSlider->usWidth),
                         (UINT16)(usPosY + DEFUALT_SLIDER_SIZE), sPriority, usCursor,
-                        SelectedSliderMovementCallback, SelectedSliderButtonCallBack);
+                        SelectedSliderMovementCallback, SelectedSliderButtonCallback);
       MSYS_SetRegionUserData(&pNewSlider->ScrollAreaMouseRegion, 1, pNewSlider->uiSliderID);
       break;
   }
@@ -463,7 +463,7 @@ void SelectedSliderMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
   }
 }
 
-void SelectedSliderButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+void SelectedSliderButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                   const struct MouseInput mouse) {
   UINT32 uiSelectedSlider;
   SLIDER *pSlider = NULL;

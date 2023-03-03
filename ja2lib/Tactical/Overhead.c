@@ -1701,7 +1701,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
-        SetStopTimeQuoteCallback(MineSpottedDialogueCallBack);
+        SetStopTimeQuoteCallback(MineSpottedDialogueCallback);
         TacticalCharacterDialogue(pSoldier, QUOTE_SUSPICIOUS_GROUND);
       }
     } else {
@@ -2158,7 +2158,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
-        SetStopTimeQuoteCallback(MineSpottedDialogueCallBack);
+        SetStopTimeQuoteCallback(MineSpottedDialogueCallback);
         TacticalCharacterDialogue(pSoldier, QUOTE_SUSPICIOUS_GROUND);
       }
     } else {

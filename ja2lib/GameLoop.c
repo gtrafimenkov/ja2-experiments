@@ -42,14 +42,14 @@ UINT8 gubCheckForFreeSpaceOnHardDriveCount = DONT_CHECK_FOR_FREE_SPACE;
 
 extern BOOLEAN DoSkiMessageBox(UINT8 ubStyle, STR16 zString, UINT32 uiExitScreen, UINT8 ubFlags,
                                MSGBOX_CALLBACK ReturnCallback);
-extern void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue);
+extern void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue);
 extern BOOLEAN gfTacticalPlacementGUIActive;
 extern BOOLEAN gfTacticalPlacementGUIDirty;
 extern BOOLEAN gfValidLocationsChanged;
 extern BOOLEAN gfInMsgBox;
 
 // callback to confirm game is over
-void EndGameMessageBoxCallBack(UINT8 bExitValue);
+void EndGameMessageBoxCallback(UINT8 bExitValue);
 void HandleNewScreenChange(UINT32 uiNewScreen, UINT32 uiOldScreen);
 
 // The InitializeGame function is responsible for setting up all data and Gaming Engine
@@ -318,7 +318,7 @@ void HandleShortCutExitState(void) {
   if (guiCurrentScreen == AUTORESOLVE_SCREEN) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], guiCurrentScreen,
                  (UINT8)(MSG_BOX_FLAG_YESNO | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                 EndGameMessageBoxCallBack, &pCenteringRect);
+                 EndGameMessageBoxCallback, &pCenteringRect);
     return;
   }
 
@@ -326,15 +326,15 @@ void HandleShortCutExitState(void) {
   if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
     // set up for mapscreen
     DoMapMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], MAP_SCREEN,
-                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallBack);
+                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallback);
 
   } else if (guiCurrentScreen == LAPTOP_SCREEN) {
     // set up for laptop
     DoLapTopSystemMessageBox(MSG_BOX_LAPTOP_DEFAULT, pMessageStrings[MSG_EXITGAME], LAPTOP_SCREEN,
-                             MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallBack);
+                             MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallback);
   } else if (guiCurrentScreen == SHOPKEEPER_SCREEN) {
     DoSkiMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], SHOPKEEPER_SCREEN,
-                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallBack);
+                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallback);
   } else {
     // check if error or editor
 #ifdef JA2BETAVERSION
@@ -355,11 +355,11 @@ void HandleShortCutExitState(void) {
     // set up for all otherscreens
     DoMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], guiCurrentScreen,
                  (UINT8)(MSG_BOX_FLAG_YESNO | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                 EndGameMessageBoxCallBack, &pCenteringRect);
+                 EndGameMessageBoxCallback, &pCenteringRect);
   }
 }
 
-void EndGameMessageBoxCallBack(UINT8 bExitValue) {
+void EndGameMessageBoxCallback(UINT8 bExitValue) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gfProgramIsRunning = FALSE;

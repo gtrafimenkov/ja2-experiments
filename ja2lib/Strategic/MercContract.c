@@ -41,7 +41,7 @@
 void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier);
 void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *pSoldier,
                                                             BOOLEAN fAddRehireButton);
-void MercDepartEquipmentBoxCallBack(UINT8 bExitValue);
+void MercDepartEquipmentBoxCallback(UINT8 bExitValue);
 BOOLEAN HandleFiredDeadMerc(struct SOLDIERTYPE *pSoldier);
 void HandleExtendMercsContract(struct SOLDIERTYPE *pSoldier);
 void HandleSoldierLeavingWithLowMorale(struct SOLDIERTYPE *pSoldier);
@@ -50,7 +50,7 @@ void HandleSoldierLeavingForAnotherContract(struct SOLDIERTYPE *pSoldier);
 void HandleNotifyPlayerCantAffordInsurance(void);
 void HandleNotifyPlayerCanAffordInsurance(struct SOLDIERTYPE *pSoldier, UINT8 ubLength,
                                           INT32 iCost);
-void ExtendMercInsuranceContractCallBack(UINT8 bExitValue);
+void ExtendMercInsuranceContractCallback(UINT8 bExitValue);
 void HandleUniqueEventWhenPlayerLeavesTeam(struct SOLDIERTYPE *pSoldier);
 
 UINT32 uiContractTimeMode = 0;
@@ -989,11 +989,11 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
       DoMapMessageBox(
           MSG_BOX_BASIC_STYLE, sString, MAP_SCREEN,
           (UINT16)((fAddRehireButton ? MSG_BOX_FLAG_GENERICCONTRACT : MSG_BOX_FLAG_GENERIC)),
-          MercDepartEquipmentBoxCallBack);
+          MercDepartEquipmentBoxCallback);
     } else {
       DoMapMessageBox(MSG_BOX_BASIC_STYLE, sString, MAP_SCREEN,
                       (UINT16)((fAddRehireButton ? MSG_BOX_FLAG_OKCONTRACT : MSG_BOX_FLAG_OK)),
-                      MercDepartEquipmentBoxCallBack);
+                      MercDepartEquipmentBoxCallback);
     }
 
   } else {
@@ -1003,12 +1003,12 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
           MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
           (UINT16)(MSG_BOX_FLAG_USE_CENTERING_RECT |
                    (fAddRehireButton ? MSG_BOX_FLAG_GENERICCONTRACT : MSG_BOX_FLAG_GENERIC)),
-          MercDepartEquipmentBoxCallBack, &pCenteringRect);
+          MercDepartEquipmentBoxCallback, &pCenteringRect);
     } else {
       DoMessageBox(MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
                    (UINT16)(MSG_BOX_FLAG_USE_CENTERING_RECT |
                             (fAddRehireButton ? MSG_BOX_FLAG_OKCONTRACT : MSG_BOX_FLAG_OK)),
-                   MercDepartEquipmentBoxCallBack, &pCenteringRect);
+                   MercDepartEquipmentBoxCallback, &pCenteringRect);
     }
   }
 
@@ -1017,7 +1017,7 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
   }
 }
 
-void MercDepartEquipmentBoxCallBack(UINT8 bExitValue) {
+void MercDepartEquipmentBoxCallback(UINT8 bExitValue) {
   // gear left in current sector?
   if (pLeaveSoldier == NULL) {
     return;
@@ -1243,12 +1243,12 @@ void HandleNotifyPlayerCanAffordInsurance(struct SOLDIERTYPE *pSoldier, UINT8 ub
   pContractReHireSoldier = pSoldier;
 
   // now pop up the message box
-  DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_YESNO, ExtendMercInsuranceContractCallBack);
+  DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_YESNO, ExtendMercInsuranceContractCallback);
 
   return;
 }
 
-void ExtendMercInsuranceContractCallBack(UINT8 bExitValue) {
+void ExtendMercInsuranceContractCallback(UINT8 bExitValue) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     PurchaseOrExtendInsuranceForSoldier(gpInsuranceSoldier, gubContractLength);
   }

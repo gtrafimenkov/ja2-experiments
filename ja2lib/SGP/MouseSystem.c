@@ -72,7 +72,7 @@ INT16 gsFastHelpDelay = 600;  // In timer ticks
 BOOLEAN gfShowFastHelp = TRUE;
 
 // help text is done, now execute callback, if there is one
-void ExecuteMouseHelpEndCallBack(struct MOUSE_REGION *region);
+void ExecuteMouseHelpEndCallback(struct MOUSE_REGION *region);
 
 // Kris:
 // NOTE:  This doesn't really need to be here, however, it is a good indication that
@@ -494,7 +494,7 @@ void MSYS_UpdateMouseRegion(void) {
     if (MSYS_PrevRegion != MSYS_CurrRegion) {
       // Remove the help text for the previous region if one is currently being displayed.
       if (MSYS_PrevRegion->FastHelpText) {
-        // ExecuteMouseHelpEndCallBack( MSYS_PrevRegion );
+        // ExecuteMouseHelpEndCallback( MSYS_PrevRegion );
 
         if (MSYS_PrevRegion->uiFlags & MSYS_GOT_BACKGROUND)
           FreeBackgroundRectPending(MSYS_PrevRegion->FastHelpRect);
@@ -519,7 +519,7 @@ void MSYS_UpdateMouseRegion(void) {
       // Implemented gain mouse region
       if (MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK) {
         if (MSYS_CurrRegion->FastHelpText && !(MSYS_CurrRegion->uiFlags & MSYS_FASTHELP_RESET)) {
-          // ExecuteMouseHelpEndCallBack( MSYS_CurrRegion );
+          // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
           MSYS_CurrRegion->FastHelpTimer = gsFastHelpDelay;
           if (MSYS_CurrRegion->uiFlags & MSYS_GOT_BACKGROUND)
             FreeBackgroundRectPending(MSYS_CurrRegion->FastHelpRect);
@@ -575,7 +575,7 @@ void MSYS_UpdateMouseRegion(void) {
         (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE);
       }
 
-      // ExecuteMouseHelpEndCallBack( MSYS_CurrRegion );
+      // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
       // MSYS_CurrRegion->FastHelpTimer = gsFastHelpDelay;
 
       MSYS_Action &= (~MSYS_DO_MOVE);
@@ -624,7 +624,7 @@ void MSYS_UpdateMouseRegion(void) {
                 FreeBackgroundRectPending(MSYS_CurrRegion->FastHelpRect);
               MSYS_CurrRegion->uiFlags &= (~MSYS_GOT_BACKGROUND);
 
-              // ExecuteMouseHelpEndCallBack( MSYS_CurrRegion );
+              // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
               MSYS_CurrRegion->FastHelpTimer = gsFastHelpDelay;
               MSYS_CurrRegion->uiFlags &= (~MSYS_FASTHELP_RESET);
 
@@ -710,7 +710,7 @@ void MSYS_UpdateMouseRegion(void) {
 //
 void MSYS_DefineRegion(struct MOUSE_REGION *region, UINT16 tlx, UINT16 tly, UINT16 brx, UINT16 bry,
                        INT8 priority, UINT16 crsr, MOUSE_CALLBACK movecallback,
-                       MOUSE_CALLBACK buttoncallback) {
+                       MOUSE_CALLBACK ButtonCallback) {
 #ifdef MOUSESYSTEM_DEBUGGING
   if (region->uiFlags & MSYS_REGION_EXISTS)
     AssertMsg(0, "Attempting to define a region that already exists.");
@@ -732,8 +732,8 @@ void MSYS_DefineRegion(struct MOUSE_REGION *region, UINT16 tlx, UINT16 tly, UINT
   region->MovementCallback = movecallback;
   if (movecallback != MSYS_NO_CALLBACK) region->uiFlags |= MSYS_MOVE_CALLBACK;
 
-  region->ButtonCallback = buttoncallback;
-  if (buttoncallback != MSYS_NO_CALLBACK) region->uiFlags |= MSYS_BUTTON_CALLBACK;
+  region->ButtonCallback = ButtonCallback;
+  if (ButtonCallback != MSYS_NO_CALLBACK) region->uiFlags |= MSYS_BUTTON_CALLBACK;
 
   region->Cursor = crsr;
   if (crsr != MSYS_NO_CURSOR) region->uiFlags |= MSYS_SET_CURSOR;
@@ -1217,7 +1217,7 @@ void SetRegionHelpEndCallback(struct MOUSE_REGION *region,
   return;
 }
 
-void ExecuteMouseHelpEndCallBack(struct MOUSE_REGION *region) {
+void ExecuteMouseHelpEndCallback(struct MOUSE_REGION *region) {
   if (region == NULL) {
     return;
   }

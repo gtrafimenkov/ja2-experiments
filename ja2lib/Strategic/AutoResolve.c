@@ -62,7 +62,7 @@
 #include "Utils/WordWrap.h"
 #include "platform_strings.h"
 
-//#define INVULNERABILITY
+// #define INVULNERABILITY
 
 extern BOOLEAN AutoReload(struct SOLDIERTYPE *pSoldier);
 BOOLEAN gfTransferTacticalOppositionToAutoResolve = FALSE;
@@ -3748,7 +3748,7 @@ BOOLEAN IsBattleOver() {
   return TRUE;
 }
 
-//#define TESTSURRENDER
+// #define TESTSURRENDER
 
 BOOLEAN AttemptPlayerCapture() {
   INT32 i;

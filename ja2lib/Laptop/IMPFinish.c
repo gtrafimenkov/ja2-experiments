@@ -62,7 +62,7 @@ void BtnIMPFinishPersonalityCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPFinishStartOverCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPFinishDoneCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPFinishPortraitCallback(GUI_BUTTON *btn, INT32 reason);
-void FinishMessageBoxCallBack(UINT8 bExitValue);
+void FinishMessageBoxCallback(UINT8 bExitValue);
 extern void BtnIMPMainPageVoiceCallback(GUI_BUTTON *btn, INT32 reason);
 extern void BtnIMPMainPagePortraitCallback(GUI_BUTTON *btn, INT32 reason);
 
@@ -251,7 +251,7 @@ void BtnIMPFinishStartOverCallback(GUI_BUTTON *btn, INT32 reason) {
     if (btn->uiFlags & BUTTON_CLICKED_ON) {
       btn->uiFlags &= ~(BUTTON_CLICKED_ON);
       DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pImpPopUpStrings[1], LAPTOP_SCREEN, MSG_BOX_FLAG_YESNO,
-                         FinishMessageBoxCallBack);
+                         FinishMessageBoxCallback);
     }
   }
 }
@@ -554,7 +554,7 @@ void DestroyCharacterPortrait(void) {
   return;
 }
 
-void FinishMessageBoxCallBack(UINT8 bExitValue) {
+void FinishMessageBoxCallback(UINT8 bExitValue) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     iCurrentImpPage = IMP_HOME_PAGE;
