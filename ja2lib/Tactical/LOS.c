@@ -2061,7 +2061,7 @@ BOOLEAN BulletHitMerc(BULLET *pBullet, struct STRUCTURE *pStructure, BOOLEAN fIn
   WeaponHit(SWeaponHit.usSoldierID, SWeaponHit.usWeaponIndex, SWeaponHit.sDamage,
             SWeaponHit.sBreathLoss, SWeaponHit.usDirection, SWeaponHit.sXPos, SWeaponHit.sYPos,
             SWeaponHit.sZPos, SWeaponHit.sRange, SWeaponHit.ubAttackerID, SWeaponHit.fHit,
-            SWeaponHit.ubSpecial, SWeaponHit.ubLocation, XXX_GetMouseInput());
+            SWeaponHit.ubSpecial, SWeaponHit.ubLocation);
   return (fStopped);
 }
 

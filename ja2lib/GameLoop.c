@@ -267,9 +267,7 @@ void GameLoop(void) {
     guiPendingScreen = NO_PENDING_SCREEN;
   }
 
-  struct GameInput gameInput;
-  gameInput.mouse = XXX_GetMouseInput();
-  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))(&gameInput);
+  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))(XXX_GetGameInput());
 
   // if the screen has chnaged
   if (uiOldScreen != guiCurrentScreen) {
