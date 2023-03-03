@@ -5031,14 +5031,14 @@ INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT
   }
 }
 
-void HandleTacticalUILoseCursorFromOtherScreen() {
+void HandleTacticalUILoseCursorFromOtherScreen(const struct GameInput *gameInput) {
   SetUICursor(0);
 
   gfTacticalForceNoCursor = TRUE;
 
   ErasePath(TRUE);
 
-  (*(GameScreens[GAME_SCREEN].HandleScreen))();
+  (*(GameScreens[GAME_SCREEN].HandleScreen))(gameInput);
 
   gfTacticalForceNoCursor = FALSE;
 

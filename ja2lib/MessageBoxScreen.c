@@ -72,7 +72,7 @@ BOOLEAN gfStartedFromMapScreen = FALSE;
 BOOLEAN fRestoreBackgroundForMessageBox = FALSE;
 BOOLEAN gfDontOverRideSaveBuffer = TRUE;  // this variable can be unset if ur in a non gamescreen
                                           // and DONT want the msg box to use the save buffer
-extern void HandleTacticalUILoseCursorFromOtherScreen();
+extern void HandleTacticalUILoseCursorFromOtherScreen(const struct GameInput *gameInput);
 extern STR16 pUpdatePanelButtons[];
 
 CHAR16 gzUserDefinedButton1[128];
@@ -858,27 +858,13 @@ UINT32 MessageBoxScreenHandle(const struct GameInput *gameInput) {
       // UINT8	 *pDestBuf, *pSrcBuf;
 
       if (gfStartedFromGameScreen) {
-        HandleTacticalUILoseCursorFromOtherScreen();
+        HandleTacticalUILoseCursorFromOtherScreen(gameInput);
       } else {
         HandleMAPUILoseCursorFromOtherScreen();
       }
 
       gfStartedFromGameScreen = FALSE;
       gfStartedFromMapScreen = FALSE;
-      /*
-                              // Save what we have under here...
-                              pDestBuf = LockVideoSurface( gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
-                              pSrcBuf = LockVideoSurface( FRAME_BUFFER, &uiSrcPitchBYTES);
-
-                              Blt16BPPTo16BPP((UINT16 *)pDestBuf, uiDestPitchBYTES,
-                                                      (UINT16 *)pSrcBuf, uiSrcPitchBYTES,
-                                                      0 , 0,
-                                                      gMsgBox.sX , gMsgBox.sY,
-                                                      gMsgBox.usWidth, gMsgBox.usHeight );
-
-                              UnLockVideoSurface( gMsgBox.uiSaveBuffer );
-                              UnLockVideoSurface( FRAME_BUFFER );
-      */
     }
 
     gfNewMessageBox = FALSE;

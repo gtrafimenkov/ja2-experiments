@@ -3,3 +3,5 @@
           sScreenY = mouse.y;
 
 , const struct MouseInput mouse
+
+const struct GameInput *gameInput
