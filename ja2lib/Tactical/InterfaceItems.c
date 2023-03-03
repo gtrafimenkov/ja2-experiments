@@ -269,7 +269,7 @@ CHAR16 gzItemCons[SIZE_ITEM_CONS];
 CHAR16 gzFullItemPros[SIZE_ITEM_PROS];
 CHAR16 gzFullItemCons[SIZE_ITEM_PROS];
 CHAR16 gzFullItemTemp[SIZE_ITEM_PROS];  // necessary, unfortunately
-void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemDescCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 INT16 gsInvDescX;
 INT16 gsInvDescY;
 UINT8 gubItemDescStatusIndex;
@@ -303,7 +303,7 @@ MoneyLoc gMapMoneyButtonLoc = {174, 115};
 // show the description
 extern BOOLEAN fShowInventoryFlag;
 
-void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemDescAttachmentsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void ItemDescAmmoCallback(GUI_BUTTON *btn, INT32 reason);
 
 // number of keys on keyring, temp for now
@@ -348,8 +348,8 @@ extern BOOLEAN fMapInventoryItem;
 BOOLEAN gfItemPopupRegionCallbackEndFix = FALSE;
 extern void InternalMAPBeginItemPointer(struct SOLDIERTYPE *pSoldier);
 
-void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ItemPopupFullRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemPopupRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ItemPopupFullRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 BOOLEAN ReloadItemDesc();
 
 extern void HelpTextDoneCallback(void);
@@ -2511,7 +2511,7 @@ void PermanantAttachmentMessageBoxCallBack(UINT8 ubExitValue) {
   // else do nothing
 }
 
-void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemDescAttachmentsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT32 uiItemPos;
   static BOOLEAN fRightDown = FALSE;
 
@@ -5118,9 +5118,9 @@ BOOLEAN LoadTileGraphicForItem(INVTYPE *pItem, UINT32 *puiVo) {
   return (TRUE);
 }
 
-void ItemDescMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {}
+void ItemDescMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {}
 
-void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemDescCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fRightDown = FALSE, fLeftDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -5174,7 +5174,7 @@ void ItemDescDoneButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPopupRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT32 uiItemPos;
 
   uiItemPos = MSYS_GetRegionUserData(pRegion, 0);
@@ -5269,7 +5269,7 @@ void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void ItemPopupFullRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPopupFullRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   MSYS_GetRegionUserData(pRegion, 0);
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
@@ -5369,8 +5369,8 @@ void ItemPickupAll(GUI_BUTTON *btn, INT32 reason);
 void ItemPickupOK(GUI_BUTTON *btn, INT32 reason);
 void ItemPickupCancel(GUI_BUTTON *btn, INT32 reason);
 void SetupPickupPage(INT8 bPage);
-void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemPickMenuMouseMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ItemPickMenuMouseClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void CalculateItemPickupMenuDimensions();
 void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason);
 
@@ -6067,7 +6067,7 @@ void ItemPickupCancel(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPickMenuMouseMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT32 uiItemPos;
   struct ITEM_POOL *pTempItemPool;
   INT32 bPos;
@@ -6122,7 +6122,7 @@ void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPickMenuMouseClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 uiItemPos;
   UINT8 cnt;
   BOOLEAN fEnable = FALSE;

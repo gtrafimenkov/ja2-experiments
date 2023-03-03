@@ -177,8 +177,8 @@ UINT32 guiDialogueLastQuoteDelay = 0;
 
 void CheckForStopTimeQuotes(UINT16 usQuoteNum);
 
-void TextOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void FaceOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void TextOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void FaceOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // Handler functions for tactical ui diaplay
 void HandleTacticalTextUI(INT32 iFaceIndex, struct SOLDIERTYPE *pSoldier, CHAR16 *zQuoteStr);
@@ -2251,7 +2251,7 @@ void SayQuote58FromNearbyMercInSector(INT16 sGridNo, INT8 bDistance, UINT16 usQu
   }
 }
 
-void TextOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TextOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -2273,7 +2273,7 @@ void TextOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void FaceOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FaceOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {

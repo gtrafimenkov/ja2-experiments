@@ -242,7 +242,7 @@ INT32 guiXToCloseMercVideoButtonImage;
 
 // Mouse region for the subtitles region when the merc is talking
 struct MOUSE_REGION gMercSiteSubTitleMouseRegion;
-void MercSiteSubTitleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MercSiteSubTitleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 //*******************************
 //
@@ -1775,7 +1775,7 @@ UINT8 CountNumberOfMercMercsWhoAreDead() {
 }
 
 // Mouse Call back for the pop up text box
-void MercSiteSubTitleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MercSiteSubTitleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP ||
              iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {

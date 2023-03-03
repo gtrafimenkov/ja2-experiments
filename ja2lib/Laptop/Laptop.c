@@ -479,31 +479,31 @@ void WWWRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void EmailRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void FilesRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void HistoryRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void LaptopProgramIconMinimizeCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void LaptopProgramIconMinimizeCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
-void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void WWWRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void EmailRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void RestoreOldRegion(INT32 iOldRegion);
 void HighLightRegion(INT32 iCurrentRegion);
-void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ScreenRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void FinancialRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void HistoryRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void FilesRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void PersonnelRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ScreenRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // minimize callback
 void LaptopMinimizeProgramButtonCallback(GUI_BUTTON *btn, INT32 reason);
 
-void NewFileIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void NewFileIconCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 void DisplayBookMarks();
 void InitBookMarkList();
 BOOLEAN LoadBookmark();
 void DeleteBookmark();
 void ScrollDisplayText(INT32 iY);
-void BookmarkCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void BookmarkCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void CreateBookMarkMouseRegions();
-void BookmarkMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void BookmarkMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void DeleteBookmarkRegions();
 void DeleteLoadPending(void);
 BOOLEAN LoadLoadPending(void);
@@ -549,7 +549,7 @@ void HandleDefaultWebpageForLaptop(void);
 void CreateMinimizeRegionsForLaptopProgramIcons(void);
 void DestroyMinimizeRegionsForLaptopProgramIcons(void);
 void CreateDestroyMouseRegionForNewMailIcon(void);
-void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void NewEmailIconCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void HandleWWWSubSites(void);
 void UpdateStatusOfDisplayingBookMarks(void);
 void InitalizeSubSitesList(void);
@@ -2587,7 +2587,7 @@ void HighLightRegion(INT32 iCurrentRegion) { return; }
 void HandleAnimatedButtons() { return; }
 void AnimateButton(UINT32 uiIconID, UINT16 usX, UINT16 usY) { return; }
 
-void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void WWWRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2601,7 +2601,7 @@ void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void EmailRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2621,7 +2621,7 @@ void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FinancialRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2635,7 +2635,7 @@ void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void HistoryRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2650,7 +2650,7 @@ void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FilesRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2664,7 +2664,7 @@ void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void PersonnelRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2686,7 +2686,7 @@ void CheckIfMouseLeaveScreen() {
     guiCurrentLapTopCursor = LAPTOP_PANEL_CURSOR;
   }
 }
-void ScreenRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ScreenRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }
@@ -3020,7 +3020,7 @@ void CreateDestoryBookMarkRegions(void) {
   }
 }
 
-void BookmarkCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void BookmarkCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iCount;
 
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
@@ -3184,7 +3184,7 @@ void GoToWebPage(INT32 iPageId) {
   return;
 }
 
-void BookmarkMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void BookmarkMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason == MSYS_CALLBACK_REASON_MOVE) {
     iHighLightBookLine = MSYS_GetRegionUserData(pRegion, 0);
   }
@@ -3711,7 +3711,7 @@ void HandleLeftButtonUpEvent(void) {
   }
 }
 
-void LapTopScreenCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LapTopScreenCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }
@@ -4850,7 +4850,7 @@ void DestroyMinimizeRegionsForLaptopProgramIcons(void) {
   return;
 }
 
-void LaptopProgramIconMinimizeCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LaptopProgramIconMinimizeCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // callback handler for the minize region that is attatched to the laptop program icon
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     switch (guiCurrentLaptopMode) {
@@ -4965,7 +4965,7 @@ void CreateDestroyMouseRegionForNewMailIcon(void) {
   }
 }
 
-void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void NewEmailIconCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (fUnReadMailFlag) {
       fOpenMostRecentUnReadFlag = TRUE;
@@ -4974,7 +4974,7 @@ void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void NewFileIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void NewFileIconCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (fNewFilesInFileViewer) {
       fEnteredFileViewerFromNewFileIcon = TRUE;

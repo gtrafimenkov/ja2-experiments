@@ -140,7 +140,7 @@ enum {
 
 // Toc menu mouse regions
 struct MOUSE_REGION gSelectedPolicyTocMenuRegion[NUM_AIM_POLICY_TOC_BUTTONS];
-void SelectPolicyTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectPolicyTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // Agree/Disagree menu Buttons regions
 void BtnPoliciesAgreeButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -516,7 +516,7 @@ BOOLEAN ExitAimPolicyTocMenu() {
   return (TRUE);
 }
 
-void SelectPolicyTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectPolicyTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (gfInPolicyToc) {
     if (iReason & MSYS_CALLBACK_REASON_INIT) {
     } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {

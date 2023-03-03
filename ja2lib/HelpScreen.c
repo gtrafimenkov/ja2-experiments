@@ -358,12 +358,12 @@ struct MOUSE_REGION gHelpScreenFullScreenMask;
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenScrollArea;
-void SelectHelpScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectHelpScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenScrollAreaArrows;
-void SelectHelpScrollAreaArrowsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectHelpScrollAreaArrowsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // checkbox to toggle show help again toggle
 UINT32 gHelpScreenDontShowHelpAgainToggle;
@@ -2244,7 +2244,7 @@ void CalculateHeightAndPositionForHelpScreenScrollBox(INT32 *piHeightOfScrollBox
   if (piTopOfScrollBox != NULL) *piTopOfScrollBox = iTopPosScrollBox;
 }
 
-void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gfScrollBoxIsScrolling = FALSE;
@@ -2256,7 +2256,7 @@ void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectHelpScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectHelpScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     //		InvalidateRegion(pRegion->RegionTopLeftX, pRegion->RegionTopLeftY,
     // pRegion->RegionBottomRightX, pRegion->RegionBottomRightY);

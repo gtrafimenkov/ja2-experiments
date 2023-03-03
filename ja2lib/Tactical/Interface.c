@@ -233,8 +233,8 @@ INT16 gsCurInterfacePanel = TEAM_PANEL;
 void BtnPositionCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnMovementCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason);
-void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MovementMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void DoorMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 UINT32 CalcUIMessageDuration(STR16 wString);
 
@@ -2980,13 +2980,13 @@ void InitPlayerUIBar(BOOLEAN fInterrupt) {
   }
 }
 
-void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MovementMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     CancelMovementMenu();
   }
 }
 
-void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void DoorMenuBackregionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     CancelOpenDoorMenu();
   }

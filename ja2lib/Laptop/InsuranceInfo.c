@@ -69,10 +69,10 @@ UINT32 guiInsNextBackButton;
 
 // link to the varios pages
 struct MOUSE_REGION gSelectedInsuranceInfoLinkRegion;
-void SelectInsuranceLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectInsuranceLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 struct MOUSE_REGION gSelectedInsuranceInfoHomeLinkRegion;
-void SelectInsuranceInfoHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectInsuranceInfoHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 void DisplaySubmitClaimPage();
 void DisplayPremiumPage();
@@ -278,7 +278,7 @@ void BtnInsNextButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void SelectInsuranceLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectInsuranceLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_INSURANCE_CONTRACT;
@@ -286,7 +286,7 @@ void SelectInsuranceLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReas
   }
 }
 
-void SelectInsuranceInfoHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectInsuranceInfoHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_INSURANCE;

@@ -265,8 +265,8 @@ INT32 iTotalHeight = 0;
 void SwapMessages(INT32 iIdA, INT32 iIdB);
 void PlaceMessagesinPages();
 BOOLEAN fFirstTime = TRUE;
-void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void EmailMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void EmailMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void PreviousRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void NextRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void SetUnNewMessages();
@@ -1329,7 +1329,7 @@ void LookForUnread() {
   return;
 }
 
-void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iCount;
   PagePtr pPage = pPageList;
   INT32 iId = 0;
@@ -1392,7 +1392,7 @@ void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
     }
   }
 }
-void EmailMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void EmailMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }

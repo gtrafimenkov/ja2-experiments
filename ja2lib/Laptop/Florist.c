@@ -73,7 +73,7 @@ UINT32 guiGalleryButton;
 
 // link to the flower home page by clicking on the flower title
 struct MOUSE_REGION gSelectedFloristTitleHomeLinkRegion;
-void SelectFloristTitleHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectFloristTitleHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 void GameInitFlorist() {}
 
@@ -273,7 +273,7 @@ void BtnGalleryButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void SelectFloristTitleHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectFloristTitleHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_FLORIST;

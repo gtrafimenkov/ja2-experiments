@@ -52,7 +52,7 @@ void UpDateIMPMainPageButtons(void);
 void BeginMessageBoxCallBack(UINT8 bExitValue);
 void DestoryMouseRegionsForIMPMainPageBasedOnCharGenStatus(void);
 void CreateMouseRegionsForIMPMainPageBasedOnCharGenStatus(void);
-void IMPMainPageNotSelectableBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void IMPMainPageNotSelectableBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 BOOLEAN LoadCharacterPortraitForMainPage(void);
 
 BOOLEAN CheckIfFinishedCharacterGeneration(void);
@@ -565,7 +565,7 @@ void DestoryMouseRegionsForIMPMainPageBasedOnCharGenStatus(void) {
   return;
 }
 
-void IMPMainPageNotSelectableBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void IMPMainPageNotSelectableBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }

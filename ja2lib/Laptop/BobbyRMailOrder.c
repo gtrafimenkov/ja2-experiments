@@ -280,37 +280,37 @@ INT32 giBobbyRGotoShipmentPageImage;
 
 // mouse region for the shipping speed selection area
 struct MOUSE_REGION gSelectedShippingSpeedRegion[3];
-void SelectShippingSpeedRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectShippingSpeedRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // mouse region for the confirm area
 struct MOUSE_REGION gSelectedConfirmOrderRegion;
-void SelectConfirmOrderRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectConfirmOrderRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // mouse region for the drop down city location area
 struct MOUSE_REGION gSelectedDropDownRegion[BOBBYR_ORDER_NUM_SHIPPING_CITIES];
-void SelectDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectDropDownMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectDropDownMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // mouse region for scroll area for the drop down city location area
 struct MOUSE_REGION gSelectedScrollAreaDropDownRegion[BOBBYR_ORDER_NUM_SHIPPING_CITIES];
-void SelectScrollAreaDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectScrollAreaDropDownMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectScrollAreaDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectScrollAreaDropDownMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // mouse region to activate the shipping location drop down
 struct MOUSE_REGION gSelectedActivateCityDroDownRegion;
-void SelectActivateCityDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectActivateCityDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // mouse region to close the drop down menu
 struct MOUSE_REGION gSelectedCloseDropDownRegion;
-void SelectCloseDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectCloseDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // mouse region to click on the title to go to the home page
 struct MOUSE_REGION gSelectedTitleLinkRegion;
-void SelectTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // mouse region to click on the up or down arrow on the scroll area
 struct MOUSE_REGION gSelectedUpDownArrowOnScrollAreaRegion[2];
-void SelectUpDownArrowOnScrollAreaRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectUpDownArrowOnScrollAreaRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 BOOLEAN DrawShippingSpeedLights(UINT8 ubSelectedLight);
 BOOLEAN CreateDestroyBobbyRDropDown(UINT8 ubDropDownAction);
@@ -1110,7 +1110,7 @@ void BtnBobbyRHomeCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void SelectShippingSpeedRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectShippingSpeedRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gubSelectedLight = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
@@ -1157,7 +1157,7 @@ BOOLEAN DrawShippingSpeedLights(UINT8 ubSelected) {
   return (TRUE);
 }
 
-void SelectConfirmOrderRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectConfirmOrderRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // Remove the items for Boby Rqys Inventory
@@ -1445,7 +1445,7 @@ BOOLEAN CreateDestroyBobbyRDropDown(UINT8 ubDropDownAction) {
   return (TRUE);
 }
 
-void SelectDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT8 ubSelected = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
@@ -1457,7 +1457,7 @@ void SelectDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectActivateCityDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectActivateCityDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gubDropDownAction = BR_DROP_DOWN_CREATE;
@@ -1604,7 +1604,7 @@ void DisplayShippingLocationCity() {
                    BOBBYR_ORDER_DYNAMIC_TEXT_COLOR, FONT_MCOLOR_BLACK, FALSE, RIGHT_JUSTIFIED);
 }
 
-void SelectCloseDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectCloseDroDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gubDropDownAction = BR_DROP_DOWN_DESTROY;
@@ -1658,14 +1658,14 @@ BOOLEAN IsAnythingPurchasedFromBobbyRayPage() {
   return (fReturnType);
 }
 
-void SelectTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_BOBBY_R;
   }
 }
 
-void SelectScrollAreaDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectScrollAreaDropDownRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT8 ubCityNum = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
@@ -1735,7 +1735,7 @@ void SelectScrollAreaDropDownMovementCallBack(struct MOUSE_REGION *pRegion, INT3
   }
 }
 
-void SelectUpDownArrowOnScrollAreaRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectUpDownArrowOnScrollAreaRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP ||
              iReason & MSYS_CALLBACK_REASON_LBUTTON_REPEAT) {

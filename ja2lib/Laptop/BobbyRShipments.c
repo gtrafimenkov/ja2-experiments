@@ -75,7 +75,7 @@ UINT32 guiBobbyRShipmentHome;
 INT32 giBobbyRShipmentHomeImage;
 
 struct MOUSE_REGION gSelectedPreviousShipmentsRegion[BOBBYR_SHIPMENT_NUM_PREVIOUS_SHIPMENTS];
-void SelectPreviousShipmentsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectPreviousShipmentsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 //
 // Function Prototypes
@@ -353,7 +353,7 @@ void RemovePreviousShipmentsMouseRegions() {
   }
 }
 
-void SelectPreviousShipmentsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectPreviousShipmentsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     INT32 iSlotID = MSYS_GetRegionUserData(pRegion, 0);

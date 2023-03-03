@@ -78,7 +78,7 @@ UINT32 guiSliderBoxImage = 0;
 // ggg
 
 // Mouse regions for the currently selected save game
-void SelectedSliderButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectedSliderButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void SelectedSliderMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
 
 ///////////////////////////////////////////////////
@@ -460,7 +460,7 @@ void SelectedSliderMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) 
   }
 }
 
-void SelectedSliderButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectedSliderButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT32 uiSelectedSlider;
   SLIDER *pSlider = NULL;
 

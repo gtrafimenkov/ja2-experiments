@@ -352,7 +352,7 @@ BOOLEAN AutoSleepMerc( struct SOLDIERTYPE *pSoldier );
 */
 
 // assignment screen mask
-void AssignmentScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void AssignmentScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // glow area for contract region?
 BOOLEAN fGlowContractRegion = FALSE;
@@ -401,7 +401,7 @@ void RepositionMouseRegions(void);
 void CheckAndUpdateTacticalAssignmentPopUpPositions(void);
 void HandleRestFatigueAndSleepStatus(void);
 BOOLEAN CharacterIsTakingItEasy(struct SOLDIERTYPE *pSoldier);
-void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void RepairMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 BOOLEAN CanCharacterDoctorButDoesntHaveMedKit(struct SOLDIERTYPE *pSoldier);
 BOOLEAN CanCharacterRepairButDoesntHaveARepairkit(struct SOLDIERTYPE *pSoldier);
 
@@ -4253,7 +4253,7 @@ void HandleShadingOfLinesForVehicleMenu(void) {
   }
 }
 
-void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void VehicleMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment region
   INT32 iValue = -1, iVehicleID;
   struct SOLDIERTYPE *pSoldier;
@@ -4296,7 +4296,7 @@ void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void VehicleMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void VehicleMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for assignment region
   INT32 iValue = -1;
 
@@ -4630,7 +4630,7 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
   return;
 }
 
-void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void RepairMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment region
   INT32 iValue = -1;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -4759,7 +4759,7 @@ void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void RepairMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void RepairMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for assignment region
   INT32 iValue = -1;
 
@@ -5181,7 +5181,7 @@ void CreateDestroyScreenMaskForAssignmentAndContractMenus(void) {
   return;
 }
 
-void AssignmentScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void AssignmentScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment screen mask region
 
   if ((iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) || (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP)) {
@@ -5833,7 +5833,7 @@ void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox) {
   }
 }
 
-void AssignmentMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void AssignmentMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for assignment region
   INT32 iValue = -1;
   struct SOLDIERTYPE *pSoldier;
@@ -5868,7 +5868,7 @@ void AssignmentMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void RemoveMercMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void RemoveMercMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for assignment region
   INT32 iValue = -1;
 
@@ -5888,7 +5888,7 @@ void RemoveMercMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void ContractMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ContractMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for Contract region
   INT32 iValue = -1;
 
@@ -5909,7 +5909,7 @@ void ContractMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SquadMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SquadMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for assignment region
   INT32 iValue = -1;
 
@@ -5936,7 +5936,7 @@ void SquadMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void RemoveMercMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for contract region
   INT32 iValue = -1;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -6078,7 +6078,7 @@ void MercDismissConfirmCallBack(UINT8 bExitValue) {
   }
 }
 
-void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ContractMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for contract region
   INT32 iValue = -1;
   BOOLEAN fOkToClose = FALSE;
@@ -6180,7 +6180,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   return;
 }
 
-void TrainingMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TrainingMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for assignment region
   INT32 iValue = -1;
 
@@ -6204,7 +6204,7 @@ void TrainingMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void AttributeMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void AttributeMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for assignment region
   INT32 iValue = -1;
 
@@ -6222,7 +6222,7 @@ void AttributeMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SquadMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment region
   INT32 iValue = -1;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -6371,7 +6371,7 @@ void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   return;
 }
 
-void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TrainingMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment region
   INT32 iValue = -1;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -6540,7 +6540,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void AttributesMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void AttributesMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment region
   INT32 iValue = -1;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -6601,7 +6601,7 @@ void AttributesMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 };
 
-void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void AssignmentMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment region
   INT32 iValue = -1;
   CHAR16 sString[128];

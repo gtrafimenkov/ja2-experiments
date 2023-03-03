@@ -326,9 +326,9 @@ extern void RememberPreviousPathForAllSelectedChars(void);
 // the screen mask functions
 void CreateScreenMaskForInventoryPoolPopUp(void);
 void RemoveScreenMaskForInventoryPoolPopUp(void);
-void InventoryScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void InventoryScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
-void MapScreenHelpTextScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MapScreenHelpTextScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void SetUpShutDownMapScreenHelpTextScreenMask(void);
 void DisplayFastHelpRegions(FASTHELPREGION *pRegion, INT32 iSize);
 void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion);
@@ -338,8 +338,8 @@ void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion);
 
 void AddStringsToMoveBox(void);
 void CreatePopUpBoxForMovementBox(void);
-void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MoveMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MoveMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void SelectAllOtherSoldiersInList(void);
 void DeselectAllOtherSoldiersInList(void);
 void HandleMoveoutOfSectorMovementTroops(void);
@@ -351,7 +351,7 @@ void ClearMouseRegionsForMoveBox(void);
 BOOLEAN AllOtherSoldiersInListAreSelected(void);
 BOOLEAN AllSoldiersInSquadSelected(INT32 iSquadNumber);
 
-void MoveScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MoveScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 /*
 void CreateUpdateBoxStrings( void );
 void CreateUpdateBox( void );
@@ -1212,7 +1212,7 @@ void RemoveScreenMaskForInventoryPoolPopUp(void) {
 }
 
 // invnetory screen mask btn callback
-void InventoryScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void InventoryScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // inventory screen mask btn callback
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fMapInventoryPoolInited = FALSE;
@@ -2401,7 +2401,7 @@ void SetUpShutDownMapScreenHelpTextScreenMask(void) {
   }
 }
 
-void MapScreenHelpTextScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MapScreenHelpTextScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     // stop showing
     ShutDownUserDefineHelpTextRegions();
@@ -3274,7 +3274,7 @@ void ClearMouseRegionsForMoveBox(void) {
   return;
 }
 
-void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MoveMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // mvt callback handler for move box line regions
   INT32 iValue = -1;
 
@@ -3289,7 +3289,7 @@ void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MoveMenuBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for move box line regions
   INT32 iMoveBoxLine = -1, iRegionType = -1, iListIndex = -1, iClickTime = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -3741,7 +3741,7 @@ void RemoveScreenMaskForMoveBox(void) {
   }
 }
 
-void MoveScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MoveScreenMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for move box screen mask region
   if ((iReason & MSYS_CALLBACK_REASON_LBUTTON_UP)) {
     fShowMapScreenMovementList = FALSE;

@@ -63,7 +63,7 @@ void ResetAimHistoryButtons();
 void DisableAimHistoryButton();
 
 struct MOUSE_REGION gSelectedHistoryTocMenuRegion[NUM_AIM_HISTORY_PAGES];
-void SelectHistoryTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectHistoryTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // Bottom Menu Buttons
 void BtnHistoryMenuButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -264,7 +264,7 @@ BOOLEAN ExitAimHistoryMenuBar(void) {
   return (TRUE);
 }
 
-void SelectHistoryMenuButtonsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectHistoryMenuButtonsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT8 rValue;
   static BOOLEAN fOnPage = TRUE;
 
@@ -406,7 +406,7 @@ BOOLEAN ExitTocMenu() {
   return (TRUE);
 }
 
-void SelectHistoryTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectHistoryTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (gfInToc) {
     if (iReason & MSYS_CALLBACK_REASON_INIT) {
     } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {

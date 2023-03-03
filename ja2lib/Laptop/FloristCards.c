@@ -45,7 +45,7 @@ INT8 gbCurrentlySelectedCard;
 
 // link to the card gallery
 struct MOUSE_REGION gSelectedFloristCardsRegion[9];
-void SelectFloristCardsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectFloristCardsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 INT32 guiFlowerCardsButtonImage;
 void BtnFlowerCardsBackButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -166,7 +166,7 @@ void RenderFloristCards() {
                    LAPTOP_SCREEN_WEB_LR_Y);
 }
 
-void SelectFloristCardsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectFloristCardsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gbCurrentlySelectedCard = (UINT8)MSYS_GetRegionUserData(pRegion, 0);

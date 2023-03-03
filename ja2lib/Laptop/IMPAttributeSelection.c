@@ -124,8 +124,8 @@ void SetGeneratedCharacterAttributes(void);
 void BtnIMPAttributeFinishCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPAttributeSliderLeftCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPAttributeSliderRightCallback(GUI_BUTTON *btn, INT32 reason);
-void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SliderRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SliderBarRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void StatAtZeroBoxCallBack(UINT8 bExitValue);
 
 void EnterIMPAttributeSelection(void) {
@@ -1117,7 +1117,7 @@ void DestroySlideBarMouseRegions(void) {
   return;
 }
 
-void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SliderRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iCurrentAttributeValue = 0;
   INT32 iNewAttributeValue = 0;
   INT32 iAttributeDelta = 0;
@@ -1273,7 +1273,7 @@ void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SliderBarRegionButtonCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     fSlideIsActive = TRUE;
     SliderRegionButtonCallback(&pSliderRegions[MSYS_GetRegionUserData(pRegion, 0)],

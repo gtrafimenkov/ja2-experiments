@@ -77,11 +77,11 @@ UINT32 guiInsuranceBulletImage;
 
 // link to the varios pages
 struct MOUSE_REGION gSelectedInsuranceLinkRegion[3];
-void SelectInsuranceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectInsuranceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // link to the home page by clicking on the small title
 struct MOUSE_REGION gSelectedInsuranceTitleLinkRegion;
-void SelectInsuranceTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectInsuranceTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 void GameInitInsurance() {}
 
@@ -365,7 +365,7 @@ void GetInsuranceText(UINT8 ubNumber, STR16 pString) {
   }
 }
 
-void SelectInsuranceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectInsuranceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT32 uiInsuranceLink = MSYS_GetRegionUserData(pRegion, 0);
@@ -380,7 +380,7 @@ void SelectInsuranceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
   }
 }
 
-void SelectInsuranceTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectInsuranceTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_INSURANCE;

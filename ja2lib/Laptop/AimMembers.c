@@ -487,12 +487,12 @@ INT32 giXToCloseVideoConfButton;
 // Mouse Regions
 // Clicking on guys Face
 struct MOUSE_REGION gSelectedFaceRegion;
-void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 // Clicking To shut merc up
 struct MOUSE_REGION gSelectedShutUpMercRegion;
-void SelectShutUpMercRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectShutUpMercRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 //*******************************************
 //
@@ -984,7 +984,7 @@ BOOLEAN DrawMoneyToScreen(INT32 iNumber, INT8 bWidth, UINT16 usLocX, UINT16 usLo
   return (TRUE);
 }
 
-void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM_MEMBERS_FACIAL_INDEX;
@@ -997,7 +997,7 @@ void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     gfAimMemberDisplayFaceHelpText = FALSE;
     gfRedrawScreen = TRUE;
@@ -2437,7 +2437,7 @@ void DisplayTextForMercFaceVideoPopUp(STR16 pString) {
   gfRedrawScreen = TRUE;
 }
 
-void SelectShutUpMercRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectShutUpMercRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   BOOLEAN fInCallBack = TRUE;
 
   if (fInCallBack) {

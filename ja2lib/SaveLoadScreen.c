@@ -214,11 +214,11 @@ INT32 guiSaveLoadImage;
 
 // Mouse regions for the currently selected save game
 struct MOUSE_REGION gSelectedSaveRegion[NUM_SAVE_GAMES];
-void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void SelectedSaveRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
 
 struct MOUSE_REGION gSLSEntireScreenRegion;
-void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 //////////////////////////////////////////////////////
 //
@@ -1430,7 +1430,7 @@ btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
 }
 */
 
-void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT8 bActiveTextField;
 
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
@@ -1947,7 +1947,7 @@ void DoneFadeInForSaveLoadScreen(void) {
   }
 }
 
-void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     DisableSelectedSlot();

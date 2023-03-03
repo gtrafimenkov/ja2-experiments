@@ -198,7 +198,7 @@ void BtnOptionsTogglesCallback(GUI_BUTTON *btn, INT32 reason);
 
 // Mouse regions for the name of the option
 struct MOUSE_REGION gSelectedOptionTextRegion[NUM_GAME_OPTIONS];
-void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void SelectedOptionTextRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
 
 // Mouse regions for the area around the toggle boxs
@@ -1089,7 +1089,7 @@ void HandleSliderBarMovementSounds() {
     uiLastSpeechTime = GetJA2Clock();
 }
 
-void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT8 ubButton = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {

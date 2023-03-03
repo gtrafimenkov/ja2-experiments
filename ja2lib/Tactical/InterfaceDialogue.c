@@ -139,13 +139,13 @@ void CarmenLeavesSectorCallback(void);
 #define CHANCE_FOR_DOCTOR_TO_SAY_RANDOM_QUOTE 20
 
 // NPC talk panel UI stuff
-void TalkPanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TalkPanelClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TextRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void TalkPanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void TalkPanelClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void TextRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
-void TalkPanelBaseRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TalkPanelNameRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TalkPanelNameRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void TalkPanelBaseRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void TalkPanelNameRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void TalkPanelNameRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void DoneTalkingButtonClickCallback(GUI_BUTTON *btn, INT32 reason);
 
 void CalculatePopupTextPosition(INT16 sWidth, INT16 sHeight);
@@ -847,7 +847,7 @@ void RenderTalkingMenu() {
   gTalkPanel.fDirtyLevel = 0;
 }
 
-void TalkPanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TalkPanelMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT32 uiItemPos;
 
   uiItemPos = MSYS_GetRegionUserData(pRegion, 0);
@@ -862,7 +862,7 @@ void TalkPanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void TalkPanelClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TalkPanelClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   UINT32 uiItemPos;
   BOOLEAN fDoConverse = TRUE;
   uiItemPos = MSYS_GetRegionUserData(pRegion, 0);
@@ -925,7 +925,7 @@ void TalkPanelClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void TalkPanelBaseRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TalkPanelBaseRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -945,7 +945,7 @@ void TalkPanelBaseRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReaso
   }
 }
 
-void TalkPanelNameRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TalkPanelNameRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // Donot do this if we are talking already
     if (!gFacesData[gTalkPanel.iFaceIndex].fTalking) {
@@ -956,7 +956,7 @@ void TalkPanelNameRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReaso
   }
 }
 
-void TalkPanelNameRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TalkPanelNameRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // Donot do this if we are talking already
   if (gFacesData[gTalkPanel.iFaceIndex].fTalking) {
     return;
@@ -4285,7 +4285,7 @@ BOOLEAN NPCOpenThing(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor) {
   return (TRUE);
 }
 
-void TextRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TextRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {

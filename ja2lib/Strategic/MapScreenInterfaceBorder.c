@@ -94,7 +94,7 @@ void BtnMilitiaCallback(GUI_BUTTON *btn, INT32 reason);
 // void BtnZoomCallback(GUI_BUTTON *btn,INT32 reason);
 
 void BtnGenericMouseMoveButtonCallbackForMapBorder(GUI_BUTTON *btn, INT32 reason);
-void LevelMarkerBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void LevelMarkerBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 void CommonBtnCallbackBtnDownChecks(void);
 
@@ -1052,7 +1052,7 @@ void DeleteMouseRegionsForLevelMarkers(void) {
   }
 }
 
-void LevelMarkerBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LevelMarkerBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   // btn callback handler for assignment screen mask region
   INT32 iCounter = 0;
 

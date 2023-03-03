@@ -158,7 +158,7 @@ BOOLEAN HandleSpecialFiles(UINT8 ubFormat);
 BOOLEAN HandleSpecialTerroristFile(INT32 iFileNumber, STR sPictureName);
 
 // callbacks
-void FilesBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void FilesBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void BtnPreviousFilePageCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnNextFilePageCallback(GUI_BUTTON *btn, INT32 reason);
 
@@ -640,7 +640,7 @@ void RemoveFilesMouseRegions(void) {
   }
 }
 
-void FilesBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FilesBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iFileId = -1;
   INT32 iCounter = 0;
   FilesUnitPtr pFilesList = pFilesListHead;

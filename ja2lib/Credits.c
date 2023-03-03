@@ -262,8 +262,8 @@ loading screens too!)",	// Joey \"Joeker\" Whelan",
 // Global Variables
 
 struct MOUSE_REGION gCrdtMouseRegions[NUM_PEOPLE_IN_CREDITS];
-void SelectCreditFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectCreditFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectCreditFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectCreditFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 UINT32 guiCreditBackGroundImage;
 UINT32 guiCreditFaces;
@@ -1184,14 +1184,14 @@ void HandleCreditFlags(UINT32 uiFlags) {
   }
 }
 
-void SelectCreditFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectCreditFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
   }
 }
 
-void SelectCreditFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectCreditFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     giCurrentlySelectedFace = -1;
   } else if (iReason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {

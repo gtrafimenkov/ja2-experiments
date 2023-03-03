@@ -66,7 +66,7 @@ void CheckForAndAddMercToTeamPanel(struct SOLDIERTYPE *pSoldier);
 
 void DisableTacticalTeamPanelButtons(BOOLEAN fDisable);
 void RenderTownIDString();
-void KeyRingSlotInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void KeyRingSlotInvClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 
 extern INT8 gbNewItem[NUM_INV_SLOTS];
 extern INT8 gbNewItemCycle[NUM_INV_SLOTS];

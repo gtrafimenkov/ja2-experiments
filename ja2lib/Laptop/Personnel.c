@@ -347,7 +347,7 @@ void LeftButtonCallBack(GUI_BUTTON *btn, INT32 reason);
 void RightButtonCallBack(GUI_BUTTON *btn, INT32 reason);
 void LeftFFButtonCallBack(GUI_BUTTON *btn, INT32 reason);
 void RightFFButtonCallBack(GUI_BUTTON *btn, INT32 reason);
-void PersonnelPortraitCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void PersonnelPortraitCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void CreatePersonnelButtons(void);
 void DeletePersonnelButtons(void);
 void DisplayHeader(void);
@@ -382,8 +382,8 @@ INT32 GetNumberOfLeftOnPastTeam(void);
 INT32 GetNumberOfDeadOnPastTeam(void);
 void DisplayStateOfPastTeamMembers(void);
 void CreateDestroyCurrentDepartedMouseRegions(void);
-void PersonnelCurrentTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void PersonnelDepartedTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void PersonnelCurrentTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void PersonnelDepartedTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void CreateDestroyButtonsForDepartedTeamList(void);
 void DepartedDownCallBack(GUI_BUTTON *btn, INT32 reason);
 void DepartedUpCallBack(GUI_BUTTON *btn, INT32 reason);
@@ -406,7 +406,7 @@ void EnableDisableInventoryScrollButtons(void);
 void PersonnelINVStartButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void EmployementInfoButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void PersonnelStatStartButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void HandleSliderBarClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void HandleSliderBarClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 INT32 GetNumberOfMercsDeadOrAliveOnPlayersTeam(void);
 
 void RenderSliderBarForPersonnelInventory(void);
@@ -2063,7 +2063,7 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
   return (TRUE);
 }
 
-void PersonnelPortraitCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void PersonnelPortraitCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iPortraitId = 0;
   INT32 iOldPortraitId;
 
@@ -4070,7 +4070,7 @@ void CreateDestroyCurrentDepartedMouseRegions(void) {
   return;
 }
 
-void PersonnelCurrentTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void PersonnelCurrentTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fCurrentTeamMode = TRUE;
 
@@ -4090,7 +4090,7 @@ void PersonnelCurrentTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void PersonnelDepartedTeamCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void PersonnelDepartedTeamCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fCurrentTeamMode = FALSE;
 
@@ -5095,7 +5095,7 @@ void FindPositionOfPersInvSlider(void) {
   guiSliderPosition = uiCurrentInventoryIndex * sSizeOfEachSubRegion;
 }
 
-void HandleSliderBarClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void HandleSliderBarClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iValue = 0;
   INT32 iNumberOfItems = 0;
   INT16 sSizeOfEachSubRegion = 0;

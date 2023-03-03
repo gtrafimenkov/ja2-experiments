@@ -247,7 +247,7 @@ void RenderCivQuoteBoxOverlay(VIDEO_OVERLAY *pBlitter) {
   }
 }
 
-void QuoteOverlayClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void QuoteOverlayClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fLButtonDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
