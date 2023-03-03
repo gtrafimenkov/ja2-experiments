@@ -1698,7 +1698,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
       (*pfKeepMoving) = FALSE;
 
       if (sMineGridNo != NOWHERE) {
-        LocateGridNo(sMineGridNo, mouse);
+        LocateGridNo(sMineGridNo);
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
@@ -2155,7 +2155,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
       (*pfKeepMoving) = FALSE;
 
       if (sMineGridNo != NOWHERE) {
-        LocateGridNo(sMineGridNo, mouse);
+        LocateGridNo(sMineGridNo);
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
@@ -2459,7 +2459,7 @@ void LocateSoldier(UINT16 usID, BOOLEAN fSetLocator) {
     sNewCenterWorldX = (INT16)pSoldier->dXPos;
     sNewCenterWorldY = (INT16)pSoldier->dYPos;
 
-    SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY, mouse);
+    SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY);
 
     // Plot new path!
     gfPlotNewMovement = TRUE;
@@ -2475,7 +2475,7 @@ void LocateSoldier(UINT16 usID, BOOLEAN fSetLocator) {
   }
 }
 
-void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce, const struct MouseInput mouse) {
+void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce) {
   INT16 sNewCenterWorldX, sNewCenterWorldY;
 
   ConvertGridNoToCenterCellXY(sGridNo, &sNewCenterWorldX, &sNewCenterWorldY);
@@ -2485,12 +2485,10 @@ void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce, const struct MouseInpu
     return;
   }
 
-  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY, mouse);
+  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY);
 }
 
-void LocateGridNo(UINT16 sGridNo, const struct MouseInput mouse) {
-  InternalLocateGridNo(sGridNo, FALSE, mouse);
-}
+void LocateGridNo(UINT16 sGridNo) { InternalLocateGridNo(sGridNo, FALSE); }
 
 void SlideTo(INT16 sGridno, UINT16 usSoldierID, UINT16 usReasonID, BOOLEAN fSetLocator) {
   INT32 cnt;

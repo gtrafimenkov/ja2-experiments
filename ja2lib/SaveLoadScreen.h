@@ -1,6 +1,7 @@
 #ifndef _SAVE_LOAD_SCREEN__H_
 #define _SAVE_LOAD_SCREEN__H_
 
+#include "GameInput.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Types.h"
 

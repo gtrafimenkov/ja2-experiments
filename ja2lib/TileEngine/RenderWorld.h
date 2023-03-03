@@ -172,7 +172,7 @@ void DirtyWorldRender();
 void SetMercGlowFast();
 void SetMercGlowNormal();
 
-void SetRenderCenter(INT16 sNewX, INT16 sNewY, const struct MouseInput mouse);
+void SetRenderCenter(INT16 sNewX, INT16 sNewY);
 
 #ifdef _DEBUG
 void RenderFOVDebug();

@@ -568,7 +568,7 @@ void DoDive() {
 
     if (gsNotLocatedYet && !(gTacticalStatus.uiFlags & INCOMBAT)) {
       gsNotLocatedYet = FALSE;
-      LocateGridNo(gsDiveTargetLocation, mouse);
+      LocateGridNo(gsDiveTargetLocation);
     }
 
     sOldGridNo = GETWORLDINDEXFROMWORLDCOORDS(gsDiveY, gsDiveX);
@@ -625,7 +625,7 @@ void DoDive() {
         sStrafeY = (INT16)(gsDiveY + dDeltaYPos);
 
         if ((gTacticalStatus.uiFlags & INCOMBAT)) {
-          LocateGridNo(sGridNo, mouse);
+          LocateGridNo(sGridNo);
         }
 
         if (GridNoOnVisibleWorldTile((INT16)(GETWORLDINDEXFROMWORLDCOORDS(sStrafeY, sStrafeX)))) {
@@ -712,7 +712,7 @@ void DoBombing() {
 
     if (gsNotLocatedYet && !(gTacticalStatus.uiFlags & INCOMBAT)) {
       gsNotLocatedYet = FALSE;
-      LocateGridNo(gsDiveTargetLocation, mouse);
+      LocateGridNo(gsDiveTargetLocation);
     }
 
     sOldGridNo = GETWORLDINDEXFROMWORLDCOORDS(gsDiveY, gsDiveX);

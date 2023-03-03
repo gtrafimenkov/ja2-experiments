@@ -2189,7 +2189,8 @@ void RenderWorld(const struct MouseInput mouse) {
     fInterfacePanelDirty = DIRTYLEVEL2;
 
     // Apply scrolling sets some world variables
-    ApplyScrolling(gsRenderCenterX, gsRenderCenterY, TRUE, FALSE, mouse);
+    struct MouseInput dummyMouseInput = {};
+    ApplyScrolling(gsRenderCenterX, gsRenderCenterY, TRUE, FALSE, dummyMouseInput);
     ResetLayerOptimizing();
 
     if ((gRenderFlags & RENDER_FLAG_NOZ)) {
@@ -6397,13 +6398,14 @@ void SetMercGlowFast() {
 
 void SetMercGlowNormal() { gpGlowFramePointer = gsGlowFrames; }
 
-void SetRenderCenter(INT16 sNewX, INT16 sNewY, const struct MouseInput mouse) {
+void SetRenderCenter(INT16 sNewX, INT16 sNewY) {
   if (gfIgnoreScrolling == 1) {
     return;
   }
 
   // Apply these new coordinates to the renderer!
-  ApplyScrolling(sNewX, sNewY, TRUE, FALSE, mouse);
+  struct MouseInput dummyMouseInput = {};
+  ApplyScrolling(sNewX, sNewY, TRUE, FALSE, dummyMouseInput);
 
   // Set flag to ignore scrolling this frame
   gfIgnoreScrollDueToCenterAdjust = TRUE;

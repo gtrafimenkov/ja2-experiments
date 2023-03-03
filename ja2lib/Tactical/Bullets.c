@@ -178,7 +178,7 @@ void LocateBullet(INT32 iBulletIndex) {
 
           // Only if we are in turnbased and noncombat
           if (gTacticalStatus.uiFlags & TURNBASED && (gTacticalStatus.uiFlags & INCOMBAT)) {
-            LocateGridNo((INT16)gBullets[iBulletIndex].sGridNo, mouse);
+            LocateGridNo((INT16)gBullets[iBulletIndex].sGridNo);
           }
         }
       }

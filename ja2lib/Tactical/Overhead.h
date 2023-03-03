@@ -209,7 +209,7 @@ void EndTacticalDemo();
 
 void SelectSoldier(UINT16 usSoldierID, BOOLEAN fAcknowledge, BOOLEAN fForceReselect);
 
-void LocateGridNo(UINT16 sGridNo, const struct MouseInput mouse);
+void LocateGridNo(UINT16 sGridNo);
 void LocateSoldier(UINT16 usID, BOOLEAN fSetLocator);
 
 void BeginTeamTurn(UINT8 ubTeam);
