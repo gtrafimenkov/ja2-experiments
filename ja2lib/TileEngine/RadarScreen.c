@@ -499,7 +499,7 @@ static void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY,
   sNewCenterWorldX = (INT16)(gCenterWorldX + sTempX_W);
   sNewCenterWorldY = (INT16)(gCenterWorldY + sTempY_W);
 
-  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY, mouse);
+  SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY);
 }
 
 void DisableRadarScreenRender(void) {

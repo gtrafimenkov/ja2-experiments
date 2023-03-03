@@ -2462,7 +2462,7 @@ void SelectedMercEnemyIndicatorCallback(struct MOUSE_REGION *pRegion, INT32 iRea
         if (gpSMCurrentMerc->bOppCnt > 0) {
           CycleVisibleEnemies(gpSMCurrentMerc);
         } else {
-          SelectedMercButtonCallback(pRegion, iReason);
+          SelectedMercButtonCallback(pRegion, iReason, mouse);
         }
       }
     }
@@ -2770,7 +2770,7 @@ void BtnLookCallback(GUI_BUTTON *btn, INT32 reason) {
     btn->uiFlags |= BUTTON_CLICKED_ON;
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
-    ToggleLookCursorMode(mouse);
+    ToggleLookCursorMode(NULL, XXX_GetMouseInput());
   } else if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
   }
@@ -3250,7 +3250,7 @@ void BtnEndTurnCallback(GUI_BUTTON *btn, INT32 reason) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
 
     // END TURN
-    UIHandleEndTurn(NULL);
+    UIHandleEndTurn(NULL, XXX_GetMouseInput());
 
   } else if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
@@ -3447,7 +3447,7 @@ void EnemyIndicatorClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       if (pSoldier->bOppCnt > 0) {  // Cycle....
         CycleVisibleEnemies(pSoldier);
       } else {
-        MercFacePanelCallback(pRegion, iReason);
+        MercFacePanelCallback(pRegion, iReason, XXX_GetMouseInput());
       }
     }
   }
@@ -4546,6 +4546,7 @@ void DisableSMPpanelButtonsWhenInShopKeeperInterface(BOOLEAN fDontDrawButtons) {
 }
 
 BOOLEAN IsMouseInRegion(struct MOUSE_REGION *pRegion) {
+  const struct MouseInput mouse = XXX_GetMouseInput();
   if ((mouse.x >= pRegion->RegionTopLeftX) && (mouse.x <= pRegion->RegionBottomRightX) &&
       (mouse.y >= pRegion->RegionTopLeftY) && (mouse.y <= pRegion->RegionBottomRightY)) {
     return (TRUE);

@@ -408,7 +408,8 @@ void HandleOverheadMap(const struct MouseInput mouse) {
         bZLevel = GetZLevelOfItemPoolGivenStructure(sActionGridNo, 0, pStructure);
 
         if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
-          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, mouse);
+          const struct Point16 point = {mouse.x, mouse.y};
+          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, point);
 
           gfOverItemPool = TRUE;
           gsOveritemPoolGridNo = pItemPool->sGridNo;
@@ -419,9 +420,9 @@ void HandleOverheadMap(const struct MouseInput mouse) {
         INT8 bZLevel = 0;
 
         if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
-          struct MouseInput adjusted = mouse;
-          adjusted.y -= 5;
-          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, adjusted);
+          struct Point16 point = {mouse.x, mouse.y};
+          point.y -= 5;
+          DrawItemPoolList(pItemPool, usMapPos, ITEMLIST_DISPLAY, bZLevel, point);
 
           gfOverItemPool = TRUE;
           gsOveritemPoolGridNo = pItemPool->sGridNo;
@@ -1130,7 +1131,7 @@ void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
     // Get new proposed center location.
     GetFromAbsoluteScreenXYWorldXY(&uiCellX, &uiCellY, sWorldScreenX, sWorldScreenY);
 
-    SetRenderCenter((INT16)uiCellX, (INT16)uiCellY, mouse);
+    SetRenderCenter((INT16)uiCellX, (INT16)uiCellY);
 
     KillOverheadMap(mouse);
 

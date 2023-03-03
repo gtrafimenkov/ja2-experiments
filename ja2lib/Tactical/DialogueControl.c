@@ -435,13 +435,13 @@ void HandleDialogue() {
           gTacticalStatus.bBoxingState == DISQUALIFIED) &&
         !(gTacticalStatus.uiFlags & IGNORE_ENGAGED_IN_CONV_UI_UNLOCK)) {
       guiPendingOverrideEvent = LU_ENDUILOCK;
-      HandleTacticalUI(mouse);
+      HandleTacticalUI(XXX_GetMouseInput());
 
       // ATE: If this is NOT the player's turn.. engage AI UI lock!
       if (gTacticalStatus.ubCurrentTeam != gbPlayerNum) {
         // Setup locked UI
         guiPendingOverrideEvent = LU_BEGINUILOCK;
-        HandleTacticalUI(mouse);
+        HandleTacticalUI(XXX_GetMouseInput());
       }
     }
 
@@ -455,7 +455,7 @@ void HandleDialogue() {
       if (guiPendingScreen != MSG_BOX_SCREEN && guiCurrentScreen != MSG_BOX_SCREEN) {
         // No, so we should lock the UI!
         guiPendingOverrideEvent = LU_BEGINUILOCK;
-        HandleTacticalUI(mouse);
+        HandleTacticalUI(XXX_GetMouseInput());
       }
     }
   }
@@ -533,7 +533,8 @@ void HandleDialogue() {
 
       if (gpCurrentTalkingFace->uiFlags & FACE_TRIGGER_PREBATTLE_INT) {
         UnLockPauseState();
-        InitPreBattleInterface((struct GROUP *)gpCurrentTalkingFace->uiUserData1, TRUE, mouse);
+        InitPreBattleInterface((struct GROUP *)gpCurrentTalkingFace->uiUserData1, TRUE,
+                               XXX_GetMouseInput());
         // Reset flag!
         gpCurrentTalkingFace->uiFlags &= (~FACE_TRIGGER_PREBATTLE_INT);
       }
@@ -773,7 +774,7 @@ void HandleDialogue() {
 
     if (QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_TRIGGERPREBATTLEINTERFACE) {
       UnLockPauseState();
-      InitPreBattleInterface((struct GROUP *)QItem->uiSpecialEventData, TRUE, mouse);
+      InitPreBattleInterface((struct GROUP *)QItem->uiSpecialEventData, TRUE, XXX_GetMouseInput());
     }
     if (QItem->uiSpecialEventFlag & DIALOGUE_ADD_EVENT_FOR_SOLDIER_UPDATE_BOX) {
       INT32 iReason = 0;

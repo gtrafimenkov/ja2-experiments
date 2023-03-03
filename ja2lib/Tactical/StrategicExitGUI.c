@@ -302,7 +302,7 @@ BOOLEAN InternalInitSectorExitMenu(UINT8 ubDirection, INT16 sAdditionalData) {
   gExitDialog.usHeight = usTextBoxHeight;
 
   guiPendingOverrideEvent = EX_EXITSECTORMENU;
-  HandleTacticalUI(mouse);
+  HandleTacticalUI(XXX_GetMouseInput());
 
   gfInSectorExitMenu = TRUE;
 

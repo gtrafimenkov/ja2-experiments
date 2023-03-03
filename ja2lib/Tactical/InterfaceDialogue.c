@@ -233,11 +233,11 @@ BOOLEAN InitiateConversation(struct SOLDIERTYPE *pDestSoldier, struct SOLDIERTYP
 
     // Turn off lock UI ( if on )
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI(mouse);
+    HandleTacticalUI(XXX_GetMouseInput());
 
     // Turn on talking ui
     guiPendingOverrideEvent = TA_TALKINGMENU;
-    HandleTacticalUI(mouse);
+    HandleTacticalUI(XXX_GetMouseInput());
 
     return (FALSE);
   }
@@ -309,14 +309,14 @@ BOOLEAN InternalInitiateConversation(struct SOLDIERTYPE *pDestSoldier,
 
     // Turn off lock UI ( if on )
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI(mouse);
+    HandleTacticalUI(XXX_GetMouseInput());
 
     // Turn on talking ui
     guiPendingOverrideEvent = TA_TALKINGMENU;
-    HandleTacticalUI(mouse);
+    HandleTacticalUI(XXX_GetMouseInput());
   } else {
     guiPendingOverrideEvent = TA_TALKINGMENU;
-    HandleTacticalUI(mouse);
+    HandleTacticalUI(XXX_GetMouseInput());
   }
 
   return (TRUE);
@@ -1393,7 +1393,7 @@ void HandleWaitTimerForNPCTrigger() {
     if ((GetJA2Clock() - guiWaitingForTriggerTime) > 500) {
       guiPendingOverrideEvent = LU_ENDUILOCK;
 
-      UIHandleLUIEndLock(NULL);
+      UIHandleLUIEndLock(NULL, XXX_GetMouseInput());
 
       HandleNPCTrigger();
 

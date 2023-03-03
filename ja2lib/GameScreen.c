@@ -360,7 +360,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   }
 
   if (gfBeginEndTurn) {
-    UIHandleEndTurn(NULL);
+    UIHandleEndTurn(NULL, gameInput->mouse);
     gfBeginEndTurn = FALSE;
   }
 

@@ -1999,7 +1999,7 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
     case MONSTERCLASS:
 
       DoSpecialEffectAmmoMiss(ubAttackerID, sGridNo, sXPos, sYPos, sZPos, FALSE, TRUE, iBullet,
-                              mouse);
+                              XXX_GetMouseInput());
 
       RemoveBullet(iBullet);
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
@@ -2061,7 +2061,7 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
       }
     } else {
       if (!fStopped || !DoSpecialEffectAmmoMiss(ubAttackerID, sGridNo, sXPos, sYPos, sZPos, FALSE,
-                                                TRUE, iBullet, mouse)) {
+                                                TRUE, iBullet, XXX_GetMouseInput())) {
         if (sZPos == 0) {
           PlayJA2Sample(MISS_G2, RATE_11025, uiMissVolume, 1, SoundDir(sGridNo));
         } else {
@@ -3384,7 +3384,8 @@ void ShotMiss(UINT8 ubAttackerID, INT32 iBullet) {
     // PLAY SOUND AND FLING DEBRIS
     // RANDOMIZE SOUND SYSTEM
 
-    if (!DoSpecialEffectAmmoMiss(ubAttackerID, NOWHERE, 0, 0, 0, TRUE, TRUE, 0, mouse)) {
+    if (!DoSpecialEffectAmmoMiss(ubAttackerID, NOWHERE, 0, 0, 0, TRUE, TRUE, 0,
+                                 XXX_GetMouseInput())) {
       PlayJA2Sample(MISS_1 + Random(8), RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
     }
 

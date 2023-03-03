@@ -7,3 +7,5 @@
 const struct GameInput *gameInput
 
 , XXX_GetMouseInput()
+
+const struct MouseInput mouse = XXX_GetMouseInput();

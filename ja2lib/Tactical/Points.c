@@ -842,7 +842,7 @@ UINT8 CalcTotalAPsToAttack(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 ub
 
           if (pSoldier->ubBodyType == BLOODCAT) {
             sGotLocation = FindNextToAdjacentGridEx(pSoldier, sGridNo, &ubDirection,
-                                                    &sAdjustedGridNo, TRUE, FALSE, mouse);
+                                                    &sAdjustedGridNo, TRUE, FALSE);
             if (sGotLocation == -1) {
               sGotLocation = NOWHERE;
             }

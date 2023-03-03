@@ -501,7 +501,8 @@ struct MOUSE_REGION gArmsDealersDropItemToGroundMouseRegions;
 void SelectArmsDealersDropItemToGroundRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                                      const struct MouseInput mouse);
 void SelectArmsDealersDropItemToGroundMovementRegionCallback(struct MOUSE_REGION *pRegion,
-                                                             INT32 iReason);
+                                                             INT32 iReason,
+                                                             const struct MouseInput mouse);
 
 ////////////////////////////////////////////
 //
@@ -6643,7 +6644,8 @@ void SelectArmsDealersDropItemToGroundRegionCallback(struct MOUSE_REGION *pRegio
 }
 
 void SelectArmsDealersDropItemToGroundMovementRegionCallback(struct MOUSE_REGION *pRegion,
-                                                             INT32 iReason) {
+                                                             INT32 iReason,
+                                                             const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     gfSkiDisplayDropItemToGroundText = FALSE;
     gubSkiDirtyLevel = SKI_DIRTY_LEVEL2;

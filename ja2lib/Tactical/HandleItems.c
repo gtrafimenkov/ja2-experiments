@@ -457,7 +457,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID, mouse);
+      SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
     } else {
       return (ITEM_HANDLE_NOAPS);
     }
@@ -528,7 +528,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID, mouse);
+      SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
       gfResetUIMovementOptimization = TRUE;
 
@@ -575,7 +575,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
 
     if (EnoughPoints(pSoldier, sAPCost, 0, fFromUI)) {
       // OK, set UI
-      SetUIBusy(pSoldier->ubID, mouse);
+      SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
       // CHECK IF WE ARE AT THIS GRIDNO NOW
       if (pSoldier->sGridNo != sActionGridNo) {
@@ -639,7 +639,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID, mouse);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -709,7 +709,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID, mouse);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -773,7 +773,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID, mouse);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -816,7 +816,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID, mouse);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -867,7 +867,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
           }
 
           // OK, set UI
-          SetUIBusy(pSoldier->ubID, mouse);
+          SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
           if (fFromUI) {
             guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -947,7 +947,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
     }
 
     // OK, set UI
-    SetUIBusy(pSoldier->ubID, mouse);
+    SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
     if (fFromUI) {
       guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -995,7 +995,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID, mouse);
+      SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
       if (fFromUI) {
         guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -1099,7 +1099,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID, mouse);
+      SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
       return (ITEM_HANDLE_OK);
 
@@ -1307,7 +1307,7 @@ void SoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGr
   // Deduct points!
   // sAPCost = GetAPsToPickupItem( pSoldier, sGridNo );
   // DeductPoints( pSoldier, sAPCost, 0 );
-  SetUIBusy(pSoldier->ubID, mouse);
+  SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // CHECK IF NOT AT SAME GRIDNO
   if (pSoldier->sGridNo != sActionGridNo) {
@@ -2596,7 +2596,7 @@ extern void HandleAnyMercInSquadHasCompatibleStuff(UINT8 ubSquad, struct OBJECTT
                                                    BOOLEAN fReset);
 
 BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bCommand, INT8 bZLevel,
-                         const struct MouseInput mouse) {
+                         const struct Point16 point) {
   INT16 sY;
   struct ITEM_POOL *pTempItemPool;
   CHAR16 pStr[100];
@@ -2695,12 +2695,12 @@ BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bComm
   }
 
   // Determine where our mouse is!
-  if (mouse.x > (640 - sLargestLineWidth)) {
-    sFontX = mouse.x - sLargestLineWidth;
+  if (point.x > (640 - sLargestLineWidth)) {
+    sFontX = point.x - sLargestLineWidth;
   } else {
-    sFontX = mouse.x + 15;
+    sFontX = point.x + 15;
   }
-  sFontY = mouse.y;
+  sFontY = point.y;
 
   // Move up if over interface....
   if ((sFontY + sHeight) > 340) {
@@ -3019,8 +3019,9 @@ void RenderTopmostFlashingItems() {
           BltVideoObjectFromIndex(FRAME_BUFFER, guiRADIO, pLocator->bRadioFrame, sXPos, sYPos,
                                   VO_BLT_SRCTRANSPARENCY, NULL);
 
+          const struct Point16 point = {sXPos, sYPos};
           DrawItemPoolList(pItemPool, pItemPool->sGridNo, ITEMLIST_DISPLAY,
-                           pItemPool->bRenderZHeightAboveLevel, sXPos, sYPos, XXX_GetMouseInput());
+                           pItemPool->bRenderZHeightAboveLevel, point);
         }
       }
     }

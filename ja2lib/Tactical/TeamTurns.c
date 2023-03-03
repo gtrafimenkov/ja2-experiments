@@ -188,7 +188,7 @@ void StartPlayerTeamTurn(BOOLEAN fDoBattleSnd, BOOLEAN fEnteringCombatMode) {
   /// that a baddie can die and still maintain it's attacker ID
   gTacticalStatus.fKilledEnemyOnAttack = FALSE;
 
-  HandleTacticalUI(mouse);
+  HandleTacticalUI(XXX_GetMouseInput());
 }
 
 void FreezeInterfaceForEnemyTurn(void) {
@@ -603,7 +603,7 @@ void StartInterrupt(void) {
 
     // Signal UI done enemy's turn
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI(mouse);
+    HandleTacticalUI(XXX_GetMouseInput());
 
     InitPlayerUIBar(TRUE);
     // AddTopMessage( PLAYER_INTERRUPT_MESSAGE, Message[STR_INTERRUPT] );
@@ -820,7 +820,7 @@ void EndInterrupt(BOOLEAN fMarkInterruptOccurred) {
         // both hidden interrupts as well - NOT good because
         // hidden interrupts should leave it locked if it was already...
         guiPendingOverrideEvent = LU_ENDUILOCK;
-        HandleTacticalUI(mouse);
+        HandleTacticalUI(XXX_GetMouseInput());
 
         if (gusSelectedSoldier != NO_SOLDIER) {
           SlideTo(NOWHERE, gusSelectedSoldier, NOBODY, SETLOCATOR);

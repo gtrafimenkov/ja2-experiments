@@ -178,9 +178,9 @@ static UINT16 guiStructureHitChance[MAX_DIST_FOR_LESS_THAN_MAX_CHANCE_TO_HIT_STR
 #define MAX_AIMING_SCREWUP (RADIANS_IN_CIRCLE * 15 / 360)
 // min aiming screwup is X degrees, gets divided by distance in tiles
 #define MIN_AIMING_SCREWUP (RADIANS_IN_CIRCLE * 22 / 360)
-//#define MAX_AIMING_SCREWUP 0.2618
-// equal to 10 degrees
-//#define MAX_AIMING_SCREWUP_VERTIC 0.1745
+// #define MAX_AIMING_SCREWUP 0.2618
+//  equal to 10 degrees
+// #define MAX_AIMING_SCREWUP_VERTIC 0.1745
 
 #define SMELL_REDUCTION_FOR_NEARBY_OBSTACLE 80
 
@@ -233,7 +233,7 @@ FLOAT Distance2D(FLOAT dDeltaX, FLOAT dDeltaY) {
   return ((FLOAT)sqrt((DOUBLE)(dDeltaX * dDeltaX + dDeltaY * dDeltaY)));
 }
 
-//#define DEBUGLOS
+// #define DEBUGLOS
 
 #if defined(JA2BETAVERSION) && defined(DEBUGLOS)
 void DebugLOS(STR szOutput) {
@@ -2061,7 +2061,7 @@ BOOLEAN BulletHitMerc(BULLET *pBullet, struct STRUCTURE *pStructure, BOOLEAN fIn
   WeaponHit(SWeaponHit.usSoldierID, SWeaponHit.usWeaponIndex, SWeaponHit.sDamage,
             SWeaponHit.sBreathLoss, SWeaponHit.usDirection, SWeaponHit.sXPos, SWeaponHit.sYPos,
             SWeaponHit.sZPos, SWeaponHit.sRange, SWeaponHit.ubAttackerID, SWeaponHit.fHit,
-            SWeaponHit.ubSpecial, SWeaponHit.ubLocation);
+            SWeaponHit.ubSpecial, SWeaponHit.ubLocation, XXX_GetMouseInput());
   return (fStopped);
 }
 

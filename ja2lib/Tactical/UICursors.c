@@ -67,7 +67,7 @@ BOOLEAN GetMouseRecalcAndShowAPFlags(UINT32 *puiCursorFlags, BOOLEAN *pfShowAPs)
   BOOLEAN fShowAPs = FALSE;
 
   // SET FLAGS FOR CERTAIN MOUSE MOVEMENTS
-  GetCursorMovementFlags(&uiCursorFlags, mouse);
+  GetCursorMovementFlags(&uiCursorFlags, XXX_GetMouseInput());
 
   // Force if we are currently cycling guys...
   if (gfUIForceReExamineCursorData) {
@@ -763,6 +763,7 @@ void DetermineCursorBodyLocation(UINT8 ubSoldierID, BOOLEAN fDisplay, BOOLEAN fR
         }
 
         // Check if mouse is iin bounding box of soldier
+        const struct MouseInput mouse = XXX_GetMouseInput();
         if (!IsPointInSoldierBoundingBox(pTargetSoldier, mouse.x, mouse.y)) {
           fOnGuy = FALSE;
         }
@@ -778,6 +779,7 @@ void DetermineCursorBodyLocation(UINT8 ubSoldierID, BOOLEAN fDisplay, BOOLEAN fR
       if (gfUIFullTargetFound) {
         pTargetSoldier = MercPtrs[gusUIFullTargetID];
 
+        const struct MouseInput mouse = XXX_GetMouseInput();
         if (FindRelativeSoldierPosition(pTargetSoldier, &usFlags, mouse.x, mouse.y)) {
           fOnGuy = TRUE;
         }

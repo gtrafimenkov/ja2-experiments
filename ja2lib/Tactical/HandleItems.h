@@ -2,6 +2,7 @@
 #define __HANDLE_ITEMS_H
 
 #include "GameInput.h"
+#include "Point.h"
 #include "SGP/Types.h"
 #include "Tactical/WorldItems.h"
 
@@ -107,7 +108,7 @@ struct OBJECTTYPE *InternalAddItemToPool(INT16 *psGridNo, struct OBJECTTYPE *pOb
 INT16 AdjustGridNoForItemPlacement(struct SOLDIERTYPE *pSoldier, INT16 sGridNo);
 BOOLEAN GetItemPool(UINT16 usMapPos, struct ITEM_POOL **ppItemPool, UINT8 ubLevel);
 BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bCommand, INT8 bZLevel,
-                         const struct MouseInput mouse);
+                         const struct Point16 point);
 BOOLEAN RemoveItemFromPool(INT16 sGridNo, INT32 iItemIndex, UINT8 ubLevel);
 BOOLEAN ItemExistsAtLocation(INT16 sGridNo, INT32 iItemIndex, UINT8 ubLevel);
 BOOLEAN MoveItemPools(INT16 sStartPos, INT16 sEndPos);

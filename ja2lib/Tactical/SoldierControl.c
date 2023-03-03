@@ -3701,7 +3701,7 @@ void ChangeSoldierStance(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredStance) {
   }
 
   // Set UI Busy
-  SetUIBusy(pSoldier->ubID, mouse);
+  SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // ATE: If we are an NPC, cower....
   if (pSoldier->ubBodyType >= FATCIV && pSoldier->ubBodyType <= KIDCIV) {
@@ -5120,7 +5120,7 @@ void BeginSoldierClimbUpRoof(struct SOLDIERTYPE *pSoldier) {
     if (EnoughPoints(pSoldier, GetAPsToClimbRoof(pSoldier, FALSE), 0, TRUE)) {
       if (pSoldier->bTeam == gbPlayerNum) {
         // OK, SET INTERFACE FIRST
-        SetUIBusy(pSoldier->ubID, mouse);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       }
 
       pSoldier->sTempNewGridNo =
@@ -6109,7 +6109,7 @@ void BeginSoldierClimbDownRoof(struct SOLDIERTYPE *pSoldier) {
     if (EnoughPoints(pSoldier, GetAPsToClimbRoof(pSoldier, TRUE), 0, TRUE)) {
       if (pSoldier->bTeam == gbPlayerNum) {
         // OK, SET INTERFACE FIRST
-        SetUIBusy(pSoldier->ubID, mouse);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       }
 
       pSoldier->sTempNewGridNo =
@@ -7801,7 +7801,7 @@ void ContinueMercMovement(struct SOLDIERTYPE *pSoldier) {
 
       AdjustNoAPToFinishMove(pSoldier, FALSE);
 
-      SetUIBusy(pSoldier->ubID, mouse);
+      SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
       // OK, try and get a path to out dest!
       EVENT_InternalGetNewSoldierPath(pSoldier, sGridNo, pSoldier->usUIMovementMode, FALSE, TRUE);
@@ -8419,7 +8419,7 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
     // If in water....
     if (MercInWater(pSoldier)) {
       UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
-      HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel);
+      HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel, XXX_GetMouseInput());
       SoldierGotoStationaryStance(pSoldier);
       if (!(pSoldier->uiStatusFlags & SOLDIER_PC)) {
         // reset action value for AI because we're done!
@@ -8485,7 +8485,7 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
         case ANIM_PRONE:
 
           UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
-          HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel);
+          HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel, XXX_GetMouseInput());
           SoldierGotoStationaryStance(pSoldier);
           if (!(pSoldier->uiStatusFlags & SOLDIER_PC)) {
             // reset action value for AI because we're done!
@@ -8793,7 +8793,7 @@ void MercStealFromMerc(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarget
              String("!!!!!!! Starting STEAL attack, attack count now %d",
                     gTacticalStatus.ubAttackBusyCount));
 
-    SetUIBusy(pSoldier->ubID, mouse);
+    SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
   }
 }
 

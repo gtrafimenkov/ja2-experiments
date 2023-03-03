@@ -1282,7 +1282,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
               gTacticalStatus.ubAttackBusyCount = 0;
 
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              UIHandleLUIEndLock(NULL);
+              UIHandleLUIEndLock(NULL, XXX_GetMouseInput());
             }
             if ((InputEvent.usEvent == KEY_DOWN) && (InputEvent.usParam == ENTER) &&
                 (InputEvent.usKeyState & CTRL_DOWN)) {
@@ -2325,7 +2325,8 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
 							}
 						}
 #endif
-          } else if (!CycleSoldierFindStack(usMapPos))  // Are we over a merc stack?
+          } else if (!CycleSoldierFindStack(usMapPos, XXX_GetMouseInput()))
+            // Are we over a merc stack?
             CycleIntTileFindStack(usMapPos);  // If not, now check if we are over a struct stack
           break;
 
@@ -3484,7 +3485,7 @@ INT8 CheckForAndHandleHandleVehicleInteractiveClick(struct SOLDIERTYPE *pSoldier
             }
 
             // OK, set UI
-            SetUIBusy(pSoldier->ubID, mouse);
+            SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
             // guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
 
             return (-1);
@@ -3702,7 +3703,7 @@ INT8 HandleMoveModeInteractiveClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
           if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
             fContinue = FALSE;
 
-            SetUIBusy(pSoldier->ubID, mouse);
+            SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
             if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED)) {
               // puiNewEvent = C_WAIT_FOR_CONFIRM;
@@ -3853,13 +3854,13 @@ void TestMeanWhile(INT32 iID) {
 
 void EscapeUILock() {
   // UNLOCK UI
-  UnSetUIBusy((UINT8)gusSelectedSoldier);
+  UnSetUIBusy((UINT8)gusSelectedSoldier, XXX_GetMouseInput());
 
   // Decrease global busy  counter...
   gTacticalStatus.ubAttackBusyCount = 0;
 
   guiPendingOverrideEvent = LU_ENDUILOCK;
-  UIHandleLUIEndLock(NULL);
+  UIHandleLUIEndLock(NULL, XXX_GetMouseInput());
 }
 
 #ifdef JA2BETAVERSION

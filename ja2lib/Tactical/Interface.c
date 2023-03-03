@@ -2670,7 +2670,7 @@ void CreateTopMessage(UINT32 uiSurface, UINT8 ubType, CHAR16 *psString) {
 
 void TurnExpiredCallback(UINT8 bExitValue) {
   // End turn...
-  UIHandleEndTurn(NULL);
+  UIHandleEndTurn(XXX_GetMouseInput());
 }
 
 void CheckForAndHandleEndPlayerTimeLimit() {
@@ -2688,7 +2688,7 @@ void CheckForAndHandleEndPlayerTimeLimit() {
           // )MSG_BOX_FLAG_OK, TurnExpiredCallback, NULL );
 
           // End turn...
-          UIHandleEndTurn(NULL);
+          UIHandleEndTurn(XXX_GetMouseInput());
         }
       }
     }
