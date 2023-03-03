@@ -2893,8 +2893,6 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
               CancelAIAction(pSoldier, TRUE);
             }
 
-            // HandleItem( pSoldier, pTarget->sGridNo, 0, NOTHING, FALSE );
-
             pSoldier->uiStatusFlags |= SOLDIER_NPC_DOING_PUNCH;
           } else {
             TriggerNPCWithGivenApproach(pSoldier->ubProfile, (UINT8)pSoldier->uiPendingActionData4,

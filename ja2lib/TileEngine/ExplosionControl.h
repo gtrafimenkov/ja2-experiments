@@ -1,6 +1,7 @@
 #ifndef _EXPLOSION_CONTROL_H
 #define _EXPLOSION_CONTROL_H
 
+#include "MouseInput.h"
 #include "Tactical/Weapons.h"
 
 #define MAX_DISTANCE_EXPLOSIVE_CAN_DESTROY_STRUCTURES 2
@@ -76,7 +77,7 @@ void InternalIgniteExplosion(UINT8 ubOwner, INT16 sX, INT16 sY, INT16 sZ, INT16 
 void GenerateExplosion(EXPLOSION_PARAMS *pExpParams);
 
 void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, BOOLEAN fSubsequent,
-                  INT8 bLevel, INT32 iSmokeEffectNum);
+                  INT8 bLevel, INT32 iSmokeEffectNum, const struct MouseInput mouse);
 
 void AddBombToQueue(UINT32 uiWorldBombIndex, UINT32 uiTimeStamp);
 

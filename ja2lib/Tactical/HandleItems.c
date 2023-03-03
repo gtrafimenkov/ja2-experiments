@@ -174,7 +174,7 @@ BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
 }
 
 INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UINT16 usHandItem,
-                 BOOLEAN fFromUI) {
+                 BOOLEAN fFromUI, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pTargetSoldier = NULL;
   UINT16 usSoldierIndex;
   INT16 sTargetGridNo;
@@ -961,11 +961,11 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
   if (Item[usHandItem].usItemClass == IC_BLADE) {
     // See if we can get there to stab
     if (pSoldier->ubBodyType == BLOODCAT) {
-      sActionGridNo =
-          FindNextToAdjacentGridEx(pSoldier, usGridNo, &ubDirection, &sAdjustedGridNo, TRUE, FALSE);
+      sActionGridNo = FindNextToAdjacentGridEx(pSoldier, usGridNo, &ubDirection, &sAdjustedGridNo,
+                                               TRUE, FALSE, mouse);
     } else if (CREATURE_OR_BLOODCAT(pSoldier) && PythSpacesAway(pSoldier->sGridNo, usGridNo) > 1) {
-      sActionGridNo =
-          FindNextToAdjacentGridEx(pSoldier, usGridNo, &ubDirection, &sAdjustedGridNo, TRUE, FALSE);
+      sActionGridNo = FindNextToAdjacentGridEx(pSoldier, usGridNo, &ubDirection, &sAdjustedGridNo,
+                                               TRUE, FALSE, mouse);
       if (sActionGridNo == -1) {
         sActionGridNo =
             FindAdjacentGridEx(pSoldier, usGridNo, &ubDirection, &sAdjustedGridNo, TRUE, FALSE);

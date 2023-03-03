@@ -353,7 +353,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   DebugValidateSoldierData();
 #endif
 
-  if (HandleAutoBandage()) {
+  if (HandleAutoBandage(gameInput->mouse)) {
 #ifndef VISIBLE_AUTO_BANDAGE
     return (GAME_SCREEN);
 #endif
@@ -518,7 +518,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
       UpdateBullets();
 
       // Execute Tactical Overhead
-      ExecuteOverhead();
+      ExecuteOverhead(gameInput->mouse);
     }
 
     // Handle animated cursors

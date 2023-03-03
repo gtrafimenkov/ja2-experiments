@@ -63,10 +63,6 @@
 
 // MODULE FOR EXPLOSIONS
 
-// Spreads the effects of explosions...
-BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16 usItem, UINT8 ubOwner,
-                  INT16 sSubsequent, BOOLEAN *pfMercHit, INT8 bLevel, INT32 iSmokeEffectID);
-
 extern INT8 gbSAMGraphicList[NUMBER_OF_SAMS];
 extern void AddToShouldBecomeHostileOrSayQuoteList(UINT8 ubID);
 extern void RecompileLocalMovementCostsForWall(INT16 sGridNo, UINT8 ubOrientation);
@@ -1097,8 +1093,10 @@ void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
   }
 }
 
-BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBombGridNo, INT16 sWoundAmt,
-                               INT16 sBreathAmt, UINT32 uiDist, UINT16 usItem, INT16 sSubsequent) {
+static BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBombGridNo,
+                                      INT16 sWoundAmt, INT16 sBreathAmt, UINT32 uiDist,
+                                      UINT16 usItem, INT16 sSubsequent,
+                                      const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 sNewWoundAmt = 0;
   UINT8 ubDirection;
@@ -1132,7 +1130,7 @@ BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBombGridNo,
 
   if (ubOwner != NOBODY && MercPtrs[ubOwner]->bTeam == gbPlayerNum &&
       pSoldier->bTeam != gbPlayerNum) {
-    ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION);
+    ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION, mouse);
   }
 
   return (TRUE);
@@ -1250,8 +1248,9 @@ BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive
   return (fRecompileMovementCosts);
 }
 
-BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16 usItem, UINT8 ubOwner,
-                  INT16 sSubsequent, BOOLEAN *pfMercHit, INT8 bLevel, INT32 iSmokeEffectID) {
+static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16 usItem,
+                         UINT8 ubOwner, INT16 sSubsequent, BOOLEAN *pfMercHit, INT8 bLevel,
+                         INT32 iSmokeEffectID, const struct MouseInput mouse) {
   INT16 sWoundAmt = 0, sBreathAmt = 0, sStructDmgAmt;
   UINT8 ubPerson;
   struct SOLDIERTYPE *pSoldier;
@@ -1425,7 +1424,7 @@ BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16 usItem
       // don't hurt anyone who is already dead & waiting to be removed
       if ((ubPerson = WhoIsThere2(sGridNo, bLevel)) != NOBODY) {
         DamageSoldierFromBlast(ubPerson, ubOwner, sBombGridNo, sWoundAmt, sBreathAmt, uiDist,
-                               usItem, sSubsequent);
+                               usItem, sSubsequent, mouse);
       }
 
       if (bLevel == 1) {
@@ -1435,11 +1434,11 @@ BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16 usItem
             if ((sBreathAmt / 2) > 20) {
               DamageSoldierFromBlast(
                   ubPerson, ubOwner, sBombGridNo, (INT16)Random((sWoundAmt / 2) - 20),
-                  (INT16)Random((sBreathAmt / 2) - 20), uiDist, usItem, sSubsequent);
+                  (INT16)Random((sBreathAmt / 2) - 20), uiDist, usItem, sSubsequent, mouse);
             } else {
               DamageSoldierFromBlast(ubPerson, ubOwner, sBombGridNo,
                                      (INT16)Random((sWoundAmt / 2) - 20), 1, uiDist, usItem,
-                                     sSubsequent);
+                                     sSubsequent, mouse);
             }
           }
         }
@@ -1784,7 +1783,7 @@ void GetRayStopInfo(UINT32 uiNewSpot, UINT8 ubDir, INT8 bLevel, BOOLEAN fSmokeEf
 }
 
 void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, BOOLEAN fSubsequent,
-                  INT8 bLevel, INT32 iSmokeEffectID) {
+                  INT8 bLevel, INT32 iSmokeEffectID, const struct MouseInput mouse) {
   INT32 uiNewSpot, uiTempSpot, uiBranchSpot, cnt, branchCnt;
   INT32 uiTempRange, ubBranchRange;
   UINT8 ubDir, ubBranchDir, ubKeepGoing;
@@ -1819,7 +1818,7 @@ void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, B
 
   // first, affect main spot
   if (ExpAffect(sGridNo, sGridNo, 0, usItem, ubOwner, fSubsequent, &fAnyMercHit, bLevel,
-                iSmokeEffectID)) {
+                iSmokeEffectID, mouse)) {
     fRecompileMovement = TRUE;
   }
 
@@ -1853,7 +1852,7 @@ void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, B
         // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("Explosion affects %d", uiNewSpot) );
         // ok, do what we do here...
         if (ExpAffect(sGridNo, (INT16)uiNewSpot, cnt / 2, usItem, ubOwner, fSubsequent,
-                      &fAnyMercHit, bLevel, iSmokeEffectID)) {
+                      &fAnyMercHit, bLevel, iSmokeEffectID, mouse)) {
           fRecompileMovement = TRUE;
         }
 
@@ -1887,7 +1886,7 @@ void SpreadEffect(INT16 sGridNo, UINT8 ubRadius, UINT16 usItem, UINT8 ubOwner, B
                 // ok, do what we do here
                 // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("Explosion affects %d", uiNewSpot) );
                 if (ExpAffect(sGridNo, (INT16)uiNewSpot, (INT16)((cnt + branchCnt) / 2), usItem,
-                              ubOwner, fSubsequent, &fAnyMercHit, bLevel, iSmokeEffectID)) {
+                              ubOwner, fSubsequent, &fAnyMercHit, bLevel, iSmokeEffectID, mouse)) {
                   fRecompileMovement = TRUE;
                 }
                 uiBranchSpot = uiNewSpot;

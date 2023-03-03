@@ -54,7 +54,7 @@ extern void UpdateEnemyUIBar(void);
 extern void DisplayHiddenTurnbased(struct SOLDIERTYPE *pActingSoldier);
 extern void AdjustNoAPToFinishMove(struct SOLDIERTYPE *pSoldier, BOOLEAN fSet);
 
-void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier);
+static void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse);
 void HandleAITacticalTraversal(struct SOLDIERTYPE *pSoldier);
 
 extern UINT8 gubElementsOnExplosionQueue;
@@ -73,7 +73,7 @@ UINT8 gubAICounter;
 // Very representing if this computer is the host, therefore controlling the ai
 extern BYTE gfAmIHost;
 
-//#define TESTAI
+// #define TESTAI
 
 INT8 GameOption[MAXGAMEOPTIONS] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0};
 
@@ -134,7 +134,7 @@ BOOLEAN InitAI(void) {
 
 BOOLEAN AimingGun(struct SOLDIERTYPE *pSoldier) { return (FALSE); }
 
-void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
+void HandleSoldierAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) {
   // ATE
   // Bail if we are engaged in a NPC conversation/ and/or sequence ... or we have a pause because
   // we just saw someone... or if there are bombs on the bomb queue
@@ -160,21 +160,6 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
       return;
     }
   }
-  /*
-  else
-  {
-          // AI is run on all PCs except the one who is selected
-          if (pSoldier->uiStatusFlags & SOLDIER_PC )
-          {
-                  // if this soldier is "selected" then only let user give orders!
-                  if ((pSoldier->ubID == gusSelectedSoldier) && !(gTacticalStatus.uiFlags &
-  DEMOMODE))
-                  {
-                          return;
-                  }
-          }
-  }
-  */
 
   // determine what sort of AI to use
   if ((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT)) {
@@ -218,8 +203,8 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
   } else if (!(pSoldier->fAIFlags &
                AI_HANDLE_EVERY_FRAME))  // if set to handle every frame, ignore delay!
   {
-    //#ifndef AI_PROFILING
-    // Time to handle guys in realtime (either combat or not )
+    // #ifndef AI_PROFILING
+    //  Time to handle guys in realtime (either combat or not )
     if (!TIMECOUNTERDONE(pSoldier->AICounter, pSoldier->uiAIDelay)) {
       // CAMFIELD, LOOK HERE!
       return;
@@ -229,7 +214,7 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
       // DebugMsg( TOPIC_JA2, DBG_LEVEL_0, String( "%s waiting %d from %d", pSoldier->name,
       // pSoldier->AICounter, uiCurrTime ) );
     }
-    //#endif
+    // #endif
   }
 
   if (pSoldier->fAIFlags & AI_HANDLE_EVERY_FRAME)  // if set to handle every frame, ignore delay!
@@ -455,7 +440,7 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
         // well that move must have been cancelled because we're thinking now!
         // pSoldier->fNoAPToFinishMove = FALSE;
       }
-      TurnBasedHandleNPCAI(pSoldier);
+      TurnBasedHandleNPCAI(pSoldier, mouse);
     } else {
       RTHandleAI(pSoldier);
     }
@@ -1343,103 +1328,7 @@ void MarkDetectableMines(struct SOLDIERTYPE *pSoldier)
 
 */
 
-void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier) {
-  /*
-   if (Status.gamePaused)
-    {
-  #ifdef DEBUGBUSY
-     DebugAI("HandleManAI - Skipping %d, the game is paused\n",pSoldier->ubID);
-  #endif
-
-     return;
-    }
-  //
-
-   // If man is inactive/at base/dead/unconscious
-   if (!pSoldier->bActive || !pSoldier->bInSector || (pSoldier->bLife < OKLIFE))
-    {
-  #ifdef DEBUGDECISIONS
-     AINumMessage("HandleManAI - Unavailable man, skipping guy#",pSoldier->ubID);
-  #endif
-
-     NPCDoesNothing(pSoldier);
-     return;
-    }
-
-   if (PTR_CIVILIAN && pSoldier->service &&
-       (pSoldier->bNeutral || MedicsMissionIsEscort(pSoldier)))
-    {
-  #ifdef DEBUGDECISIONS
-     AINumMessage("HandleManAI - Civilian is being serviced, skipping guy#",pSoldier->ubID);
-  #endif
-
-     NPCDoesNothing(pSoldier);
-     return;
-    }
-  */
-
-  /*
-  anim = pSoldier->anitype[pSoldier->anim];
-
-  // If man is down on the ground
-  if (anim < BREATHING)
-   {
-    // if he lacks the breath, or APs to get up this turn (life checked above)
-    // OR... (new June 13/96 Ian) he's getting first aid...
-    if ((pSoldier->bBreath < OKBREATH) || (pSoldier->bActionPoints < (AP_GET_UP + AP_ROLL_OVER))
-        || pSoldier->service)
-     {
- #ifdef RECORDNET
-      fprintf(NetDebugFile,"\tAI: %d can't get up (breath %d, AP %d), ending his turn\n",
-                 pSoldier->ubID,pSoldier->bBreath,pSoldier->bActionPoints);
- #endif
- #ifdef DEBUGDECISIONS
-      AINumMessage("HandleManAI - CAN'T GET UP, skipping guy #",pSoldier->ubID);
- #endif
-
-      NPCDoesNothing(pSoldier);
-      return;
-     }
-    else
-     {
-      // wait until he gets up first, only then worry about deciding his AI
-
- #ifdef RECORDNET
-      fprintf(NetDebugFile,"\tAI: waiting for %d to GET UP (breath %d, AP %d)\n",
-                 pSoldier->ubID,pSoldier->bBreath,pSoldier->bActionPoints);
- #endif
-
- #ifdef DEBUGBUSY
-      AINumMessage("HandleManAI - About to get up, skipping guy#",pSoldier->ubID);
- #endif
-
-      return;
-     }
-   }
-
-
-  // if NPC's has been forced to stop by an opponent's interrupt or similar
-  if (pSoldier->forcedToStop)
-   {
- #ifdef DEBUGBUSY
-    AINumMessage("HandleManAI - Forced to stop, skipping guy #",pSoldier->ubID);
- #endif
-
-    return;
-   }
-
-  // if we are still in the midst in an uninterruptable animation
-  if (!AnimControl[anim].interruptable)
-   {
- #ifdef DEBUGBUSY
-    AINumMessage("HandleManAI - uninterruptable animation, skipping guy #",pSoldier->ubID);
- #endif
-
-    return;      // wait a while, let the animation finish first
-   }
-
- */
-
+void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) {
   // yikes, this shouldn't occur! we should be trying to finish our move!
   // pSoldier->fNoAPToFinishMove = FALSE;
 
@@ -1447,21 +1336,6 @@ void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bStopped) {
     // if active team is waiting for oppChanceToDecide, that means we have NOT
     // had a chance to go through NewSelectedNPC(), so do the refresh here
-    /*
-    ???
-    if (gTacticalStatus.team[Net.turnActive].allowOppChanceToDecide)
-    {
-            // if mines are still marked (this could happen if we also control the
-            // active team that's potentially BEING interrupted), unmark them
-            //RestoreMarkedMines();
-
-            RefreshAI(pSoldier);
-    }
-    else
-    {
-            DecideAlertStatus(pSoldier);
-    }
-    */
   }
 
   if ((pSoldier->bAction != AI_ACTION_NONE) && pSoldier->bActionInProgress) {
@@ -1571,19 +1445,6 @@ void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier) {
       return;
     }
 
-    /*
-    // if we somehow just caused an uninterruptable animation to occur
-    // This is mainly to finish a weapon_AWAY anim that preceeds a TOSS attack
-    if (!AnimControl[ pSoldier->anitype[pSoldier->anim] ].interruptable)
-     {
-   #ifdef DEBUGBUSY
-      DebugAI( String( "Uninterruptable animation %d, skipping guy
-   %d",pSoldier->anitype[pSoldier->anim],pSoldier->ubID ) ); #endif
-
-      return;      // wait a while, let the animation finish first
-     }
-           */
-
     // to get here, we MUST have an action selected, but not in progress...
 
     // see if we can afford to do this action
@@ -1591,7 +1452,7 @@ void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier) {
       NPCDoesAct(pSoldier);
 
       // perform the chosen action
-      pSoldier->bActionInProgress = ExecuteAction(pSoldier);  // if started, mark us as busy
+      pSoldier->bActionInProgress = ExecuteAction(pSoldier, mouse);  // if started, mark us as busy
 
       if (!pSoldier->bActionInProgress && pSoldier->sAbsoluteFinalDestination != NOWHERE) {
         // turn based... abort this guy's turn
@@ -1671,7 +1532,7 @@ void AIDecideRadioAnimation(struct SOLDIERTYPE *pSoldier) {
   }
 }
 
-INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
+INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) {
   INT32 iRetCode;
   // NumMessage("ExecuteAction - Guy#",pSoldier->ubID);
 
@@ -1726,30 +1587,6 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
       SendSoldierSetDesiredDirectionEvent(pSoldier, pSoldier->usActionData);
       // now we'll have to wait for the turning to finish; no need to call TurnSoldier here
       // TurnSoldier( pSoldier );
-      /*
-                              if (!StartTurn(pSoldier,pSoldier->usActionData,FASTTURN))
-                              {
-      #ifdef BETAVERSION
-                                      sprintf(tempstr,"ERROR: %s tried TURN to direction %d,
-      StartTurn failed, action %d CANCELED",
-                                                      pSoldier->name,pSoldier->usActionData,pSoldier->bAction);
-                                      PopMessage(tempstr);
-      #endif
-
-                                      // ZAP NPC's remaining action points so this isn't likely to
-      repeat pSoldier->bActionPoints = 0;
-
-                                      CancelAIAction(pSoldier,FORCE);
-                                      return(FALSE);         // nothing is in progress
-                              }
-                              else
-                              {
-      #ifdef RECORDNET
-                                      fprintf(NetDebugFile,"\tAI decides to turn guynum %d to dir
-      %d\n",pSoldier->ubID,pSoldier->usActionData); #endif
-                                      NetLookTowardsDir(pSoldier,pSoldier->usActionData);
-                              }
-                              */
       break;
 
     case AI_ACTION_PICKUP_ITEM:  // grab something!
@@ -1767,7 +1604,7 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
         // change action to climb now and try that.
         pSoldier->bAction = AI_ACTION_CLIMB_ROOF;
         if (IsActionAffordable(pSoldier)) {
-          return (ExecuteAction(pSoldier));
+          return (ExecuteAction(pSoldier, mouse));
         } else {
           // no action started
           return (FALSE);
@@ -1996,7 +1833,7 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
       }
 #endif
       iRetCode = HandleItem(pSoldier, pSoldier->usActionData, pSoldier->bTargetLevel,
-                            pSoldier->inv[HANDPOS].usItem, FALSE);
+                            pSoldier->inv[HANDPOS].usItem, FALSE, mouse);
       if (iRetCode != ITEM_HANDLE_OK) {
         if (iRetCode !=
             ITEM_HANDLE_BROKEN)  // if the item broke, this is 'legal' and doesn't need reporting
@@ -2129,8 +1966,8 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
 
     case AI_ACTION_GIVE_AID:  // help injured/dying friend
       // pSoldier->usUIMovementMode = RUNNING;
-      iRetCode =
-          HandleItem(pSoldier, pSoldier->usActionData, 0, pSoldier->inv[HANDPOS].usItem, FALSE);
+      iRetCode = HandleItem(pSoldier, pSoldier->usActionData, 0, pSoldier->inv[HANDPOS].usItem,
+                            FALSE, mouse);
       if (iRetCode != ITEM_HANDLE_OK) {
 #ifdef JA2BETAVERSION
         ScreenMsg(

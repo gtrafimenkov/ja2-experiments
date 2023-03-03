@@ -48,7 +48,7 @@
 
 #define CORPSE_INDEX_OFFSET 10000
 
-//#define		DELAY_UNTIL_ROTTING		( 1 * NUM_SEC_IN_DAY )
+// #define		DELAY_UNTIL_ROTTING		( 1 * NUM_SEC_IN_DAY )
 #define DELAY_UNTIL_ROTTING (1 * NUM_SEC_IN_DAY / 60)
 #define DELAY_UNTIL_DONE_ROTTING (3 * NUM_SEC_IN_DAY / 60)
 
@@ -1267,7 +1267,7 @@ void CorpseHit(INT16 sGridNo, UINT16 usStructureID) {
 #endif
 }
 
-void VaporizeCorpse(INT16 sGridNo, UINT16 usStructureID) {
+void VaporizeCorpse(INT16 sGridNo, UINT16 usStructureID, const struct MouseInput mouse) {
   struct STRUCTURE *pStructure, *pBaseStructure;
   ROTTING_CORPSE *pCorpse = NULL;
   INT16 sBaseGridNo;
@@ -1317,7 +1317,7 @@ void VaporizeCorpse(INT16 sGridNo, UINT16 usStructureID) {
 
     if (pCorpse->def.bLevel == 0) {
       // Set some blood......
-      SpreadEffect(sBaseGridNo, (UINT8)((2)), 0, NOBODY, BLOOD_SPREAD_EFFECT, 0, -1);
+      SpreadEffect(sBaseGridNo, (UINT8)((2)), 0, NOBODY, BLOOD_SPREAD_EFFECT, 0, -1, mouse);
     }
   }
 

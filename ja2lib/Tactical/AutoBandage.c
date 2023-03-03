@@ -207,7 +207,7 @@ void ShouldBeginAutoBandage() {
   }
 }
 
-BOOLEAN HandleAutoBandage() {
+BOOLEAN HandleAutoBandage(const struct MouseInput mouse) {
   InputAtom InputEvent;
 
   if (gTacticalStatus.fAutoBandageMode) {
@@ -236,7 +236,7 @@ BOOLEAN HandleAutoBandage() {
     }
 
     // Execute Tactical Overhead
-    ExecuteOverhead();
+    ExecuteOverhead(mouse);
 
     // Deque all game events
     DequeAllGameEvents(TRUE);

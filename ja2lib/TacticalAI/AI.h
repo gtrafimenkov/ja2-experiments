@@ -1,6 +1,7 @@
 #ifndef __AI_H
 #define __AI_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "TileEngine/WorldDef.h"
 
@@ -164,7 +165,7 @@ INT16 DistanceToClosestFriend(struct SOLDIERTYPE *pSoldier);
 void EndAIDeadlock(void);
 void EndAIGuysTurn(struct SOLDIERTYPE *pSoldier);
 
-INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier);
+INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse);
 
 INT16 FindAdjacentSpotBeside(struct SOLDIERTYPE *pSoldier, INT16 sGridno);
 INT16 FindBestNearbyCover(struct SOLDIERTYPE *pSoldier, INT32 morale, INT32 *pPercentBetter);
@@ -196,7 +197,7 @@ void FreeUpNPCFromRoofClimb(struct SOLDIERTYPE *pSoldier);
 UINT8 GetClosestOpponent(struct SOLDIERTYPE *pSoldier);
 UINT8 GetMostThreateningOpponent(struct SOLDIERTYPE *pSoldier);
 
-void HandleSoldierAI(struct SOLDIERTYPE *pSoldier);
+void HandleSoldierAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse);
 void HandleInitialRedAlert(INT8 bTeam, UINT8 ubCommunicate);
 
 void InitPanicSystem();

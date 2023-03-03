@@ -688,7 +688,7 @@ FLOAT gdRadiansForAngle[] = {
 
 };
 
-BOOLEAN ExecuteOverhead() {
+BOOLEAN ExecuteOverhead(const struct MouseInput mouse) {
   UINT32 cnt;
   struct SOLDIERTYPE *pSoldier;
   INT16 sAPCost;
@@ -1345,7 +1345,7 @@ BOOLEAN ExecuteOverhead() {
             (((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT)) ||
              (fHandleAI && guiAISlotToHandle == cnt) ||
              (pSoldier->fAIFlags & AI_HANDLE_EVERY_FRAME) || gTacticalStatus.fAutoBandageMode)) {
-          HandleSoldierAI(pSoldier);
+          HandleSoldierAI(pSoldier, mouse);
           if (!((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT))) {
             if (GetJA2Clock() - iTimerVal > RT_AI_TIMESLICE) {
               // don't do any more AI this time!
@@ -1368,7 +1368,7 @@ BOOLEAN ExecuteOverhead() {
         // the ONLY thing to do with away soldiers is process their schedule if they have one
         // and there is an action for them to do (like go on-sector)
         if (pSoldier->fAIFlags & AI_CHECK_SCHEDULE) {
-          HandleSoldierAI(pSoldier);
+          HandleSoldierAI(pSoldier, mouse);
         }
       }
     }
@@ -3896,7 +3896,7 @@ INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pub
   }
 
   if (fForceToPerson) {
-    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO)) {
+    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
       sGridNo = MercPtrs[usSoldierIndex]->sGridNo;
       if (psAdjustedGridNo != NULL) {
         *psAdjustedGridNo = sGridNo;
@@ -4056,7 +4056,8 @@ INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pub
 }
 
 INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
-                               INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor) {
+                               INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor,
+                               const struct MouseInput mouse) {
   // This function works in a similar way as FindAdjacentGridEx, but looks for a location 2 tiles
   // away
 
@@ -4099,7 +4100,7 @@ INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
   }
 
   if (fForceToPerson) {
-    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO)) {
+    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO, mouse)) {
       sGridNo = MercPtrs[usSoldierIndex]->sGridNo;
       if (psAdjustedGridNo != NULL) {
         *psAdjustedGridNo = sGridNo;
@@ -5933,7 +5934,7 @@ void HandleSuppressionFire(UINT8 ubTargetedMerc, UINT8 ubCausedAttacker) {
 }
 
 BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE **ppTarget,
-                                      INT8 bReason) {
+                                      INT8 bReason, const struct MouseInput mouse) {
   INT16 sTargetXPos, sTargetYPos;
   BOOLEAN fEnterCombat = TRUE;
   struct SOLDIERTYPE *pTarget = *ppTarget;
@@ -6055,7 +6056,7 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
 
           // Fire back!
           HandleItem(pTarget, pSoldier->sGridNo, pSoldier->bLevel, pTarget->inv[HANDPOS].usItem,
-                     FALSE);
+                     FALSE, mouse);
         }
       }
 
@@ -6172,7 +6173,8 @@ struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByA
       // stuff that only applies to when we attack
       if (pTarget->ubBodyType != CROW) {
         if (pSoldier->bTeam == gbPlayerNum) {
-          fEnterCombat = ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK);
+          fEnterCombat =
+              ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK, mouse);
           if (!fEnterCombat) {
             DebugMsg(TOPIC_JA2, DBG_LEVEL_3, ">>Not entering combat as a result of PC attack");
           }

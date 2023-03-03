@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Tactical/OverheadTypes.h"
 #include "Tactical/SoldierFind.h"
@@ -199,7 +200,7 @@ extern BOOLEAN IsLocationSittable(INT32 iMapIndex, BOOLEAN fOnRoof);
 extern BOOLEAN IsLocationSittableExcludingPeople(INT32 iMapIndex, BOOLEAN fOnRoof);
 extern BOOLEAN FlatRoofAboveGridNo(INT32 iMapIndex);
 
-BOOLEAN ExecuteOverhead();
+BOOLEAN ExecuteOverhead(const struct MouseInput mouse);
 BOOLEAN ResetAllAnimationCache();
 
 void EndTurn(UINT8 ubNextTeam);
@@ -237,7 +238,8 @@ BOOLEAN UIOKMoveDestination(struct SOLDIERTYPE *pSoldier, UINT16 usMapPos);
 INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
                          INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor);
 INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
-                               INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor);
+                               INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor,
+                               const struct MouseInput mouse);
 
 void SelectNextAvailSoldier(struct SOLDIERTYPE *pSoldier);
 BOOLEAN TeamMemberNear(INT8 bTeam, INT16 sGridNo, INT32 iRange);
@@ -300,7 +302,7 @@ void MakeCivHostile(struct SOLDIERTYPE *pSoldier, INT8 bNewSide);
 #define REASON_EXPLOSION 2
 
 BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE **ppTarget,
-                                      INT8 bReason);
+                                      INT8 bReason, const struct MouseInput mouse);
 
 INT16 FindAdjacentPunchTarget(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTargetSoldier,
                               INT16 *psAdjustedTargetGridNo, UINT8 *pubDirection);

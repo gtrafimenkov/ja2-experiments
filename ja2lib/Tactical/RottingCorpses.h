@@ -1,6 +1,7 @@
 #ifndef _ROTTING_CORPSES_H
 #define _ROTTING_CORPSES_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Tactical/SoldierControl.h"
 #include "TileEngine/TileAnimation.h"
@@ -150,7 +151,7 @@ INT16 FindNearestAvailableGridNoForCorpse(ROTTING_CORPSE_DEFINITION *pCorpseDef,
 void HandleRottingCorpses();
 void AddCrowToCorpse(ROTTING_CORPSE *pCorpse);
 
-void VaporizeCorpse(INT16 sGridNo, UINT16 usStructureID);
+void VaporizeCorpse(INT16 sGridNo, UINT16 usStructureID, const struct MouseInput mouse);
 void CorpseHit(INT16 sGridNo, UINT16 usStructureID);
 
 void HandleCrowLeave(struct SOLDIERTYPE *pSoldier);
