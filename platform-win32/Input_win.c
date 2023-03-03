@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <windows.h>
 
+#include "GameInputInternal.h"
 #include "Local.h"
 #include "Point.h"
 #include "Rect.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
-#include "SGP/InputMousePos.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
 #include "SGP/Video.h"
@@ -57,8 +57,6 @@ UINT32 guiRightButtonRepeatTimer;
 BOOLEAN gfTrackMousePos;     // TRUE = queue mouse movement events, FALSE = don't
 BOOLEAN gfLeftButtonState;   // TRUE = Pressed, FALSE = Not Pressed
 BOOLEAN gfRightButtonState;  // TRUE = Pressed, FALSE = Not Pressed
-UINT16 mouse.x;              // X position of the mouse on screen
-UINT16 mouse.y;              // y position of the mouse on screen
 
 // The queue structures are used to track input events using queued events
 
@@ -116,11 +114,11 @@ LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
 
   switch (wParam) {
     case WM_LBUTTONDOWN:  // Update the current mouse position
-      mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
-      mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
-      uiParam = mouse.y;
+      g_gameInput.mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
+      g_gameInput.mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
+      uiParam = g_gameInput.mouse.y;
       uiParam = uiParam << 16;
-      uiParam = uiParam | mouse.x;
+      uiParam = uiParam | g_gameInput.mouse.x;
       // Update the button state
       gfLeftButtonState = TRUE;
       // Set that we have input
@@ -129,11 +127,11 @@ LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
       QueueEvent(LEFT_BUTTON_DOWN, 0, uiParam);
       break;
     case WM_LBUTTONUP:  // Update the current mouse position
-      mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
-      mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
-      uiParam = mouse.y;
+      g_gameInput.mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
+      g_gameInput.mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
+      uiParam = g_gameInput.mouse.y;
       uiParam = uiParam << 16;
-      uiParam = uiParam | mouse.x;
+      uiParam = uiParam | g_gameInput.mouse.x;
       // Update the button state
       gfLeftButtonState = FALSE;
       // Set that we have input
@@ -142,11 +140,11 @@ LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
       QueueEvent(LEFT_BUTTON_UP, 0, uiParam);
       break;
     case WM_RBUTTONDOWN:  // Update the current mouse position
-      mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
-      mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
-      uiParam = mouse.y;
+      g_gameInput.mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
+      g_gameInput.mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
+      uiParam = g_gameInput.mouse.y;
       uiParam = uiParam << 16;
-      uiParam = uiParam | mouse.x;
+      uiParam = uiParam | g_gameInput.mouse.x;
       // Update the button state
       gfRightButtonState = TRUE;
       // Set that we have input
@@ -155,11 +153,11 @@ LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
       QueueEvent(RIGHT_BUTTON_DOWN, 0, uiParam);
       break;
     case WM_RBUTTONUP:  // Update the current mouse position
-      mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
-      mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
-      uiParam = mouse.y;
+      g_gameInput.mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
+      g_gameInput.mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
+      uiParam = g_gameInput.mouse.y;
       uiParam = uiParam << 16;
-      uiParam = uiParam | mouse.x;
+      uiParam = uiParam | g_gameInput.mouse.x;
       // Update the button state
       gfRightButtonState = FALSE;
       // Set that we have input
@@ -168,11 +166,11 @@ LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
       QueueEvent(RIGHT_BUTTON_UP, 0, uiParam);
       break;
     case WM_MOUSEMOVE:  // Update the current mouse position
-      mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
-      mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
-      uiParam = mouse.y;
+      g_gameInput.mouse.x = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).x;
+      g_gameInput.mouse.y = (UINT16)(((MOUSEHOOKSTRUCT *)lParam)->pt).y;
+      uiParam = g_gameInput.mouse.y;
       uiParam = uiParam << 16;
-      uiParam = uiParam | mouse.x;
+      uiParam = uiParam | g_gameInput.mouse.x;
       // Trigger an input event
       if (gfTrackMousePos == TRUE) {
         QueueEvent(MOUSE_POS, 0, uiParam);
@@ -211,8 +209,8 @@ BOOLEAN InitializeInputManager(void) {
   guiLeftButtonRepeatTimer = 0;
   guiRightButtonRepeatTimer = 0;
   // Set the mouse to the center of the screen
-  mouse.x = 320;
-  mouse.y = 240;
+  g_gameInput.mouse.x = 320;
+  g_gameInput.mouse.y = 240;
   // Initialize the string input mechanism
   gfCurrentStringInputState = FALSE;
   gpCurrentStringDescriptor = NULL;

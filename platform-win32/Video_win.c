@@ -1157,7 +1157,7 @@ void ScrollJA2Background(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScr
     for (cnt = 0; cnt < usNumStrips; cnt++) {
       RenderStaticWorldRect((INT16)StripRegions[cnt].left, (INT16)StripRegions[cnt].top,
                             (INT16)StripRegions[cnt].right, (INT16)StripRegions[cnt].bottom, TRUE,
-                            mouse);
+                            XXX_GetMouseInput());
       do {
         ReturnCode = IDirectDrawSurface2_SGPBltFast(
             pDest, StripRegions[cnt].left, StripRegions[cnt].top, gpFrameBuffer,

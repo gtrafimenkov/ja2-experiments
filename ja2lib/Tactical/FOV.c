@@ -366,7 +366,7 @@ void RevealRoofsAndItems(struct SOLDIERTYPE *pSoldier, UINT32 itemsToo, BOOLEAN 
       memset(gubFOVDebugInfoInfo, 0, sizeof(gubFOVDebugInfoInfo));
 
       SetRenderFlags(RENDER_FLAG_FULL);
-      RenderWorld(mouse);
+      RenderWorld(XXX_GetMouseInput());
     }
 #endif
 

@@ -43,6 +43,7 @@
     <ClCompile Include="Editor\SmoothingUtils.c" />
     <ClCompile Include="FadeScreen.c" />
     <ClCompile Include="GameInitOptionsScreen.c" />
+    <ClCompile Include="GameInput.c" />
     <ClCompile Include="GameLoop.c" />
     <ClCompile Include="GameScreen.c" />
     <ClCompile Include="GameSettings.c" />

@@ -1672,7 +1672,7 @@ INT32 FindBestPath(struct SOLDIERTYPE *s, INT16 sDestination, INT8 ubLevel, INT1
   if (gfDisplayCoverValues && gfDrawPathPoints) {
     SetRenderFlags(RENDER_FLAG_FULL);
     if (guiCurrentScreen == GAME_SCREEN) {
-      RenderWorld(mouse);
+      RenderWorld(XXX_GetMouseInput());
       // RenderCoverDebug( );
       InvalidateScreen();
       EndFrameBufferRender();
@@ -1725,7 +1725,7 @@ INT32 FindBestPath(struct SOLDIERTYPE *s, INT16 sDestination, INT8 ubLevel, INT1
 #if defined(PATHAI_VISIBLE_DEBUG)
     if (gfDisplayCoverValues && gfDrawPathPoints) {
       SetRenderFlags(RENDER_FLAG_FULL);
-      RenderWorld(mouse);
+      RenderWorld(XXX_GetMouseInput());
       // RenderCoverDebug( );
       InvalidateScreen();
       EndFrameBufferRender();

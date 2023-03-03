@@ -115,8 +115,6 @@ BOOLEAN Plat_FileEntityExists(const char *path) { return FALSE; }
 BOOLEAN gfKeyState[256];
 BOOLEAN gfLeftButtonState;
 BOOLEAN gfRightButtonState;
-UINT16 mouse.x;
-UINT16 mouse.y;
 
 BOOLEAN gfSGPInputReceived = FALSE;
 
