@@ -89,7 +89,8 @@ void BtnBrushCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnObject1Callback(GUI_BUTTON *btn, INT32 reason);
 void BtnObject2Callback(GUI_BUTTON *btn, INT32 reason);
 void BtnFillCallback(GUI_BUTTON *btn, INT32 reason);
-void TerrainTileButtonRegionCallback(struct MOUSE_REGION *reg, INT32 reason);
+void TerrainTileButtonRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                     const struct MouseInput mouse);
 // Items Tab Callbacks
 void ItemsWeaponsCallback(GUI_BUTTON *btn, INT32 reason);
 void ItemsAmmoCallback(GUI_BUTTON *btn, INT32 reason);

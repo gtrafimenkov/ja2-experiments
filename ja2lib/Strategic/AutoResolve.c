@@ -266,8 +266,10 @@ void FinishButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void RetreatButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void BandageButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void DoneButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason);
-void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason);
+void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason,
+                               const struct MouseInput mouse);
+void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                const struct MouseInput mouse);
 
 void DetermineBandageButtonState();
 
@@ -2288,7 +2290,8 @@ void DoneButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason,
+                               const struct MouseInput mouse) {
   // Find the merc with the same region.
   INT32 i;
   SOLDIERCELL *pCell = NULL;
@@ -2315,7 +2318,8 @@ void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
   }
 }
 
-void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // Find the merc with the same region.
     INT32 i;

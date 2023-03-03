@@ -36,6 +36,8 @@
 #include "Utils/Text.h"
 #include "Utils/WordWrap.h"
 
+static void KillTacticalPlacementGUI(const struct MouseInput mouse);
+
 typedef struct MERCPLACEMENT {
   struct SOLDIERTYPE *pSoldier;
   UINT32 uiVObjectID;
@@ -81,8 +83,8 @@ void DoneOverheadPlacementClickCallback(GUI_BUTTON *btn, INT32 reason);
 void SpreadPlacementsCallback(GUI_BUTTON *btn, INT32 reason);
 void GroupPlacementsCallback(GUI_BUTTON *btn, INT32 reason);
 void ClearPlacementsCallback(GUI_BUTTON *btn, INT32 reason);
-void MercMoveCallback(struct MOUSE_REGION *reg, INT32 reason);
-void MercClickCallback(struct MOUSE_REGION *reg, INT32 reason);
+void MercMoveCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
+void MercClickCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
 void PlaceMercs();
 void FastHelpRemovedCallback();
 void FastHelpRemoved2Callback();
@@ -353,7 +355,7 @@ void InitTacticalPlacementGUI() {
   }
 }
 
-void RenderTacticalPlacementGUI() {
+static void RenderTacticalPlacementGUI(const struct MouseInput mouse) {
   INT32 i, xp, yp, width;
   INT32 iStartY;
   struct SOLDIERTYPE *pSoldier;
@@ -541,12 +543,12 @@ void EnsureDoneButtonStatus() {
   }
 }
 
-void TacticalPlacementHandle() {
+void TacticalPlacementHandle(const struct MouseInput mouse) {
   InputAtom InputEvent;
 
   EnsureDoneButtonStatus();
 
-  RenderTacticalPlacementGUI();
+  RenderTacticalPlacementGUI(mouse);
 
   if (gfRightButtonState) {
     gbSelectedMercID = -1;
@@ -559,12 +561,12 @@ void TacticalPlacementHandle() {
       switch (InputEvent.usParam) {
 #ifdef JA2TESTVERSION
         case ESC:
-          KillTacticalPlacementGUI();
+          KillTacticalPlacementGUI(mouse);
           break;
 #endif
         case ENTER:
           if (ButtonList[iTPButtons[DONE_BUTTON]]->uiFlags & BUTTON_ENABLED) {
-            KillTacticalPlacementGUI();
+            KillTacticalPlacementGUI(mouse);
           }
           break;
         case 'c':
@@ -620,13 +622,13 @@ void TacticalPlacementHandle() {
     SetCurrentCursorFromDatabase(CURSOR_NORMAL);
   }
   if (gfKillTacticalGUI == 1) {
-    KillTacticalPlacementGUI();
+    KillTacticalPlacementGUI(mouse);
   } else if (gfKillTacticalGUI == 2) {
     gfKillTacticalGUI = 1;
   }
 }
 
-void KillTacticalPlacementGUI() {
+static void KillTacticalPlacementGUI(const struct MouseInput mouse) {
   INT32 i;
 
   gbHilightedMercID = -1;
@@ -771,7 +773,7 @@ void ClearPlacementsCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void MercMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MercMoveCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse) {
   if (reg->uiFlags & MSYS_MOUSE_IN_AREA) {
     INT8 i;
     for (i = 0; i < giPlacements; i++) {
@@ -789,7 +791,7 @@ void MercMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
   }
 }
 
-void MercClickCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MercClickCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     INT8 i;
     for (i = 0; i < giPlacements; i++) {
@@ -846,7 +848,8 @@ void SelectNextUnplacedUnit() {
   }
 }
 
-void HandleTacticalPlacementClicksInOverheadMap(struct MOUSE_REGION *reg, INT32 reason) {
+void HandleTacticalPlacementClicksInOverheadMap(struct MOUSE_REGION *reg, INT32 reason,
+                                                const struct MouseInput mouse) {
   INT32 i;
   INT16 sGridNo;
   BOOLEAN fInvalidArea = FALSE;

@@ -132,7 +132,6 @@ void ResetLayerOptimizing(void);
 void ResetSpecificLayerOptimizing(UINT32 uiRowFlag);
 
 // Routines of RenderWorld
-extern void RenderStaticWorld();
 void CopyRenderBuffer();
 
 void SetRenderFlags(UINT32 uiFlags);
@@ -161,7 +160,6 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClip(UINT16 *pBuffer, UINT32 uiDestPitc
                                               UINT16 usIndex, SGPRect *clipregion);
 
 void RenderStaticWorldRect(INT16, INT16, INT16, INT16, BOOLEAN, const struct MouseInput mouse);
-void RenderMarkedWorld(void);
 void RenderDynamicMercWorld(void);
 
 void ExamineZBufferRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom);

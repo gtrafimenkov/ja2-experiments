@@ -24,8 +24,10 @@ STR16 szClipboard;
 BOOLEAN gfNoScroll = FALSE;
 
 // The internal callback functions assigned to each text field.
-void MouseClickedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason);
-void MouseMovedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason);
+void MouseClickedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                      const struct MouseInput mouse);
+void MouseMovedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                    const struct MouseInput mouse);
 
 // Internal string manipulation functions.
 void AddChar(UINT32 uiKey);
@@ -930,7 +932,8 @@ void RemoveChar(UINT8 ubArrayIndex) {
 }
 
 // Internally used to continue highlighting text
-void MouseMovedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MouseMovedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                    const struct MouseInput mouse) {
   TEXTINPUTNODE *curr;
   if (gfLeftButtonState) {
     if (reason & MSYS_CALLBACK_REASON_MOVE || reason & MSYS_CALLBACK_REASON_LOST_MOUSE ||
@@ -980,7 +983,8 @@ void MouseMovedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason) {
 }
 
 // Internally used to calculate where to place the cursor.
-void MouseClickedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MouseClickedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                      const struct MouseInput mouse) {
   TEXTINPUTNODE *curr;
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     INT32 iClickX, iCurrCharPos, iNextCharPos;

@@ -364,7 +364,7 @@ void HandleOverheadMap(const struct MouseInput mouse) {
   if (!gfEditMode) {
     // CHECK FOR UI
     if (gfTacticalPlacementGUIActive) {
-      TacticalPlacementHandle();
+      TacticalPlacementHandle(mouse);
       if (!gfTacticalPlacementGUIActive) {
         return;
       }
@@ -1114,7 +1114,7 @@ void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
   INT16 sWorldScreenX, sWorldScreenY;
 
   if (gfTacticalPlacementGUIActive) {
-    HandleTacticalPlacementClicksInOverheadMap(reg, reason);
+    HandleTacticalPlacementClicksInOverheadMap(reg, reason, mouse);
     return;
   }
 

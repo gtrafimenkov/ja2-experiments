@@ -108,8 +108,8 @@ void SummaryToggleAlternateCallback(GUI_BUTTON *btn, INT32 reason);
 void SummarySciFiCallback(GUI_BUTTON *btn, INT32 reason);
 void SummaryRealCallback(GUI_BUTTON *btn, INT32 reason);
 void SummaryEnemyCallback(GUI_BUTTON *btn, INT32 reason);
-void MapMoveCallback(struct MOUSE_REGION *reg, INT32 reason);
-void MapClickCallback(struct MOUSE_REGION *reg, INT32 reason);
+void MapMoveCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
+void MapClickCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
 
 // Set if there is an existing global summary.  The first time this is run on your computer, it
 // will not exist, and will have to be generated before this will be set.
@@ -1750,7 +1750,7 @@ void CreateGlobalSummary() {
   DebugPrint("GlobalSummary Information generated successfully.\n");
 }
 
-void MapMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MapMoveCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse) {
   static INT16 gsPrevX = 0, gsPrevY = 0;
   // calc current sector highlighted.
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -1768,7 +1768,7 @@ void MapMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
   }
 }
 
-void MapClickCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MapClickCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse) {
   static INT16 sLastX = -1, sLastY = -1;
   static INT32 iLastClickTime = 0;
   // calc current sector selected.

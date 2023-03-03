@@ -50,6 +50,9 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
+static void RenderStaticWorld(const struct MouseInput mouse);
+static void RenderMarkedWorld(const struct MouseInput mouse);
+
 static void RenderDynamicWorld(const struct MouseInput mouse);
 
 static BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY,
@@ -713,7 +716,7 @@ static void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY
   if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
-    if (ShouldCheckForMouseDetections()) {
+    if (ShouldCheckForMouseDetections(mouse)) {
       BeginCurInteractiveTileCheck(gubIntTileCheckFlags);
       fCheckForMouseDetections = TRUE;
 
@@ -2186,21 +2189,21 @@ void RenderWorld(const struct MouseInput mouse) {
     fInterfacePanelDirty = DIRTYLEVEL2;
 
     // Apply scrolling sets some world variables
-    ApplyScrolling(gsRenderCenterX, gsRenderCenterY, TRUE, FALSE);
+    ApplyScrolling(gsRenderCenterX, gsRenderCenterY, TRUE, FALSE, mouse);
     ResetLayerOptimizing();
 
     if ((gRenderFlags & RENDER_FLAG_NOZ)) {
       RenderStaticWorldRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
                             gsVIEWPORT_END_Y, FALSE, mouse);
     } else {
-      RenderStaticWorld();
+      RenderStaticWorld(mouse);
     }
 
     if (!(gRenderFlags & RENDER_FLAG_SAVEOFF)) UpdateSaveBuffer();
 
   } else if (gRenderFlags & RENDER_FLAG_MARKED) {
     ResetLayerOptimizing();
-    RenderMarkedWorld();
+    RenderMarkedWorld(mouse);
     if (!(gRenderFlags & RENDER_FLAG_SAVEOFF)) UpdateSaveBuffer();
   }
 
@@ -2356,7 +2359,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   // #endif
 }
 
-void RenderStaticWorld() {
+static void RenderStaticWorld(const struct MouseInput mouse) {
   UINT32 uiLevelFlags[9];
   UINT16 sLevelIDs[9];
 
@@ -2415,7 +2418,7 @@ void RenderStaticWorld() {
   ResetRenderParameters();
 }
 
-void RenderMarkedWorld(void) {
+static void RenderMarkedWorld(const struct MouseInput mouse) {
   UINT32 uiLevelFlags[4];
   UINT16 sLevelIDs[4];
 
@@ -2759,7 +2762,7 @@ static BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, IN
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWNLEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWNLEFT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fLeftOK) {
