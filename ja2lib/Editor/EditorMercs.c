@@ -247,11 +247,11 @@ CHAR16 *EditMercAttitudes[6] = {L"Defensive",     L"Brave Loner",   L"Brave Budd
 #endif
 #define RANDOM -1
 #define MAX_ENEMYTYPES 7
-//#define MAX_ENEMYRANDOMTYPES	5
+// #define MAX_ENEMYRANDOMTYPES	5
 #define MAX_CREATURETYPES 8
 #define MAX_REBELTYPES 7
 #define MAX_CIVTYPES 18
-//#define MAX_CIVRANDOMTYPES		11
+// #define MAX_CIVRANDOMTYPES		11
 INT8 bEnemyArray[MAX_ENEMYTYPES] = {RANDOM,    REGMALE, BIGMALE, STOCKYMALE,
                                     REGFEMALE, TANK_NW, TANK_NE};
 INT8 bCreatureArray[MAX_CREATURETYPES] = {BLOODCAT,    LARVAE_MONSTER, INFANT_MONSTER,
@@ -2312,7 +2312,7 @@ void DisplayBodyTypeInfo() {
   DrawEditorInfoBox(str, FONT10ARIAL, 490, 364, 70, 20);
 }
 
-void UpdateMercsInfo() {
+void UpdateMercsInfo(const struct MouseInput mouse) {
   if (!gfRenderMercInfo) return;
 
   // We are rendering it now, so signify that it has been done, so
@@ -2321,7 +2321,7 @@ void UpdateMercsInfo() {
 
   switch (gubCurrMercMode) {
     case MERC_GETITEMMODE:
-      RenderEditorItemsInfo();
+      RenderEditorItemsInfo(mouse);
       break;
     case MERC_INVENTORYMODE:
       if (gfMercGetItem)

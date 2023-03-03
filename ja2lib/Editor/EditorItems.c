@@ -479,7 +479,7 @@ void DetermineItemsScrolling() {
     EnableEditorButton(ITEMS_RIGHTSCROLL);
 }
 
-void RenderEditorItemsInfo() {
+void RenderEditorItemsInfo(const struct MouseInput mouse) {
   UINT8 *pDestBuf, *pSrcBuf;
   UINT32 uiSrcPitchBYTES, uiDestPitchBYTES;
   INVTYPE *item;

@@ -44,8 +44,6 @@
 #include "Utils/TimerControl.h"
 #include "Utils/WordWrap.h"
 
-void RenderEditorInfo();
-
 extern struct ITEM_POOL *gpItemPool;
 
 // editor icon storage vars
@@ -797,7 +795,7 @@ void RenderSelectedItemBlownUp() {
   }
 }
 
-void RenderEditorInfo() {
+static void RenderEditorInfo(const struct MouseInput mouse) {
   wchar_t FPSText[50];
   INT16 iMapIndex;
 
@@ -829,7 +827,7 @@ void RenderEditorInfo() {
       DrawEditorInfoBox(FPSText, FONT12POINT1, 310, 430, 40, 30);
       break;
     case TASK_ITEMS:
-      RenderEditorItemsInfo();
+      RenderEditorItemsInfo(mouse);
       UpdateItemStatsPanel();
       break;
     case TASK_BUILDINGS:
@@ -840,7 +838,7 @@ void RenderEditorInfo() {
       DrawEditorInfoBox(wszSelType[gusSelectionType], FONT12POINT1, 530, 430, 60, 30);
       break;
     case TASK_MERCS:
-      UpdateMercsInfo();
+      UpdateMercsInfo(mouse);
       break;
     case TASK_MAPINFO:
       UpdateMapInfo();
@@ -857,7 +855,7 @@ void RenderEditorInfo() {
 // always true in ButtonSystem.c, so it won't effect anything else.
 extern BOOLEAN gfGotoGridNoUI;
 
-void ProcessEditorRendering() {
+void ProcessEditorRendering(const struct MouseInput mouse) {
   BOOLEAN fSaveBuffer = FALSE;
   if (gfRenderTaskbar)  // do a full taskbar render.
   {
@@ -888,7 +886,7 @@ void ProcessEditorRendering() {
   if (gfEditingDoor) RenderDoorEditingWindow();
 
   if (TextInputMode()) RenderAllTextFields();
-  RenderEditorInfo();
+  RenderEditorInfo(mouse);
 
   if (!gfSummaryWindowActive && !gfGotoGridNoUI && !InOverheadMap()) {
     if (gpItem && gsItemGridNo != -1) RenderSelectedItemBlownUp();

@@ -320,8 +320,10 @@ BOOLEAN SpecifyButtonIcon(INT32 iButtonID, INT32 iVideoObjectID, UINT16 usVideoO
 void SetButtonPosition(INT32 iButtonID, INT16 x, INT16 y);
 void ResizeButton(INT32 iButtonID, INT16 w, INT16 h);
 
-void QuickButtonCallbackMMove(struct MOUSE_REGION *reg, INT32 reason);
-void QuickButtonCallbackMButn(struct MOUSE_REGION *reg, INT32 reason);
+void QuickButtonCallbackMMove(struct MOUSE_REGION *reg, INT32 reason,
+                              const struct MouseInput mouse);
+void QuickButtonCallbackMButn(struct MOUSE_REGION *reg, INT32 reason,
+                              const struct MouseInput mouse);
 
 BOOLEAN SetButtonCursor(INT32 iBtnId, UINT16 crsr);
 void MSYS_SetBtnUserData(INT32 iButtonNum, INT32 index, INT32 userdata);

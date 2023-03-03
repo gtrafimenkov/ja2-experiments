@@ -13,7 +13,6 @@ extern BOOLEAN gfCreatedFDlg;
 extern BOOLEAN gfDestroyFDlg;
 
 UINT32 WaitForFileName(void);
-void RemoveFileDialog(void);
 void CreateFileDialog(CHAR16 *zTitle);
 
 void SelectFileDialogYPos(UINT16 usRelativeYPos);

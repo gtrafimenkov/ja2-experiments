@@ -3441,7 +3441,7 @@ UINT32 EditScreenHandle(const struct GameInput *gameInput) {
 
   if (fShowingCursor) RemoveTempMouseCursorObject();
 
-  ProcessEditorRendering();
+  ProcessEditorRendering(gameInput->mouse);
 
   // Handle toolbar selections
   HandleJA2ToolbarSelection();

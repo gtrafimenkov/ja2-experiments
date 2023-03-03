@@ -2,6 +2,7 @@
 #define __EDITOR_TASKBAR_UTILS_H
 
 #include "BuildDefines.h"
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 // These are utilities that are used within the editor.  This function absorbs the expensive
@@ -12,7 +13,7 @@ enum { GUI_CLEAR_EVENT, GUI_LCLICK_EVENT, GUI_RCLICK_EVENT, GUI_MOVE_EVENT };
 
 // Taskbar manipulation functions
 void DoTaskbar(void);
-void ProcessEditorRendering();
+void ProcessEditorRendering(const struct MouseInput mouse);
 void EnableEditorTaskbar();
 void DisableEditorTaskbar();
 void CreateEditorTaskbar();
