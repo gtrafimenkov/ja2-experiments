@@ -3362,10 +3362,10 @@ void BtnGenericMouseMoveButtonCallback(GUI_BUTTON *btn, INT32 reason) {
 void ReleaseAnchorMode() {
   if (!gpAnchoredButton) return;
 
-  if (gusMouseXPos < gpAnchoredButton->Area.RegionTopLeftX ||
-      gusMouseXPos > gpAnchoredButton->Area.RegionBottomRightX ||
-      gusMouseYPos < gpAnchoredButton->Area.RegionTopLeftY ||
-      gusMouseYPos > gpAnchoredButton->Area.RegionBottomRightY) {
+  if (mouse.x < gpAnchoredButton->Area.RegionTopLeftX ||
+      mouse.x > gpAnchoredButton->Area.RegionBottomRightX ||
+      mouse.y < gpAnchoredButton->Area.RegionTopLeftY ||
+      mouse.y > gpAnchoredButton->Area.RegionBottomRightY) {
     // released outside button area, so restore previous button state.
     if (gfAnchoredState)
       gpAnchoredButton->uiFlags |= BUTTON_CLICKED_ON;

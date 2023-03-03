@@ -4523,8 +4523,8 @@ void DisableSMPpanelButtonsWhenInShopKeeperInterface(BOOLEAN fDontDrawButtons) {
 }
 
 BOOLEAN IsMouseInRegion(struct MOUSE_REGION *pRegion) {
-  if ((gusMouseXPos >= pRegion->RegionTopLeftX) && (gusMouseXPos <= pRegion->RegionBottomRightX) &&
-      (gusMouseYPos >= pRegion->RegionTopLeftY) && (gusMouseYPos <= pRegion->RegionBottomRightY)) {
+  if ((mouse.x >= pRegion->RegionTopLeftX) && (mouse.x <= pRegion->RegionBottomRightX) &&
+      (mouse.y >= pRegion->RegionTopLeftY) && (mouse.y <= pRegion->RegionBottomRightY)) {
     return (TRUE);
   } else {
     return (FALSE);

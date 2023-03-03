@@ -236,12 +236,11 @@ void QueryRTLeftButton(UINT32 *puiNewEvent) {
                   // Have we started this yet?
                   if (!gfStartLookingForRubberBanding && !gRubberBandActive) {
                     gfStartLookingForRubberBanding = TRUE;
-                    gusRubberBandX = gusMouseXPos;
-                    gusRubberBandY = gusMouseYPos;
+                    gusRubberBandX = mouse.x;
+                    gusRubberBandY = mouse.y;
                   } else {
                     // Have we moved....?
-                    if (abs(gusMouseXPos - gusRubberBandX) > 10 ||
-                        abs(gusMouseYPos - gusRubberBandY) > 10) {
+                    if (abs(mouse.x - gusRubberBandX) > 10 || abs(mouse.y - gusRubberBandY) > 10) {
                       gfStartLookingForRubberBanding = FALSE;
 
                       // Stop scrolling:

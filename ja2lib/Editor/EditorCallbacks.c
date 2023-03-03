@@ -502,14 +502,14 @@ void BtnQuitCallback(GUI_BUTTON *btn, INT32 reason) {
 
 // ITEMS
 void MouseMovedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason) {
-  HandleItemsPanel(gusMouseXPos, gusMouseYPos, GUI_MOVE_EVENT);
+  HandleItemsPanel(mouse.x, mouse.y, GUI_MOVE_EVENT);
 }
 
 void MouseClickedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP)
-    HandleItemsPanel(gusMouseXPos, gusMouseYPos, GUI_LCLICK_EVENT);
+    HandleItemsPanel(mouse.x, mouse.y, GUI_LCLICK_EVENT);
   else if (reason & MSYS_CALLBACK_REASON_RBUTTON_UP)
-    HandleItemsPanel(gusMouseXPos, gusMouseYPos, GUI_RCLICK_EVENT);
+    HandleItemsPanel(mouse.x, mouse.y, GUI_RCLICK_EVENT);
 }
 
 void ItemsWeaponsCallback(GUI_BUTTON *btn, INT32 reason) {

@@ -830,8 +830,8 @@ void RenderSelectionWindow(void) {
 
       iSX = iStartClickX;
       iSY = iStartClickY - iTopWinCutOff + SelWinStartPoint.iY;
-      iEX = gusMouseXPos;
-      iEY = gusMouseYPos;
+      iEX = mouse.x;
+      iEY = mouse.y;
 
       if (iEX < iSX) {
         iEX ^= iSX;
@@ -965,15 +965,15 @@ void DisplaySelectionWindowGraphicalInformation() {
   // UINT16 usObjIndex, usIndex;
   UINT16 y;
   // Determine if there is a valid picture at cursor position.
-  // iRelX = gusMouseXPos;
-  // iRelY = gusMouseYPos + iTopWinCutOff - (INT16)SelWinStartPoint.iY;
+  // iRelX = mouse.x;
+  // iRelY = mouse.y + iTopWinCutOff - (INT16)SelWinStartPoint.iY;
 
-  y = gusMouseYPos + iTopWinCutOff - (UINT16)SelWinStartPoint.iY;
+  y = mouse.y + iTopWinCutOff - (UINT16)SelWinStartPoint.iY;
   pNode = pDispList;
   fDone = FALSE;
   while ((pNode != NULL) && !fDone) {
-    if ((gusMouseXPos >= pNode->iX) && (gusMouseXPos < (pNode->iX + pNode->iWidth)) &&
-        (y >= pNode->iY) && (y < (pNode->iY + pNode->iHeight))) {
+    if ((mouse.x >= pNode->iX) && (mouse.x < (pNode->iX + pNode->iWidth)) && (y >= pNode->iY) &&
+        (y < (pNode->iY + pNode->iHeight))) {
       fDone = TRUE;
       // pNode->fChosen = TRUE;
       // iXInc = (pNode->iX + pNode->iWidth) - iClickX;

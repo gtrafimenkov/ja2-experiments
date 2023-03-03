@@ -115,8 +115,8 @@ BOOLEAN Plat_FileEntityExists(const char *path) { return FALSE; }
 BOOLEAN gfKeyState[256];
 BOOLEAN gfLeftButtonState;
 BOOLEAN gfRightButtonState;
-UINT16 gusMouseXPos;
-UINT16 gusMouseYPos;
+UINT16 mouse.x;
+UINT16 mouse.y;
 
 BOOLEAN gfSGPInputReceived = FALSE;
 
@@ -267,9 +267,7 @@ BOOLEAN ImageFillVideoSurfaceArea(UINT32 uiDestVSurface, INT32 iDestX1, INT32 iD
   return FALSE;
 }
 
-struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
-  return NULL;
-}
+struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) { return NULL; }
 
 BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette) {
   return FALSE;

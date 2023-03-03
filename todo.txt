@@ -1,3 +1,5 @@
           // Set mouse stuff
-          sScreenX = gusMouseXPos;
-          sScreenY = gusMouseYPos;
+          sScreenX = mouse.x;
+          sScreenY = mouse.y;
+
+, const struct MouseInput mouse

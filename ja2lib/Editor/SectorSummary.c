@@ -1406,15 +1406,14 @@ void RenderSummaryWindow() {
               gpPEnemyItemsSummaryArray && gusPEnemyItemsSummaryArraySize ||
               gpNEnemyItemsSummaryArray && gusNEnemyItemsSummaryArraySize )*/
       {
-        if (gusMouseXPos >= 350 && gusMouseYPos >= 30 && gusMouseXPos <= 404 &&
-            gusMouseYPos <= 42) {
+        if (mouse.x >= 350 && mouse.y >= 30 && mouse.x <= 404 && mouse.y <= 42) {
           gfItemDetailsMode = TRUE;
           gfSetupItemDetailsMode = TRUE;
           gfRenderSummary = TRUE;
         }
       }
-    } else if (gfItemDetailsMode && gusMouseXPos >= 350 && gusMouseYPos >= 15 &&
-               gusMouseXPos <= 404 && gusMouseYPos <= 27) {
+    } else if (gfItemDetailsMode && mouse.x >= 350 && mouse.y >= 15 && mouse.x <= 404 &&
+               mouse.y <= 27) {
       gfItemDetailsMode = FALSE;
       gfRenderSummary = TRUE;
     }

@@ -129,7 +129,7 @@ enum {
 #define SCROLL_INTERTIA_STEP1 6
 #define SCROLL_INTERTIA_STEP2 8
 
-//#define SHORT_ROUND( x ) ( (INT16)( ( x * 1000 ) / 1000 ) )
+// #define SHORT_ROUND( x ) ( (INT16)( ( x * 1000 ) / 1000 ) )
 #define SHORT_ROUND(x) (x)
 
 #define NUM_ITEM_CYCLE_COLORS 60
@@ -625,7 +625,7 @@ void RenderSetShadows(BOOLEAN fShadows) {
 void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT32 iStartPointX_S,
                  INT32 iStartPointY_S, INT32 iEndXS, INT32 iEndYS, UINT8 ubNumLevels,
                  UINT32 *puiLevels, UINT16 *psLevelIDs) {
-  //#if 0
+  // #if 0
 
   struct LEVELNODE *pNode;  //, *pLand, *pStruct; //*pObject, *pTopmost, *pMerc;
   struct SOLDIERTYPE *pSoldier, *pSelSoldier;
@@ -2184,7 +2184,7 @@ void RenderWorld() {
   // gsVIEWPORT_END_Y ); AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
   // gsVIEWPORT_END_Y ); return;
 
-  //#if 0
+  // #if 0
 
   if (gRenderFlags & RENDER_FLAG_FULL) {
     gfRenderFullThisFrame = TRUE;
@@ -2241,7 +2241,7 @@ void RenderWorld() {
 
 #endif
 
-  //#endif
+  // #endif
 
   // RenderStaticWorldRect( gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
   // gsVIEWPORT_END_Y ); AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
@@ -2298,7 +2298,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
               gsLEndYS, 1, uiLevelFlags, sLevelIDs);
 
-  //#if 0
+  // #if 0
 
   uiLevelFlags[0] = TILES_STATIC_OBJECTS;
   sLevelIDs[0] = RENDER_STATIC_OBJECTS;
@@ -2376,7 +2376,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
     AddBaseDirtyRect(sLeft, sTop, sRight, sBottom);
   }
 
-  //#endif
+  // #endif
 }
 
 void RenderStaticWorld() {
@@ -2958,22 +2958,22 @@ void ScrollWorld() {
         RESETCOUNTER(STARTSCROLL);
       }
 
-      if (gusMouseYPos == 0) {
+      if (mouse.y == 0) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_UP;
       }
 
-      if (gusMouseYPos >= 479) {
+      if (mouse.y >= 479) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_DOWN;
       }
 
-      if (gusMouseXPos >= 639) {
+      if (mouse.x >= 639) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_RIGHT;
       }
 
-      if (gusMouseXPos == 0) {
+      if (mouse.x == 0) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_LEFT;
       }
@@ -3358,28 +3358,28 @@ BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY, BOOLE
     } else {
       if (fOutRight) {
         // Check where our cursor is!
-        if (gusMouseXPos >= 639) {
+        if (mouse.x >= 639) {
           gfUIShowExitEast = TRUE;
         }
       }
 
       if (fOutLeft) {
         // Check where our cursor is!
-        if (gusMouseXPos == 0) {
+        if (mouse.x == 0) {
           gfUIShowExitWest = TRUE;
         }
       }
 
       if (fOutTop) {
         // Check where our cursor is!
-        if (gusMouseYPos == 0) {
+        if (mouse.y == 0) {
           gfUIShowExitNorth = TRUE;
         }
       }
 
       if (fOutBottom) {
         // Check where our cursor is!
-        if (gusMouseYPos >= 479) {
+        if (mouse.y >= 479) {
           gfUIShowExitSouth = TRUE;
         }
       }

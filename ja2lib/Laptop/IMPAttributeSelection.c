@@ -221,16 +221,16 @@ void HandleIMPAttributeSelection(void) {
   // set the currently selectd slider bar
   if (gfLeftButtonState && gpCurrentScrollBox != NULL) {
     // if theuser is holding down the mouse cursor to left of the start of the slider bars
-    if (gusMouseXPos < (SKILL_SLIDE_START_X + LAPTOP_SCREEN_UL_X)) {
+    if (mouse.x < (SKILL_SLIDE_START_X + LAPTOP_SCREEN_UL_X)) {
       DecrementStat(giCurrentlySelectedStat);
     }
 
     // else if the user is holding down the mouse button to the right of the scroll bars
-    else if (gusMouseXPos > (LAPTOP_SCREEN_UL_X + SKILL_SLIDE_START_X + BAR_WIDTH)) {
+    else if (mouse.x > (LAPTOP_SCREEN_UL_X + SKILL_SLIDE_START_X + BAR_WIDTH)) {
       IncrementStat(giCurrentlySelectedStat);
     } else {
       INT32 iCurrentAttributeValue;
-      INT32 sNewX = gusMouseXPos;
+      INT32 sNewX = mouse.x;
       INT32 iNewValue;
 
       // get old stat value

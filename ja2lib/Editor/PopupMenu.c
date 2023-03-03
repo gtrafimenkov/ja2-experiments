@@ -283,16 +283,16 @@ UINT8 GetPopupIndexFromMousePosition() {
   UINT8 ubNumEntriesDown;
   UINT16 usRelX;
   UINT8 ubCount;
-  if (gusMouseXPos >= gPopup.usLeft && gusMouseXPos <= gPopup.usRight &&
-      gusMouseYPos > gPopup.usTop             // one pixel gap on top ignored
-      && gusMouseYPos < gPopup.usBottom - 2)  // two pixel gap on bottom ignored
+  if (mouse.x >= gPopup.usLeft && mouse.x <= gPopup.usRight &&
+      mouse.y > gPopup.usTop             // one pixel gap on top ignored
+      && mouse.y < gPopup.usBottom - 2)  // two pixel gap on bottom ignored
   {
     // subtract the top y coord of the popup region from the mouse's yPos as well
     // as an extra pixel at the top of the region which is ignored in menu selection,
     // divide this number by the height of a menu entry, then add one.  This will
     // return the menu index from 1 (at the top) to n (at the bottom).
-    ubNumEntriesDown = (gusMouseYPos - gPopup.usTop - 1) / gusEntryHeight + 1;
-    usRelX = gusMouseXPos - gPopup.usLeft;
+    ubNumEntriesDown = (mouse.y - gPopup.usTop - 1) / gusEntryHeight + 1;
+    usRelX = mouse.x - gPopup.usLeft;
     ubCount = 0;
     while (usRelX > gPopup.ubColumnWidth[ubCount]) {
       usRelX -= gPopup.ubColumnWidth[ubCount];
@@ -312,9 +312,9 @@ void PopupMenuHandle() {
     // Attempt to determine if the menu will be persistant or not.
     // Determination is made when the mouse's left button is released or if
     // the mouse cursor enters the menu region.
-    if (gusMouseXPos >= gPopup.usLeft && gusMouseXPos <= gPopup.usRight &&
-        gusMouseYPos > gPopup.usTop             // one pixel gap on top ignored
-        && gusMouseYPos < gPopup.usBottom - 1)  // two pixel gap on bottom ignored
+    if (mouse.x >= gPopup.usLeft && mouse.x <= gPopup.usRight &&
+        mouse.y > gPopup.usTop             // one pixel gap on top ignored
+        && mouse.y < gPopup.usBottom - 1)  // two pixel gap on bottom ignored
     {
       // mouse cursor has just entered the menu region -- nonpersistant.
 
@@ -334,7 +334,7 @@ void PopupMenuHandle() {
   if (!gPopup.fUseKeyboardInfoUntilMouseMoves) {
     // check menu entry based on mouse position
     gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition();
-  } else if (gusMouseXPos != gPopup.usLastMouseX || gusMouseYPos != gPopup.usLastMouseY) {
+  } else if (mouse.x != gPopup.usLastMouseX || mouse.y != gPopup.usLastMouseY) {
     // The keyboard determined the last entry, but the mouse has moved,
     // so use the mouse to determine the new entry.
     gPopup.fUseKeyboardInfoUntilMouseMoves = FALSE;
@@ -364,8 +364,8 @@ void PopupMenuHandle() {
         switch (InputEvent.usParam) {
           case DNARROW:
             gPopup.fUseKeyboardInfoUntilMouseMoves = TRUE;
-            gPopup.usLastMouseX = gusMouseXPos;
-            gPopup.usLastMouseY = gusMouseYPos;
+            gPopup.usLastMouseX = mouse.x;
+            gPopup.usLastMouseY = mouse.y;
             gPopup.ubSelectedIndex++;
             if (gPopup.ubSelectedIndex > gPopup.ubNumEntries) {
               gPopup.ubSelectedIndex = 1;
@@ -373,8 +373,8 @@ void PopupMenuHandle() {
             break;
           case UPARROW:
             gPopup.fUseKeyboardInfoUntilMouseMoves = TRUE;
-            gPopup.usLastMouseX = gusMouseXPos;
-            gPopup.usLastMouseY = gusMouseYPos;
+            gPopup.usLastMouseX = mouse.x;
+            gPopup.usLastMouseY = mouse.y;
             if (gPopup.ubSelectedIndex < 2) {
               gPopup.ubSelectedIndex = gPopup.ubNumEntries;
             } else {

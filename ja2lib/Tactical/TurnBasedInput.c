@@ -2863,7 +2863,7 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         }
 
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos - 5, gusMouseYPos );
+        // SimulateMouseMovement( mouse.x - 5, mouse.y );
         InitSectorExitMenu(DIRECTION_EXITGRID, sMapPos);
       }
     }
@@ -2878,7 +2878,7 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos - 5, gusMouseYPos );
+        // SimulateMouseMovement( mouse.x - 5, mouse.y );
         InitSectorExitMenu(EAST, 0);
       }
     }
@@ -2891,7 +2891,7 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos + 5, gusMouseYPos );
+        // SimulateMouseMovement( mouse.x + 5, mouse.y );
         InitSectorExitMenu(WEST, 0);
       }
     }
@@ -2904,7 +2904,7 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos, gusMouseYPos + 5 );
+        // SimulateMouseMovement( mouse.x, mouse.y + 5 );
         InitSectorExitMenu(NORTH, 0);
       }
     }
@@ -2917,7 +2917,7 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos, gusMouseYPos - 5);
+        // SimulateMouseMovement( mouse.x, mouse.y - 5);
         InitSectorExitMenu(SOUTH, 0);
       }
     }

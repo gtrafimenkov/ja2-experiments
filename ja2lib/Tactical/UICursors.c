@@ -763,7 +763,7 @@ void DetermineCursorBodyLocation(UINT8 ubSoldierID, BOOLEAN fDisplay, BOOLEAN fR
         }
 
         // Check if mouse is iin bounding box of soldier
-        if (!IsPointInSoldierBoundingBox(pTargetSoldier, gusMouseXPos, gusMouseYPos)) {
+        if (!IsPointInSoldierBoundingBox(pTargetSoldier, mouse.x, mouse.y)) {
           fOnGuy = FALSE;
         }
       }
@@ -778,7 +778,7 @@ void DetermineCursorBodyLocation(UINT8 ubSoldierID, BOOLEAN fDisplay, BOOLEAN fR
       if (gfUIFullTargetFound) {
         pTargetSoldier = MercPtrs[gusUIFullTargetID];
 
-        if (FindRelativeSoldierPosition(pTargetSoldier, &usFlags, gusMouseXPos, gusMouseYPos)) {
+        if (FindRelativeSoldierPosition(pTargetSoldier, &usFlags, mouse.x, mouse.y)) {
           fOnGuy = TRUE;
         }
       }

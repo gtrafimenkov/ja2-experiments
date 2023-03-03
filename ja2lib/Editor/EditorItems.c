@@ -494,9 +494,9 @@ void RenderEditorItemsInfo() {
   if (!eInfo.fActive) {
     return;
   }
-  if (gusMouseXPos < 110 || gusMouseXPos > 480 || gusMouseYPos < 360 ||
-      gusMouseYPos > 440) {  // Mouse has moved out of the items display region -- so nothing can be
-                             // highlighted.
+  if (mouse.x < 110 || mouse.x > 480 || mouse.y < 360 ||
+      mouse.y > 440) {  // Mouse has moved out of the items display region -- so nothing can be
+                        // highlighted.
     eInfo.sHilitedItemIndex = -1;
   }
   pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);

@@ -951,11 +951,11 @@ void MouseMovedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason) {
         }
       }
       if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
-        if (gusMouseYPos < reg->RegionTopLeftY) {
+        if (mouse.y < reg->RegionTopLeftY) {
           gubEndHilite = 0;
           gfHiliteMode = TRUE;
           return;
-        } else if (gusMouseYPos > reg->RegionBottomRightY) {
+        } else if (mouse.y > reg->RegionBottomRightY) {
           gubEndHilite = gpActive->ubStrLen;
           gfHiliteMode = TRUE;
           return;
@@ -963,7 +963,7 @@ void MouseMovedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason) {
       }
 
       // Calculate the cursor position.
-      iClickX = gusMouseXPos - reg->RegionTopLeftX;
+      iClickX = mouse.x - reg->RegionTopLeftX;
       iCurrCharPos = 0;
       gubCursorPos = 0;
       iNextCharPos = StringPixLengthArg(pColors->usFont, 1, gpActive->szString) / 2;
@@ -1001,7 +1001,7 @@ void MouseClickedInTextRegionCallback(struct MOUSE_REGION *reg, INT32 reason) {
     // Signifies that we are typing text now.
     gfEditingText = TRUE;
     // Calculate the cursor position.
-    iClickX = gusMouseXPos - reg->RegionTopLeftX;
+    iClickX = mouse.x - reg->RegionTopLeftX;
     iCurrCharPos = 0;
     gubCursorPos = 0;
     iNextCharPos = StringPixLengthArg(pColors->usFont, 1, gpActive->szString) / 2;

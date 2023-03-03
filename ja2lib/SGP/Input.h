@@ -81,13 +81,13 @@ extern BOOLEAN gfSGPInputReceived;
 #define _KeyDown(a) gfKeyState[(a)]
 #define _LeftButtonDown gfLeftButtonState
 #define _RightButtonDown gfRightButtonState
-#define _MouseXPos gusMouseXPos
-#define _MouseYPos gusMouseYPos
+#define _MouseXPos mouse.x
+#define _MouseYPos mouse.y
 
 // NOTE: this may not be the absolute most-latest current mouse co-ordinates, use GetCursorPos for
 // that
 #define _gusMouseInside(x1, y1, x2, y2) \
-  ((gusMouseXPos >= x1) && (gusMouseXPos <= x2) && (gusMouseYPos >= y1) && (gusMouseYPos <= y2))
+  ((mouse.x >= x1) && (mouse.x <= x2) && (mouse.y >= y1) && (mouse.y <= y2))
 
 #define _EvType(a) ((InputAtom *)(a))->usEvent
 #define _EvTimeStamp(a) ((InputAtom *)(a))->uiTimeStamp

@@ -560,8 +560,8 @@ void PopupMovementMenu(UI_EVENT *pUIEvent) {
   // Erase other menus....
   EraseInterfaceMenus(TRUE);
 
-  giMenuAnchorX = gusMouseXPos - 18;
-  giMenuAnchorY = gusMouseYPos - 18;
+  giMenuAnchorX = mouse.x - 18;
+  giMenuAnchorY = mouse.y - 18;
 
   // ATE: OK loser, let's check if we're going off the screen!
   if (giMenuAnchorX < 0) {

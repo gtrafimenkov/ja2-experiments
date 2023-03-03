@@ -91,7 +91,8 @@ void HandleOverheadUI();
 void MoveOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
                                 const struct MouseInput mouse);
 void DeleteOverheadDB();
-BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo);
+static BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo,
+                                                           const struct MouseInput mouse);
 
 extern BOOLEAN AnyItemsVisibleOnLevel(struct ITEM_POOL *pItemPool, INT8 bZLevel);
 extern void HandleAnyMercInSquadHasCompatibleStuff(UINT8 ubSquad, struct OBJECTTYPE *pObject,
@@ -531,8 +532,8 @@ void HandleOverheadUI() {
 
     if (ubID != NOBODY) {
       // OK, selected guy is here...
-      // gprintfdirty( gusMouseXPos, gusMouseYPos, MercPtrs[ ubID ]->name );
-      // mprintf( gusMouseXPos, gusMouseYPos, MercPtrs[ ubID ]->name );
+      // gprintfdirty( mouse.x, mouse.y, MercPtrs[ ubID ]->name );
+      // mprintf( mouse.x, mouse.y, MercPtrs[ ubID ]->name );
     }
   }
 
@@ -1127,8 +1128,8 @@ void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
     reg->uiFlags |= BUTTON_CLICKED_ON;
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     reg->uiFlags &= (~BUTTON_CLICKED_ON);
-    sWorldScreenX = (gusMouseXPos - gsStartRestrictedX) * 5;
-    sWorldScreenY = (gusMouseYPos - gsStartRestrictedY) * 5;
+    sWorldScreenX = (mouse.x - gsStartRestrictedX) * 5;
+    sWorldScreenY = (mouse.y - gsStartRestrictedY) * 5;
 
     // Get new proposed center location.
     GetFromAbsoluteScreenXYWorldXY(&uiCellX, &uiCellY, sWorldScreenX, sWorldScreenY);
@@ -1164,8 +1165,8 @@ BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo) {
 
   if ((OverheadRegion.uiFlags & MSYS_MOUSE_IN_AREA)) {
     // ATE: Adjust alogrithm values a tad to reflect map positioning
-    sWorldScreenX = gsStartRestrictedX + (gusMouseXPos - 5) * 5;
-    sWorldScreenY = gsStartRestrictedY + (gusMouseYPos - 8) * 5;
+    sWorldScreenX = gsStartRestrictedX + (mouse.x - 5) * 5;
+    sWorldScreenY = gsStartRestrictedY + (mouse.y - 8) * 5;
 
     // Get new proposed center location.
     GetFromAbsoluteScreenXYWorldXY(&uiCellX, &uiCellY, sWorldScreenX, sWorldScreenY);
@@ -1187,14 +1188,15 @@ BOOLEAN GetOverheadMouseGridNo(INT16 *psGridNo) {
   }
 }
 
-BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo) {
+static BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(INT16 *psGridNo,
+                                                           const struct MouseInput mouse) {
   INT32 uiCellX, uiCellY;
   INT16 sWorldScreenX, sWorldScreenY;
 
   if ((OverheadRegion.uiFlags & MSYS_MOUSE_IN_AREA)) {
     // ATE: Adjust alogrithm values a tad to reflect map positioning
-    sWorldScreenX = gsStartRestrictedX + (gusMouseXPos - 5) * 5;
-    sWorldScreenY = gsStartRestrictedY + (gusMouseYPos)*5;
+    sWorldScreenX = gsStartRestrictedX + (mouse.x - 5) * 5;
+    sWorldScreenY = gsStartRestrictedY + (mouse.y) * 5;
 
     // Get new proposed center location.
     GetFromAbsoluteScreenXYWorldXY(&uiCellX, &uiCellY, sWorldScreenX, sWorldScreenY);

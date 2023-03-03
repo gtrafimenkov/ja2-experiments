@@ -45,7 +45,7 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 
-//#ifdef JA2BETAVERSION
+// #ifdef JA2BETAVERSION
 
 //*******************************
 //
@@ -2135,7 +2135,7 @@ void CalcPositionOfNewScrollBoxLocation() {
   INT16 sStartPosOfScrollArea =
       gpActiveListBox->usScrollPosY + gpActiveListBox->usScrollArrowHeight;
 
-  sMouseYPos = gusMouseYPos;
+  sMouseYPos = mouse.y;
 
   // if we have to scroll
   if (sMouseYPos > sStartPosOfScrollArea ||

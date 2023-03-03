@@ -372,8 +372,7 @@ void RenderTacticalPlacementGUI() {
   if (!gfTacticalPlacementGUIDirty && gbHilightedMercID != -1) {
     xp = 91 + (gbHilightedMercID / 2) * 54;
     yp = (gbHilightedMercID % 2) ? 412 : 361;
-    if (gusMouseXPos < xp || gusMouseXPos > xp + 54 || gusMouseYPos < yp ||
-        gusMouseYPos > yp + 62) {
+    if (mouse.x < xp || mouse.x > xp + 54 || mouse.y < yp || mouse.y > yp + 62) {
       gbHilightedMercID = -1;
       gubHilightedGroupID = 0;
       SetCursorMerc(gbSelectedMercID);
@@ -590,19 +589,19 @@ void TacticalPlacementHandle() {
     }
   }
   gfValidCursor = FALSE;
-  if (gbSelectedMercID != -1 && gusMouseYPos < 320) {
+  if (gbSelectedMercID != -1 && mouse.y < 320) {
     switch (gMercPlacement[gbCursorMercID].ubStrategicInsertionCode) {
       case INSERTION_CODE_NORTH:
-        if (gusMouseYPos <= 40) gfValidCursor = TRUE;
+        if (mouse.y <= 40) gfValidCursor = TRUE;
         break;
       case INSERTION_CODE_EAST:
-        if (gusMouseXPos >= 600) gfValidCursor = TRUE;
+        if (mouse.x >= 600) gfValidCursor = TRUE;
         break;
       case INSERTION_CODE_SOUTH:
-        if (gusMouseYPos >= 280) gfValidCursor = TRUE;
+        if (mouse.y >= 280) gfValidCursor = TRUE;
         break;
       case INSERTION_CODE_WEST:
-        if (gusMouseXPos <= 40) gfValidCursor = TRUE;
+        if (mouse.x <= 40) gfValidCursor = TRUE;
         break;
     }
     if (gubDefaultButton == GROUP_BUTTON) {

@@ -758,8 +758,8 @@ UINT32 HandleTacticalUI(void) {
   // IF this event is of type snap mouse, save position
   if (gEvents[uiNewEvent].uiFlags & UIEVENT_SNAPMOUSE && gEvents[uiNewEvent].fFirstTime) {
     // Save mouse position
-    gusSavedMouseX = gusMouseXPos;
-    gusSavedMouseY = gusMouseYPos;
+    gusSavedMouseX = mouse.x;
+    gusSavedMouseY = mouse.y;
   }
 
   // HANDLE UI EVENT
@@ -865,7 +865,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_EAST_UICURSOR;
       }
 
-      if (gusMouseXPos < 635) {
+      if (mouse.x < 635) {
         gfUIShowExitEast = FALSE;
       }
     }
@@ -884,7 +884,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_WEST_UICURSOR;
       }
 
-      if (gusMouseXPos > 5) {
+      if (mouse.x > 5) {
         gfUIShowExitWest = FALSE;
       }
     }
@@ -903,7 +903,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_NORTH_UICURSOR;
       }
 
-      if (gusMouseYPos > 5) {
+      if (mouse.y > 5) {
         gfUIShowExitNorth = FALSE;
       }
     }
@@ -922,7 +922,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_SOUTH_UICURSOR;
       }
 
-      if (gusMouseYPos < 478) {
+      if (mouse.y < 478) {
         gfUIShowExitSouth = FALSE;
 
         // Define region for viewport
@@ -1916,8 +1916,8 @@ UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
   guiNewUICursor = NO_UICURSOR;
 
   if (pUIEvent->fFirstTime) {
-    gusAnchorMouseY = gusMouseYPos;
-    usOldMouseY = gusMouseYPos;
+    gusAnchorMouseY = mouse.y;
+    usOldMouseY = mouse.y;
     ubNearHeigherLevel = FALSE;
     ubNearLowerLevel = FALSE;
 
@@ -1989,13 +1989,13 @@ UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
   }
 
   // Check if delta X has changed alot since last time
-  iPosDiff = abs((INT32)(usOldMouseY - gusMouseYPos));
+  iPosDiff = abs((INT32)(usOldMouseY - mouse.y));
 
   // guiShowUPDownArrows = ARROWS_SHOW_DOWN_BESIDE | ARROWS_SHOW_UP_BESIDE;
   guiShowUPDownArrows = uiOldShowUPDownArrows;
 
   {
-    if (gusAnchorMouseY > gusMouseYPos) {
+    if (gusAnchorMouseY > mouse.y) {
       // Get soldier
       if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
         if (iPosDiff < GO_MOVE_ONE && ubUpHeight >= 1) {
@@ -2032,7 +2032,7 @@ UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
       }
     }
 
-    if (gusAnchorMouseY < gusMouseYPos) {
+    if (gusAnchorMouseY < mouse.y) {
       // Get soldier
       if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
         if (iPosDiff < GO_MOVE_ONE && ubDownDepth >= 1) {
@@ -2980,7 +2980,7 @@ void GetCursorMovementFlags(UINT32 *puiCursorFlags) {
 
   *puiCursorFlags = 0;
 
-  if (gusMouseXPos != usOldMouseXPos || gusMouseYPos != usOldMouseYPos) {
+  if (mouse.x != usOldMouseXPos || mouse.y != usOldMouseYPos) {
     (*puiCursorFlags) |= MOUSE_MOVING;
 
     // IF CURSOR WAS PREVIOUSLY STATIONARY, MAKE THE ADDITIONAL CHECK OF GRID POS CHANGE
@@ -2997,8 +2997,8 @@ void GetCursorMovementFlags(UINT32 *puiCursorFlags) {
   }
 
   usOldMapPos = usMapPos;
-  usOldMouseXPos = gusMouseXPos;
-  usOldMouseYPos = gusMouseYPos;
+  usOldMouseXPos = mouse.x;
+  usOldMouseYPos = mouse.y;
 
   uiOldFrameNumber = guiGameCycleCounter;
   uiSameFrameCursorFlags = (*puiCursorFlags);
@@ -4309,8 +4309,8 @@ UINT32 UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent) {
   guiNewUICursor = NO_UICURSOR;
   // SetCurrentCursorFromDatabase( VIDEO_NO_CURSOR );
 
-  gRubberBandRect.iRight = gusMouseXPos;
-  gRubberBandRect.iBottom = gusMouseYPos;
+  gRubberBandRect.iRight = mouse.x;
+  gRubberBandRect.iBottom = mouse.y;
 
   // Copy into temp rect
   memcpy(&aRect, &gRubberBandRect, sizeof(gRubberBandRect));
