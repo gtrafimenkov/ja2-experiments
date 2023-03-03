@@ -435,13 +435,13 @@ void HandleDialogue() {
           gTacticalStatus.bBoxingState == DISQUALIFIED) &&
         !(gTacticalStatus.uiFlags & IGNORE_ENGAGED_IN_CONV_UI_UNLOCK)) {
       guiPendingOverrideEvent = LU_ENDUILOCK;
-      HandleTacticalUI();
+      HandleTacticalUI(mouse);
 
       // ATE: If this is NOT the player's turn.. engage AI UI lock!
       if (gTacticalStatus.ubCurrentTeam != gbPlayerNum) {
         // Setup locked UI
         guiPendingOverrideEvent = LU_BEGINUILOCK;
-        HandleTacticalUI();
+        HandleTacticalUI(mouse);
       }
     }
 
@@ -455,7 +455,7 @@ void HandleDialogue() {
       if (guiPendingScreen != MSG_BOX_SCREEN && guiCurrentScreen != MSG_BOX_SCREEN) {
         // No, so we should lock the UI!
         guiPendingOverrideEvent = LU_BEGINUILOCK;
-        HandleTacticalUI();
+        HandleTacticalUI(mouse);
       }
     }
   }

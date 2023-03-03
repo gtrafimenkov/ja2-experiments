@@ -351,7 +351,7 @@ void AutoBandage(BOOLEAN fStart) {
 
     // Lock UI!
     // guiPendingOverrideEvent = LU_BEGINUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(XXX_GetMouseInput());
 
     PauseGame();
     // Compress time...
@@ -425,7 +425,7 @@ void AutoBandage(BOOLEAN fStart) {
 
     // UnLock UI!
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(XXX_GetMouseInput());
 
     UnPauseGame();
     // Bring time back...

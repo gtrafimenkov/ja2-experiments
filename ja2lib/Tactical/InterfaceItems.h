@@ -2,6 +2,7 @@
 #define __INTERFACE_ITEMS_H
 
 #include "GameInput.h"
+#include "Point.h"
 #include "SGP/MouseSystem.h"
 #include "Tactical/HandleItems.h"
 #include "Tactical/Items.h"

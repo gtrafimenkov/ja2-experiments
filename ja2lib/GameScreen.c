@@ -526,7 +526,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
       HandleAnimatedCursors();
 
       // Handle Interface
-      uiNewScreen = HandleTacticalUI();
+      uiNewScreen = HandleTacticalUI(gameInput->mouse);
 
       // called to handle things like face panels changeing due to team panel, squad changes, etc
       // To be done AFTER HandleUI and before ExecuteOverlays( )

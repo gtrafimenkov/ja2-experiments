@@ -2505,7 +2505,7 @@ void BtnUpdownCallback(GUI_BUTTON *btn, INT32 reason) {
     // gsInterfaceLevel = gpSMCurrentMerc->bUIInterfaceLevel;
 
     // Change interface level via HandleUI handler
-    UIHandleChangeLevel(NULL);
+    UIHandleChangeLevel(NULL, XXX_GetMouseInput());
 
     // Remember soldier's new value
     gpSMCurrentMerc->bUIInterfaceLevel = (INT8)gsInterfaceLevel;
@@ -4586,7 +4586,7 @@ void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
 
         // Make sure we go back to movement mode...
         guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
-        HandleTacticalUI();
+        HandleTacticalUI(mouse);
 
         swprintf(zMoney, ARR_SIZE(zMoney), L"%d", gpItemPointer->uiMoneyAmount);
 

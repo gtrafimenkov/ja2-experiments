@@ -1798,7 +1798,7 @@ BOOLEAN InitDoorOpenMenu(struct SOLDIERTYPE *pSoldier, struct STRUCTURE *pStruct
   gOpenDoorMenu.sY = sScreenY - ((BUTTON_PANEL_HEIGHT - sHeight) / 2);
 
   // Alrighty, cancel lock UI if we havn't done so already
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // OK, CHECK FOR BOUNDARIES!
   if ((gOpenDoorMenu.sX + BUTTON_PANEL_WIDTH) > 640) {
@@ -1817,7 +1817,7 @@ BOOLEAN InitDoorOpenMenu(struct SOLDIERTYPE *pSoldier, struct STRUCTURE *pStruct
   gOpenDoorMenu.fMenuHandled = FALSE;
 
   guiPendingOverrideEvent = OP_OPENDOORMENU;
-  HandleTacticalUI();
+  HandleTacticalUI(mouse);
 
   PopupDoorOpenMenu(fClosingDoor);
 

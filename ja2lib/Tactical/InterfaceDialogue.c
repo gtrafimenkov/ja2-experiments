@@ -233,11 +233,11 @@ BOOLEAN InitiateConversation(struct SOLDIERTYPE *pDestSoldier, struct SOLDIERTYP
 
     // Turn off lock UI ( if on )
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     // Turn on talking ui
     guiPendingOverrideEvent = TA_TALKINGMENU;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     return (FALSE);
   }
@@ -309,14 +309,14 @@ BOOLEAN InternalInitiateConversation(struct SOLDIERTYPE *pDestSoldier,
 
     // Turn off lock UI ( if on )
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     // Turn on talking ui
     guiPendingOverrideEvent = TA_TALKINGMENU;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
   } else {
     guiPendingOverrideEvent = TA_TALKINGMENU;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
   }
 
   return (TRUE);

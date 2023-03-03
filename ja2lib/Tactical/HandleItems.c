@@ -3020,7 +3020,7 @@ void RenderTopmostFlashingItems() {
                                   VO_BLT_SRCTRANSPARENCY, NULL);
 
           DrawItemPoolList(pItemPool, pItemPool->sGridNo, ITEMLIST_DISPLAY,
-                           pItemPool->bRenderZHeightAboveLevel, sXPos, sYPos);
+                           pItemPool->bRenderZHeightAboveLevel, sXPos, sYPos, XXX_GetMouseInput());
         }
       }
     }

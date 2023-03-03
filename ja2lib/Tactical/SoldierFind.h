@@ -32,8 +32,9 @@ BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
 BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
                                       const struct MouseInput mouse);
 BOOLEAN FindSoldierGridNo(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags);
-BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
-                    const struct MouseInput mouse);
+BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags);
+BOOLEAN FindSoldier_(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
+                     const struct MouseInput mouse);
 struct SOLDIERTYPE *SimpleFindSoldier(INT16 sGridNo, INT8 bLevel);
 
 BOOLEAN CycleSoldierFindStack(UINT16 usMapPos, const struct MouseInput mouse);

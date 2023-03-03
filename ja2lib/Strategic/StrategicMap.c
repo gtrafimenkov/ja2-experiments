@@ -2213,7 +2213,7 @@ void JumpIntoAdjacentSector(UINT8 ubTacticalDirection, UINT8 ubJumpCode, INT16 s
 
     // Lock UI!
     guiPendingOverrideEvent = LU_BEGINUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
   }
 }
 
@@ -2779,7 +2779,7 @@ void DoneFadeOutAdjacentSector() {
     }
     SetActionToDoOnceMercsGetToLocation(WAIT_FOR_MERCS_TO_WALKON_SCREEN, ubNum, 0, 0, 0);
     guiPendingOverrideEvent = LU_BEGINUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     // Unset flag here.....
     gfPathAroundObstacles = TRUE;

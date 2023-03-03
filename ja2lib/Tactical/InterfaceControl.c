@@ -838,7 +838,7 @@ void ResetInterfaceAndUI() {
 
   // Set UI back to movement...
   guiPendingOverrideEvent = M_ON_TERRAIN;
-  HandleTacticalUI();
+  HandleTacticalUI(mouse);
 }
 
 BOOLEAN InterfaceOKForMeanwhilePopup() {

@@ -60,7 +60,7 @@ typedef enum {
 
 } UI_MODE;
 
-typedef UINT32 (*UI_HANDLEFNC)(struct TAG_UI_EVENT *);
+typedef UINT32 (*UI_HANDLEFNC)(struct TAG_UI_EVENT *, const struct MouseInput mouse);
 
 typedef struct TAG_UI_EVENT {
   UINT32 uiFlags;
@@ -239,7 +239,7 @@ extern BOOLEAN gfUIConfirmExitArrows;
 extern INT16 gsJumpOverGridNo;
 
 UINT32 HandleTacticalUI(const struct MouseInput mouse);
-UINT32 UIHandleEndTurn(UI_EVENT *pUIEvent);
+UINT32 UIHandleEndTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
 extern BOOLEAN gfUIShowCurIntTile;
 
@@ -282,7 +282,7 @@ void ToggleTalkCursorMode(UINT32 *puiNewEvent);
 void ToggleLookCursorMode(UINT32 *puiNewEvent, const struct MouseInput mouse);
 
 void UIHandleSoldierStanceChange(UINT8 ubSoldierID, INT8 bNewStance);
-void GetCursorMovementFlags(UINT32 *puiCursorFlags);
+void GetCursorMovementFlags(UINT32 *puiCursorFlags, const struct MouseInput mouse);
 
 BOOLEAN HandleUIMovementCursor(struct SOLDIERTYPE *pSoldier, UINT32 uiCursorFlags, UINT16 usMapPos,
                                UINT32 uiFlags);
@@ -302,7 +302,7 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustForConfirm);
 void SetUIBusy(UINT8 ubID, const struct MouseInput mouse);
 void UnSetUIBusy(UINT8 ubID, const struct MouseInput mouse);
 
-UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent);
+UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
 void BeginDisplayTimedCursor(UINT32 uiCursorID, UINT32 uiDelay);
 
@@ -311,7 +311,7 @@ INT8 HandleMoveModeInteractiveClick(UINT16 usMapPos, UINT32 *puiNewEvent);
 
 BOOLEAN HandleUIReloading(struct SOLDIERTYPE *pSoldier);
 
-UINT32 UIHandleChangeLevel(UI_EVENT *pUIEvent);
+UINT32 UIHandleChangeLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 BOOLEAN UIHandleOnMerc(BOOLEAN fMovementMode);
 
 void ChangeInterfaceLevel(INT16 sLevel);

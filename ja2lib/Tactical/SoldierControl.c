@@ -1229,7 +1229,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
 
     // Alrighty, check if we should free buddy up!
     if (usNewState == GIVING_AID) {
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
     }
 
     // SUBSTITUDE VARIOUS REG ANIMATIONS WITH ODD BODY TYPES
@@ -1300,7 +1300,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
       // Check for breath collapse if a given animation like
       if (CheckForBreathCollapse(pSoldier) || pSoldier->bCollapsed) {
         // UNset UI
-        UnSetUIBusy(pSoldier->ubID);
+        UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
         SoldierCollapse(pSoldier);
 
@@ -1373,7 +1373,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
             } else {
               if (pSoldier->bBreathCollapsed) {
                 // UNset UI
-                UnSetUIBusy(pSoldier->ubID);
+                UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
                 SoldierCollapse(pSoldier);
 
@@ -4317,7 +4317,7 @@ void TurnSoldier(struct SOLDIERTYPE *pSoldier) {
     // Unset ui busy if from ui
     if (pSoldier->bTurningFromUI && (pSoldier->fTurningFromPronePosition != 3) &&
         (pSoldier->fTurningFromPronePosition != 1)) {
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       pSoldier->bTurningFromUI = FALSE;
     }
 
@@ -7168,7 +7168,7 @@ void EVENT_SoldierBeginFirstAid(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UIN
     }
 
     if (fRefused) {
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       return;
     }
 
@@ -7221,7 +7221,7 @@ void EVENT_SoldierEnterVehicle(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
     EnterVehicle(pTSoldier, pSoldier);
   }
 
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 }
 
 UINT32 SoldierDressWound(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pVictim, INT16 sKitPts,
@@ -7537,7 +7537,7 @@ void HaultSoldierFromSighting(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromSightin
 
   // Unset UI!
   if (fFromSightingEnemy || (pSoldier->pTempObject == NULL && !pSoldier->fTurningToShoot)) {
-    UnSetUIBusy(pSoldier->ubID);
+    UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
   }
 
   pSoldier->bTurningFromUI = FALSE;
@@ -7598,7 +7598,7 @@ void EVENT_StopMerc(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bDirection
   }
 
   // Unset UI!
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   UnMarkMovementReserved(pSoldier);
 }
@@ -8418,7 +8418,7 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
   } else {
     // If in water....
     if (MercInWater(pSoldier)) {
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel);
       SoldierGotoStationaryStance(pSoldier);
       if (!(pSoldier->uiStatusFlags & SOLDIER_PC)) {
@@ -8484,7 +8484,7 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
         case ANIM_CROUCH:
         case ANIM_PRONE:
 
-          UnSetUIBusy(pSoldier->ubID);
+          UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
           HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel);
           SoldierGotoStationaryStance(pSoldier);
           if (!(pSoldier->uiStatusFlags & SOLDIER_PC)) {

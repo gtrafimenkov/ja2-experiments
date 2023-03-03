@@ -4343,7 +4343,7 @@ BOOLEAN HandleItemPointerClick(UINT16 usMapPos) {
             }
 
             // OK, set UI
-            SetUIBusy(gpItemPointerSoldier->ubID);
+            SetUIBusy(gpItemPointerSoldier->ubID, XXX_GetMouseInput());
           }
         }
 
@@ -5413,7 +5413,7 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
   PauseTime(TRUE);
 
   // Alrighty, cancel lock UI if we havn't done so already
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // Change to INV panel if not there already...
   gfSwitchPanel = TRUE;

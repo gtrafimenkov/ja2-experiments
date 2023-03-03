@@ -86,8 +86,8 @@ BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
   *pMercFlags = 0;
 
   if (GetMouseMapPos(&sMapPos)) {
-    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
-                    mouse)) {
+    if (FindSoldier_(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
+                     mouse)) {
       return (TRUE);
     }
   }
@@ -102,8 +102,8 @@ BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlag
   *pMercFlags = 0;
 
   if (GetMouseMapPos(&sMapPos)) {
-    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
-                    mouse)) {
+    if (FindSoldier_(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
+                     mouse)) {
       return (TRUE);
     }
   }
@@ -168,14 +168,9 @@ UINT32 GetSoldierFindFlags(UINT16 ubID) {
 extern BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObject, UINT16 usIndex,
                                                       INT32 iTextX, INT32 iTestY);
 
-BOOLEAN FindSoldierGridNo(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
-  struct MouseInput dummyMousePos = {0, 0};
-  return FindSoldier(sGridNo, pusSoldierIndex, pMercFlags, FIND_SOLDIER_GRIDNO, dummyMousePos);
-}
-
 // THIS FUNCTION IS CALLED FAIRLY REGULARLY
-BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
-                    const struct MouseInput mouse) {
+BOOLEAN FindSoldier_(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
+                     const struct MouseInput mouse) {
   UINT32 cnt;
   struct SOLDIERTYPE *pSoldier;
   SGPRect aRect;
@@ -387,14 +382,25 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
   return (FALSE);
 }
 
+BOOLEAN FindSoldierGridNo(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
+  struct MouseInput dummyMousePos = {0, 0};
+  return FindSoldier_(sGridNo, pusSoldierIndex, pMercFlags, FIND_SOLDIER_GRIDNO, dummyMousePos);
+}
+
+BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags) {
+  // TODO: get actual mouse pos
+  struct MouseInput mousePos = {0, 0};
+  return FindSoldier_(sGridNo, pusSoldierIndex, pMercFlags, FIND_SOLDIER_GRIDNO, mousePos);
+}
+
 BOOLEAN CycleSoldierFindStack(UINT16 usMapPos, const struct MouseInput mouse) {
   UINT16 usSoldierIndex;
   UINT32 uiMercFlags;
 
   // Have we initalized for this yet?
   if (!gfHandleStack) {
-    if (FindSoldier(usMapPos, &usSoldierIndex, &uiMercFlags,
-                    FINDSOLDIERSAMELEVEL(gsInterfaceLevel) | FIND_SOLDIER_BEGINSTACK, mouse)) {
+    if (FindSoldier_(usMapPos, &usSoldierIndex, &uiMercFlags,
+                     FINDSOLDIERSAMELEVEL(gsInterfaceLevel) | FIND_SOLDIER_BEGINSTACK, mouse)) {
       gfHandleStack = TRUE;
     }
   }

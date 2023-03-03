@@ -307,7 +307,7 @@ void InteractWithOpenableStruct(struct SOLDIERTYPE *pSoldier, struct STRUCTURE *
       if (!fTrapsFound) {
         InitDoorOpenMenu(pSoldier, pStructure, ubDirection, FALSE);
       } else {
-        UnSetUIBusy(pSoldier->ubID);
+        UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       }
     } else {
       pSoldier->ubDoorHandleCode = HANDLE_DOOR_OPEN;

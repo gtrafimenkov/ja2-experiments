@@ -1210,7 +1210,7 @@ BOOLEAN ExecuteOverhead(const struct MouseInput mouse) {
                           SoldierGotoStationaryStance(pSoldier);
                         }
                       } else {
-                        UnSetUIBusy(pSoldier->ubID);
+                        UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
                         SoldierGotoStationaryStance(pSoldier);
                       }
@@ -1411,7 +1411,7 @@ BOOLEAN ExecuteOverhead(const struct MouseInput mouse) {
 
             if ((gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              HandleTacticalUI();
+              HandleTacticalUI(mouse);
             }
             AllMercsHaveWalkedOffSector();
             break;
@@ -1421,7 +1421,7 @@ BOOLEAN ExecuteOverhead(const struct MouseInput mouse) {
             // OK, unset UI
             if ((gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              HandleTacticalUI();
+              HandleTacticalUI(mouse);
             }
             break;
 
@@ -1430,7 +1430,7 @@ BOOLEAN ExecuteOverhead(const struct MouseInput mouse) {
             // OK, unset UI
             if ((gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              HandleTacticalUI();
+              HandleTacticalUI(mouse);
             }
             AllMercsWalkedToExitGrid();
             break;
@@ -1465,7 +1465,7 @@ void HaltGuyFromNewGridNoBecauseOfNoAPs(struct SOLDIERTYPE *pSoldier) {
               pSoldier->name);
   }
 
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // OK, Unset engaged in CONV, something changed...
   UnSetEngagedInConvFromPCAction(pSoldier);
@@ -1519,7 +1519,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
       pSoldier->bEndDoorOpenCode = FALSE;
 
       if (fInitialMove) {
-        UnSetUIBusy(pSoldier->ubID);
+        UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       }
 
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("HandleGotoNewGridNo() Failed: Out of Breath"));
@@ -1863,7 +1863,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
 
               fDontContinue = TRUE;
 
-              UnSetUIBusy(pSoldier->ubID);
+              UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
             }
           }
       }
@@ -5041,7 +5041,7 @@ BOOLEAN CheckForEndOfBattle(BOOLEAN fAnEnemyRetreated) {
     gTacticalStatus.fEnemyInSector = FALSE;
 
     // If here, the battle has been lost!
-    UnSetUIBusy((UINT8)gusSelectedSoldier);
+    UnSetUIBusy((UINT8)gusSelectedSoldier, XXX_GetMouseInput());
 
     if (gTacticalStatus.uiFlags & INCOMBAT) {
       // Exit mode!
@@ -5099,13 +5099,13 @@ BOOLEAN CheckForEndOfBattle(BOOLEAN fAnEnemyRetreated) {
     // battle for us
     EndAllAITurns();
 
-    UnSetUIBusy((UINT8)gusSelectedSoldier);
+    UnSetUIBusy((UINT8)gusSelectedSoldier, XXX_GetMouseInput());
 
     // ATE:
     // If we ended battle in any team other than the player's
     // we need to end the UI lock using this method....
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(XXX_GetMouseInput());
 
     if (gTacticalStatus.uiFlags & INCOMBAT) {
       // Exit mode!
@@ -6198,10 +6198,6 @@ static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCa
             if (pTeamSoldier->bActive && pTeamSoldier->bInSector) {
               if (pTeamSoldier->ubBodyType == CROW) {
                 if (pTeamSoldier->bOppList[pSoldier->ubID] == SEEN_CURRENTLY) {
-                  // ZEROTIMECOUNTER( pTeamSoldier->AICounter );
-
-                  // MakeCivHostile( pTeamSoldier, 2 );
-
                   HandleCrowFlyAway(pTeamSoldier);
                 }
               }
@@ -6247,7 +6243,7 @@ static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCa
     }
 
     if (pSoldier->uiStatusFlags & SOLDIER_PC) {
-      UnSetUIBusy(ubID);
+      UnSetUIBusy(ubID, XXX_GetMouseInput());
     } else {
       FreeUpNPCFromAttacking(ubID);
     }

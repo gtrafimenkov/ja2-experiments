@@ -1524,7 +1524,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
           if ((gpItemPointer == NULL) &&
               ((gsCurInterfacePanel != SM_PANEL) ||
                (ButtonList[iSMPanelButtons[UPDOWN_BUTTON]]->uiFlags & BUTTON_ENABLED))) {
-            UIHandleChangeLevel(NULL);
+            UIHandleChangeLevel(NULL, XXX_GetMouseInput());
 
             if (gsCurInterfacePanel == SM_PANEL) {
               // Remember soldier's new value

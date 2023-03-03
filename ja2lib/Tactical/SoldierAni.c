@@ -160,7 +160,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
         // Wait here until we are free....
         if (!pSoldier->fInNonintAnim) {
           // UNset UI
-          UnSetUIBusy(pSoldier->ubID);
+          UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
           SoldierCollapse(pSoldier);
 
@@ -251,7 +251,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               HandlePlacingRoofMarker(pSoldier, pSoldier->sGridNo, TRUE, TRUE);
             } else {
               // OK, UNSET INTERFACE FIRST
-              UnSetUIBusy(pSoldier->ubID);
+              UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
               if (pSoldier->ubID == gusSelectedSoldier) {
                 ChangeInterfaceLevel(1);
@@ -470,7 +470,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
           // ATE: if it's the begin cower animation, unset ui, cause it could
           // be from player changin stance
           if (pSoldier->usAnimState == START_COWER) {
-            UnSetUIBusy(pSoldier->ubID);
+            UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
           }
           break;
 
@@ -531,7 +531,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               SoldierGotoStationaryStance(pSoldier);
 
               // Set UI Busy
-              UnSetUIBusy(pSoldier->ubID);
+              UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
               return (TRUE);
             }
           }
@@ -1134,7 +1134,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               ChangeInterfaceLevel(0);
             }
             // OK, UNSET INTERFACE FIRST
-            UnSetUIBusy(pSoldier->ubID);
+            UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
           } else {
             FreeUpNPCFromRoofClimb(pSoldier);
           }
@@ -1792,7 +1792,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
                 (pSoldier->fTurningFromPronePosition != 1)) {
               if (gTacticalStatus.ubAttackBusyCount == 0) {
                 // OK, UNSET INTERFACE FIRST
-                UnSetUIBusy(pSoldier->ubID);
+                UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
                 // ( before we could get interrupted potentially by an interrupt )
               }
             }
@@ -1814,7 +1814,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               // still locked
               if (gfHiddenInterrupt) {
                 guiPendingOverrideEvent = LA_BEGINUIOURTURNLOCK;
-                HandleTacticalUI();
+                HandleTacticalUI(mouse);
               }
 
               // ATE: Now, check AI guy to cancel what he was going....

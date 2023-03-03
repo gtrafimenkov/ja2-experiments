@@ -67,7 +67,7 @@ BOOLEAN GetMouseRecalcAndShowAPFlags(UINT32 *puiCursorFlags, BOOLEAN *pfShowAPs)
   BOOLEAN fShowAPs = FALSE;
 
   // SET FLAGS FOR CERTAIN MOUSE MOVEMENTS
-  GetCursorMovementFlags(&uiCursorFlags);
+  GetCursorMovementFlags(&uiCursorFlags, mouse);
 
   // Force if we are currently cycling guys...
   if (gfUIForceReExamineCursorData) {
