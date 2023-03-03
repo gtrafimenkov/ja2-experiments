@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "FadeScreen.h"
+#include "GameInputInternal.h"
 #include "GameSettings.h"
 #include "Globals.h"
 #include "HelpScreen.h"
@@ -267,7 +268,7 @@ void GameLoop(void) {
     guiPendingScreen = NO_PENDING_SCREEN;
   }
 
-  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))(XXX_GetGameInput());
+  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))(&g_gameInput);
 
   // if the screen has chnaged
   if (uiOldScreen != guiCurrentScreen) {
