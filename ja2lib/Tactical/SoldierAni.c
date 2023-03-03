@@ -1523,7 +1523,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
           // DROP ITEM
           HandleSoldierPickupItem(pSoldier, pSoldier->uiPendingActionData1,
                                   (INT16)(pSoldier->uiPendingActionData4),
-                                  pSoldier->bPendingActionData3);
+                                  pSoldier->bPendingActionData3, XXX_GetMouseInput());
           // EVENT HAS BEEN HANDLED
           pSoldier->ubPendingAction = NO_PENDING_ACTION;
 
@@ -1814,7 +1814,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               // still locked
               if (gfHiddenInterrupt) {
                 guiPendingOverrideEvent = LA_BEGINUIOURTURNLOCK;
-                HandleTacticalUI(mouse);
+                HandleTacticalUI(XXX_GetMouseInput());
               }
 
               // ATE: Now, check AI guy to cancel what he was going....

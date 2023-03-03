@@ -267,7 +267,9 @@ void GameLoop(void) {
     guiPendingScreen = NO_PENDING_SCREEN;
   }
 
-  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))();
+  struct GameInput gameInput;
+  gameInput.mouse = XXX_GetMouseInput();
+  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))(&gameInput);
 
   // if the screen has chnaged
   if (uiOldScreen != guiCurrentScreen) {
@@ -286,11 +288,6 @@ void GameLoop(void) {
     ReportMapscreenErrorLock();
   }
 #endif
-}
-
-void SetCurrentScreen(UINT32 uiNewScreen) {
-  guiCurrentScreen = uiNewScreen;
-  (*(GameScreens[guiCurrentScreen].HandleScreen))();
 }
 
 void SetPendingNewScreen(UINT32 uiNewScreen) { guiPendingScreen = uiNewScreen; }
