@@ -2,6 +2,7 @@
 #define __SECTOR_SUMMARY_H
 
 #include "BuildDefines.h"
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 // This function can be very time consuming as it loads every map file with a valid
@@ -11,7 +12,7 @@ void CreateGlobalSummary();
 void CreateSummaryWindow();
 void ReleaseSummaryWindow();
 void DestroySummaryWindow();
-void RenderSummaryWindow();
+void RenderSummaryWindow(const struct MouseInput mouse);
 void LoadWorldInfo();
 
 void UpdateSectorSummary(STR16 gszFilename, BOOLEAN fUpdate);

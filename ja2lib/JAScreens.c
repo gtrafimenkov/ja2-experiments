@@ -357,7 +357,7 @@ UINT32 PalEditScreenHandle(const struct GameInput *gameInput) {
     guiBackgroundRect = RegisterBackgroundRect(BGND_FLAG_PERMANENT, NULL, 50, 10, 600, 400);
 
   } else {
-    (*(GameScreens[GAME_SCREEN].HandleScreen))();
+    (*(GameScreens[GAME_SCREEN].HandleScreen))(gameInput);
   }
 
   return (PALEDIT_SCREEN);
@@ -549,7 +549,7 @@ UINT32 DebugScreenHandle(const struct GameInput *gameInput) {
     SetUIKeyboardHook((UIKEYBOARD_HOOK)DebugKeyboardHook);
 
   } else {
-    (*(GameScreens[GAME_SCREEN].HandleScreen))();
+    (*(GameScreens[GAME_SCREEN].HandleScreen))(gameInput);
   }
 
   return (DEBUG_SCREEN);

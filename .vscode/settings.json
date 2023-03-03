@@ -4,6 +4,8 @@
         "selectwin.h": "c",
         "renderworld.h": "c",
         "message.h": "c",
-        "textinput.h": "c"
+        "textinput.h": "c",
+        "vobject.h": "c",
+        "jascreens.h": "c"
     }
 }

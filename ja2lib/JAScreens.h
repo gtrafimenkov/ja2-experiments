@@ -106,10 +106,6 @@ extern UINT32 IntroScreenShutdown(void);
 extern UINT32 IntroScreenHandle(const struct GameInput *gameInput);
 extern UINT32 IntroScreenInit(void);
 
-extern UINT32 CreditScreenInit(void);
-extern UINT32 CreditScreenHandle(const struct GameInput *gameInput);
-extern UINT32 CreditScreenShutdown(void);
-
 // External functions
 extern void DisplayFrameRate();
 

@@ -390,7 +390,7 @@ void BtnHelpScreenScrollArrowsCallback(GUI_BUTTON *btn, INT32 reason);
 // ggg
 
 BOOLEAN EnterHelpScreen();
-void HandleHelpScreen();
+static void HandleHelpScreen(const struct MouseInput mouse);
 void RenderHelpScreen();
 void ExitHelpScreen();
 
@@ -513,7 +513,7 @@ HELP_SCREEN_SHOULD_COME_UP:
   return (TRUE);
 }
 
-void HelpScreenHandler() {
+void HelpScreenHandler(const struct MouseInput mouse) {
   // if we are just entering the help screen
   if (gfHelpScreenEntry) {
     // setup the help screen
@@ -529,7 +529,7 @@ void HelpScreenHandler() {
   GetHelpScreenUserInput();
 
   // handle the help screen
-  HandleHelpScreen();
+  HandleHelpScreen(mouse);
 
   // if the help screen is dirty, re-render it
   if (gHelpScreen.ubHelpScreenDirty != HLP_SCRN_DRTY_LVL_NOT_DIRTY) {
@@ -675,7 +675,7 @@ BOOLEAN EnterHelpScreen() {
   return (TRUE);
 }
 
-void HandleHelpScreen() {
+static void HandleHelpScreen(const struct MouseInput mouse) {
   // if any of the possible screens need to have a some code done every loop..  its done in here
   SpecialHandlerCode();
 

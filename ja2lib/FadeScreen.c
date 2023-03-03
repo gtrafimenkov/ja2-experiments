@@ -2,6 +2,7 @@
 
 #include "GameLoop.h"
 #include "Globals.h"
+#include "JAScreens.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"

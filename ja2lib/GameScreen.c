@@ -117,7 +117,7 @@ void TacticalScreenLocateToSoldier();
 UINT32 guiTacticalLeaveScreenID;
 BOOLEAN guiTacticalLeaveScreen = FALSE;
 
-void HandleModalTactical();
+static void HandleModalTactical(const struct MouseInput mouse);
 extern void CheckForDisabledRegionRemove();
 extern void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce);
 
@@ -345,7 +345,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   // HELP_SCREEN_TACTICAL, FALSE ) )
   if (!gfPreBattleInterfaceActive && ShouldTheHelpScreenComeUp(HELP_SCREEN_TACTICAL, FALSE)) {
     // handle the help screen
-    HelpScreenHandler();
+    HelpScreenHandler(gameInput->mouse);
     return (GAME_SCREEN);
   }
 
@@ -389,7 +389,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
     if (gfTacticalIsModal == 1) {
       gfTacticalIsModal++;
     } else {
-      HandleModalTactical();
+      HandleModalTactical(gameInput->mouse);
 
       return (GAME_SCREEN);
     }
@@ -572,7 +572,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
 
   // SetRenderFlags( RENDER_FLAG_FULL );
 
-  RenderWorld(mouse);
+  RenderWorld(gameInput->mouse);
 
   if (gRenderOverride != NULL) {
     gRenderOverride();
@@ -823,7 +823,7 @@ void EndModalTactical() {
   SetRenderFlags(RENDER_FLAG_FULL);
 }
 
-void HandleModalTactical() {
+static void HandleModalTactical(const struct MouseInput mouse) {
   StartFrameBufferRender();
 
   RestoreBackgroundRects();

@@ -879,7 +879,7 @@ void ProcessEditorRendering(const struct MouseInput mouse) {
   RenderButtons();
 
   if (gfSummaryWindowActive)
-    RenderSummaryWindow();
+    RenderSummaryWindow(mouse);
   else if (!gfGotoGridNoUI && !InOverheadMap())
     RenderMercStrings();
 

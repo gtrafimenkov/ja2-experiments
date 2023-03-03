@@ -1,6 +1,7 @@
 #ifndef _CREDITS__H_
 #define _CREDITS__H_
 
+#include "GameInput.h"
 #include "SGP/Types.h"
 
 UINT32 CreditScreenInit(void);

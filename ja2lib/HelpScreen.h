@@ -1,6 +1,7 @@
 #ifndef _HELP_SCREEN__H_
 #define _HELP_SCREEN__H_
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 // enum used for the different help screens that can come up
@@ -58,7 +59,7 @@ typedef struct {
 extern HELP_SCREEN_STRUCT gHelpScreen;
 
 BOOLEAN ShouldTheHelpScreenComeUp(UINT8 ubScreenID, BOOLEAN fForceHelpScreenToComeUp);
-void HelpScreenHandler();
+void HelpScreenHandler(const struct MouseInput mouse);
 void InitHelpScreenSystem();
 void NewScreenSoResetHelpScreen();
 INT8 HelpScreenDetermineWhichMapScreenHelpToShow();

@@ -907,7 +907,7 @@ void RenderItemDetails() {
   }
 }
 
-void RenderSummaryWindow() {
+void RenderSummaryWindow(const struct MouseInput mouse) {
   UINT8 *pDestBuf;
   UINT32 uiDestPitchBYTES;
   SGPRect ClipRect;
