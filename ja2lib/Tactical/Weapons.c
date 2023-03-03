@@ -2127,7 +2127,7 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
         if (gGameSettings.fOptions[TOPTION_SHOW_MISSES]) {
           if (ubAttackerID != NOBODY) {
             if (MercPtrs[ubAttackerID]->bTeam == gbPlayerNum) {
-              LocateGridNo(sGridNo);
+              LocateGridNo(sGridNo, mouse);
             }
           }
         }
@@ -3393,7 +3393,7 @@ void ShotMiss(UINT8 ubAttackerID, INT32 iBullet) {
       pBullet = GetBulletPtr(iBullet);
 
       if (pAttacker->bTeam == gbPlayerNum) {
-        LocateGridNo((INT16)pBullet->sGridNo);
+        LocateGridNo((INT16)pBullet->sGridNo, mouse);
       }
     }
   }

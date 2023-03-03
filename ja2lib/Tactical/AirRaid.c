@@ -568,7 +568,7 @@ void DoDive() {
 
     if (gsNotLocatedYet && !(gTacticalStatus.uiFlags & INCOMBAT)) {
       gsNotLocatedYet = FALSE;
-      LocateGridNo(gsDiveTargetLocation);
+      LocateGridNo(gsDiveTargetLocation, mouse);
     }
 
     sOldGridNo = GETWORLDINDEXFROMWORLDCOORDS(gsDiveY, gsDiveX);
@@ -625,23 +625,11 @@ void DoDive() {
         sStrafeY = (INT16)(gsDiveY + dDeltaYPos);
 
         if ((gTacticalStatus.uiFlags & INCOMBAT)) {
-          LocateGridNo(sGridNo);
+          LocateGridNo(sGridNo, mouse);
         }
 
         if (GridNoOnVisibleWorldTile((INT16)(GETWORLDINDEXFROMWORLDCOORDS(sStrafeY, sStrafeX)))) {
-          // if ( gsNotLocatedYet && !( gTacticalStatus.uiFlags & INCOMBAT ) )
-          //	{
-          //	gsNotLocatedYet = FALSE;
-          //		LocateGridNo( sGridNo );
-          //	}
-
-          // if ( ( gTacticalStatus.uiFlags & INCOMBAT ) )
           {
-            // Increase attacker busy...
-            // gTacticalStatus.ubAttackBusyCount++;
-            // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("!!!!!!! Starting attack AIR RAID ( fire gun
-            // ), attack count now %d", gTacticalStatus.ubAttackBusyCount) );
-
             // INcrement bullet fired...
             gpRaidSoldier->bBulletsLeft++;
           }
@@ -724,7 +712,7 @@ void DoBombing() {
 
     if (gsNotLocatedYet && !(gTacticalStatus.uiFlags & INCOMBAT)) {
       gsNotLocatedYet = FALSE;
-      LocateGridNo(gsDiveTargetLocation);
+      LocateGridNo(gsDiveTargetLocation, mouse);
     }
 
     sOldGridNo = GETWORLDINDEXFROMWORLDCOORDS(gsDiveY, gsDiveX);
@@ -780,12 +768,6 @@ void DoBombing() {
           sStrafeY = (INT16)(gsDiveY + dDeltaYPos);
 
           if (GridNoOnVisibleWorldTile((INT16)(GETWORLDINDEXFROMWORLDCOORDS(sStrafeY, sStrafeX)))) {
-            // if ( gsNotLocatedYet && !( gTacticalStatus.uiFlags & INCOMBAT ) )
-            //{
-            //	gsNotLocatedYet = FALSE;
-            //	LocateGridNo( sGridNo );
-            //}
-
             if (Random(2)) {
               usItem = HAND_GRENADE;
             } else {

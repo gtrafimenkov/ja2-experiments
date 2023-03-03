@@ -1161,7 +1161,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               if (pSoldier->bVisible != -1 ||
                   (pSoldier->ubTargetID != NOBODY &&
                    MercPtrs[pSoldier->ubTargetID]->bTeam == gbPlayerNum)) {
-                LocateGridNo(pSoldier->sTargetGridNo);
+                LocateGridNo(pSoldier->sTargetGridNo, mouse);
               }
             }
           }

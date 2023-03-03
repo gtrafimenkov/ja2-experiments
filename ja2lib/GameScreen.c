@@ -119,7 +119,7 @@ BOOLEAN guiTacticalLeaveScreen = FALSE;
 
 static void HandleModalTactical(const struct MouseInput mouse);
 extern void CheckForDisabledRegionRemove();
-extern void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce);
+extern void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce, const struct MouseInput mouse);
 
 UINT32 MainGameScreenInit(void) {
   VIDEO_OVERLAY_DESC VideoOverlayDesc;
@@ -257,7 +257,7 @@ void EnterTacticalScreen() {
   }
 
   if (gTacticalStatus.uiFlags & IN_DEIDRANNA_ENDGAME) {
-    InternalLocateGridNo(4561, TRUE);
+    InternalLocateGridNo(4561, TRUE, mouse);
   }
 
   // Clear tactical message q
@@ -431,7 +431,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
 
   if (gfTacticalDoHeliRun) {
     gfGameScreenLocateToSoldier = FALSE;
-    InternalLocateGridNo(gMapInformation.sNorthGridNo, TRUE);
+    InternalLocateGridNo(gMapInformation.sNorthGridNo, TRUE, mouse);
 
     // Start heli Run...
     StartHelicopterRun(gMapInformation.sNorthGridNo);

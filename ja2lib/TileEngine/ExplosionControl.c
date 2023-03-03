@@ -221,7 +221,7 @@ void GenerateExplosion(EXPLOSION_PARAMS *pExpParams) {
 
   // ATE: Locate to explosion....
   if (pExpParams->fLocate) {
-    LocateGridNo(sGridNo);
+    LocateGridNo(sGridNo, mouse);
   }
 }
 

@@ -1698,7 +1698,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
       (*pfKeepMoving) = FALSE;
 
       if (sMineGridNo != NOWHERE) {
-        LocateGridNo(sMineGridNo);
+        LocateGridNo(sMineGridNo, mouse);
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
@@ -2155,7 +2155,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
       (*pfKeepMoving) = FALSE;
 
       if (sMineGridNo != NOWHERE) {
-        LocateGridNo(sMineGridNo);
+        LocateGridNo(sMineGridNo, mouse);
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
@@ -2475,7 +2475,7 @@ void LocateSoldier(UINT16 usID, BOOLEAN fSetLocator) {
   }
 }
 
-void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce) {
+void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce, const struct MouseInput mouse) {
   INT16 sNewCenterWorldX, sNewCenterWorldY;
 
   ConvertGridNoToCenterCellXY(sGridNo, &sNewCenterWorldX, &sNewCenterWorldY);
@@ -2488,7 +2488,9 @@ void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce) {
   SetRenderCenter(sNewCenterWorldX, sNewCenterWorldY, mouse);
 }
 
-void LocateGridNo(UINT16 sGridNo) { InternalLocateGridNo(sGridNo, FALSE); }
+void LocateGridNo(UINT16 sGridNo, const struct MouseInput mouse) {
+  InternalLocateGridNo(sGridNo, FALSE, mouse);
+}
 
 void SlideTo(INT16 sGridno, UINT16 usSoldierID, UINT16 usReasonID, BOOLEAN fSetLocator) {
   INT32 cnt;
