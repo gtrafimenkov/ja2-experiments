@@ -443,7 +443,7 @@ BOOLEAN gfDropDamagedItems = FALSE;
 // Mouse Regions
 //
 struct MOUSE_REGION gQuestDebugSysScreenRegions;
-// void QuestDebugSysScreenRegionCallBack(struct MOUSE_REGION * pRegion, INT32 iReason );
+// void QuestDebugSysScreenRegionCallback(struct MOUSE_REGION * pRegion, INT32 iReason );
 
 UINT32 guiQuestDebugExitButton;
 void BtnQuestDebugExitButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -494,19 +494,25 @@ UINT32 guiQuestDebugRPCSaySectorDescToggle;
 void BtnQuestDebugRPCSaySectorDescToggleCallback(GUI_BUTTON *btn, INT32 reason);
 
 struct MOUSE_REGION gSelectedNpcListRegion[QUEST_DBS_MAX_DISPLAYED_ENTRIES];
-void SelectNpcListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SelectNpcListMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectNpcListRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
+void SelectNpcListMovementCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
 
 struct MOUSE_REGION gScrollAreaRegion[QUEST_DBS_NUM_INCREMENTS_IN_SCROLL_BAR];
-void ScrollAreaRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void ScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ScrollAreaRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void ScrollAreaMovementCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
 
 struct MOUSE_REGION gScrollArrowsRegion[2];
-void ScrollArrowsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ScrollArrowsRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
 
 // Text entry Disable the screen
 struct MOUSE_REGION gQuestTextEntryDebugDisableScreenRegion;
-void QuestDebugTextEntryDisableScreenRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void QuestDebugTextEntryDisableScreenRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                                    const struct MouseInput mouse);
 
 // Ok button on the text entry form
 UINT32 guiQuestDebugTextEntryOkBtn;
@@ -518,11 +524,13 @@ void BtnQuestDebugNPCInventOkBtnButtonCallback(GUI_BUTTON *btn, INT32 reason);
 
 // Mouse regions for the Quests
 struct MOUSE_REGION gQuestListRegion[QUEST_DBS_NUM_DISPLAYED_QUESTS];
-void ScrollQuestListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ScrollQuestListRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
 
 // Mouse regions for the Facts
 struct MOUSE_REGION gFactListRegion[QUEST_DBS_NUM_DISPLAYED_FACTS];
-void ScrollFactListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void ScrollFactListRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
 
 UINT32 guiQDPgUpButtonButton;
 void BtnQDPgUpButtonButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -898,7 +906,7 @@ BOOLEAN EnterQuestDebugSystem() {
     MSYS_DefineRegion(&gQuestListRegion[i], usPosX, usPosY,
                       (UINT16)(usPosX + QUEST_DBS_FIRST_SECTION_WIDTH),
                       (UINT16)(usPosY + usFontHeight), MSYS_PRIORITY_HIGH + 2, CURSOR_WWW,
-                      MSYS_NO_CALLBACK, ScrollQuestListRegionCallBack);  // CURSOR_LAPTOP_SCREEN
+                      MSYS_NO_CALLBACK, ScrollQuestListRegionCallback);  // CURSOR_LAPTOP_SCREEN
     // Add region
     MSYS_AddRegion(&gQuestListRegion[i]);
     MSYS_SetRegionUserData(&gQuestListRegion[i], 0, i);
@@ -913,7 +921,7 @@ BOOLEAN EnterQuestDebugSystem() {
     MSYS_DefineRegion(&gFactListRegion[i], usPosX, usPosY,
                       (UINT16)(usPosX + QUEST_DBS_SECOND_SECTION_WIDTH),
                       (UINT16)(usPosY + usFontHeight), MSYS_PRIORITY_HIGH + 2, CURSOR_WWW,
-                      MSYS_NO_CALLBACK, ScrollFactListRegionCallBack);  // CURSOR_LAPTOP_SCREEN
+                      MSYS_NO_CALLBACK, ScrollFactListRegionCallback);  // CURSOR_LAPTOP_SCREEN
     // Add region
     MSYS_AddRegion(&gFactListRegion[i]);
     MSYS_SetRegionUserData(&gFactListRegion[i], 0, i);
@@ -1618,7 +1626,7 @@ BOOLEAN CreateDestroyDisplaySelectNpcDropDownBox() {
         MSYS_DefineRegion(&gSelectedNpcListRegion[i], usPosX, (UINT16)(usPosY),
                           (UINT16)(usPosX + gpActiveListBox->usScrollWidth),
                           (UINT16)(usPosY + usFontHeight), MSYS_PRIORITY_HIGH + 20, CURSOR_WWW,
-                          SelectNpcListMovementCallBack, SelectNpcListRegionCallBack);
+                          SelectNpcListMovementCallback, SelectNpcListRegionCallback);
         MSYS_AddRegion(&gSelectedNpcListRegion[i]);
         MSYS_SetRegionUserData(&gSelectedNpcListRegion[i], 0, i);
 
@@ -1638,8 +1646,8 @@ BOOLEAN CreateDestroyDisplaySelectNpcDropDownBox() {
         MSYS_DefineRegion(&gScrollAreaRegion[i], usPosX, usPosY,
                           (UINT16)(usPosX + gpActiveListBox->usScrollBarWidth),
                           (UINT16)(usPosY + gpActiveListBox->usScrollBarHeight),
-                          MSYS_PRIORITY_HIGH + 20, CURSOR_WWW, ScrollAreaMovementCallBack,
-                          ScrollAreaRegionCallBack);
+                          MSYS_PRIORITY_HIGH + 20, CURSOR_WWW, ScrollAreaMovementCallback,
+                          ScrollAreaRegionCallback);
         MSYS_AddRegion(&gScrollAreaRegion[i]);
         MSYS_SetRegionUserData(&gScrollAreaRegion[i], 0, i);
       }
@@ -1652,7 +1660,7 @@ BOOLEAN CreateDestroyDisplaySelectNpcDropDownBox() {
                         (UINT16)(usPosX + gpActiveListBox->usScrollBarWidth),
                         (UINT16)(usPosY + gpActiveListBox->usScrollArrowHeight),
                         MSYS_PRIORITY_HIGH + 20, CURSOR_WWW, MSYS_NO_CALLBACK,
-                        ScrollArrowsRegionCallBack);
+                        ScrollArrowsRegionCallback);
       MSYS_AddRegion(&gScrollArrowsRegion[0]);
       MSYS_SetRegionUserData(&gScrollArrowsRegion[0], 0, 0);
 
@@ -1664,7 +1672,7 @@ BOOLEAN CreateDestroyDisplaySelectNpcDropDownBox() {
                         (UINT16)(usPosX + gpActiveListBox->usScrollBarWidth),
                         (UINT16)(usPosY + gpActiveListBox->usScrollArrowHeight),
                         MSYS_PRIORITY_HIGH + 20, CURSOR_WWW, MSYS_NO_CALLBACK,
-                        ScrollArrowsRegionCallBack);
+                        ScrollArrowsRegionCallback);
       MSYS_AddRegion(&gScrollArrowsRegion[1]);
       MSYS_SetRegionUserData(&gScrollArrowsRegion[1], 0, 1);
 
@@ -1672,7 +1680,7 @@ BOOLEAN CreateDestroyDisplaySelectNpcDropDownBox() {
       if (!gfBackgroundMaskEnabled) {
         MSYS_DefineRegion(&gQuestTextEntryDebugDisableScreenRegion, 0, 0, 640, 480,
                           MSYS_PRIORITY_HIGH + 15, CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK,
-                          QuestDebugTextEntryDisableScreenRegionCallBack);
+                          QuestDebugTextEntryDisableScreenRegionCallback);
         MSYS_AddRegion(&gQuestTextEntryDebugDisableScreenRegion);
         gfBackgroundMaskEnabled = TRUE;
       }
@@ -1942,7 +1950,8 @@ void DisplaySelectedItem() {
   SetFontShadow(DEFAULT_SHADOW);
 }
 
-void SelectNpcListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectNpcListRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT8 ubSelected = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
@@ -1956,7 +1965,8 @@ void SelectNpcListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, co
   }
 }
 
-void SelectNpcListMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectNpcListMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                   const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     pRegion->uiFlags &= (~BUTTON_CLICKED_ON);
     InvalidateRegion(pRegion->RegionTopLeftX, pRegion->RegionTopLeftY, pRegion->RegionBottomRightX,
@@ -2058,7 +2068,8 @@ void DrawQdsScrollRectangle()  // INT16 sSelectedEntry, UINT16 usStartPosX, UINT
   UnLockVideoSurface(FRAME_BUFFER);
 }
 
-void ScrollArrowsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void ScrollArrowsRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if ((iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) ||
              (iReason & MSYS_CALLBACK_REASON_LBUTTON_REPEAT)) {
@@ -2091,7 +2102,8 @@ void ScrollArrowsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, con
   }
 }
 
-void ScrollAreaRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void ScrollAreaRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     CalcPositionOfNewScrollBoxLocation();
@@ -2104,7 +2116,8 @@ void ScrollAreaRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const
   }
 }
 
-void ScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void ScrollAreaMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     pRegion->uiFlags &= (~BUTTON_CLICKED_ON);
 
@@ -2441,7 +2454,7 @@ BOOLEAN CreateDestroyDisplayTextEntryBox(UINT8 ubAction, STR16 pString,
       if (!gfBackgroundMaskEnabled) {
         MSYS_DefineRegion(&gQuestTextEntryDebugDisableScreenRegion, 0, 0, 640, 480,
                           MSYS_PRIORITY_HIGH + 40, CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK,
-                          QuestDebugTextEntryDisableScreenRegionCallBack);
+                          QuestDebugTextEntryDisableScreenRegionCallback);
         MSYS_AddRegion(&gQuestTextEntryDebugDisableScreenRegion);
         gfBackgroundMaskEnabled = TRUE;
       }
@@ -2522,7 +2535,8 @@ BOOLEAN CreateDestroyDisplayTextEntryBox(UINT8 ubAction, STR16 pString,
   return (TRUE);
 }
 
-void QuestDebugTextEntryDisableScreenRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void QuestDebugTextEntryDisableScreenRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gpActiveListBox->ubCurScrollBoxAction = QD_DROP_DOWN_DESTROY;
@@ -2561,7 +2575,8 @@ void TextEntryBox(STR16 pString, TEXT_ENTRY_CALLBACK TextEntryCallBack) {
   gubTextEntryAction = QD_DROP_DOWN_DISPLAY;
 }
 
-void ScrollQuestListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void ScrollQuestListRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     wchar_t String[512];
@@ -2580,7 +2595,8 @@ void ScrollQuestListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, 
   }
 }
 
-void ScrollFactListRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void ScrollFactListRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     wchar_t String[512];
@@ -2736,7 +2752,7 @@ void CreateDestroyDisplayNPCInventoryPopup(UINT8 ubAction) {
       if (!gfBackgroundMaskEnabled) {
         MSYS_DefineRegion(&gQuestTextEntryDebugDisableScreenRegion, 0, 0, 640, 480,
                           MSYS_PRIORITY_HIGH + 40, CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK,
-                          QuestDebugTextEntryDisableScreenRegionCallBack);
+                          QuestDebugTextEntryDisableScreenRegionCallback);
         MSYS_AddRegion(&gQuestTextEntryDebugDisableScreenRegion);
         gfBackgroundMaskEnabled = TRUE;
       }
@@ -3287,7 +3303,7 @@ void StartMercTalkingFromQuoteNum(INT32 iQuoteToStartTalkingFrom) {
   if (!gfBackgroundMaskEnabled) {
     MSYS_DefineRegion(&gQuestTextEntryDebugDisableScreenRegion, 0, 0, 640, 480,
                       MSYS_PRIORITY_HIGH + 3, CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK,
-                      QuestDebugTextEntryDisableScreenRegionCallBack);
+                      QuestDebugTextEntryDisableScreenRegionCallback);
     MSYS_AddRegion(&gQuestTextEntryDebugDisableScreenRegion);
     gfBackgroundMaskEnabled = TRUE;
   }

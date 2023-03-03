@@ -63,7 +63,8 @@ void ResetAimHistoryButtons();
 void DisableAimHistoryButton();
 
 struct MOUSE_REGION gSelectedHistoryTocMenuRegion[NUM_AIM_HISTORY_PAGES];
-void SelectHistoryTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectHistoryTocMenuRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                        const struct MouseInput mouse);
 
 // Bottom Menu Buttons
 void BtnHistoryMenuButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -264,7 +265,8 @@ BOOLEAN ExitAimHistoryMenuBar(void) {
   return (TRUE);
 }
 
-void SelectHistoryMenuButtonsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectHistoryMenuButtonsRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse) {
   UINT8 rValue;
   static BOOLEAN fOnPage = TRUE;
 
@@ -377,7 +379,7 @@ BOOLEAN InitTocMenu() {
       MSYS_DefineRegion(&gSelectedHistoryTocMenuRegion[i], AIM_HISTORY_TOC_X, usPosY,
                         (UINT16)(AIM_HISTORY_TOC_X + AIM_CONTENTBUTTON_WIDTH),
                         (UINT16)(usPosY + AIM_CONTENTBUTTON_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                        MSYS_NO_CALLBACK, SelectHistoryTocMenuRegionCallBack);
+                        MSYS_NO_CALLBACK, SelectHistoryTocMenuRegionCallback);
       MSYS_AddRegion(&gSelectedHistoryTocMenuRegion[i]);
       MSYS_SetRegionUserData(&gSelectedHistoryTocMenuRegion[i], 0, i + 1);
     }
@@ -406,7 +408,8 @@ BOOLEAN ExitTocMenu() {
   return (TRUE);
 }
 
-void SelectHistoryTocMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectHistoryTocMenuRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                        const struct MouseInput mouse) {
   if (gfInToc) {
     if (iReason & MSYS_CALLBACK_REASON_INIT) {
     } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {

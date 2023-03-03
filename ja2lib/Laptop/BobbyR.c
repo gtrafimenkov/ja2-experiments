@@ -170,7 +170,8 @@ UINT8 gubBobbyRPages[] = {LAPTOP_MODE_BOBBY_R_USED, LAPTOP_MODE_BOBBY_R_MISC,
 
 // Bobby's Sign menu mouse regions
 struct MOUSE_REGION gSelectedBobbiesSignMenuRegion[BOBBIES_NUMBER_SIGNS];
-void SelectBobbiesSignMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectBobbiesSignMenuRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                         const struct MouseInput mouse);
 
 BOOLEAN InitBobbiesMouseRegion(UINT8 ubNumerRegions, UINT16 *usMouseRegionPosArray,
                                struct MOUSE_REGION *MouseRegion);
@@ -443,7 +444,7 @@ BOOLEAN InitBobbiesMouseRegion(UINT8 ubNumerRegions, UINT16 *usMouseRegionPosArr
     MSYS_DefineRegion(&MouseRegion[i], usMouseRegionPosArray[ubCount],
                       usMouseRegionPosArray[ubCount + 1], usMouseRegionPosArray[ubCount + 2],
                       usMouseRegionPosArray[ubCount + 3], MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                      MSYS_NO_CALLBACK, SelectBobbiesSignMenuRegionCallBack);
+                      MSYS_NO_CALLBACK, SelectBobbiesSignMenuRegionCallback);
     MSYS_AddRegion(&MouseRegion[i]);
     MSYS_SetRegionUserData(&MouseRegion[i], 0, gubBobbyRPages[i]);
 
@@ -461,7 +462,8 @@ BOOLEAN RemoveBobbiesMouseRegion(UINT8 ubNumberRegions, struct MOUSE_REGION *Mou
   return (TRUE);
 }
 
-void SelectBobbiesSignMenuRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectBobbiesSignMenuRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                         const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT8 ubNewPage = (UINT8)MSYS_GetRegionUserData(pRegion, 0);

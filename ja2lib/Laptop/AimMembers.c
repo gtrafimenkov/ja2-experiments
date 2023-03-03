@@ -188,7 +188,7 @@
 
 #define AIM_MEMBER_OPTIONAL_GEAR_X AIM_MERC_INFO_X
 #define AIM_MEMBER_OPTIONAL_GEAR_Y WEAPONBOX_Y - 13
-//#define		AIM_MEMBER_OPTIONAL_GEAR_NUMBER_X		AIM_MEMBER_OPTIONAL_GEAR_X
+// #define		AIM_MEMBER_OPTIONAL_GEAR_NUMBER_X		AIM_MEMBER_OPTIONAL_GEAR_X
 
 #define AIM_MEMBER_WEAPON_NAME_X WEAPONBOX_X
 #define AIM_MEMBER_WEAPON_NAME_Y WEAPONBOX_Y + WEAPONBOX_SIZE_Y + 1
@@ -487,12 +487,15 @@ INT32 giXToCloseVideoConfButton;
 // Mouse Regions
 // Clicking on guys Face
 struct MOUSE_REGION gSelectedFaceRegion;
-void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SelectFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void SelectFaceMovementRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
 
 // Clicking To shut merc up
 struct MOUSE_REGION gSelectedShutUpMercRegion;
-void SelectShutUpMercRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectShutUpMercRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
 //*******************************************
 //
@@ -652,7 +655,7 @@ BOOLEAN EnterAIMMembers() {
   //** Mouse Regions **
   MSYS_DefineRegion(&gSelectedFaceRegion, PORTRAIT_X, PORTRAIT_Y, PORTRAIT_X + PORTRAIT_WIDTH,
                     PORTRAIT_Y + PORTRAIT_HEIGHT, MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                    SelectFaceMovementRegionCallBack, SelectFaceRegionCallBack);
+                    SelectFaceMovementRegionCallback, SelectFaceRegionCallback);
   MSYS_AddRegion(&gSelectedFaceRegion);
 
   // Set the fast help for the mouse region
@@ -662,7 +665,7 @@ BOOLEAN EnterAIMMembers() {
   // if user clicks in the area, the merc will shut up!
   MSYS_DefineRegion(&gSelectedShutUpMercRegion, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y,
                     LAPTOP_SCREEN_LR_X, LAPTOP_SCREEN_WEB_LR_Y, MSYS_PRIORITY_HIGH - 1,
-                    CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, SelectShutUpMercRegionCallBack);
+                    CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, SelectShutUpMercRegionCallback);
   MSYS_AddRegion(&gSelectedShutUpMercRegion);
   // have it disbled at first
   MSYS_DisableRegion(&gSelectedShutUpMercRegion);
@@ -984,7 +987,8 @@ BOOLEAN DrawMoneyToScreen(INT32 iNumber, INT8 bWidth, UINT16 usLocX, UINT16 usLo
   return (TRUE);
 }
 
-void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM_MEMBERS_FACIAL_INDEX;
@@ -997,7 +1001,8 @@ void SelectFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const
   }
 }
 
-void SelectFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectFaceMovementRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     gfAimMemberDisplayFaceHelpText = FALSE;
     gfRedrawScreen = TRUE;
@@ -2437,7 +2442,8 @@ void DisplayTextForMercFaceVideoPopUp(STR16 pString) {
   gfRedrawScreen = TRUE;
 }
 
-void SelectShutUpMercRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectShutUpMercRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   BOOLEAN fInCallBack = TRUE;
 
   if (fInCallBack) {

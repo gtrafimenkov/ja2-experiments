@@ -1,6 +1,7 @@
 #ifndef _SHOPKEEPER_INTERFACE__H_
 #define _SHOPKEEPER_INTERFACE__H_
 
+#include "GameInput.h"
 #include "Laptop/StoreInventory.h"
 #include "SGP/Types.h"
 

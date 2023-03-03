@@ -184,7 +184,8 @@ INT32 guiBobbyRNextPageImage;
 
 // Big Image Mouse region
 struct MOUSE_REGION gSelectedBigImageRegion[BOBBYR_NUM_WEAPONS_ON_PAGE];
-void SelectBigImageRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectBigImageRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
 
 // The order form button
 void BtnBobbyROrderFormCallback(GUI_BUTTON *btn, INT32 reason);
@@ -198,7 +199,8 @@ INT32 guiBobbyRHomeImage;
 
 // Link from the title
 struct MOUSE_REGION gSelectedTitleImageLinkRegion;
-void SelectTitleImageLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectTitleImageLinkRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                        const struct MouseInput mouse);
 
 UINT32 guiTempCurrentMode;
 
@@ -361,7 +363,7 @@ BOOLEAN InitBobbyBrTitle() {
   MSYS_DefineRegion(&gSelectedTitleImageLinkRegion, BOBBYR_BRTITLE_X, BOBBYR_BRTITLE_Y,
                     (BOBBYR_BRTITLE_X + BOBBYR_BRTITLE_WIDTH),
                     (UINT16)(BOBBYR_BRTITLE_Y + BOBBYR_BRTITLE_HEIGHT), MSYS_PRIORITY_HIGH,
-                    CURSOR_WWW, MSYS_NO_CALLBACK, SelectTitleImageLinkRegionCallBack);
+                    CURSOR_WWW, MSYS_NO_CALLBACK, SelectTitleImageLinkRegionCallback);
   MSYS_AddRegion(&gSelectedTitleImageLinkRegion);
 
   gusOldItemNumOnTopOfPage = 65535;
@@ -379,7 +381,8 @@ BOOLEAN DeleteBobbyBrTitle() {
   return (TRUE);
 }
 
-void SelectTitleImageLinkRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectTitleImageLinkRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                        const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_BOBBY_R;
@@ -1236,7 +1239,7 @@ void CreateMouseRegionForBigImage(UINT16 usPosY, UINT8 ubCount, INT16 *pItemNumb
     MSYS_DefineRegion(&gSelectedBigImageRegion[i], BOBBYR_GRID_PIC_X, usPosY,
                       (BOBBYR_GRID_PIC_X + BOBBYR_GRID_PIC_WIDTH),
                       (UINT16)(usPosY + BOBBYR_GRID_PIC_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                      MSYS_NO_CALLBACK, SelectBigImageRegionCallBack);
+                      MSYS_NO_CALLBACK, SelectBigImageRegionCallback);
     MSYS_AddRegion(&gSelectedBigImageRegion[i]);
     MSYS_SetRegionUserData(&gSelectedBigImageRegion[i], 0, i);
 
@@ -1275,7 +1278,8 @@ void DeleteMouseRegionForBigImage() {
   gubNumItemsOnScreen = 0;
 }
 
-void SelectBigImageRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectBigImageRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT16 usItemNum = (UINT16)MSYS_GetRegionUserData(pRegion, 0);

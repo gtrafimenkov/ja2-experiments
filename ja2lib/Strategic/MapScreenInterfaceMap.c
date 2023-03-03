@@ -483,8 +483,10 @@ void BlitMineText(INT16 sMapX, INT16 sMapY);
 extern BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY);
 INT16 GetBaseSectorForCurrentTown(void);
 void RenderIconsPerSectorForSelectedTown(void);
-void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void MilitiaRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void MilitiaRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 void CreateDestroyMilitiaSectorButtons(void);
 void ShowHighLightedSectorOnMilitiaMap(void);
 void SetMilitiaMapButtonsText(void);
@@ -508,7 +510,8 @@ void ShowSAMSitesOnStrategicMap(void);
 // UINT8 NumFriendlyInSector( INT16 sX, INT16 sY, INT8 bZ );
 
 // callbacks
-void MilitiaBoxMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MilitiaBoxMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 // display potential path, yes or no?
 void DisplayThePotentialPathForHelicopter(INT16 sMapX, INT16 sMapY);
@@ -4755,7 +4758,8 @@ void ShowHighLightedSectorOnMilitiaMap(void) {
   return;
 }
 
-void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   iValue = MSYS_GetRegionUserData(pRegion, 0);
@@ -4777,7 +4781,8 @@ void MilitiaRegionClickCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, con
   }
 }
 
-void MilitiaRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MilitiaRegionMoveCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   iValue = MSYS_GetRegionUserData(pRegion, 0);
@@ -5575,7 +5580,8 @@ void HandleLowerLevelMapBlit(void) {
   return;
 }
 
-void MilitiaBoxMaskBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void MilitiaBoxMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   // btn callback handler for assignment screen mask region
   if ((iReason & MSYS_CALLBACK_REASON_LBUTTON_UP)) {
     sSectorMilitiaMapSector = -1;

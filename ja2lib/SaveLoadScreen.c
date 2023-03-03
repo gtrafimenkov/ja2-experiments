@@ -214,11 +214,14 @@ INT32 guiSaveLoadImage;
 
 // Mouse regions for the currently selected save game
 struct MOUSE_REGION gSelectedSaveRegion[NUM_SAVE_GAMES];
-void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SelectedSaveRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
+void SelectedSaveRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void SelectedSaveRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                        const struct MouseInput mouse);
 
 struct MOUSE_REGION gSLSEntireScreenRegion;
-void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectedSLSEntireRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                     const struct MouseInput mouse);
 
 //////////////////////////////////////////////////////
 //
@@ -489,7 +492,7 @@ BOOLEAN EnterSaveLoadScreen() {
     MSYS_DefineRegion(&gSelectedSaveRegion[i], usPosX, usPosY,
                       (UINT16)(usPosX + SLG_SAVELOCATION_WIDTH),
                       (UINT16)(usPosY + SLG_SAVELOCATION_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                      SelectedSaveRegionMovementCallBack, SelectedSaveRegionCallBack);
+                      SelectedSaveRegionMovementCallback, SelectedSaveRegionCallback);
     MSYS_AddRegion(&gSelectedSaveRegion[i]);
     MSYS_SetRegionUserData(&gSelectedSaveRegion[i], 0, i);
 
@@ -512,7 +515,7 @@ BOOLEAN EnterSaveLoadScreen() {
 
   // Create the screen mask to enable ability to righ click to cancel the sace game
   MSYS_DefineRegion(&gSLSEntireScreenRegion, 0, 0, 639, 479, MSYS_PRIORITY_HIGH - 10, CURSOR_NORMAL,
-                    MSYS_NO_CALLBACK, SelectedSLSEntireRegionCallBack);
+                    MSYS_NO_CALLBACK, SelectedSLSEntireRegionCallback);
   MSYS_AddRegion(&gSLSEntireScreenRegion);
 
   // Reset the regions
@@ -1430,7 +1433,8 @@ btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
 }
 */
 
-void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectedSaveRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   INT8 bActiveTextField;
 
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
@@ -1570,7 +1574,8 @@ void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, con
   }
 }
 
-void SelectedSaveRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectedSaveRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                        const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     INT8 bTemp;
     pRegion->uiFlags &= (~BUTTON_CLICKED_ON);
@@ -1947,7 +1952,8 @@ void DoneFadeInForSaveLoadScreen(void) {
   }
 }
 
-void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectedSLSEntireRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                     const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     DisableSelectedSlot();

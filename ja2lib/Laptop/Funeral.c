@@ -92,11 +92,13 @@ UINT32 guiRightColumn;
 
 // Clicking on Funeral link
 struct MOUSE_REGION gSelectedFuneralLinkRegion[FUNERAL_NUMBER_OF_LINKS];
-void SelectFuneralLinkRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason);
+void SelectFuneralLinkRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                     const struct MouseInput mouse);
 
 // Clicking on rip sign to make it disappear
 struct MOUSE_REGION gSelectedRipSignRegion;
-void SelectRipSignRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason);
+void SelectRipSignRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
 
 void DisplayFuneralRipTombStone();
 
@@ -148,7 +150,7 @@ BOOLEAN EnterFuneral() {
     MSYS_DefineRegion(&gSelectedFuneralLinkRegion[i], usPosX, FUNERAL_LINK_1_Y,
                       (UINT16)(usPosX + FUNERAL_LINK_1_WIDTH),
                       (UINT16)(FUNERAL_LINK_1_Y + FUNERAL_LINK_1_HEIGHT), MSYS_PRIORITY_HIGH,
-                      CURSOR_WWW, MSYS_NO_CALLBACK, SelectFuneralLinkRegionCallBack);
+                      CURSOR_WWW, MSYS_NO_CALLBACK, SelectFuneralLinkRegionCallback);
     MSYS_AddRegion(&gSelectedFuneralLinkRegion[i]);
     MSYS_SetRegionUserData(&gSelectedFuneralLinkRegion[i], 0, i);
 
@@ -159,7 +161,7 @@ BOOLEAN EnterFuneral() {
                     (UINT16)(FUNERAL_CLOSED_RIP_SIGN_X + FUNERAL_CLOSED_WIDTH),
                     (UINT16)(FUNERAL_CLOSED_RIP_SIGN_Y + FUNERAL_CLOSED_HEIGHT),
                     MSYS_PRIORITY_HIGH + 1, CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK,
-                    SelectRipSignRegionCallBack);
+                    SelectRipSignRegionCallback);
   MSYS_AddRegion(&gSelectedRipSignRegion);
   MSYS_DisableRegion(&gSelectedRipSignRegion);
 
@@ -305,7 +307,8 @@ void DisplayFuneralRipTombStone() {
   MSYS_EnableRegion(&gSelectedRipSignRegion);
 }
 
-void SelectFuneralLinkRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason) {
+void SelectFuneralLinkRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                     const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT32 uiUserData;
@@ -323,7 +326,8 @@ void SelectFuneralLinkRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason
   }
 }
 
-void SelectRipSignRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason) {
+void SelectRipSignRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     MSYS_DisableRegion(&gSelectedRipSignRegion);

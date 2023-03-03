@@ -124,7 +124,8 @@ INT16 gsMaxPlayersOnTeam;
 
 // link to the varios pages
 struct MOUSE_REGION gSelectedInsuranceContractLinkRegion[2];
-void SelectInsuranceContractRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectInsuranceContractRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                           const struct MouseInput mouse);
 
 INT32 guiInsContractPrevButtonImage;
 void BtnInsContractPrevButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -218,7 +219,7 @@ BOOLEAN EnterInsuranceContract() {
     MSYS_DefineRegion(
         &gSelectedInsuranceContractLinkRegion[i], usPosX, INS_CTRCT_BOTTON_LINK_RED_BAR_Y - 37,
         (UINT16)(usPosX + INS_CTRCT_BOTTOM_LINK_RED_WIDTH), INS_CTRCT_BOTTON_LINK_RED_BAR_Y + 2,
-        MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK, SelectInsuranceContractRegionCallBack);
+        MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK, SelectInsuranceContractRegionCallback);
     MSYS_AddRegion(&gSelectedInsuranceContractLinkRegion[i]);
     MSYS_SetRegionUserData(&gSelectedInsuranceContractLinkRegion[i], 0, i);
 
@@ -879,7 +880,8 @@ pSoldier->ubProfile);
 }
 */
 
-void SelectInsuranceContractRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectInsuranceContractRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                           const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT32 uiInsuranceLink = MSYS_GetRegionUserData(pRegion, 0);

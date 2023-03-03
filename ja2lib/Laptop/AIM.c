@@ -82,18 +82,18 @@ UINT8 gCurrentAimPage[NUM_AIM_SCREENS] = {LAPTOP_MODE_AIM,
 #define AIM_COPYRIGHT_WIDTH 400
 #define AIM_COPYRIGHT_GAP 9
 
-//#define			AIM_WARNING_TIME				100
+// #define			AIM_WARNING_TIME				100
 #define AIM_WARNING_TIME 10000
 
-//#define			AIM_ADVERTISING_DELAY		50
+// #define			AIM_ADVERTISING_DELAY		50
 #define AIM_ADVERTISING_DELAY 500
 
-//#define			AIM_FLOWER_AD_DELAY					15
+// #define			AIM_FLOWER_AD_DELAY					15
 #define AIM_FLOWER_AD_DELAY 150
 #define AIM_FLOWER_NUM_SUBIMAGES 16
 
 #define AIM_AD_FOR_ADS_DELAY 150
-//#define			AIM_AD_FOR_ADS_DELAY					15
+// #define			AIM_AD_FOR_ADS_DELAY					15
 #define AIM_AD_FOR_ADS__NUM_SUBIMAGES 13
 
 #define AIM_AD_INSURANCE_AD_DELAY 150
@@ -111,7 +111,7 @@ UINT8 gCurrentAimPage[NUM_AIM_SCREENS] = {LAPTOP_MODE_AIM,
 #define AIM_AD_BOBBYR_AD__NUM_SUBIMAGES 21
 #define AIM_AD_BOBBYR_AD_NUM_DUCK_SUBIMAGES 6
 
-//#define
+// #define
 
 enum {
   AIM_AD_NOT_DONE,
@@ -147,19 +147,23 @@ BOOLEAN gfInitAdArea;
 
 // MemberCard
 struct MOUSE_REGION gSelectedMemberCardRegion;
-void SelectMemberCardRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectMemberCardRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
 // Policies
 struct MOUSE_REGION gSelectedPoliciesRegion;
-void SelectPoliciesRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectPoliciesRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
 
 // History
 struct MOUSE_REGION gSelectedHistoryRegion;
-void SelectHistoryRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectHistoryRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
 
 // Links
 struct MOUSE_REGION gSelectedLinksRegion;
-void SelectLinksRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectLinksRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 // Bottom Buttons
 void BtnAimBottomButtonsCallback(GUI_BUTTON *btn, INT32 reason);
@@ -168,11 +172,13 @@ INT32 guiBottomButtonImage;
 
 // Banner Area
 struct MOUSE_REGION gSelectedBannerRegion;
-void SelectBannerRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectBannerRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
 
 // Aim logo click
 struct MOUSE_REGION gSelectedAimLogo;
-void SelectAimLogoRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectAimLogoRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
 
 BOOLEAN DrawWarningBox(BOOLEAN fInit, BOOLEAN fRedraw);
 BOOLEAN DisplayFlowerAd(BOOLEAN fInit, BOOLEAN fRedraw);
@@ -256,31 +262,31 @@ BOOLEAN EnterAIM() {
   // Mouse region for the MebershipCard
   MSYS_DefineRegion(&gSelectedMemberCardRegion, MEMBERCARD_X, MEMBERCARD_Y,
                     (MEMBERCARD_X + LINK_SIZE_X), (MEMBERCARD_Y + LINK_SIZE_Y), MSYS_PRIORITY_HIGH,
-                    CURSOR_WWW, MSYS_NO_CALLBACK, SelectMemberCardRegionCallBack);
+                    CURSOR_WWW, MSYS_NO_CALLBACK, SelectMemberCardRegionCallback);
   MSYS_AddRegion(&gSelectedMemberCardRegion);
 
   // Mouse region for the Policies
   MSYS_DefineRegion(&gSelectedPoliciesRegion, POLICIES_X, POLICIES_Y, (POLICIES_X + LINK_SIZE_X),
                     (POLICIES_Y + LINK_SIZE_Y), MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK,
-                    SelectPoliciesRegionCallBack);
+                    SelectPoliciesRegionCallback);
   MSYS_AddRegion(&gSelectedPoliciesRegion);
 
   // Mouse region for the History
   MSYS_DefineRegion(&gSelectedHistoryRegion, HISTORY_X, HISTORY_Y, (HISTORY_X + LINK_SIZE_X),
                     (HISTORY_Y + LINK_SIZE_Y), MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK,
-                    SelectHistoryRegionCallBack);
+                    SelectHistoryRegionCallback);
   MSYS_AddRegion(&gSelectedHistoryRegion);
 
   // Mouse region for the Links
   MSYS_DefineRegion(&gSelectedLinksRegion, LINKS_X, LINKS_Y, (LINKS_X + LINK_SIZE_X),
                     (LINKS_Y + LINK_SIZE_Y), MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK,
-                    SelectLinksRegionCallBack);
+                    SelectLinksRegionCallback);
   MSYS_AddRegion(&gSelectedLinksRegion);
 
   // Mouse region for the Links
   MSYS_DefineRegion(&gSelectedBannerRegion, AIM_AD_TOP_LEFT_X, AIM_AD_TOP_LEFT_Y,
                     AIM_AD_BOTTOM_RIGHT_X, AIM_AD_BOTTOM_RIGHT_Y, MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                    MSYS_NO_CALLBACK, SelectBannerRegionCallBack);
+                    MSYS_NO_CALLBACK, SelectBannerRegionCallback);
   MSYS_AddRegion(&gSelectedBannerRegion);
 
   // disable the region because only certain banners will be 'clickable'
@@ -378,7 +384,8 @@ void RenderAIM() {
                    LAPTOP_SCREEN_WEB_LR_Y);
 }
 
-void SelectMemberCardRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectMemberCardRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (!fFirstTimeIn) guiCurrentLaptopMode = LAPTOP_MODE_AIM_MEMBERS_SORTED_FILES;
@@ -386,7 +393,8 @@ void SelectMemberCardRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void SelectPoliciesRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectPoliciesRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM_POLICIES;
@@ -394,7 +402,8 @@ void SelectPoliciesRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, c
   }
 }
 
-void SelectHistoryRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectHistoryRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM_HISTORY;
@@ -402,7 +411,8 @@ void SelectHistoryRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, co
   }
 }
 
-void SelectLinksRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectLinksRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM_LINKS;
@@ -426,7 +436,7 @@ BOOLEAN InitAimDefaults() {
   // Mouse region for the Links
   MSYS_DefineRegion(&gSelectedAimLogo, AIM_SYMBOL_X, AIM_SYMBOL_Y, AIM_SYMBOL_X + AIM_SYMBOL_WIDTH,
                     AIM_SYMBOL_Y + AIM_SYMBOL_HEIGHT, MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                    MSYS_NO_CALLBACK, SelectAimLogoRegionCallBack);
+                    MSYS_NO_CALLBACK, SelectAimLogoRegionCallback);
   MSYS_AddRegion(&gSelectedAimLogo);
 
   return (TRUE);
@@ -467,7 +477,8 @@ BOOLEAN DrawAimDefaults() {
   return (TRUE);
 }
 
-void SelectAimLogoRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectAimLogoRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM;
@@ -800,7 +811,8 @@ BOOLEAN DrawWarningBox(BOOLEAN fInit, BOOLEAN fRedraw) {
   }
 }
 
-void SelectBannerRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectBannerRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (gubCurrentAdvertisment == AIM_AD_FLOWER_SHOP)

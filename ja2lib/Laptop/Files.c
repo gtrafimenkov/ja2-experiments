@@ -158,7 +158,7 @@ BOOLEAN HandleSpecialFiles(UINT8 ubFormat);
 BOOLEAN HandleSpecialTerroristFile(INT32 iFileNumber, STR sPictureName);
 
 // callbacks
-void FilesBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void FilesBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void BtnPreviousFilePageCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnNextFilePageCallback(GUI_BUTTON *btn, INT32 reason);
 
@@ -625,7 +625,7 @@ void InitializeFilesMouseRegions(void) {
                       (INT16)(FILES_LIST_Y + iCounter * (BLOCK_HEIGHT + 2)),
                       FILES_LIST_X + FILES_LIST_WIDTH,
                       (INT16)(FILES_LIST_Y + (iCounter + 1) * (BLOCK_HEIGHT + 2)),
-                      MSYS_PRIORITY_NORMAL + 2, MSYS_NO_CURSOR, MSYS_NO_CALLBACK, FilesBtnCallBack);
+                      MSYS_PRIORITY_NORMAL + 2, MSYS_NO_CURSOR, MSYS_NO_CALLBACK, FilesBtnCallback);
     MSYS_AddRegion(&pFilesRegions[iCounter]);
     MSYS_SetRegionUserData(&pFilesRegions[iCounter], 0, iCounter);
   }
@@ -640,7 +640,7 @@ void RemoveFilesMouseRegions(void) {
   }
 }
 
-void FilesBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void FilesBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iFileId = -1;
   INT32 iCounter = 0;
   FilesUnitPtr pFilesList = pFilesListHead;

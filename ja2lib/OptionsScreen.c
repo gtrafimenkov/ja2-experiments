@@ -102,7 +102,7 @@
 
 // Slider bar defines
 #define OPT_GAP_BETWEEN_SLIDER_BARS 60
-//#define		OPT_SLIDER_BAR_WIDTH 200
+// #define		OPT_SLIDER_BAR_WIDTH 200
 #define OPT_SLIDER_BAR_SIZE 258
 
 #define OPT_SLIDER_TEXT_WIDTH 45
@@ -198,12 +198,15 @@ void BtnOptionsTogglesCallback(GUI_BUTTON *btn, INT32 reason);
 
 // Mouse regions for the name of the option
 struct MOUSE_REGION gSelectedOptionTextRegion[NUM_GAME_OPTIONS];
-void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SelectedOptionTextRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
+void SelectedOptionTextRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
+void SelectedOptionTextRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                              const struct MouseInput mouse);
 
 // Mouse regions for the area around the toggle boxs
 struct MOUSE_REGION gSelectedToggleBoxAreaRegion;
-void SelectedToggleBoxAreaRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
+void SelectedToggleBoxAreaRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                                 const struct MouseInput mouse);
 
 /////////////////////////////////
 //
@@ -433,8 +436,8 @@ BOOLEAN EnterOptionsScreen() {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_FIRST_COLUMN_X + 13, usPosY,
                         (UINT16)(OPT_TOGGLE_BOX_FIRST_COL_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight * ubNumLines), MSYS_PRIORITY_HIGH,
-                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallBack,
-                        SelectedOptionTextRegionCallBack);
+                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallback,
+                        SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     } else {
@@ -442,7 +445,7 @@ BOOLEAN EnterOptionsScreen() {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_FIRST_COLUMN_X + 13, usPosY,
                         (UINT16)(OPT_TOGGLE_BOX_FIRST_COL_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                        SelectedOptionTextRegionMovementCallBack, SelectedOptionTextRegionCallBack);
+                        SelectedOptionTextRegionMovementCallback, SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     }
@@ -481,15 +484,15 @@ BOOLEAN EnterOptionsScreen() {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_SECOND_COLUMN_X + 13,
                         usPosY, (UINT16)(OPT_TOGGLE_BOX_SECOND_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight * ubNumLines), MSYS_PRIORITY_HIGH,
-                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallBack,
-                        SelectedOptionTextRegionCallBack);
+                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallback,
+                        SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     } else {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_SECOND_COLUMN_X + 13,
                         usPosY, (UINT16)(OPT_TOGGLE_BOX_SECOND_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                        SelectedOptionTextRegionMovementCallBack, SelectedOptionTextRegionCallBack);
+                        SelectedOptionTextRegionMovementCallback, SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     }
@@ -503,7 +506,7 @@ BOOLEAN EnterOptionsScreen() {
   // Create a mouse region so when the user leaves a togglebox text region we can detect it then
   // unselect the region
   MSYS_DefineRegion(&gSelectedToggleBoxAreaRegion, 0, 0, 640, 480, MSYS_PRIORITY_NORMAL,
-                    CURSOR_NORMAL, SelectedToggleBoxAreaRegionMovementCallBack, MSYS_NO_CALLBACK);
+                    CURSOR_NORMAL, SelectedToggleBoxAreaRegionMovementCallback, MSYS_NO_CALLBACK);
   MSYS_AddRegion(&gSelectedToggleBoxAreaRegion);
 
   // Render the scene before adding the slider boxes
@@ -1089,7 +1092,8 @@ void HandleSliderBarMovementSounds() {
     uiLastSpeechTime = GetJA2Clock();
 }
 
-void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectedOptionTextRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse) {
   UINT8 ubButton = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
@@ -1110,7 +1114,8 @@ void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReaso
   }
 }
 
-void SelectedOptionTextRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectedOptionTextRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                              const struct MouseInput mouse) {
   INT8 bButton = (INT8)MSYS_GetRegionUserData(pRegion, 0);
 
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -1215,7 +1220,8 @@ void HandleHighLightedText(BOOLEAN fHighLight) {
   }
 }
 
-void SelectedToggleBoxAreaRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectedToggleBoxAreaRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                                 const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
   } else if (reason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {
     UINT8 ubCnt;

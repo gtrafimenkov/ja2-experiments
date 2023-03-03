@@ -49,12 +49,15 @@ UINT32 guiAimFiFace[MAX_NUMBER_MERCS];
 
 // Face regions
 struct MOUSE_REGION gMercFaceMouseRegions[MAX_NUMBER_MERCS];
-void SelectMercFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
-void SelectMercFaceMoveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectMercFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
+void SelectMercFaceMoveRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
 
 // Screen region, used to right click to go back to previous page
 struct MOUSE_REGION gScreenMouseRegions;
-void SelectScreenRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SelectScreenRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
 
 BOOLEAN DrawMercsFaceToScreen(UINT8 ubMercID, UINT16 usPosX, UINT16 usPosY, UINT8 ubImage);
 
@@ -80,7 +83,7 @@ BOOLEAN EnterAimFacialIndex() {
       MSYS_DefineRegion(&gMercFaceMouseRegions[i], usPosX, usPosY,
                         (INT16)(usPosX + AIM_FI_PORTRAIT_WIDTH),
                         (INT16)(usPosY + AIM_FI_PORTRAIT_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                        SelectMercFaceMoveRegionCallBack, SelectMercFaceRegionCallBack);
+                        SelectMercFaceMoveRegionCallback, SelectMercFaceRegionCallback);
       // Add region
       MSYS_AddRegion(&gMercFaceMouseRegions[i]);
       MSYS_SetRegionUserData(&gMercFaceMouseRegions[i], 0, i);
@@ -99,7 +102,7 @@ BOOLEAN EnterAimFacialIndex() {
 
   MSYS_DefineRegion(&gScreenMouseRegions, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y,
                     LAPTOP_SCREEN_LR_X, LAPTOP_SCREEN_WEB_LR_Y, MSYS_PRIORITY_HIGH - 1,
-                    CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, SelectScreenRegionCallBack);
+                    CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, SelectScreenRegionCallback);
   // Add region
   MSYS_AddRegion(&gScreenMouseRegions);
 
@@ -199,7 +202,8 @@ BOOLEAN RenderAimFacialIndex() {
   return (TRUE);
 }
 
-void SelectMercFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectMercFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM_MEMBERS;
@@ -209,14 +213,16 @@ void SelectMercFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, c
   }
 }
 
-void SelectScreenRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void SelectScreenRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     guiCurrentLaptopMode = LAPTOP_MODE_AIM_MEMBERS_SORTED_FILES;
   }
 }
 
-void SelectMercFaceMoveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectMercFaceMoveRegionCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                      const struct MouseInput mouse) {
   UINT8 ubMercNum;
   UINT16 usPosX, usPosY;
 

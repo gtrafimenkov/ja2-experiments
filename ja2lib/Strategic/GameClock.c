@@ -38,8 +38,10 @@ extern BOOLEAN gfFadeOut;
 // These functions shouldn't be used anywhere else...
 extern BOOLEAN GameEventsPending(UINT32 uiAdjustment);
 extern void ProcessPendingGameEvents(UINT32 uiAdjustment, UINT8 ubWarpCode);
-void PauseOfClockBtnCallback(struct MOUSE_REGION* pRegion, INT32 iReason);
-void ScreenMaskForGamePauseBtnCallBack(struct MOUSE_REGION* pRegion, INT32 iReason);
+void PauseOfClockBtnCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void ScreenMaskForGamePauseBtnCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                       const struct MouseInput mouse);
 
 void CreateDestroyScreenMaskForPauseGame(void);
 
@@ -832,7 +834,8 @@ void RemoveMouseRegionForPauseOfClock(void) {
   }
 }
 
-void PauseOfClockBtnCallback(struct MOUSE_REGION* pRegion, INT32 iReason) {
+void PauseOfClockBtnCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                             const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     HandlePlayerPauseUnPauseOfGame();
   }
@@ -891,7 +894,7 @@ void CreateDestroyScreenMaskForPauseGame(void) {
   } else if ((gfPauseDueToPlayerGamePause == TRUE) && (fCreated == FALSE)) {
     // create a mouse region for pausing of game clock
     MSYS_DefineRegion(&gClockScreenMaskMouseRegion, 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST, 0,
-                      MSYS_NO_CALLBACK, ScreenMaskForGamePauseBtnCallBack);
+                      MSYS_NO_CALLBACK, ScreenMaskForGamePauseBtnCallback);
     fCreated = TRUE;
 
     // get region x and y values
@@ -915,7 +918,8 @@ void CreateDestroyScreenMaskForPauseGame(void) {
   }
 }
 
-void ScreenMaskForGamePauseBtnCallBack(struct MOUSE_REGION* pRegion, INT32 iReason) {
+void ScreenMaskForGamePauseBtnCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                       const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // unpause the game
     HandlePlayerPauseUnPauseOfGame();

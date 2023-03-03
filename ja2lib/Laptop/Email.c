@@ -265,7 +265,7 @@ INT32 iTotalHeight = 0;
 void SwapMessages(INT32 iIdA, INT32 iIdB);
 void PlaceMessagesinPages();
 BOOLEAN fFirstTime = TRUE;
-void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void EmailBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void EmailMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void PreviousRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void NextRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -321,7 +321,7 @@ void InitializeMouseRegions() {
     MSYS_DefineRegion(&pEmailRegions[iCounter], MIDDLE_X,
                       ((INT16)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)), MIDDLE_X + LINE_WIDTH,
                       (INT16)(MIDDLE_Y + iCounter * MIDDLE_WIDTH + MIDDLE_WIDTH),
-                      MSYS_PRIORITY_NORMAL + 2, MSYS_NO_CURSOR, EmailMvtCallBack, EmailBtnCallBack);
+                      MSYS_PRIORITY_NORMAL + 2, MSYS_NO_CURSOR, EmailMvtCallBack, EmailBtnCallback);
     MSYS_AddRegion(&pEmailRegions[iCounter]);
     MSYS_SetRegionUserData(&pEmailRegions[iCounter], 0, iCounter);
   }
@@ -1329,7 +1329,7 @@ void LookForUnread() {
   return;
 }
 
-void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
+void EmailBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iCount;
   PagePtr pPage = pPageList;
   INT32 iId = 0;
