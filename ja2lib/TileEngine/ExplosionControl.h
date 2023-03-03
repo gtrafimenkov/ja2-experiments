@@ -106,6 +106,6 @@ void RemoveAllActiveTimedBombs(void);
 
 BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive, INT16 sSubsequent,
                          BOOLEAN fRecompileMovementCosts, INT16 sWoundAmt, INT16 sBreathAmt,
-                         UINT8 ubOwner);
+                         UINT8 ubOwner, const struct MouseInput mouse);
 
 #endif

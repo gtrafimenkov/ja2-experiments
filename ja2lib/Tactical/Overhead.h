@@ -236,7 +236,8 @@ UINT32 EnterTacticalDemoMode();
 BOOLEAN UIOKMoveDestination(struct SOLDIERTYPE *pSoldier, UINT16 usMapPos);
 
 INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
-                         INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor);
+                         INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor,
+                         const struct MouseInput mouse);
 INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
                                INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor,
                                const struct MouseInput mouse);
@@ -268,7 +269,7 @@ void CycleThroughKnownEnemies();
 
 BOOLEAN CheckForEndOfCombatMode(BOOLEAN fIncrementTurnsNotSeen);
 
-struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID);
+struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID, const struct MouseInput mouse);
 
 BOOLEAN PlayerTeamFull();
 

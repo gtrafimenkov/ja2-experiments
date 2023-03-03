@@ -9,6 +9,7 @@
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
+#include "MouseInput.h"
 #include "SGP/Container.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
@@ -2759,14 +2760,16 @@ UINT16 PickSoldierReadyAnimation(struct SOLDIERTYPE *pSoldier, BOOLEAN fEndReady
   return (INVALID_ANIMATION);
 }
 
-extern struct SOLDIERTYPE *FreeUpAttackerGivenTarget(UINT8 ubID, UINT8 ubTargetID);
-extern struct SOLDIERTYPE *ReduceAttackBusyGivenTarget(UINT8 ubID, UINT8 ubTargetID);
+extern struct SOLDIERTYPE *FreeUpAttackerGivenTarget(UINT8 ubID, UINT8 ubTargetID,
+                                                     const struct MouseInput mouse);
+extern struct SOLDIERTYPE *ReduceAttackBusyGivenTarget(UINT8 ubID, UINT8 ubTargetID,
+                                                       const struct MouseInput mouse);
 
 // ATE: THIS FUNCTION IS USED FOR ALL SOLDIER TAKE DAMAGE FUNCTIONS!
 void EVENT_SoldierGotHit(struct SOLDIERTYPE *pSoldier, UINT16 usWeaponIndex, INT16 sDamage,
                          INT16 sBreathLoss, UINT16 bDirection, UINT16 sRange, UINT8 ubAttackerID,
                          UINT8 ubSpecial, UINT8 ubHitLocation, INT16 sSubsequent,
-                         INT16 sLocationGrid) {
+                         INT16 sLocationGrid, const struct MouseInput mouse) {
   UINT8 ubCombinedLoss, ubVolume, ubReason;
   struct SOLDIERTYPE *pNewSoldier;
 
@@ -2896,9 +2899,9 @@ void EVENT_SoldierGotHit(struct SOLDIERTYPE *pSoldier, UINT16 usWeaponIndex, INT
 
     // ATE: If it's from GUNFIRE damage, keep in mind bullets...
     if (Item[usWeaponIndex].usItemClass & IC_GUN) {
-      pNewSoldier = FreeUpAttackerGivenTarget(pSoldier->ubAttackerID, pSoldier->ubID);
+      pNewSoldier = FreeUpAttackerGivenTarget(pSoldier->ubAttackerID, pSoldier->ubID, mouse);
     } else {
-      pNewSoldier = ReduceAttackBusyGivenTarget(pSoldier->ubAttackerID, pSoldier->ubID);
+      pNewSoldier = ReduceAttackBusyGivenTarget(pSoldier->ubAttackerID, pSoldier->ubID, mouse);
     }
 
     if (pNewSoldier != NULL) {

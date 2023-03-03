@@ -382,12 +382,11 @@ void HandleFencePartnerCheck(INT16 sStructGridNo) {
   }
 }
 
-BOOLEAN ExplosiveDamageStructureAtGridNo(struct STRUCTURE *pCurrent,
-                                         struct STRUCTURE **ppNextCurrent, INT16 sGridNo,
-                                         INT16 sWoundAmt, UINT32 uiDist,
-                                         BOOLEAN *pfRecompileMovementCosts, BOOLEAN fOnlyWalls,
-                                         BOOLEAN fSubSequentMultiTilesTransitionDamage,
-                                         UINT8 ubOwner, INT8 bLevel) {
+static BOOLEAN ExplosiveDamageStructureAtGridNo(
+    struct STRUCTURE *pCurrent, struct STRUCTURE **ppNextCurrent, INT16 sGridNo, INT16 sWoundAmt,
+    UINT32 uiDist, BOOLEAN *pfRecompileMovementCosts, BOOLEAN fOnlyWalls,
+    BOOLEAN fSubSequentMultiTilesTransitionDamage, UINT8 ubOwner, INT8 bLevel,
+    const struct MouseInput mouse) {
   INT16 sX, sY;
   struct STRUCTURE *pBase, *pWallStruct, *pAttached, *pAttachedBase;
   struct LEVELNODE *pNode = NULL, *pNewNode = NULL, *pAttachedNode;
@@ -430,7 +429,7 @@ BOOLEAN ExplosiveDamageStructureAtGridNo(struct STRUCTURE *pCurrent,
     // Spray corpse in a fine mist....
     if (uiDist <= 1) {
       // Remove corpse...
-      VaporizeCorpse(sGridNo, pCurrent->usStructureID);
+      VaporizeCorpse(sGridNo, pCurrent->usStructureID, mouse);
     }
   } else if (!(pCurrent->fFlags & STRUCTURE_PERSON)) {
     // Damage structure!
@@ -963,11 +962,11 @@ BOOLEAN ExplosiveDamageStructureAtGridNo(struct STRUCTURE *pCurrent,
 
 struct STRUCTURE *gStruct;
 
-void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
-                           BOOLEAN *pfRecompileMovementCosts, BOOLEAN fOnlyWalls,
-                           INT8 bMultiStructSpecialFlag,
-                           BOOLEAN fSubSequentMultiTilesTransitionDamage, UINT8 ubOwner,
-                           INT8 bLevel) {
+static void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
+                                  BOOLEAN *pfRecompileMovementCosts, BOOLEAN fOnlyWalls,
+                                  INT8 bMultiStructSpecialFlag,
+                                  BOOLEAN fSubSequentMultiTilesTransitionDamage, UINT8 ubOwner,
+                                  INT8 bLevel, const struct MouseInput mouse) {
   struct STRUCTURE *pCurrent, *pNextCurrent, *pStructure;
   struct STRUCTURE *pBaseStructure;
   INT16 sDesiredLevel;
@@ -1019,7 +1018,7 @@ void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
     if (pCurrent->sCubeOffset == sDesiredLevel) {
       fExplodeDamageReturn = ExplosiveDamageStructureAtGridNo(
           pCurrent, &pNextCurrent, sGridNo, sWoundAmt, uiDist, pfRecompileMovementCosts, fOnlyWalls,
-          0, ubOwner, bLevel);
+          0, ubOwner, bLevel, mouse);
 
       // Are we overwritting damage due to multi-tile...?
       if (fExplodeDamageReturn) {
@@ -1062,10 +1061,12 @@ void ExplosiveDamageGridNo(INT16 sGridNo, INT16 sWoundAmt, UINT32 uiDist,
                   // If we just damaged it, use same damage value....
                   if (fMultiStructSpecialFlag) {
                     ExplosiveDamageGridNo(sNewGridNo2, sWoundAmt, uiDist, pfRecompileMovementCosts,
-                                          fOnlyWalls, bMultiStructSpecialFlag, 1, ubOwner, bLevel);
+                                          fOnlyWalls, bMultiStructSpecialFlag, 1, ubOwner, bLevel,
+                                          mouse);
                   } else {
                     ExplosiveDamageGridNo(sNewGridNo2, sWoundAmt, uiDist, pfRecompileMovementCosts,
-                                          fOnlyWalls, bMultiStructSpecialFlag, 2, ubOwner, bLevel);
+                                          fOnlyWalls, bMultiStructSpecialFlag, 2, ubOwner, bLevel,
+                                          mouse);
                   }
 
                   {
@@ -1138,7 +1139,7 @@ static BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBomb
 
 BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive, INT16 sSubsequent,
                          BOOLEAN fRecompileMovementCosts, INT16 sWoundAmt, INT16 sBreathAmt,
-                         UINT8 ubOwner) {
+                         UINT8 ubOwner, const struct MouseInput mouse) {
   INT8 bPosOfMask = NO_SLOT;
 
   if (!pSoldier->bActive || !pSoldier->bInSector || !pSoldier->bLife || AM_A_ROBOT(pSoldier)) {
@@ -1242,7 +1243,7 @@ BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive
 
     if (ubOwner != NOBODY && MercPtrs[ubOwner]->bTeam == gbPlayerNum &&
         pSoldier->bTeam != gbPlayerNum) {
-      ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION);
+      ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION, mouse);
     }
   }
   return (fRecompileMovementCosts);
@@ -1358,14 +1359,14 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
       }
 
       ExplosiveDamageGridNo(sGridNo, sStructDmgAmt, uiDist, &fRecompileMovementCosts, FALSE, -1, 0,
-                            ubOwner, bLevel);
+                            ubOwner, bLevel, mouse);
 
       // ATE: Look for damage to walls ONLY for next two gridnos
       sNewGridNo = NewGridNo(sGridNo, DirectionInc(NORTH));
 
       if (GridNoOnVisibleWorldTile(sNewGridNo)) {
         ExplosiveDamageGridNo(sNewGridNo, sStructDmgAmt, uiDist, &fRecompileMovementCosts, TRUE, -1,
-                              0, ubOwner, bLevel);
+                              0, ubOwner, bLevel, mouse);
       }
 
       // ATE: Look for damage to walls ONLY for next two gridnos
@@ -1373,7 +1374,7 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
 
       if (GridNoOnVisibleWorldTile(sNewGridNo)) {
         ExplosiveDamageGridNo(sNewGridNo, sStructDmgAmt, uiDist, &fRecompileMovementCosts, TRUE, -1,
-                              0, ubOwner, bLevel);
+                              0, ubOwner, bLevel, mouse);
       }
     }
 
@@ -1452,145 +1453,7 @@ static BOOLEAN ExpAffect(INT16 sBombGridNo, INT16 sGridNo, UINT32 uiDist, UINT16
 
       fRecompileMovementCosts =
           DishOutGasDamage(pSoldier, pExplosive, sSubsequent, fRecompileMovementCosts, sWoundAmt,
-                           sBreathAmt, ubOwner);
-      /*
-                       if (!pSoldier->bActive || !pSoldier->bInSector || !pSoldier->bLife ||
-         AM_A_ROBOT( pSoldier ) )
-                       {
-                               return( fRecompileMovementCosts );
-                       }
-
-                       if ( pExplosive->ubType == EXPLOSV_CREATUREGAS )
-                       {
-                               if ( pSoldier->uiStatusFlags & SOLDIER_MONSTER )
-                               {
-                                      // unaffected by own gas effects
-                                      return( fRecompileMovementCosts );
-                               }
-                               if ( sSubsequent && pSoldier->fHitByGasFlags & HIT_BY_CREATUREGAS )
-                               {
-                                      // already affected by creature gas this turn
-                                      return( fRecompileMovementCosts );
-                               }
-                       }
-                       else // no gas mask help from creature attacks
-                              // ATE/CJC: gas stuff
-                              {
-                               INT8 bPosOfMask = NO_SLOT;
-
-
-                               if ( pExplosive->ubType == EXPLOSV_TEARGAS )
-                               {
-                                      // ignore whether subsequent or not if hit this turn
-                                       if ( pSoldier->fHitByGasFlags & HIT_BY_TEARGAS )
-                                       {
-                                              // already affected by creature gas this turn
-                                              return( fRecompileMovementCosts );
-                                       }
-                               }
-                               else if ( pExplosive->ubType == EXPLOSV_MUSTGAS )
-                               {
-                                       if ( sSubsequent && pSoldier->fHitByGasFlags &
-         HIT_BY_MUSTARDGAS )
-                                       {
-                                              // already affected by creature gas this turn
-                                              return( fRecompileMovementCosts );
-                                       }
-
-                               }
-
-                               if ( sSubsequent && pSoldier->fHitByGasFlags & HIT_BY_CREATUREGAS )
-                               {
-                                      // already affected by creature gas this turn
-                                      return( fRecompileMovementCosts );
-                               }
-
-
-                               if ( pSoldier->inv[ HEAD1POS ].usItem == GASMASK && pSoldier->inv[
-         HEAD1POS ].bStatus[0] >= USABLE )
-                               {
-                                              bPosOfMask = HEAD1POS;
-                               }
-                               else if ( pSoldier->inv[ HEAD2POS ].usItem == GASMASK &&
-         pSoldier->inv[ HEAD2POS ].bStatus[0] >= USABLE )
-                               {
-                                              bPosOfMask = HEAD2POS;
-                               }
-
-                               if ( bPosOfMask != NO_SLOT  )
-                               {
-                                       if ( pSoldier->inv[ bPosOfMask ].bStatus[0] <
-         GASMASK_MIN_STATUS )
-                                       {
-                                               // GAS MASK reduces breath loss by its work% (it
-         leaks if not at least 70%) sBreathAmt = ( sBreathAmt * ( 100 - pSoldier->inv[ bPosOfMask
-         ].bStatus[0] ) ) / 100; if ( sBreathAmt > 500 )
-                                               {
-                                                              // if at least 500 of breath damage
-         got through
-                                                              // the soldier within the blast radius
-         is gassed for at least one
-                                                              // turn, possibly more if it's tear
-         gas (which hangs around a while) pSoldier->uiStatusFlags |= SOLDIER_GASSED;
-                                               }
-
-                                               if ( sWoundAmt > 1 )
-                                               {
-                                                pSoldier->inv[ bPosOfMask ].bStatus[0] -= (INT8)
-         Random( 4 ); sWoundAmt = ( sWoundAmt * ( 100 -  pSoldier->inv[ bPosOfMask ].bStatus[0] ) )
-         / 100;
-                                               }
-                                               else if ( sWoundAmt == 1 )
-                                               {
-                                                      pSoldier->inv[ bPosOfMask ].bStatus[0] -=
-         (INT8) Random( 2 );
-                                               }
-                                       }
-                                       else
-                                       {
-                                              sBreathAmt = 0;
-                                              if ( sWoundAmt > 0 )
-                                              {
-                                               if ( sWoundAmt == 1 )
-                                               {
-                                                      pSoldier->inv[ bPosOfMask ].bStatus[0] -=
-         (INT8) Random( 2 );
-                                               }
-                                               else
-                                               {
-                                                      // use up gas mask
-                                                      pSoldier->inv[ bPosOfMask ].bStatus[0] -=
-         (INT8) Random( 4 );
-                                               }
-                                              }
-                                              sWoundAmt = 0;
-                                       }
-
-                               }
-                              }
-
-                              if ( sWoundAmt != 0 || sBreathAmt != 0 )
-                              {
-                                      switch( pExplosive->ubType )
-                                      {
-                                              case EXPLOSV_CREATUREGAS:
-                                                      pSoldier->fHitByGasFlags |=
-         HIT_BY_CREATUREGAS; break; case EXPLOSV_TEARGAS: pSoldier->fHitByGasFlags |=
-         HIT_BY_TEARGAS; break; case EXPLOSV_MUSTGAS: pSoldier->fHitByGasFlags |= HIT_BY_MUSTARDGAS;
-                                                      break;
-                                              default:
-                                                      break;
-                                      }
-                                      // a gas effect, take damage directly...
-                                      SoldierTakeDamage( pSoldier, ANIM_STAND, sWoundAmt,
-         sBreathAmt, TAKE_DAMAGE_GAS, NOBODY, NOWHERE, 0, TRUE ); if ( pSoldier->bLife >=
-         CONSCIOUSNESS )
-                                      {
-                                              DoMercBattleSound( pSoldier, (INT8)( BATTLE_SOUND_HIT1
-         + Random( 2 ) ) );
-                                      }
-                              }
-                              */
+                           sBreathAmt, ubOwner, mouse);
     }
 
     (*pfMercHit) = TRUE;

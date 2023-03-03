@@ -11,6 +11,7 @@
 #include "JAScreens.h"
 #include "Laptop/History.h"
 #include "MessageBoxScreen.h"
+#include "MouseInput.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/MouseSystem.h"
@@ -1790,7 +1791,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
                            (INT16)(pExplosive->ubDamage + (UINT8)PreRandom(pExplosive->ubDamage)),
                            (INT16)(100 * (pExplosive->ubStunDamage +
                                           (INT16)PreRandom((pExplosive->ubStunDamage / 2)))),
-                           NOBODY);
+                           NOBODY, mouse);
         }
       }
 
@@ -3815,7 +3816,8 @@ BOOLEAN TeamMemberNear(INT8 bTeam, INT16 sGridNo, INT32 iRange) {
 }
 
 INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pubDirection,
-                         INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor) {
+                         INT16 *psAdjustedGridNo, BOOLEAN fForceToPerson, BOOLEAN fDoor,
+                         const struct MouseInput mouse) {
   // psAdjustedGridNo gets the original gridno or the new one if updated
   // It will ONLY be updated IF we were over a merc, ( it's updated to their gridno )
   // pubDirection gets the direction to the final gridno
@@ -6074,8 +6076,9 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
   return (fEnterCombat);
 }
 
-struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker,
-                                                  UINT8 ubTargetID) {
+static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker,
+                                                         UINT8 ubTargetID,
+                                                         const struct MouseInput mouse) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
@@ -6339,36 +6342,40 @@ struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByA
   return (pTarget);
 }
 
-struct SOLDIERTYPE *ReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker) {
+struct SOLDIERTYPE *ReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker,
+                                          const struct MouseInput mouse) {
   if (ubID == NOBODY) {
-    return (InternalReduceAttackBusyCount(ubID, fCalledByAttacker, NOBODY));
+    return (InternalReduceAttackBusyCount(ubID, fCalledByAttacker, NOBODY, mouse));
   } else {
-    return (InternalReduceAttackBusyCount(ubID, fCalledByAttacker, MercPtrs[ubID]->ubTargetID));
+    return (
+        InternalReduceAttackBusyCount(ubID, fCalledByAttacker, MercPtrs[ubID]->ubTargetID, mouse));
   }
 }
 
-struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID) {
+struct SOLDIERTYPE *FreeUpAttacker(UINT8 ubID, const struct MouseInput mouse) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
 
-  return (ReduceAttackBusyCount(ubID, TRUE));
+  return (ReduceAttackBusyCount(ubID, TRUE, mouse));
 }
 
-struct SOLDIERTYPE *FreeUpAttackerGivenTarget(UINT8 ubID, UINT8 ubTargetID) {
+struct SOLDIERTYPE *FreeUpAttackerGivenTarget(UINT8 ubID, UINT8 ubTargetID,
+                                              const struct MouseInput mouse) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
 
-  return (InternalReduceAttackBusyCount(ubID, TRUE, ubTargetID));
+  return (InternalReduceAttackBusyCount(ubID, TRUE, ubTargetID, mouse));
 }
 
-struct SOLDIERTYPE *ReduceAttackBusyGivenTarget(UINT8 ubID, UINT8 ubTargetID) {
+struct SOLDIERTYPE *ReduceAttackBusyGivenTarget(UINT8 ubID, UINT8 ubTargetID,
+                                                const struct MouseInput mouse) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
 
-  return (InternalReduceAttackBusyCount(ubID, FALSE, ubTargetID));
+  return (InternalReduceAttackBusyCount(ubID, FALSE, ubTargetID, mouse));
 }
 
 void StopMercAnimation(BOOLEAN fStop) {

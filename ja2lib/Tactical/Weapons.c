@@ -730,7 +730,7 @@ BOOLEAN FireWeapon(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   if (sTargetGridNo == pSoldier->sGridNo) {
     // FREE UP NPC!
     DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - attack on own gridno!"));
-    FreeUpAttacker((UINT8)pSoldier->ubID);
+    FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
     return (FALSE);
   }
 
@@ -1329,7 +1329,7 @@ BOOLEAN UseBlade(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
       }
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                String("@@@@@@@ Freeing up attacker - missed in knife attack"));
-      FreeUpAttacker((UINT8)pSoldier->ubID);
+      FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
     }
 
     if (PTR_OURTEAM && pSoldier->ubTargetID != NOBODY) {
@@ -1366,7 +1366,7 @@ BOOLEAN UseBlade(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   } else {
     DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
              String("@@@@@@@ Freeing up attacker - missed in knife attack"));
-    FreeUpAttacker((UINT8)pSoldier->ubID);
+    FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
   }
 
   // possibly reduce monster smell
@@ -1511,7 +1511,7 @@ BOOLEAN UseHandToHand(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo, BOOLEAN
 #ifdef JA2BETAVERSION
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - steal"));
 #endif
-      FreeUpAttacker((UINT8)pSoldier->ubID);
+      FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
 
     } else {
       // ATE/CC: if doing ninja spin kick (only), automatically make it a hit
@@ -1575,7 +1575,7 @@ BOOLEAN UseHandToHand(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo, BOOLEAN
       } else {
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - missed in HTH attack"));
-        FreeUpAttacker((UINT8)pSoldier->ubID);
+        FreeUpAttacker((UINT8)pSoldier->ubID, mouse);
       }
     }
   }
@@ -1766,9 +1766,9 @@ BOOLEAN UseLauncher(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   return (TRUE);
 }
 
-BOOLEAN DoSpecialEffectAmmoMiss(UINT8 ubAttackerID, INT16 sGridNo, INT16 sXPos, INT16 sYPos,
-                                INT16 sZPos, BOOLEAN fSoundOnly, BOOLEAN fFreeupAttacker,
-                                INT32 iBullet) {
+static BOOLEAN DoSpecialEffectAmmoMiss(UINT8 ubAttackerID, INT16 sGridNo, INT16 sXPos, INT16 sYPos,
+                                       INT16 sZPos, BOOLEAN fSoundOnly, BOOLEAN fFreeupAttacker,
+                                       INT32 iBullet, const struct MouseInput mouse) {
   ANITILE_PARAMS AniParams;
   UINT8 ubAmmoType;
   UINT16 usItem;
@@ -1797,7 +1797,7 @@ BOOLEAN DoSpecialEffectAmmoMiss(UINT8 ubAttackerID, INT16 sGridNo, INT16 sXPos, 
         RemoveBullet(iBullet);
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - bullet hit structure - explosive ammo"));
-        FreeUpAttacker((UINT8)ubAttackerID);
+        FreeUpAttacker((UINT8)ubAttackerID, mouse);
       }
     }
 
@@ -1842,7 +1842,8 @@ BOOLEAN DoSpecialEffectAmmoMiss(UINT8 ubAttackerID, INT16 sGridNo, INT16 sXPos, 
 
 void WeaponHit(UINT16 usSoldierID, UINT16 usWeaponIndex, INT16 sDamage, INT16 sBreathLoss,
                UINT16 usDirection, INT16 sXPos, INT16 sYPos, INT16 sZPos, INT16 sRange,
-               UINT8 ubAttackerID, BOOLEAN fHit, UINT8 ubSpecial, UINT8 ubHitLocation) {
+               UINT8 ubAttackerID, BOOLEAN fHit, UINT8 ubSpecial, UINT8 ubHitLocation,
+               const struct MouseInput mouse) {
   struct SOLDIERTYPE *pTargetSoldier;
 
   // Get Target
@@ -1871,7 +1872,7 @@ void WeaponHit(UINT16 usSoldierID, UINT16 usWeaponIndex, INT16 sDamage, INT16 sB
   }
 
   DoSpecialEffectAmmoMiss(ubAttackerID, pTargetSoldier->sGridNo, sXPos, sYPos, sZPos, FALSE, FALSE,
-                          0);
+                          0, mouse);
 
   // OK, SHOT HAS HIT, DO THINGS APPROPRIATELY
   // ATE: This is 'cause of that darn smoke effect that could potnetially kill
@@ -1997,12 +1998,13 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
 
     case MONSTERCLASS:
 
-      DoSpecialEffectAmmoMiss(ubAttackerID, sGridNo, sXPos, sYPos, sZPos, FALSE, TRUE, iBullet);
+      DoSpecialEffectAmmoMiss(ubAttackerID, sGridNo, sXPos, sYPos, sZPos, FALSE, TRUE, iBullet,
+                              mouse);
 
       RemoveBullet(iBullet);
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                String("@@@@@@@ Freeing up attacker - monster attack hit structure"));
-      FreeUpAttacker((UINT8)ubAttackerID);
+      FreeUpAttacker((UINT8)ubAttackerID, mouse);
 
       // PlayJA2Sample( SPIT_RICOCHET , RATE_11025, uiMissVolume, 1, SoundDir( sGridNo ) );
       break;
@@ -2031,7 +2033,7 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
         RemoveBullet(iBullet);
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - knife attack hit structure"));
-        FreeUpAttacker((UINT8)ubAttackerID);
+        FreeUpAttacker((UINT8)ubAttackerID, mouse);
       }
   }
 
@@ -2055,11 +2057,11 @@ void StructureHit(INT32 iBullet, UINT16 usWeaponIndex, INT8 bWeaponStatus, UINT8
         RemoveBullet(iBullet);
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker - bullet hit same structure twice"));
-        FreeUpAttacker((UINT8)ubAttackerID);
+        FreeUpAttacker((UINT8)ubAttackerID, mouse);
       }
     } else {
       if (!fStopped || !DoSpecialEffectAmmoMiss(ubAttackerID, sGridNo, sXPos, sYPos, sZPos, FALSE,
-                                                TRUE, iBullet)) {
+                                                TRUE, iBullet, mouse)) {
         if (sZPos == 0) {
           PlayJA2Sample(MISS_G2, RATE_11025, uiMissVolume, 1, SoundDir(sGridNo));
         } else {
@@ -3382,7 +3384,7 @@ void ShotMiss(UINT8 ubAttackerID, INT32 iBullet) {
     // PLAY SOUND AND FLING DEBRIS
     // RANDOMIZE SOUND SYSTEM
 
-    if (!DoSpecialEffectAmmoMiss(ubAttackerID, NOWHERE, 0, 0, 0, TRUE, TRUE, 0)) {
+    if (!DoSpecialEffectAmmoMiss(ubAttackerID, NOWHERE, 0, 0, 0, TRUE, TRUE, 0, mouse)) {
       PlayJA2Sample(MISS_1 + Random(8), RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
     }
 
