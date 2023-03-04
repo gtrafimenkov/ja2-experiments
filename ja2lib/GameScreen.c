@@ -677,7 +677,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   // Display Framerate
   DisplayFrameRate();
 
-  CheckForMeanwhileOKStart();
+  CheckForMeanwhileOKStart(gameInput->mouse);
 
   ScrollString();
 

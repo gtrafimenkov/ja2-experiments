@@ -315,7 +315,7 @@ BOOLEAN BeginMeanwhile(UINT8 ubMeanwhileID) {
   return (TRUE);
 }
 
-void BringupMeanwhileBox() {
+static void BringupMeanwhileBox(const struct MouseInput mouse) {
   CHAR16 zStr[256];
 
 #ifdef JA2TESTVERSION
@@ -335,14 +335,14 @@ void BringupMeanwhileBox() {
 #endif
   {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, MSG_BOX_FLAG_OKSKIP,
-                 BeginMeanwhileCallback, NULL, XXX_GetMouseInput());
+                 BeginMeanwhileCallback, NULL, mouse);
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, (UINT8)MSG_BOX_FLAG_OK,
-                 BeginMeanwhileCallback, NULL, XXX_GetMouseInput());
+                 BeginMeanwhileCallback, NULL, mouse);
   }
 }
 
-void CheckForMeanwhileOKStart() {
+void CheckForMeanwhileOKStart(const struct MouseInput mouse) {
   if (gfMeanwhileTryingToStart) {
     // Are we in prebattle interface?
     if (gfPreBattleInterfaceActive) {
@@ -369,7 +369,7 @@ void CheckForMeanwhileOKStart() {
     // In mapscreen, time is paused when manipulating items...
     CancelItemPointer();
 
-    BringupMeanwhileBox();
+    BringupMeanwhileBox(mouse);
   }
 }
 

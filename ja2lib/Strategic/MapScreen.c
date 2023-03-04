@@ -3464,7 +3464,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
     RenderKeyRingPopup(FALSE);
   }
 
-  CheckForMeanwhileOKStart();
+  CheckForMeanwhileOKStart(gameInput->mouse);
 
   // save background rects
   // ATE: DO this BEFORE rendering help text....
