@@ -46,7 +46,6 @@
 #include "Tactical/HandleItems.h"
 #include "Tactical/HandleUI.h"
 #include "Tactical/Interface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/InterfaceDialogue.h"
 #include "Tactical/InterfacePanels.h"
 #include "Tactical/Items.h"

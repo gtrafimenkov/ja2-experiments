@@ -25,7 +25,6 @@
 #include "Strategic/StrategicStatus.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/DialogueControl.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/Menptr.h"
 #include "Tactical/RottingCorpses.h"
 #include "Tactical/SoldierAdd.h"

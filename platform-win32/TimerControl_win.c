@@ -1,7 +1,6 @@
 #include <windows.h>
 
 #include "SGP/Debug.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
 #include "Utils/TimerControl.h"

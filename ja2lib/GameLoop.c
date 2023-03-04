@@ -25,7 +25,6 @@
 #include "Strategic/PreBattleInterface.h"
 #include "SysGlobals.h"
 #include "Tactical/Interface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/TacticalSave.h"
 #include "UI.h"

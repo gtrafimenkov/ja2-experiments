@@ -40,7 +40,6 @@
 #include "Tactical/DialogueControl.h"
 #include "Tactical/HandleItems.h"
 #include "Tactical/Interface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/InterfaceItems.h"
 #include "Tactical/Keys.h"
 #include "Tactical/Menptr.h"

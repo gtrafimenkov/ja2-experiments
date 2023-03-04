@@ -19,7 +19,6 @@
 #include "SysGlobals.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/Interface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/InterfacePanels.h"
 #include "Tactical/Menptr.h"
 #include "Tactical/OppList.h"

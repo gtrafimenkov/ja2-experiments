@@ -40,7 +40,6 @@
 #include "Tactical/Campaign.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/Interface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/InterfaceDialogue.h"
 #include "Tactical/ItemTypes.h"
 #include "Tactical/Items.h"

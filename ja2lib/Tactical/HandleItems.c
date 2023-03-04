@@ -20,7 +20,6 @@
 #include "Tactical/EndGame.h"
 #include "Tactical/FOV.h"
 #include "Tactical/Interface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/InterfaceDialogue.h"
 #include "Tactical/InterfaceItems.h"
 #include "Tactical/InterfacePanels.h"

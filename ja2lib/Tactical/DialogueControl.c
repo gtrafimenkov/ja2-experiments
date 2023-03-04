@@ -34,7 +34,6 @@
 #include "Tactical/EndGame.h"
 #include "Tactical/Faces.h"
 #include "Tactical/Gap.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/InterfaceDialogue.h"
 #include "Tactical/InterfaceUtils.h"
 #include "Tactical/LOS.h"

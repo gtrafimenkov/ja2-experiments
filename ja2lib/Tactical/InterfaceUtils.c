@@ -15,7 +15,6 @@
 #include "StrUtils.h"
 #include "Tactical/Faces.h"
 #include "Tactical/Interface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
 #include "Tactical/SoldierMacros.h"

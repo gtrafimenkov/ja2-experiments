@@ -6,7 +6,6 @@
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Tactical/DialogueControl.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/Squads.h"

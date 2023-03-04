@@ -19,7 +19,6 @@
 #include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
 #include "SysGlobals.h"
-#include "Tactical/InterfaceControl.h"
 #include "TileEngine/OverheadMap.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"

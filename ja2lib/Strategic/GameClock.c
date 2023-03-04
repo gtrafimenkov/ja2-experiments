@@ -17,7 +17,6 @@
 #include "Strategic/MapScreenInterfaceBottom.h"
 #include "Strategic/MapScreenInterfaceMap.h"
 #include "Strategic/PreBattleInterface.h"
-#include "Tactical/InterfaceControl.h"
 #include "Tactical/MapInformation.h"
 #include "Tactical/Overhead.h"
 #include "TileEngine/Environment.h"
