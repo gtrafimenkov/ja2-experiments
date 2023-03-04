@@ -1,6 +1,7 @@
 #ifndef __MERCS_H
 #define __MERCS_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 #define MERC_BUTTON_UP_COLOR FONT_MCOLOR_WHITE
@@ -45,9 +46,9 @@ enum {
 };
 
 void GameInitMercs();
-BOOLEAN EnterMercs();
+BOOLEAN EnterMercs(const struct MouseInput mouse);
 void ExitMercs();
-void HandleMercs();
+void HandleMercs(const struct MouseInput mouse);
 void RenderMercs();
 
 BOOLEAN InitMercBackGround();

@@ -589,7 +589,8 @@ BOOLEAN RemoveRepairItemFromDealersOfferArea(INT8 bSlot);
 INT8 GetInvSlotOfUnfullMoneyInMercInventory(struct SOLDIERTYPE *pSoldier);
 void ClearPlayersOfferSlot(INT32 ubSlotToClear);
 void ClearArmsDealerOfferSlot(INT32 ubSlotToClear);
-void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue);
+void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue,
+                                                              const struct MouseInput mouse);
 BOOLEAN DoSkiMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT8 ubFlags,
                         MSGBOX_CALLBACK ReturnCallback);
 BOOLEAN WillShopKeeperRejectObjectsFromPlayer(INT8 bDealerId, INT8 bSlotId);
@@ -5423,7 +5424,8 @@ BOOLEAN DoSkiMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UIN
   return ((giSKIMessageBox != -1));
 }
 
-void ConfirmDontHaveEnoughForTheDealerMessageBoxCallback(UINT8 bExitValue) {
+void ConfirmDontHaveEnoughForTheDealerMessageBoxCallback(UINT8 bExitValue,
+                                                         const struct MouseInput mouse) {
   // simply redraw the panel
   if (bExitValue == MSG_BOX_RETURN_OK) {
     gubSkiDirtyLevel = SKI_DIRTY_LEVEL2;
@@ -5435,7 +5437,8 @@ void ConfirmDontHaveEnoughForTheDealerMessageBoxCallback(UINT8 bExitValue) {
   return;
 }
 
-void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue) {
+void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue,
+                                                              const struct MouseInput mouse) {
   // yes, deduct the money
   if (bExitValue == MSG_BOX_RETURN_YES) {
     UINT32 uiPlayersOfferAreaValue = CalculateTotalPlayersValue();

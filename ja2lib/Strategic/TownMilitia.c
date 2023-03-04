@@ -47,8 +47,8 @@ INT16 gsUnpaidStrategicSector[MAX_CHARACTER_COUNT];
 extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
 
 // private prototypes
-void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue);
-void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue);
+void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
+void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void MilitiaTrainingRejected(void);
 
 void InitFriendlyTownSectorServer(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY);
@@ -550,7 +550,7 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
 
 // IMPORTANT: This same callback is used both for initial training and for continue training prompt
 // use 'gfYesNoPromptIsForContinue' flag to tell them apart
-void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue) {
+void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   CHAR16 sString[128];
 
   Assert(giTotalCostOfTraining > 0);
@@ -590,7 +590,7 @@ void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue) {
   return;
 }
 
-void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue) {
+void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   MilitiaTrainingRejected();
   return;
 }

@@ -210,9 +210,9 @@ void DoneFadeInForExitGameInitOptionScreen(void);
 BOOLEAN DoGioMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
                         MSGBOX_CALLBACK ReturnCallback);
 void DisplayMessageToUserAboutGameDifficulty();
-void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue);
+void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 BOOLEAN DisplayMessageToUserAboutIronManMode();
-void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue);
+void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 // ppp
 
@@ -1039,7 +1039,7 @@ void DisplayMessageToUserAboutGameDifficulty() {
   }
 }
 
-void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue) {
+void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gubGameOptionScreenHandler = GIO_EXIT;
   }
@@ -1060,7 +1060,7 @@ BOOLEAN DisplayMessageToUserAboutIronManMode() {
   return (FALSE);
 }
 
-void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue) {
+void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gubGameOptionScreenHandler = GIO_IRON_MAN_MODE;
   } else {

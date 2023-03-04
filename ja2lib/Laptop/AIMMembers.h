@@ -1,12 +1,13 @@
 #ifndef __AIMMEMBERS_H_
 #define __AIMMEMBERS_H_
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 void GameInitAIMMembers();
 BOOLEAN EnterAIMMembers();
 void ExitAIMMembers();
-void HandleAIMMembers();
+void HandleAIMMembers(const struct MouseInput mouse);
 BOOLEAN RenderAIMMembers();
 
 BOOLEAN DrawNumeralsToScreen(INT32 iNumber, INT8 bWidth, UINT16 usLocX, UINT16 usLocY,
@@ -15,7 +16,7 @@ BOOLEAN DrawMoneyToScreen(INT32 iNumber, INT8 bWidth, UINT16 usLocX, UINT16 usLo
                           UINT8 ubColor);
 
 void DisplayTextForMercFaceVideoPopUp(STR16 pString);
-BOOLEAN DisplayTalkingMercFaceForVideoPopUp(INT32 iFaceIndex);
+BOOLEAN DisplayTalkingMercFaceForVideoPopUp(INT32 iFaceIndex, const struct MouseInput mouse);
 void EnterInitAimMembers();
 BOOLEAN RenderAIMMembersTopLevel();
 void ResetMercAnnoyanceAtPlayer(UINT8 ubMercID);

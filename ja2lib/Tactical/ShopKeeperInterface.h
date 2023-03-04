@@ -78,8 +78,10 @@ void DrawHatchOnInventory(UINT32 uiSurface, UINT16 usPosX, UINT16 usPosY, UINT16
 BOOLEAN ShouldSoldierDisplayHatchOnItem(UINT8 ubProfileID, INT16 sSlotNum);
 INT8 AddItemToPlayersOfferArea(UINT8 ubProfileID, INVENTORY_IN_SLOT *pInvSlot,
                                INT8 bSlotIdInOtherLocation);
-void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue);
-void ConfirmDontHaveEnoughForTheDealerMessageBoxCallback(UINT8 bExitValue);
+void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallback(UINT8 bExitValue,
+                                                              const struct MouseInput mouse);
+void ConfirmDontHaveEnoughForTheDealerMessageBoxCallback(UINT8 bExitValue,
+                                                         const struct MouseInput mouse);
 
 void SkiHelpTextDoneCallback(void);
 void SetSkiCursor(UINT16 usCursor);

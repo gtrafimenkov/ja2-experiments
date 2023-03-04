@@ -43,7 +43,8 @@ UINT8 gubCheckForFreeSpaceOnHardDriveCount = DONT_CHECK_FOR_FREE_SPACE;
 
 extern BOOLEAN DoSkiMessageBox(UINT8 ubStyle, STR16 zString, UINT32 uiExitScreen, UINT8 ubFlags,
                                MSGBOX_CALLBACK ReturnCallback);
-extern void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue);
+extern void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue,
+                                                                  const struct MouseInput mouse);
 extern BOOLEAN gfTacticalPlacementGUIActive;
 extern BOOLEAN gfTacticalPlacementGUIDirty;
 extern BOOLEAN gfValidLocationsChanged;

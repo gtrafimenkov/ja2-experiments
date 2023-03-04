@@ -3612,7 +3612,7 @@ void HandleHandCursorClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
 
 extern BOOLEAN AnyItemsVisibleOnLevel(struct ITEM_POOL *pItemPool, INT8 bZLevel);
 
-void ExchangeMessageBoxCallback(UINT8 bExitValue) {
+void ExchangeMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     SwapMercPositions(gpExchangeSoldier1, gpExchangeSoldier2);
   }

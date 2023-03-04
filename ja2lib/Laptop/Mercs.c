@@ -253,14 +253,14 @@ void MercSiteSubTitleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
 
 BOOLEAN StartSpeckTalking(UINT16 usQuoteNum);
 void InitMercVideoFace();
-BOOLEAN HandleSpeckTalking(BOOLEAN fReset);
+static BOOLEAN HandleSpeckTalking(BOOLEAN fReset, const struct MouseInput mouse);
 // BOOLEAN	PixelateVideoMercImage();
 BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, UINT16 usPosX, UINT16 usPosY, UINT16 usWidth,
                                UINT16 usHeight);
 BOOLEAN InitDestroyXToCloseVideoWindow(BOOLEAN fCreate);
 BOOLEAN DisplayMercVideoIntro(UINT16 usTimeTillFinish);
 void HandleCurrentMercDistortion();
-void HandleTalkingSpeck();
+static void HandleTalkingSpeck(const struct MouseInput mouse);
 // BOOLEAN DistortVideoMercImage();
 BOOLEAN DistortVideoMercImage(UINT16 usPosX, UINT16 usPosY, UINT16 usWidth, UINT16 usHeight);
 BOOLEAN IsAnyMercMercsHired();
@@ -323,14 +323,14 @@ void GameInitMercs() {
   */
 }
 
-BOOLEAN EnterMercs() {
+BOOLEAN EnterMercs(const struct MouseInput mouse) {
   VOBJECT_DESC VObjectDesc;
   VSURFACE_DESC vs_desc;
 
   SetBookMark(MERC_BOOKMARK);
 
   // Reset a static variable
-  HandleSpeckTalking(TRUE);
+  HandleSpeckTalking(TRUE, mouse);
 
   InitMercBackGround();
 
@@ -483,7 +483,7 @@ void ExitMercs() {
   EmptyDialogueQueue();
 }
 
-void HandleMercs() {
+void HandleMercs(const struct MouseInput mouse) {
   if (gfRedrawMercSite) {
     RenderMercs();
     gfRedrawMercSite = FALSE;
@@ -517,7 +517,7 @@ void HandleMercs() {
 
   // if Specks should be video conferencing...
   if (gubCurrentMercVideoMode != MERC_VIDEO_NO_VIDEO_MODE) {
-    HandleTalkingSpeck();
+    HandleTalkingSpeck(mouse);
   }
 
   // Reset the some variables
@@ -980,7 +980,7 @@ BOOLEAN StartSpeckTalking(UINT16 usQuoteNum) {
 }
 
 // Performs the frame by frame update
-BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
+static BOOLEAN HandleSpeckTalking(BOOLEAN fReset, const struct MouseInput mouse) {
   static BOOLEAN fWasTheMercTalking = FALSE;
   BOOLEAN fIsTheMercTalking;
   SGPRect SrcRect;
@@ -1292,7 +1292,7 @@ BOOLEAN DisplayMercVideoIntro(UINT16 usTimeTillFinish) {
     return (FALSE);
 }
 
-void HandleTalkingSpeck() {
+static void HandleTalkingSpeck(const struct MouseInput mouse) {
   BOOLEAN fIsSpeckTalking = TRUE;
 
   switch (gubCurrentMercVideoMode) {
@@ -1328,7 +1328,7 @@ void HandleTalkingSpeck() {
         GetSpeckConditionalOpening(FALSE);
         gfJustEnteredMercSite = FALSE;
       } else {
-        fIsSpeckTalking = HandleSpeckTalking(FALSE);
+        fIsSpeckTalking = HandleSpeckTalking(FALSE, mouse);
 
         if (!fIsSpeckTalking) fIsSpeckTalking = GetSpeckConditionalOpening(FALSE);
 

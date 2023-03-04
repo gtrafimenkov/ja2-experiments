@@ -890,7 +890,7 @@ void NextInventoryMapBtnCallback(GUI_BUTTON *btn, INT32 reason);
 void UpdateCursorIfInLastSector(void);
 
 void ContractButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 // blt inventory panel
 void BltCharInvPanel();
@@ -8057,7 +8057,7 @@ void DestroyTheItemInCursor() {
   gpItemPointer = NULL;
 }
 
-void TrashItemMessageBoxCallback(UINT8 bExitValue) {
+void TrashItemMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // find the item and get rid of it
 
@@ -8887,7 +8887,7 @@ void TellPlayerWhyHeCantCompressTime(const struct MouseInput mouse) {
   }
 }
 
-void MapScreenDefaultOkBoxCallback(UINT8 bExitValue) {
+void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_OK) {
     fMapPanelDirty = TRUE;

@@ -2,6 +2,7 @@
 #define __LAPTOP_H
 
 #include "MessageBoxScreen.h"
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Utils/FontControl.h"
 
@@ -12,7 +13,6 @@ INT32 EnterLaptop();
 void ExitLaptop();
 void RenderLaptop();
 UINT32 ExitLaptopMode(UINT32 uiMode);
-void EnterNewLaptopMode();
 UINT32 DrawLapTopIcons();
 UINT32 DrawLapTopText();
 void ReDrawHighLight();

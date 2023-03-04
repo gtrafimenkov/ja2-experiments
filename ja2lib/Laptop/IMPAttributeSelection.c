@@ -128,7 +128,7 @@ void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                 const struct MouseInput mouse);
 void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                                    const struct MouseInput mouse);
-void StatAtZeroBoxCallback(UINT8 bExitValue);
+void StatAtZeroBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 void EnterIMPAttributeSelection(void) {
   // set attributes and skills
@@ -1413,7 +1413,7 @@ void SetGeneratedCharacterAttributes(void) {
   return;
 }
 
-void StatAtZeroBoxCallback(UINT8 bExitValue) {
+void StatAtZeroBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     MarkButtonsDirty();

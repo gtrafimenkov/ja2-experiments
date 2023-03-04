@@ -231,7 +231,7 @@ void UnPurchaseBobbyRayItem(UINT16 usItemNumber);
 UINT32 CalculateTotalPurchasePrice();
 void DisableBobbyRButtons();
 void CalcFirstIndexForPage(STORE_INVENTORY *pInv, UINT32 uiItemClass);
-void OutOfStockMessageBoxCallback(UINT8 bExitValue);
+void OutOfStockMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 UINT8 CheckPlayersInventoryForGunMatchingGivenAmmoID(INT16 sItemID);
 void BobbyrRGunsHelpTextDoneCallback(void);
 #ifdef JA2BETAVERSION
@@ -1605,7 +1605,7 @@ void CalcFirstIndexForPage(STORE_INVENTORY *pInv, UINT32 uiItemClass) {
   }
 }
 
-void OutOfStockMessageBoxCallback(UINT8 bExitValue) {
+void OutOfStockMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_OK) {
     //		guiCurrentLaptopMode  = LAPTOP_MODE_BOBBY_R;

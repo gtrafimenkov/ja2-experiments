@@ -247,7 +247,7 @@ void EVENT_InternalSetSoldierDesiredDirection(struct SOLDIERTYPE *pSoldier, UINT
 
 #ifdef JA2BETAVERSION
 extern void ValidatePlayersAreInOneGroupOnly();
-extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void SAIReportError(STR16 wErrorString);
 #endif
 

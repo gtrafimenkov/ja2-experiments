@@ -536,7 +536,7 @@ BOOLEAN InitTitleBarMaximizeGraphics(UINT32 uiBackgroundGraphic, STR16 pTitle, U
 void RemoveTitleBarMaximizeGraphics();
 BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, UINT16 usTopLeftX,
                                        UINT16 usTopLeftY, UINT16 usTopRightX);
-void HandleSlidingTitleBar(void);
+static void HandleSlidingTitleBar(const struct MouseInput mouse);
 void ShowLights(void);
 void FlickerHDLight(void);
 BOOLEAN ExitLaptopDone(void);
@@ -582,7 +582,7 @@ void CreateLaptopButtonHelpText(INT32 iButtonIndex, UINT32 uiButtonHelpTextID);
 // Used to determine delay if its raining
 BOOLEAN IsItRaining();
 INT32 WWaitDelayIncreasedIfRaining(INT32 iLoadTime);
-void InternetRainDelayMessageBoxCallback(UINT8 bExitValue);
+void InternetRainDelayMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 extern void ClearHistoryList(void);
 
@@ -1178,7 +1178,7 @@ void RenderLaptop() {
   MarkButtonsDirty();
 }
 
-void EnterNewLaptopMode() {
+static void EnterNewLaptopMode(const struct MouseInput mouse) {
   static BOOLEAN fOldLoadFlag = FALSE;
 
   if (fExitingLaptopFlag) {
@@ -1360,7 +1360,7 @@ void EnterNewLaptopMode() {
       break;
 
     case LAPTOP_MODE_MERC:
-      EnterMercs();
+      EnterMercs(mouse);
       break;
     case LAPTOP_MODE_MERC_FILES:
       EnterMercsFiles();
@@ -1486,7 +1486,7 @@ static void HandleLapTopHandles(const struct MouseInput mouse) {
       HandleAIM();
       break;
     case LAPTOP_MODE_AIM_MEMBERS:
-      HandleAIMMembers();
+      HandleAIMMembers(mouse);
       break;
     case LAPTOP_MODE_AIM_MEMBERS_FACIAL_INDEX:
       HandleAimFacialIndex();
@@ -1508,7 +1508,7 @@ static void HandleLapTopHandles(const struct MouseInput mouse) {
       break;
 
     case LAPTOP_MODE_MERC:
-      HandleMercs();
+      HandleMercs(mouse);
       break;
     case LAPTOP_MODE_MERC_FILES:
       HandleMercsFiles();
@@ -1723,13 +1723,13 @@ UINT32 LaptopScreenHandle(const struct GameInput *gameInput) {
 
     if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
       if (guiCurrentLaptopMode <= LAPTOP_MODE_WWW) {
-        EnterNewLaptopMode();
+        EnterNewLaptopMode(gameInput->mouse);
         if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
           guiPreviousLaptopMode = guiCurrentLaptopMode;
         }
       } else {
         if (!fLoadPendingFlag) {
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(gameInput->mouse);
           guiPreviousLaptopMode = guiCurrentLaptopMode;
         }
       }
@@ -1836,7 +1836,7 @@ UINT32 LaptopScreenHandle(const struct GameInput *gameInput) {
   DisplayTaskBarIcons();
 
   // handle if we are maximizing a program from a minimized state or vice versa
-  HandleSlidingTitleBar();
+  HandleSlidingTitleBar(gameInput->mouse);
 
   // flicker HD light as nessacary
   FlickerHDLight();
@@ -3941,7 +3941,7 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, UINT16 u
 
 void RemoveTitleBarMaximizeGraphics() { DeleteVideoSurfaceFromIndex(guiTitleBarSurface); }
 
-void HandleSlidingTitleBar(void) {
+static void HandleSlidingTitleBar(const struct MouseInput mouse) {
   if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
     return;
   }
@@ -3957,7 +3957,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -3967,7 +3967,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -3977,7 +3977,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -3987,7 +3987,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -3997,7 +3997,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4007,7 +4007,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4022,7 +4022,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 66, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4031,7 +4031,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 130, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4040,7 +4040,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 226, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4049,7 +4049,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 194, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4058,7 +4058,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 162, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4067,7 +4067,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 99, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -5398,7 +5398,7 @@ BOOLEAN IsItRaining() {
     return (FALSE);
 }
 
-void InternetRainDelayMessageBoxCallback(UINT8 bExitValue) {
+void InternetRainDelayMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   GoToWebPage(giRainDelayInternetSite);
 
   // Set to -2 so we dont due the message for this occurence of laptop

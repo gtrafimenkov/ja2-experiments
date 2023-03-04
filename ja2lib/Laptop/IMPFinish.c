@@ -62,7 +62,7 @@ void BtnIMPFinishPersonalityCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPFinishStartOverCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPFinishDoneCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPFinishPortraitCallback(GUI_BUTTON *btn, INT32 reason);
-void FinishMessageBoxCallback(UINT8 bExitValue);
+void FinishMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 extern void BtnIMPMainPageVoiceCallback(GUI_BUTTON *btn, INT32 reason);
 extern void BtnIMPMainPagePortraitCallback(GUI_BUTTON *btn, INT32 reason);
 
@@ -554,7 +554,7 @@ void DestroyCharacterPortrait(void) {
   return;
 }
 
-void FinishMessageBoxCallback(UINT8 bExitValue) {
+void FinishMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     iCurrentImpPage = IMP_HOME_PAGE;

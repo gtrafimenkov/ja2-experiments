@@ -543,7 +543,8 @@ void DisplayDots(UINT16 usNameX, UINT16 usNameY, UINT16 usStatX, STR16 pString);
 
 void DelayMercSpeech(UINT8 ubMercID, UINT16 usQuoteNum, UINT16 usDelay, BOOLEAN fNewQuote,
                      BOOLEAN fReset);
-void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallback(UINT8 bExitValue);
+static void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallback(
+    UINT8 bExitValue, const struct MouseInput mouse);
 void DisplayAimMemberClickOnFaceHelpText();
 
 // ppp
@@ -771,7 +772,7 @@ void ExitAIMMembers() {
   RemoveTextMercPopupImages();
 }
 
-void HandleAIMMembers() {
+void HandleAIMMembers(const struct MouseInput mouse) {
   // determine if the merc has a quote that is waiting to be said
   DelayMercSpeech(0, 0, 0, FALSE, FALSE);
 
@@ -784,14 +785,6 @@ void HandleAIMMembers() {
   if (gfStopMercFromTalking) {
     StopMercTalking();
     gfStopMercFromTalking = FALSE;
-    /*
-                    //if we were waiting for the merc to stop talking
-                    if( gfWaitingForMercToStopTalkingOrUserToClick )
-                    {
-                            gubVideoConferencingMode = AIM_VIDEO_POPDOWN_MODE;
-                            gfWaitingForMercToStopTalkingOrUserToClick = FALSE;
-                    }
-    */
   }
 
   // If we have to change video conference modes, change to new mode
@@ -820,7 +813,7 @@ void HandleAIMMembers() {
 
   // if the face is active, display the talking face
   if (gfVideoFaceActive) {
-    gfMercIsTalking = DisplayTalkingMercFaceForVideoPopUp(giMercFaceIndex);
+    gfMercIsTalking = DisplayTalkingMercFaceForVideoPopUp(giMercFaceIndex, mouse);
 
     // put the noise lines on the screen
     if (!gfIsAnsweringMachineActive) HandleVideoDistortion();
@@ -2347,7 +2340,7 @@ BOOLEAN InitVideoFaceTalking(UINT8 ubMercID, UINT16 usQuoteNum) {
   return (TRUE);
 }
 
-BOOLEAN DisplayTalkingMercFaceForVideoPopUp(INT32 iFaceIndex) {
+BOOLEAN DisplayTalkingMercFaceForVideoPopUp(INT32 iFaceIndex, const struct MouseInput mouse) {
   static BOOLEAN fWasTheMercTalking = FALSE;
   BOOLEAN fIsTheMercTalking;
   SGPRect SrcRect;
@@ -4117,7 +4110,8 @@ void DisplayPopUpBoxExplainingMercArrivalLocationAndTime() {
   LaptopSaveInfo.sLastHiredMerc.fHaveDisplayedPopUpInLaptop = TRUE;
 }
 
-void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallback(UINT8 bExitValue) {
+static void DisplayPopUpBoxExplainingMercArrivalLocationAndTimeCallback(
+    UINT8 bExitValue, const struct MouseInput mouse) {
   // unset the flag so the msgbox WONT dislay its save buffer
   gfDontOverRideSaveBuffer = FALSE;
 

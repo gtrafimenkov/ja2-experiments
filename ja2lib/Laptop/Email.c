@@ -2124,7 +2124,6 @@ void ReDraw() {
   // forces update of entire laptop screen
   if (fReDraw) {
     RenderLaptop();
-    // EnterNewLaptopMode();
     DrawLapTopText();
     ReDrawHighLight();
     MarkButtonsDirty();

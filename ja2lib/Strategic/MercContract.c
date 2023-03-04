@@ -42,7 +42,7 @@ void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier);
 static void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *pSoldier,
                                                                    BOOLEAN fAddRehireButton,
                                                                    const struct MouseInput mouse);
-void MercDepartEquipmentBoxCallback(UINT8 bExitValue);
+void MercDepartEquipmentBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 BOOLEAN HandleFiredDeadMerc(struct SOLDIERTYPE *pSoldier);
 void HandleExtendMercsContract(struct SOLDIERTYPE *pSoldier);
 void HandleSoldierLeavingWithLowMorale(struct SOLDIERTYPE *pSoldier);
@@ -1020,7 +1020,7 @@ static void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIE
   }
 }
 
-void MercDepartEquipmentBoxCallback(UINT8 bExitValue) {
+void MercDepartEquipmentBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // gear left in current sector?
   if (pLeaveSoldier == NULL) {
     return;

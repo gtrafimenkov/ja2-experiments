@@ -79,7 +79,7 @@ UINT32 guiMercBackBoxButton;
 
 void DisplayHiredMercs();
 void SettleMercAccounts();
-void MercAuthorizePaymentMessageBoxCallback(UINT8 bExitValue);
+void MercAuthorizePaymentMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 void GameInitMercsAccount() {}
 
@@ -492,7 +492,7 @@ void SettleMercAccounts() {
   */
 }
 
-void MercAuthorizePaymentMessageBoxCallback(UINT8 bExitValue) {
+void MercAuthorizePaymentMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, clear the form
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // if the player owes Speck money, then settle the accounts

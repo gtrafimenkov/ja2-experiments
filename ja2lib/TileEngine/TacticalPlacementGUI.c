@@ -88,7 +88,7 @@ void MercClickCallback(struct MOUSE_REGION *reg, INT32 reason, const struct Mous
 void PlaceMercs();
 void FastHelpRemovedCallback();
 void FastHelpRemoved2Callback();
-void DialogRemoved(UINT8 ubResult);
+static void DialogRemoved(UINT8 ubResult, const struct MouseInput mouse);
 
 void PutDownMercPiece(INT32 iPlacement);
 void PickUpMercPiece(INT32 iPlacement);
@@ -990,7 +990,7 @@ void FastHelpRemoved2Callback() {
   gfValidLocationsChanged = 2;  // because fast help text covers it.
 }
 
-void DialogRemoved(UINT8 ubResult) {
+static void DialogRemoved(UINT8 ubResult, const struct MouseInput mouse) {
   gfTacticalPlacementGUIDirty = TRUE;
   gfValidLocationsChanged = TRUE;
 }

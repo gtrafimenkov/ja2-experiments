@@ -116,7 +116,7 @@ extern MINE_LOCATION_TYPE gMineLocation[MAX_NUMBER_OF_MINES];
 
 extern void CalculateNonPersistantPBIInfo();
 
-extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 extern BOOLEAN gfGettingNameFromSaveLoadScreen;
 

@@ -332,7 +332,7 @@ void RemovePurchasedItemsFromBobbyRayInventory();
 BOOLEAN IsAnythingPurchasedFromBobbyRayPage();
 void DrawGoldRectangle(INT8 bCityNum);
 UINT32 CalcCostFromWeightOfPackage(UINT8 ubTypeOfService);
-void ConfirmBobbyRPurchaseMessageBoxCallback(UINT8 bExitValue);
+void ConfirmBobbyRPurchaseMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void PurchaseBobbyOrder();
 UINT32 CalcPackageTotalWeight();
 void DisplayPackageWeight();
@@ -792,7 +792,7 @@ void BtnBobbyRAcceptOrderCallback(GUI_BUTTON *btn, INT32 reason) {
         if (gbSelectedCity == BR_DRASSEN &&
             !StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_B13)].fEnemyControlled) {
           // Quick hack to bypass the confirmation box
-          ConfirmBobbyRPurchaseMessageBoxCallback(MSG_BOX_RETURN_YES);
+          ConfirmBobbyRPurchaseMessageBoxCallback(MSG_BOX_RETURN_YES, XXX_GetMouseInput());
         } else {
           // else pop up a confirmation box
           swprintf(zTemp, ARR_SIZE(zTemp), BobbyROrderFormText[BOBBYR_CONFIRM_DEST],
@@ -2086,7 +2086,7 @@ void AddJohnsGunShipment() {
   AddNewBobbyRShipment(Temp, BR_DRASSEN, bDaysAhead, FALSE, 0);
 }
 
-void ConfirmBobbyRPurchaseMessageBoxCallback(UINT8 bExitValue) {
+void ConfirmBobbyRPurchaseMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_YES) {
     PurchaseBobbyOrder();

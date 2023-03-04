@@ -317,7 +317,7 @@ extern void RebuildContractBoxForMerc(struct SOLDIERTYPE *pCharacter);
 
 extern void SetUpCursorForStrategicMap(void);
 
-extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 extern BOOLEAN PlayerSoldierTooTiredToTravel(struct SOLDIERTYPE *pSoldier);
 
