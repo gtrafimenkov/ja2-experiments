@@ -92,6 +92,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
+#include "UI.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Cursors.h"
 #include "Utils/EventPump.h"
@@ -7074,7 +7075,7 @@ INT32 GetIndexForThisSoldier(struct SOLDIERTYPE *pSoldier) {
 
   for (iCounter = 0; iCounter < iLastGuy; iCounter++) {
     if (gCharactersList[iCounter].fValid == TRUE) {
-      if ((&Menptr[gCharactersList[iCounter].usSolID]) == pSoldier) {
+      if ((GetMercFromCharacterList(iCounter)) == pSoldier) {
         iIndex = iCounter;
         iCounter = iLastGuy;
       }
@@ -8470,7 +8471,7 @@ void UpdateBadAssignments(void) {
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     if (gCharactersList[iCounter].fValid == TRUE) {
-      CheckIfSoldierUnassigned(&Menptr[gCharactersList[iCounter].usSolID]);
+      CheckIfSoldierUnassigned(GetMercFromCharacterList(iCounter));
     }
   }
 
@@ -9029,7 +9030,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
       }
 
       // get soldier assoc. with entry
-      pCurrentSoldier = &Menptr[gCharactersList[iCounter].usSolID];
+      pCurrentSoldier = GetMercFromCharacterList(iCounter);
 
       // check if soldier is active
       if (pCurrentSoldier->bActive == FALSE) {
@@ -9134,7 +9135,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
         if (GetLengthOfMercPath(MercPtrs[gCharactersList[iCounter].usSolID]) == 0) {
           sEndSectorA = 9999;
         } else {
-          sEndSectorA = GetLastSectorIdInCharactersPath(&Menptr[gCharactersList[iCounter].usSolID]);
+          sEndSectorA = GetLastSectorIdInCharactersPath(GetMercFromCharacterList(iCounter));
         }
 
         for (iCounterA = 0; iCounterA < FIRST_VEHICLE; iCounterA++) {

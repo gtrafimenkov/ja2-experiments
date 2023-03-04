@@ -478,7 +478,7 @@ void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList() {
       continue;
     }
 
-    pSoldier = &Menptr[gCharactersList[iCounter].usSolID];
+    pSoldier = GetMercFromCharacterList(iCounter);
 
     if (pSoldier->bActive == FALSE) {
       continue;
@@ -504,7 +504,7 @@ void ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(INT16 sSectorX, I
       continue;
     }
 
-    pSoldier = &Menptr[gCharactersList[iCounter].usSolID];
+    pSoldier = GetMercFromCharacterList(iCounter);
 
     if (pSoldier->bActive == FALSE) {
       continue;

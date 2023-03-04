@@ -734,7 +734,7 @@ void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrain
       continue;
     }
 
-    pSoldier = &Menptr[gCharactersList[iCounter].usSolID];
+    pSoldier = GetMercFromCharacterList(iCounter);
 
     // valid soldier?
     if (pSoldier->bActive == FALSE) {
@@ -843,7 +843,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
         // selected?
         if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE) ||
             (iCounter == bSelectedAssignChar)) {
-          pSoldier = &Menptr[gCharactersList[iCounter].usSolID];
+          pSoldier = GetMercFromCharacterList(iCounter);
 
           if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
             if (SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)].fMilitiaTrainingPaid ==

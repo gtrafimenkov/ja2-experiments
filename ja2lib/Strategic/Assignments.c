@@ -1707,7 +1707,7 @@ void VerifyTownTrainingIsPaidFor(void) {
       continue;
     }
 
-    pSoldier = &Menptr[gCharactersList[iCounter].usSolID];
+    pSoldier = GetMercFromCharacterList(iCounter);
 
     if (pSoldier->bActive && (pSoldier->bAssignment == TRAIN_TOWN)) {
       // make sure that sector is paid up!
@@ -9082,7 +9082,7 @@ BOOLEAN HandleSelectedMercsBeingPutAsleep(BOOLEAN fWakeUp, BOOLEAN fDisplayWarni
     // if the current character in the list is valid...then grab soldier pointer for the character
     if (gCharactersList[iCounter].fValid) {
       // get the soldier pointer
-      pSoldier = &Menptr[gCharactersList[iCounter].usSolID];
+      pSoldier = GetMercFromCharacterList(iCounter);
 
       if (pSoldier->bActive == FALSE) {
         continue;

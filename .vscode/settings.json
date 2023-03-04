@@ -9,6 +9,7 @@
         "jascreens.h": "c",
         "gameinputinternal.h": "c",
         "himage.h": "c",
-        "menptr.h": "c"
+        "menptr.h": "c",
+        "mapscreeninterfacemap.h": "c"
     }
 }
