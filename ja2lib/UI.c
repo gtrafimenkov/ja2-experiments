@@ -4,6 +4,9 @@
 #include "ScreenIDs.h"
 #include "Soldier.h"
 #include "Strategic/MapScreenInterface.h"
+#include "Strategic/MapScreenInterfaceBorder.h"
+#include "Strategic/MapScreenInterfaceMap.h"
+#include "Strategic/PreBattleInterface.h"
 #include "Tactical/Interface.h"
 #include "Tactical/InterfaceControl.h"
 
@@ -24,3 +27,14 @@ struct SOLDIERTYPE* GetTacticalContextMenuMerc() { return GetSoldierByID(gusUIFu
 struct SOLDIERTYPE* GetMercFromCharacterList(int index) {
   return GetSoldierByID(gCharactersList[index].usSolID);
 }
+
+void SwitchMapToMilitiaMode() {
+  if (!fShowMilitia) {
+    ToggleShowMilitiaMode();
+  }
+}
+
+bool IsGoingToAutoresolve() { return gfAutomaticallyStartAutoResolve; }
+
+// Return index of the character selected for assignment
+i8 GetCharForAssignmentIndex() { return bSelectedAssignChar; }

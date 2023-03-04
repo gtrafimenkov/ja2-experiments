@@ -21,4 +21,11 @@ struct SOLDIERTYPE* GetTacticalContextMenuMerc();
 // Valid indeces are [0..MAX_CHARACTER_COUNT).
 struct SOLDIERTYPE* GetMercFromCharacterList(int index);
 
+void SwitchMapToMilitiaMode();
+
+bool IsGoingToAutoresolve();
+
+// Return index of the character selected for assignment
+i8 GetCharForAssignmentIndex();
+
 #endif

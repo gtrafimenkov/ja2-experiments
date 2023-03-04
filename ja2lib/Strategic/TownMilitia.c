@@ -8,9 +8,6 @@
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
-#include "Strategic/MapScreenInterfaceBorder.h"
-#include "Strategic/MapScreenInterfaceMap.h"
-#include "Strategic/PreBattleInterface.h"
 #include "Strategic/QueenCommand.h"
 #include "Strategic/Strategic.h"
 #include "Strategic/StrategicMap.h"
@@ -618,8 +615,9 @@ void HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap(void) {
     // handle militia defections and reset team to friendly
     HandleMilitiaDefections(gWorldSectorX, gWorldSectorY);
     gTacticalStatus.Team[MILITIA_TEAM].bSide = 0;
-  } else if (!gfAutomaticallyStartAutoResolve) {  // Don't promote militia if we are going directly
-                                                  // to autoresolve to finish the current battle.
+  } else if (!IsGoingToAutoresolve()) {
+    // Don't promote militia if we are going directly
+    // to autoresolve to finish the current battle.
     HandleMilitiaPromotions();
   }
 }
@@ -822,9 +820,7 @@ void HandleContinueOfTownTraining(void) {
 
     // If the militia view isn't currently active, then turn it on when prompting to continue
     // training.
-    if (!fShowMilitia) {
-      ToggleShowMilitiaMode();
-    }
+    SwitchMapToMilitiaMode();
   }
 }
 
@@ -840,7 +836,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
       if (gCharactersList[iCounter].fValid) {
         // selected?
         if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE) ||
-            (iCounter == bSelectedAssignChar)) {
+            (iCounter == GetCharForAssignmentIndex())) {
           pSoldier = GetMercFromCharacterList(iCounter);
 
           if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
