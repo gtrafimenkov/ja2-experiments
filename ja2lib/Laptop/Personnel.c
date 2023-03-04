@@ -5129,7 +5129,6 @@ void HandleSliderBarClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
     }
 
     // find the x,y on the slider bar
-    struct Point MousePos = GetMousePoint();
 
     // get the subregion sizes
     sSizeOfEachSubRegion =
@@ -5137,7 +5136,7 @@ void HandleSliderBarClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                 (INT32)(iNumberOfItems));
 
     // get the cursor placement
-    sYPositionOnBar = (INT16)(MousePos.y - Y_OF_PERSONNEL_SCROLL_REGION);
+    sYPositionOnBar = (INT16)(mouse.y - Y_OF_PERSONNEL_SCROLL_REGION);
 
     if (sSizeOfEachSubRegion == 0) {
       return;

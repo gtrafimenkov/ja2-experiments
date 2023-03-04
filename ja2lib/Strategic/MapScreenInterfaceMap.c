@@ -3673,17 +3673,11 @@ void DisplayDistancesForHelicopter(void) {
   BltVideoObject(FRAME_BUFFER, hHandle, 0, MAP_HELICOPTER_ETA_POPUP_X, sYPosition,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
-  //	sTotalCanTravel = ( INT16 )GetTotalDistanceHelicopterCanTravel( );
   sDistanceToGo = (INT16)DistanceOfIntendedHelicopterPath();
-  sTotalOfTrip = sDistanceToGo;  // + ( INT16 ) ( DistanceToNearestRefuelPoint( ( INT16 )(
-                                 // LastSectorInHelicoptersPath() % MAP_WORLD_X ), ( INT16 ) (
-                                 // LastSectorInHelicoptersPath() / MAP_WORLD_X ) ) );
+  sTotalOfTrip = sDistanceToGo;
 
   sNumSafeSectors = GetNumSafeSectorsInPath();
   sNumUnSafeSectors = GetNumUnSafeSectorsInPath();
-
-  //	sDistanceSoFar = ( INT16 )HowFarHelicopterhasTravelledSinceRefueling( );
-  //	 sTotalDistanceOfTrip = ( INT16 )DistanceToNearestRefuelPoint( )
 
   if (sDistanceToGo == 9999) {
     sDistanceToGo = 0;
@@ -3697,13 +3691,6 @@ void DisplayDistancesForHelicopter(void) {
   swprintf(sString, ARR_SIZE(sString), L"%s", pHelicopterEtaStrings[0]);
   mprintf(MAP_HELICOPTER_ETA_POPUP_X + 5, sYPosition + 5, sString);
 
-  /*
-    if ( IsSectorOutOfTheWay( sMapX, sMapY ) )
-    {
-                  SetFontForeground( FONT_RED );
-          }
-          else
-  */
   { SetFontForeground(FONT_LTGREEN); }
 
   swprintf(sString, ARR_SIZE(sString), L"%d", sTotalOfTrip);

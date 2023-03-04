@@ -5391,17 +5391,6 @@ void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
 
           GetMouseMapXY(&sMapX, &sMapY);
 
-          /*
-                                                  // translate screen values to map grid values for
-             zoomed in if(fZoomFlag)
-                                                  {
-                                                          sMapX=(UINT16)iZoomX/MAP_GRID_X+sMapX;
-                                                          sMapX=sMapX/2;
-                                                          sMapY=(UINT16)iZoomY/MAP_GRID_Y+sMapY;
-                                                          sMapY=sMapY/2;
-                                                  }
-          */
-
           // if he clicked on the last sector in his current path
           if (CheckIfClickOnLastSectorInPath(sMapX, sMapY)) {
             DestinationPlottingCompleted();
@@ -5490,16 +5479,6 @@ void PollRightButtonInMapView(UINT32 *puiNewEvent) {
           *puiNewEvent = MAP_EVENT_CANCEL_PATH;
         } else {
           if (GetMouseMapXY(&sMapX, &sMapY)) {
-            /*
-                                                            if(fZoomFlag)
-                                                            {
-                                                                    sMapX=(UINT16)iZoomX/MAP_GRID_X+sMapX;
-                                                                    sMapX=sMapX/2;
-                                                                    sMapY=(UINT16)iZoomY/MAP_GRID_Y+sMapY;
-                                                                    sMapY=sMapY/2;
-                                                            }
-            */
-
             if ((sSelMapX != sMapX) || (sSelMapY != sMapY)) {
               ChangeSelectedMapSector(sMapX, sMapY, (INT8)iCurrentMapSectorZ);
             }
@@ -7120,16 +7099,6 @@ void PlotTemporaryPaths(void) {
   if (GetMouseMapXY(&sMapX, &sMapY)) {
     if (fPlotForHelicopter == TRUE) {
       Assert(fShowAircraftFlag == TRUE);
-      /*
-                              if( fZoomFlag )
-                              {
-                                      sMapX =  ( INT16 )( ( ( iZoomX ) / ( WORLD_MAP_X ) ) + sMapX
-         ); sMapX /= 2;
-
-                                      sMapY =  ( INT16 )( ( ( iZoomY ) / ( WORLD_MAP_X ) ) + sMapY
-         ); sMapY /= 2;
-                              }
-      */
 
       // plot temp path
       PlotATemporaryPathForHelicopter(sMapX, sMapY);
@@ -9562,17 +9531,6 @@ void CancelOrShortenPlottedPath(void) {
   UINT32 uiReturnValue;
 
   GetMouseMapXY(&sMapX, &sMapY);
-
-  /*
-          // translate zoom in to zoom out coords
-          if(fZoomFlag)
-          {
-                  sMapX=(UINT16)iZoomX/MAP_GRID_X+sMapX;
-                  sMapX=sMapX/2;
-                  sMapY=(UINT16)iZoomY/MAP_GRID_Y+sMapY;
-                  sMapY=sMapY/2;
-           }
-  */
 
   // check if we are in aircraft mode
   if (fShowAircraftFlag == TRUE) {
