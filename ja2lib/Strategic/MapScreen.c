@@ -653,7 +653,7 @@ extern INT16 MSYS_CurrentMY;
 // PROTOTYPES
 
 // basic input
-void GetMapKeyboardInput(UINT32 *puiNewEvent);
+static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse);
 void PollLeftButtonInMapView(UINT32 *puiNewEvent);
 void PollRightButtonInMapView(UINT32 *puiNewEvent);
 
@@ -3908,11 +3908,6 @@ void RenderMapCursorsIndexesAnims() {
 
   if (fHighlightChanged || gfMapPanelWasRedrawn) {
     // redraw sector index letters and numbers
-    /*
-                    if( fZoomFlag )
-                            DrawMapIndexSmallMap( fSelectedCursorIsYellow );
-                    else
-    */
     DrawMapIndexBigMap(fSelectedCursorIsYellow);
   }
 }
@@ -3925,7 +3920,7 @@ static UINT32 HandleMapUI(const struct MouseInput mouse) {
   BOOLEAN fWasAlreadySelected;
 
   // Get Input from keyboard
-  GetMapKeyboardInput(&uiNewEvent);
+  GetMapKeyboardInput(&uiNewEvent, mouse);
 
   CreateDestroyMapInvButton();
 
@@ -4181,7 +4176,7 @@ static UINT32 HandleMapUI(const struct MouseInput mouse) {
   return (uiNewScreen);
 }
 
-void GetMapKeyboardInput(UINT32 *puiNewEvent) {
+static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   InputAtom InputEvent;
   INT8 bSquadNumber;
   UINT8 ubGroupId = 0;
@@ -4198,27 +4193,27 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
         MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
         MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
         MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
         MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
         MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
     }
 

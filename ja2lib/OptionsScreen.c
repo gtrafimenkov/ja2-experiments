@@ -218,7 +218,7 @@ BOOLEAN EnterOptionsScreen();
 void RenderOptionsScreen();
 void ExitOptionsScreen();
 void HandleOptionsScreen();
-void GetOptionsScreenUserInput();
+static void GetOptionsScreenUserInput(const struct MouseInput mouse);
 void SetOptionsExitScreen(UINT32 uiExitScreen);
 
 void SoundFXSliderChangeCallback(INT32 iNewValue);
@@ -266,7 +266,7 @@ UINT32 OptionsScreenHandle(const struct GameInput *gameInput) {
 
   RestoreBackgroundRects();
 
-  GetOptionsScreenUserInput();
+  GetOptionsScreenUserInput(gameInput->mouse);
 
   HandleOptionsScreen();
 
@@ -728,7 +728,7 @@ void RenderOptionsScreen() {
                    OPTIONS__BOTTOM_RIGHT_Y);
 }
 
-void GetOptionsScreenUserInput() {
+static void GetOptionsScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
   struct Point MousePos = GetMousePoint();
 
@@ -737,27 +737,27 @@ void GetOptionsScreenUserInput() {
     switch (Event.usEvent) {
       case LEFT_BUTTON_DOWN:
         MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
         MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
         MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
         MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
         MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
     }
 

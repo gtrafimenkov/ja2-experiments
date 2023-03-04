@@ -394,7 +394,7 @@ static void HandleHelpScreen(const struct MouseInput mouse);
 void RenderHelpScreen();
 void ExitHelpScreen();
 
-void GetHelpScreenUserInput();
+static void GetHelpScreenUserInput(const struct MouseInput mouse);
 void HelpScreenSpecialExitCode();
 void SetSizeAndPropertiesOfHelpScreen();
 BOOLEAN DrawHelpScreenBackGround();
@@ -526,7 +526,7 @@ void HelpScreenHandler(const struct MouseInput mouse) {
   RestoreBackgroundRects();
 
   // get the mouse and keyboard inputs
-  GetHelpScreenUserInput();
+  GetHelpScreenUserInput(mouse);
 
   // handle the help screen
   HandleHelpScreen(mouse);
@@ -945,7 +945,7 @@ void CreateHelpScreenButtons() {
   }
 }
 
-void GetHelpScreenUserInput() {
+static void GetHelpScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
   struct Point MousePos = GetMousePoint();
 
@@ -954,27 +954,27 @@ void GetHelpScreenUserInput() {
     switch (Event.usEvent) {
       case LEFT_BUTTON_DOWN:
         MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
         MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
         MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
         MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
         MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
     }
 

@@ -1155,7 +1155,7 @@ void GetPolledKeyboardInput(UINT32 *puiNewEvent) {
 extern BOOLEAN gfDisableRegionActive;
 extern BOOLEAN gfUserTurnRegionActive;
 
-void GetKeyboardInput(UINT32 *puiNewEvent) {
+void GetKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   InputAtom InputEvent;
   BOOLEAN fKeyTaken = FALSE;
   INT16 usMapPos;
@@ -1170,19 +1170,19 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
         MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
         MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
         MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
     }
 

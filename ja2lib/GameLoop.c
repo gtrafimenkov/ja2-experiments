@@ -161,7 +161,7 @@ void GameLoop(void) {
   struct Point MousePos = GetMousePoint();
   // Hook into mouse stuff for MOVEMENT MESSAGES
   MouseSystemHook(MOUSE_POS, (UINT16)MousePos.x, (UINT16)MousePos.y, _LeftButtonDown,
-                  _RightButtonDown);
+                  _RightButtonDown, mouse);
   MusicPoll(FALSE);
 
   while (DequeueSpecificEvent(&InputEvent, LEFT_BUTTON_REPEAT | RIGHT_BUTTON_REPEAT |
@@ -171,27 +171,27 @@ void GameLoop(void) {
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
         MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
         MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
         MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
         MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
         MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
     }
   }

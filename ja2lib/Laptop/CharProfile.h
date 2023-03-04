@@ -1,12 +1,13 @@
 #ifndef __CHARPROFILE_H
 #define __CHARPROFILE_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 void GameInitCharProfile();
 void EnterCharProfile();
 void ExitCharProfile();
-void HandleCharProfile();
+void HandleCharProfile(const struct MouseInput mouse);
 void RenderCharProfile();
 void ResetCharacterStats(void);
 void InitIMPSubPageList(void);

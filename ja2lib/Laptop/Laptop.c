@@ -1480,7 +1480,7 @@ void EnterNewLaptopMode() {
   // HandleDefaultWebpageForLaptop( );
 }
 
-void HandleLapTopHandles() {
+static void HandleLapTopHandles(const struct MouseInput mouse) {
   if (fLoadPendingFlag) return;
 
   if ((fMaximizingProgram == TRUE) || (fMinizingProgram == TRUE)) {
@@ -1550,7 +1550,7 @@ void HandleLapTopHandles() {
       break;
 
     case LAPTOP_MODE_CHAR_PROFILE:
-      HandleCharProfile();
+      HandleCharProfile(mouse);
       break;
     case LAPTOP_MODE_FLORIST:
       HandleFlorist();
@@ -1764,7 +1764,7 @@ UINT32 LaptopScreenHandle(const struct GameInput *gameInput) {
 
   if (fExitingLaptopFlag == FALSE) {
     // handle handles for laptop input stream
-    HandleLapTopHandles();
+    HandleLapTopHandles(gameInput->mouse);
   }
 
   // get keyboard input, handle it

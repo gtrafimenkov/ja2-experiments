@@ -256,7 +256,7 @@ extern INT16 guiCreateGuyIndex;
 extern INT16 guiCreateBadGuyIndex;
 
 // FUNCTIONS IN INPUT MODULES
-void GetKeyboardInput(UINT32 *puiNewEvent);
+void GetKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse);
 void GetPolledKeyboardInput(UINT32 *puiNewEvent);
 
 void GetTBMouseButtonInput(UINT32 *puiNewEvent);

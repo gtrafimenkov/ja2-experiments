@@ -68,7 +68,7 @@ void ResetQuizAnswerButtons();
 void CompileQuestionsInStatsAndWhatNot(void);
 void PrintQuizQuestionNumber(void);
 void CheckStateOfTheConfirmButton(void);
-void HandleIMPQuizKeyBoard(void);
+static HandleIMPQuizKeyBoard(const struct MouseInput mouse);
 void ToggleQuestionNumberButtonOn(INT32 iAnswerNumber);
 void MoveBackAQuestion(void);
 void MoveAheadAQuestion(void);
@@ -151,12 +151,12 @@ void ExitIMPPersonalityQuiz(void) {
   return;
 }
 
-void HandleIMPPersonalityQuiz(void) {
+void HandleIMPPersonalityQuiz(const struct MouseInput mouse) {
   // create/destroy buttons for  questions, if needed
   CreateIMPPersonalityQuizAnswerButtons();
 
   // handle keyboard input
-  HandleIMPQuizKeyBoard();
+  HandleIMPQuizKeyBoard(mouse);
 
   if (iCurrentAnswer == -1) {
     DisableButton(giIMPPersonalityQuizButton[0]);
@@ -1402,7 +1402,7 @@ void CheckStateOfTheConfirmButton(void) {
   return;
 }
 
-void HandleIMPQuizKeyBoard(void) {
+static void HandleIMPQuizKeyBoard(const struct MouseInput mouse) {
   InputAtom InputEvent;
   BOOLEAN fSkipFrame = FALSE;
 
@@ -1411,103 +1411,35 @@ void HandleIMPQuizKeyBoard(void) {
   while ((DequeueEvent(&InputEvent) == TRUE)) {
     if (fSkipFrame == FALSE) {
       // HOOK INTO MOUSE HOOKS
-
-      /*
-      if( (InputEvent.usEvent == KEY_DOWN ) && ( InputEvent.usParam >= '1' ) && ( InputEvent.usParam
-      <= '9') )
-      {
-              if( ( UINT16 )( iNumberOfPersonaButtons ) >= InputEvent.usParam - '0' )
-              {
-                      // reset buttons
-                      ResetQuizAnswerButtons( );
-
-                      // ok, check to see if button was disabled, if so, re enable
-                      CheckStateOfTheConfirmButton( );
-
-                      // toggle this button on
-                      ButtonList[ giIMPPersonalityQuizAnswerButton[ InputEvent.usParam - '1' ]
-      ]->uiFlags |= (BUTTON_CLICKED_ON);
-
-                      iCurrentAnswer = InputEvent.usParam - '1';
-
-                      PrintImpText( );
-
-                      // the current and last question numbers
-                      PrintQuizQuestionNumber( );
-
-                      fReDrawCharProfile = TRUE;
-                      fSkipFrame = TRUE;
-              }
-      }
-      else if( ( iCurrentAnswer != -1 ) && ( InputEvent.usEvent == KEY_DOWN ) && (
-      InputEvent.usParam == ENTER ) )
-      {
-              // reset all the buttons
-              ResetQuizAnswerButtons( );
-
-              // copy the answer into the list
-              iQuizAnswerList[ giCurrentPersonalityQuizQuestion ] = iCurrentAnswer;
-
-              // reset answer for next question
-              iCurrentAnswer = -1;
-
-              // next question, JOHNNY!
-              giCurrentPersonalityQuizQuestion++;
-              giMaxPersonalityQuizQuestion++;
-
-
-              // OPPS!, done..time to finish up
-              if( giCurrentPersonalityQuizQuestion > 15)
-              {
-                      iCurrentImpPage = IMP_PERSONALITY_FINISH;
-                      // process
-                      CompileQuestionsInStatsAndWhatNot( );
-              }
-
-              fSkipFrame = TRUE;
-      }
-      else if( ( InputEvent.usEvent == KEY_DOWN ) && ( InputEvent.usParam == '=' ) )
-      {
-              MoveAheadAQuestion( );
-              fSkipFrame = TRUE;
-      }
-      else if( ( InputEvent.usEvent == KEY_DOWN ) && ( InputEvent.usParam == '-' ) )
-      {
-              MoveBackAQuestion( );
-              fSkipFrame = TRUE;
-      }
-      else
-      {
-
-*/ switch (InputEvent.usEvent) {
+      switch (InputEvent.usEvent) {
         case LEFT_BUTTON_DOWN:
           MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                          _RightButtonDown);
+                          _RightButtonDown, mouse);
 
           break;
         case LEFT_BUTTON_UP:
           MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                          _RightButtonDown);
+                          _RightButtonDown, mouse);
 
           break;
         case RIGHT_BUTTON_DOWN:
           MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                          _RightButtonDown);
+                          _RightButtonDown, mouse);
 
           break;
         case RIGHT_BUTTON_UP:
           MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                          _RightButtonDown);
+                          _RightButtonDown, mouse);
 
           break;
         case RIGHT_BUTTON_REPEAT:
           MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y,
-                          _LeftButtonDown, _RightButtonDown);
+                          _LeftButtonDown, _RightButtonDown, mouse);
 
           break;
         case LEFT_BUTTON_REPEAT:
           MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                          _RightButtonDown);
+                          _RightButtonDown, mouse);
 
           break;
         default:

@@ -233,7 +233,7 @@ BOOLEAN EnterSaveLoadScreen();
 void RenderSaveLoadScreen();
 void ExitSaveLoadScreen();
 void HandleSaveLoadScreen();
-void GetSaveLoadScreenUserInput();
+static void GetSaveLoadScreenUserInput(const struct MouseInput mouse);
 void SaveLoadGameNumber(INT8 bSaveGameID);
 BOOLEAN LoadSavedGameHeader(INT8 bEntry, SAVED_GAME_HEADER *pSaveGameHeader);
 BOOLEAN DisplaySaveGameEntry(INT8 bEntryID);  //, UINT16 usPosY );
@@ -303,7 +303,7 @@ UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput) {
 
   // to guarentee that we do not accept input when we are fading out
   if (!gfStartedFadingOut) {
-    GetSaveLoadScreenUserInput();
+    GetSaveLoadScreenUserInput(gameInput->mouse);
   } else
     gfRedrawSaveLoadScreen = FALSE;
 
@@ -729,7 +729,7 @@ void HandleSaveLoadScreen() {
   }
 }
 
-void GetSaveLoadScreenUserInput() {
+static void GetSaveLoadScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
   INT8 bActiveTextField;
   static BOOLEAN fWasCtrlHeldDownLastFrame = FALSE;
@@ -758,27 +758,27 @@ void GetSaveLoadScreenUserInput() {
     switch (Event.usEvent) {
       case LEFT_BUTTON_DOWN:
         MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
         MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
         MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
         MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
         MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+                        _RightButtonDown, mouse);
         break;
     }
 

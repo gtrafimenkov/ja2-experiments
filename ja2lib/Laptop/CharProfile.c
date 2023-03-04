@@ -190,7 +190,7 @@ void HandleCharProfile() {
       HandleIMPPersonalityEntrance();
       break;
     case (IMP_PERSONALITY_QUIZ):
-      HandleIMPPersonalityQuiz();
+      HandleIMPPersonalityQuiz(mouse);
       break;
     case (IMP_PERSONALITY_FINISH):
       HandleIMPPersonalityFinish();

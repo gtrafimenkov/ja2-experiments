@@ -695,7 +695,7 @@ UINT32 HandleTacticalUI(const struct MouseInput mouse) {
       // FROM MOUSE CLICKS
       GetRTMouseButtonInput(&uiNewEvent);
       // FROM KEYBOARD
-      GetKeyboardInput(&uiNewEvent);
+      GetKeyboardInput(&uiNewEvent, mouse);
 
     } else {
       // FROM MOUSE POSITION
@@ -705,7 +705,7 @@ UINT32 HandleTacticalUI(const struct MouseInput mouse) {
       // FROM MOUSE CLICKS
       GetTBMouseButtonInput(&uiNewEvent);
       // FROM KEYBOARD
-      GetKeyboardInput(&uiNewEvent);
+      GetKeyboardInput(&uiNewEvent, mouse);
     }
 
   } else {
