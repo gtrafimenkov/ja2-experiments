@@ -1863,8 +1863,6 @@ BOOLEAN PossibleToCoordinateSimultaneousGroupArrivals(struct GROUP *pFirstGroup)
     // Kris August 03, 1999 Bug fix:  Changed 1st line to 2nd line to fix game breaking if this
     // dialog came up while in tactical.
     //                               It would kick you to mapscreen, where things would break...
-    // DoMapMessageBox( MSG_BOX_BASIC_STYLE, str, MAP_SCREEN, MSG_BOX_FLAG_YESNO,
-    // PlanSimultaneousGroupArrivalCallback );
     DoMapMessageBox(MSG_BOX_BASIC_STYLE, str, guiCurrentScreen, MSG_BOX_FLAG_YESNO,
                     PlanSimultaneousGroupArrivalCallback);
 

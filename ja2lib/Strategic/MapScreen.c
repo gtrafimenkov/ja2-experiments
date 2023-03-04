@@ -213,8 +213,8 @@
 // contract
 #define CONTRACT_X 185
 #define CONTRACT_Y 50
-//#define CONTRACT_WIDTH  63
-//#define CONTRACT_HEIGHT 10
+// #define CONTRACT_WIDTH  63
+// #define CONTRACT_HEIGHT 10
 
 // trash can
 #define TRASH_CAN_X 176
@@ -315,8 +315,8 @@
 #define SOLDIER_PIC_Y 20
 #define SOLDIER_HAND_X 6
 #define SOLDIER_HAND_Y 81
-//#define	TM_INV_WIDTH								58
-//#define	TM_INV_HEIGHT								23
+// #define	TM_INV_WIDTH								58
+// #define	TM_INV_HEIGHT								23
 
 #define CLOCK_X 554
 #define CLOCK_Y 459
@@ -9997,8 +9997,6 @@ void ExplainWhySkyriderCantFly(void) {
   // grounded by enemies in sector?
   if (CanHelicopterTakeOff() == FALSE) {
     SkyRiderTalk(CHOPPER_NOT_ACCESSIBLE);
-    //		DoMapMessageBox( MSG_BOX_BASIC_STYLE, pSkyriderText[ 4 ], MAP_SCREEN,
-    // MSG_BOX_FLAG_OK, MapScreenDefaultOkBoxCallback );
     return;
   }
 
