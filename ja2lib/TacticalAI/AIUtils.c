@@ -1272,7 +1272,7 @@ BOOLEAN GuySawEnemyThisTurnOrBefore(struct SOLDIERTYPE *pSoldier) {
   UINT8 ubIDLoop;
 
   for (ubTeamLoop = 0; ubTeamLoop < MAXTEAMS; ubTeamLoop++) {
-    if (gTacticalStatus.Team[ubTeamLoop].bSide != pSoldier->bSide) {
+    if (GetTeamSide(ubTeamLoop) != pSoldier->bSide) {
       // consider guys in this team, which isn't on our side
       for (ubIDLoop = gTacticalStatus.Team[ubTeamLoop].bFirstID;
            ubIDLoop <= gTacticalStatus.Team[ubTeamLoop].bLastID; ubIDLoop++) {

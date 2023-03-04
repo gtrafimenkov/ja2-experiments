@@ -1,5 +1,7 @@
 #include "Strategic/TownMilitia.h"
 
+#include <string.h>
+
 #include "Laptop/Finances.h"
 #include "Militia.h"
 #include "Money.h"
@@ -10,16 +12,12 @@
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
-#include "Strategic/Strategic.h"
-#include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicTownLoyalty.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/MilitiaControl.h"
-#include "Tactical/Overhead.h"
 #include "Town.h"
 #include "UI.h"
 #include "Utils/Text.h"
-#include "Utils/Utilities.h"
 
 #define SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST 50
 
@@ -68,7 +66,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
   UINT8 ubTownId;
 
   // get town index
-  ubTownId = StrategicMap[sMapX + sMapY * MAP_WORLD_X].bNameId;
+  ubTownId = GetTownIdForSector(sMapX, sMapY);
 
   if (ubTownId == BLANK_SECTOR) {
     Assert(IsThisSectorASAMSector(sMapX, sMapY, 0));
@@ -373,7 +371,7 @@ BOOLEAN ServeNextFriendlySectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
     iTownSector = pTownLocationsList[gubTownSectorServerIndex];
 
     // if this sector is in the town we're looking for
-    if (StrategicMap[iTownSector].bNameId == gubTownSectorServerTownId) {
+    if (GetTownIdForStrategicMapIndex(iTownSector) == gubTownSectorServerTownId) {
       // A sector in the specified town.  Calculate its X & Y sector compotents
       sMapX = iTownSector % MAP_WORLD_X;
       sMapY = iTownSector / MAP_WORLD_X;
@@ -591,10 +589,10 @@ void MilitiaTrainingRejected(void) {
 }
 
 void HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap(void) {
-  if (gTacticalStatus.Team[MILITIA_TEAM].bSide != 0) {
+  if (GetTeamSide(MILITIA_TEAM) != 0) {
     // handle militia defections and reset team to friendly
     HandleMilitiaDefections(GetLoadedSectorX(), GetLoadedSectorY());
-    gTacticalStatus.Team[MILITIA_TEAM].bSide = 0;
+    SetTeamSide(MILITIA_TEAM, 0);
   } else if (!IsGoingToAutoresolve()) {
     // Don't promote militia if we are going directly
     // to autoresolve to finish the current battle.
@@ -919,7 +917,8 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector) {
   INT32 iCounter = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
 
-  for (iCounter = 0; iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
+  struct SoldierIDRange range = GetSoldierRangeForTeam(OUR_TEAM);
+  for (iCounter = range.firstIndex; iCounter <= range.lastIndex; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
     if (pSoldier->bActive) {
@@ -978,57 +977,4 @@ BOOLEAN MilitiaTrainingAllowedInTown(INT8 bTownId) {
       // not a town sector!
       return (FALSE);
   }
-}
-
-void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize) {
-  CHAR16 pStr[256];
-  BOOLEAN fAddSpace = FALSE;
-  swprintf(str, bufSize, L"");
-
-  if (!gbMilitiaPromotions) {
-    return;
-  }
-  if (gbGreenToElitePromotions > 1) {
-    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[22], gbGreenToElitePromotions);
-    wcsncat(str, pStr, bufSize);
-    fAddSpace = TRUE;
-  } else if (gbGreenToElitePromotions == 1) {
-    wcsncat(str, gzLateLocalizedString[29], bufSize);
-    fAddSpace = TRUE;
-  }
-
-  if (gbGreenToRegPromotions > 1) {
-    if (fAddSpace) {
-      wcsncat(str, L" ", bufSize);
-    }
-    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[23], gbGreenToRegPromotions);
-    wcsncat(str, pStr, bufSize);
-    fAddSpace = TRUE;
-  } else if (gbGreenToRegPromotions == 1) {
-    if (fAddSpace) {
-      wcsncat(str, L" ", bufSize);
-    }
-    wcsncat(str, gzLateLocalizedString[30], bufSize);
-    fAddSpace = TRUE;
-  }
-
-  if (gbRegToElitePromotions > 1) {
-    if (fAddSpace) {
-      wcsncat(str, L" ", bufSize);
-    }
-    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[24], gbRegToElitePromotions);
-    wcsncat(str, pStr, bufSize);
-  } else if (gbRegToElitePromotions == 1) {
-    if (fAddSpace) {
-      wcsncat(str, L" ", bufSize);
-    }
-    wcsncat(str, gzLateLocalizedString[31], bufSize);
-    fAddSpace = TRUE;
-  }
-
-  // Clear the fields
-  gbGreenToElitePromotions = 0;
-  gbGreenToRegPromotions = 0;
-  gbRegToElitePromotions = 0;
-  gbMilitiaPromotions = 0;
 }

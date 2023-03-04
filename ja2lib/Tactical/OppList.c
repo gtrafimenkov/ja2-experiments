@@ -2439,8 +2439,7 @@ INT8 OurMaxPublicOpplist() {
     if (!pSoldier || !pSoldier->bLife) continue;  // next merc
 
     // if this man is NEUTRAL / on our side, he's not an opponent
-    if (pSoldier->bNeutral ||
-        (gTacticalStatus.Team[gbPlayerNum].bSide == Menptr[pSoldier->ubID].bSide))
+    if (pSoldier->bNeutral || (GetTeamSide(gbPlayerNum) == Menptr[pSoldier->ubID].bSide))
       continue;  // next merc
 
     // opponent, check our public opplist value for him

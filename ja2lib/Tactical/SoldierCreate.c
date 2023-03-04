@@ -251,7 +251,7 @@ struct SOLDIERTYPE *TacticalCreateSoldier(SOLDIERCREATE_STRUCT *pCreateStruct, U
 
     Soldier.bActionPoints = CalcActionPoints(&Soldier);
     Soldier.bInitialActionPoints = Soldier.bActionPoints;
-    Soldier.bSide = gTacticalStatus.Team[Soldier.bTeam].bSide;
+    Soldier.bSide = GetTeamSide(Soldier.bTeam);
     Soldier.bActive = TRUE;
     Soldier.sSectorX = pCreateStruct->sSectorX;
     Soldier.sSectorY = pCreateStruct->sSectorY;

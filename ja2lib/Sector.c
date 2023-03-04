@@ -17,7 +17,7 @@ BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
   }
 
   // if sector is controlled by enemies, it's not ours (duh!)
-  if (!bMapZ && StrategicMap[sMapX + sMapY * MAP_WORLD_X].fEnemyControlled == TRUE) {
+  if (!bMapZ && IsSectorEnemyControlled(sMapX, sMapY)) {
     return FALSE;
   }
 
@@ -50,3 +50,9 @@ BOOLEAN IsThisSectorASAMSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
 
 i16 GetLoadedSectorX() { return gWorldSectorX; }
 i16 GetLoadedSectorY() { return gWorldSectorY; }
+
+bool IsSectorEnemyControlled(i16 sMapX, i16 sMapY) {
+  return StrategicMap[CALCULATE_STRATEGIC_INDEX(sMapX, sMapY)].fEnemyControlled;
+}
+
+// fEnemyControlled

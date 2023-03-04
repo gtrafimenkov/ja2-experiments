@@ -85,6 +85,7 @@
 #include "TileEngine/TacticalPlacementGUI.h"
 #include "TileEngine/WorldDat.h"
 #include "TileEngine/WorldMan.h"
+#include "Town.h"
 #include "UI.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Cursors.h"
@@ -140,11 +141,6 @@ BOOLEAN gfLoneEPCAttemptingTraversal = FALSE;
 BOOLEAN gfRobotWithoutControllerAttemptingTraversal = FALSE;
 BOOLEAN gubLoneMercAttemptingToAbandonEPCs = 0;
 INT8 gbPotentiallyAbandonedEPCSlotID = -1;
-
-INT8 gbGreenToElitePromotions = 0;
-INT8 gbGreenToRegPromotions = 0;
-INT8 gbRegToElitePromotions = 0;
-INT8 gbMilitiaPromotions = 0;
 
 extern BOOLEAN gfUsePersistantPBI;
 
@@ -536,8 +532,10 @@ BOOLEAN InitStrategicEngine() {
 INT8 GetTownIdForSector(INT16 sMapX, INT16 sMapY) {
   // return the name value of the town in this sector
 
-  return (StrategicMap[CALCULATE_STRATEGIC_INDEX(sMapX, sMapY)].bNameId);
+  return GetTownIdForStrategicMapIndex(CALCULATE_STRATEGIC_INDEX(sMapX, sMapY));
 }
+
+i8 GetTownIdForStrategicMapIndex(i32 index) { return StrategicMap[index].bNameId; }
 
 // return number of sectors this town takes up
 UINT8 GetTownSectorSize(INT8 bTownId) {

@@ -508,19 +508,19 @@ BOOLEAN InitOverhead() {
     gTacticalStatus.Team[cnt].RadarColor = bDefaultTeamColors[cnt];
 
     if (cnt == gbPlayerNum || cnt == PLAYER_PLAN) {
-      gTacticalStatus.Team[cnt].bSide = 0;
+      SetTeamSide(cnt, 0);
       gTacticalStatus.Team[cnt].bHuman = TRUE;
     } else {
       if (cnt == MILITIA_TEAM) {
         // militia guys on our side!
-        gTacticalStatus.Team[cnt].bSide = 0;
+        SetTeamSide(cnt, 0);
       } else if (cnt == CREATURE_TEAM) {
         // creatures are on no one's side but their own
         // NB side 2 is used for hostile rebels....
-        gTacticalStatus.Team[cnt].bSide = 3;
+        SetTeamSide(cnt, 3);
       } else {
         // hostile (enemies, or civilians; civs are potentially hostile but neutral)
-        gTacticalStatus.Team[cnt].bSide = 1;
+        SetTeamSide(cnt, 1);
       }
       gTacticalStatus.Team[cnt].bHuman = FALSE;
     }
@@ -4739,7 +4739,7 @@ BOOLEAN SoldierHasSeenEnemiesLastFewTurns(struct SOLDIERTYPE *pTeamSoldier) {
   INT32 cnt;
 
   for (cnt = 0; cnt < MAXTEAMS; cnt++) {
-    if (gTacticalStatus.Team[cnt].bSide != pTeamSoldier->bSide) {
+    if (GetTeamSide(cnt) != pTeamSoldier->bSide) {
       // check this team for possible enemies
       cnt2 = gTacticalStatus.Team[cnt].bFirstID;
       for (pSoldier = MercPtrs[cnt2]; cnt2 <= gTacticalStatus.Team[cnt].bLastID;

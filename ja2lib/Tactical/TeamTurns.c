@@ -1533,8 +1533,8 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, UINT8 ubInterruptType) {
     ubIntCnt = 0;
 
     for (ubTeam = 0; ubTeam < MAXTEAMS; ubTeam++) {
-      if (gTacticalStatus.Team[ubTeam].bTeamActive &&
-          (gTacticalStatus.Team[ubTeam].bSide != pSoldier->bSide) && ubTeam != CIV_TEAM) {
+      if (gTacticalStatus.Team[ubTeam].bTeamActive && (GetTeamSide(ubTeam) != pSoldier->bSide) &&
+          ubTeam != CIV_TEAM) {
         for (ubOpp = gTacticalStatus.Team[ubTeam].bFirstID;
              ubOpp <= gTacticalStatus.Team[ubTeam].bLastID; ubOpp++) {
           pOpponent = MercPtrs[ubOpp];
