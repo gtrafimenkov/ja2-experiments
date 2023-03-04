@@ -5,6 +5,7 @@
 #include "Laptop/Finances.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
+#include "Money.h"
 #include "Point.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
@@ -5306,7 +5307,7 @@ void ATMOtherButtonCallback(GUI_BUTTON *btn, INT32 reason) {
                 }
               } else if (fATMFlags == 3) {
                 // deposit from merc to account
-                if (LaptopSaveInfo.iCurrentBalance >= wcstol(sTransferString, NULL, 10)) {
+                if (MoneyGetBalance() >= wcstol(sTransferString, NULL, 10)) {
                   if ((wcstol(sTransferString, NULL, 10) % 10) != 0) {
                     fOldATMFlags = fATMFlags;
                     fATMFlags = 5;
@@ -5324,7 +5325,7 @@ void ATMOtherButtonCallback(GUI_BUTTON *btn, INT32 reason) {
                 } else {
                   fOldATMFlags = fATMFlags;
                   fATMFlags = 4;
-                  iValue = LaptopSaveInfo.iCurrentBalance;
+                  iValue = MoneyGetBalance();
                   swprintf(sTransferString, ARR_SIZE(sTransferString), L"%d", iValue);
                   fReDrawScreenFlag = TRUE;
                 }
@@ -5539,8 +5540,8 @@ BOOLEAN TransferFundsFromBankToMerc(struct SOLDIERTYPE *pSoldier, INT32 iCurrent
   }
 
   // current balance
-  if (iCurrentBalance > LaptopSaveInfo.iCurrentBalance) {
-    iCurrentBalance = LaptopSaveInfo.iCurrentBalance;
+  if (iCurrentBalance > MoneyGetBalance()) {
+    iCurrentBalance = MoneyGetBalance();
   }
 
   // set up object

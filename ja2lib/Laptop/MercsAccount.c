@@ -7,6 +7,7 @@
 #include "Laptop/LaptopSave.h"
 #include "Laptop/Mercs.h"
 #include "Laptop/SpeckQuotes.h"
+#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -341,7 +342,7 @@ void SettleMercAccounts() {
           gMercProfiles[ubMercID].sSalary * gMercProfiles[ubMercID].iMercMercContractLength;
 
       // if the player can afford to pay this merc
-      if (LaptopSaveInfo.iCurrentBalance >= iPartialPayment + iContractCharge) {
+      if (MoneyGetBalance() >= iPartialPayment + iContractCharge) {
         // Increment the counter that keeps track of the of the number of days the player has paid
         // for merc services
         LaptopSaveInfo.guiNumberOfMercPaymentsInDays +=
@@ -395,7 +396,7 @@ void SettleMercAccounts() {
   /*
 
           //if the player doesnt have enough money to fully pay for the all the mercs contract
-          if( LaptopSaveInfo.iCurrentBalance < giMercTotalContractCharge )
+          if( MoneyGetBalance() < giMercTotalContractCharge )
           {
                   INT32	iPartialPayment=0;
                   INT32	iContractCharge=0;
@@ -421,7 +422,7 @@ void SettleMercAccounts() {
   pSoldier->iTotalContractLength;
 
                                   //if the player can afford to pay this merc
-                                  if( LaptopSaveInfo.iCurrentBalance > iContractCharge )
+                                  if( MoneyGetBalance() > iContractCharge )
                                   {
                                           sSoldierID = GetSoldierIDFromMercID( ubMercID );
                                           pSoldier = MercPtrs[ sSoldierID ];

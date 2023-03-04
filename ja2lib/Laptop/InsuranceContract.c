@@ -9,6 +9,7 @@
 #include "Laptop/InsuranceText.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
+#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/English.h"
 #include "SGP/Random.h"
@@ -1495,7 +1496,7 @@ void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, UINT32 ui
       Assert(0);
   } else {
     // if the player doesnt have enough money, tell him
-    if (LaptopSaveInfo.iCurrentBalance < iAmountOfMoneyTransfer) {
+    if (MoneyGetBalance() < iAmountOfMoneyTransfer) {
       wchar_t sText[800];
 
       GetInsuranceText(INS_MLTI_NOT_ENOUGH_FUNDS, sText);

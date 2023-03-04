@@ -10,8 +10,8 @@
 #include "JAScreens.h"
 #include "LanguageDefines.h"
 #include "Laptop/Finances.h"
-#include "Laptop/LaptopSave.h"
 #include "MessageBoxScreen.h"
+#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
@@ -2987,7 +2987,7 @@ void RenderItemDescriptionBox() {
 
       // if the player is taking money from their account
       if (gfAddingMoneyToMercFromPlayersAccount)
-        swprintf(pStr, ARR_SIZE(pStr), L"%ld", LaptopSaveInfo.iCurrentBalance);
+        swprintf(pStr, ARR_SIZE(pStr), L"%ld", MoneyGetBalance());
       else
         swprintf(pStr, ARR_SIZE(pStr), L"%ld", gRemoveMoney.uiTotalAmount);
 

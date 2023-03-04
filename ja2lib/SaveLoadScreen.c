@@ -9,8 +9,8 @@
 #include "GameVersion.h"
 #include "JAScreens.h"
 #include "Laptop/Finances.h"
-#include "Laptop/LaptopSave.h"
 #include "Local.h"
+#include "Money.h"
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
@@ -1138,7 +1138,7 @@ BOOLEAN DisplaySaveGameEntry(INT8 bEntryID)  //, UINT16 usPosY )
       //			SaveGameHeader.sSectorY = gWorldSectorY;
       //			SaveGameHeader.bSectorZ = gbWorldSectorZ;
       SaveGameHeader.ubNumOfMercsOnPlayersTeam = NumberOfMercsOnPlayerTeam();
-      SaveGameHeader.iCurrentBalance = LaptopSaveInfo.iCurrentBalance;
+      SaveGameHeader.iCurrentBalance = MoneyGetBalance();
       wcscpy(SaveGameHeader.sSavedGameDesc, gzGameDescTextField);
 
       // copy over the initial game options

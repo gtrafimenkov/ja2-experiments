@@ -13,6 +13,7 @@
 #include "Laptop/IMPVoices.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
+#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
@@ -215,7 +216,7 @@ void BtnIMPConfirmYes(GUI_BUTTON *btn, INT32 reason) {
         return;
       }
 
-      if (LaptopSaveInfo.iCurrentBalance < COST_OF_PROFILE) {
+      if (MoneyGetBalance() < COST_OF_PROFILE) {
         // not enough
         return;
       }
@@ -512,7 +513,7 @@ void LoadInCurrentImpCharacter(void) {
   // close file
   FileMan_Close(hFile);
 
-  if (LaptopSaveInfo.iCurrentBalance < COST_OF_PROFILE) {
+  if (MoneyGetBalance() < COST_OF_PROFILE) {
     // not enough
     return;
   }

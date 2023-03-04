@@ -4593,7 +4593,7 @@ void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
       gfAddingMoneyToMercFromPlayersAccount = TRUE;
 
       // create the temp object from the players account balance
-      //			if( LaptopSaveInfo.iCurrentBalance > MAX_MONEY_PER_SLOT )
+      //			if( MoneyGetBalance() > MAX_MONEY_PER_SLOT )
       //				CreateMoney( MAX_MONEY_PER_SLOT, &gItemPointer );
       //			else
       CreateMoney(LaptopSaveInfo.iCurrentBalance, &gItemPointer);

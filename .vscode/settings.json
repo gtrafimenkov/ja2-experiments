@@ -10,6 +10,7 @@
         "gameinputinternal.h": "c",
         "himage.h": "c",
         "menptr.h": "c",
-        "mapscreeninterfacemap.h": "c"
+        "mapscreeninterfacemap.h": "c",
+        "laptop.h": "c"
     }
 }

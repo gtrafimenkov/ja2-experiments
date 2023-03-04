@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "Laptop/Finances.h"
-#include "Laptop/LaptopSave.h"
+#include "Money.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "Strategic/Assignments.h"
@@ -46,7 +46,7 @@
 #define REFUEL_HELICOPTER_DELAY 30  // minutes
 
 // total number of sectors one can go
-//#define MAX_HELICOPTER_DISTANCE 25
+// #define MAX_HELICOPTER_DISTANCE 25
 
 // maximum chance out of a hundred per unsafe sector that a SAM site in decent working condition
 // will hit Skyrider
@@ -1967,7 +1967,7 @@ void PaySkyriderBill(void) {
   // if we owe anything for the trip
   if (iTotalAccumulatedCostByPlayer > 0) {
     // if player can afford to pay the Skyrider bill
-    if (LaptopSaveInfo.iCurrentBalance >= iTotalAccumulatedCostByPlayer) {
+    if (MoneyGetBalance() >= iTotalAccumulatedCostByPlayer) {
       // no problem, pay the man
       // add the transaction
       AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, GetWorldTotalMin(),
@@ -1975,14 +1975,12 @@ void PaySkyriderBill(void) {
       ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pSkyriderText[0], iTotalAccumulatedCostByPlayer);
     } else {
       // money owed
-      if (LaptopSaveInfo.iCurrentBalance > 0) {
-        ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pSkyriderText[0],
-                  LaptopSaveInfo.iCurrentBalance);
-        gMercProfiles[SKYRIDER].iBalance =
-            LaptopSaveInfo.iCurrentBalance - iTotalAccumulatedCostByPlayer;
+      if (MoneyGetBalance() > 0) {
+        ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pSkyriderText[0], MoneyGetBalance());
+        gMercProfiles[SKYRIDER].iBalance = MoneyGetBalance() - iTotalAccumulatedCostByPlayer;
         // add the transaction
         AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, GetWorldTotalMin(),
-                                    -LaptopSaveInfo.iCurrentBalance);
+                                    -MoneyGetBalance());
       } else {
         gMercProfiles[SKYRIDER].iBalance = -iTotalAccumulatedCostByPlayer;
       }
@@ -2008,8 +2006,8 @@ void PayOffSkyriderDebtIfAny() {
   iAmountOwed = -gMercProfiles[SKYRIDER].iBalance;
 
   // if we owe him anything, and have any money
-  if ((iAmountOwed > 0) && (LaptopSaveInfo.iCurrentBalance > 0)) {
-    iPayAmount = min(iAmountOwed, LaptopSaveInfo.iCurrentBalance);
+  if ((iAmountOwed > 0) && (MoneyGetBalance() > 0)) {
+    iPayAmount = min(iAmountOwed, MoneyGetBalance());
 
     // pay the man what we can
     gMercProfiles[SKYRIDER].iBalance += iPayAmount;

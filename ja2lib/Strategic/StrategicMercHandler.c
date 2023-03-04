@@ -10,6 +10,7 @@
 #include "Laptop/LaptopSave.h"
 #include "Laptop/Mercs.h"
 #include "Laptop/Personnel.h"
+#include "Money.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
@@ -256,7 +257,7 @@ void MercDailyUpdate() {
         // if the player owes money
         if (iMoneyOwedToMerc != 0) {
           // if the player can afford to pay them
-          if (LaptopSaveInfo.iCurrentBalance >= iMoneyOwedToMerc) {
+          if (MoneyGetBalance() >= iMoneyOwedToMerc) {
             // add the transaction to the player
             AddTransactionToPlayersBook(PAYMENT_TO_NPC, pSoldier->ubProfile, GetWorldTotalMin(),
                                         -iMoneyOwedToMerc);

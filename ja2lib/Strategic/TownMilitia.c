@@ -1,8 +1,7 @@
 #include "Strategic/TownMilitia.h"
 
-// #include "JAScreens.h"
 #include "Laptop/Finances.h"
-#include "Laptop/LaptopSave.h"
+#include "Money.h"
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
 #include "Soldier.h"
@@ -441,7 +440,7 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
 
   gfYesNoPromptIsForContinue = FALSE;
 
-  if (LaptopSaveInfo.iCurrentBalance < giTotalCostOfTraining) {
+  if (MoneyGetBalance() < giTotalCostOfTraining) {
     swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[8], giTotalCostOfTraining);
     DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_OK, CantTrainMilitiaOkBoxCallback);
     return;
@@ -525,7 +524,7 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
   giTotalCostOfTraining = MILITIA_TRAINING_COST;
 
   // can player afford to continue training?
-  if (LaptopSaveInfo.iCurrentBalance < giTotalCostOfTraining) {
+  if (MoneyGetBalance() < giTotalCostOfTraining) {
     // can't afford to continue training
     swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[8], giTotalCostOfTraining);
     DoContinueMilitiaTrainingMessageBox(sSectorX, sSectorY, sString, MSG_BOX_FLAG_OK,
@@ -556,7 +555,7 @@ void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue) {
   // yes
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // does the player have enough
-    if (LaptopSaveInfo.iCurrentBalance >= giTotalCostOfTraining) {
+    if (MoneyGetBalance() >= giTotalCostOfTraining) {
       if (gfYesNoPromptIsForContinue) {
         ContinueTrainingInThisSector();
       } else {

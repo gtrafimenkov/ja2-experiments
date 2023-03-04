@@ -8,7 +8,6 @@
 #include "Laptop/Finances.h"
 #include "Laptop/History.h"
 #include "Laptop/Laptop.h"
-#include "Laptop/LaptopSave.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"
@@ -7180,7 +7179,7 @@ void CreateContractBox(struct SOLDIERTYPE *pCharacter) {
           /*
                                           // add current balance after title string
                                            swprintf( sDollarString, L"%d",
-             LaptopSaveInfo.iCurrentBalance); InsertCommasForDollarFigure( sDollarString );
+             MoneyGetBalance()); InsertCommasForDollarFigure( sDollarString );
                                            InsertDollarSignInToString( sDollarString );
                                            swprintf( sString, L"%s %s", pContractStrings[uiCounter],
              sDollarString ); AddMonoString(&hStringHandle, sString);

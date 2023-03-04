@@ -7,9 +7,10 @@
 #include "Laptop/Finances.h"
 #include "Laptop/History.h"
 #include "Laptop/InsuranceContract.h"
-#include "Laptop/LaptopSave.h"
+
 #include "Laptop/Mercs.h"
 #include "Laptop/Personnel.h"
+#include "Money.h"
 #include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -327,7 +328,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredAction
   }
 
   // check to see if the merc has enough money
-  if (LaptopSaveInfo.iCurrentBalance < iContractCharge) return (FALSE);
+  if (MoneyGetBalance() < iContractCharge) return (FALSE);
 
   // Check to see if merc will renew
   if (!WillMercRenew(pSoldier, TRUE)) {
@@ -364,7 +365,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredAction
 
     HandleImportantMercQuote(pSoldier, QUOTE_ACCEPT_CONTRACT_RENEWAL);
 
-    if (iCostOfInsurance > LaptopSaveInfo.iCurrentBalance) {
+    if (iCostOfInsurance > MoneyGetBalance()) {
       // no can afford
       HandleNotifyPlayerCantAffordInsurance();
 

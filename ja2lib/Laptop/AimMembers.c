@@ -11,6 +11,7 @@
 #include "Laptop/History.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
+#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
@@ -1771,7 +1772,7 @@ INT8 AimMemberHireMerc() {
   INT16 sSoldierID = 0;
   INT8 bTypeOfContract = 0;
 
-  if (LaptopSaveInfo.iCurrentBalance < giContractAmount) {
+  if (MoneyGetBalance() < giContractAmount) {
     // wasnt hired because of lack of funds
     InitCreateDeleteAimPopUpBox(AIM_POPUP_CREATE, AimPopUpText[AIM_MEMBER_FUNDS_TRANSFER_FAILED],
                                 AimPopUpText[AIM_MEMBER_NOT_ENOUGH_FUNDS], AIM_POPUP_BOX_X,

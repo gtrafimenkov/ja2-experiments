@@ -34,13 +34,13 @@
 #include "Laptop/InsuranceComments.h"
 #include "Laptop/InsuranceContract.h"
 #include "Laptop/InsuranceInfo.h"
-#include "Laptop/LaptopSave.h"
 #include "Laptop/Mercs.h"
 #include "Laptop/MercsAccount.h"
 #include "Laptop/MercsFiles.h"
 #include "Laptop/MercsNoAccount.h"
 #include "Laptop/Personnel.h"
 #include "Laptop/SirTech.h"
+#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/English.h"
@@ -3566,7 +3566,7 @@ void DisplayPlayersBalanceToDate(void) {
   SetFontShadow(NO_SHADOW);
 
   // parse straigth number
-  swprintf(sString, ARR_SIZE(sString), L"%d", LaptopSaveInfo.iCurrentBalance);
+  swprintf(sString, ARR_SIZE(sString), L"%d", MoneyGetBalance());
 
   // put in commas, then dollar sign
   InsertCommasForDollarFigure(sString);
@@ -4470,7 +4470,7 @@ void PrintBalance(void) {
   SetFontBackground(FONT_BLACK);
   SetFontShadow(NO_SHADOW);
 
-  swprintf(pString, ARR_SIZE(pString), L"%d", LaptopSaveInfo.iCurrentBalance);
+  swprintf(pString, ARR_SIZE(pString), L"%d", MoneyGetBalance());
   InsertCommasForDollarFigure(pString);
   InsertDollarSignInToString(pString);
 

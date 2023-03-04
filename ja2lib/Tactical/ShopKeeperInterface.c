@@ -7,6 +7,7 @@
 #include "Laptop/LaptopSave.h"
 #include "Laptop/Personnel.h"
 #include "MessageBoxScreen.h"
+#include "Money.h"
 #include "Rect.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
@@ -1329,7 +1330,7 @@ BOOLEAN RenderShopKeeperInterface() {
                        CENTER_JUSTIFIED);
 
   // Display the players current balance value
-  swprintf(zMoney, ARR_SIZE(zMoney), L"%d", LaptopSaveInfo.iCurrentBalance);
+  swprintf(zMoney, ARR_SIZE(zMoney), L"%d", MoneyGetBalance());
 
   InsertCommasForDollarFigure(zMoney);
   InsertDollarSignInToString(zMoney);
@@ -4629,13 +4630,13 @@ void HandleAtmOK() {
 
   } else if (gubCurrentSkiAtmMode == SKI_ATM_GIVE_MODE) {
     // are we tring to take more then we have?
-    if (iAmountToTransfer > LaptopSaveInfo.iCurrentBalance) {
+    if (iAmountToTransfer > MoneyGetBalance()) {
       if (LaptopSaveInfo.iCurrentBalance == 0)
         memset(gzSkiAtmTransferString, 0, sizeof(gzSkiAtmTransferString));
       else {
         // Set the amount to transfer
         swprintf(gzSkiAtmTransferString, ARR_SIZE(gzSkiAtmTransferString), L"%d",
-                 LaptopSaveInfo.iCurrentBalance);
+                 MoneyGetBalance());
       }
 
       gubCurrentSkiAtmMode = SKI_ATM_ERR_GIVE_MODE;
@@ -4843,7 +4844,7 @@ void HandleCurrentModeText(UINT8 ubMode) {
       break;
 
     case SKI_ATM_DISPLAY_PLAYERS_BALANCE:
-      swprintf(zMoney, ARR_SIZE(zMoney), L"%d", LaptopSaveInfo.iCurrentBalance);
+      swprintf(zMoney, ARR_SIZE(zMoney), L"%d", MoneyGetBalance());
       InsertCommasForDollarFigure(zMoney);
       InsertDollarSignInToString(zMoney);
 

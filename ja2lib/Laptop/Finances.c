@@ -2,6 +2,7 @@
 
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
+#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
@@ -199,8 +200,7 @@ UINT32 AddTransactionToPlayersBook(UINT8 ubCode, UINT8 ubSecondCode, UINT32 uiDa
   // update balance
   LaptopSaveInfo.iCurrentBalance += iAmount;
 
-  uiId = ProcessAndEnterAFinacialRecord(ubCode, uiDate, iAmount, ubSecondCode,
-                                        LaptopSaveInfo.iCurrentBalance);
+  uiId = ProcessAndEnterAFinacialRecord(ubCode, uiDate, iAmount, ubSecondCode, MoneyGetBalance());
 
   // write balance to disk
   WriteBalanceToDisk();
@@ -337,7 +337,7 @@ INT32 GetYesterdaysIncome(void) {
 
 INT32 GetCurrentBalance(void) {
   // get balance to this minute
-  return (LaptopSaveInfo.iCurrentBalance);
+  return (MoneyGetBalance());
 
   // return(GetTotalDebits((GetWorldTotalMin()))+GetTotalCredits((GetWorldTotalMin())));
 }

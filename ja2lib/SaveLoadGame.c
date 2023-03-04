@@ -18,9 +18,9 @@
 #include "Laptop/IMPConfirm.h"
 #include "Laptop/IMPPortraits.h"
 #include "Laptop/Laptop.h"
-#include "Laptop/LaptopSave.h"
 #include "Laptop/Mercs.h"
 #include "LoadingScreen.h"
+#include "Money.h"
 #include "OptionsScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
@@ -600,7 +600,7 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
                                  &SaveGameHeader.bSectorZ);
 
   SaveGameHeader.ubNumOfMercsOnPlayersTeam = NumberOfMercsOnPlayerTeam();
-  SaveGameHeader.iCurrentBalance = LaptopSaveInfo.iCurrentBalance;
+  SaveGameHeader.iCurrentBalance = MoneyGetBalance();
 
   SaveGameHeader.uiCurrentScreen = guiPreviousOptionScreen;
 

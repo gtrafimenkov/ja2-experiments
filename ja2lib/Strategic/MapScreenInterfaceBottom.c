@@ -4,8 +4,8 @@
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "Laptop/Finances.h"
-#include "Laptop/LaptopSave.h"
 #include "MapScreenInterfaceMapInventory.h"
+#include "Money.h"
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
@@ -1171,7 +1171,7 @@ void DisplayCurrentBalanceForMapBottom(void) {
   SetFontForeground(183);
   SetFontBackground(FONT_BLACK);
 
-  swprintf(sString, ARR_SIZE(sString), L"%d", LaptopSaveInfo.iCurrentBalance);
+  swprintf(sString, ARR_SIZE(sString), L"%d", MoneyGetBalance());
 
   // insert
 
