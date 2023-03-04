@@ -74,7 +74,7 @@ UINT16 RealtimeDelay(struct SOLDIERTYPE *pSoldier) {
   }
 }
 
-void RTHandleAI(struct SOLDIERTYPE *pSoldier) {
+void RTHandleAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) {
 #ifdef AI_PROFILING
   INT32 iLoop;
 #endif
@@ -201,6 +201,5 @@ void RTHandleAI(struct SOLDIERTYPE *pSoldier) {
   NPCDoesAct(pSoldier);
 
   // perform the chosen action
-  pSoldier->bActionInProgress =
-      ExecuteAction(pSoldier, XXX_GetMouseInput());  // if started, mark us as busy
+  pSoldier->bActionInProgress = ExecuteAction(pSoldier, mouse);  // if started, mark us as busy
 }

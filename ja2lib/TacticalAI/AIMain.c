@@ -442,7 +442,7 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse
       }
       TurnBasedHandleNPCAI(pSoldier, mouse);
     } else {
-      RTHandleAI(pSoldier);
+      RTHandleAI(pSoldier, mouse);
     }
 
   } else {
@@ -516,7 +516,7 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse
 
       //*** TRICK- TAKE INTO ACCOUNT PAUSED FOR NO TIME ( FOR NOW )
       if (pSoldier->fNoAPToFinishMove) {
-        SoldierTriesToContinueAlongPath(pSoldier);
+        SoldierTriesToContinueAlongPath(pSoldier, mouse);
       }
       // ATE: Let's also test if we are in any stationary animation...
       else if ((gAnimControl[pSoldier->usAnimState].uiFlags & ANIM_STATIONARY)) {
@@ -535,7 +535,7 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse
                      String("GONNA TRY TO CONTINUE PATH FOR %d", pSoldier->ubID));
 #endif
 
-            SoldierTriesToContinueAlongPath(pSoldier);
+            SoldierTriesToContinueAlongPath(pSoldier, mouse);
           }
         }
       }

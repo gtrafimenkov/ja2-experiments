@@ -661,7 +661,7 @@ INT16 GoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, INT16 sDesGrid, INT
   return (InternalGoAsFarAsPossibleTowards(pSoldier, sDesGrid, -1, bAction, 0));
 }
 
-void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier) {
+void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) {
   INT16 usNewGridNo, bAPCost;
 
   // turn off the flag now that we're going to do something about it...

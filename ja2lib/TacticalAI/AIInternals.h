@@ -1,3 +1,4 @@
+#include "MouseInput.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Tactical/AnimationControl.h"
@@ -57,20 +58,20 @@ enum { URGENCY_LOW = 0, URGENCY_MED, URGENCY_HIGH, NUM_URGENCY_STATES };
    5000 + 2000 * Random(3))
 #define REALTIME_CREATURE_AI_DELAY (10000 + 1000 * Random(3))
 
-//#define PLAYINGMODE             0
-//#define CAMPAIGNLENGTH          1
-//#define LASTUSABLESLOT          2
-//#define RANDOMMERCS             3
-//#define AVAILABLEMERCS          4
-//#define HIRINGKNOWLEDGE         5
-//#define EQUIPMENTLEVEL          6
-//#define ENEMYTEAMSIZE           7
+// #define PLAYINGMODE             0
+// #define CAMPAIGNLENGTH          1
+// #define LASTUSABLESLOT          2
+// #define RANDOMMERCS             3
+// #define AVAILABLEMERCS          4
+// #define HIRINGKNOWLEDGE         5
+// #define EQUIPMENTLEVEL          6
+// #define ENEMYTEAMSIZE           7
 #define ENEMYDIFFICULTY 8  // this is being used in this module
-//#define FOG_OF_WAR              9
-//#define TURNLENGTH              10
-//#define INCREASEDAP             11
-//#define BLOODSTAINS             12
-//#define STARTINGBALANCE         13
+// #define FOG_OF_WAR              9
+// #define TURNLENGTH              10
+// #define INCREASEDAP             11
+// #define BLOODSTAINS             12
+// #define STARTINGBALANCE         13
 #define MAXGAMEOPTIONS 14
 
 #define NOSHOOT_WAITABIT -1
@@ -208,7 +209,7 @@ INT8 RandomPointPatrolAI(struct SOLDIERTYPE *pSoldier);
 INT32 RangeChangeDesire(struct SOLDIERTYPE *pSoldier);
 UINT16 RealtimeDelay(struct SOLDIERTYPE *pSoldier);
 void RearrangePocket(struct SOLDIERTYPE *pSoldier, INT8 bPocket1, INT8 bPocket2, UINT8 bPermanent);
-void RTHandleAI(struct SOLDIERTYPE *pSoldier);
+void RTHandleAI(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse);
 UINT16 RunAway(struct SOLDIERTYPE *pSoldier);
 INT8 SearchForItems(struct SOLDIERTYPE *pSoldier, INT8 bReason, UINT16 usItem);
 UINT8 ShootingStanceChange(struct SOLDIERTYPE *pSoldier, ATTACKTYPE *pAttack,

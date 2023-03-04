@@ -222,7 +222,7 @@ void SetCivilianDestination(UINT8 ubWho, INT16 sGridno);
 void SetNewSituation(struct SOLDIERTYPE *pSoldier);
 
 UINT8 SoldierDifficultyLevel(struct SOLDIERTYPE *pSoldier);
-void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier);
+void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse);
 void StartNPCAI(struct SOLDIERTYPE *pSoldier);
 void TempHurt(struct SOLDIERTYPE *pVictim, struct SOLDIERTYPE *pAttacker);
 int TryToResumeMovement(struct SOLDIERTYPE *pSoldier, INT16 sGridno);
