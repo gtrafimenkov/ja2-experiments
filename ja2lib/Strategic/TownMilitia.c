@@ -1,14 +1,15 @@
 #include "Strategic/TownMilitia.h"
 
 #include "Laptop/Finances.h"
+#include "Militia.h"
 #include "Money.h"
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
+#include "Sector.h"
 #include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
-#include "Strategic/QueenCommand.h"
 #include "Strategic/Strategic.h"
 #include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicTownLoyalty.h"
@@ -206,7 +207,7 @@ INT8 MilitiaRankToSoldierClass(UINT8 ubRank) {
 }
 
 void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = &(SectorInfo[SECTOR(sMapX, sMapY)]);
+  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(SECTOR(sMapX, sMapY));
 
   pSectorInfo->ubNumberOfCivsAtLevel[ubRank] += ubHowMany;
 
@@ -216,7 +217,7 @@ void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 u
 
 void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
                                      UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = &(SectorInfo[SECTOR(sMapX, sMapY)]);
+  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(SECTOR(sMapX, sMapY));
 
   // damn well better have that many around to promote!
   Assert(pSectorInfo->ubNumberOfCivsAtLevel[ubCurrentRank] >= ubHowMany);
@@ -234,7 +235,7 @@ void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRa
 }
 
 void StrategicRemoveMilitiaFromSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = &(SectorInfo[SECTOR(sMapX, sMapY)]);
+  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(SECTOR(sMapX, sMapY));
 
   // damn well better have that many around to remove!
   Assert(pSectorInfo->ubNumberOfCivsAtLevel[ubRank] >= ubHowMany);
@@ -341,7 +342,7 @@ UINT8 CountAllMilitiaInSector(INT16 sMapX, INT16 sMapY) {
 }
 
 UINT8 MilitiaInSectorOfRank(INT16 sMapX, INT16 sMapY, UINT8 ubRank) {
-  return (SectorInfo[SECTOR(sMapX, sMapY)].ubNumberOfCivsAtLevel[ubRank]);
+  return GetSectorInfoByIndex(SECTOR(sMapX, sMapY))->ubNumberOfCivsAtLevel[ubRank];
 }
 
 BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
@@ -482,7 +483,7 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
   sSectorX = pSoldier->sSectorX;
   sSectorY = pSoldier->sSectorY;
 
-  Assert(SectorInfo[SECTOR(sSectorX, sSectorY)].fMilitiaTrainingPaid == FALSE);
+  Assert(GetSectorInfoByIndex(SECTOR(sSectorX, sSectorY))->fMilitiaTrainingPaid == FALSE);
 
   pMilitiaTrainerSoldier = pSoldier;
 
@@ -640,11 +641,11 @@ BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY) {
       sSectorValue = SECTOR(sCounterA, sCounterB);
 
       // check if any sort of militia here
-      if (SectorInfo[sSectorValue].ubNumberOfCivsAtLevel[GREEN_MILITIA]) {
+      if (GetSectorInfoByIndex(sSectorValue)->ubNumberOfCivsAtLevel[GREEN_MILITIA]) {
         return (TRUE);
-      } else if (SectorInfo[sSectorValue].ubNumberOfCivsAtLevel[REGULAR_MILITIA]) {
+      } else if (GetSectorInfoByIndex(sSectorValue)->ubNumberOfCivsAtLevel[REGULAR_MILITIA]) {
         return (TRUE);
-      } else if (SectorInfo[sSectorValue].ubNumberOfCivsAtLevel[ELITE_MILITIA]) {
+      } else if (GetSectorInfoByIndex(sSectorValue)->ubNumberOfCivsAtLevel[ELITE_MILITIA]) {
         return (TRUE);
       }
     }
@@ -840,8 +841,8 @@ void BuildListOfUnpaidTrainableSectors(void) {
           pSoldier = GetMercFromCharacterList(iCounter);
 
           if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-            if (SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)].fMilitiaTrainingPaid ==
-                FALSE) {
+            if (GetSectorInfoByIndex(SECTOR(pSoldier->sSectorX, pSoldier->sSectorY))
+                    ->fMilitiaTrainingPaid == FALSE) {
               // check to see if this sector is a town and needs equipment
               gsUnpaidStrategicSector[iCounter] =
                   CALCULATE_STRATEGIC_INDEX(pSoldier->sSectorX, pSoldier->sSectorY);
@@ -856,8 +857,8 @@ void BuildListOfUnpaidTrainableSectors(void) {
     iCounter = 0;
 
     if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-      if (SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)].fMilitiaTrainingPaid ==
-          FALSE) {
+      if (GetSectorInfoByIndex(SECTOR(pSoldier->sSectorX, pSoldier->sSectorY))
+              ->fMilitiaTrainingPaid == FALSE) {
         // check to see if this sector is a town and needs equipment
         gsUnpaidStrategicSector[iCounter] =
             CALCULATE_STRATEGIC_INDEX(pSoldier->sSectorX, pSoldier->sSectorY);
@@ -923,13 +924,13 @@ void ContinueTrainingInThisSector(void) {
 }
 
 void PayForTrainingInSector(UINT8 ubSector) {
-  Assert(SectorInfo[ubSector].fMilitiaTrainingPaid == FALSE);
+  Assert(GetSectorInfoByIndex(ubSector)->fMilitiaTrainingPaid == FALSE);
 
   // spend the money
   AddTransactionToPlayersBook(TRAIN_TOWN_MILITIA, ubSector, -(MILITIA_TRAINING_COST));
 
   // mark this sector sectors as being paid up
-  SectorInfo[ubSector].fMilitiaTrainingPaid = TRUE;
+  GetSectorInfoByIndex(ubSector)->fMilitiaTrainingPaid = TRUE;
 
   // reset done flags
   ResetDoneFlagForAllMilitiaTrainersInSector(ubSector);

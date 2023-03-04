@@ -736,7 +736,8 @@ current one!!!) ubCurrent = CALCULATE_STRATEGIC_INDEX( pGroup->ubSectorX, pGroup
         {
                 AssertMsg( 0, String("Group %d (%s) attempting illegal move from sector %d, dir %d
 (%s).", pGroup->ubGroupID, ( pGroup->fPlayer ) ? "Player" : "AI", ubSector, ubDirection,
-                                gszTerrain[SectorInfo[ubSector].ubTraversability[ubDirection]] ) );
+                                gszTerrain[GetSectorInfoByIndex(ubSector)->ubTraversability[ubDirection]]
+) );
         }
 
         // figure out what how far along ( percentage ) the vehicle's trip duration we bailed out at

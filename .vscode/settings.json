@@ -12,6 +12,9 @@
         "menptr.h": "c",
         "mapscreeninterfacemap.h": "c",
         "laptop.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "mapscreeninterfaceborder.h": "c",
+        "queencommand.h": "c",
+        "mapscreeninterface.h": "c"
     }
 }
