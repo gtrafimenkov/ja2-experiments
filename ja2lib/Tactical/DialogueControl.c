@@ -390,7 +390,7 @@ void HandleDialogueUIAdjustments() {
   }
 }
 
-void HandleDialogue() {
+void HandleDialogue(const struct MouseInput mouse) {
   INT32 iQSize;
   DIALOGUE_Q_STRUCT *QItem;
   static BOOLEAN fOldEngagedInConvFlagOn = FALSE;
@@ -971,7 +971,7 @@ void HandleDialogue() {
       // if soldier valid...
       if (pSoldier != NULL) {
         // .. remove the fired soldier again
-        BeginStrategicRemoveMerc(pSoldier, (UINT8)QItem->uiSpecialEventData);
+        BeginStrategicRemoveMerc(pSoldier, (UINT8)QItem->uiSpecialEventData, mouse);
       }
     } else if (QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_CONTRACT_ENDING_NO_ASK_EQUIP) {
       // grab soldier ptr from profile ID

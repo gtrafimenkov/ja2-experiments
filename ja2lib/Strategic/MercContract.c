@@ -727,7 +727,8 @@ void CheckIfMercGetsAnotherContract(struct SOLDIERTYPE *pSoldier) {
 }
 
 // for ubRemoveType pass in the enum from the .h, 	( MERC_QUIT, MERC_FIRED  )
-BOOLEAN BeginStrategicRemoveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fAddRehireButton) {
+BOOLEAN BeginStrategicRemoveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fAddRehireButton,
+                                 const struct MouseInput mouse) {
   InterruptTime();
   PauseGame();
   LockPauseState(8);
@@ -739,7 +740,7 @@ BOOLEAN BeginStrategicRemoveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fAddRehir
   if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__EPC) {
     UnEscortEPC(pSoldier);
   } else {
-    NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(pSoldier, fAddRehireButton);
+    NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(pSoldier, fAddRehireButton, mouse);
   }
 
   return (TRUE);

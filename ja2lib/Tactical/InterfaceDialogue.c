@@ -96,7 +96,7 @@ BOOLEAN NPCOpenThing(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor);
 UINT16 gusDialogueMessageBoxType;
 
 void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType);
-void DialogueMessageBoxCallback(UINT8 ubExitValue);
+static void DialogueMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 void CarmenLeavesSectorCallback(void);
 
 #define TALK_PANEL_FACE_X 6
@@ -161,7 +161,7 @@ BOOLEAN InternalInitiateConversation(struct SOLDIERTYPE *pDestSoldier,
                                      struct SOLDIERTYPE *pSrcSoldier, INT8 bApproach,
                                      uintptr_t uiApproachData);
 
-extern void EndGameMessageBoxCallback(UINT8 ubExitValue);
+extern void EndGameMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 extern INT16 FindNearestOpenableNonDoor(INT16 sStartGridNo);
 extern void RecalculateOppCntsDueToBecomingNeutral(struct SOLDIERTYPE *pSoldier);
 
@@ -2197,38 +2197,6 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
             pDoor->fLocked = FALSE;
           }
         }
-        /*
-        // handle door opening here
-        {
-                struct STRUCTURE * pStructure;
-                pStructure = FindStructure( sGridNo, STRUCTURE_ANYDOOR );
-                if (pStructure)
-                {
-
-
-
-                        pStructure->
-
-                        if (pStructure->fFlags & STRUCTURE_OPEN)
-                        {
-                                // it's already open - this MIGHT be an error but probably not
-                                // because we are basically just ensuring that the door is open
-                        }
-                        else
-                        {
-                                if (pStructure->fFlags & STRUCTURE_BASE_TILE)
-                                {
-                                        HandleDoorChangeFromGridNo( NULL, sGridNo, FALSE );
-                                }
-                                else
-                                {
-                                        HandleDoorChangeFromGridNo( NULL, pStructure->sBaseGridNo,
-        FALSE );
-                                }
-                        }
-                }
-        }
-        */
         break;
 
       case NPC_ACTION_POSSIBLY_ADVERTISE_CINDY:
@@ -3232,7 +3200,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
       case NPC_ACTION_END_DEMO:
         DeleteTalkingMenu();
         // hack!!
-        EndGameMessageBoxCallback(MSG_BOX_RETURN_YES);
+        EndGameMessageBoxCallback(MSG_BOX_RETURN_YES, XXX_GetMouseInput());
         break;
 
       case NPC_ACTION_SEND_ENRICO_MIGUEL_EMAIL:
@@ -3950,7 +3918,7 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
   }
 }
 
-void DialogueMessageBoxCallback(UINT8 ubExitValue) {
+static void DialogueMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   UINT8 ubProfile;
   struct SOLDIERTYPE *pSoldier;
 

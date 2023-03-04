@@ -68,7 +68,7 @@ INT32 giAutoBandagesSoldierFaces[2 * MAX_CHARACTER_COUNT];
 // has the button for autobandage end been setup yet
 BOOLEAN fAutoEndBandageButtonCreated = FALSE;
 
-void BeginAutoBandageCallback(UINT8 bExitValue);
+static void BeginAutoBandageCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void CancelAutoBandageCallback(UINT8 bExitValue);
 
 // the update box for autobandaging mercs
@@ -461,7 +461,7 @@ void AutoBandage(BOOLEAN fStart) {
   ResetAllMercSpeeds();
 }
 
-void BeginAutoBandageCallback(UINT8 bExitValue) {
+static void BeginAutoBandageCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     fRestoreBackgroundForMessageBox = TRUE;
     AutoBandage(TRUE);

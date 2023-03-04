@@ -2369,7 +2369,7 @@ BOOLEAN DisplayTalkingMercFaceForVideoPopUp(INT32 iFaceIndex) {
     gFacesData[giMercFaceIndex].fInvalidAnim = TRUE;
   }
 
-  HandleDialogue();
+  HandleDialogue(mouse);
   HandleAutoFaces();
   HandleTalkingAutoFaces();
 

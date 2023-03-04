@@ -666,7 +666,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
       }
     }
 
-    HandleDialogue();
+    HandleDialogue(gameInput->mouse);
   }
 
   // Don't render if we have a scroll pending!
@@ -833,7 +833,7 @@ static void HandleModalTactical(const struct MouseInput mouse) {
   ExecuteVideoOverlays();
 
   // Handle dialogue queue system
-  HandleDialogue();
+  HandleDialogue(mouse);
 
   HandleTalkingAutoFaces();
 

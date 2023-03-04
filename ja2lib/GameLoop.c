@@ -50,7 +50,7 @@ extern BOOLEAN gfValidLocationsChanged;
 extern BOOLEAN gfInMsgBox;
 
 // callback to confirm game is over
-void EndGameMessageBoxCallback(UINT8 bExitValue);
+void EndGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void HandleNewScreenChange(UINT32 uiNewScreen, UINT32 uiOldScreen);
 
 // The InitializeGame function is responsible for setting up all data and Gaming Engine
@@ -354,7 +354,7 @@ void HandleShortCutExitState(void) {
   }
 }
 
-void EndGameMessageBoxCallback(UINT8 bExitValue) {
+void EndGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gfProgramIsRunning = FALSE;

@@ -37,7 +37,7 @@ enum {
   MSG_BOX_LAPTOP_DEFAULT,
 };
 
-typedef void (*MSGBOX_CALLBACK)(UINT8 bExitValue);
+typedef void (*MSGBOX_CALLBACK)(UINT8 bExitValue, const struct MouseInput mouse);
 
 typedef struct {
   UINT16 usFlags;

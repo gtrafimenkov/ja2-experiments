@@ -226,7 +226,8 @@ void SpeechSliderChangeCallback(INT32 iNewValue);
 void MusicSliderChangeCallback(INT32 iNewValue);
 // BOOLEAN		DoOptionsMessageBox( UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
 // UINT8 ubFlags, MSGBOX_CALLBACK ReturnCallback );
-void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue);
+static void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue,
+                                                    const struct MouseInput mouse);
 void HandleSliderBarMovementSounds();
 void HandleOptionToggle(UINT8 ubButton, BOOLEAN fState, BOOLEAN fDown, BOOLEAN fPlaySound);
 void HandleHighLightedText(BOOLEAN fHighLight);
@@ -1019,7 +1020,8 @@ BOOLEAN DoOptionsMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
   return ((giOptionsMessageBox != -1));
 }
 
-void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue) {
+static void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue,
+                                                    const struct MouseInput mouse) {
   // yes, Quit to main menu
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gfEnteredFromMapScreen = FALSE;

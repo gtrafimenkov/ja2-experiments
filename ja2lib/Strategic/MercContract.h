@@ -1,6 +1,7 @@
 #ifndef _MERC_CONTRACT_H_
 #define _MERC_CONTRACT_H_
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 struct SOLDIERTYPE;
@@ -50,7 +51,8 @@ enum
 BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredAction);
 
 BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier);
-BOOLEAN BeginStrategicRemoveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fAddRehireButton);
+BOOLEAN BeginStrategicRemoveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fAddRehireButton,
+                                 const struct MouseInput mouse);
 
 BOOLEAN WillMercRenew(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote);
 void CheckIfMercGetsAnotherContract(struct SOLDIERTYPE *pSoldier);

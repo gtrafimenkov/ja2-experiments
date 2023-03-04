@@ -728,7 +728,7 @@ UINT32 QuestDebugScreenHandle(const struct GameInput *gameInput) {
   RenderButtons();
 
   // To handle the dialog
-  HandleDialogue();
+  HandleDialogue(gameInput->mouse);
   HandleAutoFaces();
   HandleTalkingAutoFaces();
 

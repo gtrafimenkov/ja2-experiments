@@ -1001,7 +1001,7 @@ BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
   DestRect.iRight = DestRect.iLeft + MERC_VIDEO_FACE_WIDTH;
   DestRect.iBottom = DestRect.iTop + MERC_VIDEO_FACE_HEIGHT;
 
-  HandleDialogue();
+  HandleDialogue(mouse);
   HandleAutoFaces();
   HandleTalkingAutoFaces();
 

@@ -512,7 +512,7 @@ void SelectArmsDealersDropItemToGroundMovementRegionCallback(struct MOUSE_REGION
 
 BOOLEAN EnterShopKeeperInterface();
 BOOLEAN ExitShopKeeperInterface();
-void HandleShopKeeperInterface();
+static void HandleShopKeeperInterface(const struct MouseInput mouse);
 BOOLEAN RenderShopKeeperInterface();
 void GetShopKeeperInterfaceUserInput();
 void DestroySkiInventorySlotMouseRegions();
@@ -554,7 +554,7 @@ void MovePlayerOfferedItemsOfValueToArmsDealersInventory();
 INT8 AddInventoryToSkiLocation(INVENTORY_IN_SLOT *pInv, UINT8 ubSpotLocation, UINT8 ubWhere);
 BOOLEAN RemoveItemFromDealersInventory(INVENTORY_IN_SLOT *pInvSlot, UINT8 ubSlot);
 BOOLEAN InitShopKeepersFace(UINT8 ubMercID);
-void DisplayTalkingArmsDealer();
+static void DisplayTalkingArmsDealer(const struct MouseInput mouse);
 BOOLEAN StartShopKeeperTalking(UINT16 usQuoteNum);
 void HandleShopKeeperDialog(UINT8 ubInit);
 BOOLEAN IsGunOrAmmoOfSameTypeSelected(struct OBJECTTYPE *pItemObject);
@@ -706,7 +706,7 @@ UINT32 ShopKeeperScreenHandle(const struct GameInput *gameInput) {
     gpSMCurrentMerc->fCheckForNewlyAddedItems = FALSE;
   }
 
-  HandleShopKeeperInterface();
+  HandleShopKeeperInterface(gameInput->mouse);
 
   if (gubSkiDirtyLevel == SKI_DIRTY_LEVEL2) {
     RenderShopKeeperInterface();
@@ -1183,7 +1183,7 @@ BOOLEAN ExitShopKeeperInterface() {
   return (TRUE);
 }
 
-void HandleShopKeeperInterface() {
+static void HandleShopKeeperInterface(const struct MouseInput mouse) {
   UINT8 ubStatusOfSkiRenderDirtyFlag = gubSkiDirtyLevel;
 
   INT32 iCounter = 0;
@@ -1239,7 +1239,7 @@ void HandleShopKeeperInterface() {
   // ATM:
   //	RenderSkiAtmPanel();
 
-  DisplayTalkingArmsDealer();
+  DisplayTalkingArmsDealer(mouse);
 
   DisplayArmsDealerCurrentInventoryPage();
 
@@ -4053,7 +4053,7 @@ INT8 AddInventoryToSkiLocation(INVENTORY_IN_SLOT *pInv, UINT8 ubSpotLocation, UI
   return (bSlotAddedTo);
 }
 
-void DisplayTalkingArmsDealer() {
+static void DisplayTalkingArmsDealer(const struct MouseInput mouse) {
   static BOOLEAN fWasTheMercTalking = FALSE;
   //	static UINT32		uiLastTime=0;
   //	UINT32					uiCurTime = GetJA2Clock();
@@ -4062,7 +4062,7 @@ void DisplayTalkingArmsDealer() {
   // Make sure the Dealers doesn't get disabled
   gFacesData[giShopKeeperFaceIndex].fDisabled = FALSE;
 
-  HandleDialogue();
+  HandleDialogue(mouse);
 
   // Gets handled when we render the tactical interface
   HandleAutoFaces();

@@ -3344,7 +3344,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   HandleContractRenewalSequence();
 
   // handle dialog
-  HandleDialogue();
+  HandleDialogue(gameInput->mouse);
 
   // now the border corner piece
   //	RenderMapBorderCorner( );

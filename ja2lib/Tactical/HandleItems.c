@@ -87,16 +87,17 @@ static struct SOLDIERTYPE *gpTempSoldier;
 static INT16 gsTempGridno;
 static INT8 bTempFrequency;
 
-void BombMessageBoxCallback(UINT8 ubExitValue);
-void BoobyTrapMessageBoxCallback(UINT8 ubExitValue);
-void SwitchMessageBoxCallback(UINT8 ubExitValue);
+static void BombMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
+static void BoobyTrapMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
+static void SwitchMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 void BoobyTrapDialogueCallback(void);
 void MineSpottedDialogueCallback(void);
 void MineSpottedLocatorCallback(void);
-void RemoveBlueFlagDialogueCallback(UINT8 ubExitValue);
-void MineSpottedMessageBoxCallback(UINT8 ubExitValue);
+static void RemoveBlueFlagDialogueCallback(UINT8 ubExitValue, const struct MouseInput mouse);
+static void MineSpottedMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 void CheckForPickedOwnership(void);
-void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue);
+static void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue,
+                                                   const struct MouseInput mouse);
 
 BOOLEAN ContinuePastBoobyTrap(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bLevel,
                               INT32 iItemIndex, BOOLEAN fInStrategic, BOOLEAN *pfSaidQuote);
@@ -3319,7 +3320,7 @@ void StartBombMessageBox(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) {
   }
 }
 
-void BombMessageBoxCallback(UINT8 ubExitValue) {
+static void BombMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (gpTempSoldier) {
     if (gpTempSoldier->inv[HANDPOS].usItem == REMOTEBOMBTRIGGER) {
       SetOffBombsByFrequency(gpTempSoldier->ubID, ubExitValue);
@@ -3545,7 +3546,7 @@ void BoobyTrapDialogueCallback(void) {
   }
 }
 
-void BoobyTrapMessageBoxCallback(UINT8 ubExitValue) {
+static void BoobyTrapMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (gfJustFoundBoobyTrap) {
     // NOW award for finding boobytrap
     // WISDOM GAIN:  Detected a booby-trap
@@ -3634,7 +3635,8 @@ void BoobyTrapMessageBoxCallback(UINT8 ubExitValue) {
   }
 }
 
-void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue) {
+static void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue,
+                                                   const struct MouseInput mouse) {
   if (gfJustFoundBoobyTrap) {
     // NOW award for finding boobytrap
 
@@ -3707,7 +3709,7 @@ void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue) {
   }
 }
 
-void SwitchMessageBoxCallback(UINT8 ubExitValue) {
+static void SwitchMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // Message that switch is activated...
     ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, gzLateLocalizedString[60]);
@@ -3892,14 +3894,14 @@ void MineSpottedLocatorCallback(void) {
                (UINT8)MSG_BOX_FLAG_YESNO, MineSpottedMessageBoxCallback, NULL, XXX_GetMouseInput());
 }
 
-void MineSpottedMessageBoxCallback(UINT8 ubExitValue) {
+static void MineSpottedMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // place a blue flag where the mine was found
     AddBlueFlag(gsBoobyTrapGridNo, gbBoobyTrapLevel);
   }
 }
 
-void RemoveBlueFlagDialogueCallback(UINT8 ubExitValue) {
+static void RemoveBlueFlagDialogueCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     RemoveBlueFlag(gsBoobyTrapGridNo, gbBoobyTrapLevel);
   }

@@ -709,7 +709,6 @@ void NumberedMsgBoxCallback(GUI_BUTTON *btn, INT32 reason) {
 static UINT32 ExitMsgBox(INT8 ubExitCode, const struct MouseInput mouse) {
   UINT32 uiDestPitchBYTES, uiSrcPitchBYTES;
   UINT8 *pDestBuf, *pSrcBuf;
-  SGPPoint pPosition;
 
   // Delete popup!
   RemoveMercPopupBoxFromIndex(gMsgBox.iBoxId);
