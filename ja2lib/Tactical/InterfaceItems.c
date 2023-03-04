@@ -1085,7 +1085,6 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, INT16 sPocket, UINT8 fD
     // IF it's the second hand and this hand cannot contain anything, remove the second hand
     // position graphic
     if (sPocket == SECONDHANDPOS && Item[pSoldier->inv[HANDPOS].usItem].fFlags & ITEM_TWO_HANDED) {
-      //			if( guiCurrentScreen != MAP_SCREEN )
       if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
         BltVideoObjectFromIndex(guiSAVEBUFFER, guiSecItemHiddenVO, 0, 217, 448,
                                 VO_BLT_SRCTRANSPARENCY, NULL);
@@ -2060,8 +2059,6 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, INT16 sX, INT
   // Add region
   if ((Item[pObject->usItem].usItemClass & IC_GUN) && pObject->usItem != ROCKET_LAUNCHER) {
     // Add button
-    //    if( guiCurrentScreen != MAP_SCREEN )
-    // if( guiCurrentItemDescriptionScreen != MAP_SCREEN )
     swprintf(pStr, ARR_SIZE(pStr), L"%d/%d", gpItemDescObject->ubGunShotsLeft,
              Weapon[gpItemDescObject->usItem].ubMagSize);
     FilenameForBPP("INTERFACE\\infobox.sti", ubString);
@@ -2554,7 +2551,6 @@ void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
           gpItemPointer = &gItemPointer;
           gpItemPointerSoldier = gpItemDescSoldier;
 
-          //				if( guiCurrentScreen == MAP_SCREEN )
           if (guiCurrentItemDescriptionScreen == MAP_SCREEN) {
             // Set mouse
             guiExternVo = GetInterfaceGraphicForItem(&(Item[gpItemPointer->usItem]));
@@ -4833,7 +4829,7 @@ BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, INT16 sInvX, INT16 sInvY,
   INT16 sKeyRingItemWidth = 0;
   INT16 sOffSetY = 0, sOffSetX = 0;
 
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     gsKeyRingPopupInvX = 0;
     sKeyRingItemWidth = MAP_KEY_RING_ROW_WIDTH;
     sOffSetX = 40;
@@ -4924,7 +4920,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
   INT16 sKeyRingItemWidth = 0;
   INT16 sOffSetY = 0, sOffSetX = 0;
 
-  if (guiCurrentScreen != MAP_SCREEN) {
+  if (!IsMapScreen_2()) {
     sOffSetY = 8;
   } else {
     sOffSetX = 40;
@@ -4954,7 +4950,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
   usHeight = (UINT32)pTrav->usHeight;
   usWidth = (UINT32)pTrav->usWidth;
 
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     sKeyRingItemWidth = MAP_KEY_RING_ROW_WIDTH;
   } else {
     // Set some globals

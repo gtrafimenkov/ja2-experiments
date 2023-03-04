@@ -5,7 +5,12 @@
 
 bool IsTacticalMode();
 
+// Are we on the map screen?
 bool IsMapScreen();
+
+// Another check for Are we on the map screen?
+// It is not clear how it is different from IsMapScreen().
+bool IsMapScreen_2();
 
 const SGPRect* GetMapCenteringRect();
 

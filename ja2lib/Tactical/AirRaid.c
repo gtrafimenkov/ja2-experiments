@@ -31,6 +31,7 @@
 #include "TileEngine/ExplosionControl.h"
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/SoundControl.h"
@@ -202,7 +203,7 @@ BOOLEAN BeginAirRaid() {
   ChangeSelectedMapSector(gAirRaidDef.sSectorX, gAirRaidDef.sSectorY, (INT8)gAirRaidDef.sSectorZ);
 
   if (gAirRaidDef.sSectorX != gWorldSectorX || gAirRaidDef.sSectorY != gWorldSectorY ||
-      gAirRaidDef.sSectorZ != gbWorldSectorZ || guiCurrentScreen == MAP_SCREEN) {
+      gAirRaidDef.sSectorZ != gbWorldSectorZ || IsMapScreen_2()) {
     // sector not loaded
     // Set flag for handling raid....
     gubAirRaidMode = AIR_RAID_TRYING_TO_START;

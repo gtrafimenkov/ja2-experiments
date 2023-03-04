@@ -637,7 +637,7 @@ BOOLEAN SetCurrentSquad(INT32 iCurrentSquad, BOOLEAN fForce) {
   // ARM: can't call SetCurrentSquad() in mapscreen, it calls SelectSoldier(), that will initialize
   // interface panels!!!
   // ATE: Adjusted conditions a bit ( sometimes were not getting selected )
-  if (guiCurrentScreen == LAPTOP_SCREEN || guiCurrentScreen == MAP_SCREEN) {
+  if (guiCurrentScreen == LAPTOP_SCREEN || IsMapScreen_2()) {
     return (FALSE);
   }
 

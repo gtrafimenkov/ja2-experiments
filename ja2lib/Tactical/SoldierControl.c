@@ -5383,7 +5383,7 @@ UINT8 SoldierTakeDamage(struct SOLDIERTYPE *pSoldier, INT8 bHeight, INT16 sLifeD
   // Calculate bandage
   bBandage = pSoldier->bLifeMax - pSoldier->bLife - pSoldier->bBleeding;
 
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     fReDrawFace = TRUE;
   }
 
@@ -8154,7 +8154,7 @@ void SoldierBleed(struct SOLDIERTYPE *pSoldier, BOOLEAN fBandagedBleed) {
     RESETTIMECOUNTER(pSoldier->PortraitFlashCounter, FLASH_PORTRAIT_DELAY);
 
     // If we are in mapscreen, set this person as selected
-    if (guiCurrentScreen == MAP_SCREEN) {
+    if (IsMapScreen_2()) {
       SetInfoChar(pSoldier->ubID);
     }
   }
@@ -9264,7 +9264,7 @@ void DebugValidateSoldierData() {
     if (fProblemDetected) {
       SAIReportError(sString);
       /*
-                              if ( guiCurrentScreen == MAP_SCREEN )
+                              if ( IsMapScreen_2() )
                                       DoMapMessageBox( MSG_BOX_BASIC_STYLE, sString, MAP_SCREEN,
          MSG_BOX_FLAG_OK, MapScreenDefaultOkBoxCallback ); else DoMessageBox( MSG_BOX_BASIC_STYLE,
          sString, GAME_SCREEN, ( UINT8 )MSG_BOX_FLAG_OK, NULL, NULL );

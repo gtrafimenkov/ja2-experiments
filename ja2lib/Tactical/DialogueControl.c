@@ -469,7 +469,7 @@ void HandleDialogue() {
       //    CHANGE FROM TEAM TO INV INTERFACE
 
       // Where are we and where did this face once exist?
-      if (guiScreenIDUsedWhenUICreated == GAME_SCREEN && guiCurrentScreen == MAP_SCREEN) {
+      if (guiScreenIDUsedWhenUICreated == GAME_SCREEN && IsMapScreen_2()) {
         // GO FROM GAMESCREEN TO MAPSCREEN
         // REMOVE OLD UI
         // Set face inactive!
@@ -1613,7 +1613,7 @@ void HandleTacticalNPCTextUI(UINT8 ubCharacterNum, CHAR16 *zQuoteStr) {
   CHAR16 zText[QUOTE_MESSAGE_SIZE];
 
   // Setup dialogue text box
-  if (guiCurrentScreen != MAP_SCREEN) {
+  if (!IsMapScreen_2()) {
     gTalkPanel.fRenderSubTitlesNow = TRUE;
     gTalkPanel.fSetupSubTitles = TRUE;
   }
@@ -1635,7 +1635,7 @@ void DisplayTextForExternalNPC(UINT8 ubCharacterNum, STR16 zQuoteStr) {
   INT16 sLeft;
 
   // Setup dialogue text box
-  if (guiCurrentScreen != MAP_SCREEN) {
+  if (!IsMapScreen_2()) {
     gTalkPanel.fRenderSubTitlesNow = TRUE;
     gTalkPanel.fSetupSubTitles = TRUE;
   }
@@ -1650,7 +1650,7 @@ void DisplayTextForExternalNPC(UINT8 ubCharacterNum, STR16 zQuoteStr) {
   MapScreenMessage(FONT_MCOLOR_WHITE, MSG_DIALOG, L"%s", zText);
 #endif
 
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     sLeft = (gsExternPanelXPosition + 97);
     gsTopPosition = gsExternPanelYPosition;
   } else {
@@ -1757,7 +1757,7 @@ void HandleExternNPCSpeechFace(INT32 iIndex) {
   // Set flag to say WE control when to set inactive!
   gFacesData[iFaceIndex].uiFlags |= FACE_INACTIVE_HANDLED_ELSEWHERE;
 
-  if (guiCurrentScreen != MAP_SCREEN) {
+  if (!IsMapScreen_2()) {
     // Setup video overlay!
     VideoOverlayDesc.sLeft = 10;
     VideoOverlayDesc.sTop = 20;
@@ -1819,7 +1819,7 @@ void HandleTacticalSpeechUI(UINT8 ubCharacterNum, INT32 iFaceIndex) {
     fDoExternPanel = TRUE;
   } else {
     // If we are not an active face!
-    if (guiCurrentScreen != MAP_SCREEN) {
+    if (!IsMapScreen_2()) {
       fDoExternPanel = TRUE;
     }
   }
@@ -1867,7 +1867,7 @@ void HandleTacticalSpeechUI(UINT8 ubCharacterNum, INT32 iFaceIndex) {
 
     gfFacePanelActive = TRUE;
 
-  } else if (guiCurrentScreen == MAP_SCREEN) {
+  } else if (IsMapScreen_2()) {
     // Are we in mapscreen?
     // If so, set current guy active to talk.....
     if (pSoldier != NULL) {

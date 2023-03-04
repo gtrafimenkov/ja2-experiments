@@ -47,6 +47,7 @@
 #include "TileEngine/RenderFun.h"
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/EventPump.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
@@ -298,7 +299,7 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
       gfTacticalDoHeliRun = TRUE;
 
       // OK, If we are in mapscreen, get out...
-      if (guiCurrentScreen == MAP_SCREEN) {
+      if (IsMapScreen_2()) {
         // ATE: Make sure the current one is selected!
         ChangeSelectedMapSector(gWorldSectorX, gWorldSectorY, 0);
 

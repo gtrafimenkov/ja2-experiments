@@ -2293,7 +2293,7 @@ void InternalSelectSoldier(UINT16 usSoldierID, BOOLEAN fAcknowledge, BOOLEAN fFo
 
   // ARM: can't call SelectSoldier() in mapscreen, that will initialize interface panels!!!
   // ATE: Adjusted conditions a bit ( sometimes were not getting selected )
-  if (guiCurrentScreen == LAPTOP_SCREEN || guiCurrentScreen == MAP_SCREEN) {
+  if (guiCurrentScreen == LAPTOP_SCREEN || IsMapScreen_2()) {
     return;
   }
 

@@ -938,7 +938,6 @@ void ReevaluateItemHatches(struct SOLDIERTYPE *pSoldier, BOOLEAN fAllValid) {
 
       // !!! ATTACHING/MERGING ITEMS IN MAP SCREEN IS NOT SUPPORTED !!!
       // CJC: seems to be supported now...
-      // if( guiCurrentScreen != MAP_SCREEN )
       {
         // Check attachments, override to valid placement if valid merge...
         if (ValidAttachment(gpItemPointer->usItem, pSoldier->inv[cnt].usItem)) {
@@ -2291,7 +2290,7 @@ void SMInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
     // Check for # of slots in item
     if ((gpSMCurrentMerc->inv[uiHandPos].ubNumberOfObjects > 1 &&
          ItemSlotLimit(gpSMCurrentMerc->inv[uiHandPos].usItem, (UINT8)uiHandPos) > 0) &&
-        (guiCurrentScreen != MAP_SCREEN)) {
+        (!IsMapScreen_2())) {
       if (!InItemStackPopup()) {
         // InitItemStackPopup( gpSMCurrentMerc, (UINT8)uiHandPos, SM_ITEMDESC_START_X,
         // SM_ITEMDESC_START_Y, SM_ITEMDESC_WIDTH, SM_ITEMDESC_HEIGHT );
@@ -4226,7 +4225,7 @@ void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason)
   INT16 sStartYPosition = 0;
   INT16 sWidth = 0, sHeight = 0;
 
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     if (bSelectedInfoChar == -1) {
       return;
     }
@@ -4258,7 +4257,7 @@ void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason)
   }
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
-    if (guiCurrentScreen == MAP_SCREEN) {
+    if (IsMapScreen_2()) {
       // want the inv done button shutdown and the region behind the keyring shaded
       // ForceButtonUnDirty( giMapInvDoneButton );
       // shade the background

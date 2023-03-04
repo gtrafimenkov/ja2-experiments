@@ -4026,7 +4026,7 @@ void CreateDestroyMouseRegionsForAssignmentMenu(void) {
   if ((fShowAssignmentMenu == TRUE) && (fCreated == FALSE)) {
     gfIgnoreScrolling = FALSE;
 
-    if ((fShowAssignmentMenu) && (guiCurrentScreen == MAP_SCREEN)) {
+    if ((fShowAssignmentMenu) && (IsMapScreen_2())) {
       SetBoxPosition(ghAssignmentBox, AssignmentPosition);
     }
 
@@ -4490,7 +4490,7 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
   if ((fShowRepairMenu == TRUE) && (fCreated == FALSE)) {
     CheckAndUpdateTacticalAssignmentPopUpPositions();
 
-    if ((fShowRepairMenu) && (guiCurrentScreen == MAP_SCREEN)) {
+    if ((fShowRepairMenu) && (IsMapScreen_2())) {
       // SetBoxPosition( ghRepairBox ,RepairPosition);
     }
 
@@ -5455,7 +5455,7 @@ void CreateDestroyMouseRegionsForTrainingMenu(void) {
   // will create/destroy mouse regions for the map screen assignment main menu
 
   if ((fShowTrainingMenu == TRUE) && (fCreated == FALSE)) {
-    if ((fShowTrainingMenu) && (guiCurrentScreen == MAP_SCREEN)) {
+    if ((fShowTrainingMenu) && (IsMapScreen_2())) {
       SetBoxPosition(ghTrainingBox, TrainPosition);
     }
 
@@ -5548,7 +5548,7 @@ void CreateDestroyMouseRegionsForAttributeMenu(void) {
   // will create/destroy mouse regions for the map screen attribute  menu
 
   if ((fShowAttributeMenu == TRUE) && (fCreated == FALSE)) {
-    if ((fShowAssignmentMenu) && (guiCurrentScreen == MAP_SCREEN)) {
+    if ((fShowAssignmentMenu) && (IsMapScreen_2())) {
       SetBoxPosition(ghAssignmentBox, AssignmentPosition);
     }
 

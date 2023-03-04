@@ -498,7 +498,7 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
     SetRenderFlags(RENDER_FLAG_FULL);
   }
 
-  else if (guiCurrentScreen == MAP_SCREEN) {
+  else if (IsMapScreen_2()) {
     fMapPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;

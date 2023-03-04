@@ -1,6 +1,6 @@
 #include "Strategic/TownMilitia.h"
 
-#include "JAScreens.h"
+// #include "JAScreens.h"
 #include "Laptop/Finances.h"
 #include "Laptop/LaptopSave.h"
 #include "SGP/Random.h"
@@ -458,7 +458,7 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
   }
 
   // if we are in mapscreen, make a pop up
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     DoMapMessageBox(MSG_BOX_BASIC_STYLE, sString, MAP_SCREEN, MSG_BOX_FLAG_YESNO,
                     PayMilitiaTrainingYesNoBoxCallback);
   } else {

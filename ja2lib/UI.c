@@ -14,6 +14,7 @@ static SGPRect mapCenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
 const SGPRect* GetMapCenteringRect() { return &mapCenteringRect; }
 
 bool IsMapScreen() { return guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN; }
+bool IsMapScreen_2() { return guiCurrentScreen == MAP_SCREEN; }
 
 // Get Merc associated with the context menu on tactical screen.
 struct SOLDIERTYPE* GetTacticalContextMenuMerc() { return GetSoldierByID(gusUIFullTargetID); }

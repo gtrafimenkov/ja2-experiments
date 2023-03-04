@@ -22,6 +22,7 @@
 #include "Tactical/Weapons.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/SysUtil.h"
+#include "UI.h"
 
 #define LIFE_BAR_SHADOW FROMRGB(108, 12, 12)
 #define LIFE_BAR FROMRGB(200, 0, 0)
@@ -210,7 +211,7 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, INT16 sXPos, INT16 sYPos, I
   GetVideoObject(&hHandle, guiBrownBackgroundForTeamPanel);
 
   // DO MAX BREATH
-  if (guiCurrentScreen != MAP_SCREEN) {
+  if (!IsMapScreen_2()) {
     if (gusSelectedSoldier == pSoldier->ubID && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
         OK_INTERRUPT_MERC(pSoldier)) {
       // gold, the second entry in the .sti

@@ -334,8 +334,7 @@ void BeginLoadScreen() {
 
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
 
-  if (guiCurrentScreen == MAP_SCREEN && !(gTacticalStatus.uiFlags & LOADING_SAVED_GAME) &&
-      !AreInMeanwhile()) {
+  if (IsMapScreen_2() && !(gTacticalStatus.uiFlags & LOADING_SAVED_GAME) && !AreInMeanwhile()) {
     DstRect.iLeft = 0;
     DstRect.iTop = 0;
     DstRect.iRight = 640;
@@ -4139,7 +4138,7 @@ void CrippledVersionFailureToLoadMapCallBack(UINT8 bExitValue) {
   ReStartingGame();
 
   // go to the main menu
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     SetPendingNewScreen(MAINMENU_SCREEN);
   } else {
     InternalLeaveTacticalScreen(MAINMENU_SCREEN);

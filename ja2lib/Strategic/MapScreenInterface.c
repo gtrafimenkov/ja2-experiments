@@ -1804,7 +1804,7 @@ void UpdateMapScreenAssignmentPositions(void) {
   // set the position of the pop up boxes
   SGPPoint pPoint;
 
-  if (guiCurrentScreen != MAP_SCREEN) {
+  if (!IsMapScreen_2()) {
     return;
   }
 
@@ -2096,7 +2096,7 @@ void HandleMinerEvent(UINT8 bMinerNumber, INT16 sSectorX, INT16 sSectorY, INT16 
                       BOOLEAN fForceMapscreen) {
   BOOLEAN fFromMapscreen = FALSE;
 
-  if (guiCurrentScreen == MAP_SCREEN) {
+  if (IsMapScreen_2()) {
     fFromMapscreen = TRUE;
   } else {
     // if transition to mapscreen is required

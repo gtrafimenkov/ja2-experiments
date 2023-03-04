@@ -62,6 +62,7 @@
 #include "TileEngine/StructureInternals.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/EventPump.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
@@ -69,7 +70,7 @@
 
 #define NO_JUMP 0
 #define MAX_ANIFRAMES_PER_FLASH 2
-//#define		TIME_FOR_RANDOM_ANIM_CHECK	10
+// #define		TIME_FOR_RANDOM_ANIM_CHECK	10
 #define TIME_FOR_RANDOM_ANIM_CHECK 2
 
 BOOLEAN gfLastMercTalkedAboutKillingID = NOBODY;
@@ -2973,7 +2974,7 @@ BOOLEAN HandleSoldierDeath(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfMadeCorpse) 
           gTacticalStatus.ubEnemyKilledOnAttackKiller = pSoldier->ubAttackerID;
 
           // also check if we are in mapscreen, if so update soldier's list
-          if (guiCurrentScreen == MAP_SCREEN) {
+          if (IsMapScreen_2()) {
             ReBuildCharactersList();
           }
         } else if (pSoldier->bVisible == TRUE) {
@@ -3144,8 +3145,8 @@ BOOLEAN CheckForAndHandleSoldierDeath(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfM
   return (FALSE);
 }
 
-//#define TESTFALLBACK
-//#define TESTFALLFORWARD
+// #define TESTFALLBACK
+// #define TESTFALLFORWARD
 
 void CheckForAndHandleSoldierIncompacitated(struct SOLDIERTYPE *pSoldier) {
   INT16 sNewGridNo;

@@ -45,6 +45,7 @@
 #include "Tactical/TacticalSave.h"
 #include "Tactical/Vehicles.h"
 #include "TileEngine/IsometricUtils.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
@@ -4038,8 +4039,8 @@ void NotifyPlayerOfBloodcatBattle(UINT8 ubSectorX, UINT8 ubSectorY) {
     wcscpy(str, pMapErrorString[13]);
   }
 
-  if (guiCurrentScreen == MAP_SCREEN) {  // Force render mapscreen (need to update the position of
-                                         // the group before the dialog appears.
+  if (IsMapScreen_2()) {  // Force render mapscreen (need to update the position of
+                          // the group before the dialog appears.
     fMapPanelDirty = TRUE;
     MapScreenHandle();
     InvalidateScreen();
