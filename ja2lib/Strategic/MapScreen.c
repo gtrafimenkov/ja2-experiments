@@ -20,6 +20,7 @@
 #include "Laptop/LaptopSave.h"
 #include "Laptop/Personnel.h"
 #include "Local.h"
+#include "MouseInput.h"
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
@@ -654,17 +655,17 @@ extern INT16 MSYS_CurrentMY;
 
 // basic input
 static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse);
-void PollLeftButtonInMapView(UINT32 *puiNewEvent);
-void PollRightButtonInMapView(UINT32 *puiNewEvent);
+static void PollLeftButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse);
+static void PollRightButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse);
 
 // background render
 static void BlitBackgroundToSaveBuffer(const struct MouseInput mouse);
 
 // Drawing the Map
 static UINT32 HandleMapUI(const struct MouseInput mouse);
-void RenderMapCursorsIndexesAnims(void);
+static void RenderMapCursorsIndexesAnims(const struct MouseInput mouse);
 BOOLEAN GetMapXY(INT16 sX, INT16 sY, INT16 *psMapWorldX, INT16 *psMapWorldY);
-BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY);
+BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY, const struct MouseInput mouse);
 
 void StartConfirmMapMoveMode(INT16 sMapY);
 void EndConfirmMapMoveMode(void);
@@ -739,7 +740,7 @@ void RenderTeamRegionBackground(void);
 void RenderMapRegionBackground(void);
 void HandleHighLightingOfLinesInTeamPanel(void);
 void ClearTeamPanel();
-void PlotTemporaryPaths(void);
+static void PlotTemporaryPaths(const struct MouseInput mouse);
 void PlotPermanentPaths(void);
 void RenderHandPosItem(void);
 void ContractListRegionBoxGlow(UINT16 usCount);
@@ -887,7 +888,7 @@ void PrevInventoryMapBtnCallback(GUI_BUTTON *btn, INT32 reason);
 void NextInventoryMapBtnCallback(GUI_BUTTON *btn, INT32 reason);
 
 // check if cursor needs to be set to checkmark or to the walking guy?
-void UpdateCursorIfInLastSector(void);
+static void UpdateCursorIfInLastSector(const struct MouseInput mouse);
 
 void ContractButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
@@ -909,7 +910,7 @@ BOOLEAN MapCharacterHasAccessibleInventory(INT8 bCharNumber);
 void CheckForInventoryModeCancellation();
 
 void ChangeMapScreenMaskCursor(UINT16 usCursor);
-void CancelOrShortenPlottedPath(void);
+static void CancelOrShortenPlottedPath(const struct MouseInput mouse);
 
 BOOLEAN HandleCtrlOrShiftInTeamPanel(INT8 bCharNumber);
 
@@ -3243,7 +3244,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
 
   if (!fShowMapInventoryPool && !gfPauseDueToPlayerGamePause &&
       !IsMapScreenHelpTextUp() /* && !fDisabledMapBorder */) {
-    RenderMapCursorsIndexesAnims();
+    RenderMapCursorsIndexesAnims(gameInput->mouse);
   }
 
   if (fDisableDueToBattleRoster == FALSE) {
@@ -3332,10 +3333,10 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   if ((bSelectedDestChar != -1) || (fPlotForHelicopter == TRUE)) {
     // plot out paths
     PlotPermanentPaths();
-    PlotTemporaryPaths();
+    PlotTemporaryPaths(gameInput->mouse);
 
     // show ETA
-    RenderMapBorderEtaPopUp();
+    RenderMapBorderEtaPopUp(gameInput->mouse);
     DisplayGroundEta();
 
     // DisplayDestinationOfCurrentDestMerc( );
@@ -3498,7 +3499,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   ExecuteBaseDirtyRectQueue();
 
   // update cursor
-  UpdateCursorIfInLastSector();
+  UpdateCursorIfInLastSector(gameInput->mouse);
 
   // about to leave for new map
   if (gfLoadPending == 1) {
@@ -3804,7 +3805,7 @@ void DrawTimeRemaining(INT16 sCharNumber, INT32 iFont, UINT8 ubFontColor) {
              ((UINT32)iFont));
 }
 
-void RenderMapCursorsIndexesAnims() {
+static void RenderMapCursorsIndexesAnims(const struct MouseInput mouse) {
   BOOLEAN fSelectedSectorHighlighted = FALSE;
   BOOLEAN fSelectedCursorIsYellow = TRUE;
   UINT16 usCursorColor;
@@ -3824,7 +3825,7 @@ void RenderMapCursorsIndexesAnims() {
   fDrawCursors = CanDrawSectorCursor();
 
   // if mouse cursor is over a map sector
-  if (fDrawCursors && (GetMouseMapXY(&gsHighlightSectorX, &gsHighlightSectorY))) {
+  if (fDrawCursors && (GetMouseMapXY(&gsHighlightSectorX, &gsHighlightSectorY, mouse))) {
     // handle highlighting of sector pointed at ( WHITE )
 
     // if we're over a different sector than when we previously blitted this
@@ -3925,8 +3926,8 @@ static UINT32 HandleMapUI(const struct MouseInput mouse) {
   CreateDestroyMapInvButton();
 
   // Get mouse
-  PollLeftButtonInMapView(&uiNewEvent);
-  PollRightButtonInMapView(&uiNewEvent);
+  PollLeftButtonInMapView(&uiNewEvent, mouse);
+  PollRightButtonInMapView(&uiNewEvent, mouse);
 
   // Switch on event
   switch (uiNewEvent) {
@@ -3934,7 +3935,7 @@ static UINT32 HandleMapUI(const struct MouseInput mouse) {
       break;
 
     case MAP_EVENT_PLOT_PATH:
-      GetMouseMapXY(&sMapX, &sMapY);
+      GetMouseMapXY(&sMapX, &sMapY, mouse);
 
       // plotting for the chopper?
       if (fPlotForHelicopter == TRUE) {
@@ -3983,13 +3984,13 @@ static UINT32 HandleMapUI(const struct MouseInput mouse) {
       break;
 
     case MAP_EVENT_CANCEL_PATH:
-      CancelOrShortenPlottedPath();
+      CancelOrShortenPlottedPath(mouse);
       break;
 
     case MAP_EVENT_CLICK_SECTOR:
 
       // Get Current mouse position
-      if (GetMouseMapXY(&sMapX, &sMapY)) {
+      if (GetMouseMapXY(&sMapX, &sMapY, mouse)) {
         // not zoomed out, make sure this is a valid sector
         if (IsTheCursorAllowedToHighLightThisSector(sMapX, sMapY) == FALSE) {
           // do nothing, return
@@ -4831,7 +4832,7 @@ static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mou
           if ((fCtrl) && (CHEATER_CHEAT_LEVEL())) {
             // check if selected dest char,
             if ((bSelectedDestChar != -1) && (fPlotForHelicopter == FALSE) &&
-                (iCurrentMapSectorZ == 0) && (GetMouseMapXY(&sMapX, &sMapY))) {
+                (iCurrentMapSectorZ == 0) && (GetMouseMapXY(&sMapX, &sMapY, mouse))) {
               INT16 sDeltaX, sDeltaY;
               INT16 sPrevX, sPrevY;
               struct SOLDIERTYPE *pSoldier = MercPtrs[gCharactersList[bSelectedDestChar].usSolID];
@@ -5255,23 +5256,23 @@ void EndMapScreen(BOOLEAN fDuringFade) {
   gfRequestGiveSkyriderNewDestination = FALSE;
 }
 
-BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY) {
+BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY, const struct MouseInput mouse) {
   if (IsMapScreenHelpTextUp()) {
     // don't show highlight while global help text is up
     return (FALSE);
   }
 
-  struct MouseInput mouse = XXX_GetMouseInput();
+  struct MouseInput mcopy = mouse;
 
   if (fZoomFlag) {
-    if (mouse.x > MAP_GRID_X + MAP_VIEW_START_X) mouse.x -= MAP_GRID_X;
-    if (mouse.x > MAP_VIEW_START_X + MAP_VIEW_WIDTH) mouse.x = -1;
-    if (mouse.y > MAP_GRID_Y + MAP_VIEW_START_Y) mouse.y -= MAP_GRID_Y;
-    if (mouse.y > MAP_VIEW_START_Y + MAP_VIEW_HEIGHT - 11) mouse.y = -11;
-    if (mouse.y < MAP_VIEW_START_Y) mouse.y = -1;
+    if (mcopy.x > MAP_GRID_X + MAP_VIEW_START_X) mcopy.x -= MAP_GRID_X;
+    if (mcopy.x > MAP_VIEW_START_X + MAP_VIEW_WIDTH) mcopy.x = -1;
+    if (mcopy.y > MAP_GRID_Y + MAP_VIEW_START_Y) mcopy.y -= MAP_GRID_Y;
+    if (mcopy.y > MAP_VIEW_START_Y + MAP_VIEW_HEIGHT - 11) mcopy.y = -11;
+    if (mcopy.y < MAP_VIEW_START_Y) mcopy.y = -1;
   }
 
-  return (GetMapXY((INT16)mouse.x, (INT16)mouse.y, psMapWorldX, psMapWorldY));
+  return (GetMapXY((INT16)mcopy.x, (INT16)mcopy.y, psMapWorldX, psMapWorldY));
 }
 
 BOOLEAN GetMapXY(INT16 sX, INT16 sY, INT16 *psMapWorldX, INT16 *psMapWorldY) {
@@ -5335,7 +5336,7 @@ void RenderMapHighlight(INT16 sMapX, INT16 sMapY, UINT16 usLineColor, BOOLEAN fS
   UnLockVideoSurface(FRAME_BUFFER);
 }
 
-void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
+static void PollLeftButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   static BOOLEAN fLBBeenPressedInMapView = FALSE;
   INT16 sMapX, sMapY;
 
@@ -5389,7 +5390,7 @@ void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
         if ((bSelectedDestChar != -1) || (fPlotForHelicopter == TRUE)) {
           fEndPlotting = FALSE;
 
-          GetMouseMapXY(&sMapX, &sMapY);
+          GetMouseMapXY(&sMapX, &sMapY, mouse);
 
           // if he clicked on the last sector in his current path
           if (CheckIfClickOnLastSectorInPath(sMapX, sMapY)) {
@@ -5422,7 +5423,7 @@ void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
   fJustFinishedPlotting = FALSE;
 }
 
-void PollRightButtonInMapView(UINT32 *puiNewEvent) {
+static void PollRightButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   static BOOLEAN fRBBeenPressedInMapView = FALSE;
   INT16 sMapX, sMapY;
 
@@ -5478,7 +5479,7 @@ void PollRightButtonInMapView(UINT32 *puiNewEvent) {
           // cancel/shorten the path
           *puiNewEvent = MAP_EVENT_CANCEL_PATH;
         } else {
-          if (GetMouseMapXY(&sMapX, &sMapY)) {
+          if (GetMouseMapXY(&sMapX, &sMapY, mouse)) {
             if ((sSelMapX != sMapX) || (sSelMapY != sMapY)) {
               ChangeSelectedMapSector(sMapX, sMapY, (INT8)iCurrentMapSectorZ);
             }
@@ -7083,11 +7084,11 @@ void PlotPermanentPaths(void) {
   }
 }
 
-void PlotTemporaryPaths(void) {
+static void PlotTemporaryPaths(const struct MouseInput mouse) {
   INT16 sMapX, sMapY;
 
   // check to see if we have in fact moved are are plotting a path?
-  if (GetMouseMapXY(&sMapX, &sMapY)) {
+  if (GetMouseMapXY(&sMapX, &sMapY, mouse)) {
     if (fPlotForHelicopter == TRUE) {
       Assert(fShowAircraftFlag == TRUE);
 
@@ -7868,13 +7869,13 @@ void RebuildWayPointsForAllSelectedCharsGroups(void) {
   }
 }
 
-void UpdateCursorIfInLastSector(void) {
+static void UpdateCursorIfInLastSector(const struct MouseInput mouse) {
   INT16 sMapX = 0, sMapY = 0;
 
   // check to see if we are plotting a path, if so, see if we are highlighting the last sector int
   // he path, if so, change the cursor
   if ((bSelectedDestChar != -1) || (fPlotForHelicopter == TRUE)) {
-    GetMouseMapXY(&sMapX, &sMapY);
+    GetMouseMapXY(&sMapX, &sMapY, mouse);
 
     // translate screen values to map grid values for zoomed in
     if (fZoomFlag) {
@@ -9517,11 +9518,11 @@ void ChangeMapScreenMaskCursor(UINT16 usCursor) {
   }
 }
 
-void CancelOrShortenPlottedPath(void) {
+static void CancelOrShortenPlottedPath(const struct MouseInput mouse) {
   INT16 sMapX, sMapY;
   UINT32 uiReturnValue;
 
-  GetMouseMapXY(&sMapX, &sMapY);
+  GetMouseMapXY(&sMapX, &sMapY, mouse);
 
   // check if we are in aircraft mode
   if (fShowAircraftFlag == TRUE) {

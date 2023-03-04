@@ -1,6 +1,7 @@
 #ifndef __MAP_INTERFACE_BORDER_H
 #define __MAP_INTERFACE_BORDER_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 #define MAP_BORDER_START_X 261
@@ -87,7 +88,7 @@ void DeleteMapBorderButtons(void);
 BOOLEAN CreateButtonsForMapBorder(void);
 
 // render the pop up for eta  in path plotting in map screen
-void RenderMapBorderEtaPopUp(void);
+void RenderMapBorderEtaPopUp(const struct MouseInput mouse);
 BOOLEAN DoesPlayerHaveAnyMilitia(void);
 
 // void UpdateLevelButtonStates( void );

@@ -480,7 +480,7 @@ void BlitMineGridMarkers(void);
 void BlitSAMGridMarkers(void);
 void BlitMineIcon(INT16 sMapX, INT16 sMapY);
 void BlitMineText(INT16 sMapX, INT16 sMapY);
-extern BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY);
+extern BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY, const struct MouseInput mouse);
 INT16 GetBaseSectorForCurrentTown(void);
 void RenderIconsPerSectorForSelectedTown(void);
 void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
@@ -3638,7 +3638,7 @@ void ShowPeopleInMotion(INT16 sX, INT16 sY) {
   SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
 }
 
-void DisplayDistancesForHelicopter(void) {
+void DisplayDistancesForHelicopter(const struct MouseInput mouse) {
   // calculate the distance travelled, the proposed distance, and total distance one can go
   // display these on screen
   INT16 sDistanceToGo = 0;  //, sDistanceSoFar = 0, sTotalCanTravel = 0;
@@ -3654,7 +3654,7 @@ void DisplayDistancesForHelicopter(void) {
   INT16 sNumUnSafeSectors;
   UINT32 uiTripCost;
 
-  if (GetMouseMapXY(&sMapX, &sMapY) && !fZoomFlag && (sMapY >= 13)) {
+  if (GetMouseMapXY(&sMapX, &sMapY, mouse) && !fZoomFlag && (sMapY >= 13)) {
     sYPosition = MAP_HELICOPTER_UPPER_ETA_POPUP_Y;
   } else {
     sYPosition = MAP_HELICOPTER_ETA_POPUP_Y;

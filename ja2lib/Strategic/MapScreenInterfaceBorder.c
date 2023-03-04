@@ -166,51 +166,16 @@ void RenderMapBorder(void) {
   return;
 }
 
-/*
-void RenderMapBorderCorner( void )
-{
-        // renders map border corner to the FRAME_BUFFER
-        struct VObject* hHandle;
-
-        if( fDisabledMapBorder )
-        {
-                return;
-        }
-
-        if( fShowMapInventoryPool )
-        {
-                return;
-        }
-
-
-        // get and blt corner
-        GetVideoObject(&hHandle, guiMapBorderCorner );
-        BltVideoObject( FRAME_BUFFER , hHandle, 0,MAP_BORDER_CORNER_X, MAP_BORDER_CORNER_Y,
-VO_BLT_SRCTRANSPARENCY,NULL );
-
-        InvalidateRegion( MAP_BORDER_CORNER_X, MAP_BORDER_CORNER_Y, 635, 315);
-
-        return;
-}
-*/
-
-void RenderMapBorderEtaPopUp(void) {
+void RenderMapBorderEtaPopUp(const struct MouseInput mouse) {
   // renders map border corner to the FRAME_BUFFER
   struct VObject *hHandle;
-
-  /*
-          if( fDisabledMapBorder )
-          {
-                  return;
-          }
-  */
 
   if (fShowMapInventoryPool) {
     return;
   }
 
   if (fPlotForHelicopter == TRUE) {
-    DisplayDistancesForHelicopter();
+    DisplayDistancesForHelicopter(mouse);
     return;
   }
 
