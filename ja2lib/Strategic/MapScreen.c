@@ -4192,28 +4192,22 @@ static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mou
     // HOOK INTO MOUSE HOOKS
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown, mouse);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown, mouse);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown, mouse);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown, mouse);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown, mouse);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown, mouse);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 

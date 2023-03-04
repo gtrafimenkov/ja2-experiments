@@ -192,8 +192,8 @@ void MSYS_Shutdown(void) {
   UnRegisterDebugTopic(TOPIC_MOUSE_SYSTEM, "Mouse Region System");
 }
 
-void MouseSystemHook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButton,
-                     BOOLEAN RightButton, const struct MouseInput mouse) {
+void MouseSystemHook(UINT16 Type, BOOLEAN LeftButton, BOOLEAN RightButton,
+                     const struct MouseInput mouse) {
   // If the mouse system isn't initialized, get out o' here
   if (!MSYS_SystemInitialized) return;
 
@@ -234,10 +234,10 @@ void MouseSystemHook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButt
       else
         MSYS_CurrentButtons &= (~MSYS_RIGHT_BUTTON);
 
-      if ((Xcoord != MSYS_CurrentMX) || (Ycoord != MSYS_CurrentMY)) {
+      if ((mouse.x != MSYS_CurrentMX) || (mouse.y != MSYS_CurrentMY)) {
         MSYS_Action |= MSYS_DO_MOVE;
-        MSYS_CurrentMX = Xcoord;
-        MSYS_CurrentMY = Ycoord;
+        MSYS_CurrentMX = mouse.x;
+        MSYS_CurrentMY = mouse.y;
       }
 
       MSYS_UpdateMouseRegion(mouse);
@@ -253,20 +253,20 @@ void MouseSystemHook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButt
       else if (Type == RIGHT_BUTTON_REPEAT)
         MSYS_Action |= MSYS_DO_RBUTTON_REPEAT;
 
-      if ((Xcoord != MSYS_CurrentMX) || (Ycoord != MSYS_CurrentMY)) {
+      if ((mouse.x != MSYS_CurrentMX) || (mouse.y != MSYS_CurrentMY)) {
         MSYS_Action |= MSYS_DO_MOVE;
-        MSYS_CurrentMX = Xcoord;
-        MSYS_CurrentMY = Ycoord;
+        MSYS_CurrentMX = mouse.x;
+        MSYS_CurrentMY = mouse.y;
       }
 
       MSYS_UpdateMouseRegion(mouse);
       break;
 
     case MOUSE_POS:
-      if ((Xcoord != MSYS_CurrentMX) || (Ycoord != MSYS_CurrentMY) || gfRefreshUpdate) {
+      if ((mouse.x != MSYS_CurrentMX) || (mouse.y != MSYS_CurrentMY) || gfRefreshUpdate) {
         MSYS_Action |= MSYS_DO_MOVE;
-        MSYS_CurrentMX = Xcoord;
-        MSYS_CurrentMY = Ycoord;
+        MSYS_CurrentMX = mouse.x;
+        MSYS_CurrentMY = mouse.y;
 
         gfRefreshUpdate = FALSE;
 

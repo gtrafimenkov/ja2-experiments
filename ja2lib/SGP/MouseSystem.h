@@ -127,8 +127,8 @@ struct MOUSE_REGION {
 #define MSYS_ALREADY_GRABBED 1
 #define MSYS_REGION_NOT_IN_LIST 2
 
-extern void MouseSystemHook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButton,
-                            BOOLEAN RightButton, const struct MouseInput mouse);
+extern void MouseSystemHook(UINT16 Type, BOOLEAN LeftButton, BOOLEAN RightButton,
+                            const struct MouseInput mouse);
 
 // Internal Functions
 INT32 MSYS_GetNewID(void);
