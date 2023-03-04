@@ -93,8 +93,6 @@ INT32 giErrorMessageBox = 0;
 //
 ///////////////////////////////////////////////////////////////
 
-void TempFileLoadErrorMessageReturnCallback(UINT8 ubRetVal);
-
 BOOLEAN SaveWorldItemsToTempItemFile(INT16 sMapX, INT16 sMapY, INT8 bMapZ, UINT32 uiNumberOfItems,
                                      WORLDITEM *pData);
 BOOLEAN RetrieveTempFileFromSavedGame(HWFILE hFile, UINT32 uiType, INT16 sMapX, INT16 sMapY,
@@ -2268,7 +2266,9 @@ BOOLEAN LoadTempNpcQuoteArrayToSaveGameFile(HWFILE hFile) {
   return (LoadFilesFromSavedGame(NPC_TEMP_QUOTE_FILE, hFile));
 }
 
-void TempFileLoadErrorMessageReturnCallback(UINT8 ubRetVal) { gfProgramIsRunning = FALSE; }
+static void TempFileLoadErrorMessageReturnCallback(UINT8 ubRetVal, const struct MouseInput mouse) {
+  gfProgramIsRunning = FALSE;
+}
 
 // if you call this function, make sure you return TRUE (if applicable) to make the game
 // think it succeeded the load.  This sets up the dialog for the game exit, after the hacker
@@ -2277,9 +2277,9 @@ void InitExitGameDialogBecauseFileHackDetected() {
   SGPRect CenteringRect = {0, 0, 639, 479};
 
   // do message box and return
-  giErrorMessageBox =
-      DoMessageBox(MSG_BOX_BASIC_STYLE, pAntiHackerString[ANTIHACKERSTR_EXITGAME], GAME_SCREEN,
-                   MSG_BOX_FLAG_OK, TempFileLoadErrorMessageReturnCallback, &CenteringRect);
+  giErrorMessageBox = DoMessageBox(
+      MSG_BOX_BASIC_STYLE, pAntiHackerString[ANTIHACKERSTR_EXITGAME], GAME_SCREEN, MSG_BOX_FLAG_OK,
+      TempFileLoadErrorMessageReturnCallback, &CenteringRect, XXX_GetMouseInput());
 }
 
 UINT32 MercChecksum(struct SOLDIERTYPE *pSoldier) {

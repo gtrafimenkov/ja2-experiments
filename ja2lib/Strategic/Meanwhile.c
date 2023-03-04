@@ -93,11 +93,11 @@ INT16 gsOldCurInterfacePanel = 0;
 BOOLEAN gfWorldWasLoaded = FALSE;
 UINT8 ubCurrentMeanWhileId = 0;
 
-void BeginMeanwhileCallBack(UINT8 bExitValue);
-void DoneFadeOutMeanwhile(void);
-void DoneFadeInMeanwhile(void);
-void DoneFadeOutMeanwhileOnceDone(void);
-void DoneFadeInMeanwhileOnceDone(void);
+void BeginMeanwhileCallback(UINT8 bExitValue, const struct MouseInput mouse);
+static void DoneFadeOutMeanwhile(const struct MouseInput mouse);
+static void DoneFadeInMeanwhile(const struct MouseInput mouse);
+static void DoneFadeOutMeanwhileOnceDone(const struct MouseInput mouse);
+static void DoneFadeInMeanwhileOnceDone(const struct MouseInput mouse);
 void LocateMeanWhileGrid(void);
 
 UINT32 uiMeanWhileFlags = 0;
@@ -315,7 +315,7 @@ BOOLEAN BeginMeanwhile(UINT8 ubMeanwhileID) {
   return (TRUE);
 }
 
-void BringupMeanwhileBox() {
+static void BringupMeanwhileBox(const struct MouseInput mouse) {
   CHAR16 zStr[256];
 
 #ifdef JA2TESTVERSION
@@ -335,14 +335,14 @@ void BringupMeanwhileBox() {
 #endif
   {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, MSG_BOX_FLAG_OKSKIP,
-                 BeginMeanwhileCallBack, NULL);
+                 BeginMeanwhileCallback, NULL, mouse);
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, (UINT8)MSG_BOX_FLAG_OK,
-                 BeginMeanwhileCallBack, NULL);
+                 BeginMeanwhileCallback, NULL, mouse);
   }
 }
 
-void CheckForMeanwhileOKStart() {
+void CheckForMeanwhileOKStart(const struct MouseInput mouse) {
   if (gfMeanwhileTryingToStart) {
     // Are we in prebattle interface?
     if (gfPreBattleInterfaceActive) {
@@ -369,7 +369,7 @@ void CheckForMeanwhileOKStart() {
     // In mapscreen, time is paused when manipulating items...
     CancelItemPointer();
 
-    BringupMeanwhileBox();
+    BringupMeanwhileBox(mouse);
   }
 }
 
@@ -522,7 +522,7 @@ void StartMeanwhile() {
   gFadeOutDoneCallback = DoneFadeOutMeanwhile;
 }
 
-void DoneFadeOutMeanwhile() {
+static void DoneFadeOutMeanwhile(const struct MouseInput mouse) {
   // OK, insertion data found, enter sector!
 
   SetCurrentWorldSector(gCurrentMeanwhileDef.sSectorX, gCurrentMeanwhileDef.sSectorY, 0);
@@ -535,7 +535,7 @@ void DoneFadeOutMeanwhile() {
   FadeInNextFrame();
 }
 
-void DoneFadeInMeanwhile() {
+static void DoneFadeInMeanwhile(const struct MouseInput mouse) {
   // ATE: double check that we are in meanwhile
   // this is if we cancel right away.....
   if (gfInMeanwhile) {
@@ -550,7 +550,7 @@ void DoneFadeInMeanwhile() {
   }
 }
 
-void BeginMeanwhileCallBack(UINT8 bExitValue) {
+void BeginMeanwhileCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_OK || bExitValue == MSG_BOX_RETURN_YES) {
     gTacticalStatus.uiFlags |= ENGAGED_IN_CONV;
     // Increment reference count...
@@ -713,7 +713,7 @@ void EndMeanwhile() {
   }
 }
 
-void DoneFadeOutMeanwhileOnceDone() {
+static void DoneFadeOutMeanwhileOnceDone(const struct MouseInput mouse) {
   UINT32 cnt;
   UINT8 ubProfile;
 
@@ -769,7 +769,7 @@ void DoneFadeOutMeanwhileOnceDone() {
   FadeInNextFrame();
 }
 
-void DoneFadeInMeanwhileOnceDone() {}
+static void DoneFadeInMeanwhileOnceDone(const struct MouseInput mouse) {}
 
 void LocateMeanWhileGrid(void) {
   INT16 sGridNo = 0;

@@ -223,7 +223,7 @@ void QueryRTLeftButton(UINT32 *puiNewEvent) {
             case CONFIRM_MOVE_MODE:
 
               // First check if we clicked on a guy, if so, make selected if it's ours
-              if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
+              if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags, XXX_GetMouseInput())) {
                 // Select guy
                 if ((uiMercFlags & SELECTED_MERC) && !(uiMercFlags & UNCONSCIOUS_MERC) &&
                     !(MercPtrs[usSoldierIndex]->uiStatusFlags & SOLDIER_VEHICLE)) {
@@ -232,16 +232,17 @@ void QueryRTLeftButton(UINT32 *puiNewEvent) {
               } else {
                 // if ( COUNTERDONE( RUBBER_BAND_START_DELAY )  )
                 {
+                  const struct MouseInput mouse = XXX_GetMouseInput();
+
                   // OK, change to rubber banding mode..
                   // Have we started this yet?
                   if (!gfStartLookingForRubberBanding && !gRubberBandActive) {
                     gfStartLookingForRubberBanding = TRUE;
-                    gusRubberBandX = gusMouseXPos;
-                    gusRubberBandY = gusMouseYPos;
+                    gusRubberBandX = mouse.x;
+                    gusRubberBandY = mouse.y;
                   } else {
                     // Have we moved....?
-                    if (abs(gusMouseXPos - gusRubberBandX) > 10 ||
-                        abs(gusMouseYPos - gusRubberBandY) > 10) {
+                    if (abs(mouse.x - gusRubberBandX) > 10 || abs(mouse.y - gusRubberBandY) > 10) {
                       gfStartLookingForRubberBanding = FALSE;
 
                       // Stop scrolling:
@@ -382,7 +383,8 @@ void QueryRTLeftButton(UINT32 *puiNewEvent) {
                           case IDLE_MODE:
 
                             // First check if we clicked on a guy, if so, make selected if it's ours
-                            if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
+                            if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags,
+                                                     XXX_GetMouseInput())) {
                               // Select guy
                               if (uiMercFlags & OWNED_MERC) {
                                 *puiNewEvent = I_SELECT_MERC;
@@ -548,7 +550,8 @@ void QueryRTLeftButton(UINT32 *puiNewEvent) {
                                   if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
                                     // First check if we clicked on a guy, if so, make selected if
                                     // it's ours
-                                    if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags) &&
+                                    if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags,
+                                                             XXX_GetMouseInput()) &&
                                         (uiMercFlags & OWNED_MERC)) {
                                       // Select guy
                                       *puiNewEvent = I_SELECT_MERC;

@@ -47,6 +47,8 @@
 #include "platform.h"
 #include "platform_strings.h"
 
+static void RemoveFileDialog(const struct MouseInput mouse);
+
 struct FileDialogList;
 
 //===========================================================================
@@ -71,7 +73,6 @@ void FDlgNamesCallback(GUI_BUTTON *butn, INT32 reason);
 void UpdateWorldInfoCallback(GUI_BUTTON *b, INT32 reason);
 void FileDialogModeCallback(UINT8 ubID, BOOLEAN fEntering);
 
-UINT32 ProcessLoadSaveScreenMessageBoxResult();
 BOOLEAN RemoveFromFDlgList(struct FileDialogList **head, struct FileDialogList *node);
 
 void DrawFileDialog();
@@ -170,13 +171,13 @@ void LoadSaveScreenEntry() {
   iLastClickTime = 0;
 }
 
-UINT32 ProcessLoadSaveScreenMessageBoxResult() {
+UINT32 ProcessLoadSaveScreenMessageBoxResult(const struct MouseInput mouse) {
   struct FileDialogList *curr, *temp;
   gfRenderWorld = TRUE;
   RemoveMessageBox();
   if (gfIllegalName) {
     fEnteringLoadSaveScreen = TRUE;
-    RemoveFileDialog();
+    RemoveFileDialog(mouse);
     MarkWorldDirty();
     return gfMessageBoxResult ? LOADSAVE_SCREEN : EDIT_SCREEN;
   }
@@ -220,7 +221,7 @@ UINT32 ProcessLoadSaveScreenMessageBoxResult() {
       }
     }
     MarkWorldDirty();
-    RenderWorld();
+    RenderWorld(mouse);
     gfDeleteFile = FALSE;
     iFDlgState = DIALOG_NONE;
     return LOADSAVE_SCREEN;
@@ -231,24 +232,24 @@ UINT32 ProcessLoadSaveScreenMessageBoxResult() {
   }
   if (gfReadOnly) {  // file is readonly.  Result will determine if the file dialog stays up.
     fEnteringLoadSaveScreen = TRUE;
-    RemoveFileDialog();
+    RemoveFileDialog(mouse);
     return gfMessageBoxResult ? LOADSAVE_SCREEN : EDIT_SCREEN;
   }
   if (gfFileExists) {
     if (gfMessageBoxResult) {  // okay to overwrite file
-      RemoveFileDialog();
+      RemoveFileDialog(mouse);
       gbCurrentFileIOStatus = INITIATE_MAP_SAVE;
       return LOADSAVE_SCREEN;
     }
     fEnteringLoadSaveScreen = TRUE;
-    RemoveFileDialog();
+    RemoveFileDialog(mouse);
     return EDIT_SCREEN;
   }
   Assert(0);
   return LOADSAVE_SCREEN;
 }
 
-UINT32 LoadSaveScreenHandle(void) {
+UINT32 LoadSaveScreenHandle(const struct GameInput *gameInput) {
   struct FileDialogList *FListNode;
   INT32 x;
   InputAtom DialogEvent;
@@ -266,7 +267,7 @@ UINT32 LoadSaveScreenHandle(void) {
   }
 
   if (gubMessageBoxStatus) {
-    if (MessageBoxHandled()) return ProcessLoadSaveScreenMessageBoxResult();
+    if (MessageBoxHandled()) return ProcessLoadSaveScreenMessageBoxResult(gameInput->mouse);
     return LOADSAVE_SCREEN;
   }
 
@@ -314,7 +315,7 @@ UINT32 LoadSaveScreenHandle(void) {
 
   switch (iFDlgState) {
     case DIALOG_CANCEL:
-      RemoveFileDialog();
+      RemoveFileDialog(gameInput->mouse);
       fEnteringLoadSaveScreen = TRUE;
       return EDIT_SCREEN;
     case DIALOG_DELETE:
@@ -356,7 +357,7 @@ UINT32 LoadSaveScreenHandle(void) {
           CreateMessageBox(L" File exists, Overwrite? ");
         return (LOADSAVE_SCREEN);
       }
-      RemoveFileDialog();
+      RemoveFileDialog(gameInput->mouse);
       gbCurrentFileIOStatus = INITIATE_MAP_SAVE;
       return LOADSAVE_SCREEN;
     case DIALOG_LOAD:
@@ -366,7 +367,7 @@ UINT32 LoadSaveScreenHandle(void) {
         iFDlgState = DIALOG_NONE;
         return LOADSAVE_SCREEN;
       }
-      RemoveFileDialog();
+      RemoveFileDialog(gameInput->mouse);
       CreateProgressBar(0, 118, 183, 522, 202);
       DefineProgressBarPanel(0, 65, 79, 94, 100, 155, 540, 235);
       swprintf(zOrigName, ARR_SIZE(zOrigName), L"Loading map:  %s", gzFilename);
@@ -458,7 +459,7 @@ void FileDialogModeCallback(UINT8 ubID, BOOLEAN fEntering) {
   }
 }
 
-void RemoveFileDialog(void) {
+void RemoveFileDialog(const struct MouseInput mouse) {
   INT32 x;
 
   MSYS_RemoveRegion(&BlanketRegion);
@@ -479,7 +480,7 @@ void RemoveFileDialog(void) {
   EnableEditorTaskbar();
   KillTextInputMode();
   MarkWorldDirty();
-  RenderWorld();
+  RenderWorld(mouse);
   EndFrameBufferRender();
 }
 
@@ -751,7 +752,7 @@ void InitErrorCatchDialog() {
 
   // do message box and return
   giErrorCatchMessageBox = DoMessageBox(MSG_BOX_BASIC_STYLE, gzErrorCatchString, EDIT_SCREEN,
-                                        MSG_BOX_FLAG_OK, NULL, &CenteringRect);
+                                        MSG_BOX_FLAG_OK, NULL, &CenteringRect, XXX_GetMouseInput());
   gfErrorCatch = FALSE;
 }
 

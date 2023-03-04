@@ -35,7 +35,8 @@ UINT32 guiInsCmntBulletImage;
 
 // link to the varios pages
 struct MOUSE_REGION gSelectedInsuranceCommentLinkRegion[3];
-void SelectInsuranceCommentLinkRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason);
+void SelectInsuranceCommentLinkRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                              const struct MouseInput mouse);
 
 BOOLEAN DisplayComment(UINT8 ubCommentorsName, UINT8 ubComment, UINT16 usPosY);
 
@@ -58,7 +59,7 @@ BOOLEAN EnterInsuranceComments() {
     MSYS_DefineRegion(&gSelectedInsuranceCommentLinkRegion[i], usPosX, INS_CMNT_LINK_Y - 1,
                       (UINT16)(usPosX + INS_CMNT_LINK_WIDTH),
                       INS_CMNT_LINK_Y + INS_CMNT_LINK_HEIGHT + 1, MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                      MSYS_NO_CALLBACK, SelectInsuranceCommentLinkRegionCallBack);
+                      MSYS_NO_CALLBACK, SelectInsuranceCommentLinkRegionCallback);
     MSYS_AddRegion(&gSelectedInsuranceCommentLinkRegion[i]);
     MSYS_SetRegionUserData(&gSelectedInsuranceCommentLinkRegion[i], 0, i);
 
@@ -154,7 +155,8 @@ void RenderInsuranceComments() {
                    LAPTOP_SCREEN_WEB_LR_Y);
 }
 
-void SelectInsuranceCommentLinkRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason) {
+void SelectInsuranceCommentLinkRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT32 uiInsuranceLink = MSYS_GetRegionUserData(pRegion, 0);

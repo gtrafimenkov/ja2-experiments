@@ -1,6 +1,7 @@
 #ifndef MEANWHILE_H
 #define MEANWHILE_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 enum {
@@ -39,7 +40,7 @@ void HandleFirstBattleVictory(void);
 
 BOOLEAN BeginMeanwhile(UINT8 ubMeanwhileID);
 
-void CheckForMeanwhileOKStart();
+void CheckForMeanwhileOKStart(const struct MouseInput mouse);
 void EndMeanwhile();
 
 BOOLEAN AreInMeanwhile();

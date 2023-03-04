@@ -124,7 +124,7 @@ void ExitCharProfile() {
   ExitOldIMPMode();
 }
 
-void HandleCharProfile() {
+void HandleCharProfile(const struct MouseInput mouse) {
   if (fReDrawCharProfile) {
     // re draw
     RenderCharProfile();
@@ -190,7 +190,7 @@ void HandleCharProfile() {
       HandleIMPPersonalityEntrance();
       break;
     case (IMP_PERSONALITY_QUIZ):
-      HandleIMPPersonalityQuiz();
+      HandleIMPPersonalityQuiz(mouse);
       break;
     case (IMP_PERSONALITY_FINISH):
       HandleIMPPersonalityFinish();
@@ -199,7 +199,7 @@ void HandleCharProfile() {
       HandleIMPAttributeEntrance();
       break;
     case (IMP_ATTRIBUTE_PAGE):
-      HandleIMPAttributeSelection();
+      HandleIMPAttributeSelection(XXX_GetMouseInput());
       break;
     case (IMP_ATTRIBUTE_FINISH):
       HandleIMPAttributeFinish();

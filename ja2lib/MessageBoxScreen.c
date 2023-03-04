@@ -29,6 +29,11 @@
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
 
+static void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
+                                                  MSGBOX_CALLBACK ReturnCallback,
+                                                  SGPRect *pCenteringRect,
+                                                  const struct MouseInput mouse);
+
 #define MSGBOX_DEFAULT_WIDTH 300
 
 #define MSGBOX_BUTTON_WIDTH 61
@@ -37,8 +42,6 @@
 
 #define MSGBOX_SMALL_BUTTON_WIDTH 31
 #define MSGBOX_SMALL_BUTTON_X_SEP 8
-
-typedef void (*MSGBOX_CALLBACK)(UINT8 bExitValue);
 
 // old mouse x and y positions
 SGPPoint pOldMousePosition;
@@ -58,8 +61,8 @@ void ContractMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void LieMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void NOMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void NumberedMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
-void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-UINT32 ExitMsgBox(INT8 ubExitCode);
+void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
 UINT16 GetMSgBoxButtonWidth(INT32 iButtonImage);
 
 SGPRect gOldCursorLimitRectangle;
@@ -71,14 +74,15 @@ BOOLEAN gfStartedFromMapScreen = FALSE;
 BOOLEAN fRestoreBackgroundForMessageBox = FALSE;
 BOOLEAN gfDontOverRideSaveBuffer = TRUE;  // this variable can be unset if ur in a non gamescreen
                                           // and DONT want the msg box to use the save buffer
-extern void HandleTacticalUILoseCursorFromOtherScreen();
+extern void HandleTacticalUILoseCursorFromOtherScreen(const struct GameInput *gameInput);
 extern STR16 pUpdatePanelButtons[];
 
 CHAR16 gzUserDefinedButton1[128];
 CHAR16 gzUserDefinedButton2[128];
 
 INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect) {
+                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect,
+                   const struct MouseInput mouse) {
   VSURFACE_DESC vs_desc;
   UINT16 usTextBoxWidth;
   UINT16 usTextBoxHeight;
@@ -92,7 +96,8 @@ INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 u
   UINT16 usCursor;
   INT32 iId = -1;
 
-  GetMousePos(&pOldMousePosition);
+  pOldMousePosition.iX = mouse.x;
+  pOldMousePosition.iY = mouse.y;
 
   // this variable can be unset if ur in a non gamescreen and DONT want the msg box to use the save
   // buffer
@@ -599,7 +604,8 @@ INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 u
   return (iId);
 }
 
-void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   /// if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP)
   //{
   //	gMsgBox.bHandled = MSG_BOX_RETURN_NO;
@@ -698,10 +704,9 @@ void NumberedMsgBoxCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-UINT32 ExitMsgBox(INT8 ubExitCode) {
+static UINT32 ExitMsgBox(INT8 ubExitCode, const struct MouseInput mouse) {
   UINT32 uiDestPitchBYTES, uiSrcPitchBYTES;
   UINT8 *pDestBuf, *pSrcBuf;
-  SGPPoint pPosition;
 
   // Delete popup!
   RemoveMercPopupBoxFromIndex(gMsgBox.iBoxId);
@@ -778,7 +783,7 @@ UINT32 ExitMsgBox(INT8 ubExitCode) {
 
   // Call done callback!
   if (gMsgBox.ExitCallback != NULL) {
-    (*(gMsgBox.ExitCallback))(ubExitCode);
+    (*(gMsgBox.ExitCallback))(ubExitCode, mouse);
   }
 
   // if ur in a non gamescreen and DONT want the msg box to use the save buffer, unset
@@ -803,12 +808,10 @@ UINT32 ExitMsgBox(INT8 ubExitCode) {
   gfDontOverRideSaveBuffer = TRUE;
 
   if (fCursorLockedToArea == TRUE) {
-    GetMousePos(&pPosition);
-
-    if ((pPosition.iX > MessageBoxRestrictedCursorRegion.iRight) ||
-        ((pPosition.iX > MessageBoxRestrictedCursorRegion.iLeft) &&
-         (pPosition.iY < MessageBoxRestrictedCursorRegion.iTop) &&
-         (pPosition.iY > MessageBoxRestrictedCursorRegion.iBottom))) {
+    if ((mouse.x > MessageBoxRestrictedCursorRegion.iRight) ||
+        ((mouse.x > MessageBoxRestrictedCursorRegion.iLeft) &&
+         (mouse.y < MessageBoxRestrictedCursorRegion.iTop) &&
+         (mouse.y > MessageBoxRestrictedCursorRegion.iBottom))) {
       SimulateMouseMovement(pOldMousePosition.iX, pOldMousePosition.iY);
     }
 
@@ -846,37 +849,20 @@ UINT32 ExitMsgBox(INT8 ubExitCode) {
 
 UINT32 MessageBoxScreenInit() { return (TRUE); }
 
-UINT32 MessageBoxScreenHandle() {
+UINT32 MessageBoxScreenHandle(const struct GameInput *gameInput) {
   InputAtom InputEvent;
 
   if (gfNewMessageBox) {
     // If in game screen....
     if ((gfStartedFromGameScreen) || (gfStartedFromMapScreen)) {
-      // UINT32 uiDestPitchBYTES, uiSrcPitchBYTES;
-      // UINT8	 *pDestBuf, *pSrcBuf;
-
       if (gfStartedFromGameScreen) {
-        HandleTacticalUILoseCursorFromOtherScreen();
+        HandleTacticalUILoseCursorFromOtherScreen(gameInput);
       } else {
         HandleMAPUILoseCursorFromOtherScreen();
       }
 
       gfStartedFromGameScreen = FALSE;
       gfStartedFromMapScreen = FALSE;
-      /*
-                              // Save what we have under here...
-                              pDestBuf = LockVideoSurface( gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
-                              pSrcBuf = LockVideoSurface( FRAME_BUFFER, &uiSrcPitchBYTES);
-
-                              Blt16BPPTo16BPP((UINT16 *)pDestBuf, uiDestPitchBYTES,
-                                                      (UINT16 *)pSrcBuf, uiSrcPitchBYTES,
-                                                      0 , 0,
-                                                      gMsgBox.sX , gMsgBox.sY,
-                                                      gMsgBox.usWidth, gMsgBox.usHeight );
-
-                              UnLockVideoSurface( gMsgBox.uiSaveBuffer );
-                              UnLockVideoSurface( FRAME_BUFFER );
-      */
     }
 
     gfNewMessageBox = FALSE;
@@ -1021,7 +1007,7 @@ UINT32 MessageBoxScreenHandle() {
 
   if (gMsgBox.bHandled) {
     SetRenderFlags(RENDER_FLAG_FULL);
-    return (ExitMsgBox(gMsgBox.bHandled));
+    return (ExitMsgBox(gMsgBox.bHandled, gameInput->mouse));
   }
 
   return (MSG_BOX_SCREEN);
@@ -1033,26 +1019,30 @@ UINT32 MessageBoxScreenShutdown() { return (FALSE); }
 void DoScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                    MSGBOX_CALLBACK ReturnCallback) {
   SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
-  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
+  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect,
+                                        XXX_GetMouseInput());
 }
 
 // a basic box that don't care what screen we came from
 void DoUpperScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback) {
   SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y / 2};
-  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
+  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect,
+                                        XXX_GetMouseInput());
 }
 
 // a basic box that don't care what screen we came from
 void DoLowerScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback) {
   SGPRect CenteringRect = {0, INV_INTERFACE_START_Y / 2, 640, INV_INTERFACE_START_Y};
-  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
+  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect,
+                                        XXX_GetMouseInput());
 }
 
-void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
-                                           MSGBOX_CALLBACK ReturnCallback,
-                                           SGPRect *pCenteringRect) {
+static void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
+                                                  MSGBOX_CALLBACK ReturnCallback,
+                                                  SGPRect *pCenteringRect,
+                                                  const struct MouseInput mouse) {
   /// which screen are we in?
 
   // Map Screen (excluding AI Viewer)
@@ -1066,11 +1056,11 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
     // auto resolve is a special case
     if (guiCurrentScreen == AUTORESOLVE_SCREEN) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, zString, AUTORESOLVE_SCREEN, usFlags, ReturnCallback,
-                   pCenteringRect);
+                   pCenteringRect, mouse);
     } else {
       // set up for mapscreen
       DoMapMessageBoxWithRect(MSG_BOX_BASIC_STYLE, zString, MAP_SCREEN, usFlags, ReturnCallback,
-                              pCenteringRect);
+                              pCenteringRect, mouse);
     }
   }
 
@@ -1084,19 +1074,19 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
   // Save Load Screen
   else if (guiCurrentScreen == SAVE_LOAD_SCREEN) {
     DoSaveLoadMessageBoxWithRect(MSG_BOX_BASIC_STYLE, zString, SAVE_LOAD_SCREEN, usFlags,
-                                 ReturnCallback, pCenteringRect);
+                                 ReturnCallback, pCenteringRect, mouse);
   }
 
   // Options Screen
   else if (guiCurrentScreen == OPTIONS_SCREEN) {
     DoOptionsMessageBoxWithRect(MSG_BOX_BASIC_STYLE, zString, OPTIONS_SCREEN, usFlags,
-                                ReturnCallback, pCenteringRect);
+                                ReturnCallback, pCenteringRect, mouse);
   }
 
   // Tactical
   else if (guiCurrentScreen == GAME_SCREEN) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zString, guiCurrentScreen, usFlags, ReturnCallback,
-                 pCenteringRect);
+                 pCenteringRect, mouse);
   }
 }
 

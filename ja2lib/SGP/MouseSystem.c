@@ -5,6 +5,7 @@
 
 #include "JAScreens.h"
 #include "Local.h"
+#include "MouseInput.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
@@ -20,6 +21,8 @@
 #include "ScreenIDs.h"
 #include "TileEngine/RenderDirty.h"
 #include "Utils/FontControl.h"
+
+static void MSYS_UpdateMouseRegion(const struct MouseInput mouse);
 
 #define BASE_REGION_FLAGS (MSYS_REGION_ENABLED | MSYS_SET_CURSOR)
 
@@ -72,7 +75,7 @@ INT16 gsFastHelpDelay = 600;  // In timer ticks
 BOOLEAN gfShowFastHelp = TRUE;
 
 // help text is done, now execute callback, if there is one
-void ExecuteMouseHelpEndCallBack(struct MOUSE_REGION *region);
+void ExecuteMouseHelpEndCallback(struct MOUSE_REGION *region);
 
 // Kris:
 // NOTE:  This doesn't really need to be here, however, it is a good indication that
@@ -190,13 +193,8 @@ void MSYS_Shutdown(void) {
   UnRegisterDebugTopic(TOPIC_MOUSE_SYSTEM, "Mouse Region System");
 }
 
-//======================================================================================================
-//	MSYS_SGP_Mouse_Handler_Hook
-//
-//	Hook to the SGP's mouse handler
-//
-void MSYS_SGP_Mouse_Handler_Hook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButton,
-                                 BOOLEAN RightButton) {
+void MouseSystemHook(UINT16 Type, BOOLEAN LeftButton, BOOLEAN RightButton,
+                     const struct MouseInput mouse) {
   // If the mouse system isn't initialized, get out o' here
   if (!MSYS_SystemInitialized) return;
 
@@ -237,13 +235,13 @@ void MSYS_SGP_Mouse_Handler_Hook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOL
       else
         MSYS_CurrentButtons &= (~MSYS_RIGHT_BUTTON);
 
-      if ((Xcoord != MSYS_CurrentMX) || (Ycoord != MSYS_CurrentMY)) {
+      if ((mouse.x != MSYS_CurrentMX) || (mouse.y != MSYS_CurrentMY)) {
         MSYS_Action |= MSYS_DO_MOVE;
-        MSYS_CurrentMX = Xcoord;
-        MSYS_CurrentMY = Ycoord;
+        MSYS_CurrentMX = mouse.x;
+        MSYS_CurrentMY = mouse.y;
       }
 
-      MSYS_UpdateMouseRegion();
+      MSYS_UpdateMouseRegion(mouse);
       break;
 
     // ATE: Checks here for mouse button repeats.....
@@ -256,24 +254,24 @@ void MSYS_SGP_Mouse_Handler_Hook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOL
       else if (Type == RIGHT_BUTTON_REPEAT)
         MSYS_Action |= MSYS_DO_RBUTTON_REPEAT;
 
-      if ((Xcoord != MSYS_CurrentMX) || (Ycoord != MSYS_CurrentMY)) {
+      if ((mouse.x != MSYS_CurrentMX) || (mouse.y != MSYS_CurrentMY)) {
         MSYS_Action |= MSYS_DO_MOVE;
-        MSYS_CurrentMX = Xcoord;
-        MSYS_CurrentMY = Ycoord;
+        MSYS_CurrentMX = mouse.x;
+        MSYS_CurrentMY = mouse.y;
       }
 
-      MSYS_UpdateMouseRegion();
+      MSYS_UpdateMouseRegion(mouse);
       break;
 
     case MOUSE_POS:
-      if ((Xcoord != MSYS_CurrentMX) || (Ycoord != MSYS_CurrentMY) || gfRefreshUpdate) {
+      if ((mouse.x != MSYS_CurrentMX) || (mouse.y != MSYS_CurrentMY) || gfRefreshUpdate) {
         MSYS_Action |= MSYS_DO_MOVE;
-        MSYS_CurrentMX = Xcoord;
-        MSYS_CurrentMY = Ycoord;
+        MSYS_CurrentMX = mouse.x;
+        MSYS_CurrentMY = mouse.y;
 
         gfRefreshUpdate = FALSE;
 
-        MSYS_UpdateMouseRegion();
+        MSYS_UpdateMouseRegion(mouse);
       }
       break;
 
@@ -461,7 +459,7 @@ void MSYS_DeleteRegionFromList(struct MOUSE_REGION *region) {
 //	Searches the list for the highest priority region and updates it's info. It also dispatches
 //	the callback functions
 //
-void MSYS_UpdateMouseRegion(void) {
+static void MSYS_UpdateMouseRegion(const struct MouseInput mouse) {
   INT32 found;
   UINT32 ButtonReason;
   struct MOUSE_REGION *pTempRegion;
@@ -494,7 +492,7 @@ void MSYS_UpdateMouseRegion(void) {
     if (MSYS_PrevRegion != MSYS_CurrRegion) {
       // Remove the help text for the previous region if one is currently being displayed.
       if (MSYS_PrevRegion->FastHelpText) {
-        // ExecuteMouseHelpEndCallBack( MSYS_PrevRegion );
+        // ExecuteMouseHelpEndCallback( MSYS_PrevRegion );
 
         if (MSYS_PrevRegion->uiFlags & MSYS_GOT_BACKGROUND)
           FreeBackgroundRectPending(MSYS_PrevRegion->FastHelpRect);
@@ -508,7 +506,8 @@ void MSYS_UpdateMouseRegion(void) {
       // the mouse has left the old region
       if (MSYS_PrevRegion->uiFlags & MSYS_MOVE_CALLBACK &&
           MSYS_PrevRegion->uiFlags & MSYS_REGION_ENABLED)
-        (*(MSYS_PrevRegion->MovementCallback))(MSYS_PrevRegion, MSYS_CALLBACK_REASON_LOST_MOUSE);
+        (*(MSYS_PrevRegion->MovementCallback))(MSYS_PrevRegion, MSYS_CALLBACK_REASON_LOST_MOUSE,
+                                               mouse);
     }
   }
 
@@ -519,7 +518,7 @@ void MSYS_UpdateMouseRegion(void) {
       // Implemented gain mouse region
       if (MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK) {
         if (MSYS_CurrRegion->FastHelpText && !(MSYS_CurrRegion->uiFlags & MSYS_FASTHELP_RESET)) {
-          // ExecuteMouseHelpEndCallBack( MSYS_CurrRegion );
+          // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
           MSYS_CurrRegion->FastHelpTimer = gsFastHelpDelay;
           if (MSYS_CurrRegion->uiFlags & MSYS_GOT_BACKGROUND)
             FreeBackgroundRectPending(MSYS_CurrRegion->FastHelpRect);
@@ -530,7 +529,8 @@ void MSYS_UpdateMouseRegion(void) {
           //	b->uiFlags |= BUTTON_DIRTY;
         }
         if (MSYS_CurrRegion->uiFlags & MSYS_REGION_ENABLED) {
-          (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_GAIN_MOUSE);
+          (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_GAIN_MOUSE,
+                                                 mouse);
         }
       }
 
@@ -572,10 +572,10 @@ void MSYS_UpdateMouseRegion(void) {
 
       if (MSYS_CurrRegion->uiFlags & MSYS_REGION_ENABLED &&
           MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK && MSYS_Action & MSYS_DO_MOVE) {
-        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE);
+        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE, mouse);
       }
 
-      // ExecuteMouseHelpEndCallBack( MSYS_CurrRegion );
+      // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
       // MSYS_CurrRegion->FastHelpTimer = gsFastHelpDelay;
 
       MSYS_Action &= (~MSYS_DO_MOVE);
@@ -624,7 +624,7 @@ void MSYS_UpdateMouseRegion(void) {
                 FreeBackgroundRectPending(MSYS_CurrRegion->FastHelpRect);
               MSYS_CurrRegion->uiFlags &= (~MSYS_GOT_BACKGROUND);
 
-              // ExecuteMouseHelpEndCallBack( MSYS_CurrRegion );
+              // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
               MSYS_CurrRegion->FastHelpTimer = gsFastHelpDelay;
               MSYS_CurrRegion->uiFlags &= (~MSYS_FASTHELP_RESET);
 
@@ -669,7 +669,7 @@ void MSYS_UpdateMouseRegion(void) {
               }
             }
 
-            (*(MSYS_CurrRegion->ButtonCallback))(MSYS_CurrRegion, ButtonReason);
+            (*(MSYS_CurrRegion->ButtonCallback))(MSYS_CurrRegion, ButtonReason, mouse);
           }
         }
       }
@@ -693,7 +693,7 @@ void MSYS_UpdateMouseRegion(void) {
       MSYS_CurrRegion->RelativeYPos = MSYS_CurrentMY - MSYS_CurrRegion->RegionTopLeftY;
 
       if ((MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK) && (MSYS_Action & MSYS_DO_MOVE)) {
-        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE);
+        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE, mouse);
       }
 
       MSYS_Action &= (~MSYS_DO_MOVE);
@@ -710,7 +710,7 @@ void MSYS_UpdateMouseRegion(void) {
 //
 void MSYS_DefineRegion(struct MOUSE_REGION *region, UINT16 tlx, UINT16 tly, UINT16 brx, UINT16 bry,
                        INT8 priority, UINT16 crsr, MOUSE_CALLBACK movecallback,
-                       MOUSE_CALLBACK buttoncallback) {
+                       MOUSE_CALLBACK ButtonCallback) {
 #ifdef MOUSESYSTEM_DEBUGGING
   if (region->uiFlags & MSYS_REGION_EXISTS)
     AssertMsg(0, "Attempting to define a region that already exists.");
@@ -732,8 +732,8 @@ void MSYS_DefineRegion(struct MOUSE_REGION *region, UINT16 tlx, UINT16 tly, UINT
   region->MovementCallback = movecallback;
   if (movecallback != MSYS_NO_CALLBACK) region->uiFlags |= MSYS_MOVE_CALLBACK;
 
-  region->ButtonCallback = buttoncallback;
-  if (buttoncallback != MSYS_NO_CALLBACK) region->uiFlags |= MSYS_BUTTON_CALLBACK;
+  region->ButtonCallback = ButtonCallback;
+  if (ButtonCallback != MSYS_NO_CALLBACK) region->uiFlags |= MSYS_BUTTON_CALLBACK;
 
   region->Cursor = crsr;
   if (crsr != MSYS_NO_CURSOR) region->uiFlags |= MSYS_SET_CURSOR;
@@ -912,37 +912,6 @@ INT32 MSYS_GetRegionUserData(struct MOUSE_REGION *region, INT32 index) {
   return (region->UserData[index]);
 }
 
-//=================================================================================================
-//	MSYS_GrabMouse
-//
-//	Assigns all mouse activity to a region, effectively blocking any other region from having
-//	control.
-//
-INT32 MSYS_GrabMouse(struct MOUSE_REGION *region) {
-  if (!MSYS_RegionInList(region)) return (MSYS_REGION_NOT_IN_LIST);
-
-  if (MSYS_Mouse_Grabbed == TRUE) return (MSYS_ALREADY_GRABBED);
-
-  MSYS_Mouse_Grabbed = TRUE;
-  MSYS_GrabRegion = region;
-  return (MSYS_GRABBED_OK);
-}
-
-//=================================================================================================
-//	MSYS_ReleaseMouse
-//
-//	Releases a previously grabbed mouse region
-//
-void MSYS_ReleaseMouse(struct MOUSE_REGION *region) {
-  if (MSYS_GrabRegion != region) return;
-
-  if (MSYS_Mouse_Grabbed == TRUE) {
-    MSYS_Mouse_Grabbed = FALSE;
-    MSYS_GrabRegion = NULL;
-    MSYS_UpdateMouseRegion();
-  }
-}
-
 /* ==================================================================================
    MSYS_MoveMouseRegionTo( struct MOUSE_REGION *region, INT16 sX, INT16 sY)
 
@@ -968,31 +937,12 @@ void MSYS_MoveMouseRegionTo(struct MOUSE_REGION *region, INT16 sX, INT16 sY) {
   return;
 }
 
-/* ==================================================================================
-   MSYS_MoveMouseRegionBy( struct MOUSE_REGION *region, INT16 sDeltaX, INT16 sDeltaY)
-
-         Moves a Mouse region by sDeltaX sDeltaY on the screen
-
-*/
-
-void MSYS_MoveMouseRegionBy(struct MOUSE_REGION *region, INT16 sDeltaX, INT16 sDeltaY) {
-  // move top left
-  region->RegionTopLeftX = region->RegionTopLeftX + sDeltaX;
-  region->RegionTopLeftY = region->RegionTopLeftY + sDeltaY;
-
-  // now move bottom right
-  region->RegionBottomRightX = region->RegionBottomRightX + sDeltaX;
-  region->RegionBottomRightY = region->RegionBottomRightY + sDeltaY;
-
-  return;
-}
-
 // This function will force a re-evaluation of mouse regions
 // Usually used to force change of mouse cursor if panels switch, etc
-void RefreshMouseRegions() {
+void RefreshMouseRegions(const struct MouseInput mouse) {
   MSYS_Action |= MSYS_DO_MOVE;
 
-  MSYS_UpdateMouseRegion();
+  MSYS_UpdateMouseRegion(mouse);
 }
 
 void SetRegionFastHelpText(struct MOUSE_REGION *region, STR16 szText) {
@@ -1190,10 +1140,6 @@ void RenderFastHelp() {
   }
 }
 
-BOOLEAN SetRegionSavedRect(struct MOUSE_REGION *region) { return FALSE; }
-
-void FreeRegionSavedRect(struct MOUSE_REGION *region) {}
-
 void MSYS_AllowDisabledRegionFastHelp(struct MOUSE_REGION *region, BOOLEAN fAllow) {
   if (fAllow) {
     region->uiFlags |= MSYS_ALLOW_DISABLED_FASTHELP;
@@ -1217,7 +1163,7 @@ void SetRegionHelpEndCallback(struct MOUSE_REGION *region,
   return;
 }
 
-void ExecuteMouseHelpEndCallBack(struct MOUSE_REGION *region) {
+void ExecuteMouseHelpEndCallback(struct MOUSE_REGION *region) {
   if (region == NULL) {
     return;
   }

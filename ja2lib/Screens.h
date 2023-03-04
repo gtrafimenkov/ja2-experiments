@@ -1,6 +1,7 @@
 #ifndef __SCREEN_MANAGER
 #define __SCREEN_MANAGER
 
+#include "GameInput.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
 
@@ -11,7 +12,7 @@
 
 typedef struct Screens {
   UINT32 (*InitializeScreen)(void);
-  UINT32 (*HandleScreen)(void);
+  UINT32 (*HandleScreen)(const struct GameInput *gameInput);
   UINT32 (*ShutdownScreen)(void);
 
 } Screens;

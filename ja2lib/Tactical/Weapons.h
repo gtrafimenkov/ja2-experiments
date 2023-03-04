@@ -1,6 +1,7 @@
 #ifndef __WEAPONS_H
 #define __WEAPONS_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Tactical/ItemTypes.h"
 

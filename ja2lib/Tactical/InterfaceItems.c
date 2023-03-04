@@ -269,7 +269,7 @@ CHAR16 gzItemCons[SIZE_ITEM_CONS];
 CHAR16 gzFullItemPros[SIZE_ITEM_PROS];
 CHAR16 gzFullItemCons[SIZE_ITEM_PROS];
 CHAR16 gzFullItemTemp[SIZE_ITEM_PROS];  // necessary, unfortunately
-void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 INT16 gsInvDescX;
 INT16 gsInvDescY;
 UINT8 gubItemDescStatusIndex;
@@ -303,7 +303,8 @@ MoneyLoc gMapMoneyButtonLoc = {174, 115};
 // show the description
 extern BOOLEAN fShowInventoryFlag;
 
-void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
 void ItemDescAmmoCallback(GUI_BUTTON *btn, INT32 reason);
 
 // number of keys on keyring, temp for now
@@ -348,8 +349,10 @@ extern BOOLEAN fMapInventoryItem;
 BOOLEAN gfItemPopupRegionCallbackEndFix = FALSE;
 extern void InternalMAPBeginItemPointer(struct SOLDIERTYPE *pSoldier);
 
-void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ItemPopupFullRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void ItemPopupFullRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse);
 BOOLEAN ReloadItemDesc();
 
 extern void HelpTextDoneCallback(void);
@@ -2504,14 +2507,15 @@ void DoAttachment(void) {
   gfReEvaluateEveryonesNothingToDo = TRUE;
 }
 
-void PermanantAttachmentMessageBoxCallBack(UINT8 ubExitValue) {
+void PermanantAttachmentMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     DoAttachment();
   }
   // else do nothing
 }
 
-void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   UINT32 uiItemPos;
   static BOOLEAN fRightDown = FALSE;
 
@@ -2539,7 +2543,7 @@ void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
             ValidAttachment(gpItemPointer->usItem, gpItemDescObject->usItem)) {
           DoScreenIndependantMessageBox(Message[STR_PERMANENT_ATTACHMENT],
                                         (UINT8)MSG_BOX_FLAG_YESNO,
-                                        PermanantAttachmentMessageBoxCallBack);
+                                        PermanantAttachmentMessageBoxCallback);
           return;
         }
 
@@ -4339,7 +4343,7 @@ BOOLEAN HandleItemPointerClick(UINT16 usMapPos) {
             }
 
             // OK, set UI
-            SetUIBusy(gpItemPointerSoldier->ubID);
+            SetUIBusy(gpItemPointerSoldier->ubID, XXX_GetMouseInput());
           }
         }
 
@@ -5118,9 +5122,10 @@ BOOLEAN LoadTileGraphicForItem(INVTYPE *pItem, UINT32 *puiVo) {
   return (TRUE);
 }
 
-void ItemDescMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {}
+void ItemDescMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse) {}
 
-void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemDescCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   static BOOLEAN fRightDown = FALSE, fLeftDown = FALSE;
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
@@ -5174,7 +5179,8 @@ void ItemDescDoneButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse) {
   UINT32 uiItemPos;
 
   uiItemPos = MSYS_GetRegionUserData(pRegion, 0);
@@ -5269,7 +5275,8 @@ void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void ItemPopupFullRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPopupFullRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                 const struct MouseInput mouse) {
   MSYS_GetRegionUserData(pRegion, 0);
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
@@ -5369,22 +5376,24 @@ void ItemPickupAll(GUI_BUTTON *btn, INT32 reason);
 void ItemPickupOK(GUI_BUTTON *btn, INT32 reason);
 void ItemPickupCancel(GUI_BUTTON *btn, INT32 reason);
 void SetupPickupPage(INT8 bPage);
-void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
+void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 void CalculateItemPickupMenuDimensions();
-void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 // STUFF FOR POPUP ITEM INFO BOX
 void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel) { gItemPickupMenu.fDirtyLevel = fDirtyLevel; }
 
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
-                                 struct ITEM_POOL *pItemPool, INT16 sScreenX, INT16 sScreenY,
-                                 INT8 bZLevel) {
+                                 struct ITEM_POOL *pItemPool, struct Point16 point, INT8 bZLevel) {
   VOBJECT_DESC VObjectDesc;
   CHAR8 ubString[48];
   struct ITEM_POOL *pTempItemPool;
   INT32 cnt;
-  INT16 sCenX, sCenY, sX, sY, sCenterYVal;
+  INT16 sCenX, sCenY, sCenterYVal;
 
   // Erase other menus....
   EraseInterfaceMenus(TRUE);
@@ -5405,7 +5414,7 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
   PauseTime(TRUE);
 
   // Alrighty, cancel lock UI if we havn't done so already
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // Change to INV panel if not there already...
   gfSwitchPanel = TRUE;
@@ -5445,16 +5454,9 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
   CalculateItemPickupMenuDimensions();
 
   // Get XY
+  i16 sX = point.x;
+  i16 sY = point.y;
   {
-    // First get mouse xy screen location
-    if (sGridNo != NOWHERE) {
-      sX = gusMouseXPos;
-      sY = gusMouseYPos;
-    } else {
-      sX = sScreenX;
-      sY = sScreenY;
-    }
-
     // CHECK FOR LEFT/RIGHT
     if ((sX + gItemPickupMenu.sWidth) > 640) {
       sX = 640 - gItemPickupMenu.sWidth - ITEMPICK_START_X_OFFSET;
@@ -6067,7 +6069,8 @@ void ItemPickupCancel(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse) {
   UINT32 uiItemPos;
   struct ITEM_POOL *pTempItemPool;
   INT32 bPos;
@@ -6115,14 +6118,16 @@ void ItemPickMenuMouseMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) 
   }
 }
 
-void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPickupBackgroundClick(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     // OK, goto team panel....
     ToggleTacticalPanels();
   }
 }
 
-void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   INT32 uiItemPos;
   UINT8 cnt;
   BOOLEAN fEnable = FALSE;
@@ -6134,16 +6139,6 @@ void ItemPickMenuMouseClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason)
       // Toggle selection... ONLY IF LEGAL!!
       gItemPickupMenu.pfSelectedArray[uiItemPos + gItemPickupMenu.ubScrollAnchor] =
           !gItemPickupMenu.pfSelectedArray[uiItemPos + gItemPickupMenu.ubScrollAnchor];
-
-      // OK, pickup item....
-      // gItemPickupMenu.fHandled = TRUE;
-
-      // pTempItemPool = gItemPickupMenu.ItemPoolSlots[ gItemPickupMenu.bCurSelect -
-      // gItemPickupMenu.ubScrollAnchor ];
-
-      // Tell our soldier to pickup this item!
-      // SoldierGetItemFromWorld( gItemPickupMenu.pSoldier, pTempItemPool->iItemIndex,
-      // gItemPickupMenu.sGridNo, gItemPickupMenu.bZLevel );
     }
 
     // Loop through all and set /unset OK
@@ -6202,11 +6197,12 @@ void BtnMoneyButtonCallback(GUI_BUTTON *btn, INT32 reason) {
             if (guiCurrentScreen == SHOPKEEPER_SCREEN)
               DoMessageBox(MSG_BOX_BASIC_STYLE,
                            gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                           SHOPKEEPER_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                           SHOPKEEPER_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL,
+                           XXX_GetMouseInput());
             else
               DoMessageBox(MSG_BOX_BASIC_STYLE,
                            gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                           GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                           GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
             return;
           }
 
@@ -6222,7 +6218,7 @@ void BtnMoneyButtonCallback(GUI_BUTTON *btn, INT32 reason) {
               (gRemoveMoney.uiMoneyRemoving + 100) > MAX_MONEY_PER_SLOT) {
             DoMessageBox(MSG_BOX_BASIC_STYLE,
                          gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
             return;
           }
 
@@ -6238,7 +6234,7 @@ void BtnMoneyButtonCallback(GUI_BUTTON *btn, INT32 reason) {
               (gRemoveMoney.uiMoneyRemoving + 10) > MAX_MONEY_PER_SLOT) {
             DoMessageBox(MSG_BOX_BASIC_STYLE,
                          gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
             return;
           }
 

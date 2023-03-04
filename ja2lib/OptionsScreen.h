@@ -1,6 +1,7 @@
 #ifndef _OPTIONS_SCREEN__H_
 #define _OPTIONS_SCREEN__H_
 
+#include "GameInput.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Types.h"
 
@@ -12,7 +13,7 @@
 extern UINT32 guiPreviousOptionScreen;
 
 UINT32 OptionsScreenShutdown(void);
-UINT32 OptionsScreenHandle(void);
+UINT32 OptionsScreenHandle(const struct GameInput *gameInput);
 UINT32 OptionsScreenInit(void);
 
 void SetOptionsScreenToggleBoxes();

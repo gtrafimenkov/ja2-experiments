@@ -2,6 +2,7 @@
 #define _DIALOG_CONTROL_H
 
 #include "GameScreen.h"
+#include "MouseInput.h"
 #include "Tactical/Faces.h"
 
 // An enumeration for dialog quotes
@@ -224,7 +225,7 @@ extern UINT32 uiExternalFaceProfileIds[];
 BOOLEAN InitalizeDialogueControl();
 void ShutdownDialogueControl();
 void EmptyDialogueQueue();
-void HandleDialogue();
+void HandleDialogue(const struct MouseInput mouse);
 void HandleImportantMercQuote(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNumber);
 
 // Send in a profile number to see if text dialog exists for this guy....
@@ -316,7 +317,7 @@ void SetEngagedInConvFromPCAction(struct SOLDIERTYPE *pSoldier);
 extern UINT32 guiDialogueLastQuoteTime;
 extern UINT32 guiDialogueLastQuoteDelay;
 
-void SetStopTimeQuoteCallback(MODAL_HOOK pCallBack);
+void SetStopTimeQuoteCallback(MODAL_HOOK pCallback);
 
 BOOLEAN DialogueActive();
 

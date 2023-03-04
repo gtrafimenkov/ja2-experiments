@@ -42,7 +42,7 @@
 #define MAINMENU_TEXT_FILE "LoadScreens\\MainMenu.edt"
 #define MAINMENU_RECORD_SIZE 80 * 2
 
-//#define TESTFOREIGNFONTS
+// #define TESTFOREIGNFONTS
 
 // MENU ITEMS
 enum {
@@ -87,7 +87,8 @@ void HandleMainMenuScreen();
 void DisplayAssignmentText();
 void ClearMainMenu();
 void HandleHelpScreenInput();
-void SelectMainMenuBackGroundRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectMainMenuBackGroundRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse);
 void SetMainMenuExitScreen(UINT32 uiNewScreen);
 void CreateDestroyBackGroundMouseMask(BOOLEAN fCreate);
 BOOLEAN CreateDestroyMainMenuButtons(BOOLEAN fCreate);
@@ -102,7 +103,7 @@ UINT32 MainMenuScreenInit() {
   return (TRUE);
 }
 
-UINT32 MainMenuScreenHandle() {
+UINT32 MainMenuScreenHandle(const struct GameInput *gameInput) {
   UINT32 cnt;
 
   if (guiSplashStartTime + 4000 > GetJA2Clock()) {
@@ -411,22 +412,11 @@ void ClearMainMenu() {
   InvalidateScreen();
 }
 
-void SelectMainMenuBackGroundRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectMainMenuBackGroundRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
-    //		if( gfDoHelpScreen )
-    //		{
-    //			SetMainMenuExitScreen( INIT_SCREEN );
-    //			gfDoHelpScreen = FALSE;
-    //		}
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
-    /*
-                    if( gfDoHelpScreen )
-                    {
-                            SetMainMenuExitScreen( INIT_SCREEN );
-                            gfDoHelpScreen = FALSE;
-                    }
-    */
   }
 }
 
@@ -447,7 +437,7 @@ void CreateDestroyBackGroundMouseMask(BOOLEAN fCreate) {
 
     // Make a mouse region
     MSYS_DefineRegion(&(gBackRegion), 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST, CURSOR_NORMAL,
-                      MSYS_NO_CALLBACK, SelectMainMenuBackGroundRegionCallBack);
+                      MSYS_NO_CALLBACK, SelectMainMenuBackGroundRegionCallback);
     // Add region
     MSYS_AddRegion(&(gBackRegion));
 

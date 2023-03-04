@@ -203,22 +203,22 @@ UINT8 GetCurrentGameSaveButtonSetting();
 UINT8 GetCurrentGameStyleButtonSetting();
 UINT8 GetCurrentDifficultyButtonSetting();
 void RestoreGIOButtonBackGrounds();
-void DoneFadeOutForExitGameInitOptionScreen(void);
+static void DoneFadeOutForExitGameInitOptionScreen(const struct MouseInput mouse);
 void DoneFadeInForExitGameInitOptionScreen(void);
 // JA2Gold: no more timed turns setting
 // UINT8			GetCurrentTimedTurnsButtonSetting();
 BOOLEAN DoGioMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
                         MSGBOX_CALLBACK ReturnCallback);
 void DisplayMessageToUserAboutGameDifficulty();
-void ConfirmGioDifSettingMessageBoxCallBack(UINT8 bExitValue);
+void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 BOOLEAN DisplayMessageToUserAboutIronManMode();
-void ConfirmGioIronManMessageBoxCallBack(UINT8 bExitValue);
+void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 // ppp
 
 UINT32 GameInitOptionsScreenInit(void) { return (1); }
 
-UINT32 GameInitOptionsScreenHandle(void) {
+UINT32 GameInitOptionsScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfGIOScreenEntry) {
@@ -245,7 +245,7 @@ UINT32 GameInitOptionsScreenHandle(void) {
   ExecuteBaseDirtyRectQueue();
   EndFrameBufferRender();
 
-  if (HandleFadeOutCallback()) {
+  if (HandleFadeOutCallback(gameInput->mouse)) {
     ClearMainMenu();
     return (gubGIOExitScreen);
   }
@@ -258,7 +258,7 @@ UINT32 GameInitOptionsScreenHandle(void) {
     ExitGIOScreen();
   }
 
-  if (HandleFadeInCallback()) {
+  if (HandleFadeInCallback(gameInput->mouse)) {
     // Re-render the scene!
     RenderGIOScreen();
   }
@@ -642,7 +642,6 @@ BOOLEAN RenderGIOScreen() {
 
 void GetGIOScreenUserInput() {
   InputAtom Event;
-  //	struct Point MousePos = GetMousePoint();
 
   while (DequeueEvent(&Event)) {
     if (Event.usEvent == KEY_DOWN) {
@@ -966,7 +965,7 @@ void RestoreGIOButtonBackGrounds() {
   }
 }
 
-void DoneFadeOutForExitGameInitOptionScreen(void) {
+static void DoneFadeOutForExitGameInitOptionScreen(const struct MouseInput mouse) {
   // loop through and get the status of all the buttons
   gGameOptions.fGunNut = GetCurrentGunButtonSetting();
   gGameOptions.fSciFi = GetCurrentGameStyleButtonSetting();
@@ -1012,7 +1011,7 @@ BOOLEAN DoGioMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UIN
   // do message box and return
   giGioMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                  (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                 ReturnCallback, &CenteringRect);
+                                 ReturnCallback, &CenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((giGioMessageBox != -1));
@@ -1025,22 +1024,22 @@ void DisplayMessageToUserAboutGameDifficulty() {
     case 0:
       DoGioMessageBox(MSG_BOX_BASIC_STYLE, zGioDifConfirmText[GIO_CFS_NOVICE],
                       GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                      ConfirmGioDifSettingMessageBoxCallBack);
+                      ConfirmGioDifSettingMessageBoxCallback);
       break;
     case 1:
       DoGioMessageBox(MSG_BOX_BASIC_STYLE, zGioDifConfirmText[GIO_CFS_EXPERIENCED],
                       GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                      ConfirmGioDifSettingMessageBoxCallBack);
+                      ConfirmGioDifSettingMessageBoxCallback);
       break;
     case 2:
       DoGioMessageBox(MSG_BOX_BASIC_STYLE, zGioDifConfirmText[GIO_CFS_EXPERT],
                       GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                      ConfirmGioDifSettingMessageBoxCallBack);
+                      ConfirmGioDifSettingMessageBoxCallback);
       break;
   }
 }
 
-void ConfirmGioDifSettingMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmGioDifSettingMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gubGameOptionScreenHandler = GIO_EXIT;
   }
@@ -1053,7 +1052,7 @@ BOOLEAN DisplayMessageToUserAboutIronManMode() {
   if (ubIronManMode) {
     DoGioMessageBox(MSG_BOX_BASIC_STYLE, gzIronManModeWarningText[IMM__IRON_MAN_MODE_WARNING_TEXT],
                     GAME_INIT_OPTIONS_SCREEN, MSG_BOX_FLAG_YESNO,
-                    ConfirmGioIronManMessageBoxCallBack);
+                    ConfirmGioIronManMessageBoxCallback);
 
     return (TRUE);
   }
@@ -1061,7 +1060,7 @@ BOOLEAN DisplayMessageToUserAboutIronManMode() {
   return (FALSE);
 }
 
-void ConfirmGioIronManMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmGioIronManMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gubGameOptionScreenHandler = GIO_IRON_MAN_MODE;
   } else {

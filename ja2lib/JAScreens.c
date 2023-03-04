@@ -182,16 +182,16 @@ void DisplayFrameRate() {
 
 // USELESS!!!!!!!!!!!!!!!!!!
 UINT32 SavingScreenInitialize(void) { return (TRUE); }
-UINT32 SavingScreenHandle(void) { return SAVING_SCREEN; }
+UINT32 SavingScreenHandle(const struct GameInput *gameInput) { return SAVING_SCREEN; }
 UINT32 SavingScreenShutdown(void) { return TRUE; }
 
 UINT32 LoadingScreenInitialize(void) { return (TRUE); }
-UINT32 LoadingScreenHandle(void) { return LOADING_SCREEN; }
+UINT32 LoadingScreenHandle(const struct GameInput *gameInput) { return LOADING_SCREEN; }
 UINT32 LoadingScreenShutdown(void) { return (TRUE); }
 
 UINT32 ErrorScreenInitialize(void) { return (TRUE); }
 
-UINT32 ErrorScreenHandle(void) {
+UINT32 ErrorScreenHandle(const struct GameInput *gameInput) {
   InputAtom InputEvent;
   static BOOLEAN fFirstTime = FALSE;
 #ifdef JA2BETAVERSION
@@ -253,7 +253,7 @@ UINT32 ErrorScreenShutdown(void) { return (TRUE); }
 
 UINT32 InitScreenInitialize(void) { return (TRUE); }
 
-UINT32 InitScreenHandle(void) {
+UINT32 InitScreenHandle(const struct GameInput *gameInput) {
   VSURFACE_DESC vs_desc;
   static struct VSurface *hVSurface;
   static UINT8 ubCurrentScreen = 255;
@@ -336,7 +336,7 @@ UINT32 InitScreenShutdown(void) { return (TRUE); }
 
 UINT32 PalEditScreenInit(void) { return (TRUE); }
 
-UINT32 PalEditScreenHandle(void) {
+UINT32 PalEditScreenHandle(const struct GameInput *gameInput) {
   static BOOLEAN FirstTime = TRUE;
 
   if (gfExitPalEditScreen) {
@@ -357,7 +357,7 @@ UINT32 PalEditScreenHandle(void) {
     guiBackgroundRect = RegisterBackgroundRect(BGND_FLAG_PERMANENT, NULL, 50, 10, 600, 400);
 
   } else {
-    (*(GameScreens[GAME_SCREEN].HandleScreen))();
+    (*(GameScreens[GAME_SCREEN].HandleScreen))(gameInput);
   }
 
   return (PALEDIT_SCREEN);
@@ -532,7 +532,7 @@ void ExitDebugScreen() {
   CheckForAndExitTacticalDebug();
 }
 
-UINT32 DebugScreenHandle(void) {
+UINT32 DebugScreenHandle(const struct GameInput *gameInput) {
   if (CheckForAndExitTacticalDebug()) {
     return (GAME_SCREEN);
   }
@@ -549,7 +549,7 @@ UINT32 DebugScreenHandle(void) {
     SetUIKeyboardHook((UIKEYBOARD_HOOK)DebugKeyboardHook);
 
   } else {
-    (*(GameScreens[GAME_SCREEN].HandleScreen))();
+    (*(GameScreens[GAME_SCREEN].HandleScreen))(gameInput);
   }
 
   return (DEBUG_SCREEN);
@@ -621,7 +621,7 @@ UINT32 SexScreenInit(void) { return (TRUE); }
 #define SMILY_DELAY 100
 #define SMILY_END_DELAY 1000
 
-UINT32 SexScreenHandle(void) {
+UINT32 SexScreenHandle(const struct GameInput *gameInput) {
   static UINT8 ubCurrentScreen = 0;
   VOBJECT_DESC VObjectDesc;
   static UINT32 guiSMILY;
@@ -752,7 +752,7 @@ void DisplayTopwareGermanyAddress() {
 }
 #endif
 
-UINT32 DemoExitScreenHandle(void) {
+UINT32 DemoExitScreenHandle(const struct GameInput *gameInput) {
   gfProgramIsRunning = FALSE;
   return (DEMO_EXIT_SCREEN);
 }

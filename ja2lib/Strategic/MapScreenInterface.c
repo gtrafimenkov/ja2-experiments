@@ -317,7 +317,7 @@ extern void RebuildContractBoxForMerc(struct SOLDIERTYPE *pCharacter);
 
 extern void SetUpCursorForStrategicMap(void);
 
-extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 extern BOOLEAN PlayerSoldierTooTiredToTravel(struct SOLDIERTYPE *pSoldier);
 
@@ -326,9 +326,11 @@ extern void RememberPreviousPathForAllSelectedChars(void);
 // the screen mask functions
 void CreateScreenMaskForInventoryPoolPopUp(void);
 void RemoveScreenMaskForInventoryPoolPopUp(void);
-void InventoryScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void InventoryScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
-void MapScreenHelpTextScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MapScreenHelpTextScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse);
 void SetUpShutDownMapScreenHelpTextScreenMask(void);
 void DisplayFastHelpRegions(FASTHELPREGION *pRegion, INT32 iSize);
 void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion);
@@ -338,8 +340,10 @@ void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion);
 
 void AddStringsToMoveBox(void);
 void CreatePopUpBoxForMovementBox(void);
-void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
+void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
 void SelectAllOtherSoldiersInList(void);
 void DeselectAllOtherSoldiersInList(void);
 void HandleMoveoutOfSectorMovementTroops(void);
@@ -351,7 +355,8 @@ void ClearMouseRegionsForMoveBox(void);
 BOOLEAN AllOtherSoldiersInListAreSelected(void);
 BOOLEAN AllSoldiersInSquadSelected(INT32 iSquadNumber);
 
-void MoveScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MoveScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 /*
 void CreateUpdateBoxStrings( void );
 void CreateUpdateBox( void );
@@ -922,83 +927,14 @@ void EnableTeamInfoPanels(void) {
   return;
 }
 
-/*
-void ActivateSoldierPopup( struct SOLDIERTYPE *pSoldier, UINT8 ubPopupType, INT16 xp, INT16 yp )
-{
-        // will activate the pop up for prebattle interface
-
-        // get the soldier id number
-        INT8 bCounter = 0;
-        INT8 bCharacter = -1;
-
-
-        for( bCounter = 0; bCounter < MAX_CHARACTER_COUNT; bCounter++ )
-        {
-                if( gCharactersList[ bCounter ].fValid == TRUE )
-                {
-                        // is this guy the passed soldier?
-                        if( pSoldier == &( Menptr[ gCharactersList[ bCounter ].usSolID ] ) )
-                        {
-                                bCharacter = bCounter;
-                                break;
-                        }
-                }
-        }
-
-        giBoxY = ( INT32 ) yp;
-        // which type of box do we show?
-        switch( ubPopupType )
-        {
-                case( ASSIGNMENT_POPUP ):
-                        bSelectedDestChar = -1;
-                        bSelectedContractChar = -1;
-                        bSelectedAssignChar = bCharacter;
-                        if( ( pSoldier->bLife > 0 ) &&( pSoldier->bAssignment != ASSIGNMENT_POW ) )
-                        {
-                                fShowAssignmentMenu = TRUE;
-                        }
-                        else
-                        {
-                                fShowRemoveMenu = TRUE;
-                        }
-
-                        // set box y positions
-                        AssignmentPosition.iY =  giBoxY;
-                        TrainPosition.iY = AssignmentPosition.iY + GetFontHeight( MAP_SCREEN_FONT )*
-ASSIGN_MENU_TRAIN; AttributePosition.iY = 	TrainPosition.iY; SquadPosition.iY =
-AssignmentPosition.iY; break; case( DESTINATION_POPUP ): bSelectedDestChar = bCharacter;
-                        bSelectedContractChar = -1;
-                        bSelectedAssignChar = -1;
-
-                        // set box y value
-                        ContractPosition.iY = giBoxY;
-                        break;
-                case( CONTRACT_POPUP ):
-                        bSelectedDestChar = -1;
-                        bSelectedContractChar = bCharacter;
-                        bSelectedAssignChar = -1;
-                        RebuildContractBoxForMerc( pSoldier );
-
-                        if( ( pSoldier->bLife > 0 ) &&( pSoldier->bAssignment != ASSIGNMENT_POW ) )
-                        {
-                                fShowContractMenu = TRUE;
-                        }
-                        else
-                        {
-                                fShowRemoveMenu = TRUE;
-                        }
-                        break;
-        }
-}
-*/
-
 INT32 DoMapMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                              MSGBOX_CALLBACK ReturnCallback,
-                              SGPRect *pCenteringRect) {  // reset the highlighted line
+                              MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect,
+                              const struct MouseInput mouse) {
+  // reset the highlighted line
   giHighLine = -1;
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
-                      pCenteringRect);
+                      pCenteringRect, XXX_GetMouseInput());
 }
 
 INT32 DoMapMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
@@ -1011,7 +947,7 @@ INT32 DoMapMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT1
   // do message box and return
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
-                      &CenteringRect);
+                      &CenteringRect, XXX_GetMouseInput());
 }
 
 void GoDownOneLevelInMap(void) { JumpToLevel(iCurrentMapSectorZ + 1); }
@@ -1152,7 +1088,8 @@ void HandleDisplayOfSelectedMercArrows(void) {
   return;
 }
 
-void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ) {
+void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ,
+                                       const struct MouseInput mouse) {
   // handle display of item pop up for this sector
   // check if anyone alive in this sector
   struct ITEM_POOL *pItemPool = NULL;
@@ -1170,8 +1107,9 @@ void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ) {
           (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bActive) &&
           (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bLife >= OKLIFE)) {
         // valid character
+        struct Point16 point = {MAP_INVEN_POOL_X, MAP_INVEN_POOL_Y};
         InitializeItemPickupMenu(&(Menptr[gCharactersList[bSelectedInfoChar].usSolID]), NOWHERE,
-                                 pItemPool, MAP_INVEN_POOL_X, MAP_INVEN_POOL_Y, -1);
+                                 pItemPool, point, -1);
         fWasInited = TRUE;
 
         CreateScreenMaskForInventoryPoolPopUp();
@@ -1211,7 +1149,8 @@ void RemoveScreenMaskForInventoryPoolPopUp(void) {
 }
 
 // invnetory screen mask btn callback
-void InventoryScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void InventoryScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   // inventory screen mask btn callback
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fMapInventoryPoolInited = FALSE;
@@ -2400,7 +2339,8 @@ void SetUpShutDownMapScreenHelpTextScreenMask(void) {
   }
 }
 
-void MapScreenHelpTextScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MapScreenHelpTextScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     // stop showing
     ShutDownUserDefineHelpTextRegions();
@@ -3273,7 +3213,8 @@ void ClearMouseRegionsForMoveBox(void) {
   return;
 }
 
-void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   // mvt callback handler for move box line regions
   INT32 iValue = -1;
 
@@ -3288,7 +3229,8 @@ void MoveMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   // btn callback handler for move box line regions
   INT32 iMoveBoxLine = -1, iRegionType = -1, iListIndex = -1, iClickTime = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -3740,7 +3682,8 @@ void RemoveScreenMaskForMoveBox(void) {
   }
 }
 
-void MoveScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MoveScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   // btn callback handler for move box screen mask region
   if ((iReason & MSYS_CALLBACK_REASON_LBUTTON_UP)) {
     fShowMapScreenMovementList = FALSE;
@@ -5002,10 +4945,6 @@ void RequestIncreaseInTimeCompression(void) {
   if (IsTimeBeingCompressed()) {
     IncreaseGameTimeCompressionRate();
   } else {
-    /*
-                    // start compressing
-                    StartTimeCompression();
-    */
     // ARM Change: start over at 5x compression
     SetGameTimeCompressionLevel(TIME_COMPRESS_5MINS);
   }
@@ -5018,18 +4957,10 @@ void RequestDecreaseInTimeCompression(void) {
     // check that we can
     if (!AllowedToTimeCompress()) {
       // not allowed to compress time
-      TellPlayerWhyHeCantCompressTime();
+      const struct MouseInput mouse = XXX_GetMouseInput();
+      TellPlayerWhyHeCantCompressTime(mouse);
       return;
     }
-
-    // ARM Change: do nothing
-    /*
-                    // if compression mode is set, just restart time so player can see it
-                    if ( giTimeCompressMode > TIME_COMPRESS_X1 )
-                    {
-                            StartTimeCompression();
-                    }
-    */
   }
 }
 

@@ -116,7 +116,7 @@ extern MINE_LOCATION_TYPE gMineLocation[MAX_NUMBER_OF_MINES];
 
 extern void CalculateNonPersistantPBIInfo();
 
-extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 extern BOOLEAN gfGettingNameFromSaveLoadScreen;
 
@@ -251,8 +251,8 @@ STR8 pHortStrings[] = {
 
 void InitializeStrategicMapSectorTownNames(void);
 
-void DoneFadeOutAdjacentSector(void);
-void DoneFadeOutExitGridSector(void);
+static void DoneFadeOutAdjacentSector(const struct MouseInput mouse);
+static void DoneFadeOutExitGridSector(const struct MouseInput mouse);
 
 INT16 PickGridNoNearestEdge(struct SOLDIERTYPE *pSoldier, UINT8 ubTacticalDirection);
 INT16 PickGridNoToWalkIn(struct SOLDIERTYPE *pSoldier, UINT8 ubInsertionDirection,
@@ -270,7 +270,7 @@ extern STR16 pBullseyeStrings[];
 extern void HandleRPCDescription();
 
 #ifdef CRIPPLED_VERSION
-void CrippledVersionFailureToLoadMapCallBack(UINT8 bExitValue);
+void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void CrippledVersionFailureToLoadMapCheck();
 #endif
 
@@ -521,7 +521,7 @@ BOOLEAN InitStrategicEngine() {
   // town distances are pre-calculated and read in from a data file
   // since it takes quite a while to plot strategic paths between all pairs of town sectors...
 
-//#define RECALC_TOWN_DISTANCES
+// #define RECALC_TOWN_DISTANCES
 #ifdef RECALC_TOWN_DISTANCES
   CalcDistancesBetweenTowns();
   WriteOutDistancesBetweenTowns();
@@ -1327,12 +1327,12 @@ BOOLEAN EnterSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
 #endif
 
   // CreateProgressBar( 0, 160, 380, 480, 400 );
-  //#ifdef JA2TESTVERSION
+  // #ifdef JA2TESTVERSION
   //	//add more detailed progress bar
   //	DefineProgressBarPanel( 0, 65, 79, 94, 130, 350, 510, 430 );
   //	swprintf( str, L"Loading map:  %S", bFilename );
   //	SetProgressBarTitle( 0, str, FONT12POINT1, FONT_BLACK, FONT_BLACK );
-  //#endif
+  // #endif
   if (!LoadWorld(bFilename)) {
     return (FALSE);
   }
@@ -1447,7 +1447,7 @@ void UpdateMercsInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
                 // ATE: If we are in i13 - pop up message!
                 if (sSectorY == MAP_ROW_I && sSectorX == 13) {
                   DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[POW_MERCS_ARE_HERE], GAME_SCREEN,
-                               (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                               (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
                 } else {
                   AddCharacterToUniqueSquad(pSoldier);
                   ubPOWSquad = pSoldier->bAssignment;
@@ -2213,7 +2213,8 @@ void JumpIntoAdjacentSector(UINT8 ubTacticalDirection, UINT8 ubJumpCode, INT16 s
 
     // Lock UI!
     guiPendingOverrideEvent = LU_BEGINUILOCK;
-    HandleTacticalUI();
+    const struct MouseInput mouse = XXX_GetMouseInput();
+    HandleTacticalUI(mouse);
   }
 }
 
@@ -2696,7 +2697,7 @@ void AllMercsHaveWalkedOffSector() {
   }
 }
 
-void DoneFadeOutExitGridSector() {
+static void DoneFadeOutExitGridSector(const struct MouseInput mouse) {
   SetCurrentWorldSector(gsAdjacentSectorX, gsAdjacentSectorY, gbAdjacentSectorZ);
   if (gfTacticalTraversal && gpTacticalTraversalGroup && gpTacticalTraversalChosenSoldier) {
     if (gTacticalStatus.fEnemyInSector) {
@@ -2710,7 +2711,7 @@ void DoneFadeOutExitGridSector() {
   FadeInGameScreen();
 }
 
-void DoneFadeOutAdjacentSector() {
+static void DoneFadeOutAdjacentSector(const struct MouseInput mouse) {
   UINT8 ubDirection;
   SetCurrentWorldSector(gsAdjacentSectorX, gsAdjacentSectorY, gbAdjacentSectorZ);
 
@@ -2779,7 +2780,8 @@ void DoneFadeOutAdjacentSector() {
     }
     SetActionToDoOnceMercsGetToLocation(WAIT_FOR_MERCS_TO_WALKON_SCREEN, ubNum, 0, 0, 0);
     guiPendingOverrideEvent = LU_BEGINUILOCK;
-    HandleTacticalUI();
+    const struct MouseInput mouse = XXX_GetMouseInput();
+    HandleTacticalUI(mouse);
 
     // Unset flag here.....
     gfPathAroundObstacles = TRUE;
@@ -4338,10 +4340,10 @@ void CrippledVersionFailureToLoadMapCheck() {
   swprintf(zString,
            L"Error! Sorry, you must stay between sectors A and E in this limited press version.");
 
-  DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionFailureToLoadMapCallBack);
+  DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionFailureToLoadMapCallback);
 }
 
-void CrippledVersionFailureToLoadMapCallBack(UINT8 bExitValue) {
+void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // clean up the code
   ReStartingGame();
 

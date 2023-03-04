@@ -1,6 +1,7 @@
 #ifndef _MAP_SCREEN_INTERFACE_MAP_H
 #define _MAP_SCREEN_INTERFACE_MAP_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Tactical/Vehicles.h"
 
@@ -86,7 +87,7 @@ void ShowPeopleInMotion(INT16 sX, INT16 sY);
 INT16 GetLastSectorOfHelicoptersPath(void);
 
 // display info about helicopter path
-void DisplayDistancesForHelicopter(void);
+void DisplayDistancesForHelicopter(const struct MouseInput mouse);
 
 // display where hei is
 void DisplayPositionOfHelicopter(void);

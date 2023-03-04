@@ -99,7 +99,7 @@ char *gpzSmackerFileNames[] = {
 // cinematic
 INT8 gbIntroScreenMode = -1;
 
-void GetIntroScreenUserInput();
+static void GetIntroScreenUserInput(const struct MouseInput mouse);
 BOOLEAN EnterIntroScreen();
 void RenderIntroScreen();
 void ExitIntroScreen();
@@ -120,7 +120,7 @@ UINT32 IntroScreenInit(void) {
 
 UINT32 IntroScreenShutdown(void) { return (1); }
 
-UINT32 IntroScreenHandle(void) {
+UINT32 IntroScreenHandle(const struct GameInput *gameInput) {
   if (gfIntroScreenEntry) {
     EnterIntroScreen();
     gfIntroScreenEntry = FALSE;
@@ -131,7 +131,7 @@ UINT32 IntroScreenHandle(void) {
 
   RestoreBackgroundRects();
 
-  GetIntroScreenUserInput();
+  GetIntroScreenUserInput(gameInput->mouse);
 
   HandleIntroScreen();
 
@@ -223,36 +223,29 @@ void HandleIntroScreen() {
   InvalidateScreen();
 }
 
-void GetIntroScreenUserInput() {
+static void GetIntroScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
-  struct Point MousePos = GetMousePoint();
 
   while (DequeueEvent(&Event)) {
     // HOOK INTO MOUSE HOOKS
     switch (Event.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 

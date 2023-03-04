@@ -43,14 +43,19 @@ void AllMoveCallback(GUI_BUTTON *btn, INT32 reason);
 void OKCallback(GUI_BUTTON *btn, INT32 reason);
 void CancelCallback(GUI_BUTTON *btn, INT32 reason);
 
-void SectorExitBackgroundCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SectorExitBackgroundCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
 
-void SingleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void AllRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void LoadRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SingleRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void AllRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void LoadRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SingleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse);
+void AllRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void LoadRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void SingleRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void AllRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
+void LoadRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
 
 typedef struct {
   struct MOUSE_REGION BackRegion;
@@ -297,7 +302,7 @@ BOOLEAN InternalInitSectorExitMenu(UINT8 ubDirection, INT16 sAdditionalData) {
   gExitDialog.usHeight = usTextBoxHeight;
 
   guiPendingOverrideEvent = EX_EXITSECTORMENU;
-  HandleTacticalUI();
+  HandleTacticalUI(XXX_GetMouseInput());
 
   gfInSectorExitMenu = TRUE;
 
@@ -357,9 +362,9 @@ BOOLEAN InternalInitSectorExitMenu(UINT8 ubDirection, INT16 sAdditionalData) {
   return (TRUE);
 }
 
-void DoneFadeInWarp(void) {}
+static void DoneFadeInWarp(const struct MouseInput mouse) {}
 
-void DoneFadeOutWarpCallback(void) {
+static void DoneFadeOutWarpCallback(const struct MouseInput mouse) {
   INT32 cnt;
   struct SOLDIERTYPE *pSoldier;
 
@@ -402,7 +407,7 @@ void DoneFadeOutWarpCallback(void) {
   FadeInGameScreen();
 }
 
-void WarpToSurfaceCallback(UINT8 bExitValue) {
+void WarpToSurfaceCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gFadeOutDoneCallback = DoneFadeOutWarpCallback;
 
@@ -420,7 +425,7 @@ BOOLEAN InitSectorExitMenu(UINT8 ubDirection, INT16 sAdditionalData) {
     if (GetWarpOutOfMineCodes(&gsWarpWorldX, &gsWarpWorldY, &gbWarpWorldZ, &gsWarpGridNo)) {
       // ATE: Check if we are in a creature lair and bring up box if so....
       DoMessageBox(MSG_BOX_BASIC_STYLE, gzLateLocalizedString[33], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, WarpToSurfaceCallback, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, WarpToSurfaceCallback, NULL, XXX_GetMouseInput());
 
       return (TRUE);
     }
@@ -685,7 +690,8 @@ void RemoveSectorExitMenu(BOOLEAN fOk) {
         swprintf(Str, ARR_SIZE(Str), pMessageStrings[MSG_EPC_CANT_TRAVERSE],
                  MercPtrs[gusSelectedSoldier]->name);
 
-        DoMessageBox(MSG_BOX_BASIC_STYLE, Str, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+        DoMessageBox(MSG_BOX_BASIC_STYLE, Str, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL,
+                     XXX_GetMouseInput());
         return;
       }
     }
@@ -809,31 +815,35 @@ void CancelCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void SectorExitBackgroundCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SectorExitBackgroundCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     // gMsgBox.bHandled = MSG_BOX_RETURN_NO;
   }
 }
 
-void SingleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SingleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     SingleMoveAction();
   }
 }
 
-void AllRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void AllRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     AllMoveAction();
   }
 }
 
-void LoadRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LoadRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                        const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gExitDialog.fGotoSector = !gExitDialog.fGotoSector;
   }
 }
 
-void SingleRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SingleRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_MOVE) {
     gExitDialog.fSingleMoveHilighted = TRUE;
   } else if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -841,7 +851,8 @@ void SingleRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void AllRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void AllRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_MOVE) {
     gExitDialog.fAllMoveHilighted = TRUE;
   } else if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -849,7 +860,8 @@ void AllRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void LoadRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LoadRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_MOVE) {
     gExitDialog.fGotoSectorHilighted = TRUE;
   } else if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {

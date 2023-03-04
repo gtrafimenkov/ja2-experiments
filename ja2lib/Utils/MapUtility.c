@@ -49,7 +49,7 @@ typedef struct {
 
 UINT32 MapUtilScreenInit() { return (TRUE); }
 
-UINT32 MapUtilScreenHandle() {
+UINT32 MapUtilScreenHandle(const struct GameInput *gameInput) {
   static INT16 fNewMap = TRUE;
   static INT16 sFileNum = 0;
   InputAtom InputEvent;
@@ -314,7 +314,7 @@ UINT32 MapUtilScreenShutdown() { return (TRUE); }
 
 UINT32 MapUtilScreenInit() { return (TRUE); }
 
-UINT32 MapUtilScreenHandle() {
+UINT32 MapUtilScreenHandle(const struct GameInput *gameInput) {
   // If this screen ever gets set, then this is a bad thing -- endless loop
   return (ERROR_SCREEN);
 }

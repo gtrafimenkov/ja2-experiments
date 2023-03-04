@@ -44,6 +44,8 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 
+static void DoneFadeInForSaveLoadScreen(const struct MouseInput mouse);
+
 BOOLEAN gfSchedulesHosed = FALSE;
 extern UINT32 guiBrokenSaveGameVersion;
 
@@ -214,11 +216,14 @@ INT32 guiSaveLoadImage;
 
 // Mouse regions for the currently selected save game
 struct MOUSE_REGION gSelectedSaveRegion[NUM_SAVE_GAMES];
-void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectedSaveRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
+void SelectedSaveRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void SelectedSaveRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                        const struct MouseInput mouse);
 
 struct MOUSE_REGION gSLSEntireScreenRegion;
-void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectedSLSEntireRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                     const struct MouseInput mouse);
 
 //////////////////////////////////////////////////////
 //
@@ -229,9 +234,9 @@ void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason
 BOOLEAN EnterSaveLoadScreen();
 void RenderSaveLoadScreen();
 void ExitSaveLoadScreen();
-void HandleSaveLoadScreen();
-void GetSaveLoadScreenUserInput();
-void SaveLoadGameNumber(INT8 bSaveGameID);
+static void HandleSaveLoadScreen(const struct MouseInput mouse);
+static void GetSaveLoadScreenUserInput(const struct MouseInput mouse);
+static void SaveLoadGameNumber(INT8 bSaveGameID, const struct MouseInput mouse);
 BOOLEAN LoadSavedGameHeader(INT8 bEntry, SAVED_GAME_HEADER *pSaveGameHeader);
 BOOLEAN DisplaySaveGameEntry(INT8 bEntryID);  //, UINT16 usPosY );
 BOOLEAN DisplaySaveGameList();
@@ -239,23 +244,26 @@ void InitSaveLoadScreenTextInputBoxes();
 void DestroySaveLoadTextInputBoxes();
 void SetSelection(UINT8 ubNewSelection);
 UINT8 CompareSaveGameVersion(INT8 bSaveGameID);
-void LoadSavedGameWarningMessageBoxCallBack(UINT8 bExitValue);
-void LoadSavedGameDeleteAllSaveGameMessageBoxCallBack(UINT8 bExitValue);
+void LoadSavedGameWarningMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
+void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue,
+                                                      const struct MouseInput mouse);
 void DeleteAllSaveGameFile();
 void DisplayOnScreenNumber(BOOLEAN fErase);
 
 void DisableSelectedSlot();
 
-void ConfirmSavedGameMessageBoxCallBack(UINT8 bExitValue);
-void ConfirmLoadSavedGameMessageBoxCallBack(UINT8 bExitValue);
-// void			FailedSavingGameCallBack( UINT8 bExitValue );
-void FailedLoadingGameCallBack(UINT8 bExitValue);
+void ConfirmSavedGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
+void ConfirmLoadSavedGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
+// void			FailedSavingGameCallback( UINT8 bExitValue );
+void FailedLoadingGameCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void SetSaveLoadExitScreen(UINT32 uiScreen);
 
-void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue);
-void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack(UINT8 bExitValue);
+void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue,
+                                                           const struct MouseInput mouse);
+void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue,
+                                                            const struct MouseInput mouse);
 
-void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue);
+static void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue, const struct MouseInput mouse);
 void ClearSelectedSaveSlot();
 void MoveSelectionUpOrDown(BOOLEAN fUp);
 void SaveGameToSlotNum();
@@ -282,7 +290,7 @@ UINT32 SaveLoadScreenInit() {
   return (TRUE);
 }
 
-UINT32 SaveLoadScreenHandle() {
+UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfSaveLoadScreenEntry) {
@@ -300,7 +308,7 @@ UINT32 SaveLoadScreenHandle() {
 
   // to guarentee that we do not accept input when we are fading out
   if (!gfStartedFadingOut) {
-    GetSaveLoadScreenUserInput();
+    GetSaveLoadScreenUserInput(gameInput->mouse);
   } else
     gfRedrawSaveLoadScreen = FALSE;
 
@@ -309,7 +317,7 @@ UINT32 SaveLoadScreenHandle() {
 
   RenderAllTextFields();
 
-  HandleSaveLoadScreen();
+  HandleSaveLoadScreen(gameInput->mouse);
 
   if (gfRedrawSaveLoadScreen) {
     RenderSaveLoadScreen();
@@ -324,7 +332,7 @@ UINT32 SaveLoadScreenHandle() {
 
     if (gubSaveGameNextPass == 5) {
       gubSaveGameNextPass = 0;
-      SaveLoadGameNumber(gbSelectedSaveLocation);
+      SaveLoadGameNumber(gbSelectedSaveLocation, gameInput->mouse);
     }
   }
 
@@ -341,7 +349,7 @@ UINT32 SaveLoadScreenHandle() {
   ExecuteBaseDirtyRectQueue();
   EndFrameBufferRender();
 
-  if (HandleFadeOutCallback()) {
+  if (HandleFadeOutCallback(gameInput->mouse)) {
     return (guiSaveLoadExitScreen);
   }
 
@@ -353,7 +361,7 @@ UINT32 SaveLoadScreenHandle() {
     ExitSaveLoadScreen();
   }
 
-  if (HandleFadeInCallback()) {
+  if (HandleFadeInCallback(gameInput->mouse)) {
     // Re-render the scene!
     RenderSaveLoadScreen();
   }
@@ -423,7 +431,7 @@ BOOLEAN EnterSaveLoadScreen() {
       gbSelectedSaveLocation = gGameSettings.bLastSavedGameSlot;
 
       // load the saved game
-      ConfirmLoadSavedGameMessageBoxCallBack(MSG_BOX_RETURN_YES);
+      ConfirmLoadSavedGameMessageBoxCallback(MSG_BOX_RETURN_YES, XXX_GetMouseInput());
     } else {  // else the save isnt valid, so dont load it
       gfLoadGameUponEntry = FALSE;
     }
@@ -489,7 +497,7 @@ BOOLEAN EnterSaveLoadScreen() {
     MSYS_DefineRegion(&gSelectedSaveRegion[i], usPosX, usPosY,
                       (UINT16)(usPosX + SLG_SAVELOCATION_WIDTH),
                       (UINT16)(usPosY + SLG_SAVELOCATION_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                      SelectedSaveRegionMovementCallBack, SelectedSaveRegionCallBack);
+                      SelectedSaveRegionMovementCallback, SelectedSaveRegionCallback);
     MSYS_AddRegion(&gSelectedSaveRegion[i]);
     MSYS_SetRegionUserData(&gSelectedSaveRegion[i], 0, i);
 
@@ -512,7 +520,7 @@ BOOLEAN EnterSaveLoadScreen() {
 
   // Create the screen mask to enable ability to righ click to cancel the sace game
   MSYS_DefineRegion(&gSLSEntireScreenRegion, 0, 0, 639, 479, MSYS_PRIORITY_HIGH - 10, CURSOR_NORMAL,
-                    MSYS_NO_CALLBACK, SelectedSLSEntireRegionCallBack);
+                    MSYS_NO_CALLBACK, SelectedSLSEntireRegionCallback);
   MSYS_AddRegion(&gSLSEntireScreenRegion);
 
   // Reset the regions
@@ -709,13 +717,13 @@ void RenderSaveLoadScreen() {
   InvalidateRegion(0, 0, 639, 479);
 }
 
-void HandleSaveLoadScreen() {
+void HandleSaveLoadScreen(const struct MouseInput mouse) {
   // If the game failed when in a message box, pop up a message box stating this
   if (gfFailedToSaveGameWhenInsideAMessageBox) {
     gfFailedToSaveGameWhenInsideAMessageBox = FALSE;
 
     DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVE_GAME_ERROR], SAVE_LOAD_SCREEN,
-                         MSG_BOX_FLAG_OK, RedrawSaveLoadScreenAfterMessageBox);
+                         MSG_BOX_FLAG_OK, RedrawSaveLoadScreenAfterMessageBox, mouse);
 
     //		gbSelectedSaveLocation = -1;
     gbHighLightedLocation = -1;
@@ -726,12 +734,10 @@ void HandleSaveLoadScreen() {
   }
 }
 
-void GetSaveLoadScreenUserInput() {
+static void GetSaveLoadScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
   INT8 bActiveTextField;
   static BOOLEAN fWasCtrlHeldDownLastFrame = FALSE;
-
-  struct Point MousePos = GetMousePoint();
 
   // if we are going to be instantly leaving the screen, dont draw the numbers
   if (gfLoadGameUponEntry) {
@@ -754,28 +760,22 @@ void GetSaveLoadScreenUserInput() {
     // HOOK INTO MOUSE HOOKS
     switch (Event.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 
@@ -888,11 +888,11 @@ void GetSaveLoadScreenUserInput() {
 
               DestroySaveLoadTextInputBoxes();
 
-              SaveLoadGameNumber(gbSelectedSaveLocation);
+              SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
               return;
             } else {
               if (gbSelectedSaveLocation != -1) {
-                SaveLoadGameNumber(gbSelectedSaveLocation);
+                SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
                 return;
               }
             }
@@ -902,7 +902,7 @@ void GetSaveLoadScreenUserInput() {
 
             gfRedrawSaveLoadScreen = TRUE;
           } else
-            SaveLoadGameNumber(gbSelectedSaveLocation);
+            SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
 
           break;
       }
@@ -910,7 +910,7 @@ void GetSaveLoadScreenUserInput() {
   }
 }
 
-void SaveLoadGameNumber(INT8 bSaveGameID) {
+static void SaveLoadGameNumber(INT8 bSaveGameID, const struct MouseInput mouse) {
   //	CHAR16	zTemp[128];
   UINT8 ubRetVal = 0;
 
@@ -934,7 +934,7 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
       swprintf(sText, ARR_SIZE(sText), zSaveLoadText[SLG_CONFIRM_SAVE], bSaveGameID);
 
       DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, sText, SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                           ConfirmSavedGameMessageBoxCallBack);
+                           ConfirmSavedGameMessageBoxCallback, mouse);
     } else {
       // else do NOT put up a confirmation
 
@@ -948,27 +948,17 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
       if (ubRetVal == SLS_GAME_VERSION_OUT_OF_DATE) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_GAME_VERSION_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallBack);
+                             LoadSavedGameWarningMessageBoxCallback, mouse);
       } else if (ubRetVal == SLS_SAVED_GAME_VERSION_OUT_OF_DATE) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVED_GAME_VERSION_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallBack);
+                             LoadSavedGameWarningMessageBoxCallback, mouse);
       } else {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_BOTH_GAME_AND_SAVED_GAME_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallBack);
+                             LoadSavedGameWarningMessageBoxCallback, mouse);
       }
     } else {
-      /*
-                              IF YOU UNCOMMENT THIS -- LOCALIZE IT!!!
-                              CHAR16	sText[512];
-
-                              swprintf( sText, L"%s%d?", zSaveLoadText[SLG_CONFIRM_LOAD],
-         bSaveGameID );
-
-                              DoSaveLoadMessageBox( MSG_BOX_BASIC_STYLE, sText, SAVE_LOAD_SCREEN,
-         MSG_BOX_FLAG_YESNO, ConfirmLoadSavedGameMessageBoxCallBack );
-      */
       // Setup up the fade routines
       StartFadeOutForSaveLoadScreen();
     }
@@ -977,24 +967,24 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
 
 BOOLEAN DoSaveLoadMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                      UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                     SGPRect *pCenteringRect) {
+                                     SGPRect *pCenteringRect, const struct MouseInput mouse) {
   // do message box and return
   giSaveLoadMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                       (UINT8)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                      ReturnCallback, pCenteringRect);
+                                      ReturnCallback, pCenteringRect, mouse);
 
   // send back return state
   return ((giSaveLoadMessageBox != -1));
 }
 
 BOOLEAN DoSaveLoadMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                             MSGBOX_CALLBACK ReturnCallback) {
+                             MSGBOX_CALLBACK ReturnCallback, const struct MouseInput mouse) {
   SGPRect CenteringRect = {0, 0, 639, 479};
 
   // do message box and return
   giSaveLoadMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                       (UINT8)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                      ReturnCallback, &CenteringRect);
+                                      ReturnCallback, &CenteringRect, mouse);
 
   // send back return state
   return ((giSaveLoadMessageBox != -1));
@@ -1391,7 +1381,7 @@ void BtnSlgSaveLoadCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
 
-    SaveLoadGameNumber(gbSelectedSaveLocation);
+    SaveLoadGameNumber(gbSelectedSaveLocation, XXX_GetMouseInput());
 
     InvalidateRegion(btn->Area.RegionTopLeftX, btn->Area.RegionTopLeftY,
                      btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
@@ -1430,7 +1420,8 @@ btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
 }
 */
 
-void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectedSaveRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   INT8 bActiveTextField;
 
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
@@ -1440,25 +1431,12 @@ void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
     UINT32 uiCurTime = GetJA2Clock();
     INT32 i;
 
-    /*
-                    //If we are saving and this is the quick save slot
-                    if( gfSaveGame && bSelected == 0 )
-                    {
-                            //Display a pop up telling user what the quick save slot is
-                            DoSaveLoadMessageBox( MSG_BOX_BASIC_STYLE, pMessageStrings[
-       MSG_QUICK_SAVE_RESERVED_FOR_TACTICAL ], SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK,
-       RedrawSaveLoadScreenAfterMessageBox ); return;
-                    }
-
-                    SetSelection( bSelected );
-    */
-
     // If we are saving and this is the quick save slot
     if (gfSaveGame && bSelected == 0) {
       // Display a pop up telling user what the quick save slot is
       DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE,
                            pMessageStrings[MSG_QUICK_SAVE_RESERVED_FOR_TACTICAL], SAVE_LOAD_SCREEN,
-                           MSG_BOX_FLAG_OK, RedrawSaveLoadScreenAfterMessageBox);
+                           MSG_BOX_FLAG_OK, RedrawSaveLoadScreenAfterMessageBox, mouse);
       return;
     }
 
@@ -1509,11 +1487,9 @@ void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
       if (gfSaveGame) {
         // if the user is not currently editing the game desc
         if (!gfUserInTextInputMode) {
-          //					SaveLoadGameNumber( gbSelectedSaveLocation );
-
           if ((uiCurTime - uiLastTime) < SLG_DOUBLE_CLICK_DELAY) {
             // Load the saved game
-            SaveLoadGameNumber(gbSelectedSaveLocation);
+            SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
           } else {
             uiLastTime = GetJA2Clock();
           }
@@ -1556,7 +1532,7 @@ void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
       else {
         if ((uiCurTime - uiLastTime) < SLG_DOUBLE_CLICK_DELAY) {
           // Load the saved game
-          SaveLoadGameNumber(bSelected);
+          SaveLoadGameNumber(bSelected, mouse);
         } else {
           uiLastTime = GetJA2Clock();
         }
@@ -1570,7 +1546,8 @@ void SelectedSaveRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectedSaveRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectedSaveRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                        const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     INT8 bTemp;
     pRegion->uiFlags &= (~BUTTON_CLICKED_ON);
@@ -1769,7 +1746,7 @@ UINT8 CompareSaveGameVersion(INT8 bSaveGameID) {
   return (ubRetVal);
 }
 
-void LoadSavedGameWarningMessageBoxCallBack(UINT8 bExitValue) {
+void LoadSavedGameWarningMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // Setup up the fade routines
@@ -1781,11 +1758,12 @@ void LoadSavedGameWarningMessageBoxCallBack(UINT8 bExitValue) {
     // ask if the user wants to delete all the saved game files
     DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_DELETE_ALL_SAVE_GAMES],
                          SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                         LoadSavedGameDeleteAllSaveGameMessageBoxCallBack);
+                         LoadSavedGameDeleteAllSaveGameMessageBoxCallback, XXX_GetMouseInput());
   }
 }
 
-void LoadSavedGameDeleteAllSaveGameMessageBoxCallBack(UINT8 bExitValue) {
+void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue,
+                                                      const struct MouseInput mouse) {
   // yes, Delete all the save game files
   if (bExitValue == MSG_BOX_RETURN_YES) {
     DeleteAllSaveGameFile();
@@ -1864,7 +1842,7 @@ void DisplayOnScreenNumber(BOOLEAN fErase) {
 extern BOOLEAN ValidateSoldierInitLinks(UINT8 ubCode);
 #endif
 
-void DoneFadeOutForSaveLoadScreen(void) {
+static void DoneFadeOutForSaveLoadScreen(const struct MouseInput mouse) {
   // Make sure we DONT reset the levels if we are loading a game
   gfHadToMakeBasementLevels = FALSE;
 
@@ -1874,7 +1852,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
       gfSchedulesHosed = TRUE;
       if (!LoadSavedGame(gbSelectedSaveLocation)) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                             SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallBack);
+                             SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback, mouse);
         NextLoopCheckForEnoughFreeHardDriveSpace();
       } else {
         gfSchedulesHosed = FALSE;
@@ -1883,7 +1861,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
       gfSchedulesHosed = FALSE;
     } else {
       DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                           SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallBack);
+                           SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback, mouse);
       NextLoopCheckForEnoughFreeHardDriveSpace();
     }
   } else {
@@ -1922,7 +1900,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
   gfStartedFadingOut = FALSE;
 }
 
-void DoneFadeInForSaveLoadScreen(void) {
+static void DoneFadeInForSaveLoadScreen(const struct MouseInput mouse) {
   // Leave the screen
   // if we are supposed to stay in tactical, due nothing,
   // if we are supposed to goto mapscreen, leave tactical and go to mapscreen
@@ -1947,7 +1925,8 @@ void DoneFadeInForSaveLoadScreen(void) {
   }
 }
 
-void SelectedSLSEntireRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectedSLSEntireRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                     const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     DisableSelectedSlot();
@@ -1966,7 +1945,7 @@ void DisableSelectedSlot() {
   ClearSelectedSaveSlot();
 }
 
-void ConfirmSavedGameMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmSavedGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   Assert(gbSelectedSaveLocation != -1);
 
   // yes, load the game
@@ -1975,7 +1954,7 @@ void ConfirmSavedGameMessageBoxCallBack(UINT8 bExitValue) {
   }
 }
 
-void ConfirmLoadSavedGameMessageBoxCallBack(UINT8 bExitValue) {
+void ConfirmLoadSavedGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   Assert(gbSelectedSaveLocation != -1);
 
   // yes, load the game
@@ -2004,7 +1983,7 @@ void ErrorDetectedInSaveCallback(UINT8 bValue) {
 }
 #endif
 
-void FailedLoadingGameCallBack(UINT8 bExitValue) {
+void FailedLoadingGameCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes
   if (bExitValue == MSG_BOX_RETURN_OK) {
     // if the current screen is tactical
@@ -2024,35 +2003,6 @@ void FailedLoadingGameCallBack(UINT8 bExitValue) {
 BOOLEAN DoQuickSave() {
   gzGameDescTextField[0] = '\0';
 
-  /*
-          // Make sure the user has enough hard drive space
-          if( !DoesUserHaveEnoughHardDriveSpace() )
-          {
-                  CHAR16	zText[512];
-                  CHAR16	zSpaceOnDrive[512];
-                  UINT32	uiSpaceOnDrive;
-                  CHAR16	zSizeNeeded[512];
-
-                  swprintf( zSizeNeeded, L"%d", REQUIRED_FREE_SPACE / BYTESINMEGABYTE );
-                  InsertCommasForDollarFigure( zSizeNeeded );
-
-                  uiSpaceOnDrive = Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom( );
-
-                  swprintf( zSpaceOnDrive, L"%.2f", uiSpaceOnDrive / (FLOAT)BYTESINMEGABYTE );
-
-                  swprintf( zText, pMessageStrings[ MSG_LOWDISKSPACE_WARNING ], zSpaceOnDrive,
-     zSizeNeeded );
-
-                  if( guiPreviousOptionScreen == MAP_SCREEN )
-                          DoMapMessageBox( MSG_BOX_BASIC_STYLE, zText, MAP_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack ); else DoMessageBox(
-     MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack, NULL );
-
-                  return( FALSE );
-          }
-  */
-
   if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
@@ -2062,7 +2012,7 @@ BOOLEAN DoQuickSave() {
                       MSG_BOX_FLAG_OK, NULL);
     else
       DoMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVE_GAME_ERROR], GAME_SCREEN,
-                   MSG_BOX_FLAG_OK, NULL, NULL);
+                   MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
   }
 
   return (TRUE);
@@ -2106,7 +2056,8 @@ BOOLEAN IsThereAnySavedGameFiles() {
   return (FALSE);
 }
 
-void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue) {
+void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue,
+                                                           const struct MouseInput mouse) {
   if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
@@ -2117,7 +2068,8 @@ void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue) {
   }
 }
 
-void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack(UINT8 bExitValue) {
+void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue,
+                                                            const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_OK) {
     // If the game failed to save
     if (!SaveGame(gbSelectedSaveLocation, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
@@ -2133,7 +2085,9 @@ void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack(UINT8 bExitValue) {
   }
 }
 
-void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue) { gfRedrawSaveLoadScreen = TRUE; }
+static void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue, const struct MouseInput mouse) {
+  gfRedrawSaveLoadScreen = TRUE;
+}
 
 void MoveSelectionUpOrDown(BOOLEAN fUp) {
   INT32 i;
@@ -2199,32 +2153,6 @@ void ClearSelectedSaveSlot() {
 }
 
 void SaveGameToSlotNum() {
-  /*
-          // Make sure the user has enough hard drive space
-          if( !DoesUserHaveEnoughHardDriveSpace() )
-          {
-                  CHAR16	zText[512];
-                  CHAR16	zSizeNeeded[512];
-                  CHAR16	zSpaceOnDrive[512];
-                  UINT32	uiSpaceOnDrive;
-
-                  swprintf( zSizeNeeded, L"%d", REQUIRED_FREE_SPACE / BYTESINMEGABYTE );
-                  InsertCommasForDollarFigure( zSizeNeeded );
-
-                  uiSpaceOnDrive = Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom( );
-
-                  swprintf( zSpaceOnDrive, L"%.2f", uiSpaceOnDrive / (FLOAT)BYTESINMEGABYTE );
-
-                  swprintf( zText, pMessageStrings[ MSG_LOWDISKSPACE_WARNING ], zSpaceOnDrive,
-     zSizeNeeded );
-
-                  DoSaveLoadMessageBox( MSG_BOX_BASIC_STYLE, zText, SAVE_LOAD_SCREEN,
-     MSG_BOX_FLAG_OK, NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallBack );
-
-                  return;
-          }
-  */
-
   // Redraw the save load screen
   RenderSaveLoadScreen();
 
@@ -2237,7 +2165,7 @@ void SaveGameToSlotNum() {
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
 
     DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVE_GAME_ERROR], SAVE_LOAD_SCREEN,
-                         MSG_BOX_FLAG_OK, NULL);
+                         MSG_BOX_FLAG_OK, NULL, XXX_GetMouseInput());
   }
 
   //			gfExitAfterMessageBox = TRUE;

@@ -1,5 +1,6 @@
 #include "Screens.h"
 
+#include "Credits.h"
 #include "JAScreens.h"
 #include "OptionsScreen.h"
 

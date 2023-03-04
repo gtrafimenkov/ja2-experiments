@@ -430,7 +430,7 @@ void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, INT16 sXPos
 
 void CompileInteractiveTiles() {}
 
-void LogMouseOverInteractiveTile(INT16 sGridNo) {
+void LogMouseOverInteractiveTile(INT16 sGridNo, const struct MouseInput mouse) {
   SGPRect aRect;
   INT16 sXMapPos, sYMapPos, sScreenX, sScreenY;
   struct LEVELNODE *pNode;
@@ -449,8 +449,8 @@ void LogMouseOverInteractiveTile(INT16 sGridNo) {
   ConvertGridNoToCellXY(sGridNo, &sXMapPos, &sYMapPos);
 
   // Set mouse stuff
-  sScreenX = gusMouseXPos;
-  sScreenY = gusMouseYPos;
+  sScreenX = mouse.x;
+  sScreenY = mouse.y;
 
   pNode = gpWorldLevelData[sGridNo].pStructHead;
 
@@ -536,9 +536,7 @@ struct LEVELNODE *InternalGetCurInteractiveTile(BOOLEAN fRejectItemsOnTop) {
   return (NULL);
 }
 
-struct LEVELNODE *GetCurInteractiveTile() {
-  return (InternalGetCurInteractiveTile(TRUE));
-}
+struct LEVELNODE *GetCurInteractiveTile() { return (InternalGetCurInteractiveTile(TRUE)); }
 
 struct LEVELNODE *GetCurInteractiveTileGridNo(INT16 *psGridNo) {
   struct LEVELNODE *pNode;
@@ -913,11 +911,11 @@ BlitDone:
   return (fDataFound);
 }
 
-BOOLEAN ShouldCheckForMouseDetections() {
+BOOLEAN ShouldCheckForMouseDetections(const struct MouseInput mouse) {
   BOOLEAN fOK = FALSE;
 
   if (gsINTOldRenderCenterX != gsRenderCenterX || gsINTOldRenderCenterY != gsRenderCenterY ||
-      gusINTOldMousePosX != gusMouseXPos || gusINTOldMousePosY != gusMouseYPos) {
+      gusINTOldMousePosX != mouse.x || gusINTOldMousePosY != mouse.y) {
     fOK = TRUE;
   }
 
@@ -925,8 +923,8 @@ BOOLEAN ShouldCheckForMouseDetections() {
   gsINTOldRenderCenterX = gsRenderCenterX;
   gsINTOldRenderCenterY = gsRenderCenterY;
 
-  gusINTOldMousePosX = gusMouseXPos;
-  gusINTOldMousePosY = gusMouseYPos;
+  gusINTOldMousePosX = mouse.x;
+  gusINTOldMousePosY = mouse.y;
 
   return (fOK);
 }

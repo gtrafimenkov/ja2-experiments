@@ -87,8 +87,8 @@ void ValidateEnemiesHaveWeapons() {
     swprintf(str, ARR_SIZE(str),
              L"%d enemies have been added without any weapons!  KM:0.  Please note sector.",
              iNumInvalid);
-    iErrorDialog =
-        DoMessageBox(MSG_BOX_BASIC_STYLE, str, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, &CenteringRect);
+    iErrorDialog = DoMessageBox(MSG_BOX_BASIC_STYLE, str, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL,
+                                &CenteringRect, XXX_GetMouseInput());
   }
 #endif
 }

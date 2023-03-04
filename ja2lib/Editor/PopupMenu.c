@@ -279,20 +279,20 @@ void RenderPopupMenu() {
 // This private function of PopupMenuHandle determines which menu entry
 // is highlighted based on the mouse cursor position.  Returns 0 if the
 // mouse is out of the menu region.
-UINT8 GetPopupIndexFromMousePosition() {
+static UINT8 GetPopupIndexFromMousePosition(const struct MouseInput mouse) {
   UINT8 ubNumEntriesDown;
   UINT16 usRelX;
   UINT8 ubCount;
-  if (gusMouseXPos >= gPopup.usLeft && gusMouseXPos <= gPopup.usRight &&
-      gusMouseYPos > gPopup.usTop             // one pixel gap on top ignored
-      && gusMouseYPos < gPopup.usBottom - 2)  // two pixel gap on bottom ignored
+  if (mouse.x >= gPopup.usLeft && mouse.x <= gPopup.usRight &&
+      mouse.y > gPopup.usTop             // one pixel gap on top ignored
+      && mouse.y < gPopup.usBottom - 2)  // two pixel gap on bottom ignored
   {
     // subtract the top y coord of the popup region from the mouse's yPos as well
     // as an extra pixel at the top of the region which is ignored in menu selection,
     // divide this number by the height of a menu entry, then add one.  This will
     // return the menu index from 1 (at the top) to n (at the bottom).
-    ubNumEntriesDown = (gusMouseYPos - gPopup.usTop - 1) / gusEntryHeight + 1;
-    usRelX = gusMouseXPos - gPopup.usLeft;
+    ubNumEntriesDown = (mouse.y - gPopup.usTop - 1) / gusEntryHeight + 1;
+    usRelX = mouse.x - gPopup.usLeft;
     ubCount = 0;
     while (usRelX > gPopup.ubColumnWidth[ubCount]) {
       usRelX -= gPopup.ubColumnWidth[ubCount];
@@ -305,16 +305,16 @@ UINT8 GetPopupIndexFromMousePosition() {
   return 0;  // mouse not in valid region.
 }
 
-void PopupMenuHandle() {
+void PopupMenuHandle(const struct MouseInput mouse) {
   InputAtom InputEvent;
 
   if (gPopup.ubActiveType == POPUP_ACTIVETYPE_NOT_YET_DETERMINED) {
     // Attempt to determine if the menu will be persistant or not.
     // Determination is made when the mouse's left button is released or if
     // the mouse cursor enters the menu region.
-    if (gusMouseXPos >= gPopup.usLeft && gusMouseXPos <= gPopup.usRight &&
-        gusMouseYPos > gPopup.usTop             // one pixel gap on top ignored
-        && gusMouseYPos < gPopup.usBottom - 1)  // two pixel gap on bottom ignored
+    if (mouse.x >= gPopup.usLeft && mouse.x <= gPopup.usRight &&
+        mouse.y > gPopup.usTop             // one pixel gap on top ignored
+        && mouse.y < gPopup.usBottom - 1)  // two pixel gap on bottom ignored
     {
       // mouse cursor has just entered the menu region -- nonpersistant.
 
@@ -333,12 +333,12 @@ void PopupMenuHandle() {
   }
   if (!gPopup.fUseKeyboardInfoUntilMouseMoves) {
     // check menu entry based on mouse position
-    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition();
-  } else if (gusMouseXPos != gPopup.usLastMouseX || gusMouseYPos != gPopup.usLastMouseY) {
+    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition(mouse);
+  } else if (mouse.x != gPopup.usLastMouseX || mouse.y != gPopup.usLastMouseY) {
     // The keyboard determined the last entry, but the mouse has moved,
     // so use the mouse to determine the new entry.
     gPopup.fUseKeyboardInfoUntilMouseMoves = FALSE;
-    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition();
+    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition(mouse);
   }
   // Check terminating conditions for persistant states.
   if (gfLeftButtonState && gPopup.ubActiveType == POPUP_ACTIVETYPE_PERSISTANT)
@@ -347,7 +347,7 @@ void PopupMenuHandle() {
       (!gfLeftButtonState && gPopup.ubActiveType == POPUP_ACTIVETYPE_NONPERSISTANT)) {
     // Selection conditions via mouse have been met whether the mouse is in the
     // menu region or not.
-    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition();
+    gPopup.ubSelectedIndex = GetPopupIndexFromMousePosition(mouse);
     if (gPopup.ubSelectedIndex) {
       ProcessPopupMenuSelection();
     }
@@ -364,8 +364,8 @@ void PopupMenuHandle() {
         switch (InputEvent.usParam) {
           case DNARROW:
             gPopup.fUseKeyboardInfoUntilMouseMoves = TRUE;
-            gPopup.usLastMouseX = gusMouseXPos;
-            gPopup.usLastMouseY = gusMouseYPos;
+            gPopup.usLastMouseX = mouse.x;
+            gPopup.usLastMouseY = mouse.y;
             gPopup.ubSelectedIndex++;
             if (gPopup.ubSelectedIndex > gPopup.ubNumEntries) {
               gPopup.ubSelectedIndex = 1;
@@ -373,8 +373,8 @@ void PopupMenuHandle() {
             break;
           case UPARROW:
             gPopup.fUseKeyboardInfoUntilMouseMoves = TRUE;
-            gPopup.usLastMouseX = gusMouseXPos;
-            gPopup.usLastMouseY = gusMouseYPos;
+            gPopup.usLastMouseX = mouse.x;
+            gPopup.usLastMouseY = mouse.y;
             if (gPopup.ubSelectedIndex < 2) {
               gPopup.ubSelectedIndex = gPopup.ubNumEntries;
             } else {
@@ -422,7 +422,7 @@ void ProcessPopupMenuSelection() {
   }
 }
 
-BOOLEAN ProcessPopupMenuIfActive() {
+BOOLEAN ProcessPopupMenuIfActive(const struct MouseInput mouse) {
   if (!gPopup.fActive && !fWaitingForLButtonRelease) return FALSE;
   if (fWaitingForLButtonRelease) {
     if (!gfLeftButtonState) {
@@ -431,7 +431,7 @@ BOOLEAN ProcessPopupMenuIfActive() {
     }
     return TRUE;
   }
-  PopupMenuHandle();
+  PopupMenuHandle(mouse);
   RenderPopupMenu();
   InvalidateRegion(gPopup.usLeft, gPopup.usTop, gPopup.usRight, gPopup.usBottom);
   ExecuteBaseDirtyRectQueue();

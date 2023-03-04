@@ -20,6 +20,7 @@
 #include "Laptop/LaptopSave.h"
 #include "Laptop/Personnel.h"
 #include "Local.h"
+#include "MouseInput.h"
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
@@ -213,8 +214,8 @@
 // contract
 #define CONTRACT_X 185
 #define CONTRACT_Y 50
-//#define CONTRACT_WIDTH  63
-//#define CONTRACT_HEIGHT 10
+// #define CONTRACT_WIDTH  63
+// #define CONTRACT_HEIGHT 10
 
 // trash can
 #define TRASH_CAN_X 176
@@ -315,8 +316,8 @@
 #define SOLDIER_PIC_Y 20
 #define SOLDIER_HAND_X 6
 #define SOLDIER_HAND_Y 81
-//#define	TM_INV_WIDTH								58
-//#define	TM_INV_HEIGHT								23
+// #define	TM_INV_WIDTH								58
+// #define	TM_INV_HEIGHT								23
 
 #define CLOCK_X 554
 #define CLOCK_Y 459
@@ -613,7 +614,6 @@ extern struct path *pTempCharacterPath;
 extern struct path *pTempHelicopterPath;
 
 extern BOOLEAN gfAutoAIAware;
-extern void HandlePreBattleInterfaceStates();
 
 // the title for the contract button on the character info panel in the upper left portion of the
 // mapscreen
@@ -654,18 +654,18 @@ extern INT16 MSYS_CurrentMY;
 // PROTOTYPES
 
 // basic input
-void GetMapKeyboardInput(UINT32 *puiNewEvent);
-void PollLeftButtonInMapView(UINT32 *puiNewEvent);
-void PollRightButtonInMapView(UINT32 *puiNewEvent);
+static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse);
+static void PollLeftButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse);
+static void PollRightButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse);
 
 // background render
-void BlitBackgroundToSaveBuffer(void);
+static void BlitBackgroundToSaveBuffer(const struct MouseInput mouse);
 
 // Drawing the Map
-UINT32 HandleMapUI();
-void RenderMapCursorsIndexesAnims(void);
+static UINT32 HandleMapUI(const struct MouseInput mouse);
+static void RenderMapCursorsIndexesAnims(const struct MouseInput mouse);
 BOOLEAN GetMapXY(INT16 sX, INT16 sY, INT16 *psMapWorldX, INT16 *psMapWorldY);
-BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY);
+BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY, const struct MouseInput mouse);
 
 void StartConfirmMapMoveMode(INT16 sMapY);
 void EndConfirmMapMoveMode(void);
@@ -740,7 +740,7 @@ void RenderTeamRegionBackground(void);
 void RenderMapRegionBackground(void);
 void HandleHighLightingOfLinesInTeamPanel(void);
 void ClearTeamPanel();
-void PlotTemporaryPaths(void);
+static void PlotTemporaryPaths(const struct MouseInput mouse);
 void PlotPermanentPaths(void);
 void RenderHandPosItem(void);
 void ContractListRegionBoxGlow(UINT16 usCount);
@@ -768,8 +768,10 @@ void CreateMercRemoveAssignBox(void);
 void DetermineWhichAssignmentMenusCanBeShown(void);
 
 void DetermineIfContractMenuCanBeShown(void);
-void ContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
+void ContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 void HandleShadingOfLinesForContractMenu(void);
 
 void UpdateStatusOfMapSortButtons(void);
@@ -801,36 +803,54 @@ void HandleContractTimeFlashForMercThatIsAboutLeave(void);
 // Mouse Region Callbacks
 
 // team list
-void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListInfoRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListAssignmentRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListAssignmentRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListDestinationRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListDestinationRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListContractRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListContractRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListSleepRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TeamListSleepRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void TeamListInfoRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
+void TeamListInfoRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
+void TeamListAssignmentRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                         const struct MouseInput mouse);
+void TeamListAssignmentRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                         const struct MouseInput mouse);
+void TeamListDestinationRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                          const struct MouseInput mouse);
+void TeamListDestinationRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                          const struct MouseInput mouse);
+void TeamListContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                       const struct MouseInput mouse);
+void TeamListContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                       const struct MouseInput mouse);
+void TeamListSleepRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
+void TeamListSleepRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
-void FaceRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void FaceRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void FaceRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
+void FaceRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
 
-void ItemRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ItemRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ItemRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
+void ItemRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
 
 // mapscreen mouse region screen mask btn callback
-void MapScreenMarkRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MapScreenMarkRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
 // inventory mvt and click callbacks
-void MAPInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MAPInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MAPInvMoveCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MAPInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
+void MAPInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void MAPInvMoveCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
 
-void InvmaskRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TrashCanBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-
-extern void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void InvmaskRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void TrashCanBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
 
 // handle talking
 void HandleSpontanousTalking(void);
@@ -868,10 +888,10 @@ void PrevInventoryMapBtnCallback(GUI_BUTTON *btn, INT32 reason);
 void NextInventoryMapBtnCallback(GUI_BUTTON *btn, INT32 reason);
 
 // check if cursor needs to be set to checkmark or to the walking guy?
-void UpdateCursorIfInLastSector(void);
+static void UpdateCursorIfInLastSector(const struct MouseInput mouse);
 
 void ContractButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 // blt inventory panel
 void BltCharInvPanel();
@@ -890,7 +910,7 @@ BOOLEAN MapCharacterHasAccessibleInventory(INT8 bCharNumber);
 void CheckForInventoryModeCancellation();
 
 void ChangeMapScreenMaskCursor(UINT16 usCursor);
-void CancelOrShortenPlottedPath(void);
+static void CancelOrShortenPlottedPath(const struct MouseInput mouse);
 
 BOOLEAN HandleCtrlOrShiftInTeamPanel(INT8 bCharNumber);
 
@@ -924,7 +944,7 @@ void HandleMilitiaRedistributionClick(void);
 void StartChangeSectorArrivalMode(void);
 BOOLEAN CanMoveBullseyeAndClickedOnIt(INT16 sMapX, INT16 sMapY);
 void CreateBullsEyeOrChopperSelectionPopup(void);
-void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue);
+void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 
 void WakeUpAnySleepingSelectedMercsOnFootOrDriving(void);
 
@@ -2632,7 +2652,7 @@ UINT32 MapScreenShutdown(void) {
   return TRUE;
 }
 
-UINT32 MapScreenHandle(void) {
+UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiNewScreen;
   VSURFACE_DESC vs_desc;
   VOBJECT_DESC VObjectDesc;
@@ -2643,7 +2663,7 @@ UINT32 MapScreenHandle(void) {
   // This determines if the help screen should be active
   if (ShouldTheHelpScreenComeUp(HelpScreenDetermineWhichMapScreenHelpToShow(), FALSE)) {
     // handle the help screen
-    HelpScreenHandler();
+    HelpScreenHandler(gameInput->mouse);
     return (MAP_SCREEN);
   }
 
@@ -2940,7 +2960,7 @@ UINT32 MapScreenHandle(void) {
 
     MSYS_DefineRegion(&gMPanelRegion, INV_REGION_X, INV_REGION_Y, INV_REGION_X + INV_REGION_WIDTH,
                       INV_REGION_Y + INV_REGION_HEIGHT, MSYS_PRIORITY_HIGH, MSYS_NO_CURSOR,
-                      MSYS_NO_CALLBACK, InvmaskRegionBtnCallBack);
+                      MSYS_NO_CALLBACK, InvmaskRegionBtnCallback);
     // screen mask for animated cursors
     MSYS_DefineRegion(&gMapScreenMaskRegion, 0, 0, 640, 480, MSYS_PRIORITY_LOW, CURSOR_NORMAL,
                       MSYS_NO_CALLBACK, MapScreenMarkRegionBtnCallback);
@@ -3044,7 +3064,7 @@ UINT32 MapScreenHandle(void) {
 
   // if not going anywhere else
   if (guiPendingScreen == NO_PENDING_SCREEN) {
-    if (HandleFadeOutCallback()) {
+    if (HandleFadeOutCallback(gameInput->mouse)) {
       // force mapscreen to be reinitialized even though we're already in it
       EndMapScreen(TRUE);
       return (MAP_SCREEN);
@@ -3082,7 +3102,7 @@ UINT32 MapScreenHandle(void) {
   // don't process any input until we've been through here once
   if (gfFirstMapscreenFrame == FALSE) {
     // Handle Interface
-    uiNewScreen = HandleMapUI();
+    uiNewScreen = HandleMapUI(gameInput->mouse);
     if (uiNewScreen != MAP_SCREEN) {
       return (MAP_SCREEN);
     }
@@ -3192,7 +3212,7 @@ UINT32 MapScreenHandle(void) {
   InterruptTimeForMenus();
 
   // place down background
-  BlitBackgroundToSaveBuffer();
+  BlitBackgroundToSaveBuffer(gameInput->mouse);
 
   if (fLeavingMapScreen == TRUE) {
     return (MAP_SCREEN);
@@ -3224,7 +3244,7 @@ UINT32 MapScreenHandle(void) {
 
   if (!fShowMapInventoryPool && !gfPauseDueToPlayerGamePause &&
       !IsMapScreenHelpTextUp() /* && !fDisabledMapBorder */) {
-    RenderMapCursorsIndexesAnims();
+    RenderMapCursorsIndexesAnims(gameInput->mouse);
   }
 
   if (fDisableDueToBattleRoster == FALSE) {
@@ -3313,10 +3333,10 @@ UINT32 MapScreenHandle(void) {
   if ((bSelectedDestChar != -1) || (fPlotForHelicopter == TRUE)) {
     // plot out paths
     PlotPermanentPaths();
-    PlotTemporaryPaths();
+    PlotTemporaryPaths(gameInput->mouse);
 
     // show ETA
-    RenderMapBorderEtaPopUp();
+    RenderMapBorderEtaPopUp(gameInput->mouse);
     DisplayGroundEta();
 
     // DisplayDestinationOfCurrentDestMerc( );
@@ -3325,13 +3345,13 @@ UINT32 MapScreenHandle(void) {
   HandleContractRenewalSequence();
 
   // handle dialog
-  HandleDialogue();
+  HandleDialogue(gameInput->mouse);
 
   // now the border corner piece
   //	RenderMapBorderCorner( );
 
   // handle display of inventory pop up
-  HandleDisplayOfItemPopUpForSector(9, 1, 0);
+  HandleDisplayOfItemPopUpForSector(9, 1, 0, gameInput->mouse);
 
   // Display Framerate
   DisplayFrameRate();
@@ -3445,7 +3465,7 @@ UINT32 MapScreenHandle(void) {
     RenderKeyRingPopup(FALSE);
   }
 
-  CheckForMeanwhileOKStart();
+  CheckForMeanwhileOKStart(gameInput->mouse);
 
   // save background rects
   // ATE: DO this BEFORE rendering help text....
@@ -3479,7 +3499,7 @@ UINT32 MapScreenHandle(void) {
   ExecuteBaseDirtyRectQueue();
 
   // update cursor
-  UpdateCursorIfInLastSector();
+  UpdateCursorIfInLastSector(gameInput->mouse);
 
   // about to leave for new map
   if (gfLoadPending == 1) {
@@ -3499,7 +3519,7 @@ UINT32 MapScreenHandle(void) {
 
   // if not going anywhere else
   if (guiPendingScreen == NO_PENDING_SCREEN) {
-    if (HandleFadeInCallback()) {
+    if (HandleFadeInCallback(gameInput->mouse)) {
       // force mapscreen to be reinitialized even though we're already in it
       EndMapScreen(TRUE);
     }
@@ -3508,7 +3528,7 @@ UINT32 MapScreenHandle(void) {
     }
   }
 
-  HandlePreBattleInterfaceStates();
+  HandlePreBattleInterfaceStates(gameInput->mouse);
 
   if (gfHotKeyEnterSector) {
     gfHotKeyEnterSector = FALSE;
@@ -3785,7 +3805,7 @@ void DrawTimeRemaining(INT16 sCharNumber, INT32 iFont, UINT8 ubFontColor) {
              ((UINT32)iFont));
 }
 
-void RenderMapCursorsIndexesAnims() {
+static void RenderMapCursorsIndexesAnims(const struct MouseInput mouse) {
   BOOLEAN fSelectedSectorHighlighted = FALSE;
   BOOLEAN fSelectedCursorIsYellow = TRUE;
   UINT16 usCursorColor;
@@ -3805,7 +3825,7 @@ void RenderMapCursorsIndexesAnims() {
   fDrawCursors = CanDrawSectorCursor();
 
   // if mouse cursor is over a map sector
-  if (fDrawCursors && (GetMouseMapXY(&gsHighlightSectorX, &gsHighlightSectorY))) {
+  if (fDrawCursors && (GetMouseMapXY(&gsHighlightSectorX, &gsHighlightSectorY, mouse))) {
     // handle highlighting of sector pointed at ( WHITE )
 
     // if we're over a different sector than when we previously blitted this
@@ -3889,16 +3909,11 @@ void RenderMapCursorsIndexesAnims() {
 
   if (fHighlightChanged || gfMapPanelWasRedrawn) {
     // redraw sector index letters and numbers
-    /*
-                    if( fZoomFlag )
-                            DrawMapIndexSmallMap( fSelectedCursorIsYellow );
-                    else
-    */
     DrawMapIndexBigMap(fSelectedCursorIsYellow);
   }
 }
 
-UINT32 HandleMapUI() {
+static UINT32 HandleMapUI(const struct MouseInput mouse) {
   UINT32 uiNewEvent = MAP_EVENT_NONE;
   INT16 sMapX = 0, sMapY = 0;
   INT16 sX, sY;
@@ -3906,13 +3921,13 @@ UINT32 HandleMapUI() {
   BOOLEAN fWasAlreadySelected;
 
   // Get Input from keyboard
-  GetMapKeyboardInput(&uiNewEvent);
+  GetMapKeyboardInput(&uiNewEvent, mouse);
 
   CreateDestroyMapInvButton();
 
   // Get mouse
-  PollLeftButtonInMapView(&uiNewEvent);
-  PollRightButtonInMapView(&uiNewEvent);
+  PollLeftButtonInMapView(&uiNewEvent, mouse);
+  PollRightButtonInMapView(&uiNewEvent, mouse);
 
   // Switch on event
   switch (uiNewEvent) {
@@ -3920,7 +3935,7 @@ UINT32 HandleMapUI() {
       break;
 
     case MAP_EVENT_PLOT_PATH:
-      GetMouseMapXY(&sMapX, &sMapY);
+      GetMouseMapXY(&sMapX, &sMapY, mouse);
 
       // plotting for the chopper?
       if (fPlotForHelicopter == TRUE) {
@@ -3969,49 +3984,13 @@ UINT32 HandleMapUI() {
       break;
 
     case MAP_EVENT_CANCEL_PATH:
-      CancelOrShortenPlottedPath();
+      CancelOrShortenPlottedPath(mouse);
       break;
-
-      /*
-          case MAP_EVENT_SELECT_SECTOR:
-                              // will select the sector the selected merc is in
-
-                              sMapX=Menptr[gCharactersList[bSelectedInfoChar].usSolID].sSectorX;
-                              sMapY=Menptr[gCharactersList[bSelectedInfoChar].usSolID].sSectorY;
-                              bMapZ=Menptr[gCharactersList[bSelectedInfoChar].usSolID].bSectorZ;
-
-                              if( ( sSelMapX != sMapX || sSelMapY != sMapY || iCurrentMapSectorZ !=
-         bMapZ ) && ( gTacticalStatus.fDidGameJustStart == FALSE ) && ( gfPreBattleInterfaceActive
-         == FALSE ) )
-                              {
-                                      ChangeSelectedMapSector( sMapX, sMapY, bMapZ );
-
-                                      fTeamPanelDirty = TRUE;
-
-                                      fMapScreenBottomDirty = TRUE;
-              bSelectedDestChar=-1;
-                              }
-
-                              break;
-      */
 
     case MAP_EVENT_CLICK_SECTOR:
 
       // Get Current mouse position
-      if (GetMouseMapXY(&sMapX, &sMapY)) {
-        /*
-                                        if( fZoomFlag == TRUE )
-                                        {
-                                                // convert to zoom out coords from screen coords
-                              sMapX = ( INT16 )( iZoomX / MAP_GRID_X + sMapX ) / 2;
-                              sMapY = ( INT16 )( iZoomY / MAP_GRID_Y + sMapY ) / 2;
-                                                //sMapX = ( INT16 ) ( ( ( iZoomX ) / ( MAP_GRID_X *
-           2) ) + sMapX / 2 );
-                                                //sMapX = ( INT16 ) ( ( ( iZoomY ) / ( MAP_GRID_Y *
-           2) ) + sMapY / 2 );
-                                        }
-        */
-
+      if (GetMouseMapXY(&sMapX, &sMapY, mouse)) {
         // not zoomed out, make sure this is a valid sector
         if (IsTheCursorAllowedToHighLightThisSector(sMapX, sMapY) == FALSE) {
           // do nothing, return
@@ -4132,8 +4111,8 @@ UINT32 HandleMapUI() {
         if (gfBlitBattleSectorLocator && sMapX == gubPBSectorX && sMapY == gubPBSectorY &&
             iCurrentMapSectorZ == gubPBSectorZ) {  // Bring up a non-persistant version of mapscreen
                                                    // if the user clicks on the sector where a
-          // battle is taking place.
-          InitPreBattleInterface(NULL, FALSE);
+                                                   // battle is taking place.
+          InitPreBattleInterface(NULL, FALSE, mouse);
           return (MAP_SCREEN);
         }
 
@@ -4198,7 +4177,7 @@ UINT32 HandleMapUI() {
   return (uiNewScreen);
 }
 
-void GetMapKeyboardInput(UINT32 *puiNewEvent) {
+static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   InputAtom InputEvent;
   INT8 bSquadNumber;
   UINT8 ubGroupId = 0;
@@ -4209,33 +4188,25 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
   fAlt = _KeyDown(ALT);
 
   while (DequeueEvent(&InputEvent)) {
-    struct Point MousePos = GetMousePoint();
-
     // HOOK INTO MOUSE HOOKS
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 
@@ -4861,7 +4832,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
           if ((fCtrl) && (CHEATER_CHEAT_LEVEL())) {
             // check if selected dest char,
             if ((bSelectedDestChar != -1) && (fPlotForHelicopter == FALSE) &&
-                (iCurrentMapSectorZ == 0) && (GetMouseMapXY(&sMapX, &sMapY))) {
+                (iCurrentMapSectorZ == 0) && (GetMouseMapXY(&sMapX, &sMapY, mouse))) {
               INT16 sDeltaX, sDeltaY;
               INT16 sPrevX, sPrevY;
               struct SOLDIERTYPE *pSoldier = MercPtrs[gCharactersList[bSelectedDestChar].usSolID];
@@ -5285,23 +5256,23 @@ void EndMapScreen(BOOLEAN fDuringFade) {
   gfRequestGiveSkyriderNewDestination = FALSE;
 }
 
-BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY) {
+BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY, const struct MouseInput mouse) {
   if (IsMapScreenHelpTextUp()) {
     // don't show highlight while global help text is up
     return (FALSE);
   }
 
-  struct Point MousePos = GetMousePoint();
+  struct MouseInput mcopy = mouse;
 
   if (fZoomFlag) {
-    if (MousePos.x > MAP_GRID_X + MAP_VIEW_START_X) MousePos.x -= MAP_GRID_X;
-    if (MousePos.x > MAP_VIEW_START_X + MAP_VIEW_WIDTH) MousePos.x = -1;
-    if (MousePos.y > MAP_GRID_Y + MAP_VIEW_START_Y) MousePos.y -= MAP_GRID_Y;
-    if (MousePos.y > MAP_VIEW_START_Y + MAP_VIEW_HEIGHT - 11) MousePos.y = -11;
-    if (MousePos.y < MAP_VIEW_START_Y) MousePos.y = -1;
+    if (mcopy.x > MAP_GRID_X + MAP_VIEW_START_X) mcopy.x -= MAP_GRID_X;
+    if (mcopy.x > MAP_VIEW_START_X + MAP_VIEW_WIDTH) mcopy.x = -1;
+    if (mcopy.y > MAP_GRID_Y + MAP_VIEW_START_Y) mcopy.y -= MAP_GRID_Y;
+    if (mcopy.y > MAP_VIEW_START_Y + MAP_VIEW_HEIGHT - 11) mcopy.y = -11;
+    if (mcopy.y < MAP_VIEW_START_Y) mcopy.y = -1;
   }
 
-  return (GetMapXY((INT16)MousePos.x, (INT16)MousePos.y, psMapWorldX, psMapWorldY));
+  return (GetMapXY((INT16)mcopy.x, (INT16)mcopy.y, psMapWorldX, psMapWorldY));
 }
 
 BOOLEAN GetMapXY(INT16 sX, INT16 sY, INT16 *psMapWorldX, INT16 *psMapWorldY) {
@@ -5365,7 +5336,7 @@ void RenderMapHighlight(INT16 sMapX, INT16 sMapY, UINT16 usLineColor, BOOLEAN fS
   UnLockVideoSurface(FRAME_BUFFER);
 }
 
-void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
+static void PollLeftButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   static BOOLEAN fLBBeenPressedInMapView = FALSE;
   INT16 sMapX, sMapY;
 
@@ -5419,18 +5390,7 @@ void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
         if ((bSelectedDestChar != -1) || (fPlotForHelicopter == TRUE)) {
           fEndPlotting = FALSE;
 
-          GetMouseMapXY(&sMapX, &sMapY);
-
-          /*
-                                                  // translate screen values to map grid values for
-             zoomed in if(fZoomFlag)
-                                                  {
-                                                          sMapX=(UINT16)iZoomX/MAP_GRID_X+sMapX;
-                                                          sMapX=sMapX/2;
-                                                          sMapY=(UINT16)iZoomY/MAP_GRID_Y+sMapY;
-                                                          sMapY=sMapY/2;
-                                                  }
-          */
+          GetMouseMapXY(&sMapX, &sMapY, mouse);
 
           // if he clicked on the last sector in his current path
           if (CheckIfClickOnLastSectorInPath(sMapX, sMapY)) {
@@ -5463,7 +5423,7 @@ void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
   fJustFinishedPlotting = FALSE;
 }
 
-void PollRightButtonInMapView(UINT32 *puiNewEvent) {
+static void PollRightButtonInMapView(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   static BOOLEAN fRBBeenPressedInMapView = FALSE;
   INT16 sMapX, sMapY;
 
@@ -5519,17 +5479,7 @@ void PollRightButtonInMapView(UINT32 *puiNewEvent) {
           // cancel/shorten the path
           *puiNewEvent = MAP_EVENT_CANCEL_PATH;
         } else {
-          if (GetMouseMapXY(&sMapX, &sMapY)) {
-            /*
-                                                            if(fZoomFlag)
-                                                            {
-                                                                    sMapX=(UINT16)iZoomX/MAP_GRID_X+sMapX;
-                                                                    sMapX=sMapX/2;
-                                                                    sMapY=(UINT16)iZoomY/MAP_GRID_Y+sMapY;
-                                                                    sMapY=sMapY/2;
-                                                            }
-            */
-
+          if (GetMouseMapXY(&sMapX, &sMapY, mouse)) {
             if ((sSelMapX != sMapX) || (sSelMapY != sMapY)) {
               ChangeSelectedMapSector(sMapX, sMapY, (INT8)iCurrentMapSectorZ);
             }
@@ -5800,12 +5750,15 @@ void HandleCursorOverRifleAmmo() {
   }
 }
 
-void MAPInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {}
+void MAPInvClickCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse) {}
 
-void MAPInvMoveCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {}
+void MAPInvMoveCamoCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {}
 
 // this is Map Screen's version of SMInvMoveCallback()
-void MAPInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MAPInvMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                        const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   UINT32 uiHandPos;
 
@@ -5860,7 +5813,8 @@ BOOLEAN MAPInternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, UINT8 ubSt
 }
 
 // this is Map Screen's version of SMInvClickCallback()
-void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   UINT32 uiHandPos;
   UINT16 usOldItemIndex, usNewItemIndex;
@@ -5954,7 +5908,7 @@ void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
           gfDeductPoints = fDeductPoints;
 
           DoScreenIndependantMessageBox( Message[ STR_MERGE_ITEMS ], MSG_BOX_FLAG_YESNO,
-          MergeMessageBoxCallBack ); return;
+          MergeMessageBoxCallback ); return;
           */
         }
         // else handle normally
@@ -6334,7 +6288,7 @@ void CheckToSeeIfMouseHasLeftMapRegionDuringPathPlotting() {
   return;
 }
 
-void BlitBackgroundToSaveBuffer(void) {
+static void BlitBackgroundToSaveBuffer(const struct MouseInput mouse) {
   // render map
   RenderMapRegionBackground();
 
@@ -6348,7 +6302,7 @@ void BlitBackgroundToSaveBuffer(void) {
     ForceButtonUnDirty(giMapContractButton);
     ForceButtonUnDirty(giCharInfoButton[0]);
     ForceButtonUnDirty(giCharInfoButton[1]);
-    RenderPreBattleInterface();
+    RenderPreBattleInterface(mouse);
   }
 
   // now render lower panel
@@ -6373,43 +6327,43 @@ void CreateMouseRegionsForTeamList(void) {
     MSYS_DefineRegion(&gTeamListNameRegion[sCounter], NAME_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), NAME_X + NAME_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd), MSYS_PRIORITY_NORMAL,
-                      MSYS_NO_CURSOR, TeamListInfoRegionMvtCallBack, TeamListInfoRegionBtnCallBack);
+                      MSYS_NO_CURSOR, TeamListInfoRegionMvtCallback, TeamListInfoRegionBtnCallback);
 
     // assignment region
     MSYS_DefineRegion(&gTeamListAssignmentRegion[sCounter], ASSIGN_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), ASSIGN_X + ASSIGN_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListAssignmentRegionMvtCallBack,
-                      TeamListAssignmentRegionBtnCallBack);
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListAssignmentRegionMvtCallback,
+                      TeamListAssignmentRegionBtnCallback);
 
     // location region (same function as name regions, so uses the same callbacks)
     MSYS_DefineRegion(&gTeamListLocationRegion[sCounter], LOC_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), LOC_X + LOC_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListInfoRegionMvtCallBack,
-                      TeamListInfoRegionBtnCallBack);
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListInfoRegionMvtCallback,
+                      TeamListInfoRegionBtnCallback);
 
     // destination region
     MSYS_DefineRegion(
         &gTeamListDestinationRegion[sCounter], DEST_ETA_X,
         (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), DEST_ETA_X + DEST_ETA_WIDTH,
         (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd), MSYS_PRIORITY_NORMAL + 1,
-        MSYS_NO_CURSOR, TeamListDestinationRegionMvtCallBack, TeamListDestinationRegionBtnCallBack);
+        MSYS_NO_CURSOR, TeamListDestinationRegionMvtCallback, TeamListDestinationRegionBtnCallback);
 
     // contract region
     MSYS_DefineRegion(&gTeamListContractRegion[sCounter], TIME_REMAINING_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd),
                       TIME_REMAINING_X + TIME_REMAINING_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListContractRegionMvtCallBack,
-                      TeamListContractRegionBtnCallBack);
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListContractRegionMvtCallback,
+                      TeamListContractRegionBtnCallback);
 
     // contract region
     MSYS_DefineRegion(&gTeamListSleepRegion[sCounter], SLEEP_X,
                       (INT16)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), SLEEP_X + SLEEP_WIDTH,
                       (INT16)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListSleepRegionMvtCallBack,
-                      TeamListSleepRegionBtnCallBack);
+                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListSleepRegionMvtCallback,
+                      TeamListSleepRegionBtnCallback);
 
     MSYS_SetRegionUserData(&gTeamListNameRegion[sCounter], 0, sCounter);
     MSYS_SetRegionUserData(&gTeamListAssignmentRegion[sCounter], 0, sCounter);
@@ -6445,7 +6399,8 @@ void DestroyMouseRegionsForTeamList(void) {
 }
 
 // mask for mapscreen region
-void MapScreenMarkRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MapScreenMarkRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // reset selected characters
     ResetAllSelectedCharacterModes();
@@ -6500,7 +6455,8 @@ void ContractButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListInfoRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse) {
   INT32 iValue = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
 
@@ -6602,7 +6558,8 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
   }
 }
 
-void TeamListInfoRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListInfoRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   if (fLockOutMapScreenInterface || gfPreBattleInterfaceActive) {
@@ -6622,7 +6579,8 @@ void TeamListInfoRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
   }
 }
 
-void TeamListAssignmentRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListAssignmentRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                         const struct MouseInput mouse) {
   INT32 iValue = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
 
@@ -6707,7 +6665,8 @@ void TeamListAssignmentRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iRe
   }
 }
 
-void TeamListAssignmentRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListAssignmentRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                         const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   if (fLockOutMapScreenInterface || gfPreBattleInterfaceActive) {
@@ -6748,7 +6707,8 @@ void TeamListAssignmentRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iRe
   }
 }
 
-void TeamListDestinationRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListDestinationRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                          const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   if (fLockOutMapScreenInterface || gfPreBattleInterfaceActive || fShowMapInventoryPool) {
@@ -6853,7 +6813,8 @@ void TeamListDestinationRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iR
   }
 }
 
-void TeamListDestinationRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListDestinationRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                          const struct MouseInput mouse) {
   INT32 iValue = -1;
 
   if (fLockOutMapScreenInterface || gfPreBattleInterfaceActive) {
@@ -6888,7 +6849,8 @@ void TeamListDestinationRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iR
   }
 }
 
-void TeamListSleepRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListSleepRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   INT32 iValue = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
 
@@ -6953,7 +6915,8 @@ void TeamListSleepRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason)
   }
 }
 
-void TeamListSleepRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListSleepRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   INT32 iValue = -1;
 
   if (fLockOutMapScreenInterface || gfPreBattleInterfaceActive) {
@@ -6990,7 +6953,8 @@ void TeamListSleepRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason)
   }
 }
 
-void TeamListContractRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                       const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   if (fLockOutMapScreenInterface || gfPreBattleInterfaceActive) {
@@ -7014,7 +6978,7 @@ void TeamListContractRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReas
       fTeamPanelDirty = TRUE;
     }
 
-    ContractRegionBtnCallback(pRegion, iReason);
+    ContractRegionBtnCallback(pRegion, iReason, mouse);
   }
 
   if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
@@ -7023,7 +6987,8 @@ void TeamListContractRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReas
   }
 }
 
-void TeamListContractRegionMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TeamListContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                       const struct MouseInput mouse) {
   INT32 iValue = -1;
 
   if (fLockOutMapScreenInterface || gfPreBattleInterfaceActive) {
@@ -7084,16 +7049,8 @@ INT32 GetIndexForThisSoldier(struct SOLDIERTYPE *pSoldier) {
 }
 
 BOOLEAN IsCursorWithInRegion(INT16 sLeft, INT16 sRight, INT16 sTop, INT16 sBottom) {
-  struct Point MousePos = GetMousePoint();
-
-  // is it within region?
-
-  if ((sLeft < MousePos.x) && (sRight > MousePos.x) && (sTop < MousePos.y) &&
-      (sBottom > MousePos.y)) {
-    return (TRUE);
-  } else {
-    return (FALSE);
-  }
+  const struct MouseInput mouse = XXX_GetMouseInput();
+  return (sLeft < mouse.x) && (sRight > mouse.x) && (sTop < mouse.y) && (sBottom > mouse.y);
 }
 
 void HandleHighLightingOfLinesInTeamPanel(void) {
@@ -7127,23 +7084,13 @@ void PlotPermanentPaths(void) {
   }
 }
 
-void PlotTemporaryPaths(void) {
+static void PlotTemporaryPaths(const struct MouseInput mouse) {
   INT16 sMapX, sMapY;
 
   // check to see if we have in fact moved are are plotting a path?
-  if (GetMouseMapXY(&sMapX, &sMapY)) {
+  if (GetMouseMapXY(&sMapX, &sMapY, mouse)) {
     if (fPlotForHelicopter == TRUE) {
       Assert(fShowAircraftFlag == TRUE);
-      /*
-                              if( fZoomFlag )
-                              {
-                                      sMapX =  ( INT16 )( ( ( iZoomX ) / ( WORLD_MAP_X ) ) + sMapX
-         ); sMapX /= 2;
-
-                                      sMapY =  ( INT16 )( ( ( iZoomY ) / ( WORLD_MAP_X ) ) + sMapY
-         ); sMapY /= 2;
-                              }
-      */
 
       // plot temp path
       PlotATemporaryPathForHelicopter(sMapX, sMapY);
@@ -7380,7 +7327,8 @@ void CheckIfPlottingForCharacterWhileAirCraft(void) {
   }
 }
 
-void ContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier = NULL;
 
   // btn callback handler for contract region
@@ -7430,7 +7378,8 @@ void ContractRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void ContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ContractRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   // mvt callback handler for contract region
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     if (fGlowContractRegion == TRUE) {
@@ -7920,13 +7869,13 @@ void RebuildWayPointsForAllSelectedCharsGroups(void) {
   }
 }
 
-void UpdateCursorIfInLastSector(void) {
+static void UpdateCursorIfInLastSector(const struct MouseInput mouse) {
   INT16 sMapX = 0, sMapY = 0;
 
   // check to see if we are plotting a path, if so, see if we are highlighting the last sector int
   // he path, if so, change the cursor
   if ((bSelectedDestChar != -1) || (fPlotForHelicopter == TRUE)) {
-    GetMouseMapXY(&sMapX, &sMapY);
+    GetMouseMapXY(&sMapX, &sMapY, mouse);
 
     // translate screen values to map grid values for zoomed in
     if (fZoomFlag) {
@@ -7969,7 +7918,8 @@ void UpdateCursorIfInLastSector(void) {
   return;
 }
 
-void FaceRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FaceRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   // error checking, make sure someone is there
   if (bSelectedInfoChar == -1) {
     return;
@@ -7997,7 +7947,8 @@ void FaceRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void FaceRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FaceRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   if (bSelectedInfoChar == -1) {
     fShowFaceHightLight = FALSE;
     return;
@@ -8013,14 +7964,16 @@ void FaceRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void ItemRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   // left AND right button are handled the same way
   if (iReason & (MSYS_CALLBACK_REASON_RBUTTON_UP | MSYS_CALLBACK_REASON_LBUTTON_UP)) {
     RequestToggleMercInventoryPanel();
   }
 }
 
-void ItemRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ItemRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse) {
   if (!CanToggleSelectedCharInventory()) {
     fShowItemHighLight = FALSE;
     return;
@@ -8105,7 +8058,7 @@ void DestroyTheItemInCursor() {
   gpItemPointer = NULL;
 }
 
-void TrashItemMessageBoxCallBack(UINT8 bExitValue) {
+void TrashItemMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // find the item and get rid of it
 
@@ -8119,7 +8072,8 @@ void TrashItemMessageBoxCallBack(UINT8 bExitValue) {
   }
 }
 
-void TrashCanBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TrashCanBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (IsMapScreenHelpTextUp()) {
       // stop mapscreen text
@@ -8132,16 +8086,17 @@ void TrashCanBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
       // set up for mapscreen
       if (gpItemPointer->ubMission) {
         DoMapMessageBox(MSG_BOX_BASIC_STYLE, pTrashItemText[1], MAP_SCREEN, MSG_BOX_FLAG_YESNO,
-                        TrashItemMessageBoxCallBack);
+                        TrashItemMessageBoxCallback);
       } else {
         DoMapMessageBox(MSG_BOX_BASIC_STYLE, pTrashItemText[0], MAP_SCREEN, MSG_BOX_FLAG_YESNO,
-                        TrashItemMessageBoxCallBack);
+                        TrashItemMessageBoxCallback);
       }
     }
   }
 }
 
-void TrashCanMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TrashCanMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {
     if (gMPanelRegion.Cursor == EXTERN_CURSOR) {
       fShowTrashCanHighLight = TRUE;
@@ -8355,21 +8310,6 @@ void CreateDestroyTrashCanRegion(void) {
     SetRegionFastHelpText(&gTrashCanRegion, pMiscMapScreenMouseRegionHelpText[1]);
 
     InitMapKeyRingInterface(KeyRingItemPanelButtonCallback);
-    /*
-                    giMapInvNextImage=  LoadButtonImage( "INTERFACE\\inventory_buttons.sti"
-       ,-1,20,-1,22,-1 ); giMapInvNext= QuickCreateButton( giMapInvNextImage, ( 2 ), ( 79 ) ,
-                                                                                    BUTTON_TOGGLE,
-       MSYS_PRIORITY_HIGHEST - 1, ( GUI_CALLBACK )BtnGenericMouseMoveButtonCallback, (
-       GUI_CALLBACK)NextInventoryMapBtnCallback );
-
-
-                    giMapInvPrevImage=  LoadButtonImage( "INTERFACE\\inventory_buttons.sti"
-       ,-1,21,-1,23,-1 ); giMapInvPrev= QuickCreateButton( giMapInvPrevImage, ( 30 ) , ( 79 ),
-                                                                                    BUTTON_TOGGLE,
-       MSYS_PRIORITY_HIGHEST - 1, ( GUI_CALLBACK )BtnGenericMouseMoveButtonCallback, (
-       GUI_CALLBACK)PrevInventoryMapBtnCallback );
-
-            */
 
     // reset the compatable item array at this point
     ResetCompatibleItemArray();
@@ -8394,7 +8334,8 @@ void CreateDestroyTrashCanRegion(void) {
   }
 }
 
-void InvmaskRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void InvmaskRegionBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   // CJC, December 15 1998: do NOTHING for clicks here
 }
 
@@ -8878,7 +8819,7 @@ void CreateDestroyMapCharacterScrollButtons(void) {
   }
 }
 
-void TellPlayerWhyHeCantCompressTime(void) {
+void TellPlayerWhyHeCantCompressTime(const struct MouseInput mouse) {
   // if we're locked into paused time compression by some event that enforces that
   if (PauseStateLocked()) {
 #ifdef JA2BETAVERSION
@@ -8939,7 +8880,7 @@ void TellPlayerWhyHeCantCompressTime(void) {
     } else {
       // The NEW non-persistant PBI is used instead of a dialog box explaining why we can't compress
       // time.
-      InitPreBattleInterface(NULL, FALSE);
+      InitPreBattleInterface(NULL, FALSE, mouse);
     }
   } else if (PlayerGroupIsInACreatureInfestedMine()) {
     DoMapMessageBox(MSG_BOX_BASIC_STYLE, gzLateLocalizedString[28], MAP_SCREEN, MSG_BOX_FLAG_OK,
@@ -8947,7 +8888,7 @@ void TellPlayerWhyHeCantCompressTime(void) {
   }
 }
 
-void MapScreenDefaultOkBoxCallback(UINT8 bExitValue) {
+void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_OK) {
     fMapPanelDirty = TRUE;
@@ -9577,22 +9518,11 @@ void ChangeMapScreenMaskCursor(UINT16 usCursor) {
   }
 }
 
-void CancelOrShortenPlottedPath(void) {
+static void CancelOrShortenPlottedPath(const struct MouseInput mouse) {
   INT16 sMapX, sMapY;
   UINT32 uiReturnValue;
 
-  GetMouseMapXY(&sMapX, &sMapY);
-
-  /*
-          // translate zoom in to zoom out coords
-          if(fZoomFlag)
-          {
-                  sMapX=(UINT16)iZoomX/MAP_GRID_X+sMapX;
-                  sMapX=sMapX/2;
-                  sMapY=(UINT16)iZoomY/MAP_GRID_Y+sMapY;
-                  sMapY=sMapY/2;
-           }
-  */
+  GetMouseMapXY(&sMapX, &sMapY, mouse);
 
   // check if we are in aircraft mode
   if (fShowAircraftFlag == TRUE) {
@@ -10235,7 +10165,7 @@ void CreateBullsEyeOrChopperSelectionPopup(void) {
                                 BullsEyeOrChopperSelectionPopupCallback);
 }
 
-void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue) {
+void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   // button 1 pressed?
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // chose chopper
@@ -10633,11 +10563,6 @@ void RestoreMapSectorCursor(INT16 sMapX, INT16 sMapY) {
 
   sScreenY -= 1;
 
-  /*
-          if(fZoomFlag)
-                  RestoreExternBackgroundRect( ((INT16)( sScreenX - MAP_GRID_X )), ((INT16)(
-     sScreenY - MAP_GRID_Y )), DMAP_GRID_ZOOM_X, DMAP_GRID_ZOOM_Y); else
-  */
   RestoreExternBackgroundRect(sScreenX, sScreenY, DMAP_GRID_X, DMAP_GRID_Y);
 }
 

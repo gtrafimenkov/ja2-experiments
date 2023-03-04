@@ -233,8 +233,10 @@ INT16 gsCurInterfacePanel = TEAM_PANEL;
 void BtnPositionCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnMovementCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason);
-void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
+void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
 
 UINT32 CalcUIMessageDuration(STR16 wString);
 
@@ -560,8 +562,9 @@ void PopupMovementMenu(UI_EVENT *pUIEvent) {
   // Erase other menus....
   EraseInterfaceMenus(TRUE);
 
-  giMenuAnchorX = gusMouseXPos - 18;
-  giMenuAnchorY = gusMouseYPos - 18;
+  const struct MouseInput mouse = XXX_GetMouseInput();
+  giMenuAnchorX = mouse.x - 18;
+  giMenuAnchorY = mouse.y - 18;
 
   // ATE: OK loser, let's check if we're going off the screen!
   if (giMenuAnchorX < 0) {
@@ -1796,7 +1799,7 @@ BOOLEAN InitDoorOpenMenu(struct SOLDIERTYPE *pSoldier, struct STRUCTURE *pStruct
   gOpenDoorMenu.sY = sScreenY - ((BUTTON_PANEL_HEIGHT - sHeight) / 2);
 
   // Alrighty, cancel lock UI if we havn't done so already
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // OK, CHECK FOR BOUNDARIES!
   if ((gOpenDoorMenu.sX + BUTTON_PANEL_WIDTH) > 640) {
@@ -1815,7 +1818,7 @@ BOOLEAN InitDoorOpenMenu(struct SOLDIERTYPE *pSoldier, struct STRUCTURE *pStruct
   gOpenDoorMenu.fMenuHandled = FALSE;
 
   guiPendingOverrideEvent = OP_OPENDOORMENU;
-  HandleTacticalUI();
+  HandleTacticalUI(XXX_GetMouseInput());
 
   PopupDoorOpenMenu(fClosingDoor);
 
@@ -2148,7 +2151,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Check APs
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_OPEN_DOOR, BP_OPEN_DOOR, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         if (gOpenDoorMenu.fClosingDoor) {
           ChangeSoldierState(gOpenDoorMenu.pSoldier,
@@ -2167,7 +2170,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Boot door
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_BOOT_DOOR, BP_BOOT_DOOR, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         InteractWithClosedDoor(gOpenDoorMenu.pSoldier, HANDLE_DOOR_FORCE);
       } else {
@@ -2180,7 +2183,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Unlock door
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_UNLOCK_DOOR, BP_UNLOCK_DOOR, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         InteractWithClosedDoor(gOpenDoorMenu.pSoldier, HANDLE_DOOR_UNLOCK);
       } else {
@@ -2193,7 +2196,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Lockpick
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_PICKLOCK, BP_PICKLOCK, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         InteractWithClosedDoor(gOpenDoorMenu.pSoldier, HANDLE_DOOR_LOCKPICK);
       } else {
@@ -2206,7 +2209,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Lockpick
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_EXAMINE_DOOR, BP_EXAMINE_DOOR, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         InteractWithClosedDoor(gOpenDoorMenu.pSoldier, HANDLE_DOOR_EXAMINE);
       } else {
@@ -2219,7 +2222,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Explode
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_EXPLODE_DOOR, BP_EXPLODE_DOOR, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         InteractWithClosedDoor(gOpenDoorMenu.pSoldier, HANDLE_DOOR_EXPLODE);
       } else {
@@ -2232,7 +2235,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Explode
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_UNTRAP_DOOR, BP_UNTRAP_DOOR, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         InteractWithClosedDoor(gOpenDoorMenu.pSoldier, HANDLE_DOOR_UNTRAP);
       } else {
@@ -2245,7 +2248,7 @@ void BtnDoorMenuCallback(GUI_BUTTON *btn, INT32 reason) {
       // Explode
       if (EnoughPoints(gOpenDoorMenu.pSoldier, AP_USE_CROWBAR, BP_USE_CROWBAR, FALSE)) {
         // Set UI
-        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID);
+        SetUIBusy((UINT8)gOpenDoorMenu.pSoldier->ubID, XXX_GetMouseInput());
 
         InteractWithClosedDoor(gOpenDoorMenu.pSoldier, HANDLE_DOOR_CROWBAR);
       } else {
@@ -2666,9 +2669,9 @@ void CreateTopMessage(UINT32 uiSurface, UINT8 ubType, CHAR16 *psString) {
   gfTopMessageDirty = TRUE;
 }
 
-void TurnExpiredCallBack(UINT8 bExitValue) {
+void TurnExpiredCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // End turn...
-  UIHandleEndTurn(NULL);
+  UIHandleEndTurn(NULL, XXX_GetMouseInput());
 }
 
 void CheckForAndHandleEndPlayerTimeLimit() {
@@ -2682,11 +2685,9 @@ void CheckForAndHandleEndPlayerTimeLimit() {
           gTacticalStatus.usTactialTurnLimitCounter++;
 
           // OK, set message that time limit has expired....
-          // DoMessageBox( MSG_BOX_BASIC_STYLE, L"Turn has Expired!", GAME_SCREEN, ( UINT8
-          // )MSG_BOX_FLAG_OK, TurnExpiredCallBack, NULL );
 
           // End turn...
-          UIHandleEndTurn(NULL);
+          UIHandleEndTurn(NULL, XXX_GetMouseInput());
         }
       }
     }
@@ -2840,33 +2841,7 @@ void EndTopMessage() {
       gTacticalStatus.fInTopMessage = FALSE;
 
       SetRenderFlags(RENDER_FLAG_FULL);
-      // RenderStaticWorldRect( 0, 0, 640, 20, TRUE );
-      // gsVIEWPORT_WINDOW_START_Y = 20;
-
-      // Copy into save buffer...
-      // BltFx.SrcRect.iLeft = 0;
-      // BltFx.SrcRect.iTop  = 0;
-      // BltFx.SrcRect.iRight = 640;
-      // BltFx.SrcRect.iBottom = 20;
-
-      // BltVideoSurface( guiSAVEBUFFER, FRAME_BUFFER, 0,
-      //															 0,
-      // 0,
-      // VS_BLT_SRCSUBRECT, &BltFx );
     }
-    // else
-    //{
-    // Render to save buffer
-    //	CreateTopMessage( guiSAVEBUFFER, gTopMessageTypes[ 0 ], gzTopMessageStrings[ 0 ] );
-    //}
-
-    // Animate up...
-    // gTopMessage.bAnimate = 1;
-    // Set time of last update
-    // gTopMessage.uiTimeOfLastUpdate = GetJA2Clock( ) + 150;
-
-    // Handle first frame now...
-    // HandleTopMessages( );
   }
 }
 
@@ -2980,13 +2955,15 @@ void InitPlayerUIBar(BOOLEAN fInterrupt) {
   }
 }
 
-void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MovementMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     CancelMovementMenu();
   }
 }
 
-void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void DoorMenuBackregionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     CancelOpenDoorMenu();
   }

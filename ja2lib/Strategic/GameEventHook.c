@@ -53,7 +53,7 @@ extern UINT32 guiTimeStampOfCurrentlyExecutingEvent;
 extern BOOLEAN gfPreventDeletionOfAnyEvent;
 
 #ifdef CRIPPLED_VERSION
-void CrippledVersionEndGameCheckCallBack(UINT8 bExitValue);
+void CrippledVersionEndGameCheckCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void CrippledVersionEndGameCheck();
 #endif
 
@@ -364,7 +364,7 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
       break;
 
     case EVENT_HAVENT_MADE_IMP_CHARACTER_EMAIL:
-      HaventMadeImpMercEmailCallBack();
+      HaventMadeImpMercEmailCallback();
       break;
 
     case EVENT_QUARTER_HOUR_UPDATE:
@@ -376,7 +376,7 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
       break;
 
     case EVENT_MERC_SITE_NEW_MERC_AVAILABLE:
-      NewMercsAvailableAtMercSiteCallBack();
+      NewMercsAvailableAtMercSiteCallback();
       break;
 
 #ifdef CRIPPLED_VERSION
@@ -406,10 +406,10 @@ void CrippledVersionEndGameCheck() {
              (8 - guiDay));
   }
 
-  DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionEndGameCheckCallBack);
+  DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionEndGameCheckCallback);
 }
 
-void CrippledVersionEndGameCheckCallBack(UINT8 bExitValue) {
+void CrippledVersionEndGameCheckCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // if we should restart the game
   if (guiDay >= 8) {
     // clean up the code

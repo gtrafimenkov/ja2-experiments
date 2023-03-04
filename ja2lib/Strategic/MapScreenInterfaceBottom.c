@@ -181,8 +181,10 @@ void BtnLaptopCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnTacticalCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnOptionsFromMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 
-void CompressModeClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void CompressMaskClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+static void CompressModeClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
+static void CompressMaskClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
 
 void BtnTimeCompressMoreMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnTimeCompressLessMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
@@ -190,9 +192,8 @@ void BtnTimeCompressLessMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnMessageDownMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnMessageUpMapScreenCallback(GUI_BUTTON *btn, INT32 reason);
 
-void MapScreenMessageScrollBarCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-
-// void CheckForAndHandleAutoMessageScroll( void );
+static void MapScreenMessageScrollBarCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                              const struct MouseInput mouse);
 
 // FUNCTIONS
 
@@ -519,10 +520,10 @@ void DrawNameOfLoadedSector(void) {
   mprintf(sFontX, sFontY, L"%s", sString);
 }
 
-void CompressModeClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+static void CompressModeClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse) {
   if (iReason & (MSYS_CALLBACK_REASON_RBUTTON_UP | MSYS_CALLBACK_REASON_LBUTTON_UP)) {
     if (CommonTimeCompressionChecks() == TRUE) return;
-
     RequestToggleTimeCompression();
   }
 }
@@ -818,14 +819,15 @@ void CreateMapScreenBottomMessageScrollBarRegion(void) {
   MSYS_DefineRegion(&gMapMessageScrollBarRegion, MESSAGE_SCROLL_AREA_START_X,
                     MESSAGE_SCROLL_AREA_START_Y, MESSAGE_SCROLL_AREA_END_X,
                     MESSAGE_SCROLL_AREA_END_Y, MSYS_PRIORITY_NORMAL, MSYS_NO_CURSOR,
-                    MSYS_NO_CALLBACK, MapScreenMessageScrollBarCallBack);
+                    MSYS_NO_CALLBACK, MapScreenMessageScrollBarCallback);
 }
 
 void DeleteMapScreenBottomMessageScrollRegion(void) {
   MSYS_RemoveRegion(&gMapMessageScrollBarRegion);
 }
 
-void MapScreenMessageScrollBarCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+static void MapScreenMessageScrollBarCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                              const struct MouseInput mouse) {
   UINT8 ubMouseYOffset;
   UINT8 ubDesiredSliderOffset;
   UINT8 ubDesiredMessageIndex;
@@ -843,9 +845,7 @@ void MapScreenMessageScrollBarCallBack(struct MOUSE_REGION *pRegion, INT32 iReas
     // this
     if (ubNumMessages > MAX_MESSAGES_ON_MAP_BOTTOM) {
       // where is the mouse?
-      struct Point MousePos = GetMousePoint();
-
-      ubMouseYOffset = (INT8)(MousePos.y - MESSAGE_SCROLL_AREA_START_Y);
+      ubMouseYOffset = (INT8)(mouse.y - MESSAGE_SCROLL_AREA_START_Y);
 
       // if clicking in the top 5 pixels of the slider bar
       if (ubMouseYOffset < (SLIDER_HEIGHT / 2)) {
@@ -1227,9 +1227,10 @@ void CreateDestroyMouseRegionMasksForTimeCompressionButtons(void) {
   }
 }
 
-void CompressMaskClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+static void CompressMaskClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
-    TellPlayerWhyHeCantCompressTime();
+    TellPlayerWhyHeCantCompressTime(mouse);
   }
 }
 

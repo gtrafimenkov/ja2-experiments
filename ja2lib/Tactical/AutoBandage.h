@@ -1,14 +1,15 @@
 #ifndef _AUTO_BANDAGE_H
 #define _AUTO_BANDAGE_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
-//#define VISIBLE_AUTO_BANDAGE
+// #define VISIBLE_AUTO_BANDAGE
 
 void AutoBandage(BOOLEAN fStart);
 void BeginAutoBandage();
 
-BOOLEAN HandleAutoBandage();
+BOOLEAN HandleAutoBandage(const struct MouseInput mouse);
 
 void ShouldBeginAutoBandage();
 

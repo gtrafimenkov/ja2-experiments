@@ -501,15 +501,17 @@ void BtnQuitCallback(GUI_BUTTON *btn, INT32 reason) {
 }
 
 // ITEMS
-void MouseMovedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason) {
-  HandleItemsPanel(gusMouseXPos, gusMouseYPos, GUI_MOVE_EVENT);
+void MouseMovedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason,
+                             const struct MouseInput mouse) {
+  HandleItemsPanel(mouse.x, mouse.y, GUI_MOVE_EVENT);
 }
 
-void MouseClickedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason) {
+void MouseClickedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason,
+                               const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP)
-    HandleItemsPanel(gusMouseXPos, gusMouseYPos, GUI_LCLICK_EVENT);
+    HandleItemsPanel(mouse.x, mouse.y, GUI_LCLICK_EVENT);
   else if (reason & MSYS_CALLBACK_REASON_RBUTTON_UP)
-    HandleItemsPanel(gusMouseXPos, gusMouseYPos, GUI_RCLICK_EVENT);
+    HandleItemsPanel(mouse.x, mouse.y, GUI_RCLICK_EVENT);
 }
 
 void ItemsWeaponsCallback(GUI_BUTTON *btn, INT32 reason) {
@@ -967,11 +969,12 @@ void MercsSetRelativeAttributesCallback(GUI_BUTTON *btn, INT32 reason) {
     SetMercRelativeAttributes((INT8)MSYS_GetBtnUserData(btn, 0));
 }
 
-void MouseMovedInMercRegion(struct MOUSE_REGION *reg, INT32 reason) {
+void MouseMovedInMercRegion(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse) {
   HandleMercInventoryPanel(reg->RelativeXPos, reg->RelativeYPos, GUI_MOVE_EVENT);
 }
 
-void MouseClickedInMercRegion(struct MOUSE_REGION *reg, INT32 reason) {
+void MouseClickedInMercRegion(struct MOUSE_REGION *reg, INT32 reason,
+                              const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP)
     HandleMercInventoryPanel(reg->RelativeXPos, reg->RelativeYPos, GUI_LCLICK_EVENT);
   else if (reason & MSYS_CALLBACK_REASON_RBUTTON_UP)

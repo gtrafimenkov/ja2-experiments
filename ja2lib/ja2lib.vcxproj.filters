@@ -1013,6 +1013,9 @@
     <ClCompile Include="StrUtils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameInput.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGP\Bitmap.h">
@@ -1073,9 +1076,6 @@
       <Filter>Header Files\SGP</Filter>
     </ClInclude>
     <ClInclude Include="SGP\MouseSystem.h">
-      <Filter>Header Files\SGP</Filter>
-    </ClInclude>
-    <ClInclude Include="SGP\MouseSystemMacros.h">
       <Filter>Header Files\SGP</Filter>
     </ClInclude>
     <ClInclude Include="SGP\PCX.h">

@@ -2,6 +2,7 @@
 #define __EDITORMERCS_H
 
 #include "BuildDefines.h"
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 // Merc editing modes.  These are used to determine which buttons to show and hide.
@@ -69,7 +70,7 @@ void IndicateSelectedMerc(INT16 sID);
 void GameInitEditorMercsInfo();
 void GameShutdownEditorMercsInfo();
 void EntryInitEditorMercsInfo();
-void UpdateMercsInfo();
+void UpdateMercsInfo(const struct MouseInput mouse);
 
 void ProcessMercEditing();
 void AddMercToWorld(INT32 iMapIndex);

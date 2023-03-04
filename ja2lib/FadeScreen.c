@@ -2,6 +2,7 @@
 
 #include "GameLoop.h"
 #include "Globals.h"
+#include "JAScreens.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
@@ -94,12 +95,12 @@ BOOLEAN HandleBeginFadeOut(UINT32 uiScreenExit) {
   return (FALSE);
 }
 
-BOOLEAN HandleFadeOutCallback() {
+BOOLEAN HandleFadeOutCallback(const struct MouseInput mouse) {
   if (gfFadeOutDone) {
     gfFadeOutDone = FALSE;
 
     if (gFadeOutDoneCallback != NULL) {
-      gFadeOutDoneCallback();
+      gFadeOutDoneCallback(mouse);
 
       gFadeOutDoneCallback = NULL;
 
@@ -110,12 +111,12 @@ BOOLEAN HandleFadeOutCallback() {
   return (FALSE);
 }
 
-BOOLEAN HandleFadeInCallback() {
+BOOLEAN HandleFadeInCallback(const struct MouseInput mouse) {
   if (gfFadeInDone) {
     gfFadeInDone = FALSE;
 
     if (gFadeInDoneCallback != NULL) {
-      gFadeInDoneCallback();
+      gFadeInDoneCallback(mouse);
     }
 
     gFadeInDoneCallback = NULL;
@@ -231,7 +232,7 @@ void BeginFade(UINT32 uiExitScreen, INT8 bFadeValue, INT8 bType, UINT32 uiDelay)
 
 UINT32 FadeScreenInit() { return (TRUE); }
 
-UINT32 FadeScreenHandle() {
+UINT32 FadeScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiTime;
 
   if (!gfFadeInitialized) {

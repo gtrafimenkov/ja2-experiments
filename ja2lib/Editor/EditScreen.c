@@ -160,7 +160,6 @@ INT32 giMusicID = 0;
 void EraseWorldData();
 
 BOOLEAN EditModeInit(void);
-BOOLEAN EditModeShutdown(void);
 void EnsureStatusOfEditorButtons();
 
 extern BOOLEAN fAllDone;
@@ -416,7 +415,7 @@ BOOLEAN EditModeInit(void) {
 //	EditModeShutdown
 //
 //	The above function's counterpart. Called when exiting the editor back to the game.
-BOOLEAN EditModeShutdown(void) {
+static BOOLEAN EditModeShutdown(const struct MouseInput mouse) {
   if (gfConfirmExitFirst) {
     gfConfirmExitPending = TRUE;
     CreateMessageBox(L"Exit editor?");
@@ -460,7 +459,7 @@ BOOLEAN EditModeShutdown(void) {
   if (gfWorldLoaded) {
     ClearRenderFlags(RENDER_FLAG_SAVEOFF);
     MarkWorldDirty();
-    RenderWorld();
+    RenderWorld(mouse);
   }
 
   InvalidateScreen();
@@ -552,8 +551,8 @@ void SetBackgroundTexture() {
 //	Displays the selection window and handles it's exit condition. Used by
 // WaitForSelectionWindow
 //
-BOOLEAN DoWindowSelection(void) {
-  RenderSelectionWindow();
+static BOOLEAN DoWindowSelection(const struct MouseInput mouse) {
+  RenderSelectionWindow(mouse);
   RenderButtonsFastHelp();
   if (fAllDone) {
     switch (iDrawMode) {
@@ -1197,15 +1196,9 @@ void HandleJA2ToolbarSelection(void) {
   iEditorToolbarState = TBAR_MODE_NONE;
 }
 
-//----------------------------------------------------------------------------------------------
-//	HandleKeyboardShortcuts
-//
-//	Select action to be taken based on the user's current key press (if any)
-//
-
 extern INT8 gbCurrSelect;
 extern void DeleteSelectedMercsItem();
-void HandleKeyboardShortcuts() {
+static void HandleKeyboardShortcuts(const struct MouseInput mouse) {
   static BOOLEAN fShowTrees = TRUE;
   while (DequeueEvent(&EditorInputEvent)) {
     if (!HandleSummaryInput(&EditorInputEvent) && !HandleTextInput(&EditorInputEvent) &&
@@ -1299,7 +1292,7 @@ void HandleKeyboardShortcuts() {
 
           case ESC:
             if (InOverheadMap()) {
-              KillOverheadMap();
+              KillOverheadMap(mouse);
             }
             if (iDrawMode == DRAW_MODE_SCHEDULEACTION) {
               CancelCurrentScheduleAction();
@@ -1606,7 +1599,7 @@ void HandleKeyboardShortcuts() {
             if (!InOverheadMap())
               GoIntoOverheadMap();
             else
-              KillOverheadMap();
+              KillOverheadMap(mouse);
             break;
 
           case 'l':
@@ -1693,7 +1686,7 @@ void HandleKeyboardShortcuts() {
 
           case 'x':
             if (EditorInputEvent.usKeyState & ALT_DOWN) {
-              if (InOverheadMap()) KillOverheadMap();
+              if (InOverheadMap()) KillOverheadMap(mouse);
               if (gfEditingDoor) KillDoorEditing();
               iCurrentAction = ACTION_QUIT_GAME;
               return;
@@ -1726,7 +1719,7 @@ void HandleKeyboardShortcuts() {
 //
 //	Perform the current user selected action, if any (or at least set things up for doing that)
 //
-UINT32 PerformSelectedAction(void) {
+static UINT32 PerformSelectedAction(const struct MouseInput mouse) {
   UINT32 uiRetVal;
 
   uiRetVal = EDIT_SCREEN;
@@ -1771,7 +1764,7 @@ UINT32 PerformSelectedAction(void) {
     case ACTION_QUIT_GAME:
       gfProgramIsRunning = FALSE;
     case ACTION_EXIT_EDITOR:
-      if (EditModeShutdown()) {
+      if (EditModeShutdown(mouse)) {
         iPrevJA2ToolbarState = iEditorToolbarState;
         iPrevDrawMode = iDrawMode;
         PrevCurrentPaste = CurrentPaste;
@@ -2304,7 +2297,7 @@ UINT32 WaitForHelpScreenResponse(void) {
 //
 //	Handles all keyboard input and display for a selection window.
 //
-UINT32 WaitForSelectionWindowResponse(void) {
+static UINT32 WaitForSelectionWindowResponse(const struct MouseInput mouse) {
   InputAtom DummyEvent;
 
   while (DequeueEvent(&DummyEvent) == TRUE) {
@@ -2331,7 +2324,7 @@ UINT32 WaitForSelectionWindowResponse(void) {
     }
   }
 
-  if (DoWindowSelection()) {
+  if (DoWindowSelection(mouse)) {
     fSelectionWindow = FALSE;
     ShutdownJA2SelectionWindow();
     // Quick hack to trash the mouse event queue.
@@ -2346,7 +2339,7 @@ UINT32 WaitForSelectionWindowResponse(void) {
     ExecuteBaseDirtyRectQueue();
     EndFrameBufferRender();
   } else {
-    DisplaySelectionWindowGraphicalInformation();
+    DisplaySelectionWindowGraphicalInformation(mouse);
     InvalidateScreen();
     ExecuteBaseDirtyRectQueue();
     EndFrameBufferRender();
@@ -3343,7 +3336,7 @@ void DrawObjectsBasedOnSelectionRegion() {
 extern void AutoLoadMap();
 
 // The main loop of the editor.
-UINT32 EditScreenHandle(void) {
+UINT32 EditScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiRetVal;
   BOOLEAN fShowingCursor;
   StartFrameBufferRender();
@@ -3373,7 +3366,7 @@ UINT32 EditScreenHandle(void) {
   }
 
   if (InOverheadMap() && !gfSummaryWindowActive) {
-    HandleOverheadMap();
+    HandleOverheadMap(gameInput->mouse);
   }
 
   // Calculate general mouse information
@@ -3396,9 +3389,9 @@ UINT32 EditScreenHandle(void) {
     return EDIT_SCREEN;
   }
 
-  if (ProcessPopupMenuIfActive()) return EDIT_SCREEN;
+  if (ProcessPopupMenuIfActive(gameInput->mouse)) return EDIT_SCREEN;
   if (fHelpScreen) return (WaitForHelpScreenResponse());
-  if (fSelectionWindow) return (WaitForSelectionWindowResponse());
+  if (fSelectionWindow) return (WaitForSelectionWindowResponse(gameInput->mouse));
 
   // If editing mercs, handle that stuff
   ProcessMercEditing();
@@ -3408,7 +3401,7 @@ UINT32 EditScreenHandle(void) {
   // Handle scrolling of the map if needed
   if (!gfGotoGridNoUI && iDrawMode != DRAW_MODE_SHOW_TILESET && !gfSummaryWindowActive &&
       !gfEditingDoor && !gfNoScroll && !InOverheadMap())
-    ScrollWorld();
+    ScrollWorld(gameInput->mouse);
 
   iCurrentAction = ACTION_NULL;
 
@@ -3441,22 +3434,22 @@ UINT32 EditScreenHandle(void) {
   }
 
   // The default here for the renderer is to just do dynamic stuff...
-  if (!gfSummaryWindowActive && !gfEditingDoor && !InOverheadMap()) RenderWorld();
+  if (!gfSummaryWindowActive && !gfEditingDoor && !InOverheadMap()) RenderWorld(gameInput->mouse);
 
   DisplayWayPoints();
 
   if (fShowingCursor) RemoveTempMouseCursorObject();
 
-  ProcessEditorRendering();
+  ProcessEditorRendering(gameInput->mouse);
 
   // Handle toolbar selections
   HandleJA2ToolbarSelection();
 
   // Handle keyboard shortcuts / selections
-  HandleKeyboardShortcuts();
+  HandleKeyboardShortcuts(gameInput->mouse);
 
   // Perform action based on current selection
-  if ((uiRetVal = PerformSelectedAction()) != EDIT_SCREEN) return (uiRetVal);
+  if ((uiRetVal = PerformSelectedAction(gameInput->mouse)) != EDIT_SCREEN) return (uiRetVal);
 
   // Display Framerate
   DisplayFrameRate();

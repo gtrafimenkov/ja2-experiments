@@ -76,7 +76,7 @@ void DecayWatchedLocs(INT8 bTeam);
 void HandleManNoLongerSeen(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOpponent,
                            INT8 *pPersOL, INT8 *pbPublOL);
 
-//#define TESTOPPLIST
+// #define TESTOPPLIST
 
 // for ManSeesMan()
 #define MANLOOKSFORMAN 0
@@ -2759,7 +2759,7 @@ void OurTeamSeesSomeone(struct SOLDIERTYPE *pSoldier, INT8 bNumReRevealed, INT8 
       }
 
       // Unset User's turn UI
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
     }
   }
 
@@ -3025,7 +3025,7 @@ void DebugSoldierPage1() {
   INT16 usMapPos;
   UINT8 ubLine = 0;
 
-  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
+  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags, XXX_GetMouseInput())) {
     // Get Soldier
     GetSoldier(&pSoldier, usSoldierIndex);
 
@@ -3207,7 +3207,7 @@ void DebugSoldierPage2() {
   struct LEVELNODE *pNode;
   UINT8 ubLine;
 
-  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
+  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags, XXX_GetMouseInput())) {
     // Get Soldier
     GetSoldier(&pSoldier, usSoldierIndex);
 
@@ -3463,7 +3463,7 @@ void DebugSoldierPage3() {
   INT16 usMapPos;
   UINT8 ubLine;
 
-  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
+  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags, XXX_GetMouseInput())) {
     // Get Soldier
     GetSoldier(&pSoldier, usSoldierIndex);
 
@@ -3800,7 +3800,7 @@ void DebugSoldierPage4() {
   UINT16 usSoldierIndex;
   UINT8 ubLine;
 
-  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags)) {
+  if (FindSoldierFromMouse(&usSoldierIndex, &uiMercFlags, XXX_GetMouseInput())) {
     // Get Soldier
     GetSoldier(&pSoldier, usSoldierIndex);
 

@@ -113,12 +113,18 @@ void Print8CharacterOnlyString(void);
 BOOLEAN CheckCharacterInputForEgg(void);
 
 // mouse region callbacks
-void SelectFullNameRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectNickNameRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectMaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectFemaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MvtOnMaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MvtOnFemaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectFullNameRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
+void SelectNickNameRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
+void SelectMaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void SelectFemaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void MvtOnMaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void MvtOnFemaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 void EnterIMPBeginScreen(void) {
   // reset all variables
@@ -875,25 +881,25 @@ void CreateIMPBeginScreenMouseRegions(void) {
   MSYS_DefineRegion(&gIMPBeginScreenMouseRegions[0], LAPTOP_SCREEN_UL_X + 196,
                     LAPTOP_SCREEN_WEB_UL_Y + 135, LAPTOP_SCREEN_UL_X + 196 + FULL_NAME_REGION_WIDTH,
                     LAPTOP_SCREEN_WEB_UL_Y + 135 + 24, MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                    MSYS_NO_CALLBACK, (MOUSE_CALLBACK)SelectFullNameRegionCallBack);
+                    MSYS_NO_CALLBACK, (MOUSE_CALLBACK)SelectFullNameRegionCallback);
 
   // nick name region
   MSYS_DefineRegion(&gIMPBeginScreenMouseRegions[1], LAPTOP_SCREEN_UL_X + 196,
                     LAPTOP_SCREEN_WEB_UL_Y + 195, LAPTOP_SCREEN_UL_X + 196 + NICK_NAME_REGION_WIDTH,
                     LAPTOP_SCREEN_WEB_UL_Y + 195 + 24, MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                    MSYS_NO_CALLBACK, (MOUSE_CALLBACK)SelectNickNameRegionCallBack);
+                    MSYS_NO_CALLBACK, (MOUSE_CALLBACK)SelectNickNameRegionCallback);
 
   // IMP_MALE gender area
   MSYS_DefineRegion(&gIMPBeginScreenMouseRegions[2], MALE_BOX_X, MALE_BOX_Y,
                     MALE_BOX_X + MALE_BOX_WIDTH, MALE_BOX_Y + MALE_BOX_HEIGHT, MSYS_PRIORITY_HIGH,
-                    CURSOR_WWW, (MOUSE_CALLBACK)MvtOnMaleRegionCallBack,
-                    (MOUSE_CALLBACK)SelectMaleRegionCallBack);
+                    CURSOR_WWW, (MOUSE_CALLBACK)MvtOnMaleRegionCallback,
+                    (MOUSE_CALLBACK)SelectMaleRegionCallback);
 
   // IMP_FEMALE gender region
   MSYS_DefineRegion(&gIMPBeginScreenMouseRegions[3], FEMALE_BOX_X, MALE_BOX_Y,
                     FEMALE_BOX_X + MALE_BOX_WIDTH, MALE_BOX_Y + MALE_BOX_HEIGHT, MSYS_PRIORITY_HIGH,
-                    CURSOR_WWW, (MOUSE_CALLBACK)MvtOnFemaleRegionCallBack,
-                    (MOUSE_CALLBACK)SelectFemaleRegionCallBack);
+                    CURSOR_WWW, (MOUSE_CALLBACK)MvtOnFemaleRegionCallback,
+                    (MOUSE_CALLBACK)SelectFemaleRegionCallback);
 
   // add regions
   MSYS_AddRegion(&gIMPBeginScreenMouseRegions[0]);
@@ -919,7 +925,8 @@ void DestroyIMPBeginScreenMouseRegions(void) {
   return;
 }
 
-void SelectFullNameRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectFullNameRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // set current mode to full name type in mode
@@ -929,7 +936,8 @@ void SelectFullNameRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectNickNameRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectNickNameRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // set mode to nick name type in
@@ -939,7 +947,8 @@ void SelectNickNameRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectMaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectMaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // set mode to nick name type in
@@ -949,7 +958,8 @@ void SelectMaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectFemaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectFemaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // set mode to nick name type in
@@ -959,7 +969,8 @@ void SelectFemaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void MvtOnFemaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MvtOnFemaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     // fNewCharInString = TRUE;
   } else if (iReason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {
@@ -968,7 +979,8 @@ void MvtOnFemaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void MvtOnMaleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MvtOnMaleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     // fNewCharInString = TRUE;
   } else if (iReason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {

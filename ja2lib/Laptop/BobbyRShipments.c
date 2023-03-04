@@ -56,7 +56,7 @@
 #define BOBBYR_SHIPMENT_NUM_ITEMS_Y BOBBYR_SHIPMENT_SHIPMENT_ORDER_NUM_Y
 #define BOBBYR_SHIPMENT_NUM_ITEMS_WIDTH 116
 
-//#define		BOBBYR_SHIPMENT_
+// #define		BOBBYR_SHIPMENT_
 
 UINT32 guiBobbyRShipmentGrid;
 
@@ -75,7 +75,8 @@ UINT32 guiBobbyRShipmentHome;
 INT32 giBobbyRShipmentHomeImage;
 
 struct MOUSE_REGION gSelectedPreviousShipmentsRegion[BOBBYR_SHIPMENT_NUM_PREVIOUS_SHIPMENTS];
-void SelectPreviousShipmentsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectPreviousShipmentsRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                           const struct MouseInput mouse);
 
 //
 // Function Prototypes
@@ -336,7 +337,7 @@ void CreatePreviousShipmentsMouseRegions() {
     MSYS_DefineRegion(&gSelectedPreviousShipmentsRegion[uiCnt], BOBBYR_SHIPMENT_ORDER_NUM_X, usPosY,
                       (UINT16)(BOBBYR_SHIPMENT_ORDER_NUM_X + usWidth), (UINT16)(usPosY + usHeight),
                       MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK,
-                      SelectPreviousShipmentsRegionCallBack);
+                      SelectPreviousShipmentsRegionCallback);
     MSYS_AddRegion(&gSelectedPreviousShipmentsRegion[uiCnt]);
     MSYS_SetRegionUserData(&gSelectedPreviousShipmentsRegion[uiCnt], 0, uiCnt);
 
@@ -353,7 +354,8 @@ void RemovePreviousShipmentsMouseRegions() {
   }
 }
 
-void SelectPreviousShipmentsRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectPreviousShipmentsRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                           const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     INT32 iSlotID = MSYS_GetRegionUserData(pRegion, 0);

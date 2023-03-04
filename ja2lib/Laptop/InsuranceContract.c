@@ -124,14 +124,15 @@ INT16 gsMaxPlayersOnTeam;
 
 // link to the varios pages
 struct MOUSE_REGION gSelectedInsuranceContractLinkRegion[2];
-void SelectInsuranceContractRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectInsuranceContractRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                           const struct MouseInput mouse);
 
 INT32 guiInsContractPrevButtonImage;
 void BtnInsContractPrevButtonCallback(GUI_BUTTON *btn, INT32 reason);
 UINT32 guiInsContractPrevBackButton;
 
 INT32 guiInsContractNextButtonImage;
-void BtnInsContractNextButtonCallBack(GUI_BUTTON *btn, INT32 reason);
+void BtnInsContractNextButtonCallback(GUI_BUTTON *btn, INT32 reason);
 UINT32 guiInsContractNextBackButton;
 
 // Graphic for Accept, Clear button for form 1
@@ -155,13 +156,13 @@ INT8 GetNumberOfHireMercsStartingFromID(UINT8 ubStartMercID);
 // INT32			CalculateInsuranceCost( struct SOLDIERTYPE *pSoldier, BOOLEAN
 // fHaveInsurance
 // );
-void InsuranceContractUserTextFieldCallBack(UINT8 ubID, BOOLEAN fEntering);
+void InsuranceContractUserTextFieldCallback(UINT8 ubID, BOOLEAN fEntering);
 INT8 CountInsurableMercs();
 void DisableInsuranceContractNextPreviousbuttons();
 void CreateDestroyInsuranceContractFormButtons(BOOLEAN fCreate);
 void HandleAcceptButton(UINT8 ubSoldierID, UINT8 ubFormID);
 FLOAT DiffFromNormRatio(INT16 sThisValue, INT16 sNormalValue);
-void InsContractNoMercsPopupCallBack(UINT8 bExitValue);
+void InsContractNoMercsPopupCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void BuildInsuranceArray();
 BOOLEAN MercIsInsurable(struct SOLDIERTYPE *pSoldier);
 // UINT32		GetContractLengthForFormNumber( UINT8 ubFormID );
@@ -218,7 +219,7 @@ BOOLEAN EnterInsuranceContract() {
     MSYS_DefineRegion(
         &gSelectedInsuranceContractLinkRegion[i], usPosX, INS_CTRCT_BOTTON_LINK_RED_BAR_Y - 37,
         (UINT16)(usPosX + INS_CTRCT_BOTTOM_LINK_RED_WIDTH), INS_CTRCT_BOTTON_LINK_RED_BAR_Y + 2,
-        MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK, SelectInsuranceContractRegionCallBack);
+        MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK, SelectInsuranceContractRegionCallback);
     MSYS_AddRegion(&gSelectedInsuranceContractLinkRegion[i]);
     MSYS_SetRegionUserData(&gSelectedInsuranceContractLinkRegion[i], 0, i);
 
@@ -241,7 +242,7 @@ BOOLEAN EnterInsuranceContract() {
       guiInsContractNextButtonImage, InsContractText[INS_CONTRACT_NEXT], INS_FONT_BIG,
       INS_FONT_COLOR, INS_FONT_SHADOW, INS_FONT_COLOR, INS_FONT_SHADOW, TEXT_CJUSTIFIED,
       INS_INFO_RIGHT_ARROW_BUTTON_X, INS_INFO_RIGHT_ARROW_BUTTON_Y, BUTTON_TOGGLE,
-      MSYS_PRIORITY_HIGH, DEFAULT_MOVE_CALLBACK, BtnInsContractNextButtonCallBack);
+      MSYS_PRIORITY_HIGH, DEFAULT_MOVE_CALLBACK, BtnInsContractNextButtonCallback);
   SetButtonCursor(guiInsContractNextBackButton, CURSOR_WWW);
   SpecifyButtonTextOffsets(guiInsContractNextBackButton, 18, 16, FALSE);
 
@@ -396,12 +397,12 @@ void RenderInsuranceContract() {
       // Display Error Message, all aim mercs are on short contract
       GetInsuranceText(INS_MLTI_ALL_AIM_MERCS_ON_SHORT_CONTRACT, sText);
       DoLapTopMessageBox(MSG_BOX_RED_ON_WHITE, sText, LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                         InsContractNoMercsPopupCallBack);
+                         InsContractNoMercsPopupCallback);
     } else {
       // Display Error Message, no valid mercs
       GetInsuranceText(INS_MLTI_NO_QUALIFIED_MERCS, sText);
       DoLapTopMessageBox(MSG_BOX_RED_ON_WHITE, sText, LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                         InsContractNoMercsPopupCallBack);
+                         InsContractNoMercsPopupCallback);
     }
   }
 
@@ -438,7 +439,7 @@ void BtnInsContractPrevButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void BtnInsContractNextButtonCallBack(GUI_BUTTON *btn, INT32 reason) {
+void BtnInsContractNextButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     btn->uiFlags |= BUTTON_CLICKED_ON;
     InvalidateRegion(btn->Area.RegionTopLeftX, btn->Area.RegionTopLeftY,
@@ -879,7 +880,8 @@ pSoldier->ubProfile);
 }
 */
 
-void SelectInsuranceContractRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectInsuranceContractRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                           const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT32 uiInsuranceLink = MSYS_GetRegionUserData(pRegion, 0);
@@ -1134,7 +1136,7 @@ FLOAT DiffFromNormRatio(INT16 sThisValue, INT16 sNormalValue) {
   return (flRatio);
 }
 
-void InsContractNoMercsPopupCallBack(UINT8 bExitValue) {
+void InsContractNoMercsPopupCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_OK) {
     guiCurrentLaptopMode = LAPTOP_MODE_INSURANCE;

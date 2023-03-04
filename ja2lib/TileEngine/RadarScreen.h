@@ -1,11 +1,14 @@
 #ifndef __RADAR_SCREEN_H
 #define __RADAR_SCREEN_H
 
+#include "MouseInput.h"
 #include "Tactical/Interface.h"
 
 // RADAR MOUSE REGION STUFF
-void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 BOOLEAN LoadRadarScreenBitmap(CHAR8 *aFilename);
 

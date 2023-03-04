@@ -134,8 +134,8 @@ enum {
 void ClearViewerRegion(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom);
 void HandleViewerInput();
 void RenderViewer();
-void ViewerMapMoveCallback(struct MOUSE_REGION *reg, INT32 reason);
-void ViewerMapClickCallback(struct MOUSE_REGION *reg, INT32 reason);
+void ViewerMapMoveCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
+void ViewerMapClickCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
 void ViewerExitCallback(GUI_BUTTON *btn, INT32 reason);
 void Compression0Callback(GUI_BUTTON *btn, INT32 reason);
 void Compression5Callback(GUI_BUTTON *btn, INT32 reason);
@@ -973,7 +973,7 @@ void HardCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void ViewerMapMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void ViewerMapMoveCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse) {
   static INT16 gsPrevX = 0, gsPrevY = 0;
   // calc current sector highlighted.
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -991,7 +991,7 @@ void ViewerMapMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
   }
 }
 
-void ViewerMapClickCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void ViewerMapClickCallback(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse) {
   static INT16 sLastX = -1, sLastY = -1;
   // calc current sector selected.
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
@@ -1013,7 +1013,7 @@ UINT32 AIViewerScreenInit() {
   return TRUE;
 }
 
-UINT32 AIViewerScreenHandle() {
+UINT32 AIViewerScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   RestoreBackgroundRects();

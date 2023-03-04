@@ -117,7 +117,7 @@ void TacticalScreenLocateToSoldier();
 UINT32 guiTacticalLeaveScreenID;
 BOOLEAN guiTacticalLeaveScreen = FALSE;
 
-void HandleModalTactical();
+static void HandleModalTactical(const struct MouseInput mouse);
 extern void CheckForDisabledRegionRemove();
 extern void InternalLocateGridNo(UINT16 sGridNo, BOOLEAN fForce);
 
@@ -336,7 +336,7 @@ extern BOOLEAN ValidateSoldierInitLinks(UINT8 ubCode);
 extern BOOLEAN gfDoDialogOnceGameScreenFadesIn;
 #endif
 
-UINT32 MainGameScreenHandle(void) {
+UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   UINT32 uiNewScreen = GAME_SCREEN;
 
   // DO NOT MOVE THIS FUNCTION CALL!!!
@@ -345,7 +345,7 @@ UINT32 MainGameScreenHandle(void) {
   // HELP_SCREEN_TACTICAL, FALSE ) )
   if (!gfPreBattleInterfaceActive && ShouldTheHelpScreenComeUp(HELP_SCREEN_TACTICAL, FALSE)) {
     // handle the help screen
-    HelpScreenHandler();
+    HelpScreenHandler(gameInput->mouse);
     return (GAME_SCREEN);
   }
 
@@ -353,14 +353,14 @@ UINT32 MainGameScreenHandle(void) {
   DebugValidateSoldierData();
 #endif
 
-  if (HandleAutoBandage()) {
+  if (HandleAutoBandage(gameInput->mouse)) {
 #ifndef VISIBLE_AUTO_BANDAGE
     return (GAME_SCREEN);
 #endif
   }
 
   if (gfBeginEndTurn) {
-    UIHandleEndTurn(NULL);
+    UIHandleEndTurn(NULL, gameInput->mouse);
     gfBeginEndTurn = FALSE;
   }
 
@@ -371,7 +371,7 @@ UINT32 MainGameScreenHandle(void) {
     gfFailedToSaveGameWhenInsideAMessageBox = FALSE;
 
     DoMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVE_GAME_ERROR], GAME_SCREEN,
-                 MSG_BOX_FLAG_OK, NULL, NULL);
+                 MSG_BOX_FLAG_OK, NULL, NULL, gameInput->mouse);
 
     return (GAME_SCREEN);
   }
@@ -389,7 +389,7 @@ UINT32 MainGameScreenHandle(void) {
     if (gfTacticalIsModal == 1) {
       gfTacticalIsModal++;
     } else {
-      HandleModalTactical();
+      HandleModalTactical(gameInput->mouse);
 
       return (GAME_SCREEN);
     }
@@ -446,7 +446,7 @@ UINT32 MainGameScreenHandle(void) {
   }
 
   if (InOverheadMap()) {
-    HandleOverheadMap();
+    HandleOverheadMap(gameInput->mouse);
     return (GAME_SCREEN);
   }
 
@@ -481,7 +481,7 @@ UINT32 MainGameScreenHandle(void) {
 #endif
   }
 
-  if (HandleFadeOutCallback()) {
+  if (HandleFadeOutCallback(gameInput->mouse)) {
     return (GAME_SCREEN);
   }
 
@@ -518,7 +518,7 @@ UINT32 MainGameScreenHandle(void) {
       UpdateBullets();
 
       // Execute Tactical Overhead
-      ExecuteOverhead();
+      ExecuteOverhead(gameInput->mouse);
     }
 
     // Handle animated cursors
@@ -526,7 +526,7 @@ UINT32 MainGameScreenHandle(void) {
       HandleAnimatedCursors();
 
       // Handle Interface
-      uiNewScreen = HandleTacticalUI();
+      uiNewScreen = HandleTacticalUI(gameInput->mouse);
 
       // called to handle things like face panels changeing due to team panel, squad changes, etc
       // To be done AFTER HandleUI and before ExecuteOverlays( )
@@ -568,11 +568,11 @@ UINT32 MainGameScreenHandle(void) {
   }
 
   // Handle Scroll Of World
-  ScrollWorld();
+  ScrollWorld(gameInput->mouse);
 
   // SetRenderFlags( RENDER_FLAG_FULL );
 
-  RenderWorld();
+  RenderWorld(gameInput->mouse);
 
   if (gRenderOverride != NULL) {
     gRenderOverride();
@@ -591,7 +591,7 @@ UINT32 MainGameScreenHandle(void) {
 #endif
 
   // Render Interface
-  RenderTopmostTacticalInterface();
+  RenderTopmostTacticalInterface(gameInput->mouse);
 
 #ifdef JA2TESTVERSION
   if (gTacticalStatus.uiFlags & ENGAGED_IN_CONV) {
@@ -666,7 +666,7 @@ UINT32 MainGameScreenHandle(void) {
       }
     }
 
-    HandleDialogue();
+    HandleDialogue(gameInput->mouse);
   }
 
   // Don't render if we have a scroll pending!
@@ -677,7 +677,7 @@ UINT32 MainGameScreenHandle(void) {
   // Display Framerate
   DisplayFrameRate();
 
-  CheckForMeanwhileOKStart();
+  CheckForMeanwhileOKStart(gameInput->mouse);
 
   ScrollString();
 
@@ -688,7 +688,7 @@ UINT32 MainGameScreenHandle(void) {
   /////////////////////////////////////////////////////
   EndFrameBufferRender();
 
-  if (HandleFadeInCallback()) {
+  if (HandleFadeInCallback(gameInput->mouse)) {
     // Re-render the scene!
     SetRenderFlags(RENDER_FLAG_FULL);
     fInterfacePanelDirty = DIRTYLEVEL2;
@@ -823,17 +823,17 @@ void EndModalTactical() {
   SetRenderFlags(RENDER_FLAG_FULL);
 }
 
-void HandleModalTactical() {
+static void HandleModalTactical(const struct MouseInput mouse) {
   StartFrameBufferRender();
 
   RestoreBackgroundRects();
 
-  RenderWorld();
+  RenderWorld(mouse);
   RenderRadarScreen();
   ExecuteVideoOverlays();
 
   // Handle dialogue queue system
-  HandleDialogue();
+  HandleDialogue(mouse);
 
   HandleTalkingAutoFaces();
 

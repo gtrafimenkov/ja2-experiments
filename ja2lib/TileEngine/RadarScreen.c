@@ -39,14 +39,17 @@
 
 extern INT32 iCurrentMapSectorZ;
 
-void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY);
+static void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY,
+                                             const struct MouseInput mouse);
 
 // render the squad list
 void RenderSquadList(void);
 
 // squad list mvt + btn callback
-void TacticalSquadListMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TacticalSquadListBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void TacticalSquadListMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
+void TacticalSquadListBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
 
 // the squad list font
 #define SQUAD_FONT COMPFONT
@@ -172,7 +175,8 @@ void MoveRadarScreen() {
   MSYS_AddRegion(&gRadarRegion);
 }
 
-void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse) {
   INT16 sRadarX, sRadarY;
 
   // check if we are allowed to do anything?
@@ -186,14 +190,15 @@ void RadarRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
       sRadarX = pRegion->RelativeXPos - (RADAR_WINDOW_WIDTH / 2);
       sRadarY = pRegion->RelativeYPos - (RADAR_WINDOW_HEIGHT / 2);
 
-      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY);
+      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY, mouse);
 
       SetRenderFlags(RENDER_FLAG_FULL);
     }
   }
 }
 
-void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   INT16 sRadarX, sRadarY;
 
   // check if we are allowed to do anything?
@@ -207,15 +212,15 @@ void RadarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
       sRadarX = pRegion->RelativeXPos - (RADAR_WINDOW_WIDTH / 2);
       sRadarY = pRegion->RelativeYPos - (RADAR_WINDOW_HEIGHT / 2);
 
-      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY);
+      AdjustWorldCenterFromRadarCoords(sRadarX, sRadarY, mouse);
     } else {
-      KillOverheadMap();
+      KillOverheadMap(mouse);
     }
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_DWN) {
     if (!InOverheadMap()) {
       GoIntoOverheadMap();
     } else {
-      KillOverheadMap();
+      KillOverheadMap(mouse);
     }
   }
 }
@@ -456,7 +461,8 @@ void RenderRadarScreen() {
   return;
 }
 
-void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY) {
+static void AdjustWorldCenterFromRadarCoords(INT16 sRadarX, INT16 sRadarY,
+                                             const struct MouseInput mouse) {
   INT16 sScreenX, sScreenY;
   INT16 sTempX_W, sTempY_W;
   INT16 sNewCenterWorldX, sNewCenterWorldY;
@@ -547,7 +553,7 @@ BOOLEAN CreateDestroyMouseRegionsForSquadList(void) {
             (INT16)(SQUAD_WINDOW_TM_Y +
                     ((sCounter + 1) *
                      ((SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / (NUMBER_OF_SQUADS / 2)))),
-            MSYS_PRIORITY_HIGHEST, 0, TacticalSquadListMvtCallback, TacticalSquadListBtnCallBack);
+            MSYS_PRIORITY_HIGHEST, 0, TacticalSquadListMvtCallback, TacticalSquadListBtnCallback);
       } else {
         // right half of list
         MSYS_DefineRegion(
@@ -559,7 +565,7 @@ BOOLEAN CreateDestroyMouseRegionsForSquadList(void) {
             (INT16)(SQUAD_WINDOW_TM_Y +
                     (((sCounter + 1) - (NUMBER_OF_SQUADS / 2)) *
                      (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
-            MSYS_PRIORITY_HIGHEST, 0, TacticalSquadListMvtCallback, TacticalSquadListBtnCallBack);
+            MSYS_PRIORITY_HIGHEST, 0, TacticalSquadListMvtCallback, TacticalSquadListBtnCallback);
       }
 
       // set user data
@@ -666,7 +672,8 @@ void RenderSquadList(void) {
   }
 }
 
-void TacticalSquadListMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TacticalSquadListMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   INT32 iValue = -1;
 
   iValue = MSYS_GetRegionUserData(pRegion, 0);
@@ -683,7 +690,8 @@ void TacticalSquadListMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   return;
 }
 
-void TacticalSquadListBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void TacticalSquadListBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   // btn callback handler for team list info region
   INT32 iValue = 0;
 

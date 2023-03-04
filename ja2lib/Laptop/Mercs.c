@@ -242,7 +242,8 @@ INT32 guiXToCloseMercVideoButtonImage;
 
 // Mouse region for the subtitles region when the merc is talking
 struct MOUSE_REGION gMercSiteSubTitleMouseRegion;
-void MercSiteSubTitleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MercSiteSubTitleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
 //*******************************
 //
@@ -252,14 +253,14 @@ void MercSiteSubTitleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason)
 
 BOOLEAN StartSpeckTalking(UINT16 usQuoteNum);
 void InitMercVideoFace();
-BOOLEAN HandleSpeckTalking(BOOLEAN fReset);
+static BOOLEAN HandleSpeckTalking(BOOLEAN fReset, const struct MouseInput mouse);
 // BOOLEAN	PixelateVideoMercImage();
 BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, UINT16 usPosX, UINT16 usPosY, UINT16 usWidth,
                                UINT16 usHeight);
 BOOLEAN InitDestroyXToCloseVideoWindow(BOOLEAN fCreate);
 BOOLEAN DisplayMercVideoIntro(UINT16 usTimeTillFinish);
 void HandleCurrentMercDistortion();
-void HandleTalkingSpeck();
+static void HandleTalkingSpeck(const struct MouseInput mouse);
 // BOOLEAN DistortVideoMercImage();
 BOOLEAN DistortVideoMercImage(UINT16 usPosX, UINT16 usPosY, UINT16 usWidth, UINT16 usHeight);
 BOOLEAN IsAnyMercMercsHired();
@@ -322,14 +323,14 @@ void GameInitMercs() {
   */
 }
 
-BOOLEAN EnterMercs() {
+BOOLEAN EnterMercs(const struct MouseInput mouse) {
   VOBJECT_DESC VObjectDesc;
   VSURFACE_DESC vs_desc;
 
   SetBookMark(MERC_BOOKMARK);
 
   // Reset a static variable
-  HandleSpeckTalking(TRUE);
+  HandleSpeckTalking(TRUE, mouse);
 
   InitMercBackGround();
 
@@ -482,7 +483,7 @@ void ExitMercs() {
   EmptyDialogueQueue();
 }
 
-void HandleMercs() {
+void HandleMercs(const struct MouseInput mouse) {
   if (gfRedrawMercSite) {
     RenderMercs();
     gfRedrawMercSite = FALSE;
@@ -516,7 +517,7 @@ void HandleMercs() {
 
   // if Specks should be video conferencing...
   if (gubCurrentMercVideoMode != MERC_VIDEO_NO_VIDEO_MODE) {
-    HandleTalkingSpeck();
+    HandleTalkingSpeck(mouse);
   }
 
   // Reset the some variables
@@ -979,7 +980,7 @@ BOOLEAN StartSpeckTalking(UINT16 usQuoteNum) {
 }
 
 // Performs the frame by frame update
-BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
+static BOOLEAN HandleSpeckTalking(BOOLEAN fReset, const struct MouseInput mouse) {
   static BOOLEAN fWasTheMercTalking = FALSE;
   BOOLEAN fIsTheMercTalking;
   SGPRect SrcRect;
@@ -1000,7 +1001,7 @@ BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
   DestRect.iRight = DestRect.iLeft + MERC_VIDEO_FACE_WIDTH;
   DestRect.iBottom = DestRect.iTop + MERC_VIDEO_FACE_HEIGHT;
 
-  HandleDialogue();
+  HandleDialogue(mouse);
   HandleAutoFaces();
   HandleTalkingAutoFaces();
 
@@ -1291,7 +1292,7 @@ BOOLEAN DisplayMercVideoIntro(UINT16 usTimeTillFinish) {
     return (FALSE);
 }
 
-void HandleTalkingSpeck() {
+static void HandleTalkingSpeck(const struct MouseInput mouse) {
   BOOLEAN fIsSpeckTalking = TRUE;
 
   switch (gubCurrentMercVideoMode) {
@@ -1327,7 +1328,7 @@ void HandleTalkingSpeck() {
         GetSpeckConditionalOpening(FALSE);
         gfJustEnteredMercSite = FALSE;
       } else {
-        fIsSpeckTalking = HandleSpeckTalking(FALSE);
+        fIsSpeckTalking = HandleSpeckTalking(FALSE, mouse);
 
         if (!fIsSpeckTalking) fIsSpeckTalking = GetSpeckConditionalOpening(FALSE);
 
@@ -1439,7 +1440,7 @@ void DisplayTextForSpeckVideoPopUp(STR16 pString) {
     MSYS_DefineRegion(&gMercSiteSubTitleMouseRegion, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y,
                       (INT16)(gusSpeckDialogueX + gusSpeckDialogueActualWidth),
                       (INT16)(MERC_TEXT_BOX_POS_Y + usActualHeight), MSYS_PRIORITY_HIGH,
-                      CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, MercSiteSubTitleRegionCallBack);
+                      CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, MercSiteSubTitleRegionCallback);
     MSYS_AddRegion(&gMercSiteSubTitleMouseRegion);
   }
 }
@@ -1775,7 +1776,8 @@ UINT8 CountNumberOfMercMercsWhoAreDead() {
 }
 
 // Mouse Call back for the pop up text box
-void MercSiteSubTitleRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MercSiteSubTitleRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP ||
              iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
@@ -2207,7 +2209,7 @@ BOOLEAN CanMercBeAvailableYet(UINT8 ubMercToCheck) {
   return (FALSE);
 }
 
-void NewMercsAvailableAtMercSiteCallBack() {
+void NewMercsAvailableAtMercSiteCallback() {
   BOOLEAN fSendEmail = FALSE;
   //	if( GetMercIDFromMERCArray( LaptopSaveInfo.gubLastMercIndex ) == BUBBA )
   {

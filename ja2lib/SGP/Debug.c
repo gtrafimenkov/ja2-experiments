@@ -339,68 +339,6 @@ void _FailMessage(STR8 pString, UINT32 uiLineNum, STR8 pSourceFile) {
   printf("Assertion Failure [Line %d in %s]\n", uiLineNum, pSourceFile);
 }
 
-// void _FailMessage(STR8 pString, UINT32 uiLineNum, STR8 pSourceFile) {
-//   MSG Message;
-//   char ubOutputString[512];
-// #ifndef _NO_DEBUG_TXT
-//   FILE *DebugFile;
-// #endif
-//   BOOLEAN fDone = FALSE;
-//   // Build the output strings
-//   sprintf(ubOutputString, "{ %ld } Assertion Failure [Line %d in %s]\n", Plat_GetTickCount(),
-//   uiLineNum,
-//           pSourceFile);
-//   if (pString)
-//     sprintf(gubAssertString, pString);
-//   else
-//     sprintf(gubAssertString, "");
-
-//   // Output to debugger
-//   if (gfRecordToDebugger) DebugPrint(ubOutputString);
-
-//     // Record to file if required
-// #ifndef _NO_DEBUG_TXT
-//   if (gfRecordToFile) {
-//     if ((DebugFile = fopen(gpcDebugLogFileName, "a+t")) != NULL) {
-//       fputs(ubOutputString, DebugFile);
-//       fclose(DebugFile);
-//     }
-//   }
-
-// #if 0
-// 	if( !FontObjs[0] )
-// 	{ //Font manager hasn't yet been initialized so use the windows error system
-// 		sprintf( gubErrorText, "Assertion Failure -- Line %d in %s", uiLineNum, pSourceFile
-// ); 		MessageBox( NULL, gubErrorText, "Jagged Alliance 2", MB_OK );
-// gfProgramIsRunning = FALSE; 		return;
-// 	}
-// #endif
-
-//   // Kris:
-//   // NASTY HACK, THE GAME IS GOING TO DIE ANYWAY, SO WHO CARES WHAT WE DO.
-//   // This will actually bring up a screen that prints out the assert message
-//   // until the user hits esc or alt-x.
-//   sprintf(gubErrorText, "Assertion Failure -- Line %d in %s", uiLineNum, pSourceFile);
-//   SetPendingNewScreen(ERROR_SCREEN);
-//   SetCurrentScreen(ERROR_SCREEN);
-//   while (gfProgramIsRunning) {
-//     if (PeekMessage(&Message, NULL, 0, 0,
-//                     PM_NOREMOVE)) {  // We have a message on the WIN95 queue, let's get it
-//       if (!GetMessage(&Message, NULL, 0, 0)) {  // It's quitting time
-//         continue;
-//       }
-//       // Ok, now that we have the message, let's handle it
-//       TranslateMessage(&Message);
-//       DispatchMessage(&Message);
-//     } else {  // Windows hasn't processed any messages, therefore we handle the rest
-//       GameLoop();
-//       gfSGPInputReceived = FALSE;
-//     }
-//   }
-// #endif
-//   exit(0);
-// }
-
 // #endif
 
 // This is NOT a _DEBUG only function! It is also needed in

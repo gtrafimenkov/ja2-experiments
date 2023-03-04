@@ -195,7 +195,7 @@ void HandleTheftByCiviliansInSector( INT16 sX, INT16 sY, INT32 iLoyalty );
 void HandleTownTheft( void );
 */
 
-extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 void InitTownLoyalty(void) {
   UINT8 ubTown = 0;

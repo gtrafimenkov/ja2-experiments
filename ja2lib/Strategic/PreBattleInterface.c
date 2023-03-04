@@ -130,7 +130,7 @@ BOOLEAN gfRenderPBInterface;
 BOOLEAN gfPBButtonsHidden;
 BOOLEAN fDisableMapInterfaceDueToBattle = FALSE;
 
-void DoTransitionFromMapscreenToPreBattleInterface();
+static void DoTransitionFromMapscreenToPreBattleInterface(const struct MouseInput mouse);
 
 BOOLEAN gfBlinkHeader;
 
@@ -247,7 +247,8 @@ void ValidateAndCorrectInBattleCounters(struct GROUP *pLocGroup) {
 }
 #endif
 
-void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) {
+void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI,
+                            const struct MouseInput mouse) {
   VOBJECT_DESC VObjectDesc;
   INT32 i;
   UINT8 ubGroupID = 0;
@@ -677,10 +678,10 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
 
   SetMusicMode(MUSIC_TACTICAL_ENEMYPRESENT);
 
-  DoTransitionFromMapscreenToPreBattleInterface();
+  DoTransitionFromMapscreenToPreBattleInterface(mouse);
 }
 
-void DoTransitionFromMapscreenToPreBattleInterface() {
+static void DoTransitionFromMapscreenToPreBattleInterface(const struct MouseInput mouse) {
   SGPRect DstRect, PBIRect;
   UINT32 uiStartTime, uiCurrTime;
   INT32 iPercentage, iFactor;
@@ -721,7 +722,7 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     gfEnterAutoResolveMode = FALSE;
   }
   // render the prebattle interface
-  RenderPreBattleInterface();
+  RenderPreBattleInterface(mouse);
 
   gfIgnoreAllInput = TRUE;
 
@@ -879,7 +880,7 @@ void RenderPBHeader(INT32 *piX, INT32 *piWidth) {
   *piWidth = width;
 }
 
-void RenderPreBattleInterface() {
+void RenderPreBattleInterface(const struct MouseInput mouse) {
   struct VObject *hVObject;
   INT32 i, x, y, line, width;
   CHAR16 str[100];
@@ -893,8 +894,8 @@ void RenderPreBattleInterface() {
   // retreat button.  If it is inside, then we set up the variables so that the retreat
   // arrows get drawn in the mapscreen.
   if (ButtonList[iPBButton[2]]->uiFlags & BUTTON_ENABLED) {
-    if (gusMouseXPos < gusRetreatButtonLeft || gusMouseXPos > gusRetreatButtonRight ||
-        gusMouseYPos < gusRetreatButtonTop || gusMouseYPos > gusRetreatButtonBottom)
+    if (mouse.x < gusRetreatButtonLeft || mouse.x > gusRetreatButtonRight ||
+        mouse.y < gusRetreatButtonTop || mouse.y > gusRetreatButtonBottom)
       fMouseInRetreatButtonArea = FALSE;
     else
       fMouseInRetreatButtonArea = TRUE;
@@ -1342,7 +1343,7 @@ void InvolvedClickCallback( struct MOUSE_REGION *reg, INT32 reason )
                 y = (INT16)(reg->RegionTopLeftY + giHilitedUninvolved * ROW_HEIGHT + 5);
                 if( y + 102 >= 360 )
                         y -= 102;
-                if( gusMouseXPos >= 76 && gusMouseXPos <= 129 )
+                if( mouse.x >= 76 && mouse.x <= 129 )
                         ActivateSoldierPopup( pSoldier, ASSIGNMENT_POPUP, 102, y );
                 gfRenderPBInterface = TRUE;
         }
@@ -1372,15 +1373,15 @@ void UninvolvedClickCallback( struct MOUSE_REGION *reg, INT32 reason )
                 y = (INT16)(reg->RegionTopLeftY + giHilitedUninvolved * ROW_HEIGHT + 5);
                 if( y + 102 >= 360 )
                         y -= 102;
-                if( gusMouseXPos >= 76 && gusMouseXPos <= 129 )
+                if( mouse.x >= 76 && mouse.x <= 129 )
                 {
                         ActivateSoldierPopup( pSoldier, ASSIGNMENT_POPUP, 102, y );
                 }
-                else if( gusMouseXPos >= 169 && gusMouseXPos <= 204 )
+                else if( mouse.x >= 169 && mouse.x <= 204 )
                 {
                         ActivateSoldierPopup( pSoldier, DESTINATION_POPUP, 186, y );
                 }
-                else if( gusMouseXPos >= 208 && gusMouseXPos <= 236 )
+                else if( mouse.x >= 208 && mouse.x <= 236 )
                 {
                         ActivateSoldierPopup( pSoldier, CONTRACT_POPUP, 172, y );
                 }
@@ -1804,14 +1805,14 @@ void LogBattleResults(UINT8 ubVictoryCode) {
   }
 }
 
-void HandlePreBattleInterfaceStates() {
+void HandlePreBattleInterfaceStates(const struct MouseInput mouse) {
   if (gfEnteringMapScreenToEnterPreBattleInterface && !gfEnteringMapScreen) {
     gfEnteringMapScreenToEnterPreBattleInterface = FALSE;
     if (!gfUsePersistantPBI) {
-      InitPreBattleInterface(NULL, FALSE);
+      InitPreBattleInterface(NULL, FALSE, mouse);
       gfUsePersistantPBI = TRUE;
     } else {
-      InitPreBattleInterface(gpBattleGroup, TRUE);
+      InitPreBattleInterface(gpBattleGroup, TRUE, mouse);
     }
   } else if (gfDelayAutoResolveStart && gfPreBattleInterfaceActive) {
     gfDelayAutoResolveStart = FALSE;

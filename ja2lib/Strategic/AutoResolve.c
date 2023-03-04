@@ -62,7 +62,7 @@
 #include "Utils/WordWrap.h"
 #include "platform_strings.h"
 
-//#define INVULNERABILITY
+// #define INVULNERABILITY
 
 extern BOOLEAN AutoReload(struct SOLDIERTYPE *pSoldier);
 BOOLEAN gfTransferTacticalOppositionToAutoResolve = FALSE;
@@ -266,8 +266,10 @@ void FinishButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void RetreatButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void BandageButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void DoneButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason);
-void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason);
+void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason,
+                               const struct MouseInput mouse);
+void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                const struct MouseInput mouse);
 
 void DetermineBandageButtonState();
 
@@ -293,7 +295,7 @@ void ProcessBattleFrame();
 BOOLEAN IsBattleOver();
 BOOLEAN AttemptPlayerCapture();
 
-void AutoBandageFinishedCallback(UINT8 ubResult);
+static void AutoBandageFinishedCallback(UINT8 ubResultconst, struct MouseInput mouse);
 
 // Debug utilities
 void ResetAutoResolveInterface();
@@ -592,7 +594,7 @@ UINT32 AutoResolveScreenShutdown() {
   return TRUE;
 }
 
-UINT32 AutoResolveScreenHandle() {
+UINT32 AutoResolveScreenHandle(const struct GameInput *gameInput) {
   RestoreBackgroundRects();
 
   if (!gpAR) {
@@ -2288,7 +2290,8 @@ void DoneButtonCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason,
+                               const struct MouseInput mouse) {
   // Find the merc with the same region.
   INT32 i;
   SOLDIERCELL *pCell = NULL;
@@ -2315,7 +2318,8 @@ void MercCellMouseMoveCallback(struct MOUSE_REGION *reg, INT32 reason) {
   }
 }
 
-void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason) {
+void MercCellMouseClickCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     // Find the merc with the same region.
     INT32 i;
@@ -3748,7 +3752,7 @@ BOOLEAN IsBattleOver() {
   return TRUE;
 }
 
-//#define TESTSURRENDER
+// #define TESTSURRENDER
 
 BOOLEAN AttemptPlayerCapture() {
   INT32 i;
@@ -4131,4 +4135,6 @@ BOOLEAN GetCurrentBattleSectorXYZAndReturnTRUEIfThereIsABattle(INT16 *psSectorX,
   }
 }
 
-void AutoBandageFinishedCallback(UINT8 ubResult) { SetupDoneInterface(); }
+static void AutoBandageFinishedCallback(UINT8 ubResult, const struct MouseInput mouse) {
+  SetupDoneInterface();
+}

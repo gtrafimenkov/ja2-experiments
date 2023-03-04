@@ -958,18 +958,11 @@ INT16 FindBestNearbyCover(struct SOLDIERTYPE *pSoldier, INT32 morale, INT32 *piP
     LocateSoldier(pSoldier->ubID, SETLOCATORFAST);
     gsBestCover = sBestCover;
     SetRenderFlags(RENDER_FLAG_FULL);
-    RenderWorld();
+    RenderWorld(mouse);
     RenderCoverDebug();
     InvalidateScreen();
     EndFrameBufferRender();
     RefreshScreen(NULL);
-    /*
-iLoop = GetJA2Clock();
-do
-{
-
-} while( ( GetJA2Clock( ) - iLoop ) < 2000 );
-*/
   }
 #endif
 

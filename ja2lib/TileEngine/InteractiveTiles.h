@@ -1,6 +1,7 @@
 #ifndef __INTERACTIVE_TILES_H
 #define __INTERACTIVE_TILES_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 struct LEVELNODE;
@@ -38,8 +39,8 @@ void HandleStructChangeFromGridNo(struct SOLDIERTYPE *pSoldier, INT16 sGridNo);
 
 void BeginCurInteractiveTileCheck(UINT8 bCheckFlags);
 void EndCurInteractiveTileCheck();
-void LogMouseOverInteractiveTile(INT16 sGridNo);
-BOOLEAN ShouldCheckForMouseDetections();
+void LogMouseOverInteractiveTile(INT16 sGridNo, const struct MouseInput mouse);
+BOOLEAN ShouldCheckForMouseDetections(const struct MouseInput mouse);
 
 void CycleIntTileFindStack(UINT16 usMapPos);
 void SetActionModeDoorCursorText();

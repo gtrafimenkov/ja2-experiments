@@ -68,8 +68,8 @@ INT32 giAutoBandagesSoldierFaces[2 * MAX_CHARACTER_COUNT];
 // has the button for autobandage end been setup yet
 BOOLEAN fAutoEndBandageButtonCreated = FALSE;
 
-void BeginAutoBandageCallBack(UINT8 bExitValue);
-void CancelAutoBandageCallBack(UINT8 bExitValue);
+static void BeginAutoBandageCallback(UINT8 bExitValue, const struct MouseInput mouse);
+void CancelAutoBandageCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 // the update box for autobandaging mercs
 void CreateTerminateAutoBandageButton(INT16 sX, INT16 sY);
@@ -96,7 +96,7 @@ void BeginAutoBandage() {
   // If we are in combat, we con't...
   if ((gTacticalStatus.uiFlags & INCOMBAT) || (NumEnemyInSector() != 0)) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_SECTOR_NOT_CLEARED], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
     return;
   }
 
@@ -127,18 +127,18 @@ void BeginAutoBandage() {
 
   if (!fFoundAGuy) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[AUTOBANDAGE_NOT_NEEDED], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
   } else if (!fFoundAMedKit) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, gzLateLocalizedString[9], GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK,
-                 NULL, NULL);
+                 NULL, NULL, XXX_GetMouseInput());
   } else {
     if (!CanAutoBandage(FALSE)) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[CANT_AUTOBANDAGE_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                   (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
     } else {
       // Confirm if we want to start or not....
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[BEGIN_AUTOBANDAGE_PROMPT_STR], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, BeginAutoBandageCallBack, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, BeginAutoBandageCallback, NULL, XXX_GetMouseInput());
     }
   }
 }
@@ -207,7 +207,7 @@ void ShouldBeginAutoBandage() {
   }
 }
 
-BOOLEAN HandleAutoBandage() {
+BOOLEAN HandleAutoBandage(const struct MouseInput mouse) {
   InputAtom InputEvent;
 
   if (gTacticalStatus.fAutoBandageMode) {
@@ -236,7 +236,7 @@ BOOLEAN HandleAutoBandage() {
     }
 
     // Execute Tactical Overhead
-    ExecuteOverhead();
+    ExecuteOverhead(mouse);
 
     // Deque all game events
     DequeAllGameEvents(TRUE);
@@ -351,7 +351,7 @@ void AutoBandage(BOOLEAN fStart) {
 
     // Lock UI!
     // guiPendingOverrideEvent = LU_BEGINUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(XXX_GetMouseInput());
 
     PauseGame();
     // Compress time...
@@ -425,7 +425,7 @@ void AutoBandage(BOOLEAN fStart) {
 
     // UnLock UI!
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(XXX_GetMouseInput());
 
     UnPauseGame();
     // Bring time back...
@@ -461,7 +461,7 @@ void AutoBandage(BOOLEAN fStart) {
   ResetAllMercSpeeds();
 }
 
-void BeginAutoBandageCallBack(UINT8 bExitValue) {
+static void BeginAutoBandageCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     fRestoreBackgroundForMessageBox = TRUE;
     AutoBandage(TRUE);

@@ -1155,13 +1155,11 @@ void GetPolledKeyboardInput(UINT32 *puiNewEvent) {
 extern BOOLEAN gfDisableRegionActive;
 extern BOOLEAN gfUserTurnRegionActive;
 
-void GetKeyboardInput(UINT32 *puiNewEvent) {
+void GetKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   InputAtom InputEvent;
   BOOLEAN fKeyTaken = FALSE;
   INT16 usMapPos;
   BOOLEAN fGoodCheatLevelKey = FALSE;
-
-  struct Point MousePos = GetMousePoint();
 
   GetMouseMapPos(&usMapPos);
 
@@ -1169,20 +1167,16 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
     // HOOK INTO MOUSE HOOKS
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 
@@ -1282,7 +1276,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
               gTacticalStatus.ubAttackBusyCount = 0;
 
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              UIHandleLUIEndLock(NULL);
+              UIHandleLUIEndLock(NULL, XXX_GetMouseInput());
             }
             if ((InputEvent.usEvent == KEY_DOWN) && (InputEvent.usParam == ENTER) &&
                 (InputEvent.usKeyState & CTRL_DOWN)) {
@@ -1524,7 +1518,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
           if ((gpItemPointer == NULL) &&
               ((gsCurInterfacePanel != SM_PANEL) ||
                (ButtonList[iSMPanelButtons[UPDOWN_BUTTON]]->uiFlags & BUTTON_ENABLED))) {
-            UIHandleChangeLevel(NULL);
+            UIHandleChangeLevel(NULL, XXX_GetMouseInput());
 
             if (gsCurInterfacePanel == SM_PANEL) {
               // Remember soldier's new value
@@ -2325,7 +2319,8 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
 							}
 						}
 #endif
-          } else if (!CycleSoldierFindStack(usMapPos))  // Are we over a merc stack?
+          } else if (!CycleSoldierFindStack(usMapPos, XXX_GetMouseInput()))
+            // Are we over a merc stack?
             CycleIntTileFindStack(usMapPos);  // If not, now check if we are over a struct stack
           break;
 
@@ -2417,7 +2412,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
                 // Display a message saying the player cant save now
                 DoMessageBox(MSG_BOX_BASIC_STYLE,
                              zNewTacticalMessages[TCTL_MSG__IRON_MAN_CANT_SAVE_NOW], GAME_SCREEN,
-                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
               }
             }
           } else if (fAlt) {
@@ -2431,7 +2426,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
                 // Display a message saying the player cant save now
                 DoMessageBox(MSG_BOX_BASIC_STYLE,
                              zNewTacticalMessages[TCTL_MSG__IRON_MAN_CANT_SAVE_NOW], GAME_SCREEN,
-                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
               }
             }
           } else if (gusSelectedSoldier != NOBODY) {
@@ -2863,7 +2858,6 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         }
 
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos - 5, gusMouseYPos );
         InitSectorExitMenu(DIRECTION_EXITGRID, sMapPos);
       }
     }
@@ -2878,7 +2872,6 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos - 5, gusMouseYPos );
         InitSectorExitMenu(EAST, 0);
       }
     }
@@ -2891,7 +2884,6 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos + 5, gusMouseYPos );
         InitSectorExitMenu(WEST, 0);
       }
     }
@@ -2904,7 +2896,6 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos, gusMouseYPos + 5 );
         InitSectorExitMenu(NORTH, 0);
       }
     }
@@ -2917,7 +2908,6 @@ BOOLEAN HandleCheckForExitArrowsInput(BOOLEAN fAdjustConfirm) {
         gfUIConfirmExitArrows = TRUE;
       } else {
         // Goto next sector
-        // SimulateMouseMovement( gusMouseXPos, gusMouseYPos - 5);
         InitSectorExitMenu(SOUTH, 0);
       }
     }
@@ -3484,7 +3474,7 @@ INT8 CheckForAndHandleHandleVehicleInteractiveClick(struct SOLDIERTYPE *pSoldier
             }
 
             // OK, set UI
-            SetUIBusy(pSoldier->ubID);
+            SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
             // guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
 
             return (-1);
@@ -3622,7 +3612,7 @@ void HandleHandCursorClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
 
 extern BOOLEAN AnyItemsVisibleOnLevel(struct ITEM_POOL *pItemPool, INT8 bZLevel);
 
-void ExchangeMessageBoxCallBack(UINT8 bExitValue) {
+void ExchangeMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     SwapMercPositions(gpExchangeSoldier1, gpExchangeSoldier2);
   }
@@ -3674,8 +3664,6 @@ INT8 HandleMoveModeInteractiveClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
           gpExchangeSoldier2 = MercPtrs[gusUIFullTargetID];
 
           // Do message box...
-          // DoMessageBox( MSG_BOX_BASIC_STYLE, TacticalStr[ EXCHANGE_PLACES_REQUESTER ],
-          // GAME_SCREEN, ( UINT8 )MSG_BOX_FLAG_YESNO, ExchangeMessageBoxCallBack, NULL );
           SwapMercPositions(gpExchangeSoldier1, gpExchangeSoldier2);
         }
       }
@@ -3702,7 +3690,7 @@ INT8 HandleMoveModeInteractiveClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
           if (AnyItemsVisibleOnLevel(pItemPool, bZLevel)) {
             fContinue = FALSE;
 
-            SetUIBusy(pSoldier->ubID);
+            SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
             if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED)) {
               // puiNewEvent = C_WAIT_FOR_CONFIRM;
@@ -3853,13 +3841,13 @@ void TestMeanWhile(INT32 iID) {
 
 void EscapeUILock() {
   // UNLOCK UI
-  UnSetUIBusy((UINT8)gusSelectedSoldier);
+  UnSetUIBusy((UINT8)gusSelectedSoldier, XXX_GetMouseInput());
 
   // Decrease global busy  counter...
   gTacticalStatus.ubAttackBusyCount = 0;
 
   guiPendingOverrideEvent = LU_ENDUILOCK;
-  UIHandleLUIEndLock(NULL);
+  UIHandleLUIEndLock(NULL, XXX_GetMouseInput());
 }
 
 #ifdef JA2BETAVERSION

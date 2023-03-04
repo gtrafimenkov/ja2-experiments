@@ -125,86 +125,84 @@
 #define GO_MOVE_THREE 100
 
 // CALLBACKS FOR EVENTS
-UINT32 UIHandleIDoNothing(UI_EVENT *pUIEvent);
-UINT32 UIHandleExit(UI_EVENT *pUIEvent);
-UINT32 UIHandleNewMerc(UI_EVENT *pUIEvent);
-UINT32 UIHandleNewBadMerc(UI_EVENT *pUIEvent);
-UINT32 UIHandleSelectMerc(UI_EVENT *pUIEvent);
-UINT32 UIHandleEnterEditMode(UI_EVENT *pUIEvent);
-UINT32 UIHandleEnterPalEditMode(UI_EVENT *pUIEvent);
-UINT32 UIHandleEndTurn(UI_EVENT *pUIEvent);
-UINT32 UIHandleTestHit(UI_EVENT *pUIEvent);
-UINT32 UIHandleIOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleIChangeToIdle(UI_EVENT *pUIEvent);
-UINT32 UIHandleILoadLevel(UI_EVENT *pUIEvent);
-UINT32 UIHandleISoldierDebug(UI_EVENT *pUIEvent);
-UINT32 UIHandleILOSDebug(UI_EVENT *pUIEvent);
-UINT32 UIHandleILevelNodeDebug(UI_EVENT *pUIEvent);
-UINT32 UIHandleIGotoDemoMode(UI_EVENT *pUIEvent);
+static UINT32 UIHandleIDoNothing(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleExit(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleNewMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleNewBadMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleSelectMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleEnterEditMode(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleEnterPalEditMode(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleTestHit(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleIOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleIChangeToIdle(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleILoadLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleISoldierDebug(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleILOSDebug(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleILevelNodeDebug(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleIGotoDemoMode(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleILoadFirstLevel(UI_EVENT *pUIEvent);
-UINT32 UIHandleILoadSecondLevel(UI_EVENT *pUIEvent);
-UINT32 UIHandleILoadThirdLevel(UI_EVENT *pUIEvent);
-UINT32 UIHandleILoadFourthLevel(UI_EVENT *pUIEvent);
-UINT32 UIHandleILoadFifthLevel(UI_EVENT *pUIEvent);
+static UINT32 UIHandleILoadFirstLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleILoadSecondLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleILoadThirdLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleILoadFourthLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleILoadFifthLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleIETOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleIETEndTurn(UI_EVENT *pUIEvent);
+static UINT32 UIHandleIETOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleIETEndTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleMChangeToAction(UI_EVENT *pUIEvent);
-UINT32 UIHandleMCycleMovement(UI_EVENT *pUIEvent);
-UINT32 UIHandleMCycleMoveAll(UI_EVENT *pUIEvent);
-UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent);
-UINT32 UIHandleMChangeToHandMode(UI_EVENT *pUIEvent);
+static UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleMChangeToAction(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleMCycleMovement(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleMCycleMoveAll(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleMChangeToHandMode(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandlePOPUPMSG(UI_EVENT *pUIEvent);
+static UINT32 UIHandlePOPUPMSG(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleAOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleAChangeToMove(UI_EVENT *pUIEvent);
-UINT32 UIHandleAChangeToConfirmAction(UI_EVENT *pUIEvent);
-UINT32 UIHandleAEndAction(UI_EVENT *pUIEvent);
+static UINT32 UIHandleAOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleAChangeToMove(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleAChangeToConfirmAction(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleAEndAction(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleMovementMenu(UI_EVENT *pUIEvent);
-UINT32 UIHandlePositionMenu(UI_EVENT *pUIEvent);
+static UINT32 UIHandleMovementMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandlePositionMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleCWait(UI_EVENT *pUIEvent);
-UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent);
-UINT32 UIHandleCOnTerrain(UI_EVENT *pUIEvent);
+static UINT32 UIHandleCWait(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleCOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandlePADJAdjustStance(UI_EVENT *pUIEvent);
+static UINT32 UIHandlePADJAdjustStance(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleCAOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent);
-UINT32 UIHandleCAEndConfirmAction(UI_EVENT *pUIEvent);
+static UINT32 UIHandleCAOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleCAEndConfirmAction(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleHCOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleHCGettingItem(UI_EVENT *pUIEvent);
+static UINT32 UIHandleHCOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleHCGettingItem(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleLCOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleLCChangeToLook(UI_EVENT *pUIEvent);
-UINT32 UIHandleLCLook(UI_EVENT *pUIEvent);
+static UINT32 UIHandleLCOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleLCChangeToLook(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleLCLook(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleTATalkingMenu(UI_EVENT *pUIEvent);
+static UINT32 UIHandleTATalkingMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleTOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleTChangeToTalking(UI_EVENT *pUIEvent);
+static UINT32 UIHandleTOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleTChangeToTalking(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleLUIOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleLUIBeginLock(UI_EVENT *pUIEvent);
-UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent);
+static UINT32 UIHandleLUIOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleLUIBeginLock(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleLAOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleLABeginLockOurTurn(UI_EVENT *pUIEvent);
-UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent);
+static UINT32 UIHandleLAOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleLABeginLockOurTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleJumpOverOnTerrain(UI_EVENT *pUIEvent);
-UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent);
+static UINT32 UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleJumpOverOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse);
+static UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleOpenDoorMenu(UI_EVENT *pUIEvent);
+static UINT32 UIHandleOpenDoorMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
-UINT32 UIHandleEXExitSectorMenu(UI_EVENT *pUIEvent);
+static UINT32 UIHandleEXExitSectorMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 
 BOOLEAN ValidQuickExchangePosition();
 
@@ -220,9 +218,10 @@ void SetMovementModeCursor(struct SOLDIERTYPE *pSoldier);
 void SetConfirmMovementModeCursor(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromMove);
 void SetUIbasedOnStance(struct SOLDIERTYPE *pSoldier, INT8 bNewStance);
 INT8 DrawUIMovementPath(struct SOLDIERTYPE *pSoldier, UINT16 usMapPos, UINT32 uiFlags);
-INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
-                                               BOOLEAN fUseOKCursor,
-                                               BOOLEAN fItemsOnlyIfOnIntTiles);
+static INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
+                                                      BOOLEAN fUseOKCursor,
+                                                      BOOLEAN fItemsOnlyIfOnIntTiles,
+                                                      const struct MouseInput mouse);
 
 extern void EVENT_InternalSetSoldierDesiredDirection(struct SOLDIERTYPE *pSoldier,
                                                      UINT16 usNewDirection, BOOLEAN fInitalMove,
@@ -607,12 +606,12 @@ BOOLEAN gfUIForceReExamineCursorData = FALSE;
 BOOLEAN gfUIFullTargetFound;
 UINT16 gusUIFullTargetID;
 
-void SetUIMouseCursor();
-void ClearEvent(UI_EVENT *pUIEvent);
+static void SetUIMouseCursor(const struct MouseInput mouse);
+void ClearEvent(UI_EVENT *pUIEvent, const struct MouseInput mouse);
 UINT8 GetAdjustedAnimHeight(UINT8 ubAnimHeight, INT8 bChange);
 
 // MAIN TACTICAL UI HANDLER
-UINT32 HandleTacticalUI(void) {
+UINT32 HandleTacticalUI(const struct MouseInput mouse) {
   UINT32 ReturnVal = GAME_SCREEN;
   UINT32 uiNewEvent;
   INT16 usMapPos;
@@ -648,7 +647,7 @@ UINT32 HandleTacticalUI(void) {
       gfUIInterfaceSetBusy = FALSE;
 
       // UNLOCK UI
-      UnSetUIBusy((UINT8)gusSelectedSoldier);
+      UnSetUIBusy((UINT8)gusSelectedSoldier, mouse);
 
       // Decrease global busy  counter...
       gTacticalStatus.ubAttackBusyCount = 0;
@@ -656,7 +655,7 @@ UINT32 HandleTacticalUI(void) {
                String("Setting attack busy count to 0 due to ending AI lock"));
 
       guiPendingOverrideEvent = LU_ENDUILOCK;
-      UIHandleLUIEndLock(NULL);
+      UIHandleLUIEndLock(NULL, mouse);
     }
   }
 
@@ -696,7 +695,7 @@ UINT32 HandleTacticalUI(void) {
       // FROM MOUSE CLICKS
       GetRTMouseButtonInput(&uiNewEvent);
       // FROM KEYBOARD
-      GetKeyboardInput(&uiNewEvent);
+      GetKeyboardInput(&uiNewEvent, mouse);
 
     } else {
       // FROM MOUSE POSITION
@@ -706,7 +705,7 @@ UINT32 HandleTacticalUI(void) {
       // FROM MOUSE CLICKS
       GetTBMouseButtonInput(&uiNewEvent);
       // FROM KEYBOARD
-      GetKeyboardInput(&uiNewEvent);
+      GetKeyboardInput(&uiNewEvent, mouse);
     }
 
   } else {
@@ -746,8 +745,7 @@ UINT32 HandleTacticalUI(void) {
     if (gEvents[guiOldEvent].uiFlags & UIEVENT_SNAPMOUSE) {
       SimulateMouseMovement((UINT32)gusSavedMouseX, (UINT32)gusSavedMouseY);
     }
-
-    ClearEvent(&gEvents[uiNewEvent]);
+    ClearEvent(&gEvents[uiNewEvent], mouse);
   }
 
   // Restore not scrolling from stance adjust....
@@ -758,12 +756,12 @@ UINT32 HandleTacticalUI(void) {
   // IF this event is of type snap mouse, save position
   if (gEvents[uiNewEvent].uiFlags & UIEVENT_SNAPMOUSE && gEvents[uiNewEvent].fFirstTime) {
     // Save mouse position
-    gusSavedMouseX = gusMouseXPos;
-    gusSavedMouseY = gusMouseYPos;
+    gusSavedMouseX = mouse.x;
+    gusSavedMouseY = mouse.y;
   }
 
   // HANDLE UI EVENT
-  ReturnVal = gEvents[uiNewEvent].HandleEvent(&(gEvents[uiNewEvent]));
+  ReturnVal = gEvents[uiNewEvent].HandleEvent(&(gEvents[uiNewEvent]), mouse);
 
   if (gfInOpenDoorMenu) {
     return (ReturnVal);
@@ -817,7 +815,7 @@ UINT32 HandleTacticalUI(void) {
   }
 
   // Will set the cursor but only if different
-  SetUIMouseCursor();
+  SetUIMouseCursor(mouse);
 
   // ATE: Check to reset selected guys....
   if (gTacticalStatus.fAtLeastOneGuyOnMultiSelect) {
@@ -832,7 +830,7 @@ UINT32 HandleTacticalUI(void) {
   return (ReturnVal);
 }
 
-void SetUIMouseCursor() {
+static void SetUIMouseCursor(const struct MouseInput mouse) {
   UINT32 uiCursorFlags;
   UINT32 uiTraverseTimeInMinutes;
   BOOLEAN fForceUpdateNewCursor = FALSE;
@@ -844,8 +842,7 @@ void SetUIMouseCursor() {
   // If not in move mode, return!
   if (gCurrentUIMode == MOVE_MODE) {
     if (gfUIConfirmExitArrows) {
-      GetCursorMovementFlags(&uiCursorFlags);
-
+      GetCursorMovementFlags(&uiCursorFlags, mouse);
       if (uiCursorFlags & MOUSE_MOVING) {
         gfUIConfirmExitArrows = FALSE;
       }
@@ -865,7 +862,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_EAST_UICURSOR;
       }
 
-      if (gusMouseXPos < 635) {
+      if (mouse.x < 635) {
         gfUIShowExitEast = FALSE;
       }
     }
@@ -884,7 +881,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_WEST_UICURSOR;
       }
 
-      if (gusMouseXPos > 5) {
+      if (mouse.x > 5) {
         gfUIShowExitWest = FALSE;
       }
     }
@@ -903,7 +900,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_NORTH_UICURSOR;
       }
 
-      if (gusMouseYPos > 5) {
+      if (mouse.y > 5) {
         gfUIShowExitNorth = FALSE;
       }
     }
@@ -922,7 +919,7 @@ void SetUIMouseCursor() {
         guiNewUICursor = NOEXIT_SOUTH_UICURSOR;
       }
 
-      if (gusMouseYPos < 478) {
+      if (mouse.y < 478) {
         gfUIShowExitSouth = FALSE;
 
         // Define region for viewport
@@ -1032,7 +1029,7 @@ void SetUIMouseCursor() {
 
 void SetUIKeyboardHook(UIKEYBOARD_HOOK KeyboardHookFnc) { gUIKeyboardHook = KeyboardHookFnc; }
 
-void ClearEvent(UI_EVENT *pUIEvent) {
+void ClearEvent(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   memset(pUIEvent->uiParams, 0, sizeof(pUIEvent->uiParams));
   pUIEvent->fDoneMenu = FALSE;
   pUIEvent->fFirstTime = TRUE;
@@ -1043,18 +1040,18 @@ void EndMenuEvent(UINT32 uiEvent) { gEvents[uiEvent].fDoneMenu = TRUE; }
 
 // HANDLER FUCNTIONS
 
-UINT32 UIHandleIDoNothing(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleIDoNothing(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   guiNewUICursor = NORMAL_SNAPUICURSOR;
 
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleExit(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleExit(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   gfProgramIsRunning = FALSE;
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleNewMerc(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleNewMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   static UINT8 ubTemp = 3;
   INT16 usMapPos;
   MERC_HIRE_STRUCT HireMercStruct;
@@ -1100,7 +1097,7 @@ UINT32 UIHandleNewMerc(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleNewBadMerc(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleNewBadMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 usMapPos;
   UINT16 usRandom;
@@ -1168,11 +1165,15 @@ UINT32 UIHandleNewBadMerc(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleEnterEditMode(UI_EVENT *pUIEvent) { return (EDIT_SCREEN); }
+static UINT32 UIHandleEnterEditMode(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (EDIT_SCREEN);
+}
 
-UINT32 UIHandleEnterPalEditMode(UI_EVENT *pUIEvent) { return (PALEDIT_SCREEN); }
+static UINT32 UIHandleEnterPalEditMode(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (PALEDIT_SCREEN);
+}
 
-UINT32 UIHandleEndTurn(UI_EVENT *pUIEvent) {
+UINT32 UIHandleEndTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // CANCEL FROM PLANNING MODE!
   if (InUIPlanMode()) {
     EndUIPlan();
@@ -1192,7 +1193,7 @@ UINT32 UIHandleEndTurn(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleTestHit(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleTestHit(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT8 bDamage;
 
@@ -1248,7 +1249,7 @@ void ChangeInterfaceLevel(INT16 sLevel) {
   ErasePath(FALSE);
 }
 
-UINT32 UIHandleChangeLevel(UI_EVENT *pUIEvent) {
+UINT32 UIHandleChangeLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   if (gsInterfaceLevel == 0) {
     ChangeInterfaceLevel(1);
   } else if (gsInterfaceLevel == 1) {
@@ -1261,7 +1262,7 @@ UINT32 UIHandleChangeLevel(UI_EVENT *pUIEvent) {
 extern void InternalSelectSoldier(UINT16 usSoldierID, BOOLEAN fAcknowledge, BOOLEAN fForceReselect,
                                   BOOLEAN fFromUI);
 
-UINT32 UIHandleSelectMerc(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleSelectMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   INT32 iCurrentSquad;
 
   // Get merc index at mouse and set current selection
@@ -1280,7 +1281,7 @@ UINT32 UIHandleSelectMerc(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 usMapPos;
   BOOLEAN fSetCursor = FALSE;
@@ -1363,7 +1364,7 @@ UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent) {
     }
 
     // DO SOME CURSOR POSITION FLAGS SETTING
-    GetCursorMovementFlags(&uiCursorFlags);
+    GetCursorMovementFlags(&uiCursorFlags, mouse);
 
     if (gusSelectedSoldier != NO_SOLDIER) {
       // Get Soldier Pointer
@@ -1397,7 +1398,7 @@ UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent) {
         guiNewUICursor = CANNOT_MOVE_UICURSOR;
 
       } else {
-        if (!UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, FALSE, TRUE)) {
+        if (!UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, FALSE, TRUE, mouse)) {
           // Are we in combat?
           if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED)) {
             // If so, draw path, etc
@@ -1437,7 +1438,7 @@ UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleMovementMenu(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMovementMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
 
   // Get soldier
@@ -1509,9 +1510,11 @@ UINT32 UIHandleMovementMenu(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandlePositionMenu(UI_EVENT *pUIEvent) { return (GAME_SCREEN); }
+static UINT32 UIHandlePositionMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (GAME_SCREEN);
+}
 
-UINT32 UIHandleAOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleAOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   INT16 usMapPos;
   struct SOLDIERTYPE *pSoldier;
   //	INT16							sTargetXPos, sTargetYPos;
@@ -1588,7 +1591,7 @@ UINT32 UIHandleAOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleMChangeToAction(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMChangeToAction(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   gUITargetShotWaiting = FALSE;
 
   EndPhysicsTrajectoryUI();
@@ -1598,13 +1601,13 @@ UINT32 UIHandleMChangeToAction(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleMChangeToHandMode(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMChangeToHandMode(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   ErasePath(FALSE);
 
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleAChangeToMove(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleAChangeToMove(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // Set merc glow back to normal
   // ( could have been set when in target cursor )
   SetMercGlowNormal();
@@ -1616,7 +1619,7 @@ UINT32 UIHandleAChangeToMove(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleCWait(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleCWait(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   INT16 usMapPos;
   struct SOLDIERTYPE *pSoldier;
   UINT32 uiCursorFlags;
@@ -1635,7 +1638,7 @@ UINT32 UIHandleCWait(UI_EVENT *pUIEvent) {
       return (GAME_SCREEN);
     }
 
-    GetCursorMovementFlags(&uiCursorFlags);
+    GetCursorMovementFlags(&uiCursorFlags, mouse);
 
     if (pInvTile != NULL) {
       HandleUIMovementCursor(pSoldier, uiCursorFlags, usMapPos, MOVEUI_TARGET_INTTILES);
@@ -1673,7 +1676,7 @@ UINT32 UIHandleCWait(UI_EVENT *pUIEvent) {
 
 // NOTE, ONCE AT THIS FUNCTION, WE HAVE ASSUMED TO HAVE CHECKED FOR ENOUGH APS THROUGH
 // SelectedMercCanAffordMove
-UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   INT16 usMapPos;
   struct SOLDIERTYPE *pSoldier;
   INT16 sDestGridNo;
@@ -1773,7 +1776,7 @@ UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent) {
           sActionGridNo =
               FindAdjacentGridEx(pSoldier, sIntTileGridNo, &ubDirection, NULL, FALSE, TRUE);
           if (sActionGridNo != -1) {
-            SetUIBusy(pSoldier->ubID);
+            SetUIBusy(pSoldier->ubID, mouse);
 
             // Set dest gridno
             sDestGridNo = sActionGridNo;
@@ -1791,7 +1794,7 @@ UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent) {
           }
         }
 
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
 
         if ((gTacticalStatus.uiFlags & REALTIME) || !(gTacticalStatus.uiFlags & INCOMBAT)) {
           // RESET MOVE FAST FLAG
@@ -1837,7 +1840,7 @@ UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleMCycleMoveAll(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMCycleMoveAll(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
 
   if (!GetSoldier(&pSoldier, gusSelectedSoldier)) {
@@ -1851,7 +1854,7 @@ UINT32 UIHandleMCycleMoveAll(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleMCycleMovement(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMCycleMovement(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   BOOLEAN fGoodMode = FALSE;
 
@@ -1899,9 +1902,11 @@ UINT32 UIHandleMCycleMovement(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleCOnTerrain(UI_EVENT *pUIEvent) { return (GAME_SCREEN); }
+static UINT32 UIHandleCOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (GAME_SCREEN);
+}
 
-UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT32 iPosDiff;
   static UINT16 gusAnchorMouseY;
@@ -1916,8 +1921,8 @@ UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
   guiNewUICursor = NO_UICURSOR;
 
   if (pUIEvent->fFirstTime) {
-    gusAnchorMouseY = gusMouseYPos;
-    usOldMouseY = gusMouseYPos;
+    gusAnchorMouseY = mouse.y;
+    usOldMouseY = mouse.y;
     ubNearHeigherLevel = FALSE;
     ubNearLowerLevel = FALSE;
 
@@ -1989,13 +1994,13 @@ UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
   }
 
   // Check if delta X has changed alot since last time
-  iPosDiff = abs((INT32)(usOldMouseY - gusMouseYPos));
+  iPosDiff = abs((INT32)(usOldMouseY - mouse.y));
 
   // guiShowUPDownArrows = ARROWS_SHOW_DOWN_BESIDE | ARROWS_SHOW_UP_BESIDE;
   guiShowUPDownArrows = uiOldShowUPDownArrows;
 
   {
-    if (gusAnchorMouseY > gusMouseYPos) {
+    if (gusAnchorMouseY > mouse.y) {
       // Get soldier
       if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
         if (iPosDiff < GO_MOVE_ONE && ubUpHeight >= 1) {
@@ -2032,7 +2037,7 @@ UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
       }
     }
 
-    if (gusAnchorMouseY < gusMouseYPos) {
+    if (gusAnchorMouseY < mouse.y) {
       // Get soldier
       if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
         if (iPosDiff < GO_MOVE_ONE && ubDownDepth >= 1) {
@@ -2079,7 +2084,7 @@ UINT32 UIHandleMAdjustStanceMode(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleAChangeToConfirmAction(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleAChangeToConfirmAction(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
 
   if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
@@ -2091,7 +2096,7 @@ UINT32 UIHandleAChangeToConfirmAction(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleCAOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleCAOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 usMapPos;
 
@@ -2109,8 +2114,8 @@ UINT32 UIHandleCAOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTargetSoldier,
-                        UINT16 usMapPos) {
+static void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTargetSoldier,
+                               UINT16 usMapPos, const struct MouseInput mouse) {
   INT32 iHandleReturn;
   INT16 sTargetGridNo;
   INT8 bTargetLevel;
@@ -2206,10 +2211,10 @@ void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarge
   }
 
   if (pSoldier->bWeaponMode == WM_ATTACHED) {
-    iHandleReturn = HandleItem(pSoldier, sTargetGridNo, bTargetLevel, UNDER_GLAUNCHER, TRUE);
+    iHandleReturn = HandleItem(pSoldier, sTargetGridNo, bTargetLevel, UNDER_GLAUNCHER, TRUE, mouse);
   } else {
     iHandleReturn =
-        HandleItem(pSoldier, sTargetGridNo, bTargetLevel, pSoldier->inv[HANDPOS].usItem, TRUE);
+        HandleItem(pSoldier, sTargetGridNo, bTargetLevel, pSoldier->inv[HANDPOS].usItem, TRUE, mouse);
   }
 
   if (iHandleReturn < 0) {
@@ -2231,15 +2236,14 @@ void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarge
   gfUIForceReExamineCursorData = TRUE;
 }
 
-void AttackRequesterCallback(UINT8 bExitValue) {
+static void AttackRequesterCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gTacticalStatus.ubLastRequesterTargetID = gpRequesterTargetMerc->ubProfile;
-
-    UIHandleMercAttack(gpRequesterMerc, gpRequesterTargetMerc, gsRequesterGridNo);
+    UIHandleMercAttack(gpRequesterMerc, gpRequesterTargetMerc, gsRequesterGridNo, mouse);
   }
 }
 
-UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   INT16 usMapPos;
   struct SOLDIERTYPE *pSoldier, *pTSoldier = NULL;
   BOOLEAN fDidRequester = FALSE;
@@ -2275,12 +2279,12 @@ UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent) {
           swprintf(zStr, ARR_SIZE(zStr), TacticalStr[ATTACK_OWN_GUY_PROMPT], pTSoldier->name);
 
           DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                       AttackRequesterCallback, NULL);
+                       AttackRequesterCallback, NULL, mouse);
         }
       }
 
       if (!fDidRequester) {
-        UIHandleMercAttack(pSoldier, pTSoldier, usMapPos);
+        UIHandleMercAttack(pSoldier, pTSoldier, usMapPos, mouse);
       }
     }
   }
@@ -2288,7 +2292,7 @@ UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleAEndAction(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleAEndAction(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 sTargetXPos, sTargetYPos;
   INT16 usMapPos;
@@ -2315,7 +2319,7 @@ UINT32 UIHandleAEndAction(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleCAEndConfirmAction(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleCAEndConfirmAction(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
 
   if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
@@ -2325,7 +2329,7 @@ UINT32 UIHandleCAEndConfirmAction(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleIOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleIOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   INT16 usMapPos;
 
   // Get gridno at this location
@@ -2346,9 +2350,11 @@ UINT32 UIHandleIOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleIChangeToIdle(UI_EVENT *pUIEvent) { return (GAME_SCREEN); }
+static UINT32 UIHandleIChangeToIdle(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (GAME_SCREEN);
+}
 
-UINT32 UIHandlePADJAdjustStance(UI_EVENT *pUIEvent) {
+static UINT32 UIHandlePADJAdjustStance(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   UINT8 ubNewStance;
 
@@ -2597,9 +2603,11 @@ void RemoveTacticalCursor() {
   ErasePath(TRUE);
 }
 
-UINT32 UIHandlePOPUPMSG(UI_EVENT *pUIEvent) { return (GAME_SCREEN); }
+static UINT32 UIHandlePOPUPMSG(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (GAME_SCREEN);
+}
 
-UINT32 UIHandleHCOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleHCOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 usMapPos;
 
@@ -2622,31 +2630,31 @@ UINT32 UIHandleHCOnTerrain(UI_EVENT *pUIEvent) {
     } else {
       guiNewUICursor = NORMALHANDCURSOR_UICURSOR;
 
-      UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, TRUE, FALSE);
+      UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, TRUE, FALSE, mouse);
     }
   }
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleHCGettingItem(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleHCGettingItem(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   guiNewUICursor = NORMAL_FREEUICURSOR;
 
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleTATalkingMenu(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleTATalkingMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   guiNewUICursor = NORMAL_FREEUICURSOR;
 
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleEXExitSectorMenu(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleEXExitSectorMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   guiNewUICursor = NORMAL_FREEUICURSOR;
 
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleOpenDoorMenu(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleOpenDoorMenu(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   guiNewUICursor = NORMAL_FREEUICURSOR;
 
   return (GAME_SCREEN);
@@ -2670,14 +2678,14 @@ void ToggleTalkCursorMode(UINT32 *puiNewEvent) {
   }
 }
 
-void ToggleLookCursorMode(UINT32 *puiNewEvent) {
+void ToggleLookCursorMode(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   // Toggle modes
   if (gCurrentUIMode == LOOKCURSOR_MODE) {
     guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
   } else {
     guiPendingOverrideEvent = LC_CHANGE_TO_LOOK;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
   }
 }
 
@@ -2815,9 +2823,11 @@ BOOLEAN UIHandleOnMerc(BOOLEAN fMovementMode) {
   return (TRUE);
 }
 
-UINT32 UIHandleILoadLevel(UI_EVENT *pUIEvent) { return (INIT_SCREEN); }
+static UINT32 UIHandleILoadLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (INIT_SCREEN);
+}
 
-UINT32 UIHandleISoldierDebug(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleISoldierDebug(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // Use soldier display pages
   SetDebugRenderHook((RENDER_HOOK)DebugSoldierPage1, 0);
   SetDebugRenderHook((RENDER_HOOK)DebugSoldierPage2, 1);
@@ -2828,17 +2838,17 @@ UINT32 UIHandleISoldierDebug(UI_EVENT *pUIEvent) {
   return (DEBUG_SCREEN);
 }
 
-UINT32 UIHandleILOSDebug(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleILOSDebug(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   SetDebugRenderHook((RENDER_HOOK)DebugStructurePage1, 0);
   return (DEBUG_SCREEN);
 }
 
-UINT32 UIHandleILevelNodeDebug(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleILevelNodeDebug(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   SetDebugRenderHook((RENDER_HOOK)DebugLevelNodePage, 0);
   return (DEBUG_SCREEN);
 }
 
-UINT32 UIHandleIETOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleIETOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // guiNewUICursor = CANNOT_MOVE_UICURSOR;
   guiNewUICursor = NO_UICURSOR;
 
@@ -2928,36 +2938,40 @@ void UIHandleSoldierStanceChange(UINT8 ubSoldierID, INT8 bNewStance) {
   // gfPlotNewMovement   = TRUE;
 }
 
-UINT32 UIHandleIETEndTurn(UI_EVENT *pUIEvent) { return (GAME_SCREEN); }
+static UINT32 UIHandleIETEndTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (GAME_SCREEN);
+}
 
-UINT32 UIHandleIGotoDemoMode(UI_EVENT *pUIEvent) { return (EnterTacticalDemoMode()); }
+static UINT32 UIHandleIGotoDemoMode(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
+  return (EnterTacticalDemoMode());
+}
 
-UINT32 UIHandleILoadFirstLevel(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleILoadFirstLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   gubCurrentScene = 0;
   return (INIT_SCREEN);
 }
 
-UINT32 UIHandleILoadSecondLevel(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleILoadSecondLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   gubCurrentScene = 1;
   return (INIT_SCREEN);
 }
 
-UINT32 UIHandleILoadThirdLevel(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleILoadThirdLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   gubCurrentScene = 2;
   return (INIT_SCREEN);
 }
 
-UINT32 UIHandleILoadFourthLevel(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleILoadFourthLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   gubCurrentScene = 3;
   return (INIT_SCREEN);
 }
 
-UINT32 UIHandleILoadFifthLevel(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleILoadFifthLevel(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   gubCurrentScene = 4;
   return (INIT_SCREEN);
 }
 
-void GetCursorMovementFlags(UINT32 *puiCursorFlags) {
+void GetCursorMovementFlags(UINT32 *puiCursorFlags, const struct MouseInput mouse) {
   INT16 usMapPos;
   INT16 sXPos, sYPos;
 
@@ -2980,7 +2994,7 @@ void GetCursorMovementFlags(UINT32 *puiCursorFlags) {
 
   *puiCursorFlags = 0;
 
-  if (gusMouseXPos != usOldMouseXPos || gusMouseYPos != usOldMouseYPos) {
+  if (mouse.x != usOldMouseXPos || mouse.y != usOldMouseYPos) {
     (*puiCursorFlags) |= MOUSE_MOVING;
 
     // IF CURSOR WAS PREVIOUSLY STATIONARY, MAKE THE ADDITIONAL CHECK OF GRID POS CHANGE
@@ -2997,8 +3011,8 @@ void GetCursorMovementFlags(UINT32 *puiCursorFlags) {
   }
 
   usOldMapPos = usMapPos;
-  usOldMouseXPos = gusMouseXPos;
-  usOldMouseYPos = gusMouseYPos;
+  usOldMouseXPos = mouse.x;
+  usOldMouseYPos = mouse.y;
 
   uiOldFrameNumber = guiGameCycleCounter;
   uiSameFrameCursorFlags = (*puiCursorFlags);
@@ -3793,7 +3807,7 @@ void SetConfirmMovementModeCursor(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromMov
   guiNewUICursor = GetInteractiveTileCursor(guiNewUICursor, TRUE);
 }
 
-UINT32 UIHandleLCOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLCOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 sFacingDir, sXPos, sYPos;
 
@@ -3834,7 +3848,7 @@ UINT32 UIHandleLCOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleLCChangeToLook(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLCChangeToLook(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   ErasePath(TRUE);
 
   return (GAME_SCREEN);
@@ -3873,7 +3887,7 @@ BOOLEAN MakeSoldierTurn(struct SOLDIERTYPE *pSoldier, INT16 sXPos, INT16 sYPos) 
   return (FALSE);
 }
 
-UINT32 UIHandleLCLook(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLCLook(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   INT16 sXPos, sYPos;
   struct SOLDIERTYPE *pSoldier;
   INT32 cnt;
@@ -3900,13 +3914,13 @@ UINT32 UIHandleLCLook(UI_EVENT *pUIEvent) {
     }
 
     if (MakeSoldierTurn(pSoldier, sXPos, sYPos)) {
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
     }
   }
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleTOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleTOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   UINT8 ubTargID;
   UINT32 uiRange;
@@ -3927,7 +3941,7 @@ UINT32 UIHandleTOnTerrain(UI_EVENT *pUIEvent) {
   if (ValidQuickExchangePosition()) {
     // Do new cursor!
     guiPendingOverrideEvent = M_ON_TERRAIN;
-    return (UIHandleMOnTerrain(pUIEvent));
+    return (UIHandleMOnTerrain(pUIEvent, mouse));
   }
 
   sTargetGridNo = usMapPos;
@@ -3997,23 +4011,23 @@ UINT32 UIHandleTOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleTChangeToTalking(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleTChangeToTalking(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   ErasePath(TRUE);
 
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleLUIOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLUIOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // guiNewUICursor = NO_UICURSOR;
   //	SetCurrentCursorFromDatabase( VIDEO_NO_CURSOR );
 
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleLUIBeginLock(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLUIBeginLock(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // Don't let both versions of the locks to happen at the same time!
   // ( They are mutually exclusive )!
-  UIHandleLAEndLockOurTurn(NULL);
+  UIHandleLAEndLockOurTurn(NULL, mouse);
 
   if (!gfDisableRegionActive) {
     gfDisableRegionActive = TRUE;
@@ -4036,25 +4050,25 @@ UINT32 UIHandleLUIBeginLock(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent) {
+UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   if (gfDisableRegionActive) {
     gfDisableRegionActive = FALSE;
 
     // Add region
     MSYS_RemoveRegion(&gDisableRegion);
-    RefreshMouseRegions();
+    RefreshMouseRegions(mouse);
 
     // SetCurrentCursorFromDatabase( guiCurrentUICursor );
 
     guiForceRefreshMousePositionCalculation = TRUE;
-    UIHandleMOnTerrain(NULL);
+    UIHandleMOnTerrain(NULL, mouse);
 
     if (gViewportRegion.uiFlags & MSYS_MOUSE_IN_AREA) {
       SetCurrentCursorFromDatabase(gUICursors[guiNewUICursor].usFreeCursorName);
     }
 
     guiPendingOverrideEvent = M_ON_TERRAIN;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     // ATE: Only if NOT in conversation!
     if (!(gTacticalStatus.uiFlags & ENGAGED_IN_CONV)) {
@@ -4091,7 +4105,7 @@ void CheckForDisabledRegionRemove() {
   }
 }
 
-UINT32 UIHandleLAOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLAOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // guiNewUICursor = NO_UICURSOR;
   // SetCurrentCursorFromDatabase( VIDEO_NO_CURSOR );
 
@@ -4298,7 +4312,7 @@ void ResetMultiSelection() {
   gTacticalStatus.fAtLeastOneGuyOnMultiSelect = FALSE;
 }
 
-UINT32 UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT32 cnt;
   INT16 sScreenX, sScreenY;
@@ -4309,8 +4323,8 @@ UINT32 UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent) {
   guiNewUICursor = NO_UICURSOR;
   // SetCurrentCursorFromDatabase( VIDEO_NO_CURSOR );
 
-  gRubberBandRect.iRight = gusMouseXPos;
-  gRubberBandRect.iBottom = gusMouseYPos;
+  gRubberBandRect.iRight = mouse.x;
+  gRubberBandRect.iBottom = mouse.y;
 
   // Copy into temp rect
   memcpy(&aRect, &gRubberBandRect, sizeof(gRubberBandRect));
@@ -4381,7 +4395,7 @@ UINT32 UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleJumpOverOnTerrain(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleJumpOverOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 usMapPos;
 
@@ -4410,7 +4424,7 @@ UINT32 UIHandleJumpOverOnTerrain(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pSoldier;
   INT16 usMapPos;
   INT8 bDirection;
@@ -4428,7 +4442,7 @@ UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent) {
     return (GAME_SCREEN);
   }
 
-  SetUIBusy(pSoldier->ubID);
+  SetUIBusy(pSoldier->ubID, mouse);
 
   // OK, Start jumping!
   // Remove any previous actions
@@ -4447,10 +4461,10 @@ UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleLABeginLockOurTurn(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLABeginLockOurTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // Don't let both versions of the locks to happen at the same time!
   // ( They are mutually exclusive )!
-  UIHandleLUIEndLock(NULL);
+  UIHandleLUIEndLock(NULL, mouse);
 
   if (!gfUserTurnRegionActive) {
     gfUserTurnRegionActive = TRUE;
@@ -4478,7 +4492,7 @@ UINT32 UIHandleLABeginLockOurTurn(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent) {
+static UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   if (gfUserTurnRegionActive) {
     gfUserTurnRegionActive = FALSE;
 
@@ -4486,19 +4500,19 @@ UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent) {
 
     // Add region
     MSYS_RemoveRegion(&gUserTurnRegion);
-    RefreshMouseRegions();
+    RefreshMouseRegions(mouse);
     // SetCurrentCursorFromDatabase( guiCurrentUICursor );
 
     gfPlotNewMovement = TRUE;
 
     guiForceRefreshMousePositionCalculation = TRUE;
-    UIHandleMOnTerrain(NULL);
+    UIHandleMOnTerrain(NULL, mouse);
 
     if (gViewportRegion.uiFlags & MSYS_MOUSE_IN_AREA) {
       SetCurrentCursorFromDatabase(gUICursors[guiNewUICursor].usFreeCursorName);
     }
     guiPendingOverrideEvent = M_ON_TERRAIN;
-    HandleTacticalUI();
+    HandleTacticalUI(mouse);
 
     TurnOffTeamsMuzzleFlashes(gbPlayerNum);
 
@@ -4793,23 +4807,23 @@ BOOLEAN HandleTalkInit() {
   return (FALSE);
 }
 
-void SetUIBusy(UINT8 ubID) {
+void SetUIBusy(UINT8 ubID, const struct MouseInput mouse) {
   if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED) &&
       (gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
     if (gusSelectedSoldier == ubID) {
       guiPendingOverrideEvent = LA_BEGINUIOURTURNLOCK;
-      HandleTacticalUI();
+      HandleTacticalUI(mouse);
     }
   }
 }
 
-void UnSetUIBusy(UINT8 ubID) {
+void UnSetUIBusy(UINT8 ubID, const struct MouseInput mouse) {
   if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED) &&
       (gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
     if (!gTacticalStatus.fUnLockUIAfterHiddenInterrupt) {
       if (gusSelectedSoldier == ubID) {
         guiPendingOverrideEvent = LA_ENDUIOUTURNLOCK;
-        HandleTacticalUI();
+        HandleTacticalUI(mouse);
 
         // Set grace period...
         gTacticalStatus.uiTactialTurnLimitClock = GetJA2Clock();
@@ -4826,9 +4840,10 @@ void BeginDisplayTimedCursor(UINT32 uiCursorID, UINT32 uiDelay) {
   guiTimerCursorDelay = uiDelay;
 }
 
-INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
-                                               BOOLEAN fUseOKCursor,
-                                               BOOLEAN fItemsOnlyIfOnIntTiles) {
+static INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
+                                                      BOOLEAN fUseOKCursor,
+                                                      BOOLEAN fItemsOnlyIfOnIntTiles,
+                                                      const struct MouseInput mouse) {
   struct ITEM_POOL *pItemPool;
   UINT32 uiCursorFlags;
   struct LEVELNODE *pIntTile;
@@ -4847,7 +4862,7 @@ INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT
     fOverEnemy = FALSE;
   }
 
-  GetCursorMovementFlags(&uiCursorFlags);
+  GetCursorMovementFlags(&uiCursorFlags, mouse);
 
   // Default gridno to mouse pos
   sActionGridNo = usMapPos;
@@ -5031,14 +5046,14 @@ INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT
   }
 }
 
-void HandleTacticalUILoseCursorFromOtherScreen() {
+void HandleTacticalUILoseCursorFromOtherScreen(const struct GameInput *gameInput) {
   SetUICursor(0);
 
   gfTacticalForceNoCursor = TRUE;
 
   ErasePath(TRUE);
 
-  (*(GameScreens[GAME_SCREEN].HandleScreen))();
+  (*(GameScreens[GAME_SCREEN].HandleScreen))(gameInput);
 
   gfTacticalForceNoCursor = FALSE;
 

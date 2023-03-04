@@ -249,8 +249,6 @@ void CheckMembersOfMvtGroupAndComplainAboutBleeding(struct SOLDIERTYPE *pSoldier
 
 void HandleArrivalOfReinforcements(struct GROUP *pGroup);
 
-void PlanSimultaneousGroupArrivalCallback(UINT8 bMessageValue);
-
 // When groups meet up, then it is possible that they may join up.  This only happens if
 // the groups were separated because of singular tactical/exitgrid traversal, and the timing
 // expires.

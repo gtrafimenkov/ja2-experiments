@@ -2,6 +2,7 @@
 #define __LAPTOP_H
 
 #include "MessageBoxScreen.h"
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Utils/FontControl.h"
 
@@ -12,7 +13,6 @@ INT32 EnterLaptop();
 void ExitLaptop();
 void RenderLaptop();
 UINT32 ExitLaptopMode(UINT32 uiMode);
-void EnterNewLaptopMode();
 UINT32 DrawLapTopIcons();
 UINT32 DrawLapTopText();
 void ReDrawHighLight();
@@ -24,7 +24,8 @@ BOOLEAN LeaveLapTopScreen();
 void SetLaptopExitScreen(UINT32 uiExitScreen);
 void SetLaptopNewGameFlag();
 UINT32 DrawLapTopIcons();
-void LapTopScreenCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void LapTopScreenCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse);
 void HandleRightButtonUpEvent(void);
 BOOLEAN DoLapTopMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT8 ubFlags,
                            MSGBOX_CALLBACK ReturnCallback);
@@ -44,7 +45,7 @@ BOOLEAN InitLaptopAndLaptopScreens();
 // clear out all tempf iles from laptop
 void ClearOutTempLaptopFiles(void);
 
-void HaventMadeImpMercEmailCallBack();
+void HaventMadeImpMercEmailCallback();
 
 extern UINT32 guiCurrentLaptopMode;
 extern UINT32 guiPreviousLaptopMode;

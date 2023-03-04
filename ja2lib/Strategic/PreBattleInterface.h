@@ -1,12 +1,14 @@
 #ifndef __PREBATTLE_INTERFACE_H
 #define __PREBATTLE_INTERFACE_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Strategic/StrategicMovement.h"
 
-void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI);
+void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI,
+                            const struct MouseInput mouse);
 void KillPreBattleInterface();
-void RenderPreBattleInterface();
+void RenderPreBattleInterface(const struct MouseInput mouse);
 
 extern BOOLEAN gfPreBattleInterfaceActive;
 extern BOOLEAN gfDisplayPotentialRetreatPaths;
@@ -96,5 +98,7 @@ enum {
   LOG_VICTORY,
 };
 void LogBattleResults(UINT8 ubVictoryCode);
+
+extern void HandlePreBattleInterfaceStates(const struct MouseInput mouse);
 
 #endif

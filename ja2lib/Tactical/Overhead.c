@@ -11,6 +11,7 @@
 #include "JAScreens.h"
 #include "Laptop/History.h"
 #include "MessageBoxScreen.h"
+#include "MouseInput.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/MouseSystem.h"
@@ -279,7 +280,7 @@ UINT8 NumCapableEnemyInSector();
 
 BOOLEAN KillIncompacitatedEnemyInSector();
 BOOLEAN CheckForLosingEndOfBattle();
-void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue);
+void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue, const struct MouseInput mouse);
 UINT8 NumEnemyInSectorNotDeadOrDying();
 UINT8 NumBloodcatsInSectorNotDeadOrDying();
 
@@ -688,7 +689,7 @@ FLOAT gdRadiansForAngle[] = {
 
 };
 
-BOOLEAN ExecuteOverhead() {
+BOOLEAN ExecuteOverhead(const struct MouseInput mouse) {
   UINT32 cnt;
   struct SOLDIERTYPE *pSoldier;
   INT16 sAPCost;
@@ -1209,7 +1210,7 @@ BOOLEAN ExecuteOverhead() {
                           SoldierGotoStationaryStance(pSoldier);
                         }
                       } else {
-                        UnSetUIBusy(pSoldier->ubID);
+                        UnSetUIBusy(pSoldier->ubID, mouse);
 
                         SoldierGotoStationaryStance(pSoldier);
                       }
@@ -1345,7 +1346,7 @@ BOOLEAN ExecuteOverhead() {
             (((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT)) ||
              (fHandleAI && guiAISlotToHandle == cnt) ||
              (pSoldier->fAIFlags & AI_HANDLE_EVERY_FRAME) || gTacticalStatus.fAutoBandageMode)) {
-          HandleSoldierAI(pSoldier);
+          HandleSoldierAI(pSoldier, mouse);
           if (!((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT))) {
             if (GetJA2Clock() - iTimerVal > RT_AI_TIMESLICE) {
               // don't do any more AI this time!
@@ -1368,7 +1369,7 @@ BOOLEAN ExecuteOverhead() {
         // the ONLY thing to do with away soldiers is process their schedule if they have one
         // and there is an action for them to do (like go on-sector)
         if (pSoldier->fAIFlags & AI_CHECK_SCHEDULE) {
-          HandleSoldierAI(pSoldier);
+          HandleSoldierAI(pSoldier, mouse);
         }
       }
     }
@@ -1410,7 +1411,7 @@ BOOLEAN ExecuteOverhead() {
 
             if ((gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              HandleTacticalUI();
+              HandleTacticalUI(mouse);
             }
             AllMercsHaveWalkedOffSector();
             break;
@@ -1420,7 +1421,7 @@ BOOLEAN ExecuteOverhead() {
             // OK, unset UI
             if ((gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              HandleTacticalUI();
+              HandleTacticalUI(mouse);
             }
             break;
 
@@ -1429,7 +1430,7 @@ BOOLEAN ExecuteOverhead() {
             // OK, unset UI
             if ((gTacticalStatus.ubCurrentTeam == gbPlayerNum)) {
               guiPendingOverrideEvent = LU_ENDUILOCK;
-              HandleTacticalUI();
+              HandleTacticalUI(mouse);
             }
             AllMercsWalkedToExitGrid();
             break;
@@ -1464,7 +1465,7 @@ void HaltGuyFromNewGridNoBecauseOfNoAPs(struct SOLDIERTYPE *pSoldier) {
               pSoldier->name);
   }
 
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // OK, Unset engaged in CONV, something changed...
   UnSetEngagedInConvFromPCAction(pSoldier);
@@ -1518,7 +1519,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
       pSoldier->bEndDoorOpenCode = FALSE;
 
       if (fInitialMove) {
-        UnSetUIBusy(pSoldier->ubID);
+        UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       }
 
       DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("HandleGotoNewGridNo() Failed: Out of Breath"));
@@ -1701,7 +1702,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
-        SetStopTimeQuoteCallback(MineSpottedDialogueCallBack);
+        SetStopTimeQuoteCallback(MineSpottedDialogueCallback);
         TacticalCharacterDialogue(pSoldier, QUOTE_SUSPICIOUS_GROUND);
       }
     } else {
@@ -1862,7 +1863,7 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
 
               fDontContinue = TRUE;
 
-              UnSetUIBusy(pSoldier->ubID);
+              UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
             }
           }
       }
@@ -2158,7 +2159,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
         // we reuse the boobytrap gridno variable here
         gsBoobyTrapGridNo = sMineGridNo;
         gpBoobyTrapSoldier = pSoldier;
-        SetStopTimeQuoteCallback(MineSpottedDialogueCallBack);
+        SetStopTimeQuoteCallback(MineSpottedDialogueCallback);
         TacticalCharacterDialogue(pSoldier, QUOTE_SUSPICIOUS_GROUND);
       }
     } else {
@@ -3896,7 +3897,7 @@ INT16 FindAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8 *pub
   }
 
   if (fForceToPerson) {
-    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO)) {
+    if (FindSoldierGridNo(sGridNo, &usSoldierIndex, &uiMercFlags)) {
       sGridNo = MercPtrs[usSoldierIndex]->sGridNo;
       if (psAdjustedGridNo != NULL) {
         *psAdjustedGridNo = sGridNo;
@@ -4099,7 +4100,7 @@ INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
   }
 
   if (fForceToPerson) {
-    if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO)) {
+    if (FindSoldierGridNo(sGridNo, &usSoldierIndex, &uiMercFlags)) {
       sGridNo = MercPtrs[usSoldierIndex]->sGridNo;
       if (psAdjustedGridNo != NULL) {
         *psAdjustedGridNo = sGridNo;
@@ -5040,7 +5041,7 @@ BOOLEAN CheckForEndOfBattle(BOOLEAN fAnEnemyRetreated) {
     gTacticalStatus.fEnemyInSector = FALSE;
 
     // If here, the battle has been lost!
-    UnSetUIBusy((UINT8)gusSelectedSoldier);
+    UnSetUIBusy((UINT8)gusSelectedSoldier, XXX_GetMouseInput());
 
     if (gTacticalStatus.uiFlags & INCOMBAT) {
       // Exit mode!
@@ -5098,13 +5099,13 @@ BOOLEAN CheckForEndOfBattle(BOOLEAN fAnEnemyRetreated) {
     // battle for us
     EndAllAITurns();
 
-    UnSetUIBusy((UINT8)gusSelectedSoldier);
+    UnSetUIBusy((UINT8)gusSelectedSoldier, XXX_GetMouseInput());
 
     // ATE:
     // If we ended battle in any team other than the player's
     // we need to end the UI lock using this method....
     guiPendingOverrideEvent = LU_ENDUILOCK;
-    HandleTacticalUI();
+    HandleTacticalUI(XXX_GetMouseInput());
 
     if (gTacticalStatus.uiFlags & INCOMBAT) {
       // Exit mode!
@@ -5933,7 +5934,7 @@ void HandleSuppressionFire(UINT8 ubTargetedMerc, UINT8 ubCausedAttacker) {
 }
 
 BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE **ppTarget,
-                                      INT8 bReason) {
+                                      INT8 bReason, const struct MouseInput mouse) {
   INT16 sTargetXPos, sTargetYPos;
   BOOLEAN fEnterCombat = TRUE;
   struct SOLDIERTYPE *pTarget = *ppTarget;
@@ -6055,7 +6056,7 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
 
           // Fire back!
           HandleItem(pTarget, pSoldier->sGridNo, pSoldier->bLevel, pTarget->inv[HANDPOS].usItem,
-                     FALSE);
+                     FALSE, mouse);
         }
       }
 
@@ -6073,8 +6074,8 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
   return (fEnterCombat);
 }
 
-struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker,
-                                                  UINT8 ubTargetID) {
+static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByAttacker,
+                                                         UINT8 ubTargetID) {
   // Strange as this may seem, this function returns a pointer to
   // the *target* in case the target has changed sides as a result
   // of being attacked
@@ -6172,7 +6173,8 @@ struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByA
       // stuff that only applies to when we attack
       if (pTarget->ubBodyType != CROW) {
         if (pSoldier->bTeam == gbPlayerNum) {
-          fEnterCombat = ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK);
+          fEnterCombat = ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK,
+                                                       XXX_GetMouseInput());
           if (!fEnterCombat) {
             DebugMsg(TOPIC_JA2, DBG_LEVEL_3, ">>Not entering combat as a result of PC attack");
           }
@@ -6197,10 +6199,6 @@ struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByA
             if (pTeamSoldier->bActive && pTeamSoldier->bInSector) {
               if (pTeamSoldier->ubBodyType == CROW) {
                 if (pTeamSoldier->bOppList[pSoldier->ubID] == SEEN_CURRENTLY) {
-                  // ZEROTIMECOUNTER( pTeamSoldier->AICounter );
-
-                  // MakeCivHostile( pTeamSoldier, 2 );
-
                   HandleCrowFlyAway(pTeamSoldier);
                 }
               }
@@ -6246,7 +6244,7 @@ struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByA
     }
 
     if (pSoldier->uiStatusFlags & SOLDIER_PC) {
-      UnSetUIBusy(ubID);
+      UnSetUIBusy(ubID, XXX_GetMouseInput());
     } else {
       FreeUpNPCFromAttacking(ubID);
     }
@@ -6545,7 +6543,7 @@ void DoneFadeOutDueToDeath(void) {
   // SetPendingNewScreen( MAINMENU_SCREEN );
 }
 
-void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue) {
+void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // Enter mapscreen.....
   CheckAndHandleUnloadingOfCurrentWorld();
 }
@@ -6604,20 +6602,23 @@ void DeathTimerCallback(void) {
       gTacticalStatus.Team[ENEMY_TEAM].bMenInSector) {
     DoMessageBox(MSG_BOX_BASIC_STYLE,
                  LargeTacticalStr[LARGESTR_NOONE_LEFT_CAPABLE_OF_BATTLE_AGAINST_CREATURES_STR],
-                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL);
+                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL,
+                 XXX_GetMouseInput());
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, LargeTacticalStr[LARGESTR_NOONE_LEFT_CAPABLE_OF_BATTLE_STR],
-                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL);
+                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL,
+                 XXX_GetMouseInput());
   }
 }
 
 void CaptureTimerCallback(void) {
   if (gfSurrendered) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, LargeTacticalStr[3], GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK,
-                 EndBattleWithUnconsciousGuysCallback, NULL);
+                 EndBattleWithUnconsciousGuysCallback, NULL, XXX_GetMouseInput());
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, LargeTacticalStr[LARGESTR_HAVE_BEEN_CAPTURED], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL);
+                 (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL,
+                 XXX_GetMouseInput());
   }
   gfSurrendered = FALSE;
 }

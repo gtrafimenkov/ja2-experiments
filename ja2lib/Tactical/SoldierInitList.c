@@ -1801,18 +1801,9 @@ BOOLEAN ValidateSoldierInitLinks(UINT8 ubCode) {
                  L"  This is the bug responsible for mercs disappearing.  Be prepared to answer "
                  L"lots of questions...");
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, str, SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK,
-                             ErrorDetectedInSaveCallback);
+                             ErrorDetectedInSaveCallback, XXX_GetMouseInput());
         break;
       case 2:  // saving game
-        // swprintf( str, L"Error detected WHILE SAVING file.  Please send save and text files
-        // associated with save to Kris and Dave." L" After doing so, go back into the game and try
-        // reloading the new save and saving it again which *could* fix the problem." L"  This is
-        // the bug responsible for mercs disappearing. Be prepared to answer lots of questions..."
-        // ); if( guiPreviousOptionScreen == MAP_SCREEN
-        // )
-        //	DoMapMessageBox( MSG_BOX_BASIC_STYLE, str, MAP_SCREEN, MSG_BOX_FLAG_OK, NULL );
-        // else
-        //	DoMessageBox( MSG_BOX_BASIC_STYLE, str, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, NULL );
         break;
       case 3:  // entering sector using temp files (before fade in)
         gfDoDialogOnceGameScreenFadesIn = TRUE;
@@ -1826,7 +1817,8 @@ BOOLEAN ValidateSoldierInitLinks(UINT8 ubCode) {
                  L"saving it again *could* fix it."
                  L"  This is the bug responsible for mercs disappearing.  Be prepared to answer "
                  L"lots of questions...");
-        DoMessageBox(MSG_BOX_BASIC_STYLE, str, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, NULL);
+        DoMessageBox(MSG_BOX_BASIC_STYLE, str, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, NULL,
+                     XXX_GetMouseInput());
         break;
     }
     return FALSE;

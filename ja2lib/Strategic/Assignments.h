@@ -3,6 +3,7 @@
 
 // header for assignment manipulation/updating for characters
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 struct GROUP;
@@ -223,40 +224,56 @@ extern BOOLEAN gfReEvaluateEveryonesNothingToDo;
 
 // pop up menu mouse regions
 void CreateDestroyMouseRegionsForAssignmentMenu(void);
-void AssignmentMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void AssignmentMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
+void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 void CreateDestroyMouseRegionsForTrainingMenu(void);
-void TrainingMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void TrainingMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
 
 void CreateDestroyMouseRegionsForAttributeMenu(void);
-void AttributeMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void AttributesMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void AttributeMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void AttributesMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox);
-void SquadMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SquadMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse);
+void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse);
 
 // vehicle menu
 void CreateDestroyMouseRegionForVehicleMenu(void);
-void VehicleMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void VehicleMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
+void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
 
 // repair menu
 void CreateDestroyMouseRegionForRepairMenu(void);
-void RepairMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void RepairMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
+void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                           const struct MouseInput mouse);
 
 // contract menu
 void CreateDestroyMouseRegionsForContractMenu(void);
-void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ContractMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
+void ContractMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
 void RebuildContractBoxForMerc(struct SOLDIERTYPE *pCharacter);
 
 // remove merc from team menu callback
-void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void RemoveMercMenuMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
+void RemoveMercMenuMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 void CreateDestroyMouseRegionsForRemoveMenu(void);
 
 // misc assignment GUI functions

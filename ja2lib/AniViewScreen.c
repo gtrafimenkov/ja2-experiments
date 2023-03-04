@@ -67,7 +67,7 @@ UINT32 AniEditScreenInit(void) { return TRUE; }
 
 UINT32 AniEditScreenShutdown(void) { return TRUE; }
 
-UINT32 AniEditScreenHandle(void) {
+UINT32 AniEditScreenHandle(const struct GameInput *gameInput) {
   InputAtom InputEvent;
   static BOOLEAN fFirstTime = TRUE;
   static UINT16 usOldState;
@@ -100,7 +100,7 @@ UINT32 AniEditScreenHandle(void) {
   /////////////////////////////////////////////////////
   StartFrameBufferRender();
 
-  RenderWorld();
+  RenderWorld(gameInput->mouse);
 
   ExecuteBaseDirtyRectQueue();
 
@@ -315,7 +315,7 @@ void BuildListFile() {
     } else {
       swprintf(zError, ARR_SIZE(zError), L"Animation str %S is not known: ", currFilename);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zError, ANIEDIT_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO, NULL,
-                   NULL);
+                   NULL, XXX_GetMouseInput());
       fclose(infoFile);
       return;
     }

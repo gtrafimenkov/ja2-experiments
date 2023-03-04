@@ -9,6 +9,7 @@
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
+#include "MouseInput.h"
 #include "SGP/Container.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
@@ -246,7 +247,7 @@ void EVENT_InternalSetSoldierDesiredDirection(struct SOLDIERTYPE *pSoldier, UINT
 
 #ifdef JA2BETAVERSION
 extern void ValidatePlayersAreInOneGroupOnly();
-extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue);
+extern void MapScreenDefaultOkBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void SAIReportError(STR16 wErrorString);
 #endif
 
@@ -1228,7 +1229,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
 
     // Alrighty, check if we should free buddy up!
     if (usNewState == GIVING_AID) {
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
     }
 
     // SUBSTITUDE VARIOUS REG ANIMATIONS WITH ODD BODY TYPES
@@ -1299,7 +1300,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
       // Check for breath collapse if a given animation like
       if (CheckForBreathCollapse(pSoldier) || pSoldier->bCollapsed) {
         // UNset UI
-        UnSetUIBusy(pSoldier->ubID);
+        UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
         SoldierCollapse(pSoldier);
 
@@ -1372,7 +1373,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
             } else {
               if (pSoldier->bBreathCollapsed) {
                 // UNset UI
-                UnSetUIBusy(pSoldier->ubID);
+                UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
                 SoldierCollapse(pSoldier);
 
@@ -3700,7 +3701,7 @@ void ChangeSoldierStance(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredStance) {
   }
 
   // Set UI Busy
-  SetUIBusy(pSoldier->ubID);
+  SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // ATE: If we are an NPC, cower....
   if (pSoldier->ubBodyType >= FATCIV && pSoldier->ubBodyType <= KIDCIV) {
@@ -4316,7 +4317,7 @@ void TurnSoldier(struct SOLDIERTYPE *pSoldier) {
     // Unset ui busy if from ui
     if (pSoldier->bTurningFromUI && (pSoldier->fTurningFromPronePosition != 3) &&
         (pSoldier->fTurningFromPronePosition != 1)) {
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       pSoldier->bTurningFromUI = FALSE;
     }
 
@@ -5119,7 +5120,7 @@ void BeginSoldierClimbUpRoof(struct SOLDIERTYPE *pSoldier) {
     if (EnoughPoints(pSoldier, GetAPsToClimbRoof(pSoldier, FALSE), 0, TRUE)) {
       if (pSoldier->bTeam == gbPlayerNum) {
         // OK, SET INTERFACE FIRST
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       }
 
       pSoldier->sTempNewGridNo =
@@ -6108,7 +6109,7 @@ void BeginSoldierClimbDownRoof(struct SOLDIERTYPE *pSoldier) {
     if (EnoughPoints(pSoldier, GetAPsToClimbRoof(pSoldier, TRUE), 0, TRUE)) {
       if (pSoldier->bTeam == gbPlayerNum) {
         // OK, SET INTERFACE FIRST
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       }
 
       pSoldier->sTempNewGridNo =
@@ -6276,7 +6277,7 @@ static int trig[8] = { 2, 3, 4, 5, 6, 7, 8, 1 };
 }
 #endif
 
-//#if 0
+// #if 0
 UINT8 atan8(INT16 sXPos, INT16 sYPos, INT16 sXPos2, INT16 sYPos2) {
   DOUBLE test_x = sXPos2 - sXPos;
   DOUBLE test_y = sYPos2 - sYPos;
@@ -6689,7 +6690,7 @@ void ReviveSoldier(struct SOLDIERTYPE *pSoldier) {
 }
 
 void HandleAnimationProfile(struct SOLDIERTYPE *pSoldier, UINT16 usAnimState, BOOLEAN fRemove) {
-  //#if 0
+  // #if 0
   struct ANIM_PROF *pProfile;
   struct ANIM_PROF_DIR *pProfileDir;
   struct ANIM_PROF_TILE *pProfileTile;
@@ -6739,7 +6740,7 @@ void HandleAnimationProfile(struct SOLDIERTYPE *pSoldier, UINT16 usAnimState, BO
     }
   }
 
-  //#endif
+  // #endif
 }
 
 struct LEVELNODE *GetAnimProfileFlags(UINT16 sGridNo, UINT16 *usFlags,
@@ -6756,7 +6757,7 @@ struct LEVELNODE *GetAnimProfileFlags(UINT16 sGridNo, UINT16 *usFlags,
     pNode = pGivenNode->pNext;
   }
 
-  //#if 0
+  // #if 0
 
   if (pNode != NULL) {
     if (pNode->uiFlags & LEVELNODE_MERCPLACEHOLDER) {
@@ -6765,7 +6766,7 @@ struct LEVELNODE *GetAnimProfileFlags(UINT16 sGridNo, UINT16 *usFlags,
     }
   }
 
-  //#endif
+  // #endif
 
   return (pNode);
 }
@@ -7167,7 +7168,7 @@ void EVENT_SoldierBeginFirstAid(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UIN
     }
 
     if (fRefused) {
-      UnSetUIBusy(pSoldier->ubID);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
       return;
     }
 
@@ -7213,14 +7214,14 @@ void EVENT_SoldierEnterVehicle(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
   UINT32 uiMercFlags;
   UINT16 usSoldierIndex;
 
-  if (FindSoldier(sGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO)) {
+  if (FindSoldierGridNo(sGridNo, &usSoldierIndex, &uiMercFlags)) {
     pTSoldier = MercPtrs[usSoldierIndex];
 
     // Enter vehicle...
     EnterVehicle(pTSoldier, pSoldier);
   }
 
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 }
 
 UINT32 SoldierDressWound(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pVictim, INT16 sKitPts,
@@ -7536,7 +7537,7 @@ void HaultSoldierFromSighting(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromSightin
 
   // Unset UI!
   if (fFromSightingEnemy || (pSoldier->pTempObject == NULL && !pSoldier->fTurningToShoot)) {
-    UnSetUIBusy(pSoldier->ubID);
+    UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
   }
 
   pSoldier->bTurningFromUI = FALSE;
@@ -7597,7 +7598,7 @@ void EVENT_StopMerc(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bDirection
   }
 
   // Unset UI!
-  UnSetUIBusy(pSoldier->ubID);
+  UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   UnMarkMovementReserved(pSoldier);
 }
@@ -7800,7 +7801,7 @@ void ContinueMercMovement(struct SOLDIERTYPE *pSoldier) {
 
       AdjustNoAPToFinishMove(pSoldier, FALSE);
 
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
       // OK, try and get a path to out dest!
       EVENT_InternalGetNewSoldierPath(pSoldier, sGridNo, pSoldier->usUIMovementMode, FALSE, TRUE);
@@ -8417,8 +8418,8 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
   } else {
     // If in water....
     if (MercInWater(pSoldier)) {
-      UnSetUIBusy(pSoldier->ubID);
-      HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel);
+      UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
+      HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel, XXX_GetMouseInput());
       SoldierGotoStationaryStance(pSoldier);
       if (!(pSoldier->uiStatusFlags & SOLDIER_PC)) {
         // reset action value for AI because we're done!
@@ -8434,8 +8435,8 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
           // we have a strucxture with items in it
           // look for orientation and use angle accordingly....
           if (bZLevel > 0) {
-            //#if 0
-            // Get direction to face....
+            // #if 0
+            //  Get direction to face....
             if ((pStructure = FindStructure(
                      (INT16)sGridNo, (STRUCTURE_HASITEMONTOP | STRUCTURE_OPENABLE))) != NULL) {
               fDoNormalPickup = FALSE;
@@ -8467,7 +8468,7 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
               // Change to pickup animation
               EVENT_InitNewSoldierAnim(pSoldier, ADJACENT_GET_ITEM, 0, FALSE);
             }
-            //#endif
+            // #endif
           }
 
           if (fDoNormalPickup) {
@@ -8483,8 +8484,8 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
         case ANIM_CROUCH:
         case ANIM_PRONE:
 
-          UnSetUIBusy(pSoldier->ubID);
-          HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel);
+          UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
+          HandleSoldierPickupItem(pSoldier, iItemIndex, sGridNo, bZLevel, XXX_GetMouseInput());
           SoldierGotoStationaryStance(pSoldier);
           if (!(pSoldier->uiStatusFlags & SOLDIER_PC)) {
             // reset action value for AI because we're done!
@@ -8792,7 +8793,7 @@ void MercStealFromMerc(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarget
              String("!!!!!!! Starting STEAL attack, attack count now %d",
                     gTacticalStatus.ubAttackBusyCount));
 
-    SetUIBusy(pSoldier->ubID);
+    SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
   }
 }
 
@@ -9263,12 +9264,6 @@ void DebugValidateSoldierData() {
 
     if (fProblemDetected) {
       SAIReportError(sString);
-      /*
-                              if ( guiCurrentScreen == MAP_SCREEN )
-                                      DoMapMessageBox( MSG_BOX_BASIC_STYLE, sString, MAP_SCREEN,
-         MSG_BOX_FLAG_OK, MapScreenDefaultOkBoxCallback ); else DoMessageBox( MSG_BOX_BASIC_STYLE,
-         sString, GAME_SCREEN, ( UINT8 )MSG_BOX_FLAG_OK, NULL, NULL );
-      */
       break;
     }
   }

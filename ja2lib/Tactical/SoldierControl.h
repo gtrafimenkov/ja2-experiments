@@ -1,6 +1,7 @@
 #ifndef __SOLDER_CONTROL_H
 #define __SOLDER_CONTROL_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Tactical/AnimationCache.h"
 #include "Tactical/ItemTypes.h"

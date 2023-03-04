@@ -1,6 +1,7 @@
 #ifndef MAP_SCREEN_INTERFACE_H
 #define MAP_SCREEN_INTERFACE_H
 
+#include "GameInput.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Types.h"
 #include "Tactical/SoldierControl.h"
@@ -345,7 +346,8 @@ void JumpToLevel(INT32 iLevel);
 void CheckAndUpdateBasedOnContractTimes(void);
 
 // check if are just about to display this pop up or stopping display
-void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ);
+void HandleDisplayOfItemPopUpForSector(INT16 sMapX, INT16 sMapY, INT16 sMapZ,
+                                       const struct MouseInput mouse);
 
 // display red arrow by name of selected merc
 void HandleDisplayOfSelectedMercArrows(void);

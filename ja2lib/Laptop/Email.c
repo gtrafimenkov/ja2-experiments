@@ -265,8 +265,8 @@ INT32 iTotalHeight = 0;
 void SwapMessages(INT32 iIdA, INT32 iIdB);
 void PlaceMessagesinPages();
 BOOLEAN fFirstTime = TRUE;
-void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void EmailMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void EmailBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
+void EmailMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void PreviousRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void NextRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void SetUnNewMessages();
@@ -321,7 +321,7 @@ void InitializeMouseRegions() {
     MSYS_DefineRegion(&pEmailRegions[iCounter], MIDDLE_X,
                       ((INT16)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)), MIDDLE_X + LINE_WIDTH,
                       (INT16)(MIDDLE_Y + iCounter * MIDDLE_WIDTH + MIDDLE_WIDTH),
-                      MSYS_PRIORITY_NORMAL + 2, MSYS_NO_CURSOR, EmailMvtCallBack, EmailBtnCallBack);
+                      MSYS_PRIORITY_NORMAL + 2, MSYS_NO_CURSOR, EmailMvtCallback, EmailBtnCallback);
     MSYS_AddRegion(&pEmailRegions[iCounter]);
     MSYS_SetRegionUserData(&pEmailRegions[iCounter], 0, iCounter);
   }
@@ -1329,7 +1329,7 @@ void LookForUnread() {
   return;
 }
 
-void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void EmailBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iCount;
   PagePtr pPage = pPageList;
   INT32 iId = 0;
@@ -1392,7 +1392,7 @@ void EmailBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
     }
   }
 }
-void EmailMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void EmailMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }
@@ -1795,7 +1795,7 @@ void CreateDestroyNewMailButton() {
 
     // set up screen mask region
     MSYS_DefineRegion(&pScreenMask, 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST - 3, CURSOR_LAPTOP_SCREEN,
-                      MSYS_NO_CALLBACK, LapTopScreenCallBack);
+                      MSYS_NO_CALLBACK, LapTopScreenCallback);
     MSYS_AddRegion(&pScreenMask);
     MarkAButtonDirty(giNewMailButton[0]);
     fReDrawScreenFlag = TRUE;
@@ -2124,7 +2124,6 @@ void ReDraw() {
   // forces update of entire laptop screen
   if (fReDraw) {
     RenderLaptop();
-    // EnterNewLaptopMode();
     DrawLapTopText();
     ReDrawHighLight();
     MarkButtonsDirty();
@@ -2158,7 +2157,7 @@ void CreateDestroyDeleteNoticeMailButton() {
 
     // set up screen mask to prevent other actions while delete mail box is destroyed
     MSYS_DefineRegion(&pDeleteScreenMask, 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST - 3,
-                      CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, LapTopScreenCallBack);
+                      CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, LapTopScreenCallback);
     MSYS_AddRegion(&pDeleteScreenMask);
 
     // force update

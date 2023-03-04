@@ -56,8 +56,6 @@ extern void QueueEvent(UINT16 ubInputEvent, UINT32 usParam, UINT32 uiParam);
 extern void KeyDown(UINT32 usParam, UINT32 uiParam);
 extern void KeyUp(UINT32 usParam, UINT32 uiParam);
 
-extern void GetMousePos(SGPPoint *Point);
-
 extern BOOLEAN DequeueSpecificEvent(InputAtom *Event, UINT32 uiMaskFlags);
 
 extern void RestrictMouseToXYXY(UINT16 usX1, UINT16 usY1, UINT16 usX2, UINT16 usY2);
@@ -73,8 +71,6 @@ extern void DequeueAllKeyBoardEvents();
 
 extern BOOLEAN gfKeyState[256];  // TRUE = Pressed, FALSE = Not Pressed
 
-extern UINT16 gusMouseXPos;         // X position of the mouse on screen
-extern UINT16 gusMouseYPos;         // y position of the mouse on screen
 extern BOOLEAN gfLeftButtonState;   // TRUE = Pressed, FALSE = Not Pressed
 extern BOOLEAN gfRightButtonState;  // TRUE = Pressed, FALSE = Not Pressed
 
@@ -83,13 +79,13 @@ extern BOOLEAN gfSGPInputReceived;
 #define _KeyDown(a) gfKeyState[(a)]
 #define _LeftButtonDown gfLeftButtonState
 #define _RightButtonDown gfRightButtonState
-#define _MouseXPos gusMouseXPos
-#define _MouseYPos gusMouseYPos
+#define _MouseXPos mouse.x
+#define _MouseYPos mouse.y
 
 // NOTE: this may not be the absolute most-latest current mouse co-ordinates, use GetCursorPos for
 // that
 #define _gusMouseInside(x1, y1, x2, y2) \
-  ((gusMouseXPos >= x1) && (gusMouseXPos <= x2) && (gusMouseYPos >= y1) && (gusMouseYPos <= y2))
+  ((mouse.x >= x1) && (mouse.x <= x2) && (mouse.y >= y1) && (mouse.y <= y2))
 
 #define _EvType(a) ((InputAtom *)(a))->usEvent
 #define _EvTimeStamp(a) ((InputAtom *)(a))->uiTimeStamp
@@ -99,7 +95,5 @@ extern BOOLEAN gfSGPInputReceived;
 #define _EvShiftDown(a) (((InputAtom *)(a))->usKeyState & SHIFT_DOWN)
 #define _EvCtrlDown(a) (((InputAtom *)(a))->usKeyState & CTRL_DOWN)
 #define _EvAltDown(a) (((InputAtom *)(a))->usKeyState & ALT_DOWN)
-
-extern struct Point GetMousePoint();
 
 #endif

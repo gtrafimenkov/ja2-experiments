@@ -50,6 +50,8 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
+#define FIND_SOLDIER_GRIDNO 0x000000004
+
 BOOLEAN IsGridNoInScreenRect(INT16 sGridNo, SGPRect *pRect);
 BOOLEAN IsPointInScreenRect(INT16 sXPos, INT16 sYPos, SGPRect *pRect);
 void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, SGPRect *pRect);
@@ -77,13 +79,15 @@ BOOLEAN gfHandleStack = FALSE;
 extern BOOLEAN gUIActionModeChangeDueToMouseOver;
 extern UINT32 guiUITargetSoldierId;
 
-BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
+BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
+                             const struct MouseInput mouse) {
   INT16 sMapPos;
 
   *pMercFlags = 0;
 
   if (GetMouseMapPos(&sMapPos)) {
-    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel))) {
+    if (FindSoldier_(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
+                     mouse)) {
       return (TRUE);
     }
   }
@@ -91,13 +95,15 @@ BOOLEAN FindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
   return (FALSE);
 }
 
-BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
+BOOLEAN SelectiveFindSoldierFromMouse(UINT16 *pusSoldierIndex, UINT32 *pMercFlags,
+                                      const struct MouseInput mouse) {
   INT16 sMapPos;
 
   *pMercFlags = 0;
 
   if (GetMouseMapPos(&sMapPos)) {
-    if (FindSoldier(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel))) {
+    if (FindSoldier_(sMapPos, pusSoldierIndex, pMercFlags, FINDSOLDIERSAMELEVEL(gsInterfaceLevel),
+                     mouse)) {
       return (TRUE);
     }
   }
@@ -163,14 +169,14 @@ extern BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObjec
                                                       INT32 iTextX, INT32 iTestY);
 
 // THIS FUNCTION IS CALLED FAIRLY REGULARLY
-BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags) {
+BOOLEAN FindSoldier_(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags,
+                     const struct MouseInput mouse) {
   UINT32 cnt;
   struct SOLDIERTYPE *pSoldier;
   SGPRect aRect;
   BOOLEAN fSoldierFound = FALSE;
   INT16 sXMapPos, sYMapPos, sScreenX, sScreenY;
   INT16 sMaxScreenMercY, sHeighestMercScreenY = -32000;
-  BOOLEAN fDoFull;
   UINT8 ubBestMerc = NOBODY;
   UINT16 usAnimSurface;
   INT32 iMercScreenX, iMercScreenY;
@@ -211,19 +217,23 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
           }
         }
 
+        BOOLEAN fDoFull;
+
         // If we are selective.... do our own guys FULL and other with gridno!
         // First look for owned soldiers, by way of the full method
         if (uiFlags & FIND_SOLDIER_GRIDNO) {
           fDoFull = FALSE;
-        } else if (uiFlags & FIND_SOLDIER_SELECTIVE) {
-          if (pSoldier->ubID >= gTacticalStatus.Team[gbPlayerNum].bFirstID &&
-              pSoldier->ubID <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
-            fDoFull = TRUE;
-          } else {
-            fDoFull = FALSE;
-          }
         } else {
-          fDoFull = TRUE;
+          if (uiFlags & FIND_SOLDIER_SELECTIVE) {
+            if (pSoldier->ubID >= gTacticalStatus.Team[gbPlayerNum].bFirstID &&
+                pSoldier->ubID <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
+              fDoFull = TRUE;
+            } else {
+              fDoFull = FALSE;
+            }
+          } else {
+            fDoFull = TRUE;
+          }
         }
 
         if (fDoFull) {
@@ -233,14 +243,9 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
           // Get XY From gridno
           ConvertGridNoToXY(sGridNo, &sXMapPos, &sYMapPos);
 
-          // Get screen XY pos from map XY
-          // Be carefull to convert to cell cords
-          // CellXYToScreenXY( (INT16)((sXMapPos*CELL_X_SIZE)), (INT16)((sYMapPos*CELL_Y_SIZE)),
-          // &sScreenX, &sScreenY);
-
           // Set mouse stuff
-          sScreenX = gusMouseXPos;
-          sScreenY = gusMouseYPos;
+          sScreenX = mouse.x;
+          sScreenY = mouse.y;
 
           if (IsPointInScreenRect(sScreenX, sScreenY, &aRect)) {
             fInScreenRect = TRUE;
@@ -291,10 +296,6 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
                   continue;
                 }
               }
-            }
-
-            // If thgis is from a gridno, use mouse pos!
-            if (pSoldier->sGridNo == sGridNo) {
             }
 
             // Only break here if we're not creating a stack of these fellas
@@ -381,14 +382,25 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
   return (FALSE);
 }
 
-BOOLEAN CycleSoldierFindStack(UINT16 usMapPos) {
+BOOLEAN FindSoldierGridNo(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags) {
+  struct MouseInput dummyMousePos = {0, 0};
+  return FindSoldier_(sGridNo, pusSoldierIndex, pMercFlags, FIND_SOLDIER_GRIDNO, dummyMousePos);
+}
+
+BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, UINT32 uiFlags) {
+  // TODO: get actual mouse pos
+  struct MouseInput mousePos = {0, 0};
+  return FindSoldier_(sGridNo, pusSoldierIndex, pMercFlags, FIND_SOLDIER_GRIDNO, mousePos);
+}
+
+BOOLEAN CycleSoldierFindStack(UINT16 usMapPos, const struct MouseInput mouse) {
   UINT16 usSoldierIndex;
   UINT32 uiMercFlags;
 
   // Have we initalized for this yet?
   if (!gfHandleStack) {
-    if (FindSoldier(usMapPos, &usSoldierIndex, &uiMercFlags,
-                    FINDSOLDIERSAMELEVEL(gsInterfaceLevel) | FIND_SOLDIER_BEGINSTACK)) {
+    if (FindSoldier_(usMapPos, &usSoldierIndex, &uiMercFlags,
+                     FINDSOLDIERSAMELEVEL(gsInterfaceLevel) | FIND_SOLDIER_BEGINSTACK, mouse)) {
       gfHandleStack = TRUE;
     }
   }
@@ -507,8 +519,8 @@ void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, SGPRect *pRect) {
   }
 
   // pTrav = &(gAnimSurfaceDatabase[ usAnimSurface ].hVideoObject->pETRLEObject[
-  // pSoldier->usAniFrame ] ); usHeight				= (UINT32)pTrav->usHeight; usWidth
-  // = (UINT32)pTrav->usWidth;
+  // pSoldier->usAniFrame ] ); usHeight				= (UINT32)pTrav->usHeight;
+  // usWidth = (UINT32)pTrav->usWidth;
 
   pRect->iLeft = sMercScreenX;
   pRect->iTop = sMercScreenY;

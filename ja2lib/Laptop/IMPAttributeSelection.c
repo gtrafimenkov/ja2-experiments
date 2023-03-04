@@ -124,9 +124,11 @@ void SetGeneratedCharacterAttributes(void);
 void BtnIMPAttributeFinishCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPAttributeSliderLeftCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnIMPAttributeSliderRightCallback(GUI_BUTTON *btn, INT32 reason);
-void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void StatAtZeroBoxCallBack(UINT8 bExitValue);
+void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse);
+void StatAtZeroBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 void EnterIMPAttributeSelection(void) {
   // set attributes and skills
@@ -212,7 +214,7 @@ void ExitIMPAttributeSelection(void) {
   return;
 }
 
-void HandleIMPAttributeSelection(void) {
+void HandleIMPAttributeSelection(const struct MouseInput mouse) {
   // review mode, do not allow changes
   if (fReviewStats) {
     return;
@@ -221,16 +223,16 @@ void HandleIMPAttributeSelection(void) {
   // set the currently selectd slider bar
   if (gfLeftButtonState && gpCurrentScrollBox != NULL) {
     // if theuser is holding down the mouse cursor to left of the start of the slider bars
-    if (gusMouseXPos < (SKILL_SLIDE_START_X + LAPTOP_SCREEN_UL_X)) {
+    if (mouse.x < (SKILL_SLIDE_START_X + LAPTOP_SCREEN_UL_X)) {
       DecrementStat(giCurrentlySelectedStat);
     }
 
     // else if the user is holding down the mouse button to the right of the scroll bars
-    else if (gusMouseXPos > (LAPTOP_SCREEN_UL_X + SKILL_SLIDE_START_X + BAR_WIDTH)) {
+    else if (mouse.x > (LAPTOP_SCREEN_UL_X + SKILL_SLIDE_START_X + BAR_WIDTH)) {
       IncrementStat(giCurrentlySelectedStat);
     } else {
       INT32 iCurrentAttributeValue;
-      INT32 sNewX = gusMouseXPos;
+      INT32 sNewX = mouse.x;
       INT32 iNewValue;
 
       // get old stat value
@@ -299,7 +301,7 @@ void HandleIMPAttributeSelection(void) {
   }
   if (fSkillAtZeroWarning == TRUE) {
     DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pSkillAtZeroWarning[0], LAPTOP_SCREEN, MSG_BOX_FLAG_YESNO,
-                       StatAtZeroBoxCallBack);
+                       StatAtZeroBoxCallback);
     fSkillAtZeroWarning = FALSE;
   }
   return;
@@ -1117,7 +1119,8 @@ void DestroySlideBarMouseRegions(void) {
   return;
 }
 
-void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   INT32 iCurrentAttributeValue = 0;
   INT32 iNewAttributeValue = 0;
   INT32 iAttributeDelta = 0;
@@ -1273,11 +1276,12 @@ void SliderRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SliderBarRegionButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                   const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     fSlideIsActive = TRUE;
     SliderRegionButtonCallback(&pSliderRegions[MSYS_GetRegionUserData(pRegion, 0)],
-                               MSYS_CALLBACK_REASON_LBUTTON_REPEAT);
+                               MSYS_CALLBACK_REASON_LBUTTON_REPEAT, mouse);
   }
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     fSlideIsActive = FALSE;
@@ -1409,7 +1413,7 @@ void SetGeneratedCharacterAttributes(void) {
   return;
 }
 
-void StatAtZeroBoxCallBack(UINT8 bExitValue) {
+void StatAtZeroBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     MarkButtonsDirty();

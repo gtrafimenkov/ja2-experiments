@@ -98,7 +98,7 @@
 #define AIM_ALUMNI_NAME_SIZE 80 * 2
 #define AIM_ALUMNI_DECRIPTION_SIZE 80 * 7 * 2
 #define AIM_ALUMNI_FILE_RECORD_SIZE 80 * 8 * 2
-//#define		AIM_ALUMNI_FILE_RECORD_SIZE			80 * 7 * 2
+// #define		AIM_ALUMNI_FILE_RECORD_SIZE			80 * 7 * 2
 #define AIM_ALUMNI_FULL_NAME_SIZE 80 * 2
 
 UINT32 guiAlumniFrame;
@@ -123,11 +123,13 @@ BOOLEAN AimArchivesSubPagesVisitedFlag[3] = {0, 0, 0};
 
 // Face regions
 struct MOUSE_REGION gMercAlumniFaceMouseRegions[MAX_NUMBER_OLD_MERCS_ON_PAGE];
-void SelectAlumniFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectAlumniFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
 // Done region
 struct MOUSE_REGION gDoneRegion;
-void SelectAlumniDoneRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectAlumniDoneRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
 
 // Previous Button
 void BtnAlumniPageButtonCallback(GUI_BUTTON *btn, INT32 reason);
@@ -362,7 +364,8 @@ void RenderAimArchives() {
                    LAPTOP_SCREEN_WEB_LR_Y);
 }
 
-void SelectAlumniFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectAlumniFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gfDrawPopUpBox = TRUE;
@@ -547,7 +550,7 @@ void InitAlumniFaceRegions() {
       MSYS_DefineRegion(&gMercAlumniFaceMouseRegions[i], usPosX, usPosY,
                         (INT16)(usPosX + AIM_ALUMNI_ALUMNI_FACE_WIDTH),
                         (INT16)(usPosY + AIM_ALUMNI_ALUMNI_FACE_HEIGHT), MSYS_PRIORITY_HIGH,
-                        CURSOR_WWW, MSYS_NO_CALLBACK, SelectAlumniFaceRegionCallBack);
+                        CURSOR_WWW, MSYS_NO_CALLBACK, SelectAlumniFaceRegionCallback);
       // Add region
       MSYS_AddRegion(&gMercAlumniFaceMouseRegions[i]);
       MSYS_SetRegionUserData(&gMercAlumniFaceMouseRegions[i], 0, i + (20 * gubPageNum));
@@ -564,7 +567,7 @@ void InitAlumniFaceRegions() {
     MSYS_DefineRegion(&gMercAlumniFaceMouseRegions[i], usPosX, usPosY,
                       (INT16)(usPosX + AIM_ALUMNI_ALUMNI_FACE_WIDTH),
                       (INT16)(usPosY + AIM_ALUMNI_ALUMNI_FACE_HEIGHT), MSYS_PRIORITY_HIGH,
-                      CURSOR_WWW, MSYS_NO_CALLBACK, SelectAlumniFaceRegionCallBack);
+                      CURSOR_WWW, MSYS_NO_CALLBACK, SelectAlumniFaceRegionCallback);
     // Add region
     MSYS_AddRegion(&gMercAlumniFaceMouseRegions[i]);
     MSYS_SetRegionUserData(&gMercAlumniFaceMouseRegions[i], 0, i + (20 * gubPageNum));
@@ -607,7 +610,7 @@ void CreateDestroyDoneMouseRegion(UINT16 usPosY) {
     MSYS_DefineRegion(&gDoneRegion, AIM_ALUMNI_DONE_X - 2, usPosY,
                       (AIM_ALUMNI_DONE_X - 2 + AIM_ALUMNI_DONE_WIDTH),
                       (INT16)(usPosY + AIM_ALUMNI_DONE_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                      MSYS_NO_CALLBACK, SelectAlumniDoneRegionCallBack);
+                      MSYS_NO_CALLBACK, SelectAlumniDoneRegionCallback);
     // Add region
     MSYS_AddRegion(&gDoneRegion);
     DoneRegionCreated = TRUE;
@@ -620,7 +623,8 @@ void CreateDestroyDoneMouseRegion(UINT16 usPosY) {
   }
 }
 
-void SelectAlumniDoneRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectAlumniDoneRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gfDestroyPopUpBox = TRUE;

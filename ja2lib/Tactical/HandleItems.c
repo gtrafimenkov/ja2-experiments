@@ -72,8 +72,6 @@ ITEM_POOL_LOCATOR FlashItemSlots[NUM_ITEM_FLASH_SLOTS];
 UINT32 guiNumFlashItemSlots = 0;
 
 struct LEVELNODE *AddItemGraphicToWorld(INVTYPE *pItem, INT16 sGridNo, UINT8 ubLevel);
-INT8 GetListMouseHotSpot(INT16 sLargestLineWidth, INT8 bNumItemsListed, INT16 sFontX, INT16 sFontY,
-                         INT8 bCurStart);
 void RemoveItemGraphicFromWorld(INVTYPE *pItem, INT16 sGridNo, UINT8 ubLevel,
                                 struct LEVELNODE *pLevelNode);
 
@@ -89,16 +87,17 @@ static struct SOLDIERTYPE *gpTempSoldier;
 static INT16 gsTempGridno;
 static INT8 bTempFrequency;
 
-void BombMessageBoxCallBack(UINT8 ubExitValue);
-void BoobyTrapMessageBoxCallBack(UINT8 ubExitValue);
-void SwitchMessageBoxCallBack(UINT8 ubExitValue);
-void BoobyTrapDialogueCallBack(void);
-void MineSpottedDialogueCallBack(void);
+static void BombMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
+static void BoobyTrapMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
+static void SwitchMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
+void BoobyTrapDialogueCallback(void);
+void MineSpottedDialogueCallback(void);
 void MineSpottedLocatorCallback(void);
-void RemoveBlueFlagDialogueCallBack(UINT8 ubExitValue);
-void MineSpottedMessageBoxCallBack(UINT8 ubExitValue);
+static void RemoveBlueFlagDialogueCallback(UINT8 ubExitValue, const struct MouseInput mouse);
+static void MineSpottedMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 void CheckForPickedOwnership(void);
-void BoobyTrapInMapScreenMessageBoxCallBack(UINT8 ubExitValue);
+static void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue,
+                                                   const struct MouseInput mouse);
 
 BOOLEAN ContinuePastBoobyTrap(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bLevel,
                               INT32 iItemIndex, BOOLEAN fInStrategic, BOOLEAN *pfSaidQuote);
@@ -176,7 +175,7 @@ BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
 }
 
 INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UINT16 usHandItem,
-                 BOOLEAN fFromUI) {
+                 BOOLEAN fFromUI, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pTargetSoldier = NULL;
   UINT16 usSoldierIndex;
   INT16 sTargetGridNo;
@@ -199,7 +198,6 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
   pSoldier->usAttackingWeapon = usHandItem;
 
   // Find soldier flags depend on if it's our own merc firing or a NPC
-  // if ( FindSoldier( usGridNo, &usSoldierIndex, &uiMercFlags, FIND_SOLDIER_GRIDNO )  )
   if ((usSoldierIndex = WhoIsThere2(usGridNo, bLevel)) != NO_SOLDIER) {
     pTargetSoldier = MercPtrs[usSoldierIndex];
 
@@ -460,7 +458,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
     } else {
       return (ITEM_HANDLE_NOAPS);
     }
@@ -531,7 +529,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
 
       gfResetUIMovementOptimization = TRUE;
 
@@ -578,7 +576,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
 
     if (EnoughPoints(pSoldier, sAPCost, 0, fFromUI)) {
       // OK, set UI
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
 
       // CHECK IF WE ARE AT THIS GRIDNO NOW
       if (pSoldier->sGridNo != sActionGridNo) {
@@ -642,7 +640,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -712,7 +710,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -776,7 +774,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -819,7 +817,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
         }
 
         // OK, set UI
-        SetUIBusy(pSoldier->ubID);
+        SetUIBusy(pSoldier->ubID, mouse);
 
         if (fFromUI) {
           guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -870,7 +868,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
           }
 
           // OK, set UI
-          SetUIBusy(pSoldier->ubID);
+          SetUIBusy(pSoldier->ubID, mouse);
 
           if (fFromUI) {
             guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -950,7 +948,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
     }
 
     // OK, set UI
-    SetUIBusy(pSoldier->ubID);
+    SetUIBusy(pSoldier->ubID, mouse);
 
     if (fFromUI) {
       guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -998,7 +996,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
 
       if (fFromUI) {
         guiPendingOverrideEvent = A_CHANGE_TO_MOVE;
@@ -1102,7 +1100,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
 
       // OK, set UI
-      SetUIBusy(pSoldier->ubID);
+      SetUIBusy(pSoldier->ubID, mouse);
 
       return (ITEM_HANDLE_OK);
 
@@ -1310,7 +1308,7 @@ void SoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGr
   // Deduct points!
   // sAPCost = GetAPsToPickupItem( pSoldier, sGridNo );
   // DeductPoints( pSoldier, sAPCost, 0 );
-  SetUIBusy(pSoldier->ubID);
+  SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // CHECK IF NOT AT SAME GRIDNO
   if (pSoldier->sGridNo != sActionGridNo) {
@@ -1398,7 +1396,8 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
               bTempFrequency = Object.bFrequency;
               gpTempSoldier = pSoldier;
               DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[ACTIVATE_SWITCH_PROMPT], GAME_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallBack, NULL);
+                           (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallback, NULL,
+                           XXX_GetMouseInput());
               pItemPool = pItemPool->pNext;
             } else {
               if (!AutoPlaceObject(pSoldier, &Object, TRUE)) {
@@ -1479,29 +1478,9 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
           bTempFrequency = Object.bFrequency;
           gpTempSoldier = pSoldier;
           DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[ACTIVATE_SWITCH_PROMPT], GAME_SCREEN,
-                       (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallBack, NULL);
+                       (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallback, NULL,
+                       XXX_GetMouseInput());
         } else {
-          /*
-                                                  // handle theft.. will return true if theft has
-             failed ( if soldier was caught ) if( pSoldier->bTeam == OUR_TEAM )
-                                                  {
-                                                          // check to see if object was owned by
-             another if( Object.fFlags & OBJECT_OWNED_BY_CIVILIAN )
-                                                          {
-                                                                  // owned by a civilian
-                                                                  if(
-             HandleLoyaltyAdjustmentForRobbery( pSoldier ) == TRUE )
-                                                                  {
-                                                                          // implememnt actual
-             tactical reaction for theft..shoot robber, yell out, etc
-                                                                  }
-
-                                                                  // reset who owns object
-                                                                  Object.fFlags &= ~(
-             OBJECT_OWNED_BY_CIVILIAN );
-                                                          }
-                                                  }
-          */
           RemoveItemFromPool(sGridNo, iItemIndex, pSoldier->bLevel);
 
           if (!AutoPlaceObject(pSoldier, &(gWorldItems[iItemIndex].o), TRUE)) {
@@ -1551,7 +1530,7 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
 }
 
 void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGridNo,
-                             INT8 bZLevel) {
+                             INT8 bZLevel, const struct MouseInput mouse) {
   struct ITEM_POOL *pItemPool;
   UINT16 usNum;
 
@@ -1584,7 +1563,8 @@ void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
         gbTrapDifficulty = gWorldItems[iItemIndex].o.bTrap;
 
         DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_TRAP_PROMPT], GAME_SCREEN,
-                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallBack, NULL);
+                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallback, NULL,
+                     XXX_GetMouseInput());
       } else {
         // OK, only hidden items exist...
         if (pSoldier->bTeam == gbPlayerNum && DoesItemPoolContainAllHiddenItems(pItemPool)) {
@@ -1611,9 +1591,8 @@ void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
             if (usNum != 0) {
               // Freeze guy!
               pSoldier->fPauseAllAnimation = TRUE;
-
-              InitializeItemPickupMenu(pSoldier, sGridNo, pItemPool, 0, 0, bZLevel);
-
+              struct Point16 point = {mouse.x, mouse.y};
+              InitializeItemPickupMenu(pSoldier, sGridNo, pItemPool, point, bZLevel);
               guiPendingOverrideEvent = G_GETTINGITEM;
             } else {
               DoMercBattleSound(pSoldier, BATTLE_SOUND_NOTHING);
@@ -2600,7 +2579,7 @@ extern void HandleAnyMercInSquadHasCompatibleStuff(UINT8 ubSquad, struct OBJECTT
                                                    BOOLEAN fReset);
 
 BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bCommand, INT8 bZLevel,
-                         INT16 sXPos, INT16 sYPos) {
+                         const struct Point16 point) {
   INT16 sY;
   struct ITEM_POOL *pTempItemPool;
   CHAR16 pStr[100];
@@ -2699,12 +2678,12 @@ BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bComm
   }
 
   // Determine where our mouse is!
-  if (sXPos > (640 - sLargestLineWidth)) {
-    sFontX = sXPos - sLargestLineWidth;
+  if (point.x > (640 - sLargestLineWidth)) {
+    sFontX = point.x - sLargestLineWidth;
   } else {
-    sFontX = sXPos + 15;
+    sFontX = point.x + 15;
   }
-  sFontY = sYPos;
+  sFontY = point.y;
 
   // Move up if over interface....
   if ((sFontY + sHeight) > 340) {
@@ -2799,42 +2778,6 @@ BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, INT16 sGridNo, UINT8 bComm
   }
 
   return (fSelectionDone);
-}
-
-INT8 GetListMouseHotSpot(INT16 sLargestLineWidth, INT8 bNumItemsListed, INT16 sFontX, INT16 sFontY,
-                         INT8 bCurStart) {
-  INT16 cnt = 0;
-  INT16 sTestX1, sTestX2, sTestY1, sTestY2;
-  INT16 sLineHeight;
-  INT8 gbCurrentItemSel = -1;
-  INT8 bListedItems;
-
-  sLineHeight = GetFontHeight(SMALLFONT1) - 2;
-
-  sTestX1 = sFontX;
-  sTestX2 = sFontX + sLargestLineWidth;
-
-  bListedItems = (bNumItemsListed - bCurStart);
-
-  if (gusMouseXPos < sTestX1 || gusMouseXPos > sTestX2) {
-    gbCurrentItemSel = -1;
-  } else {
-    // Determine where mouse is!
-    for (cnt = 0; cnt < bListedItems; cnt++) {
-      sTestY1 = sFontY + (sLineHeight * cnt);
-      sTestY2 = sFontY + (sLineHeight * (cnt + 1));
-
-      if (gusMouseYPos > sTestY1 && gusMouseYPos < sTestY2) {
-        gbCurrentItemSel = (INT8)cnt;
-        break;
-      }
-    }
-  }
-
-  // OFFSET START
-  gbCurrentItemSel += bCurStart;
-
-  return (gbCurrentItemSel);
 }
 
 void SetItemPoolLocator(struct ITEM_POOL *pItemPool) {
@@ -3059,8 +3002,9 @@ void RenderTopmostFlashingItems() {
           BltVideoObjectFromIndex(FRAME_BUFFER, guiRADIO, pLocator->bRadioFrame, sXPos, sYPos,
                                   VO_BLT_SRCTRANSPARENCY, NULL);
 
+          const struct Point16 point = {sXPos, sYPos};
           DrawItemPoolList(pItemPool, pItemPool->sGridNo, ITEMLIST_DISPLAY,
-                           pItemPool->bRenderZHeightAboveLevel, sXPos, sYPos);
+                           pItemPool->bRenderZHeightAboveLevel, point);
         }
       }
     }
@@ -3344,7 +3288,8 @@ void StartBombMessageBox(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) {
   gsTempGridno = sGridNo;
   if (pSoldier->inv[HANDPOS].usItem == REMOTEBOMBTRIGGER) {
     DoMessageBox(MSG_BOX_BASIC_SMALL_BUTTONS, TacticalStr[CHOOSE_BOMB_FREQUENCY_STR], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallBack, NULL);
+                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL,
+                 XXX_GetMouseInput());
   } else if (pSoldier->inv[HANDPOS].usItem == REMOTETRIGGER) {
     // PLay sound....
     PlayJA2Sample(USE_STATUE_REMOTE, RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
@@ -3366,14 +3311,16 @@ void StartBombMessageBox(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) {
 
   } else if (FindAttachment(&(pSoldier->inv[HANDPOS]), DETONATOR) != ITEM_NOT_FOUND) {
     DoMessageBox(MSG_BOX_BASIC_SMALL_BUTTONS, TacticalStr[CHOOSE_TIMER_STR], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallBack, NULL);
+                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL,
+                 XXX_GetMouseInput());
   } else if (FindAttachment(&(pSoldier->inv[HANDPOS]), REMDETONATOR) != ITEM_NOT_FOUND) {
     DoMessageBox(MSG_BOX_BASIC_SMALL_BUTTONS, TacticalStr[CHOOSE_REMOTE_FREQUENCY_STR], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallBack, NULL);
+                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL,
+                 XXX_GetMouseInput());
   }
 }
 
-void BombMessageBoxCallBack(UINT8 ubExitValue) {
+static void BombMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (gpTempSoldier) {
     if (gpTempSoldier->inv[HANDPOS].usItem == REMOTEBOMBTRIGGER) {
       SetOffBombsByFrequency(gpTempSoldier->ubID, ubExitValue);
@@ -3546,7 +3493,7 @@ BOOLEAN ContinuePastBoobyTrap(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 
           gbTrapDifficulty = bTrapDifficulty;
 
           // And make the call for the dialogue
-          SetStopTimeQuoteCallback(BoobyTrapDialogueCallBack);
+          SetStopTimeQuoteCallback(BoobyTrapDialogueCallback);
           TacticalCharacterDialogue(pSoldier, QUOTE_BOOBYTRAP_ITEM);
 
           (*pfSaidQuote) = TRUE;
@@ -3566,10 +3513,12 @@ BOOLEAN ContinuePastBoobyTrap(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 
 
         if (fInStrategic) {
           DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_BOOBYTRAP_PROMPT], MAP_SCREEN,
-                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallBack, NULL);
+                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallback, NULL,
+                       XXX_GetMouseInput());
         } else {
           DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_BOOBYTRAP_PROMPT], GAME_SCREEN,
-                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallBack, NULL);
+                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallback, NULL,
+                       XXX_GetMouseInput());
         }
       } else {
         // oops!
@@ -3584,20 +3533,20 @@ BOOLEAN ContinuePastBoobyTrap(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 
   return (TRUE);
 }
 
-void BoobyTrapDialogueCallBack(void) {
+void BoobyTrapDialogueCallback(void) {
   gfJustFoundBoobyTrap = TRUE;
 
   // now prompt the user...
   if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
     DoScreenIndependantMessageBox(TacticalStr[DISARM_BOOBYTRAP_PROMPT], (UINT8)MSG_BOX_FLAG_YESNO,
-                                  BoobyTrapInMapScreenMessageBoxCallBack);
+                                  BoobyTrapInMapScreenMessageBoxCallback);
   } else {
     DoScreenIndependantMessageBox(TacticalStr[DISARM_BOOBYTRAP_PROMPT], (UINT8)MSG_BOX_FLAG_YESNO,
-                                  BoobyTrapMessageBoxCallBack);
+                                  BoobyTrapMessageBoxCallback);
   }
 }
 
-void BoobyTrapMessageBoxCallBack(UINT8 ubExitValue) {
+static void BoobyTrapMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (gfJustFoundBoobyTrap) {
     // NOW award for finding boobytrap
     // WISDOM GAIN:  Detected a booby-trap
@@ -3679,13 +3628,15 @@ void BoobyTrapMessageBoxCallBack(UINT8 ubExitValue) {
   } else {
     if (gfDisarmingBuriedBomb) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[REMOVE_BLUE_FLAG_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallBack, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallback, NULL,
+                   XXX_GetMouseInput());
     }
     // otherwise do nothing
   }
 }
 
-void BoobyTrapInMapScreenMessageBoxCallBack(UINT8 ubExitValue) {
+static void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue,
+                                                   const struct MouseInput mouse) {
   if (gfJustFoundBoobyTrap) {
     // NOW award for finding boobytrap
 
@@ -3751,13 +3702,14 @@ void BoobyTrapInMapScreenMessageBoxCallBack(UINT8 ubExitValue) {
   } else {
     if (gfDisarmingBuriedBomb) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[REMOVE_BLUE_FLAG_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallBack, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallback, NULL,
+                   XXX_GetMouseInput());
     }
     // otherwise do nothing
   }
 }
 
-void SwitchMessageBoxCallBack(UINT8 ubExitValue) {
+static void SwitchMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // Message that switch is activated...
     ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, gzLateLocalizedString[60]);
@@ -3920,7 +3872,7 @@ BOOLEAN NearbyGroundSeemsWrong(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
   }
 }
 
-void MineSpottedDialogueCallBack(void) {
+void MineSpottedDialogueCallback(void) {
   struct ITEM_POOL *pItemPool;
 
   // ATE: REALLY IMPORTANT - ALL CALLBACK ITEMS SHOULD UNLOCK
@@ -3939,17 +3891,17 @@ void MineSpottedLocatorCallback(void) {
 
   // now ask the player if he wants to place a blue flag.
   DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[PLACE_BLUE_FLAG_PROMPT], GAME_SCREEN,
-               (UINT8)MSG_BOX_FLAG_YESNO, MineSpottedMessageBoxCallBack, NULL);
+               (UINT8)MSG_BOX_FLAG_YESNO, MineSpottedMessageBoxCallback, NULL, XXX_GetMouseInput());
 }
 
-void MineSpottedMessageBoxCallBack(UINT8 ubExitValue) {
+static void MineSpottedMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // place a blue flag where the mine was found
     AddBlueFlag(gsBoobyTrapGridNo, gbBoobyTrapLevel);
   }
 }
 
-void RemoveBlueFlagDialogueCallBack(UINT8 ubExitValue) {
+static void RemoveBlueFlagDialogueCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     RemoveBlueFlag(gsBoobyTrapGridNo, gbBoobyTrapLevel);
   }
@@ -4140,7 +4092,7 @@ BOOLEAN ContinuePastBoobyTrapInMapScreen(struct OBJECTTYPE *pObject, struct SOLD
           gpBoobyTrapSoldier = pSoldier;
 
           // And make the call for the dialogue
-          SetStopTimeQuoteCallback(BoobyTrapDialogueCallBack);
+          SetStopTimeQuoteCallback(BoobyTrapDialogueCallback);
           TacticalCharacterDialogue(pSoldier, QUOTE_BOOBYTRAP_ITEM);
 
           return (FALSE);
@@ -4152,7 +4104,8 @@ BOOLEAN ContinuePastBoobyTrapInMapScreen(struct OBJECTTYPE *pObject, struct SOLD
         gpBoobyTrapSoldier = pSoldier;
         gbTrapDifficulty = pObject->bTrap;
         DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_BOOBYTRAP_PROMPT], MAP_SCREEN,
-                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallBack, NULL);
+                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallback, NULL,
+                     XXX_GetMouseInput());
       } else {
         // oops!
         SetOffBoobyTrapInMapScreen(pSoldier, pObject);

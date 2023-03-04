@@ -94,7 +94,8 @@ void BtnMilitiaCallback(GUI_BUTTON *btn, INT32 reason);
 // void BtnZoomCallback(GUI_BUTTON *btn,INT32 reason);
 
 void BtnGenericMouseMoveButtonCallbackForMapBorder(GUI_BUTTON *btn, INT32 reason);
-void LevelMarkerBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void LevelMarkerBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
 
 void CommonBtnCallbackBtnDownChecks(void);
 
@@ -165,51 +166,16 @@ void RenderMapBorder(void) {
   return;
 }
 
-/*
-void RenderMapBorderCorner( void )
-{
-        // renders map border corner to the FRAME_BUFFER
-        struct VObject* hHandle;
-
-        if( fDisabledMapBorder )
-        {
-                return;
-        }
-
-        if( fShowMapInventoryPool )
-        {
-                return;
-        }
-
-
-        // get and blt corner
-        GetVideoObject(&hHandle, guiMapBorderCorner );
-        BltVideoObject( FRAME_BUFFER , hHandle, 0,MAP_BORDER_CORNER_X, MAP_BORDER_CORNER_Y,
-VO_BLT_SRCTRANSPARENCY,NULL );
-
-        InvalidateRegion( MAP_BORDER_CORNER_X, MAP_BORDER_CORNER_Y, 635, 315);
-
-        return;
-}
-*/
-
-void RenderMapBorderEtaPopUp(void) {
+void RenderMapBorderEtaPopUp(const struct MouseInput mouse) {
   // renders map border corner to the FRAME_BUFFER
   struct VObject *hHandle;
-
-  /*
-          if( fDisabledMapBorder )
-          {
-                  return;
-          }
-  */
 
   if (fShowMapInventoryPool) {
     return;
   }
 
   if (fPlotForHelicopter == TRUE) {
-    DisplayDistancesForHelicopter();
+    DisplayDistancesForHelicopter(mouse);
     return;
   }
 
@@ -1052,7 +1018,8 @@ void DeleteMouseRegionsForLevelMarkers(void) {
   }
 }
 
-void LevelMarkerBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LevelMarkerBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   // btn callback handler for assignment screen mask region
   INT32 iCounter = 0;
 

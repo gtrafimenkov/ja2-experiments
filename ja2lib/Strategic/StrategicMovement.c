@@ -50,6 +50,9 @@
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
 
+static void PlanSimultaneousGroupArrivalCallback(UINT8 bMessageValue,
+                                                 const struct MouseInput mouse);
+
 // the delay for a group about to arrive
 #define ABOUT_TO_ARRIVE_DELAY 5
 
@@ -99,7 +102,7 @@ BOOLEAN PossibleToCoordinateSimultaneousGroupArrivals(struct GROUP *pGroup);
 void HandleNonCombatGroupArrival(struct GROUP *pGroup, BOOLEAN fMainGroup, BOOLEAN fNeverLeft);
 
 struct GROUP *gpInitPrebattleGroup = NULL;
-void TriggerPrebattleInterface(UINT8 ubResult);
+static void TriggerPrebattleInterface(UINT8 ubResult, const struct MouseInput mouse);
 
 // Save the L.L. for the playerlist into the save game file
 BOOLEAN SavePlayerGroupList(HWFILE hFile, struct GROUP *pGroup);
@@ -130,7 +133,8 @@ void CancelEmptyPersistentGroupMovement(struct GROUP *pGroup);
 BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup);
 BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(INT16 sSectorX, INT16 sSectorY,
                                                          INT8 bSectorZ);
-void HandlePlayerGroupEnteringSectorToCheckForNPCsOfNoteCallback(UINT8 ubExitValue);
+void HandlePlayerGroupEnteringSectorToCheckForNPCsOfNoteCallback(UINT8 ubExitValue,
+                                                                 const struct MouseInput mouse);
 void DelayEnemyGroupsIfPathsCross(struct GROUP *pPlayerGroup);
 
 UINT8 NumberMercsInVehicleGroup(struct GROUP *pGroup);
@@ -885,7 +889,8 @@ void PrepareForPreBattleInterface(struct GROUP *pPlayerDialogGroup,
   } else {
     // ATE: What if we have unconscious guys, etc....
     // We MUST start combat, but donot play quote...
-    InitPreBattleInterface(pInitiatingBattleGroup, TRUE);
+    const struct MouseInput mouse = XXX_GetMouseInput();
+    InitPreBattleInterface(pInitiatingBattleGroup, TRUE, mouse);
   }
 }
 
@@ -1067,7 +1072,7 @@ BOOLEAN CheckConditionsForBattle(struct GROUP *pGroup) {
   return FALSE;
 }
 
-void TriggerPrebattleInterface(UINT8 ubResult) {
+static void TriggerPrebattleInterface(UINT8 ubResult, const struct MouseInput mouse) {
   StopTimeCompression();
   SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_TRIGGERPREBATTLEINTERFACE,
                                 (uintptr_t)gpInitPrebattleGroup, 0, 0, 0, 0);
@@ -1874,7 +1879,8 @@ BOOLEAN PossibleToCoordinateSimultaneousGroupArrivals(struct GROUP *pFirstGroup)
   return FALSE;
 }
 
-void PlanSimultaneousGroupArrivalCallback(UINT8 bMessageValue) {
+static void PlanSimultaneousGroupArrivalCallback(UINT8 bMessageValue,
+                                                 const struct MouseInput mouse) {
   if (bMessageValue == MSG_BOX_RETURN_YES) {
     PrepareGroupsForSimultaneousArrival();
   } else {
@@ -4043,7 +4049,7 @@ void NotifyPlayerOfBloodcatBattle(UINT8 ubSectorX, UINT8 ubSectorY) {
   if (guiCurrentScreen == MAP_SCREEN) {  // Force render mapscreen (need to update the position of
                                          // the group before the dialog appears.
     fMapPanelDirty = TRUE;
-    MapScreenHandle();
+    MapScreenHandle(XXX_GetGameInput());
     InvalidateScreen();
     RefreshScreen(NULL);
   }
@@ -4280,7 +4286,8 @@ BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(INT16 sSectorX, INT16 s
   return (fFoundSomebody);
 }
 
-void HandlePlayerGroupEnteringSectorToCheckForNPCsOfNoteCallback(UINT8 ubExitValue) {
+void HandlePlayerGroupEnteringSectorToCheckForNPCsOfNoteCallback(UINT8 ubExitValue,
+                                                                 const struct MouseInput mouse) {
   Assert(gpGroupPrompting);
 
   if ((ubExitValue == MSG_BOX_RETURN_YES) || (ubExitValue == MSG_BOX_RETURN_OK)) {

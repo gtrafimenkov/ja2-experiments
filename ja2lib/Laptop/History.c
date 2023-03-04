@@ -127,8 +127,8 @@ void PerformCheckOnHistoryRecord(UINT32 uiErrorCode, INT16 sSectorX, INT16 sSect
 #endif
 
 // callbacks
-void BtnHistoryDisplayNextPageCallBack(GUI_BUTTON *btn, INT32 reason);
-void BtnHistoryDisplayPrevPageCallBack(GUI_BUTTON *btn, INT32 reason);
+void BtnHistoryDisplayNextPageCallback(GUI_BUTTON *btn, INT32 reason);
+void BtnHistoryDisplayPrevPageCallback(GUI_BUTTON *btn, INT32 reason);
 
 UINT32 SetHistoryFact(UINT8 ubCode, UINT8 ubSecondCode, UINT32 uiDate, INT16 sSectorX,
                       INT16 sSectorY) {
@@ -380,14 +380,14 @@ void CreateHistoryButtons(void) {
   giHistoryButton[PREV_PAGE_BUTTON] =
       QuickCreateButton(giHistoryButtonImage[PREV_PAGE_BUTTON], PREV_BTN_X, BTN_Y, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnHistoryDisplayPrevPageCallBack);
+                        (GUI_CALLBACK)BtnHistoryDisplayPrevPageCallback);
 
   // the next page button
   giHistoryButtonImage[NEXT_PAGE_BUTTON] = LoadButtonImage("LAPTOP\\arrows.sti", -1, 6, -1, 7, -1);
   giHistoryButton[NEXT_PAGE_BUTTON] =
       QuickCreateButton(giHistoryButtonImage[NEXT_PAGE_BUTTON], NEXT_BTN_X, BTN_Y, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnHistoryDisplayNextPageCallBack);
+                        (GUI_CALLBACK)BtnHistoryDisplayNextPageCallback);
 
   // set buttons
   SetButtonCursor(giHistoryButton[0], CURSOR_LAPTOP_SCREEN);
@@ -410,7 +410,7 @@ void DestroyHistoryButtons(void) {
   return;
 }
 
-void BtnHistoryDisplayPrevPageCallBack(GUI_BUTTON *btn, INT32 reason) {
+void BtnHistoryDisplayPrevPageCallback(GUI_BUTTON *btn, INT32 reason) {
   // force redraw
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     fReDrawScreenFlag = TRUE;
@@ -433,7 +433,7 @@ void BtnHistoryDisplayPrevPageCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void BtnHistoryDisplayNextPageCallBack(GUI_BUTTON *btn, INT32 reason) {
+void BtnHistoryDisplayNextPageCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
     fReDrawScreenFlag = TRUE;
   }

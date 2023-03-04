@@ -1,6 +1,7 @@
 #ifndef FADE_SCREEN_H
 #define FADE_SCREEN_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 #define FADE_OUT_VERSION_ONE 1
@@ -13,7 +14,7 @@
 #define FADE_IN_SQUARE 11
 #define FADE_IN_REALFADE 12
 
-typedef void (*FADE_HOOK)(void);
+typedef void (*FADE_HOOK)(const struct MouseInput mouse);
 
 extern FADE_HOOK gFadeInDoneCallback;
 extern FADE_HOOK gFadeOutDoneCallback;
@@ -31,8 +32,8 @@ void BeginFade(UINT32 uiExitScreen, INT8 bFadeValue, INT8 bType, UINT32 uiDelay)
 BOOLEAN HandleBeginFadeIn(UINT32 uiScreenExit);
 BOOLEAN HandleBeginFadeOut(UINT32 uiScreenExit);
 
-BOOLEAN HandleFadeOutCallback();
-BOOLEAN HandleFadeInCallback();
+BOOLEAN HandleFadeOutCallback(const struct MouseInput mouse);
+BOOLEAN HandleFadeInCallback(const struct MouseInput mouse);
 
 void FadeInNextFrame();
 void FadeOutNextFrame();

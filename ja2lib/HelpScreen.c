@@ -112,7 +112,7 @@ extern BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurfac
 
 // this is the size of the text buffer where everything will be blitted.
 // 2 ( bytest for char ) * width of buffer * height of 1 line * # of text lines
-//#define	HLP_SCRN__NUMBER_BYTES_IN_TEXT_BUFFER						( 2
+// #define	HLP_SCRN__NUMBER_BYTES_IN_TEXT_BUFFER						( 2
 //* HLP_SCRN__WIDTH_OF_TEXT_BUFFER * HLP_SCRN__HEIGHT_OF_1_LINE_IN_BUFFER *
 // HLP_SCRN__MAX_NUMBER_OF_LINES_IN_BUFFER )
 #define HLP_SCRN__WIDTH_OF_TEXT_BUFFER 280
@@ -354,22 +354,25 @@ UINT8 gubRenderHelpScreenTwiceInaRow = 0;
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenFullScreenMask;
-// void SelectHelpTextFullScreenMaskCallBack(struct MOUSE_REGION * pRegion, INT32 iReason );
+// void SelectHelpTextFullScreenMaskCallback(struct MOUSE_REGION * pRegion, INT32 iReason );
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenScrollArea;
-void SelectHelpScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectHelpScrollAreaMovementCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                          const struct MouseInput mouse);
+void SelectHelpScrollAreaCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse);
 
 // region to mask the background
 struct MOUSE_REGION gHelpScreenScrollAreaArrows;
-void SelectHelpScrollAreaArrowsCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectHelpScrollAreaArrowsCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                        const struct MouseInput mouse);
 
 // checkbox to toggle show help again toggle
 UINT32 gHelpScreenDontShowHelpAgainToggle;
 void BtnHelpScreenDontShowHelpAgainCallback(GUI_BUTTON *btn, INT32 reason);
 // struct MOUSE_REGION    HelpScreenDontShowHelpAgainToggleTextRegion;
-// void		HelpScreenDontShowHelpAgainToggleTextRegionCallBack(struct MOUSE_REGION * pRegion,
+// void		HelpScreenDontShowHelpAgainToggleTextRegionCallback(struct MOUSE_REGION * pRegion,
 // INT32 iReason );
 
 INT32 giHelpScreenButtonsImage[HELP_SCREEN_NUM_BTNS];
@@ -387,11 +390,11 @@ void BtnHelpScreenScrollArrowsCallback(GUI_BUTTON *btn, INT32 reason);
 // ggg
 
 BOOLEAN EnterHelpScreen();
-void HandleHelpScreen();
+static void HandleHelpScreen(const struct MouseInput mouse);
 void RenderHelpScreen();
 void ExitHelpScreen();
 
-void GetHelpScreenUserInput();
+static void GetHelpScreenUserInput(const struct MouseInput mouse);
 void HelpScreenSpecialExitCode();
 void SetSizeAndPropertiesOfHelpScreen();
 BOOLEAN DrawHelpScreenBackGround();
@@ -510,7 +513,7 @@ HELP_SCREEN_SHOULD_COME_UP:
   return (TRUE);
 }
 
-void HelpScreenHandler() {
+void HelpScreenHandler(const struct MouseInput mouse) {
   // if we are just entering the help screen
   if (gfHelpScreenEntry) {
     // setup the help screen
@@ -523,10 +526,10 @@ void HelpScreenHandler() {
   RestoreBackgroundRects();
 
   // get the mouse and keyboard inputs
-  GetHelpScreenUserInput();
+  GetHelpScreenUserInput(mouse);
 
   // handle the help screen
-  HandleHelpScreen();
+  HandleHelpScreen(mouse);
 
   // if the help screen is dirty, re-render it
   if (gHelpScreen.ubHelpScreenDirty != HLP_SCRN_DRTY_LVL_NOT_DIRTY) {
@@ -672,13 +675,13 @@ BOOLEAN EnterHelpScreen() {
   return (TRUE);
 }
 
-void HandleHelpScreen() {
+static void HandleHelpScreen(const struct MouseInput mouse) {
   // if any of the possible screens need to have a some code done every loop..  its done in here
   SpecialHandlerCode();
 
   if (gfScrollBoxIsScrolling) {
     if (gfLeftButtonState) {
-      HelpScreenMouseMoveScrollBox(gusMouseYPos);
+      HelpScreenMouseMoveScrollBox(mouse.y);
     } else {
       gfScrollBoxIsScrolling = FALSE;
       gHelpScreen.iLastMouseClickY = -1;
@@ -942,36 +945,29 @@ void CreateHelpScreenButtons() {
   }
 }
 
-void GetHelpScreenUserInput() {
+static void GetHelpScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
-  struct Point MousePos = GetMousePoint();
 
   while (DequeueEvent(&Event)) {
     // HOOK INTO MOUSE HOOKS
     switch (Event.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 
@@ -1435,7 +1431,7 @@ void BtnHelpScreenDontShowHelpAgainCallback(GUI_BUTTON *btn, INT32 reason) {
 }
 
 /*
-void HelpScreenDontShowHelpAgainToggleTextRegionCallBack(struct MOUSE_REGION * pRegion, INT32
+void HelpScreenDontShowHelpAgainToggleTextRegionCallback(struct MOUSE_REGION * pRegion, INT32
 iReason )
 {
         if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP)
@@ -2167,8 +2163,8 @@ void CreateScrollAreaButtons() {
   // Create a mouse region 'mask' the entrire screen
   MSYS_DefineRegion(&gHelpScreenScrollArea, usPosX, (UINT16)iPosY, (UINT16)(usPosX + usWidth),
                     (UINT16)(iPosY + HLP_SCRN__HEIGHT_OF_SCROLL_AREA), MSYS_PRIORITY_HIGHEST,
-                    gHelpScreen.usCursor, SelectHelpScrollAreaMovementCallBack,
-                    SelectHelpScrollAreaCallBack);
+                    gHelpScreen.usCursor, SelectHelpScrollAreaMovementCallback,
+                    SelectHelpScrollAreaCallback);
   MSYS_AddRegion(&gHelpScreenScrollArea);
 
   guiHelpScreenScrollArrowImage[0] =
@@ -2244,7 +2240,8 @@ void CalculateHeightAndPositionForHelpScreenScrollBox(INT32 *piHeightOfScrollBox
   if (piTopOfScrollBox != NULL) *piTopOfScrollBox = iTopPosScrollBox;
 }
 
-void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectHelpScrollAreaCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                  const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     gfScrollBoxIsScrolling = FALSE;
@@ -2256,7 +2253,8 @@ void SelectHelpScrollAreaCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void SelectHelpScrollAreaMovementCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectHelpScrollAreaMovementCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                          const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     //		InvalidateRegion(pRegion->RegionTopLeftX, pRegion->RegionTopLeftY,
     // pRegion->RegionBottomRightX, pRegion->RegionBottomRightY);

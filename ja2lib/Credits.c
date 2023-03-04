@@ -65,7 +65,7 @@ enum {
 #define CRDT_FLAG__START_SECTION 0x00000002
 #define CRDT_FLAG__END_SECTION 0x00000004
 
-//#define		CRDT_NAME_OF_CREDIT_FILE
+// #define		CRDT_NAME_OF_CREDIT_FILE
 //"BINARYDATA\\Credits.txt"
 #define CRDT_NAME_OF_CREDIT_FILE "BINARYDATA\\Credits.edt"
 
@@ -262,8 +262,10 @@ loading screens too!)",	// Joey \"Joeker\" Whelan",
 // Global Variables
 
 struct MOUSE_REGION gCrdtMouseRegions[NUM_PEOPLE_IN_CREDITS];
-void SelectCreditFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectCreditFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void SelectCreditFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse);
+void SelectCreditFaceMovementRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse);
 
 UINT32 guiCreditBackGroundImage;
 UINT32 guiCreditFaces;
@@ -346,7 +348,7 @@ UINT32 CreditScreenInit(void) {
   return (1);
 }
 
-UINT32 CreditScreenHandle(void) {
+UINT32 CreditScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfCreditsScreenEntry) {
@@ -429,8 +431,8 @@ BOOLEAN EnterCreditsScreen() {
     MSYS_DefineRegion(&gCrdtMouseRegions[uiCnt], gCreditFaces[uiCnt].sX, gCreditFaces[uiCnt].sY,
                       (INT16)(gCreditFaces[uiCnt].sX + gCreditFaces[uiCnt].sWidth),
                       (INT16)(gCreditFaces[uiCnt].sY + gCreditFaces[uiCnt].sHeight),
-                      MSYS_PRIORITY_NORMAL, CURSOR_WWW, SelectCreditFaceMovementRegionCallBack,
-                      SelectCreditFaceRegionCallBack);
+                      MSYS_PRIORITY_NORMAL, CURSOR_WWW, SelectCreditFaceMovementRegionCallback,
+                      SelectCreditFaceRegionCallback);
 
     // Add region
     MSYS_AddRegion(&gCrdtMouseRegions[uiCnt]);
@@ -1184,14 +1186,16 @@ void HandleCreditFlags(UINT32 uiFlags) {
   }
 }
 
-void SelectCreditFaceRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectCreditFaceRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                    const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
   }
 }
 
-void SelectCreditFaceMovementRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectCreditFaceMovementRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                            const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
     giCurrentlySelectedFace = -1;
   } else if (iReason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {

@@ -54,8 +54,9 @@ void MercsToggleColorModeCallback(GUI_BUTTON *btn, INT32 reason);
 void MercsSetColorsCallback(GUI_BUTTON *btn, INT32 reason);
 void MercsSetBodyTypeCallback(GUI_BUTTON *btn, INT32 reason);
 void MercsInventorySlotCallback(GUI_BUTTON *btn, INT32 reason);
-void MouseMovedInMercRegion(struct MOUSE_REGION *reg, INT32 reason);
-void MouseClickedInMercRegion(struct MOUSE_REGION *reg, INT32 reason);
+void MouseMovedInMercRegion(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
+void MouseClickedInMercRegion(struct MOUSE_REGION *reg, INT32 reason,
+                              const struct MouseInput mouse);
 void MercsCivilianGroupCallback(GUI_BUTTON *btn, INT32 reason);
 void MercsScheduleAction1Callback(GUI_BUTTON *btn, INT32 reason);
 void MercsScheduleAction2Callback(GUI_BUTTON *btn, INT32 reason);
@@ -89,7 +90,8 @@ void BtnBrushCallback(GUI_BUTTON *btn, INT32 reason);
 void BtnObject1Callback(GUI_BUTTON *btn, INT32 reason);
 void BtnObject2Callback(GUI_BUTTON *btn, INT32 reason);
 void BtnFillCallback(GUI_BUTTON *btn, INT32 reason);
-void TerrainTileButtonRegionCallback(struct MOUSE_REGION *reg, INT32 reason);
+void TerrainTileButtonRegionCallback(struct MOUSE_REGION *reg, INT32 reason,
+                                     const struct MouseInput mouse);
 // Items Tab Callbacks
 void ItemsWeaponsCallback(GUI_BUTTON *btn, INT32 reason);
 void ItemsAmmoCallback(GUI_BUTTON *btn, INT32 reason);
@@ -102,8 +104,9 @@ void ItemsTriggersCallback(GUI_BUTTON *btn, INT32 reason);
 void ItemsKeysCallback(GUI_BUTTON *btn, INT32 reason);
 void ItemsLeftScrollCallback(GUI_BUTTON *btn, INT32 reason);
 void ItemsRightScrollCallback(GUI_BUTTON *btn, INT32 reason);
-void MouseMovedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason);
-void MouseClickedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason);
+void MouseMovedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason, const struct MouseInput mouse);
+void MouseClickedInItemsRegion(struct MOUSE_REGION *reg, INT32 reason,
+                               const struct MouseInput mouse);
 // MapInfo Callbacks
 void BtnFakeLightCallback(GUI_BUTTON *btn, INT32 reason);
 void MapInfoPrimeTimeRadioCallback(GUI_BUTTON *btn, INT32 reason);

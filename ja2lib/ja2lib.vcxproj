@@ -43,6 +43,7 @@
     <ClCompile Include="Editor\SmoothingUtils.c" />
     <ClCompile Include="FadeScreen.c" />
     <ClCompile Include="GameInitOptionsScreen.c" />
+    <ClCompile Include="GameInput.c" />
     <ClCompile Include="GameLoop.c" />
     <ClCompile Include="GameScreen.c" />
     <ClCompile Include="GameSettings.c" />
@@ -469,7 +470,6 @@
     <ClInclude Include="SGP\Line.h" />
     <ClInclude Include="SGP\MemMan.h" />
     <ClInclude Include="SGP\MouseSystem.h" />
-    <ClInclude Include="SGP\MouseSystemMacros.h" />
     <ClInclude Include="SGP\PCX.h" />
     <ClInclude Include="SGP\Random.h" />
     <ClInclude Include="SGP\SGP.h" />

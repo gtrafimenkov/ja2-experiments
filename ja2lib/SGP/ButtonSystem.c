@@ -2226,7 +2226,8 @@ void SetBtnHelpEndCallback(INT32 iButton, MOUSE_HELPTEXT_DONE_CALLBACK CallbackF
 //	Dispatches all button callbacks for mouse movement. This function gets
 //	called by the Mouse System. *DO NOT CALL DIRECTLY*
 //
-void QuickButtonCallbackMMove(struct MOUSE_REGION *reg, INT32 reason) {
+void QuickButtonCallbackMMove(struct MOUSE_REGION *reg, INT32 reason,
+                              const struct MouseInput mouse) {
   GUI_BUTTON *b;
   INT32 iButtonID;
 
@@ -2305,7 +2306,8 @@ void QuickButtonCallbackMMove(struct MOUSE_REGION *reg, INT32 reason) {
 //	Dispatches all button callbacks for button presses. This function is
 //	called by the Mouse System. *DO NOT CALL DIRECTLY*
 //
-void QuickButtonCallbackMButn(struct MOUSE_REGION *reg, INT32 reason) {
+void QuickButtonCallbackMButn(struct MOUSE_REGION *reg, INT32 reason,
+                              const struct MouseInput mouse) {
   GUI_BUTTON *b;
   INT32 iButtonID;
   BOOLEAN MouseBtnDown;
@@ -3361,11 +3363,11 @@ void BtnGenericMouseMoveButtonCallback(GUI_BUTTON *btn, INT32 reason) {
 
 void ReleaseAnchorMode() {
   if (!gpAnchoredButton) return;
-
-  if (gusMouseXPos < gpAnchoredButton->Area.RegionTopLeftX ||
-      gusMouseXPos > gpAnchoredButton->Area.RegionBottomRightX ||
-      gusMouseYPos < gpAnchoredButton->Area.RegionTopLeftY ||
-      gusMouseYPos > gpAnchoredButton->Area.RegionBottomRightY) {
+  const struct MouseInput mouse = XXX_GetMouseInput();
+  if (mouse.x < gpAnchoredButton->Area.RegionTopLeftX ||
+      mouse.x > gpAnchoredButton->Area.RegionBottomRightX ||
+      mouse.y < gpAnchoredButton->Area.RegionTopLeftY ||
+      mouse.y > gpAnchoredButton->Area.RegionBottomRightY) {
     // released outside button area, so restore previous button state.
     if (gfAnchoredState)
       gpAnchoredButton->uiFlags |= BUTTON_CLICKED_ON;

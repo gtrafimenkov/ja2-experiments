@@ -49,7 +49,8 @@ UINT8 gubLinkPages[] = {BOBBYR_BOOKMARK, FUNERAL_BOOKMARK, INSURANCE_BOOKMARK};
 
 // Clicking on guys Face
 struct MOUSE_REGION gSelectedLinkRegion[AIM_LINK_NUM_LINKS];
-void SelectLinkRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason);
+void SelectLinkRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
 
 void GameInitAimLinks() {}
 
@@ -81,7 +82,7 @@ BOOLEAN EnterAimLinks() {
     MSYS_DefineRegion(&gSelectedLinkRegion[i], AIM_LINK_BOBBY_LINK_X, usPosY,
                       AIM_LINK_BOBBY_LINK_X + AIM_LINK_LINK_WIDTH,
                       (UINT16)(usPosY + AIM_LINK_LINK_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                      MSYS_NO_CALLBACK, SelectLinkRegionCallBack);
+                      MSYS_NO_CALLBACK, SelectLinkRegionCallback);
     MSYS_AddRegion(&gSelectedLinkRegion[i]);
     MSYS_SetRegionUserData(&gSelectedLinkRegion[i], 0, gubLinkPages[i]);
     usPosY += AIM_LINK_LINK_OFFSET_Y;
@@ -142,7 +143,8 @@ void RenderAimLinks() {
                    LAPTOP_SCREEN_WEB_LR_Y);
 }
 
-void SelectLinkRegionCallBack(struct MOUSE_REGION* pRegion, INT32 iReason) {
+void SelectLinkRegionCallback(struct MOUSE_REGION* pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
   } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {

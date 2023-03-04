@@ -1,6 +1,7 @@
 #ifndef __RENDERWORLD_H
 #define __RENDERWORLD_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 struct VObject;
@@ -123,16 +124,14 @@ extern BOOLEAN fLandLayerDirty;
 extern BOOLEAN gfIgnoreScrollDueToCenterAdjust;
 
 // FUNCTIONS
-void ScrollWorld();
+void ScrollWorld(const struct MouseInput mouse);
 void InitRenderParams(UINT8 ubRestrictionID);
-void RenderWorld();
+void RenderWorld(const struct MouseInput mouse);
 
 void ResetLayerOptimizing(void);
 void ResetSpecificLayerOptimizing(UINT32 uiRowFlag);
 
 // Routines of RenderWorld
-extern void RenderStaticWorld();
-extern void RenderDynamicWorld();
 void CopyRenderBuffer();
 
 void SetRenderFlags(UINT32 uiFlags);
@@ -155,16 +154,12 @@ BOOLEAN ConcealWalls(INT16 sX, INT16 sY, INT16 sRadius);
 BOOLEAN RevealWalls(INT16 sX, INT16 sY, INT16 sRadius);
 void ConcealAllWalls(void);
 
-BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY, BOOLEAN fForceAdjust,
-                       BOOLEAN fCheckOnly);
-
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClip(UINT16 *pBuffer, UINT32 uiDestPitchBYTES,
                                               UINT16 *pZBuffer, UINT16 usZValue,
                                               struct VObject *hSrcVObject, INT32 iX, INT32 iY,
                                               UINT16 usIndex, SGPRect *clipregion);
 
-void RenderStaticWorldRect(INT16, INT16, INT16, INT16, BOOLEAN);
-void RenderMarkedWorld(void);
+void RenderStaticWorldRect(INT16, INT16, INT16, INT16, BOOLEAN, const struct MouseInput mouse);
 void RenderDynamicMercWorld(void);
 
 void ExamineZBufferRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom);

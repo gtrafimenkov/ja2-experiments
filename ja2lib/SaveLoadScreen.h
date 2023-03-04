@@ -1,6 +1,7 @@
 #ifndef _SAVE_LOAD_SCREEN__H_
 #define _SAVE_LOAD_SCREEN__H_
 
+#include "GameInput.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Types.h"
 
@@ -19,16 +20,13 @@ extern BOOLEAN gbSaveGameArray[NUM_SAVE_GAMES];
 extern BOOLEAN gfCameDirectlyFromGame;
 
 UINT32 SaveLoadScreenShutdown(void);
-UINT32 SaveLoadScreenHandle(void);
+UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput);
 UINT32 SaveLoadScreenInit(void);
 
 BOOLEAN DoSaveLoadMessageBox(UINT8 ubStyle, STR16 zString, UINT32 uiExitScreen, UINT16 usFlags,
-                             MSGBOX_CALLBACK ReturnCallback);
+                             MSGBOX_CALLBACK ReturnCallback, const struct MouseInput mouse);
 
 BOOLEAN InitSaveGameArray();
-
-void DoneFadeOutForSaveLoadScreen(void);
-void DoneFadeInForSaveLoadScreen(void);
 
 BOOLEAN DoQuickSave();
 BOOLEAN DoQuickLoad();

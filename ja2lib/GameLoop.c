@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "FadeScreen.h"
+#include "GameInputInternal.h"
 #include "GameSettings.h"
 #include "Globals.h"
 #include "HelpScreen.h"
@@ -42,14 +43,15 @@ UINT8 gubCheckForFreeSpaceOnHardDriveCount = DONT_CHECK_FOR_FREE_SPACE;
 
 extern BOOLEAN DoSkiMessageBox(UINT8 ubStyle, STR16 zString, UINT32 uiExitScreen, UINT8 ubFlags,
                                MSGBOX_CALLBACK ReturnCallback);
-extern void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(UINT8 bExitValue);
+extern void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue,
+                                                                  const struct MouseInput mouse);
 extern BOOLEAN gfTacticalPlacementGUIActive;
 extern BOOLEAN gfTacticalPlacementGUIDirty;
 extern BOOLEAN gfValidLocationsChanged;
 extern BOOLEAN gfInMsgBox;
 
 // callback to confirm game is over
-void EndGameMessageBoxCallBack(UINT8 bExitValue);
+void EndGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void HandleNewScreenChange(UINT32 uiNewScreen, UINT32 uiOldScreen);
 
 // The InitializeGame function is responsible for setting up all data and Gaming Engine
@@ -157,10 +159,14 @@ void GameLoop(void) {
   InputAtom InputEvent;
   UINT32 uiOldScreen = guiCurrentScreen;
 
-  struct Point MousePos = GetMousePoint();
+  struct Point MousePos = Plat_GetMousePoint();
+  g_gameInput.mouse.x = MousePos.x;
+  g_gameInput.mouse.y = MousePos.y;
+
+  const struct MouseInput mouse = g_gameInput.mouse;
+
   // Hook into mouse stuff for MOVEMENT MESSAGES
-  MouseSystemHook(MOUSE_POS, (UINT16)MousePos.x, (UINT16)MousePos.y, _LeftButtonDown,
-                  _RightButtonDown);
+  MouseSystemHook(MOUSE_POS, _LeftButtonDown, _RightButtonDown, mouse);
   MusicPoll(FALSE);
 
   while (DequeueSpecificEvent(&InputEvent, LEFT_BUTTON_REPEAT | RIGHT_BUTTON_REPEAT |
@@ -169,28 +175,22 @@ void GameLoop(void) {
     // HOOK INTO MOUSE HOOKS
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
   }
@@ -229,7 +229,8 @@ void GameLoop(void) {
           if (guiPreviousOptionScreen == MAP_SCREEN)
             DoMapMessageBox(MSG_BOX_BASIC_STYLE, zText, MAP_SCREEN, MSG_BOX_FLAG_OK, NULL);
           else
-            DoMessageBox(MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, NULL);
+            DoMessageBox(MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, NULL,
+                         mouse);
         }
         gubCheckForFreeSpaceOnHardDriveCount = DONT_CHECK_FOR_FREE_SPACE;
       }
@@ -267,7 +268,7 @@ void GameLoop(void) {
     guiPendingScreen = NO_PENDING_SCREEN;
   }
 
-  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))();
+  uiOldScreen = (*(GameScreens[guiCurrentScreen].HandleScreen))(&g_gameInput);
 
   // if the screen has chnaged
   if (uiOldScreen != guiCurrentScreen) {
@@ -286,11 +287,6 @@ void GameLoop(void) {
     ReportMapscreenErrorLock();
   }
 #endif
-}
-
-void SetCurrentScreen(UINT32 uiNewScreen) {
-  guiCurrentScreen = uiNewScreen;
-  (*(GameScreens[guiCurrentScreen].HandleScreen))();
 }
 
 void SetPendingNewScreen(UINT32 uiNewScreen) { guiPendingScreen = uiNewScreen; }
@@ -318,7 +314,7 @@ void HandleShortCutExitState(void) {
   if (guiCurrentScreen == AUTORESOLVE_SCREEN) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], guiCurrentScreen,
                  (UINT8)(MSG_BOX_FLAG_YESNO | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                 EndGameMessageBoxCallBack, &pCenteringRect);
+                 EndGameMessageBoxCallback, &pCenteringRect, XXX_GetMouseInput());
     return;
   }
 
@@ -326,15 +322,15 @@ void HandleShortCutExitState(void) {
   if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
     // set up for mapscreen
     DoMapMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], MAP_SCREEN,
-                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallBack);
+                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallback);
 
   } else if (guiCurrentScreen == LAPTOP_SCREEN) {
     // set up for laptop
     DoLapTopSystemMessageBox(MSG_BOX_LAPTOP_DEFAULT, pMessageStrings[MSG_EXITGAME], LAPTOP_SCREEN,
-                             MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallBack);
+                             MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallback);
   } else if (guiCurrentScreen == SHOPKEEPER_SCREEN) {
     DoSkiMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], SHOPKEEPER_SCREEN,
-                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallBack);
+                    MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallback);
   } else {
     // check if error or editor
 #ifdef JA2BETAVERSION
@@ -355,11 +351,11 @@ void HandleShortCutExitState(void) {
     // set up for all otherscreens
     DoMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], guiCurrentScreen,
                  (UINT8)(MSG_BOX_FLAG_YESNO | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                 EndGameMessageBoxCallBack, &pCenteringRect);
+                 EndGameMessageBoxCallback, &pCenteringRect, XXX_GetMouseInput());
   }
 }
 
-void EndGameMessageBoxCallBack(UINT8 bExitValue) {
+void EndGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gfProgramIsRunning = FALSE;

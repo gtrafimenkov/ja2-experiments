@@ -455,7 +455,6 @@ LaptopSaveInfoStruct LaptopSaveInfo;
 // function calls
 UINT32 RenderLaptopPanel();
 void RenderLapTopImage();
-void GetLaptopKeyboardInput();
 UINT32 ExitLaptopMode(UINT32 uiMode);
 
 UINT32 DrawLapTopText();
@@ -479,31 +478,41 @@ void WWWRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void EmailRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void FilesRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void HistoryRegionButtonCallback(GUI_BUTTON *btn, INT32 reason);
-void LaptopProgramIconMinimizeCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void LaptopProgramIconMinimizeCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                       const struct MouseInput mouse);
 
-void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse);
+void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
 void RestoreOldRegion(INT32 iOldRegion);
 void HighLightRegion(INT32 iCurrentRegion);
-void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void ScreenRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse);
+void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse);
+void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void ScreenRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse);
 
 // minimize callback
 void LaptopMinimizeProgramButtonCallback(GUI_BUTTON *btn, INT32 reason);
 
-void NewFileIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void NewFileIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
 
 void DisplayBookMarks();
 void InitBookMarkList();
 BOOLEAN LoadBookmark();
 void DeleteBookmark();
 void ScrollDisplayText(INT32 iY);
-void BookmarkCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void BookmarkCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse);
 void CreateBookMarkMouseRegions();
-void BookmarkMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
+void BookmarkMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse);
 void DeleteBookmarkRegions();
 void DeleteLoadPending(void);
 BOOLEAN LoadLoadPending(void);
@@ -527,7 +536,7 @@ BOOLEAN InitTitleBarMaximizeGraphics(UINT32 uiBackgroundGraphic, STR16 pTitle, U
 void RemoveTitleBarMaximizeGraphics();
 BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, UINT16 usTopLeftX,
                                        UINT16 usTopLeftY, UINT16 usTopRightX);
-void HandleSlidingTitleBar(void);
+static void HandleSlidingTitleBar(const struct MouseInput mouse);
 void ShowLights(void);
 void FlickerHDLight(void);
 BOOLEAN ExitLaptopDone(void);
@@ -549,7 +558,8 @@ void HandleDefaultWebpageForLaptop(void);
 void CreateMinimizeRegionsForLaptopProgramIcons(void);
 void DestroyMinimizeRegionsForLaptopProgramIcons(void);
 void CreateDestroyMouseRegionForNewMailIcon(void);
-void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse);
 void HandleWWWSubSites(void);
 void UpdateStatusOfDisplayingBookMarks(void);
 void InitalizeSubSitesList(void);
@@ -572,7 +582,7 @@ void CreateLaptopButtonHelpText(INT32 iButtonIndex, UINT32 uiButtonHelpTextID);
 // Used to determine delay if its raining
 BOOLEAN IsItRaining();
 INT32 WWaitDelayIncreasedIfRaining(INT32 iLoadTime);
-void InternetRainDelayMessageBoxCallBack(UINT8 bExitValue);
+void InternetRainDelayMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 extern void ClearHistoryList(void);
 
@@ -603,9 +613,9 @@ void HandleLapTopCursorUpDate() {
   }
   guiPreviousLapTopCursor = guiCurrentLapTopCursor;
 }
-void GetLaptopKeyboardInput() {
+
+static void GetLaptopKeyboardInput(const struct MouseInput mouse) {
   InputAtom InputEvent;
-  struct Point MousePos = GetMousePoint();
 
   fTabHandled = FALSE;
 
@@ -613,28 +623,22 @@ void GetLaptopKeyboardInput() {
     // HOOK INTO MOUSE HOOKS
     switch (InputEvent.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 
@@ -1174,7 +1178,7 @@ void RenderLaptop() {
   MarkButtonsDirty();
 }
 
-void EnterNewLaptopMode() {
+static void EnterNewLaptopMode(const struct MouseInput mouse) {
   static BOOLEAN fOldLoadFlag = FALSE;
 
   if (fExitingLaptopFlag) {
@@ -1356,7 +1360,7 @@ void EnterNewLaptopMode() {
       break;
 
     case LAPTOP_MODE_MERC:
-      EnterMercs();
+      EnterMercs(mouse);
       break;
     case LAPTOP_MODE_MERC_FILES:
       EnterMercsFiles();
@@ -1469,7 +1473,7 @@ void EnterNewLaptopMode() {
   // HandleDefaultWebpageForLaptop( );
 }
 
-void HandleLapTopHandles() {
+static void HandleLapTopHandles(const struct MouseInput mouse) {
   if (fLoadPendingFlag) return;
 
   if ((fMaximizingProgram == TRUE) || (fMinizingProgram == TRUE)) {
@@ -1482,7 +1486,7 @@ void HandleLapTopHandles() {
       HandleAIM();
       break;
     case LAPTOP_MODE_AIM_MEMBERS:
-      HandleAIMMembers();
+      HandleAIMMembers(mouse);
       break;
     case LAPTOP_MODE_AIM_MEMBERS_FACIAL_INDEX:
       HandleAimFacialIndex();
@@ -1504,7 +1508,7 @@ void HandleLapTopHandles() {
       break;
 
     case LAPTOP_MODE_MERC:
-      HandleMercs();
+      HandleMercs(mouse);
       break;
     case LAPTOP_MODE_MERC_FILES:
       HandleMercsFiles();
@@ -1539,7 +1543,7 @@ void HandleLapTopHandles() {
       break;
 
     case LAPTOP_MODE_CHAR_PROFILE:
-      HandleCharProfile();
+      HandleCharProfile(mouse);
       break;
     case LAPTOP_MODE_FLORIST:
       HandleFlorist();
@@ -1603,7 +1607,7 @@ void HandleLapTopHandles() {
 
 extern BOOLEAN gfPrintFrameBuffer;
 
-UINT32 LaptopScreenHandle() {
+UINT32 LaptopScreenHandle(const struct GameInput *gameInput) {
   // User just changed modes.  This is determined by the button callbacks
   // created in LaptopScreenInit()
 
@@ -1690,7 +1694,7 @@ UINT32 LaptopScreenHandle() {
   // This determines if the help screen should be active
   if (ShouldTheHelpScreenComeUp(HELP_SCREEN_LAPTOP, FALSE)) {
     // handle the help screen
-    HelpScreenHandler();
+    HelpScreenHandler(gameInput->mouse);
     return (LAPTOP_SCREEN);
   }
 
@@ -1719,13 +1723,13 @@ UINT32 LaptopScreenHandle() {
 
     if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
       if (guiCurrentLaptopMode <= LAPTOP_MODE_WWW) {
-        EnterNewLaptopMode();
+        EnterNewLaptopMode(gameInput->mouse);
         if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
           guiPreviousLaptopMode = guiCurrentLaptopMode;
         }
       } else {
         if (!fLoadPendingFlag) {
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(gameInput->mouse);
           guiPreviousLaptopMode = guiCurrentLaptopMode;
         }
       }
@@ -1753,11 +1757,11 @@ UINT32 LaptopScreenHandle() {
 
   if (fExitingLaptopFlag == FALSE) {
     // handle handles for laptop input stream
-    HandleLapTopHandles();
+    HandleLapTopHandles(gameInput->mouse);
   }
 
   // get keyboard input, handle it
-  GetLaptopKeyboardInput();
+  GetLaptopKeyboardInput(gameInput->mouse);
 
   // check to see if new mail box needs to be displayed
   DisplayNewMailBox();
@@ -1832,7 +1836,7 @@ UINT32 LaptopScreenHandle() {
   DisplayTaskBarIcons();
 
   // handle if we are maximizing a program from a minimized state or vice versa
-  HandleSlidingTitleBar();
+  HandleSlidingTitleBar(gameInput->mouse);
 
   // flicker HD light as nessacary
   FlickerHDLight();
@@ -2288,7 +2292,7 @@ BOOLEAN HandleExit(void) {
       AddFutureDayStrategicEvent(EVENT_HAVENT_MADE_IMP_CHARACTER_EMAIL, (8 + Random(4)) * 60, 0, 1);
 
       /*
-       Moved to an event that gets triggered the next day: HaventMadeImpMercEmailCallBack()
+       Moved to an event that gets triggered the next day: HaventMadeImpMercEmailCallback()
 
                               LaptopSaveInfo.fSentImpWarningAlready = TRUE;
                               AddEmail(IMP_EMAIL_AGAIN,IMP_EMAIL_AGAIN_LENGTH,1, GetWorldTotalMin( )
@@ -2303,7 +2307,7 @@ BOOLEAN HandleExit(void) {
   return (TRUE);
 }
 
-void HaventMadeImpMercEmailCallBack() {
+void HaventMadeImpMercEmailCallback() {
   // if the player STILL hasnt made an imp merc yet
   if ((LaptopSaveInfo.fIMPCompletedFlag == FALSE) &&
       (LaptopSaveInfo.fSentImpWarningAlready == FALSE)) {
@@ -2320,7 +2324,7 @@ CreateLapTopMouseRegions() {
   MSYS_DefineRegion(&gLapTopScreenRegion, (UINT16)(LaptopScreenRect.iLeft),
                     (UINT16)(LaptopScreenRect.iTop), (UINT16)(LaptopScreenRect.iRight),
                     (UINT16)(LaptopScreenRect.iBottom), MSYS_PRIORITY_NORMAL + 1,
-                    CURSOR_LAPTOP_SCREEN, ScreenRegionMvtCallback, LapTopScreenCallBack);
+                    CURSOR_LAPTOP_SCREEN, ScreenRegionMvtCallback, LapTopScreenCallback);
 
   // MSYS_AddRegion(&gLapTopScreenRegion);
   return (TRUE);
@@ -2587,7 +2591,8 @@ void HighLightRegion(INT32 iCurrentRegion) { return; }
 void HandleAnimatedButtons() { return; }
 void AnimateButton(UINT32 uiIconID, UINT16 usX, UINT16 usY) { return; }
 
-void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2601,7 +2606,8 @@ void WWWRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2621,7 +2627,8 @@ void EmailRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2635,7 +2642,8 @@ void FinancialRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                              const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2650,7 +2658,8 @@ void HistoryRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                            const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2664,7 +2673,8 @@ void FilesRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   static INT32 iFrame = 0;
   struct VObject *hLapTopIconHandle;
   if (iReason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -2679,26 +2689,11 @@ void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void CheckIfMouseLeaveScreen() {
-  struct Point MousePos = GetMousePoint();
-  if ((MousePos.x > LAPTOP_SCREEN_LR_X) || (MousePos.x < LAPTOP_UL_X) ||
-      (MousePos.y < LAPTOP_UL_Y) || (MousePos.y > LAPTOP_SCREEN_LR_Y)) {
-    guiCurrentLapTopCursor = LAPTOP_PANEL_CURSOR;
-  }
-}
-void ScreenRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void ScreenRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                             const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }
-  /*if (iReason == MSYS_CALLBACK_REASON_MOVE)
-  {
-          guiCurrentLapTopCursor=LAPTOP_SCREEN_CURSOR;
-  }
-if (iReason == MSYS_CALLBACK_REASON_LOST_MOUSE )
-  {
-CheckIfMouseLeaveScreen();
-  }
-  */
 }
 
 void ReDrawHighLight() {
@@ -2970,7 +2965,7 @@ void CreateBookMarkMouseRegions() {
         &gBookmarkMouseRegions[iCounter], (INT16)BOOK_X,
         (UINT16)(BOOK_TOP_Y + ((iCounter + 1) * (BOOK_HEIGHT + 6)) + 6), BOOK_X + BOOK_WIDTH,
         (INT16)(BOOK_TOP_Y + ((iCounter + 2) * (BOOK_HEIGHT + 6)) + 6), MSYS_PRIORITY_HIGHEST - 2,
-        CURSOR_LAPTOP_SCREEN, BookmarkMvtCallBack, BookmarkCallBack);
+        CURSOR_LAPTOP_SCREEN, BookmarkMvtCallback, BookmarkCallback);
     // MSYS_AddRegion(&gBookmarkMouseRegions[iCounter]);
     MSYS_SetRegionUserData(&gBookmarkMouseRegions[iCounter], 0, iCounter);
     MSYS_SetRegionUserData(&gBookmarkMouseRegions[iCounter], 1, 0);
@@ -2987,7 +2982,7 @@ void CreateBookMarkMouseRegions() {
       &gBookmarkMouseRegions[iCounter], (INT16)BOOK_X,
       (UINT16)(BOOK_TOP_Y + ((iCounter + 1) * (BOOK_HEIGHT + 6)) + 6), BOOK_X + BOOK_WIDTH,
       (INT16)(BOOK_TOP_Y + ((iCounter + 2) * (BOOK_HEIGHT + 6)) + 6), MSYS_PRIORITY_HIGHEST - 2,
-      CURSOR_LAPTOP_SCREEN, BookmarkMvtCallBack, BookmarkCallBack);
+      CURSOR_LAPTOP_SCREEN, BookmarkMvtCallback, BookmarkCallback);
   // MSYS_AddRegion(&gBookmarkMouseRegions[iCounter]);
   MSYS_SetRegionUserData(&gBookmarkMouseRegions[iCounter], 0, iCounter);
   MSYS_SetRegionUserData(&gBookmarkMouseRegions[iCounter], 1, CANCEL_STRING);
@@ -3020,7 +3015,7 @@ void CreateDestoryBookMarkRegions(void) {
   }
 }
 
-void BookmarkCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void BookmarkCallback(struct MOUSE_REGION *pRegion, INT32 iReason, const struct MouseInput mouse) {
   INT32 iCount;
 
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
@@ -3054,7 +3049,7 @@ void GoToWebPage(INT32 iPageId) {
   if (IsItRaining()) {
     if (giRainDelayInternetSite == -1) {
       DoLapTopMessageBox(MSG_BOX_LAPTOP_DEFAULT, pErrorStrings[4], LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
-                         InternetRainDelayMessageBoxCallBack);
+                         InternetRainDelayMessageBoxCallback);
       giRainDelayInternetSite = iPageId;
       return;
     }
@@ -3184,7 +3179,8 @@ void GoToWebPage(INT32 iPageId) {
   return;
 }
 
-void BookmarkMvtCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void BookmarkMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   if (iReason == MSYS_CALLBACK_REASON_MOVE) {
     iHighLightBookLine = MSYS_GetRegionUserData(pRegion, 0);
   }
@@ -3406,7 +3402,7 @@ void CreateDestroyErrorButton(void) {
 
     // define the screen mask
     MSYS_DefineRegion(&pScreenMask, 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST - 3, CURSOR_LAPTOP_SCREEN,
-                      MSYS_NO_CALLBACK, LapTopScreenCallBack);
+                      MSYS_NO_CALLBACK, LapTopScreenCallback);
 
     // add region
     MSYS_AddRegion(&pScreenMask);
@@ -3711,7 +3707,8 @@ void HandleLeftButtonUpEvent(void) {
   }
 }
 
-void LapTopScreenCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LapTopScreenCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }
@@ -3739,7 +3736,7 @@ BOOLEAN DoLapTopMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, 
   // do message box and return
   iLaptopMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                    (UINT8)(ubFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                   ReturnCallback, &pCenteringRect);
+                                   ReturnCallback, &pCenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((iLaptopMessageBox != -1));
@@ -3754,7 +3751,7 @@ BOOLEAN DoLapTopSystemMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 
   // do message box and return
   iLaptopMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                    (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                   ReturnCallback, pCenteringRect);
+                                   ReturnCallback, pCenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((iLaptopMessageBox != -1));
@@ -3769,7 +3766,7 @@ BOOLEAN DoLapTopSystemMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitSc
   // do message box and return
   iLaptopMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                    (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                   ReturnCallback, &CenteringRect);
+                                   ReturnCallback, &CenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((iLaptopMessageBox != -1));
@@ -3944,7 +3941,7 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, UINT16 u
 
 void RemoveTitleBarMaximizeGraphics() { DeleteVideoSurfaceFromIndex(guiTitleBarSurface); }
 
-void HandleSlidingTitleBar(void) {
+static void HandleSlidingTitleBar(const struct MouseInput mouse) {
   if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
     return;
   }
@@ -3960,7 +3957,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -3970,7 +3967,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -3980,7 +3977,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -3990,7 +3987,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4000,7 +3997,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4010,7 +4007,7 @@ void HandleSlidingTitleBar(void) {
         if (fMaximizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
           fEnteredNewLapTopDueToHandleSlidingBars = TRUE;
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4025,7 +4022,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 66, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4034,7 +4031,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 130, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4043,7 +4040,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 226, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4052,7 +4049,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 194, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4061,7 +4058,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 162, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4070,7 +4067,7 @@ void HandleSlidingTitleBar(void) {
         fMinizingProgram = !DisplayTitleBarMaximizeGraphic(FALSE, fInitTitle, 29, 99, 29 + 20);
         if (fMinizingProgram == FALSE) {
           RemoveTitleBarMaximizeGraphics();
-          EnterNewLaptopMode();
+          EnterNewLaptopMode(mouse);
           fEnteredNewLapTopDueToHandleSlidingBars = FALSE;
           fPausedReDrawScreenFlag = TRUE;
         }
@@ -4850,7 +4847,8 @@ void DestroyMinimizeRegionsForLaptopProgramIcons(void) {
   return;
 }
 
-void LaptopProgramIconMinimizeCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void LaptopProgramIconMinimizeCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                       const struct MouseInput mouse) {
   // callback handler for the minize region that is attatched to the laptop program icon
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     switch (guiCurrentLaptopMode) {
@@ -4965,7 +4963,8 @@ void CreateDestroyMouseRegionForNewMailIcon(void) {
   }
 }
 
-void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                          const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (fUnReadMailFlag) {
       fOpenMostRecentUnReadFlag = TRUE;
@@ -4974,7 +4973,8 @@ void NewEmailIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void NewFileIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void NewFileIconCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                         const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (fNewFilesInFileViewer) {
       fEnteredFileViewerFromNewFileIcon = TRUE;
@@ -5155,7 +5155,7 @@ void DisplayWebBookMarkNotify(void) {
     //	MSYS_DefineRegion( &gLapTopScreenRegion, ( UINT16 )( LaptopScreenRect.iLeft ),( UINT16 )(
     // LaptopScreenRect.iTop ),( UINT16 ) ( LaptopScreenRect.iRight ),( UINT16 )(
     // LaptopScreenRect.iBottom ), MSYS_PRIORITY_NORMAL+1,
-    // CURSOR_LAPTOP_SCREEN, ScreenRegionMvtCallback, LapTopScreenCallBack );
+    // CURSOR_LAPTOP_SCREEN, ScreenRegionMvtCallback, LapTopScreenCallback );
 
     // font stuff
     SetFont(DOWNLOAD_FONT);
@@ -5398,7 +5398,7 @@ BOOLEAN IsItRaining() {
     return (FALSE);
 }
 
-void InternetRainDelayMessageBoxCallBack(UINT8 bExitValue) {
+void InternetRainDelayMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   GoToWebPage(giRainDelayInternetSite);
 
   // Set to -2 so we dont due the message for this occurence of laptop

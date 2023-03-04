@@ -1,0 +1,11 @@
+          // Set mouse stuff
+          sScreenX = mouse.x;
+          sScreenY = mouse.y;
+
+, const struct MouseInput mouse
+
+const struct GameInput *gameInput
+
+, XXX_GetMouseInput()
+
+const struct MouseInput mouse = XXX_GetMouseInput();

@@ -50,6 +50,15 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
+static void RenderStaticWorld(const struct MouseInput mouse);
+static void RenderMarkedWorld(const struct MouseInput mouse);
+
+static void RenderDynamicWorld(const struct MouseInput mouse);
+
+static BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY,
+                              BOOLEAN fForceAdjust, BOOLEAN fCheckOnly,
+                              const struct MouseInput mouse);
+
 #ifdef __GCC
 // since some of the code is not complied on Linux
 #pragma GCC diagnostic push
@@ -129,7 +138,7 @@ enum {
 #define SCROLL_INTERTIA_STEP1 6
 #define SCROLL_INTERTIA_STEP2 8
 
-//#define SHORT_ROUND( x ) ( (INT16)( ( x * 1000 ) / 1000 ) )
+// #define SHORT_ROUND( x ) ( (INT16)( ( x * 1000 ) / 1000 ) )
 #define SHORT_ROUND(x) (x)
 
 #define NUM_ITEM_CYCLE_COLORS 60
@@ -426,25 +435,12 @@ UINT8 RenderFXStartIndex[] = {
     TOPMOST_START_INDEX,  // DYNAMIC TOPMOST
 };
 
-// INT16 gsCoordArray[ 500 ][ 500 ][ 4 ];
-// INT16 gsCoordArrayX;
-// INT16 gsCoordArrayY;
-
-// void SetRenderGlobals( INT16 sStartPointX_M, INT16 sStartPointY_M, INT16 sStartPointX_S, INT16
-// sStartPointY_S, INT16 sEndXS, INT16 sEndYS ); void TempRenderTiles(UINT32 uiFlags, INT16
-// sStartPointX_M, INT16 sStartPointY_M, INT16 sStartPointX_S, INT16 sStartPointY_S, INT16 sEndXS,
-// INT16 sEndYS ); void TempRenderTiles(UINT32 uiFlags, INT16 sStartPointX_M, INT16 sStartPointY_M,
-// INT16 sStartPointX_S, INT16 sStartPointY_S, INT16 sEndXS, INT16 sEndYS, UINT8 ubNumLevels, UINT32
-// *puiLevels );
-
 void ExamineZBufferForHiddenTiles(INT16 sStartPointX_M, INT16 sStartPointY_M, INT16 sStartPointX_S,
                                   INT16 sStartPointY_S, INT16 sEndXS, INT16 sEndYS);
 
 // void ReRenderWorld(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom);
 void ClearMarkedTiles(void);
 void CorrectRenderCenter(INT16 sRenderX, INT16 sRenderY, INT16 *pSNewX, INT16 *pSNewY);
-void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScrollYIncrement);
-
 void CalcRenderParameters(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom);
 void ResetRenderParameters();
 
@@ -622,10 +618,11 @@ void RenderSetShadows(BOOLEAN fShadows) {
     gRenderFlags &= (~RENDER_FLAG_SHADOWS);
 }
 
-void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT32 iStartPointX_S,
-                 INT32 iStartPointY_S, INT32 iEndXS, INT32 iEndYS, UINT8 ubNumLevels,
-                 UINT32 *puiLevels, UINT16 *psLevelIDs) {
-  //#if 0
+static void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M,
+                        INT32 iStartPointX_S, INT32 iStartPointY_S, INT32 iEndXS, INT32 iEndYS,
+                        UINT8 ubNumLevels, UINT32 *puiLevels, UINT16 *psLevelIDs,
+                        const struct MouseInput mouse) {
+  // #if 0
 
   struct LEVELNODE *pNode;  //, *pLand, *pStruct; //*pObject, *pTopmost, *pMerc;
   struct SOLDIERTYPE *pSoldier, *pSelSoldier;
@@ -719,7 +716,7 @@ void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT
   if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
-    if (ShouldCheckForMouseDetections()) {
+    if (ShouldCheckForMouseDetections(mouse)) {
       BeginCurInteractiveTileCheck(gubIntTileCheckFlags);
       fCheckForMouseDetections = TRUE;
 
@@ -793,7 +790,7 @@ void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT
             // Experimental!
             if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
               if (fCheckForMouseDetections && gpWorldLevelData[uiTileIndex].pStructHead != NULL) {
-                LogMouseOverInteractiveTile((INT16)uiTileIndex);
+                LogMouseOverInteractiveTile((INT16)uiTileIndex, mouse);
               }
             }
 
@@ -2093,7 +2090,8 @@ void DeleteFromWorld(UINT16 usTileIndex, UINT32 uiRenderTiles, UINT16 usIndex) {
 // memcpy's the background to the new scroll position, and renders the missing strip
 // via the RenderStaticWorldRect. Dynamic stuff will be updated on the next frame
 // by the normal render cycle
-void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScrollYIncrement) {
+static void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScrollYIncrement,
+                             const struct MouseInput mouse) {
   // RestoreBackgroundRects();
 
   if (!gfDoVideoScroll) {
@@ -2101,7 +2099,7 @@ void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScroll
     memset(gpZBuffer, LAND_Z_LEVEL, 1280 * gsVIEWPORT_END_Y);
 
     RenderStaticWorldRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-                          gsVIEWPORT_END_Y, FALSE);
+                          gsVIEWPORT_END_Y, FALSE, mouse);
 
     FreeBackgroundRectType(BGND_FLAG_ANIMATED);
   } else {
@@ -2125,7 +2123,7 @@ void ScrollBackground(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScroll
 // Coordinates for the window from that using the following functions
 // For coordinate transformations
 
-void RenderWorld() {
+void RenderWorld(const struct MouseInput mouse) {
   TILE_ELEMENT *TileElem;
   TILE_ANIMATION_DATA *pAnimData;
   UINT32 cnt = 0;
@@ -2180,11 +2178,7 @@ void RenderWorld() {
     }
   }
 
-  // RenderStaticWorldRect( gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y ); AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y ); return;
-
-  //#if 0
+  // #if 0
 
   if (gRenderFlags & RENDER_FLAG_FULL) {
     gfRenderFullThisFrame = TRUE;
@@ -2195,27 +2189,28 @@ void RenderWorld() {
     fInterfacePanelDirty = DIRTYLEVEL2;
 
     // Apply scrolling sets some world variables
-    ApplyScrolling(gsRenderCenterX, gsRenderCenterY, TRUE, FALSE);
+    struct MouseInput dummyMouseInput = {0, 0};
+    ApplyScrolling(gsRenderCenterX, gsRenderCenterY, TRUE, FALSE, dummyMouseInput);
     ResetLayerOptimizing();
 
     if ((gRenderFlags & RENDER_FLAG_NOZ)) {
       RenderStaticWorldRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-                            gsVIEWPORT_END_Y, FALSE);
+                            gsVIEWPORT_END_Y, FALSE, mouse);
     } else {
-      RenderStaticWorld();
+      RenderStaticWorld(mouse);
     }
 
     if (!(gRenderFlags & RENDER_FLAG_SAVEOFF)) UpdateSaveBuffer();
 
   } else if (gRenderFlags & RENDER_FLAG_MARKED) {
     ResetLayerOptimizing();
-    RenderMarkedWorld();
+    RenderMarkedWorld(mouse);
     if (!(gRenderFlags & RENDER_FLAG_SAVEOFF)) UpdateSaveBuffer();
   }
 
   if (gfScrollInertia == FALSE || (gRenderFlags & RENDER_FLAG_NOZ) ||
       (gRenderFlags & RENDER_FLAG_FULL) || (gRenderFlags & RENDER_FLAG_MARKED)) {
-    RenderDynamicWorld();
+    RenderDynamicWorld(mouse);
   }
 
   if (gfScrollInertia) {
@@ -2240,12 +2235,6 @@ void RenderWorld() {
   }
 
 #endif
-
-  //#endif
-
-  // RenderStaticWorldRect( gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y ); AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_START_Y, gsVIEWPORT_END_X,
-  // gsVIEWPORT_END_Y );
 
   if (gRenderFlags & RENDER_FLAG_MARKED) ClearMarkedTiles();
 
@@ -2280,7 +2269,7 @@ void RenderWorld() {
 // Determine WorldIntersectionPoint and the starting block from these
 // Then render away!
 void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
-                           BOOLEAN fDynamicsToo) {
+                           BOOLEAN fDynamicsToo, const struct MouseInput mouse) {
   UINT32 uiLevelFlags[10];
   UINT16 sLevelIDs[10];
 
@@ -2296,20 +2285,20 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   sLevelIDs[0] = RENDER_STATIC_LAND;
   // sLevelIDs[1]		= RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
-  //#if 0
+  // #if 0
 
   uiLevelFlags[0] = TILES_STATIC_OBJECTS;
   sLevelIDs[0] = RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   if (gRenderFlags & RENDER_FLAG_SHADOWS) {
     uiLevelFlags[0] = TILES_STATIC_SHADOWS;
     sLevelIDs[0] = RENDER_STATIC_SHADOWS;
     RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-                gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+                gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
   }
 
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2323,7 +2312,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   sLevelIDs[3] = RENDER_STATIC_TOPMOST;
 
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 4, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 4, uiLevelFlags, sLevelIDs, mouse);
 
   // ATE: Do obsucred layer!
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2331,15 +2320,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
   uiLevelFlags[1] = TILES_STATIC_ONROOF;
   sLevelIDs[1] = RENDER_STATIC_ONROOF;
   RenderTiles(TILES_OBSCURED, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S,
-              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs);
-
-  // uiLevelFlags[0] = TILES_DYNAMIC_MERCS;
-  // uiLevelFlags[1] = TILES_DYNAMIC_HIGHMERCS;
-
-  // sLevelIDs[0]    = RENDER_DYNAMIC_MERCS;
-  // sLevelIDs[1]		= RENDER_DYNAMIC_HIGHMERCS;
-  // RenderTiles( 0, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S, gsEndXS,
-  // gsEndYS, 1, uiLevelFlags, sLevelIDs );
+              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs, mouse);
 
   if (fDynamicsToo) {
     // DYNAMICS
@@ -2363,7 +2344,7 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
     sLevelIDs[7] = RENDER_DYNAMIC_HIGHMERCS;
     sLevelIDs[8] = RENDER_DYNAMIC_ONROOF;
     RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-                gsLEndYS, 9, uiLevelFlags, sLevelIDs);
+                gsLEndYS, 9, uiLevelFlags, sLevelIDs, mouse);
 
     SumAddiviveLayerOptimization();
   }
@@ -2376,10 +2357,10 @@ void RenderStaticWorldRect(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom,
     AddBaseDirtyRect(sLeft, sTop, sRight, sBottom);
   }
 
-  //#endif
+  // #endif
 }
 
-void RenderStaticWorld() {
+static void RenderStaticWorld(const struct MouseInput mouse) {
   UINT32 uiLevelFlags[9];
   UINT16 sLevelIDs[9];
 
@@ -2397,18 +2378,18 @@ void RenderStaticWorld() {
   sLevelIDs[0] = RENDER_STATIC_LAND;
   // sLevelIDs[1]		= RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_OBJECTS;
   sLevelIDs[0] = RENDER_STATIC_OBJECTS;
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   if (gRenderFlags & RENDER_FLAG_SHADOWS) {
     uiLevelFlags[0] = TILES_STATIC_SHADOWS;
     sLevelIDs[0] = RENDER_STATIC_SHADOWS;
     RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-                gsLEndYS, 1, uiLevelFlags, sLevelIDs);
+                gsLEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
   }
 
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2422,7 +2403,7 @@ void RenderStaticWorld() {
   sLevelIDs[3] = RENDER_STATIC_TOPMOST;
 
   RenderTiles(0, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S, gsLStartPointY_S, gsLEndXS,
-              gsLEndYS, 4, uiLevelFlags, sLevelIDs);
+              gsLEndYS, 4, uiLevelFlags, sLevelIDs, mouse);
 
   // ATE: Do obsucred layer!
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
@@ -2430,7 +2411,7 @@ void RenderStaticWorld() {
   uiLevelFlags[1] = TILES_STATIC_ONROOF;
   sLevelIDs[1] = RENDER_STATIC_ONROOF;
   RenderTiles(TILES_OBSCURED, gsLStartPointX_M, gsLStartPointY_M, gsLStartPointX_S,
-              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs);
+              gsLStartPointY_S, gsLEndXS, gsLEndYS, 2, uiLevelFlags, sLevelIDs, mouse);
 
   AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_WINDOW_START_Y, gsVIEWPORT_END_X,
                    gsVIEWPORT_WINDOW_END_Y);
@@ -2438,7 +2419,7 @@ void RenderStaticWorld() {
   ResetRenderParameters();
 }
 
-void RenderMarkedWorld(void) {
+static void RenderMarkedWorld(const struct MouseInput mouse) {
   UINT32 uiLevelFlags[4];
   UINT16 sLevelIDs[4];
 
@@ -2455,34 +2436,34 @@ void RenderMarkedWorld(void) {
   sLevelIDs[0] = RENDER_STATIC_LAND;
   sLevelIDs[1] = RENDER_STATIC_OBJECTS;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 2, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 2, uiLevelFlags, sLevelIDs, mouse);
 
   if (gRenderFlags & RENDER_FLAG_SHADOWS) {
     uiLevelFlags[0] = TILES_STATIC_SHADOWS;
     sLevelIDs[0] = RENDER_STATIC_SHADOWS;
     RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-                gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+                gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
   }
 
   uiLevelFlags[0] = TILES_STATIC_STRUCTURES;
   sLevelIDs[0] = RENDER_STATIC_STRUCTS;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_ROOF;
   sLevelIDs[0] = RENDER_STATIC_ROOF;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_ONROOF;
   sLevelIDs[0] = RENDER_STATIC_ONROOF;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_STATIC_TOPMOST;
   sLevelIDs[0] = RENDER_STATIC_TOPMOST;
   RenderTiles(TILES_MARKED, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   AddBaseDirtyRect(gsVIEWPORT_START_X, gsVIEWPORT_WINDOW_START_Y, gsVIEWPORT_END_X,
                    gsVIEWPORT_WINDOW_END_Y);
@@ -2490,7 +2471,7 @@ void RenderMarkedWorld(void) {
   ResetRenderParameters();
 }
 
-void RenderDynamicWorld() {
+static void RenderDynamicWorld(const struct MouseInput mouse) {
   UINT8 ubNumLevels;
   UINT32 uiLevelFlags[10];
   UINT16 sLevelIDs[10];
@@ -2549,7 +2530,7 @@ void RenderDynamicWorld() {
   }
 
   RenderTiles(TILES_DIRTY, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S,
-              gsEndXS, gsEndYS, ubNumLevels, uiLevelFlags, sLevelIDs);
+              gsEndXS, gsEndYS, ubNumLevels, uiLevelFlags, sLevelIDs, mouse);
 
 #ifdef JA2EDITOR
   if (!gfEditMode && !gfAniEditMode)
@@ -2575,7 +2556,7 @@ void RenderDynamicWorld() {
   sLevelIDs[4] = RENDER_DYNAMIC_STRUCTS;
 
   RenderTiles(0, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S, gsEndXS,
-              gsEndYS, 5, uiLevelFlags, sLevelIDs);
+              gsEndYS, 5, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_DYNAMIC_ROOF;
   uiLevelFlags[1] = TILES_DYNAMIC_HIGHMERCS;
@@ -2586,23 +2567,23 @@ void RenderDynamicWorld() {
   sLevelIDs[2] = RENDER_DYNAMIC_ONROOF;
 
   RenderTiles(0, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S, gsStartPointY_S, gsEndXS,
-              gsEndYS, 3, uiLevelFlags, sLevelIDs);
+              gsEndYS, 3, uiLevelFlags, sLevelIDs, mouse);
 
   uiLevelFlags[0] = TILES_DYNAMIC_TOPMOST;
   sLevelIDs[0] = RENDER_DYNAMIC_TOPMOST;
 
   // ATE: check here for mouse over structs.....
   RenderTiles(TILES_DYNAMIC_CHECKFOR_INT_TILE, gsStartPointX_M, gsStartPointY_M, gsStartPointX_S,
-              gsStartPointY_S, gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs);
+              gsStartPointY_S, gsEndXS, gsEndYS, 1, uiLevelFlags, sLevelIDs, mouse);
 
   SumAddiviveLayerOptimization();
 
   ResetRenderParameters();
 }
 
-BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sScrollYStep,
-                               INT16 *psTempRenderCenterX, INT16 *psTempRenderCenterY,
-                               BOOLEAN fCheckOnly) {
+static BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sScrollYStep,
+                                      INT16 *psTempRenderCenterX, INT16 *psTempRenderCenterY,
+                                      BOOLEAN fCheckOnly, const struct MouseInput mouse) {
   BOOLEAN fAGoodMove = FALSE, fMovedPos = FALSE;
   INT16 sTempX_W, sTempY_W;
   BOOLEAN fUpOK, fLeftOK;
@@ -2617,13 +2598,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2631,13 +2612,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2645,13 +2626,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2659,13 +2640,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fMovedPos = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
     if (fMovedPos) {
       fAGoodMove = TRUE;
     }
 
     if (!fCheckOnly) {
-      ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep);
+      ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep, mouse);
     }
   }
 
@@ -2674,13 +2655,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check left
     FromScreenToCellCoordinates((INT16)-sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fLeftOK && fUpOK) {
       FromScreenToCellCoordinates((INT16)-sScrollXStep, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2689,7 +2670,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UPLEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UPLEFT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fUpOK) {
@@ -2700,7 +2681,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fLeftOK) {
@@ -2711,7 +2692,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2721,13 +2702,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fUpOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check right
     FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fUpOK && fRightOK) {
       FromScreenToCellCoordinates((INT16)sScrollXStep, (INT16)-sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2736,7 +2717,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UPRIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UPRIGHT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fUpOK) {
@@ -2747,7 +2728,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_UP, sScrollXStep, sScrollYStep, mouse);
       }
     } else if (fRightOK) {
       fAGoodMove = TRUE;
@@ -2757,7 +2738,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2767,13 +2748,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check left.....
     FromScreenToCellCoordinates((INT16)-sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fLeftOK && fDownOK) {
       fAGoodMove = TRUE;
@@ -2782,7 +2763,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWNLEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWNLEFT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fLeftOK) {
@@ -2792,7 +2773,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_LEFT, sScrollXStep, sScrollYStep, mouse);
       }
     } else if (fDownOK) {
       FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2801,7 +2782,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2811,13 +2792,13 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
     FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     // Check down
     FromScreenToCellCoordinates(0, sScrollYStep, &sTempX_W, &sTempY_W);
     sTempRenderCenterX = gsRenderCenterX + sTempX_W;
     sTempRenderCenterY = gsRenderCenterY + sTempY_W;
-    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
+    fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly, mouse);
 
     if (fDownOK && fRightOK) {
       FromScreenToCellCoordinates((INT16)sScrollXStep, (INT16)sScrollYStep, &sTempX_W, &sTempY_W);
@@ -2826,7 +2807,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWNRIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWNRIGHT, sScrollXStep, sScrollYStep, mouse);
       }
 
     } else if (fDownOK) {
@@ -2836,7 +2817,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_DOWN, sScrollXStep, sScrollYStep, mouse);
       }
     } else if (fRightOK) {
       FromScreenToCellCoordinates(sScrollXStep, 0, &sTempX_W, &sTempY_W);
@@ -2845,7 +2826,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
       fAGoodMove = TRUE;
 
       if (!fCheckOnly) {
-        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep);
+        ScrollBackground(SCROLL_RIGHT, sScrollXStep, sScrollYStep, mouse);
       }
     }
   }
@@ -2856,7 +2837,7 @@ BOOLEAN HandleScrollDirections(UINT32 ScrollFlags, INT16 sScrollXStep, INT16 sSc
   return (fAGoodMove);
 }
 
-void ScrollWorld() {
+void ScrollWorld(const struct MouseInput mouse) {
   UINT32 ScrollFlags = 0;
   BOOLEAN fDoScroll = FALSE, fMovedPos = FALSE, fAGoodMove = FALSE;
   INT16 sTempRenderCenterX, sTempRenderCenterY;
@@ -2958,22 +2939,22 @@ void ScrollWorld() {
         RESETCOUNTER(STARTSCROLL);
       }
 
-      if (gusMouseYPos == 0) {
+      if (mouse.y == 0) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_UP;
       }
 
-      if (gusMouseYPos >= 479) {
+      if (mouse.y >= 479) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_DOWN;
       }
 
-      if (gusMouseXPos >= 639) {
+      if (mouse.x >= 639) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_RIGHT;
       }
 
-      if (gusMouseXPos == 0) {
+      if (mouse.x == 0) {
         fDoScroll = TRUE;
         ScrollFlags |= SCROLL_LEFT;
       }
@@ -3021,7 +3002,7 @@ void ScrollWorld() {
     }
 
     fAGoodMove = HandleScrollDirections(ScrollFlags, sScrollXStep, sScrollYStep,
-                                        &sTempRenderCenterX, &sTempRenderCenterY, TRUE);
+                                        &sTempRenderCenterX, &sTempRenderCenterY, TRUE, mouse);
   }
 
   // Has this been an OK scroll?
@@ -3049,7 +3030,7 @@ void ScrollWorld() {
 
       // Now we actually begin our scrolling
       HandleScrollDirections(ScrollFlags, sScrollXStep, sScrollYStep, &sTempRenderCenterX,
-                             &sTempRenderCenterY, FALSE);
+                             &sTempRenderCenterY, FALSE, mouse);
     }
   } else {
     // ATE: Also if scroll pending never got to scroll....
@@ -3169,17 +3150,12 @@ void InitRenderParams(UINT8 ubRestrictionID) {
 
   gusNormalItemOutlineColor = Get16BPPColor(FROMRGB(255, 255, 255));
   gusYellowItemOutlineColor = Get16BPPColor(FROMRGB(255, 255, 0));
-
-  // NOW GET DISTANCE SPANNING WORLD LIMITS IN WORLD COORDS
-  // FromScreenToCellCoordinates( ( gTopRightWorldLimitX - gTopLeftWorldLimitX ), (
-  // gTopRightWorldLimitY - gTopLeftWorldLimitY ), &gsWorldSpanX, &gsWorldSpanY );
-
-  // CALCULATE 16BPP COLORS FOR ITEMS
 }
 
 // Appy? HEahehahehahehae.....
-BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY, BOOLEAN fForceAdjust,
-                       BOOLEAN fCheckOnly) {
+static BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY,
+                              BOOLEAN fForceAdjust, BOOLEAN fCheckOnly,
+                              const struct MouseInput mouse) {
   BOOLEAN fScrollGood = FALSE;
   BOOLEAN fOutLeft = FALSE;
   BOOLEAN fOutRight = FALSE;
@@ -3358,28 +3334,28 @@ BOOLEAN ApplyScrolling(INT16 sTempRenderCenterX, INT16 sTempRenderCenterY, BOOLE
     } else {
       if (fOutRight) {
         // Check where our cursor is!
-        if (gusMouseXPos >= 639) {
+        if (mouse.x >= 639) {
           gfUIShowExitEast = TRUE;
         }
       }
 
       if (fOutLeft) {
         // Check where our cursor is!
-        if (gusMouseXPos == 0) {
+        if (mouse.x == 0) {
           gfUIShowExitWest = TRUE;
         }
       }
 
       if (fOutTop) {
         // Check where our cursor is!
-        if (gusMouseYPos == 0) {
+        if (mouse.y == 0) {
           gfUIShowExitNorth = TRUE;
         }
       }
 
       if (fOutBottom) {
         // Check where our cursor is!
-        if (gusMouseYPos >= 479) {
+        if (mouse.y >= 479) {
           gfUIShowExitSouth = TRUE;
         }
       }
@@ -6422,41 +6398,14 @@ void SetMercGlowFast() {
 
 void SetMercGlowNormal() { gpGlowFramePointer = gsGlowFrames; }
 
-#if 0
-		if ( gAnimControl[ pSoldier->usAnimState ].uiFlags & ANIM_MOVING )
-		{
-			if ( sZOffsetY > 0 )
-			{
-				sZOffsetY++;
-			}
-			if ( sZOffsetX > 0 )
-			{
-				sZOffsetX++;
-			}
-		}
-
-		sZOffsetX = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetX;\
-			sZOffsetY = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetY;\
-
-
-	if ( ( pSoldier->uiStatusFlags & SOLDIER_MULTITILE ) )\
-	{\
-		sZOffsetX = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetX;\
-		sZOffsetY = pNode->pStructureData->pDBStructureRef->pDBStructure->bZTileOffsetY;\
-\
-		GetMapXYWorldY( sMapX + sZOffsetX, sMapY + sZOffsetY, sWorldY );\
-	}\
-	else
-
-#endif
-
 void SetRenderCenter(INT16 sNewX, INT16 sNewY) {
   if (gfIgnoreScrolling == 1) {
     return;
   }
 
   // Apply these new coordinates to the renderer!
-  ApplyScrolling(sNewX, sNewY, TRUE, FALSE);
+  struct MouseInput dummyMouseInput = {0, 0};
+  ApplyScrolling(sNewX, sNewY, TRUE, FALSE, dummyMouseInput);
 
   // Set flag to ignore scrolling this frame
   gfIgnoreScrollDueToCenterAdjust = TRUE;

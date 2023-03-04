@@ -79,7 +79,7 @@ UINT32 guiMercBackBoxButton;
 
 void DisplayHiredMercs();
 void SettleMercAccounts();
-void MercAuthorizePaymentMessageBoxCallBack(UINT8 bExitValue);
+void MercAuthorizePaymentMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 void GameInitMercsAccount() {}
 
@@ -222,7 +222,7 @@ void BtnMercAuthorizeButtonCallback(GUI_BUTTON *btn, INT32 reason) {
                MercAccountText[MERC_ACCOUNT_AUTHORIZE_CONFIRMATION], wzDollarAmount);
 
       DoLapTopMessageBox(MSG_BOX_BLUE_ON_GREY, wzAuthorizeString, LAPTOP_SCREEN, MSG_BOX_FLAG_YESNO,
-                         MercAuthorizePaymentMessageBoxCallBack);
+                         MercAuthorizePaymentMessageBoxCallback);
 
       InvalidateRegion(btn->Area.RegionTopLeftX, btn->Area.RegionTopLeftY,
                        btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
@@ -492,7 +492,7 @@ void SettleMercAccounts() {
   */
 }
 
-void MercAuthorizePaymentMessageBoxCallBack(UINT8 bExitValue) {
+void MercAuthorizePaymentMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, clear the form
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // if the player owes Speck money, then settle the accounts

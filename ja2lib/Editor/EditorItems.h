@@ -2,6 +2,7 @@
 #define __EDITORITEMS_H
 
 #include "BuildDefines.h"
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 typedef struct {
@@ -32,7 +33,7 @@ extern EditorItemsInfo eInfo;
 void InitEditorItemsToolbar();
 void EntryInitEditorItemsInfo();
 void InitEditorItemsInfo(UINT32 uiItemType);
-void RenderEditorItemsInfo();
+void RenderEditorItemsInfo(const struct MouseInput mouse);
 void ClearEditorItemsInfo();
 void DisplayItemStatistics();
 void DetermineItemsScrolling();

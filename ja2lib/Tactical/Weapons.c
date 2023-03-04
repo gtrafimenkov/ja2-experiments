@@ -1766,9 +1766,9 @@ BOOLEAN UseLauncher(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   return (TRUE);
 }
 
-BOOLEAN DoSpecialEffectAmmoMiss(UINT8 ubAttackerID, INT16 sGridNo, INT16 sXPos, INT16 sYPos,
-                                INT16 sZPos, BOOLEAN fSoundOnly, BOOLEAN fFreeupAttacker,
-                                INT32 iBullet) {
+static BOOLEAN DoSpecialEffectAmmoMiss(UINT8 ubAttackerID, INT16 sGridNo, INT16 sXPos, INT16 sYPos,
+                                       INT16 sZPos, BOOLEAN fSoundOnly, BOOLEAN fFreeupAttacker,
+                                       INT32 iBullet) {
   ANITILE_PARAMS AniParams;
   UINT8 ubAmmoType;
   UINT16 usItem;

@@ -479,7 +479,7 @@ void DetermineItemsScrolling() {
     EnableEditorButton(ITEMS_RIGHTSCROLL);
 }
 
-void RenderEditorItemsInfo() {
+void RenderEditorItemsInfo(const struct MouseInput mouse) {
   UINT8 *pDestBuf, *pSrcBuf;
   UINT32 uiSrcPitchBYTES, uiDestPitchBYTES;
   INVTYPE *item;
@@ -494,9 +494,9 @@ void RenderEditorItemsInfo() {
   if (!eInfo.fActive) {
     return;
   }
-  if (gusMouseXPos < 110 || gusMouseXPos > 480 || gusMouseYPos < 360 ||
-      gusMouseYPos > 440) {  // Mouse has moved out of the items display region -- so nothing can be
-                             // highlighted.
+  if (mouse.x < 110 || mouse.x > 480 || mouse.y < 360 ||
+      mouse.y > 440) {  // Mouse has moved out of the items display region -- so nothing can be
+                        // highlighted.
     eInfo.sHilitedItemIndex = -1;
   }
   pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);

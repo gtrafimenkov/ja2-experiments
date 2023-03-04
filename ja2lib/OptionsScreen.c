@@ -102,7 +102,7 @@
 
 // Slider bar defines
 #define OPT_GAP_BETWEEN_SLIDER_BARS 60
-//#define		OPT_SLIDER_BAR_WIDTH 200
+// #define		OPT_SLIDER_BAR_WIDTH 200
 #define OPT_SLIDER_BAR_SIZE 258
 
 #define OPT_SLIDER_TEXT_WIDTH 45
@@ -198,12 +198,15 @@ void BtnOptionsTogglesCallback(GUI_BUTTON *btn, INT32 reason);
 
 // Mouse regions for the name of the option
 struct MOUSE_REGION gSelectedOptionTextRegion[NUM_GAME_OPTIONS];
-void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason);
-void SelectedOptionTextRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
+void SelectedOptionTextRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse);
+void SelectedOptionTextRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                              const struct MouseInput mouse);
 
 // Mouse regions for the area around the toggle boxs
 struct MOUSE_REGION gSelectedToggleBoxAreaRegion;
-void SelectedToggleBoxAreaRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason);
+void SelectedToggleBoxAreaRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                                 const struct MouseInput mouse);
 
 /////////////////////////////////
 //
@@ -215,15 +218,16 @@ BOOLEAN EnterOptionsScreen();
 void RenderOptionsScreen();
 void ExitOptionsScreen();
 void HandleOptionsScreen();
-void GetOptionsScreenUserInput();
+static void GetOptionsScreenUserInput(const struct MouseInput mouse);
 void SetOptionsExitScreen(UINT32 uiExitScreen);
 
-void SoundFXSliderChangeCallBack(INT32 iNewValue);
-void SpeechSliderChangeCallBack(INT32 iNewValue);
-void MusicSliderChangeCallBack(INT32 iNewValue);
+void SoundFXSliderChangeCallback(INT32 iNewValue);
+void SpeechSliderChangeCallback(INT32 iNewValue);
+void MusicSliderChangeCallback(INT32 iNewValue);
 // BOOLEAN		DoOptionsMessageBox( UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
 // UINT8 ubFlags, MSGBOX_CALLBACK ReturnCallback );
-void ConfirmQuitToMainMenuMessageBoxCallBack(UINT8 bExitValue);
+static void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue,
+                                                    const struct MouseInput mouse);
 void HandleSliderBarMovementSounds();
 void HandleOptionToggle(UINT8 ubButton, BOOLEAN fState, BOOLEAN fDown, BOOLEAN fPlaySound);
 void HandleHighLightedText(BOOLEAN fHighLight);
@@ -245,7 +249,7 @@ UINT32 OptionsScreenInit() {
   return (TRUE);
 }
 
-UINT32 OptionsScreenHandle() {
+UINT32 OptionsScreenHandle(const struct GameInput *gameInput) {
   StartFrameBufferRender();
 
   if (gfOptionsScreenEntry) {
@@ -263,7 +267,7 @@ UINT32 OptionsScreenHandle() {
 
   RestoreBackgroundRects();
 
-  GetOptionsScreenUserInput();
+  GetOptionsScreenUserInput(gameInput->mouse);
 
   HandleOptionsScreen();
 
@@ -275,7 +279,7 @@ UINT32 OptionsScreenHandle() {
   }
 
   // Render the active slider bars
-  RenderAllSliderBars();
+  RenderAllSliderBars(gameInput->mouse);
 
   // render buttons marked dirty
   MarkButtonsDirty();
@@ -433,8 +437,8 @@ BOOLEAN EnterOptionsScreen() {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_FIRST_COLUMN_X + 13, usPosY,
                         (UINT16)(OPT_TOGGLE_BOX_FIRST_COL_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight * ubNumLines), MSYS_PRIORITY_HIGH,
-                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallBack,
-                        SelectedOptionTextRegionCallBack);
+                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallback,
+                        SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     } else {
@@ -442,7 +446,7 @@ BOOLEAN EnterOptionsScreen() {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_FIRST_COLUMN_X + 13, usPosY,
                         (UINT16)(OPT_TOGGLE_BOX_FIRST_COL_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                        SelectedOptionTextRegionMovementCallBack, SelectedOptionTextRegionCallBack);
+                        SelectedOptionTextRegionMovementCallback, SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     }
@@ -481,15 +485,15 @@ BOOLEAN EnterOptionsScreen() {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_SECOND_COLUMN_X + 13,
                         usPosY, (UINT16)(OPT_TOGGLE_BOX_SECOND_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight * ubNumLines), MSYS_PRIORITY_HIGH,
-                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallBack,
-                        SelectedOptionTextRegionCallBack);
+                        CURSOR_NORMAL, SelectedOptionTextRegionMovementCallback,
+                        SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     } else {
       MSYS_DefineRegion(&gSelectedOptionTextRegion[cnt], OPT_TOGGLE_BOX_SECOND_COLUMN_X + 13,
                         usPosY, (UINT16)(OPT_TOGGLE_BOX_SECOND_TEXT_X + usTextWidth),
                         (UINT16)(usPosY + usTextHeight), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                        SelectedOptionTextRegionMovementCallBack, SelectedOptionTextRegionCallBack);
+                        SelectedOptionTextRegionMovementCallback, SelectedOptionTextRegionCallback);
       MSYS_AddRegion(&gSelectedOptionTextRegion[cnt]);
       MSYS_SetRegionUserData(&gSelectedOptionTextRegion[cnt], 0, cnt);
     }
@@ -503,7 +507,7 @@ BOOLEAN EnterOptionsScreen() {
   // Create a mouse region so when the user leaves a togglebox text region we can detect it then
   // unselect the region
   MSYS_DefineRegion(&gSelectedToggleBoxAreaRegion, 0, 0, 640, 480, MSYS_PRIORITY_NORMAL,
-                    CURSOR_NORMAL, SelectedToggleBoxAreaRegionMovementCallBack, MSYS_NO_CALLBACK);
+                    CURSOR_NORMAL, SelectedToggleBoxAreaRegionMovementCallback, MSYS_NO_CALLBACK);
   MSYS_AddRegion(&gSelectedToggleBoxAreaRegion);
 
   // Render the scene before adding the slider boxes
@@ -512,21 +516,21 @@ BOOLEAN EnterOptionsScreen() {
   // Add a slider bar for the Sound Effects
   guiSoundEffectsSliderID = AddSlider(
       SLIDER_VERTICAL_STEEL, CURSOR_NORMAL, OPT_SOUND_EFFECTS_SLIDER_X, OPT_SOUND_EFFECTS_SLIDER_Y,
-      OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SoundFXSliderChangeCallBack, 0);
+      OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SoundFXSliderChangeCallback, 0);
   AssertMsg(guiSoundEffectsSliderID, "Failed to AddSlider");
   SetSliderValue(guiSoundEffectsSliderID, GetSoundEffectsVolume());
 
   // Add a slider bar for the Speech
   guiSpeechSliderID =
       AddSlider(SLIDER_VERTICAL_STEEL, CURSOR_NORMAL, OPT_SPEECH_SLIDER_X, OPT_SPEECH_SLIDER_Y,
-                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SpeechSliderChangeCallBack, 0);
+                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, SpeechSliderChangeCallback, 0);
   AssertMsg(guiSpeechSliderID, "Failed to AddSlider");
   SetSliderValue(guiSpeechSliderID, GetSpeechVolume());
 
   // Add a slider bar for the Music
   guiMusicSliderID =
       AddSlider(SLIDER_VERTICAL_STEEL, CURSOR_NORMAL, OPT_MUSIC_SLIDER_X, OPT_MUSIC_SLIDER_Y,
-                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, MusicSliderChangeCallBack, 0);
+                OPT_SLIDER_BAR_SIZE, 127, MSYS_PRIORITY_HIGH, MusicSliderChangeCallback, 0);
   AssertMsg(guiMusicSliderID, "Failed to AddSlider");
   SetSliderValue(guiMusicSliderID, MusicGetVolume());
 
@@ -725,36 +729,29 @@ void RenderOptionsScreen() {
                    OPTIONS__BOTTOM_RIGHT_Y);
 }
 
-void GetOptionsScreenUserInput() {
+static void GetOptionsScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
-  struct Point MousePos = GetMousePoint();
 
   while (DequeueEvent(&Event)) {
     // HOOK INTO MOUSE HOOKS
     switch (Event.usEvent) {
       case LEFT_BUTTON_DOWN:
-        MouseSystemHook(LEFT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_UP:
-        MouseSystemHook(LEFT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_UP:
-        MouseSystemHook(RIGHT_BUTTON_UP, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_UP, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (INT16)MousePos.x, (INT16)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, _LeftButtonDown, _RightButtonDown, mouse);
         break;
     }
 
@@ -867,7 +864,7 @@ void BtnOptQuitCallback(GUI_BUTTON *btn, INT32 reason) {
 
     // Confirm the Exit to the main menu screen
     DoOptionsMessageBox(MSG_BOX_BASIC_STYLE, zOptionsText[OPT_RETURN_TO_MAIN], OPTIONS_SCREEN,
-                        MSG_BOX_FLAG_YESNO, ConfirmQuitToMainMenuMessageBoxCallBack);
+                        MSG_BOX_FLAG_YESNO, ConfirmQuitToMainMenuMessageBoxCallback);
 
     ///		SetOptionsExitScreen( MAINMENU_SCREEN );
 
@@ -978,30 +975,30 @@ void HandleOptionToggle(UINT8 ubButton, BOOLEAN fState, BOOLEAN fDown, BOOLEAN f
   }
 }
 
-void SoundFXSliderChangeCallBack(INT32 iNewValue) {
+void SoundFXSliderChangeCallback(INT32 iNewValue) {
   SetSoundEffectsVolume(iNewValue);
 
   guiSoundFxSliderMoving = GetJA2Clock();
 }
 
-void SpeechSliderChangeCallBack(INT32 iNewValue) {
+void SpeechSliderChangeCallback(INT32 iNewValue) {
   SetSpeechVolume(iNewValue);
 
   guiSpeechSliderMoving = GetJA2Clock();
 }
 
-void MusicSliderChangeCallBack(INT32 iNewValue) { MusicSetVolume(iNewValue); }
+void MusicSliderChangeCallback(INT32 iNewValue) { MusicSetVolume(iNewValue); }
 
 BOOLEAN DoOptionsMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                     UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                    SGPRect *pCenteringRect) {
+                                    SGPRect *pCenteringRect, const struct MouseInput mouse) {
   // reset exit mode
   gfExitOptionsDueToMessageBox = TRUE;
 
   // do message box and return
   giOptionsMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                      (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                     ReturnCallback, pCenteringRect);
+                                     ReturnCallback, pCenteringRect, mouse);
 
   // send back return state
   return ((giOptionsMessageBox != -1));
@@ -1017,13 +1014,14 @@ BOOLEAN DoOptionsMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
   // do message box and return
   giOptionsMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                      (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                     ReturnCallback, &CenteringRect);
+                                     ReturnCallback, &CenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((giOptionsMessageBox != -1));
 }
 
-void ConfirmQuitToMainMenuMessageBoxCallBack(UINT8 bExitValue) {
+static void ConfirmQuitToMainMenuMessageBoxCallback(UINT8 bExitValue,
+                                                    const struct MouseInput mouse) {
   // yes, Quit to main menu
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gfEnteredFromMapScreen = FALSE;
@@ -1089,7 +1087,8 @@ void HandleSliderBarMovementSounds() {
     uiLastSpeechTime = GetJA2Clock();
 }
 
-void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void SelectedOptionTextRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                      const struct MouseInput mouse) {
   UINT8 ubButton = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
 
   if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
@@ -1110,7 +1109,8 @@ void SelectedOptionTextRegionCallBack(struct MOUSE_REGION *pRegion, INT32 iReaso
   }
 }
 
-void SelectedOptionTextRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectedOptionTextRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                              const struct MouseInput mouse) {
   INT8 bButton = (INT8)MSYS_GetRegionUserData(pRegion, 0);
 
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
@@ -1215,7 +1215,8 @@ void HandleHighLightedText(BOOLEAN fHighLight) {
   }
 }
 
-void SelectedToggleBoxAreaRegionMovementCallBack(struct MOUSE_REGION *pRegion, INT32 reason) {
+void SelectedToggleBoxAreaRegionMovementCallback(struct MOUSE_REGION *pRegion, INT32 reason,
+                                                 const struct MouseInput mouse) {
   if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
   } else if (reason & MSYS_CALLBACK_REASON_GAIN_MOUSE) {
     UINT8 ubCnt;

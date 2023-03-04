@@ -141,9 +141,9 @@ void DrawAPageOfRecords(void);
 void DrawRecordsBackGround(void);
 void DrawRecordsText(void);
 void DrawRecordsColumnHeadersText(void);
-void BtnFinanceDisplayNextPageCallBack(GUI_BUTTON *btn, INT32 reason);
-void BtnFinanceFirstLastPageCallBack(GUI_BUTTON *btn, INT32 reason);
-void BtnFinanceDisplayPrevPageCallBack(GUI_BUTTON *btn, INT32 reason);
+void BtnFinanceDisplayNextPageCallback(GUI_BUTTON *btn, INT32 reason);
+void BtnFinanceFirstLastPageCallback(GUI_BUTTON *btn, INT32 reason);
+void BtnFinanceDisplayPrevPageCallback(GUI_BUTTON *btn, INT32 reason);
 void CreateFinanceButtons(void);
 void DestroyFinanceButtons(void);
 void IncrementCurrentPageFinancialDisplay(void);
@@ -1104,14 +1104,14 @@ void CreateFinanceButtons(void) {
   giFinanceButton[PREV_PAGE_BUTTON] =
       QuickCreateButton(giFinanceButtonImage[PREV_PAGE_BUTTON], PREV_BTN_X, BTN_Y, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnFinanceDisplayPrevPageCallBack);
+                        (GUI_CALLBACK)BtnFinanceDisplayPrevPageCallback);
 
   giFinanceButtonImage[NEXT_PAGE_BUTTON] =
       UseLoadedButtonImage(giFinanceButtonImage[PREV_PAGE_BUTTON], -1, 6, -1, 7, -1);
   giFinanceButton[NEXT_PAGE_BUTTON] =
       QuickCreateButton(giFinanceButtonImage[NEXT_PAGE_BUTTON], NEXT_BTN_X, BTN_Y, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnFinanceDisplayNextPageCallBack);
+                        (GUI_CALLBACK)BtnFinanceDisplayNextPageCallback);
 
   // button to go to the first page
   giFinanceButtonImage[FIRST_PAGE_BUTTON] =
@@ -1119,7 +1119,7 @@ void CreateFinanceButtons(void) {
   giFinanceButton[FIRST_PAGE_BUTTON] =
       QuickCreateButton(giFinanceButtonImage[FIRST_PAGE_BUTTON], FIRST_PAGE_X, BTN_Y, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnFinanceFirstLastPageCallBack);
+                        (GUI_CALLBACK)BtnFinanceFirstLastPageCallback);
 
   MSYS_SetBtnUserData(giFinanceButton[FIRST_PAGE_BUTTON], 0, 0);
 
@@ -1129,7 +1129,7 @@ void CreateFinanceButtons(void) {
   giFinanceButton[LAST_PAGE_BUTTON] =
       QuickCreateButton(giFinanceButtonImage[LAST_PAGE_BUTTON], LAST_PAGE_X, BTN_Y, BUTTON_TOGGLE,
                         MSYS_PRIORITY_HIGHEST - 1, BtnGenericMouseMoveButtonCallback,
-                        (GUI_CALLBACK)BtnFinanceFirstLastPageCallBack);
+                        (GUI_CALLBACK)BtnFinanceFirstLastPageCallback);
   MSYS_SetBtnUserData(giFinanceButton[LAST_PAGE_BUTTON], 0, 1);
 
   SetButtonCursor(giFinanceButton[0], CURSOR_LAPTOP_SCREEN);
@@ -1147,7 +1147,7 @@ void DestroyFinanceButtons(void) {
     UnloadButtonImage(giFinanceButtonImage[uiCnt]);
   }
 }
-void BtnFinanceDisplayPrevPageCallBack(GUI_BUTTON *btn, INT32 reason) {
+void BtnFinanceDisplayPrevPageCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     btn->uiFlags &= ~(BUTTON_CLICKED_ON);
 
@@ -1161,7 +1161,7 @@ void BtnFinanceDisplayPrevPageCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void BtnFinanceDisplayNextPageCallBack(GUI_BUTTON *btn, INT32 reason) {
+void BtnFinanceDisplayNextPageCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     btn->uiFlags &= ~(BUTTON_CLICKED_ON);
     // increment currentPage
@@ -1177,7 +1177,7 @@ void BtnFinanceDisplayNextPageCallBack(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-void BtnFinanceFirstLastPageCallBack(GUI_BUTTON *btn, INT32 reason) {
+void BtnFinanceFirstLastPageCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     UINT32 uiButton = MSYS_GetBtnUserData(btn, 0);
 

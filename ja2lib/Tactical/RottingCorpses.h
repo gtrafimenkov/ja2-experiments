@@ -1,6 +1,7 @@
 #ifndef _ROTTING_CORPSES_H
 #define _ROTTING_CORPSES_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 #include "Tactical/SoldierControl.h"
 #include "TileEngine/TileAnimation.h"

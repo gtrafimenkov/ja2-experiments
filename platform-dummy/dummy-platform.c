@@ -115,16 +115,12 @@ BOOLEAN Plat_FileEntityExists(const char *path) { return FALSE; }
 BOOLEAN gfKeyState[256];
 BOOLEAN gfLeftButtonState;
 BOOLEAN gfRightButtonState;
-UINT16 gusMouseXPos;
-UINT16 gusMouseYPos;
 
 BOOLEAN gfSGPInputReceived = FALSE;
 
 BOOLEAN DequeueSpecificEvent(InputAtom *Event, UINT32 uiMaskFlags) { return FALSE; }
 
 BOOLEAN DequeueEvent(InputAtom *Event) { return FALSE; }
-
-void GetMousePos(SGPPoint *Point) {}
 
 void RestrictMouseToXYXY(UINT16 usX1, UINT16 usY1, UINT16 usX2, UINT16 usY2) {}
 
@@ -140,7 +136,7 @@ void SimulateMouseMovement(UINT32 uiNewXPos, UINT32 uiNewYPos) {}
 
 void DequeueAllKeyBoardEvents() {}
 
-struct Point GetMousePoint() {
+struct Point Plat_GetMousePoint() {
   struct Point res = {0, 0};
   return res;
 }
@@ -267,9 +263,7 @@ BOOLEAN ImageFillVideoSurfaceArea(UINT32 uiDestVSurface, INT32 iDestX1, INT32 iD
   return FALSE;
 }
 
-struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
-  return NULL;
-}
+struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) { return NULL; }
 
 BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette) {
   return FALSE;

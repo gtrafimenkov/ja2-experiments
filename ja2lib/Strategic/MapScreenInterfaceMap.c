@@ -480,11 +480,13 @@ void BlitMineGridMarkers(void);
 void BlitSAMGridMarkers(void);
 void BlitMineIcon(INT16 sMapX, INT16 sMapY);
 void BlitMineText(INT16 sMapX, INT16 sMapY);
-extern BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY);
+extern BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY, const struct MouseInput mouse);
 INT16 GetBaseSectorForCurrentTown(void);
 void RenderIconsPerSectorForSelectedTown(void);
-void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
-void MilitiaRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse);
+void MilitiaRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 void CreateDestroyMilitiaSectorButtons(void);
 void ShowHighLightedSectorOnMilitiaMap(void);
 void SetMilitiaMapButtonsText(void);
@@ -508,7 +510,8 @@ void ShowSAMSitesOnStrategicMap(void);
 // UINT8 NumFriendlyInSector( INT16 sX, INT16 sY, INT8 bZ );
 
 // callbacks
-void MilitiaBoxMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason);
+void MilitiaBoxMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse);
 
 // display potential path, yes or no?
 void DisplayThePotentialPathForHelicopter(INT16 sMapX, INT16 sMapY);
@@ -3635,7 +3638,7 @@ void ShowPeopleInMotion(INT16 sX, INT16 sY) {
   SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
 }
 
-void DisplayDistancesForHelicopter(void) {
+void DisplayDistancesForHelicopter(const struct MouseInput mouse) {
   // calculate the distance travelled, the proposed distance, and total distance one can go
   // display these on screen
   INT16 sDistanceToGo = 0;  //, sDistanceSoFar = 0, sTotalCanTravel = 0;
@@ -3651,7 +3654,7 @@ void DisplayDistancesForHelicopter(void) {
   INT16 sNumUnSafeSectors;
   UINT32 uiTripCost;
 
-  if (GetMouseMapXY(&sMapX, &sMapY) && !fZoomFlag && (sMapY >= 13)) {
+  if (GetMouseMapXY(&sMapX, &sMapY, mouse) && !fZoomFlag && (sMapY >= 13)) {
     sYPosition = MAP_HELICOPTER_UPPER_ETA_POPUP_Y;
   } else {
     sYPosition = MAP_HELICOPTER_ETA_POPUP_Y;
@@ -3670,17 +3673,11 @@ void DisplayDistancesForHelicopter(void) {
   BltVideoObject(FRAME_BUFFER, hHandle, 0, MAP_HELICOPTER_ETA_POPUP_X, sYPosition,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
-  //	sTotalCanTravel = ( INT16 )GetTotalDistanceHelicopterCanTravel( );
   sDistanceToGo = (INT16)DistanceOfIntendedHelicopterPath();
-  sTotalOfTrip = sDistanceToGo;  // + ( INT16 ) ( DistanceToNearestRefuelPoint( ( INT16 )(
-                                 // LastSectorInHelicoptersPath() % MAP_WORLD_X ), ( INT16 ) (
-                                 // LastSectorInHelicoptersPath() / MAP_WORLD_X ) ) );
+  sTotalOfTrip = sDistanceToGo;
 
   sNumSafeSectors = GetNumSafeSectorsInPath();
   sNumUnSafeSectors = GetNumUnSafeSectorsInPath();
-
-  //	sDistanceSoFar = ( INT16 )HowFarHelicopterhasTravelledSinceRefueling( );
-  //	 sTotalDistanceOfTrip = ( INT16 )DistanceToNearestRefuelPoint( )
 
   if (sDistanceToGo == 9999) {
     sDistanceToGo = 0;
@@ -3694,13 +3691,6 @@ void DisplayDistancesForHelicopter(void) {
   swprintf(sString, ARR_SIZE(sString), L"%s", pHelicopterEtaStrings[0]);
   mprintf(MAP_HELICOPTER_ETA_POPUP_X + 5, sYPosition + 5, sString);
 
-  /*
-    if ( IsSectorOutOfTheWay( sMapX, sMapY ) )
-    {
-                  SetFontForeground( FONT_RED );
-          }
-          else
-  */
   { SetFontForeground(FONT_LTGREEN); }
 
   swprintf(sString, ARR_SIZE(sString), L"%d", sTotalOfTrip);
@@ -4755,7 +4745,8 @@ void ShowHighLightedSectorOnMilitiaMap(void) {
   return;
 }
 
-void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                                const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   iValue = MSYS_GetRegionUserData(pRegion, 0);
@@ -4777,7 +4768,8 @@ void MilitiaRegionClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   }
 }
 
-void MilitiaRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MilitiaRegionMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   INT32 iValue = 0;
 
   iValue = MSYS_GetRegionUserData(pRegion, 0);
@@ -5575,7 +5567,8 @@ void HandleLowerLevelMapBlit(void) {
   return;
 }
 
-void MilitiaBoxMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
+void MilitiaBoxMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
+                               const struct MouseInput mouse) {
   // btn callback handler for assignment screen mask region
   if ((iReason & MSYS_CALLBACK_REASON_LBUTTON_UP)) {
     sSectorMilitiaMapSector = -1;
