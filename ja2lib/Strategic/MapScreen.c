@@ -658,10 +658,10 @@ void PollLeftButtonInMapView(UINT32 *puiNewEvent);
 void PollRightButtonInMapView(UINT32 *puiNewEvent);
 
 // background render
-void BlitBackgroundToSaveBuffer(void);
+static void BlitBackgroundToSaveBuffer(const struct MouseInput mouse);
 
 // Drawing the Map
-UINT32 HandleMapUI();
+static UINT32 HandleMapUI(const struct MouseInput mouse);
 void RenderMapCursorsIndexesAnims(void);
 BOOLEAN GetMapXY(INT16 sX, INT16 sY, INT16 *psMapWorldX, INT16 *psMapWorldY);
 BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY);
@@ -3101,7 +3101,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   // don't process any input until we've been through here once
   if (gfFirstMapscreenFrame == FALSE) {
     // Handle Interface
-    uiNewScreen = HandleMapUI();
+    uiNewScreen = HandleMapUI(gameInput->mouse);
     if (uiNewScreen != MAP_SCREEN) {
       return (MAP_SCREEN);
     }
@@ -3211,7 +3211,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
   InterruptTimeForMenus();
 
   // place down background
-  BlitBackgroundToSaveBuffer();
+  BlitBackgroundToSaveBuffer(gameInput->mouse);
 
   if (fLeavingMapScreen == TRUE) {
     return (MAP_SCREEN);
@@ -3917,7 +3917,7 @@ void RenderMapCursorsIndexesAnims() {
   }
 }
 
-UINT32 HandleMapUI() {
+static UINT32 HandleMapUI(const struct MouseInput mouse) {
   UINT32 uiNewEvent = MAP_EVENT_NONE;
   INT16 sMapX = 0, sMapY = 0;
   INT16 sX, sY;
@@ -3990,29 +3990,6 @@ UINT32 HandleMapUI() {
     case MAP_EVENT_CANCEL_PATH:
       CancelOrShortenPlottedPath();
       break;
-
-      /*
-          case MAP_EVENT_SELECT_SECTOR:
-                              // will select the sector the selected merc is in
-
-                              sMapX=Menptr[gCharactersList[bSelectedInfoChar].usSolID].sSectorX;
-                              sMapY=Menptr[gCharactersList[bSelectedInfoChar].usSolID].sSectorY;
-                              bMapZ=Menptr[gCharactersList[bSelectedInfoChar].usSolID].bSectorZ;
-
-                              if( ( sSelMapX != sMapX || sSelMapY != sMapY || iCurrentMapSectorZ !=
-         bMapZ ) && ( gTacticalStatus.fDidGameJustStart == FALSE ) && ( gfPreBattleInterfaceActive
-         == FALSE ) )
-                              {
-                                      ChangeSelectedMapSector( sMapX, sMapY, bMapZ );
-
-                                      fTeamPanelDirty = TRUE;
-
-                                      fMapScreenBottomDirty = TRUE;
-              bSelectedDestChar=-1;
-                              }
-
-                              break;
-      */
 
     case MAP_EVENT_CLICK_SECTOR:
 
@@ -4139,7 +4116,6 @@ UINT32 HandleMapUI() {
             iCurrentMapSectorZ == gubPBSectorZ) {  // Bring up a non-persistant version of mapscreen
                                                    // if the user clicks on the sector where a
                                                    // battle is taking place.
-          const struct MouseInput mouse = XXX_GetMouseInput();
           InitPreBattleInterface(NULL, FALSE, mouse);
           return (MAP_SCREEN);
         }
