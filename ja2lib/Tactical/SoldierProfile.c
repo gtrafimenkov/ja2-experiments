@@ -47,6 +47,7 @@
 #include "TileEngine/RenderFun.h"
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
+#include "Town.h"
 #include "Utils/EventPump.h"
 #include "Utils/TimerControl.h"
 

@@ -24,6 +24,7 @@
 #include "Tactical/TacticalSave.h"
 #include "TacticalAI/NPC.h"
 #include "TileEngine/RenderDirty.h"
+#include "Town.h"
 #include "Utils/FontControl.h"
 #include "Utils/PopUpBox.h"
 #include "Utils/Text.h"

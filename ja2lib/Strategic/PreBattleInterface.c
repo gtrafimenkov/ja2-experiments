@@ -43,6 +43,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/TacticalPlacementGUI.h"
+#include "Town.h"
 #include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"

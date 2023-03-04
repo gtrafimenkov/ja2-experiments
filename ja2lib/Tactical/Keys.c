@@ -34,6 +34,7 @@
 #include "TileEngine/StructureInternals.h"
 #include "TileEngine/TileDat.h"
 #include "TileEngine/WorldMan.h"
+#include "Town.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"

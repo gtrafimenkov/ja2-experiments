@@ -27,6 +27,7 @@
 #include "Tactical/SoldierProfile.h"
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/RenderFun.h"
+#include "Town.h"
 #include "Utils/Message.h"
 
 #define TESTQUESTS

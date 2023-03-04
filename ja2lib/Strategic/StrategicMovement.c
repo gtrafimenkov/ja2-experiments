@@ -45,6 +45,7 @@
 #include "Tactical/TacticalSave.h"
 #include "Tactical/Vehicles.h"
 #include "TileEngine/IsometricUtils.h"
+#include "Town.h"
 #include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"

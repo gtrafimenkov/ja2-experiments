@@ -41,6 +41,7 @@
 #include "TileEngine/LightEffects.h"
 #include "TileEngine/SaveLoadMap.h"
 #include "TileEngine/SmokeEffects.h"
+#include "Town.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"

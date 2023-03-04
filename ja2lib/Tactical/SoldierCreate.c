@@ -45,6 +45,7 @@
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/Smell.h"
 #include "TileEngine/WorldMan.h"
+#include "Town.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 

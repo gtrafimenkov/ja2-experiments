@@ -3061,25 +3061,6 @@ BOOLEAN IsThereAFunctionalSAMSiteInSector(INT16 sSectorX, INT16 sSectorY, INT8 b
   return (TRUE);
 }
 
-BOOLEAN IsThisSectorASAMSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
-  // is the sector above ground?
-  if (bSectorZ != 0) {
-    return (FALSE);
-  }
-
-  if ((SAM_1_X == sSectorX) && (SAM_1_Y == sSectorY)) {
-    return (TRUE);
-  } else if ((SAM_2_X == sSectorX) && (SAM_2_Y == sSectorY)) {
-    return (TRUE);
-  } else if ((SAM_3_X == sSectorX) && (SAM_3_Y == sSectorY)) {
-    return (TRUE);
-  } else if ((SAM_4_X == sSectorX) && (SAM_4_Y == sSectorY)) {
-    return (TRUE);
-  }
-
-  return (FALSE);
-}
-
 // is this sector part of the town?
 BOOLEAN SectorIsPartOfTown(INT8 bTownId, INT16 sSectorX, INT16 sSectorY) {
   if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bNameId == bTownId) {

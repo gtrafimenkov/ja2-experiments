@@ -18,6 +18,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Sector.h"
 #include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenHelicopter.h"

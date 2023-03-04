@@ -16,6 +16,7 @@
 #include "Tactical/DialogueControl.h"
 #include "Tactical/MilitiaControl.h"
 #include "Tactical/Overhead.h"
+#include "Town.h"
 #include "UI.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
@@ -293,7 +294,7 @@ UINT8 CheckOneMilitiaForPromotion(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
 }
 
 // call this if the player attacks his own militia
-void HandleMilitiaDefections(INT16 sMapX, INT16 sMapY) {
+static void HandleMilitiaDefections(INT16 sMapX, INT16 sMapY) {
   UINT8 ubRank;
   UINT8 ubMilitiaCnt;
   UINT8 ubCount;
@@ -343,28 +344,6 @@ UINT8 CountAllMilitiaInSector(INT16 sMapX, INT16 sMapY) {
 
 UINT8 MilitiaInSectorOfRank(INT16 sMapX, INT16 sMapY, UINT8 ubRank) {
   return GetSectorInfoByIndex(SECTOR(sMapX, sMapY))->ubNumberOfCivsAtLevel[ubRank];
-}
-
-BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
-  // if this sector is currently loaded
-  if ((sMapX == gWorldSectorX) && (sMapY == gWorldSectorY) && (bMapZ == gbWorldSectorZ)) {
-    // and either there are enemies prowling this sector, or combat is in progress
-    if (gTacticalStatus.fEnemyInSector || (gTacticalStatus.uiFlags & INCOMBAT)) {
-      return FALSE;
-    }
-  }
-
-  // if sector is controlled by enemies, it's not ours (duh!)
-  if (!bMapZ && StrategicMap[sMapX + sMapY * MAP_WORLD_X].fEnemyControlled == TRUE) {
-    return FALSE;
-  }
-
-  if (NumHostilesInSector(sMapX, sMapY, bMapZ)) {
-    return FALSE;
-  }
-
-  // safe & secure, s'far as we can tell
-  return (TRUE);
 }
 
 void InitFriendlyTownSectorServer(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
@@ -614,7 +593,7 @@ void MilitiaTrainingRejected(void) {
 void HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap(void) {
   if (gTacticalStatus.Team[MILITIA_TEAM].bSide != 0) {
     // handle militia defections and reset team to friendly
-    HandleMilitiaDefections(gWorldSectorX, gWorldSectorY);
+    HandleMilitiaDefections(GetLoadedSectorX(), GetLoadedSectorY());
     gTacticalStatus.Team[MILITIA_TEAM].bSide = 0;
   } else if (!IsGoingToAutoresolve()) {
     // Don't promote militia if we are going directly

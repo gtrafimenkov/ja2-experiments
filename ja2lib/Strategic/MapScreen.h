@@ -6,9 +6,6 @@
 struct SOLDIERTYPE;
 struct path;
 
-#define MAP_WORLD_X 18
-#define MAP_WORLD_Y 18
-
 // Sector name identifiers
 typedef enum {
   BLANK_SECTOR = 0,
@@ -28,7 +25,7 @@ typedef enum {
 } Towns;
 
 #define FIRST_TOWN OMERTA
-//#define PALACE			NUM_TOWNS
+// #define PALACE			NUM_TOWNS
 
 extern BOOLEAN fCharacterInfoPanelDirty;
 extern BOOLEAN fTeamPanelDirty;

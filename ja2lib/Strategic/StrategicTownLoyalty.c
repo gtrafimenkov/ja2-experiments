@@ -30,6 +30,7 @@
 #include "Tactical/TacticalSave.h"
 #include "Tactical/Vehicles.h"
 #include "Tactical/WorldItems.h"
+#include "Town.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
 

@@ -9,6 +9,19 @@
 #define SECTORX(SectorID) ((SectorID % 16) + 1)
 #define SECTORY(SectorID) ((SectorID / 16) + 1)
 
+#define MAP_WORLD_X 18
+#define MAP_WORLD_Y 18
+
+// get index into aray
+#define CALCULATE_STRATEGIC_INDEX(x, y) (x + (y * MAP_WORLD_X))
+#define GET_X_FROM_STRATEGIC_INDEX(i) (i % MAP_WORLD_X)
+#define GET_Y_FROM_STRATEGIC_INDEX(i) (i / MAP_WORLD_X)
+
+// macros to convert between the 2 different sector numbering systems
+#define SECTOR_INFO_TO_STRATEGIC_INDEX(i) (CALCULATE_STRATEGIC_INDEX(SECTORX(i), SECTORY(i)))
+#define STRATEGIC_INDEX_TO_SECTOR_INFO(i) \
+  (SECTOR(GET_X_FROM_STRATEGIC_INDEX(i), GET_Y_FROM_STRATEGIC_INDEX(i)))
+
 struct SectorInfo;
 
 struct SectorInfo* GetSectorInfoByIndex(u8 sectorIndex);
@@ -81,5 +94,18 @@ struct SectorInfo {
 
 // Counts enemies and crepitus, but not bloodcats.
 UINT8 NumHostilesInSector(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ);
+
+// Returns TRUE if sector is under player control, has no enemies in it, and isn't currently in
+// combat mode
+BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ);
+
+BOOLEAN IsThisSectorASAMSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ);
+
+// This will get an ID string like A9- OMERTA...
+void GetSectorIDString(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ, CHAR16* zString,
+                       size_t bufSize, BOOLEAN fDetailed);
+
+i16 GetLoadedSectorX();
+i16 GetLoadedSectorY();
 
 #endif

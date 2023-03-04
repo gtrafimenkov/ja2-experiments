@@ -93,6 +93,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
+#include "Town.h"
 #include "UI.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Cursors.h"
