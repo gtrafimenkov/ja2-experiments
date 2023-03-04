@@ -39,8 +39,9 @@
 #include "Utils/Text.h"
 
 void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier);
-void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *pSoldier,
-                                                            BOOLEAN fAddRehireButton);
+static void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *pSoldier,
+                                                                   BOOLEAN fAddRehireButton,
+                                                                   const struct MouseInput mouse);
 void MercDepartEquipmentBoxCallback(UINT8 bExitValue);
 BOOLEAN HandleFiredDeadMerc(struct SOLDIERTYPE *pSoldier);
 void HandleExtendMercsContract(struct SOLDIERTYPE *pSoldier);
@@ -894,8 +895,9 @@ void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier) {
   }
 }
 
-void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *pSoldier,
-                                                            BOOLEAN fAddRehireButton) {
+static void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *pSoldier,
+                                                                   BOOLEAN fAddRehireButton,
+                                                                   const struct MouseInput mouse) {
   // will tell player this character is leaving and ask where they want the equipment left
   CHAR16 sString[1024];
   BOOLEAN fInSector = FALSE;
@@ -1003,12 +1005,12 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
           MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
           (UINT16)(MSG_BOX_FLAG_USE_CENTERING_RECT |
                    (fAddRehireButton ? MSG_BOX_FLAG_GENERICCONTRACT : MSG_BOX_FLAG_GENERIC)),
-          MercDepartEquipmentBoxCallback, &pCenteringRect, XXX_GetMouseInput());
+          MercDepartEquipmentBoxCallback, &pCenteringRect, mouse);
     } else {
       DoMessageBox(MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
                    (UINT16)(MSG_BOX_FLAG_USE_CENTERING_RECT |
                             (fAddRehireButton ? MSG_BOX_FLAG_OKCONTRACT : MSG_BOX_FLAG_OK)),
-                   MercDepartEquipmentBoxCallback, &pCenteringRect, XXX_GetMouseInput());
+                   MercDepartEquipmentBoxCallback, &pCenteringRect, mouse);
     }
   }
 
