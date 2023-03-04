@@ -67,6 +67,7 @@
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
@@ -1174,7 +1175,7 @@ BOOLEAN CompatibleItemForApplyingOnMerc(struct OBJECTTYPE *pTestObject) {
   UINT16 usItem = pTestObject->usItem;
 
   // ATE: If in mapscreen, return false always....
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     return (FALSE);
   }
 
@@ -2207,7 +2208,6 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, INT16 sX, INT
   if (gpItemDescObject->usItem != MONEY) {
     for (cnt = 0; cnt < MAX_ATTACHMENTS; cnt++) {
       // Build a mouse region here that is over any others.....
-      //			if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN )
       if (guiCurrentItemDescriptionScreen == MAP_SCREEN)
         MSYS_DefineRegion(&gItemDescAttachmentRegions[cnt],
                           (INT16)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX),
@@ -2469,7 +2469,7 @@ void DoAttachment(void) {
     if (gpItemPointer->usItem == NOTHING) {
       // attachment attached, merge item consumed, etc
 
-      if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+      if (IsMapScreen()) {
         MAPEndItemPointer();
       } else {
         // End Item pickup
@@ -2684,7 +2684,6 @@ void RenderItemDescriptionBox() {
     // Display attachments
     for (cnt = 0; cnt < MAX_ATTACHMENTS; cnt++) {
       if (gpItemDescObject->usAttachItem[cnt] != NOTHING) {
-        //        if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN )
         if (guiCurrentItemDescriptionScreen == MAP_SCREEN) {
           sCenX = (INT16)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX + 5);
           sCenY = (INT16)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY - 1);
@@ -3708,7 +3707,6 @@ void DeleteItemDescriptionBox() {
 
   gfInItemDescBox = FALSE;
 
-  //	if( guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN  )
   if (guiCurrentItemDescriptionScreen == MAP_SCREEN) {
     UnloadButtonImage(giMapInvDescButtonImage);
     RemoveButton(giMapInvDescButton);
@@ -3740,7 +3738,6 @@ void DeleteItemDescriptionBox() {
     UnloadButtonImage(giItemDescAmmoButtonImages);
     RemoveButton(giItemDescAmmoButton);
   }
-  //	if(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN )
   if (guiCurrentItemDescriptionScreen == MAP_SCREEN) {
     fCharacterInfoPanelDirty = TRUE;
     fMapPanelDirty = TRUE;
@@ -3846,7 +3843,7 @@ void BeginKeyRingItemPointer(struct SOLDIERTYPE *pSoldier, UINT8 ubKeyRingPositi
     gpItemPointerSoldier = pSoldier;
     gbItemPointerSrcSlot = ubKeyRingPosition;
 
-    if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+    if ((IsMapScreen())) {
       guiExternVo = GetInterfaceGraphicForItem(&(Item[gpItemPointer->usItem]));
       gusExternVoSubIndex = Item[gpItemPointer->usItem].ubGraphicNum;
 
@@ -4728,7 +4725,6 @@ BOOLEAN InitItemStackPopup(struct SOLDIERTYPE *pSoldier, UINT8 ubPosition, INT16
 
   gfInItemStackPopup = TRUE;
 
-  //	if ( !(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN ) )
   if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
     EnableSMPanelButtons(FALSE, FALSE);
   }
@@ -4819,7 +4815,6 @@ void DeleteItemStackPopup() {
 
   // guiTacticalInterfaceFlags &= (~INTERFACE_NORENDERBUTTONS);
 
-  //	if ( !(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN ) )
   if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
     EnableSMPanelButtons(TRUE, FALSE);
   }
@@ -4903,7 +4898,6 @@ BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, INT16 sInvX, INT16 sInvY,
 
   // guiTacticalInterfaceFlags |= INTERFACE_NORENDERBUTTONS;
 
-  //	if ( !(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN ) )
   if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
     EnableSMPanelButtons(FALSE, FALSE);
   }
@@ -5031,9 +5025,6 @@ void DeleteKeyRingPopup() {
 
   fInterfacePanelDirty = DIRTYLEVEL2;
 
-  // guiTacticalInterfaceFlags &= (~INTERFACE_NORENDERBUTTONS);
-
-  //	if ( !(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN ) )
   if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
     EnableSMPanelButtons(TRUE, FALSE);
   }
@@ -5188,7 +5179,7 @@ void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
     // If one in our hand, place it
     if (gpItemPointer != NULL) {
       if (!PlaceObjectAtObjectIndex(gpItemPointer, gpItemPopupObject, (UINT8)uiItemPos)) {
-        if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+        if ((IsMapScreen())) {
           MAPEndItemPointer();
         } else {
           gpItemPointer = NULL;
@@ -5214,7 +5205,7 @@ void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
         // RemoveObjFrom( struct OBJECTTYPE * pObj, UINT8 ubRemoveIndex )
         GetObjFrom(gpItemPopupObject, (UINT8)uiItemPos, &gItemPointer);
 
-        if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+        if ((IsMapScreen())) {
           // pick it up
           InternalMAPBeginItemPointer(gpItemPopupSoldier);
         } else {
@@ -6576,7 +6567,7 @@ BOOLEAN SaveItemCursorToSavedGame(HWFILE hFile) {
 void UpdateItemHatches() {
   struct SOLDIERTYPE *pSoldier = NULL;
 
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     if (fShowInventoryFlag && bSelectedInfoChar >= 0) {
       pSoldier = MercPtrs[gCharactersList[bSelectedInfoChar].usSolID];
     }

@@ -4971,7 +4971,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
   BOOLEAN fCharacterNoLongerValid = FALSE;
   struct SOLDIERTYPE *pSoldier = NULL;
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     if (fShowMapScreenMovementList == TRUE) {
       if (bSelectedDestChar == -1) {
         fCharacterNoLongerValid = TRUE;
@@ -5077,7 +5077,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
 
   if (((Menptr[gCharactersList[bSelectedInfoChar].usSolID].bLife == 0) ||
        (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bAssignment == ASSIGNMENT_POW)) &&
-      ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN))) {
+      ((IsMapScreen()))) {
     // show basic assignment menu
     ShowBox(ghRemoveMercAssignBox);
   } else {
@@ -5166,7 +5166,7 @@ void CreateDestroyScreenMaskForAssignmentAndContractMenus(void) {
     // created
     fCreated = TRUE;
 
-    if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+    if (!(IsMapScreen())) {
       MSYS_ChangeRegionCursor(&gAssignmentScreenMaskRegion, 0);
     }
 
@@ -6085,7 +6085,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   BOOLEAN fOkToClose = FALSE;
   struct SOLDIERTYPE *pSoldier = NULL;
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     pSoldier = &Menptr[gCharactersList[bSelectedInfoChar].usSolID];
   } else {
     // can't renew contracts from tactical!
@@ -6386,7 +6386,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
   if ((iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) ||
       (iReason & MSYS_CALLBACK_REASON_RBUTTON_DWN)) {
-    if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) && !fShowMapInventoryPool) {
+    if ((IsMapScreen()) && !fShowMapInventoryPool) {
       UnMarkButtonDirty(giMapBorderButtons[MAP_BORDER_TOWN_BTN]);
     }
   }
@@ -7590,7 +7590,7 @@ void DetermineBoxPositions(void) {
     return;
   }
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     GetBoxPosition(ghAssignmentBox, &pPoint);
     gsAssignmentBoxesX = (INT16)pPoint.iX;
     gsAssignmentBoxesY = (INT16)pPoint.iY;
@@ -7711,7 +7711,7 @@ void CheckAndUpdateTacticalAssignmentPopUpPositions(void) {
     return;
   }
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     return;
   }
 
@@ -9331,7 +9331,7 @@ void SetAssignmentForList(INT8 bAssignment, INT8 bParam) {
 
   // if not in mapscreen, there is no functionality available to change multiple assignments
   // simultaneously!
-  if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if (!(IsMapScreen())) {
     return;
   }
 
@@ -9610,7 +9610,7 @@ BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pT
 }
 
 void UnEscortEPC(struct SOLDIERTYPE *pSoldier) {
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     BOOLEAN fGotInfo;
     UINT16 usQuoteNum;
     UINT16 usFactToSetToTrue;
@@ -9794,7 +9794,7 @@ BOOLEAN CanCharacterRepairAnotherSoldiersStuff(struct SOLDIERTYPE *pSoldier,
 struct SOLDIERTYPE *GetSelectedAssignSoldier(BOOLEAN fNullOK) {
   struct SOLDIERTYPE *pSoldier = NULL;
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     // mapscreen version
     if ((bSelectedAssignChar >= 0) && (bSelectedAssignChar < MAX_CHARACTER_COUNT) &&
         (gCharactersList[bSelectedAssignChar].fValid)) {

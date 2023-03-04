@@ -13,6 +13,7 @@
 #include "Tactical/TacticalSave.h"
 #include "Tactical/Vehicles.h"
 #include "TileEngine/IsometricUtils.h"
+#include "UI.h"
 #include "Utils/MusicControl.h"
 
 StrategicMapElement StrategicMap[MAP_WORLD_X * MAP_WORLD_Y];
@@ -30,7 +31,7 @@ BOOLEAN HandleStrategicDeath(struct SOLDIERTYPE *pSoldier) {
   }
 
   // if not in mapscreen
-  if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if (!(IsMapScreen())) {
     // ATE; At least make them dead!
     if ((pSoldier->bAssignment != ASSIGNMENT_DEAD)) {
       SetTimeOfAssignmentChangeForMerc(pSoldier);

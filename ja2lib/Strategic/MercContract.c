@@ -34,6 +34,7 @@
 #include "Tactical/Squads.h"
 #include "Tactical/TacticalSave.h"
 #include "Tactical/Vehicles.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
@@ -832,7 +833,7 @@ BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier) {
   // Check if we should remove loaded world...
   CheckAndHandleUnloadingOfCurrentWorld();
 
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     ReBuildCharactersList();
   }
 
@@ -983,7 +984,7 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
   }
 
   /// which screen are we in?
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     if (fInSector == FALSE) {
       // set up for mapscreen
       DoMapMessageBox(
@@ -1105,7 +1106,7 @@ BOOLEAN HandleFiredDeadMerc(struct SOLDIERTYPE *pSoldier) {
 }
 
 void HandleExtendMercsContract(struct SOLDIERTYPE *pSoldier) {
-  if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if (!(IsMapScreen())) {
     gfEnteringMapScreen = TRUE;
 
     fEnterMapDueToContract = TRUE;

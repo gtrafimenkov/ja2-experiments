@@ -321,7 +321,7 @@ void HandleShortCutExitState(void) {
   }
 
   /// which screen are we in?
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     // set up for mapscreen
     DoMapMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], MAP_SCREEN,
                     MSG_BOX_FLAG_YESNO, EndGameMessageBoxCallBack);

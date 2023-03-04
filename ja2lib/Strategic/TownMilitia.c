@@ -838,7 +838,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
 
   memset(gsUnpaidStrategicSector, 0, sizeof(INT16) * MAX_CHARACTER_COUNT);
 
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
       // valid character?
       if (gCharactersList[iCounter].fValid) {

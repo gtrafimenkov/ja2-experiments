@@ -4241,15 +4241,14 @@ void CreateDestroyTheUpdateBox(void) {
 
 void UpdateButtonsDuringCharacterDialoguePicture(void) {
   // stop showing buttons during certain instances of dialogue
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     UnMarkButtonDirty(giCharInfoButton[0]);
     UnMarkButtonDirty(giCharInfoButton[1]);
   }
 }
 
 void UpdateButtonsDuringCharacterDialogueSubTitles(void) {
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) &&
-      (gGameSettings.fOptions[TOPTION_SUBTITLES])) {
+  if ((IsMapScreen()) && (gGameSettings.fOptions[TOPTION_SUBTITLES])) {
     UnMarkButtonDirty(giMapContractButton);
   }
 

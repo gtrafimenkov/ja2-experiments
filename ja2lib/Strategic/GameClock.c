@@ -947,7 +947,7 @@ BOOLEAN NightTime() {  // before 7AM or after 9PM
 
 void ClearTacticalStuffDueToTimeCompression(void) {
   // is this test the right thing?  ARM
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     // clear tactical event queue
     ClearEventQueue();
 

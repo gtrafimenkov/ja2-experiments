@@ -49,7 +49,7 @@ void CALLBACK TimeProc(UINT uID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2) 
       }
 
       // If mapscreen...
-      if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+      if (IsMapScreen()) {
         // IN Mapscreen, loop through player's team.....
         for (gCNT = gTacticalStatus.Team[gbPlayerNum].bFirstID;
              gCNT <= gTacticalStatus.Team[gbPlayerNum].bLastID; gCNT++) {

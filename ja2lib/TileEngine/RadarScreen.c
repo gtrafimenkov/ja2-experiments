@@ -321,7 +321,7 @@ void RenderRadarScreen() {
                                  (RADAR_WINDOW_X + RADAR_WINDOW_WIDTH - 1),
                                  (gsRadarY + RADAR_WINDOW_HEIGHT - 1));
 
-  if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if (!(IsMapScreen())) {
     usLineColor = Get16BPPColor(FROMRGB(0, 255, 0));
     RectangleDraw(TRUE, sRadarTLX, sRadarTLY, sRadarBRX, sRadarBRY - 1, usLineColor, pDestBuf);
   }
@@ -333,7 +333,7 @@ void RenderRadarScreen() {
     gfRadarCurrentGuyFlash = !gfRadarCurrentGuyFlash;
   }
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) && (fShowMapInventoryPool == TRUE)) {
+  if ((IsMapScreen()) && (fShowMapInventoryPool == TRUE)) {
     for (iCounter = 0; iCounter < MAP_INVENTORY_POOL_SLOT_COUNT; iCounter++) {
       iItemNumber = iCounter + iCurrentInventoryPoolPage * MAP_INVENTORY_POOL_SLOT_COUNT;
       // stolen item
@@ -370,7 +370,7 @@ void RenderRadarScreen() {
     }
   }
 
-  if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if (!(IsMapScreen())) {
     // RE-RENDER RADAR
     for (cnt = 0; cnt < guiNumMercSlots; cnt++) {
       pSoldier = MercSlots[cnt];
@@ -449,7 +449,7 @@ void RenderRadarScreen() {
   }
   UnLockVideoSurface(FRAME_BUFFER);
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) && (fShowMapInventoryPool == TRUE)) {
+  if ((IsMapScreen()) && (fShowMapInventoryPool == TRUE)) {
     InvalidateRegion(RADAR_WINDOW_X, gsRadarY, RADAR_WINDOW_X + RADAR_WINDOW_WIDTH,
                      gsRadarY + RADAR_WINDOW_HEIGHT);
   }

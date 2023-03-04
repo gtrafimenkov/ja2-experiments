@@ -5,6 +5,8 @@
 
 bool IsTacticalMode();
 
+bool IsMapScreen();
+
 const SGPRect* GetMapCenteringRect();
 
 #endif

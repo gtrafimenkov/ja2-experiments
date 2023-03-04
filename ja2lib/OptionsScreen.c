@@ -28,6 +28,7 @@
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldDat.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
@@ -326,7 +327,7 @@ BOOLEAN EnterOptionsScreen() {
 #endif
 
   // if we are coming from mapscreen
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     guiTacticalInterfaceFlags &= ~INTERFACE_MAPSCREEN;
     gfEnteredFromMapScreen = TRUE;
   }

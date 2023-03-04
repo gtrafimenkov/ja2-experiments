@@ -2045,7 +2045,7 @@ void SMInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
   uiHandPos = MSYS_GetRegionUserData(pRegion, 0);
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     return;
   }
 
@@ -3155,7 +3155,7 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
 
       HandleSoldierFaceFlash(pSoldier, sTEAMFacesXY[posIndex], sTEAMFacesXY[posIndex + 1]);
 
-      if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+      if (!(IsMapScreen())) {
         // HandlePanelFaceAnimations( pSoldier );
       }
     }
@@ -3368,7 +3368,7 @@ void MercFacePanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   ubID = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
 
   // If our flags are set to do this, gofoit!
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     return;
   }
 
@@ -3443,7 +3443,7 @@ void MercFacePanelCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   ubID = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
 
   // If our flags are set to do this, gofoit!
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     if (iReason & MSYS_CALLBACK_REASON_LBUTTON_DWN) {
       SetInfoChar(ubID);
     }
@@ -3834,7 +3834,7 @@ void TMFirstHandInvCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   ubID = (UINT8)MSYS_GetRegionUserData(pRegion, 0);
 
   // If our flags are set to do this, gofoit!
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+  if ((IsMapScreen())) {
     return;
   }
 
@@ -4310,7 +4310,7 @@ void KeyRingSlotInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
         return;
 
       // If our flags are set to do this, gofoit!
-      if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+      if ((IsMapScreen())) {
       } else {
         if (gpItemPopupSoldier->ubID != gusSelectedSoldier) {
           SelectSoldier(gpItemPopupSoldier->ubID, FALSE, FALSE);
@@ -4393,7 +4393,7 @@ void KeyRingSlotInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
             // Check if it's the same now!
             if (gpItemPointer->ubNumberOfObjects == 0) {
-              if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+              if (IsMapScreen()) {
                 MAPEndItemPointer();
               } else {
                 EndItemPointer();
@@ -4441,7 +4441,7 @@ void KeyRingSlotInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
     // Some global stuff here - for esc, etc
     // Check for # of slots in item
     if (!InItemDescriptionBox()) {
-      if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+      if (IsMapScreen()) {
         // InitKeyItemDescriptionBox( gpItemPopupSoldier, (UINT8)uiKeyRing, MAP_ITEMDESC_START_X,
         // MAP_ITEMDESC_START_Y, 0 );
       } else {

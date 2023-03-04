@@ -5278,10 +5278,9 @@ void HandleTakeDamageDeath(struct SOLDIERTYPE *pSoldier, UINT8 bOldLife, UINT8 u
         CheckForAndHandleSoldierDyingNotFromHit(pSoldier);
       }
 
-      // if( !( guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN ) )
       { HandleSoldierTakeDamageFeedback(pSoldier); }
 
-      if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) || !pSoldier->bInSector) {
+      if ((IsMapScreen()) || !pSoldier->bInSector) {
         if (pSoldier->bLife == 0 && !(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
           StrategicHandlePlayerTeamMercDeath(pSoldier);
 

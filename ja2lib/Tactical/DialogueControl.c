@@ -638,7 +638,7 @@ void HandleDialogue() {
     }
   }
 
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) && (QItem->uiSpecialEventFlag == 0)) {
+  if ((IsMapScreen()) && (QItem->uiSpecialEventFlag == 0)) {
     QItem->fPauseTime = TRUE;
   }
 
@@ -958,7 +958,7 @@ void HandleDialogue() {
         HandleInterfaceMessageForContinuingTrainingMilitia(pSoldier);
       }
     } else if (QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_ENTER_MAPSCREEN) {
-      if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+      if (!(IsMapScreen())) {
         gfEnteringMapScreen = TRUE;
         fEnterMapDueToContract = TRUE;
       }

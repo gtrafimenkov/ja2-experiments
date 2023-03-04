@@ -1057,9 +1057,9 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
 
   // Map Screen (excluding AI Viewer)
 #ifdef JA2BETAVERSION
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) && (guiCurrentScreen != AIVIEWER_SCREEN))
+  if ((IsMapScreen()) && (guiCurrentScreen != AIVIEWER_SCREEN))
 #else
-  if ((guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN))
+  if ((IsMapScreen()))
 #endif
   {
 

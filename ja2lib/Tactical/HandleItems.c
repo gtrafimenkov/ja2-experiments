@@ -58,6 +58,7 @@
 #include "TileEngine/StructureInternals.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
@@ -3588,7 +3589,7 @@ void BoobyTrapDialogueCallBack(void) {
   gfJustFoundBoobyTrap = TRUE;
 
   // now prompt the user...
-  if (guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN) {
+  if (IsMapScreen()) {
     DoScreenIndependantMessageBox(TacticalStr[DISARM_BOOBYTRAP_PROMPT], (UINT8)MSG_BOX_FLAG_YESNO,
                                   BoobyTrapInMapScreenMessageBoxCallBack);
   } else {

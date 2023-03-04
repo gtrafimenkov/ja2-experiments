@@ -1236,7 +1236,7 @@ BOOLEAN EnterVehicle(struct SOLDIERTYPE *pVehicle, struct SOLDIERTYPE *pSoldier)
       // OK, add....
       AddSoldierToVehicle(pSoldier, pVehicle->bVehicleID);
 
-      if (!(guiTacticalInterfaceFlags & INTERFACE_MAPSCREEN)) {
+      if (!(IsMapScreen())) {
         // Change to team panel if we are not already...
         SetCurrentInterfacePanel(TEAM_PANEL);
       }
