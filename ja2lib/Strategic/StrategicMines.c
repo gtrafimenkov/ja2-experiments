@@ -572,7 +572,7 @@ void HandleIncomeFromMines(void) {
     iIncome += MineAMine(bCounter);
   }
   if (iIncome) {
-    AddTransactionToPlayersBook(DEPOSIT_FROM_SILVER_MINE, 0, GetWorldTotalMin(), iIncome);
+    AddTransactionToPlayersBook(DEPOSIT_FROM_SILVER_MINE, 0, iIncome);
   }
 }
 

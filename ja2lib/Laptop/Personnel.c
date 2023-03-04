@@ -5514,13 +5514,12 @@ BOOLEAN TransferFundsFromMercToBank(struct SOLDIERTYPE *pSoldier, INT32 iCurrent
 
   if (iAmountLeftToTake != 0) {
     // something wrong
-    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, pSoldier->ubProfile, GetWorldTotalMin(),
+    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, pSoldier->ubProfile,
                                 (iCurrentBalance - iAmountLeftToTake));
     return (FALSE);
   } else {
     // everything ok
-    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, pSoldier->ubProfile, GetWorldTotalMin(),
-                                (iCurrentBalance));
+    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, pSoldier->ubProfile, (iCurrentBalance));
     return (TRUE);
   }
 }
@@ -5557,8 +5556,7 @@ BOOLEAN TransferFundsFromBankToMerc(struct SOLDIERTYPE *pSoldier, INT32 iCurrent
   // now auto place money object
   if (AutoPlaceObject(pSoldier, &(pMoneyObject), TRUE) == TRUE) {
     // now place transaction
-    AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile, GetWorldTotalMin(),
-                                -(iCurrentBalance));
+    AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile, -(iCurrentBalance));
   } else {
     // error, notify player that merc doesn't have the spce for this much cash
   }

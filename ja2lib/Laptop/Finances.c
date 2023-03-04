@@ -170,7 +170,7 @@ INT32 GetYesterdaysOtherDeposits(void);
 INT32 GetTodaysOtherDeposits(void);
 INT32 GetYesterdaysDebits(void);
 
-UINT32 AddTransactionToPlayersBook(UINT8 ubCode, UINT8 ubSecondCode, UINT32 uiDate, INT32 iAmount) {
+UINT32 AddTransactionToPlayersBook(UINT8 ubCode, UINT8 ubSecondCode, INT32 iAmount) {
   // adds transaction to player's book(Financial List), returns unique id number of it
   // outside of the financial system(the code in this .c file), this is the only function you'll
   // ever need
@@ -200,7 +200,8 @@ UINT32 AddTransactionToPlayersBook(UINT8 ubCode, UINT8 ubSecondCode, UINT32 uiDa
   // update balance
   LaptopSaveInfo.iCurrentBalance += iAmount;
 
-  uiId = ProcessAndEnterAFinacialRecord(ubCode, uiDate, iAmount, ubSecondCode, MoneyGetBalance());
+  uiId = ProcessAndEnterAFinacialRecord(ubCode, GetWorldTotalMin(), iAmount, ubSecondCode,
+                                        MoneyGetBalance());
 
   // write balance to disk
   WriteBalanceToDisk();

@@ -1313,9 +1313,9 @@ void InsuranceContractPayLifeInsuranceForDeadMerc(UINT8 ubPayoutID) {
   }
 
   // add transaction to players account
-  AddTransactionToPlayersBook(
-      INSURANCE_PAYOUT, LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID,
-      GetWorldTotalMin(), LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice);
+  AddTransactionToPlayersBook(INSURANCE_PAYOUT,
+                              LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID,
+                              LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice);
 
   // add to the history log the fact that the we paid the insurance claim
   AddHistoryToPlayersLog(HISTORY_INSURANCE_CLAIM_PAYOUT,
@@ -1490,7 +1490,7 @@ void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, UINT32 ui
   if (pSoldier->usLifeInsurance) {
     // if the player is extending the contract
     if (iAmountOfMoneyTransfer > 0)
-      AddTransactionToPlayersBook(EXTENDED_INSURANCE, pSoldier->ubProfile, GetWorldTotalMin(),
+      AddTransactionToPlayersBook(EXTENDED_INSURANCE, pSoldier->ubProfile,
                                   -(iAmountOfMoneyTransfer));
     else
       Assert(0);
@@ -1508,7 +1508,7 @@ void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, UINT32 ui
       // else if the player has enought to cover the bill, let him
 
       // the player just purchased life insurance
-      AddTransactionToPlayersBook(PURCHASED_INSURANCE, pSoldier->ubProfile, GetWorldTotalMin(),
+      AddTransactionToPlayersBook(PURCHASED_INSURANCE, pSoldier->ubProfile,
                                   -(iAmountOfMoneyTransfer));
 
       // add an entry in the history page for the purchasing of life insurance

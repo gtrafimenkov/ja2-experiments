@@ -6314,7 +6314,7 @@ void RemoveMoney() {
 
         // take the money from the player
         AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, gpSMCurrentMerc->ubProfile,
-                                    GetWorldTotalMin(), -(INT32)(gpItemDescObject->uiMoneyAmount));
+                                    -(INT32)(gpItemDescObject->uiMoneyAmount));
       }
 
       memcpy(&gMoveingItem, &InvSlot, sizeof(INVENTORY_IN_SLOT));
@@ -6341,7 +6341,7 @@ void RemoveMoney() {
 
         // take the money from the player
         AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, gpSMCurrentMerc->ubProfile,
-                                    GetWorldTotalMin(), -(INT32)(gpItemDescObject->uiMoneyAmount));
+                                    -(INT32)(gpItemDescObject->uiMoneyAmount));
       } else
         gpItemDescObject->uiMoneyAmount = gRemoveMoney.uiMoneyRemaining;
 

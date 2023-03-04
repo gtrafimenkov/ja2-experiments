@@ -4608,7 +4608,7 @@ void ConfirmationToDepositMoneyToPlayersAccount(UINT8 ubExitValue) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // add the money to the players account
     AddTransactionToPlayersBook(MERC_DEPOSITED_MONEY_TO_PLAYER_ACCOUNT, gpSMCurrentMerc->ubProfile,
-                                GetWorldTotalMin(), gpItemPointer->uiMoneyAmount);
+                                gpItemPointer->uiMoneyAmount);
 
     // dirty shopkeeper
     gubSkiDirtyLevel = SKI_DIRTY_LEVEL2;

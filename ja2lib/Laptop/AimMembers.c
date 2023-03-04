@@ -1842,12 +1842,12 @@ INT8 AimMemberHireMerc() {
 
   // add an entry in the finacial page for the hiring of the merc
   AddTransactionToPlayersBook(
-      HIRED_MERC, ubCurrentSoldier, GetWorldTotalMin(),
+      HIRED_MERC, ubCurrentSoldier,
       -(giContractAmount - gMercProfiles[gbCurrentSoldier].sMedicalDepositAmount));
 
   if (gMercProfiles[gbCurrentSoldier].bMedicalDeposit) {
     // add an entry in the finacial page for the medical deposit
-    AddTransactionToPlayersBook(MEDICAL_DEPOSIT, ubCurrentSoldier, GetWorldTotalMin(),
+    AddTransactionToPlayersBook(MEDICAL_DEPOSIT, ubCurrentSoldier,
                                 -(gMercProfiles[gbCurrentSoldier].sMedicalDepositAmount));
   }
 
@@ -3793,12 +3793,11 @@ void TempHiringOfMercs(UINT8 ubNumberOfMercs, BOOLEAN fReset) {
     HireMerc(&HireMercStruct);
 
     // add an entry in the finacial page for the hiring of the merc
-    AddTransactionToPlayersBook(HIRED_MERC, MercID[i], GetWorldTotalMin(),
-                                -(INT32)(gMercProfiles[MercID[i]].sSalary));
+    AddTransactionToPlayersBook(HIRED_MERC, MercID[i], -(INT32)(gMercProfiles[MercID[i]].sSalary));
 
     if (gMercProfiles[MercID[i]].bMedicalDeposit) {
       // add an entry in the finacial page for the medical deposit
-      AddTransactionToPlayersBook(MEDICAL_DEPOSIT, MercID[i], GetWorldTotalMin(),
+      AddTransactionToPlayersBook(MEDICAL_DEPOSIT, MercID[i],
                                   -(gMercProfiles[MercID[i]].sMedicalDepositAmount));
     }
 
@@ -3903,13 +3902,11 @@ BOOLEAN QuickHireMerc() {
   // add an entry in the finacial page for the hiring of the merc
   giContractAmount = gMercProfiles[gbCurrentSoldier].sSalary;
 
-  AddTransactionToPlayersBook(
-      HIRED_MERC, ubCurrentSoldier, GetWorldTotalMin(),
-      -(giContractAmount));  //- gMercProfiles[gbCurrentSoldier].sMedicalDepositAmount
+  AddTransactionToPlayersBook(HIRED_MERC, ubCurrentSoldier, -(giContractAmount));
 
   if (gMercProfiles[gbCurrentSoldier].bMedicalDeposit) {
     // add an entry in the finacial page for the medical deposit
-    AddTransactionToPlayersBook(MEDICAL_DEPOSIT, ubCurrentSoldier, GetWorldTotalMin(),
+    AddTransactionToPlayersBook(MEDICAL_DEPOSIT, ubCurrentSoldier,
                                 -(gMercProfiles[gbCurrentSoldier].sMedicalDepositAmount));
   }
 
@@ -4039,12 +4036,11 @@ void DemoHiringOfMercs() {
     HireMerc(&HireMercStruct);
 
     // add an entry in the finacial page for the hiring of the merc
-    AddTransactionToPlayersBook(HIRED_MERC, MercID[i], GetWorldTotalMin(),
-                                -(INT32)(gMercProfiles[MercID[i]].sSalary));
+    AddTransactionToPlayersBook(HIRED_MERC, MercID[i], -(INT32)(gMercProfiles[MercID[i]].sSalary));
 
     if (gMercProfiles[MercID[i]].bMedicalDeposit) {
       // add an entry in the finacial page for the medical deposit
-      AddTransactionToPlayersBook(MEDICAL_DEPOSIT, MercID[i], GetWorldTotalMin(),
+      AddTransactionToPlayersBook(MEDICAL_DEPOSIT, MercID[i],
                                   -(gMercProfiles[MercID[i]].sMedicalDepositAmount));
     }
 

@@ -7,7 +7,6 @@
 #include "Laptop/Finances.h"
 #include "Laptop/History.h"
 #include "Laptop/InsuranceContract.h"
-
 #include "Laptop/Mercs.h"
 #include "Laptop/Personnel.h"
 #include "Money.h"
@@ -407,8 +406,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredAction
   //	pSoldier->usMedicalDeposit = gMercProfiles[ pSoldier->ubProfile ].sMedicalDepositAmount;
 
   // add an entry in the finacial page for the extending  of the mercs contract
-  AddTransactionToPlayersBook(ubFinancesContractType, pSoldier->ubProfile, GetWorldTotalMin(),
-                              -iContractCharge);
+  AddTransactionToPlayersBook(ubFinancesContractType, pSoldier->ubProfile, -iContractCharge);
 
   // add an entry in the history page for the extending of the merc contract
   AddHistoryToPlayersLog(ubHistoryContractType, pSoldier->ubProfile, GetWorldTotalMin(),
@@ -860,7 +858,7 @@ void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bLife == pSoldier->bLifeMax) {
     // add an entry in the finacial page for the FULL refund of the medical deposit
     // use the medical deposit in pSoldier, not in profile, which goes up with leveling
-    AddTransactionToPlayersBook(FULL_MEDICAL_REFUND, pSoldier->ubProfile, GetWorldTotalMin(),
+    AddTransactionToPlayersBook(FULL_MEDICAL_REFUND, pSoldier->ubProfile,
                                 pSoldier->usMedicalDeposit);
 
     // add an email
@@ -869,9 +867,6 @@ void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier) {
   }
   // else if the merc is a dead, refund NOTHING!!
   else if (pSoldier->bLife <= 0) {
-    // add an entry in the finacial page for NO refund of the medical deposit
-    // AddTransactionToPlayersBook( NO_MEDICAL_REFUND, pSoldier->ubProfile, GetWorldTotalMin(), 0 );
-
     // add an email
     AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_NO_REFUND, AIM_MEDICAL_DEPOSIT_NO_REFUND_LENGTH,
                             AIM_SITE, GetWorldTotalMin(), pSoldier->usMedicalDeposit,
@@ -885,8 +880,7 @@ void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier) {
         (INT32)((pSoldier->bLife / (FLOAT)pSoldier->bLifeMax) * pSoldier->usMedicalDeposit + 0.5);
 
     // add an entry in the finacial page for a PARTIAL refund of the medical deposit
-    AddTransactionToPlayersBook(PARTIAL_MEDICAL_REFUND, pSoldier->ubProfile, GetWorldTotalMin(),
-                                iRefundAmount);
+    AddTransactionToPlayersBook(PARTIAL_MEDICAL_REFUND, pSoldier->ubProfile, iRefundAmount);
 
     // add an email
     AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_PARTIAL_REFUND,

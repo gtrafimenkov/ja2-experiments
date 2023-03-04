@@ -4450,8 +4450,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 #ifdef JA2TESTVERSION
           if (fAlt) {
             // reduce balance to $500
-            AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, GetWorldTotalMin(),
-                                        -(MoneyGetBalance() - 500));
+            AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, -(MoneyGetBalance() - 500));
           }
 #endif
           break;

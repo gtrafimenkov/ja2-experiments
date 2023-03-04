@@ -400,7 +400,7 @@ BOOLEAN InitNewGame(BOOLEAN fReset) {
     }
 
     // Setup initial money
-    AddTransactionToPlayersBook(ANONYMOUS_DEPOSIT, 0, GetWorldTotalMin(), iStartingCash);
+    AddTransactionToPlayersBook(ANONYMOUS_DEPOSIT, 0, iStartingCash);
 
     {
       UINT32 uiDaysTimeMercSiteAvailable = Random(2) + 1;
@@ -622,12 +622,12 @@ BOOLEAN QuickGameMemberHireMerc(UINT8 ubCurrentSoldier) {
   }
 
   // add an entry in the finacial page for the hiring of the merc
-  AddTransactionToPlayersBook(HIRED_MERC, ubCurrentSoldier, GetWorldTotalMin(),
+  AddTransactionToPlayersBook(HIRED_MERC, ubCurrentSoldier,
                               -(INT32)gMercProfiles[ubCurrentSoldier].uiWeeklySalary);
 
   if (gMercProfiles[ubCurrentSoldier].bMedicalDeposit) {
     // add an entry in the finacial page for the medical deposit
-    AddTransactionToPlayersBook(MEDICAL_DEPOSIT, ubCurrentSoldier, GetWorldTotalMin(),
+    AddTransactionToPlayersBook(MEDICAL_DEPOSIT, ubCurrentSoldier,
                                 -(gMercProfiles[ubCurrentSoldier].sMedicalDepositAmount));
   }
 

@@ -5430,7 +5430,7 @@ void ConfirmToDeductMoneyFromPlayersAccountMessageBoxCallBack(UINT8 bExitValue) 
 
     AddTransactionToPlayersBook(PURCHASED_ITEM_FROM_DEALER,
                                 ArmsDealerInfo[gbSelectedArmsDealerID].ubShopKeeperID,
-                                GetWorldTotalMin(), -iMoneyToDeduct);
+                                -iMoneyToDeduct);
   }
 
   // done, re-enable calls to PerformTransaction()

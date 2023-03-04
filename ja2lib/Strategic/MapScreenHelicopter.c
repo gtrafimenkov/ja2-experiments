@@ -1970,8 +1970,7 @@ void PaySkyriderBill(void) {
     if (MoneyGetBalance() >= iTotalAccumulatedCostByPlayer) {
       // no problem, pay the man
       // add the transaction
-      AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, GetWorldTotalMin(),
-                                  -iTotalAccumulatedCostByPlayer);
+      AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, -iTotalAccumulatedCostByPlayer);
       ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pSkyriderText[0], iTotalAccumulatedCostByPlayer);
     } else {
       // money owed
@@ -1979,8 +1978,7 @@ void PaySkyriderBill(void) {
         ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pSkyriderText[0], MoneyGetBalance());
         gMercProfiles[SKYRIDER].iBalance = MoneyGetBalance() - iTotalAccumulatedCostByPlayer;
         // add the transaction
-        AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, GetWorldTotalMin(),
-                                    -MoneyGetBalance());
+        AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, -MoneyGetBalance());
       } else {
         gMercProfiles[SKYRIDER].iBalance = -iTotalAccumulatedCostByPlayer;
       }
@@ -2012,7 +2010,7 @@ void PayOffSkyriderDebtIfAny() {
     // pay the man what we can
     gMercProfiles[SKYRIDER].iBalance += iPayAmount;
     // add the transaction
-    AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, GetWorldTotalMin(), -iPayAmount);
+    AddTransactionToPlayersBook(PAYMENT_TO_NPC, SKYRIDER, -iPayAmount);
     // tell player
     ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pSkyriderText[0], iPayAmount);
 

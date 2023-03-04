@@ -6,7 +6,6 @@
 #include "ScreenIDs.h"
 #include "Soldier.h"
 #include "Strategic/Assignments.h"
-#include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
 #include "Strategic/MapScreenInterfaceBorder.h"
@@ -931,8 +930,7 @@ void PayForTrainingInSector(UINT8 ubSector) {
   Assert(SectorInfo[ubSector].fMilitiaTrainingPaid == FALSE);
 
   // spend the money
-  AddTransactionToPlayersBook(TRAIN_TOWN_MILITIA, ubSector, GetWorldTotalMin(),
-                              -(MILITIA_TRAINING_COST));
+  AddTransactionToPlayersBook(TRAIN_TOWN_MILITIA, ubSector, -(MILITIA_TRAINING_COST));
 
   // mark this sector sectors as being paid up
   SectorInfo[ubSector].fMilitiaTrainingPaid = TRUE;

@@ -1973,19 +1973,10 @@ void PurchaseBobbyOrder() {
     // add the delivery
     AddNewBobbyRShipment(BobbyRayPurchases, gbSelectedCity, gubSelectedLight, TRUE,
                          CalcPackageTotalWeight());
-
-    /*
-                    //get the length of time to receive the shipment
-                    bDaysAhead = CalculateOrderDelay( gubSelectedLight );
-
-                    //AddStrategicEvent( EVENT_BOBBYRAY_PURCHASE, uiResetTimeSec, cnt);
-                    AddFutureDayStrategicEvent( EVENT_BOBBYRAY_PURCHASE, (8 + Random(4) ) * 60, cnt,
-       bDaysAhead );
-    */
   }
 
   // Add the transaction to the finance page
-  AddTransactionToPlayersBook(BOBBYR_PURCHASE, 0, GetWorldTotalMin(), -giGrandTotal);
+  AddTransactionToPlayersBook(BOBBYR_PURCHASE, 0, -giGrandTotal);
 
   // display the confirm order graphic
   gfDrawConfirmOrderGrpahic = TRUE;

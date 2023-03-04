@@ -207,7 +207,7 @@ void HourlyLarryUpdate(void) {
             // take $ from player's account
             usCashAmount = Item[ALCOHOL].usPrice;
             AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile,
-                                        GetWorldTotalMin(), -(usCashAmount));
+                                        -(usCashAmount));
             // give Larry some booze and set slot etc values appropriately
             bBoozeSlot = FindEmptySlotWithin(pSoldier, HANDPOS, SMALLPOCK8POS);
             if (bBoozeSlot != NO_SLOT) {
@@ -235,8 +235,7 @@ void HourlyLarryUpdate(void) {
         if (fBar) {
           // take $ from player's account
           usCashAmount = Item[ALCOHOL].usPrice;
-          AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile,
-                                      GetWorldTotalMin(), -(usCashAmount));
+          AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile, -(usCashAmount));
           // give Larry some booze and set slot etc values appropriately
           bBoozeSlot = FindEmptySlotWithin(pSoldier, HANDPOS, SMALLPOCK8POS);
           if (bBoozeSlot != NO_SLOT) {

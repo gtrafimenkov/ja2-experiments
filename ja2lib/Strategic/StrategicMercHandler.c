@@ -259,8 +259,7 @@ void MercDailyUpdate() {
           // if the player can afford to pay them
           if (MoneyGetBalance() >= iMoneyOwedToMerc) {
             // add the transaction to the player
-            AddTransactionToPlayersBook(PAYMENT_TO_NPC, pSoldier->ubProfile, GetWorldTotalMin(),
-                                        -iMoneyOwedToMerc);
+            AddTransactionToPlayersBook(PAYMENT_TO_NPC, pSoldier->ubProfile, -iMoneyOwedToMerc);
 
             // if the player owed money to the npc
             if (gMercProfiles[pSoldier->ubProfile].iBalance < 0) {
