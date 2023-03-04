@@ -93,8 +93,6 @@ INT32 giErrorMessageBox = 0;
 //
 ///////////////////////////////////////////////////////////////
 
-void TempFileLoadErrorMessageReturnCallback(UINT8 ubRetVal);
-
 BOOLEAN SaveWorldItemsToTempItemFile(INT16 sMapX, INT16 sMapY, INT8 bMapZ, UINT32 uiNumberOfItems,
                                      WORLDITEM *pData);
 BOOLEAN RetrieveTempFileFromSavedGame(HWFILE hFile, UINT32 uiType, INT16 sMapX, INT16 sMapY,
@@ -2268,7 +2266,9 @@ BOOLEAN LoadTempNpcQuoteArrayToSaveGameFile(HWFILE hFile) {
   return (LoadFilesFromSavedGame(NPC_TEMP_QUOTE_FILE, hFile));
 }
 
-void TempFileLoadErrorMessageReturnCallback(UINT8 ubRetVal) { gfProgramIsRunning = FALSE; }
+static void TempFileLoadErrorMessageReturnCallback(UINT8 ubRetVal, const struct MouseInput mouse) {
+  gfProgramIsRunning = FALSE;
+}
 
 // if you call this function, make sure you return TRUE (if applicable) to make the game
 // think it succeeded the load.  This sets up the dialog for the game exit, after the hacker

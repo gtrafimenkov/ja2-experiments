@@ -2669,7 +2669,7 @@ void CreateTopMessage(UINT32 uiSurface, UINT8 ubType, CHAR16 *psString) {
   gfTopMessageDirty = TRUE;
 }
 
-void TurnExpiredCallback(UINT8 bExitValue) {
+void TurnExpiredCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // End turn...
   UIHandleEndTurn(NULL, XXX_GetMouseInput());
 }

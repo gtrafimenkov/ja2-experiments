@@ -51,7 +51,7 @@ void HandleSoldierLeavingForAnotherContract(struct SOLDIERTYPE *pSoldier);
 void HandleNotifyPlayerCantAffordInsurance(void);
 void HandleNotifyPlayerCanAffordInsurance(struct SOLDIERTYPE *pSoldier, UINT8 ubLength,
                                           INT32 iCost);
-void ExtendMercInsuranceContractCallback(UINT8 bExitValue);
+void ExtendMercInsuranceContractCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void HandleUniqueEventWhenPlayerLeavesTeam(struct SOLDIERTYPE *pSoldier);
 
 UINT32 uiContractTimeMode = 0;
@@ -1251,7 +1251,7 @@ void HandleNotifyPlayerCanAffordInsurance(struct SOLDIERTYPE *pSoldier, UINT8 ub
   return;
 }
 
-void ExtendMercInsuranceContractCallback(UINT8 bExitValue) {
+void ExtendMercInsuranceContractCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     PurchaseOrExtendInsuranceForSoldier(gpInsuranceSoldier, gubContractLength);
   }

@@ -162,7 +162,7 @@ void DisableInsuranceContractNextPreviousbuttons();
 void CreateDestroyInsuranceContractFormButtons(BOOLEAN fCreate);
 void HandleAcceptButton(UINT8 ubSoldierID, UINT8 ubFormID);
 FLOAT DiffFromNormRatio(INT16 sThisValue, INT16 sNormalValue);
-void InsContractNoMercsPopupCallback(UINT8 bExitValue);
+void InsContractNoMercsPopupCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void BuildInsuranceArray();
 BOOLEAN MercIsInsurable(struct SOLDIERTYPE *pSoldier);
 // UINT32		GetContractLengthForFormNumber( UINT8 ubFormID );
@@ -1136,7 +1136,7 @@ FLOAT DiffFromNormRatio(INT16 sThisValue, INT16 sNormalValue) {
   return (flRatio);
 }
 
-void InsContractNoMercsPopupCallback(UINT8 bExitValue) {
+void InsContractNoMercsPopupCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes, so start over, else stay here and do nothing for now
   if (bExitValue == MSG_BOX_RETURN_OK) {
     guiCurrentLaptopMode = LAPTOP_MODE_INSURANCE;

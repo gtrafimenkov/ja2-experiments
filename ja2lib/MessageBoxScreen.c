@@ -43,8 +43,6 @@ static void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlag
 #define MSGBOX_SMALL_BUTTON_WIDTH 31
 #define MSGBOX_SMALL_BUTTON_X_SEP 8
 
-typedef void (*MSGBOX_CALLBACK)(UINT8 bExitValue);
-
 // old mouse x and y positions
 SGPPoint pOldMousePosition;
 SGPRect MessageBoxRestrictedCursorRegion;
@@ -785,7 +783,7 @@ static UINT32 ExitMsgBox(INT8 ubExitCode, const struct MouseInput mouse) {
 
   // Call done callback!
   if (gMsgBox.ExitCallback != NULL) {
-    (*(gMsgBox.ExitCallback))(ubExitCode);
+    (*(gMsgBox.ExitCallback))(ubExitCode, mouse);
   }
 
   // if ur in a non gamescreen and DONT want the msg box to use the save buffer, unset

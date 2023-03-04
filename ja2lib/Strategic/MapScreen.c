@@ -943,7 +943,7 @@ void HandleMilitiaRedistributionClick(void);
 void StartChangeSectorArrivalMode(void);
 BOOLEAN CanMoveBullseyeAndClickedOnIt(INT16 sMapX, INT16 sMapY);
 void CreateBullsEyeOrChopperSelectionPopup(void);
-void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue);
+void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 
 void WakeUpAnySleepingSelectedMercsOnFootOrDriving(void);
 
@@ -10164,7 +10164,7 @@ void CreateBullsEyeOrChopperSelectionPopup(void) {
                                 BullsEyeOrChopperSelectionPopupCallback);
 }
 
-void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue) {
+void BullsEyeOrChopperSelectionPopupCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   // button 1 pressed?
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // chose chopper

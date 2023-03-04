@@ -270,7 +270,7 @@ extern STR16 pBullseyeStrings[];
 extern void HandleRPCDescription();
 
 #ifdef CRIPPLED_VERSION
-void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue);
+void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void CrippledVersionFailureToLoadMapCheck();
 #endif
 
@@ -4343,7 +4343,7 @@ void CrippledVersionFailureToLoadMapCheck() {
   DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionFailureToLoadMapCallback);
 }
 
-void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue) {
+void CrippledVersionFailureToLoadMapCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // clean up the code
   ReStartingGame();
 

@@ -107,7 +107,7 @@ BOOLEAN GetCivQuoteText(UINT8 ubCivQuoteID, UINT8 ubEntryID, CHAR16 *zQuote) {
   return (TRUE);
 }
 
-void SurrenderMessageBoxCallback(UINT8 ubExitValue) {
+void SurrenderMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pTeamSoldier;
   INT32 cnt = 0;
 

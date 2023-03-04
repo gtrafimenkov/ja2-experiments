@@ -53,7 +53,7 @@ extern UINT32 guiTimeStampOfCurrentlyExecutingEvent;
 extern BOOLEAN gfPreventDeletionOfAnyEvent;
 
 #ifdef CRIPPLED_VERSION
-void CrippledVersionEndGameCheckCallback(UINT8 bExitValue);
+void CrippledVersionEndGameCheckCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void CrippledVersionEndGameCheck();
 #endif
 
@@ -409,7 +409,7 @@ void CrippledVersionEndGameCheck() {
   DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionEndGameCheckCallback);
 }
 
-void CrippledVersionEndGameCheckCallback(UINT8 bExitValue) {
+void CrippledVersionEndGameCheckCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // if we should restart the game
   if (guiDay >= 8) {
     // clean up the code

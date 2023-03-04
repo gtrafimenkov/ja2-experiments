@@ -6081,7 +6081,7 @@ void BeginRemoveMercFromContract(struct SOLDIERTYPE *pSoldier) {
   }
 }
 
-void MercDismissConfirmCallback(UINT8 bExitValue) {
+void MercDismissConfirmCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // Setup history code
     gpDismissSoldier->ubLeaveHistoryCode = HISTORY_MERC_FIRED;
@@ -6161,7 +6161,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
         // If in the renewal sequence.. do right away...
         // else put up requester.
         if (gfInContractMenuFromRenewSequence) {
-          MercDismissConfirmCallback(MSG_BOX_RETURN_YES);
+          MercDismissConfirmCallback(MSG_BOX_RETURN_YES, mouse);
         } else {
           DoMapMessageBox(MSG_BOX_BASIC_STYLE, gzLateLocalizedString[48], MAP_SCREEN,
                           MSG_BOX_FLAG_YESNO, MercDismissConfirmCallback);

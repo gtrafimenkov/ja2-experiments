@@ -243,7 +243,8 @@ void DestroySaveLoadTextInputBoxes();
 void SetSelection(UINT8 ubNewSelection);
 UINT8 CompareSaveGameVersion(INT8 bSaveGameID);
 void LoadSavedGameWarningMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
-void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
+void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue,
+                                                      const struct MouseInput mouse);
 void DeleteAllSaveGameFile();
 void DisplayOnScreenNumber(BOOLEAN fErase);
 
@@ -252,13 +253,15 @@ void DisableSelectedSlot();
 void ConfirmSavedGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void ConfirmLoadSavedGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
 // void			FailedSavingGameCallback( UINT8 bExitValue );
-void FailedLoadingGameCallback(UINT8 bExitValue);
+void FailedLoadingGameCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void SetSaveLoadExitScreen(UINT32 uiScreen);
 
-void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
-void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse);
+void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue,
+                                                           const struct MouseInput mouse);
+void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue,
+                                                            const struct MouseInput mouse);
 
-void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue);
+static void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue, const struct MouseInput mouse);
 void ClearSelectedSaveSlot();
 void MoveSelectionUpOrDown(BOOLEAN fUp);
 void SaveGameToSlotNum();
@@ -426,7 +429,7 @@ BOOLEAN EnterSaveLoadScreen() {
       gbSelectedSaveLocation = gGameSettings.bLastSavedGameSlot;
 
       // load the saved game
-      ConfirmLoadSavedGameMessageBoxCallback(MSG_BOX_RETURN_YES);
+      ConfirmLoadSavedGameMessageBoxCallback(MSG_BOX_RETURN_YES, XXX_GetMouseInput());
     } else {  // else the save isnt valid, so dont load it
       gfLoadGameUponEntry = FALSE;
     }
@@ -1757,7 +1760,8 @@ void LoadSavedGameWarningMessageBoxCallback(UINT8 bExitValue, const struct Mouse
   }
 }
 
-void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
+void LoadSavedGameDeleteAllSaveGameMessageBoxCallback(UINT8 bExitValue,
+                                                      const struct MouseInput mouse) {
   // yes, Delete all the save game files
   if (bExitValue == MSG_BOX_RETURN_YES) {
     DeleteAllSaveGameFile();
@@ -1979,7 +1983,7 @@ void ErrorDetectedInSaveCallback(UINT8 bValue) {
 }
 #endif
 
-void FailedLoadingGameCallback(UINT8 bExitValue) {
+void FailedLoadingGameCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // yes
   if (bExitValue == MSG_BOX_RETURN_OK) {
     // if the current screen is tactical
@@ -2052,7 +2056,8 @@ BOOLEAN IsThereAnySavedGameFiles() {
   return (FALSE);
 }
 
-void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
+void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue,
+                                                           const struct MouseInput mouse) {
   if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
@@ -2063,7 +2068,8 @@ void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback(UINT8 bExitValue, con
   }
 }
 
-void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue, const struct MouseInput mouse) {
+void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue,
+                                                            const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_OK) {
     // If the game failed to save
     if (!SaveGame(gbSelectedSaveLocation, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
@@ -2079,7 +2085,9 @@ void NotEnoughHardDriveSpaceForNormalSaveMessageBoxCallback(UINT8 bExitValue, co
   }
 }
 
-void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue) { gfRedrawSaveLoadScreen = TRUE; }
+static void RedrawSaveLoadScreenAfterMessageBox(UINT8 bExitValue, const struct MouseInput mouse) {
+  gfRedrawSaveLoadScreen = TRUE;
+}
 
 void MoveSelectionUpOrDown(BOOLEAN fUp) {
   INT32 i;

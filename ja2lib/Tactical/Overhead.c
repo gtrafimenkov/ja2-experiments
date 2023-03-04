@@ -280,7 +280,7 @@ UINT8 NumCapableEnemyInSector();
 
 BOOLEAN KillIncompacitatedEnemyInSector();
 BOOLEAN CheckForLosingEndOfBattle();
-void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue);
+void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue, const struct MouseInput mouse);
 UINT8 NumEnemyInSectorNotDeadOrDying();
 UINT8 NumBloodcatsInSectorNotDeadOrDying();
 
@@ -6543,7 +6543,7 @@ void DoneFadeOutDueToDeath(void) {
   // SetPendingNewScreen( MAINMENU_SCREEN );
 }
 
-void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue) {
+void EndBattleWithUnconsciousGuysCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   // Enter mapscreen.....
   CheckAndHandleUnloadingOfCurrentWorld();
 }

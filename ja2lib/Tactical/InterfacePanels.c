@@ -324,9 +324,10 @@ BOOLEAN IsMouseInRegion(struct MOUSE_REGION *pRegion);
 void HandleMouseOverSoldierFaceForContMove(struct SOLDIERTYPE *pSoldier, BOOLEAN fOn);
 void HandlePlayerTeamMemberDeathAfterSkullAnimation(struct SOLDIERTYPE *pSoldier);
 void EnableButtonsForInItemBox(BOOLEAN fDisable);
-void ConfirmationToDepositMoneyToPlayersAccount(UINT8 ubExitValue);
+static void ConfirmationToDepositMoneyToPlayersAccount(UINT8 ubExitValue,
+                                                       const struct MouseInput mouse);
 
-void MergeMessageBoxCallback(UINT8 ubExitValue);
+void MergeMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse);
 
 UINT8 gubHandPos;
 UINT16 gusOldItemIndex;
@@ -2321,7 +2322,7 @@ void SMInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void MergeMessageBoxCallback(UINT8 ubExitValue) {
+void MergeMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     AttachObject(gpItemPointerSoldier, &(gpSMCurrentMerc->inv[gubHandPos]), gpItemPointer);
 
@@ -4629,7 +4630,8 @@ void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void ConfirmationToDepositMoneyToPlayersAccount(UINT8 ubExitValue) {
+static void ConfirmationToDepositMoneyToPlayersAccount(UINT8 ubExitValue,
+                                                       const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // add the money to the players account
     AddTransactionToPlayersBook(MERC_DEPOSITED_MONEY_TO_PLAYER_ACCOUNT, gpSMCurrentMerc->ubProfile,
@@ -4657,7 +4659,7 @@ void CheckForReEvaluateDisabledINVPanelButtons() {
   }
 }
 
-void AbandonBoxingCallback(UINT8 ubExitValue) {
+void AbandonBoxingCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     // ok, proceed!
     SetBoxingState(NOT_BOXING);

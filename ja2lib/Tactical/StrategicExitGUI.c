@@ -407,7 +407,7 @@ void DoneFadeOutWarpCallback(void) {
   FadeInGameScreen();
 }
 
-void WarpToSurfaceCallback(UINT8 bExitValue) {
+void WarpToSurfaceCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gFadeOutDoneCallback = DoneFadeOutWarpCallback;
 

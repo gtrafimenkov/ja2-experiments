@@ -69,7 +69,7 @@ INT32 giAutoBandagesSoldierFaces[2 * MAX_CHARACTER_COUNT];
 BOOLEAN fAutoEndBandageButtonCreated = FALSE;
 
 static void BeginAutoBandageCallback(UINT8 bExitValue, const struct MouseInput mouse);
-void CancelAutoBandageCallback(UINT8 bExitValue);
+void CancelAutoBandageCallback(UINT8 bExitValue, const struct MouseInput mouse);
 
 // the update box for autobandaging mercs
 void CreateTerminateAutoBandageButton(INT16 sX, INT16 sY);

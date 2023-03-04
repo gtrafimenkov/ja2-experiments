@@ -93,7 +93,7 @@ INT16 gsOldCurInterfacePanel = 0;
 BOOLEAN gfWorldWasLoaded = FALSE;
 UINT8 ubCurrentMeanWhileId = 0;
 
-void BeginMeanwhileCallback(UINT8 bExitValue);
+void BeginMeanwhileCallback(UINT8 bExitValue, const struct MouseInput mouse);
 void DoneFadeOutMeanwhile(void);
 void DoneFadeInMeanwhile(void);
 void DoneFadeOutMeanwhileOnceDone(void);
@@ -550,7 +550,7 @@ void DoneFadeInMeanwhile() {
   }
 }
 
-void BeginMeanwhileCallback(UINT8 bExitValue) {
+void BeginMeanwhileCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_OK || bExitValue == MSG_BOX_RETURN_YES) {
     gTacticalStatus.uiFlags |= ENGAGED_IN_CONV;
     // Increment reference count...

@@ -2507,7 +2507,7 @@ void DoAttachment(void) {
   gfReEvaluateEveryonesNothingToDo = TRUE;
 }
 
-void PermanantAttachmentMessageBoxCallback(UINT8 ubExitValue) {
+void PermanantAttachmentMessageBoxCallback(UINT8 ubExitValue, const struct MouseInput mouse) {
   if (ubExitValue == MSG_BOX_RETURN_YES) {
     DoAttachment();
   }
