@@ -734,8 +734,6 @@ static void GetSaveLoadScreenUserInput(const struct MouseInput mouse) {
   INT8 bActiveTextField;
   static BOOLEAN fWasCtrlHeldDownLastFrame = FALSE;
 
-  // struct Point MousePos = GetMousePoint();
-
   // if we are going to be instantly leaving the screen, dont draw the numbers
   if (gfLoadGameUponEntry) {
     return;

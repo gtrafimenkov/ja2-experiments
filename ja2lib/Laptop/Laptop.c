@@ -616,7 +616,6 @@ void HandleLapTopCursorUpDate() {
 
 static void GetLaptopKeyboardInput(const struct MouseInput mouse) {
   InputAtom InputEvent;
-  // struct Point MousePos = GetMousePoint();
 
   fTabHandled = FALSE;
 
@@ -2690,27 +2689,11 @@ void PersonnelRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
   }
 }
 
-void CheckIfMouseLeaveScreen() {
-  struct Point MousePos = GetMousePoint();
-  if ((MousePos.x > LAPTOP_SCREEN_LR_X) || (MousePos.x < LAPTOP_UL_X) ||
-      (MousePos.y < LAPTOP_UL_Y) || (MousePos.y > LAPTOP_SCREEN_LR_Y)) {
-    guiCurrentLapTopCursor = LAPTOP_PANEL_CURSOR;
-  }
-}
 void ScreenRegionMvtCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                              const struct MouseInput mouse) {
   if (iReason & MSYS_CALLBACK_REASON_INIT) {
     return;
   }
-  /*if (iReason == MSYS_CALLBACK_REASON_MOVE)
-  {
-          guiCurrentLapTopCursor=LAPTOP_SCREEN_CURSOR;
-  }
-if (iReason == MSYS_CALLBACK_REASON_LOST_MOUSE )
-  {
-CheckIfMouseLeaveScreen();
-  }
-  */
 }
 
 void ReDrawHighLight() {

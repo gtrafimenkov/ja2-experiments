@@ -1406,8 +1406,6 @@ static void HandleIMPQuizKeyBoard(const struct MouseInput mouse) {
   InputAtom InputEvent;
   BOOLEAN fSkipFrame = FALSE;
 
-  // struct Point MousePos = GetMousePoint();
-
   while ((DequeueEvent(&InputEvent) == TRUE)) {
     if (fSkipFrame == FALSE) {
       // HOOK INTO MOUSE HOOKS

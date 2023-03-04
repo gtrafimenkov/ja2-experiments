@@ -225,7 +225,6 @@ void HandleIntroScreen() {
 
 static void GetIntroScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
-  // struct Point MousePos = GetMousePoint();
 
   while (DequeueEvent(&Event)) {
     // HOOK INTO MOUSE HOOKS
