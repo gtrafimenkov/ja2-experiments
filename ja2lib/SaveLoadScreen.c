@@ -349,7 +349,7 @@ UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput) {
   ExecuteBaseDirtyRectQueue();
   EndFrameBufferRender();
 
-  if (HandleFadeOutCallback()) {
+  if (HandleFadeOutCallback(gameInput->mouse)) {
     return (guiSaveLoadExitScreen);
   }
 
@@ -361,7 +361,7 @@ UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput) {
     ExitSaveLoadScreen();
   }
 
-  if (HandleFadeInCallback()) {
+  if (HandleFadeInCallback(gameInput->mouse)) {
     // Re-render the scene!
     RenderSaveLoadScreen();
   }

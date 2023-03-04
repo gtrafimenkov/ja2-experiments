@@ -362,9 +362,9 @@ BOOLEAN InternalInitSectorExitMenu(UINT8 ubDirection, INT16 sAdditionalData) {
   return (TRUE);
 }
 
-void DoneFadeInWarp(void) {}
+static void DoneFadeInWarp(const struct MouseInput mouse) {}
 
-void DoneFadeOutWarpCallback(void) {
+static void DoneFadeOutWarpCallback(const struct MouseInput mouse) {
   INT32 cnt;
   struct SOLDIERTYPE *pSoldier;
 

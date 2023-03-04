@@ -32,8 +32,8 @@ void BeginFade(UINT32 uiExitScreen, INT8 bFadeValue, INT8 bType, UINT32 uiDelay)
 BOOLEAN HandleBeginFadeIn(UINT32 uiScreenExit);
 BOOLEAN HandleBeginFadeOut(UINT32 uiScreenExit);
 
-BOOLEAN HandleFadeOutCallback();
-BOOLEAN HandleFadeInCallback();
+BOOLEAN HandleFadeOutCallback(const struct MouseInput mouse);
+BOOLEAN HandleFadeInCallback(const struct MouseInput mouse);
 
 void FadeInNextFrame();
 void FadeOutNextFrame();

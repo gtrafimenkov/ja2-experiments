@@ -203,7 +203,7 @@ UINT8 GetCurrentGameSaveButtonSetting();
 UINT8 GetCurrentGameStyleButtonSetting();
 UINT8 GetCurrentDifficultyButtonSetting();
 void RestoreGIOButtonBackGrounds();
-void DoneFadeOutForExitGameInitOptionScreen(void);
+static void DoneFadeOutForExitGameInitOptionScreen(const struct MouseInput mouse);
 void DoneFadeInForExitGameInitOptionScreen(void);
 // JA2Gold: no more timed turns setting
 // UINT8			GetCurrentTimedTurnsButtonSetting();
@@ -245,7 +245,7 @@ UINT32 GameInitOptionsScreenHandle(const struct GameInput *gameInput) {
   ExecuteBaseDirtyRectQueue();
   EndFrameBufferRender();
 
-  if (HandleFadeOutCallback()) {
+  if (HandleFadeOutCallback(gameInput->mouse)) {
     ClearMainMenu();
     return (gubGIOExitScreen);
   }
@@ -258,7 +258,7 @@ UINT32 GameInitOptionsScreenHandle(const struct GameInput *gameInput) {
     ExitGIOScreen();
   }
 
-  if (HandleFadeInCallback()) {
+  if (HandleFadeInCallback(gameInput->mouse)) {
     // Re-render the scene!
     RenderGIOScreen();
   }
@@ -965,7 +965,7 @@ void RestoreGIOButtonBackGrounds() {
   }
 }
 
-void DoneFadeOutForExitGameInitOptionScreen(void) {
+static void DoneFadeOutForExitGameInitOptionScreen(const struct MouseInput mouse) {
   // loop through and get the status of all the buttons
   gGameOptions.fGunNut = GetCurrentGunButtonSetting();
   gGameOptions.fSciFi = GetCurrentGameStyleButtonSetting();

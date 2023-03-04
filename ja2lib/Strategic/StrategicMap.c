@@ -251,8 +251,8 @@ STR8 pHortStrings[] = {
 
 void InitializeStrategicMapSectorTownNames(void);
 
-void DoneFadeOutAdjacentSector(void);
-void DoneFadeOutExitGridSector(void);
+static void DoneFadeOutAdjacentSector(const struct MouseInput mouse);
+static void DoneFadeOutExitGridSector(const struct MouseInput mouse);
 
 INT16 PickGridNoNearestEdge(struct SOLDIERTYPE *pSoldier, UINT8 ubTacticalDirection);
 INT16 PickGridNoToWalkIn(struct SOLDIERTYPE *pSoldier, UINT8 ubInsertionDirection,
@@ -2697,7 +2697,7 @@ void AllMercsHaveWalkedOffSector() {
   }
 }
 
-void DoneFadeOutExitGridSector() {
+static void DoneFadeOutExitGridSector(const struct MouseInput mouse) {
   SetCurrentWorldSector(gsAdjacentSectorX, gsAdjacentSectorY, gbAdjacentSectorZ);
   if (gfTacticalTraversal && gpTacticalTraversalGroup && gpTacticalTraversalChosenSoldier) {
     if (gTacticalStatus.fEnemyInSector) {
@@ -2711,7 +2711,7 @@ void DoneFadeOutExitGridSector() {
   FadeInGameScreen();
 }
 
-void DoneFadeOutAdjacentSector() {
+static void DoneFadeOutAdjacentSector(const struct MouseInput mouse) {
   UINT8 ubDirection;
   SetCurrentWorldSector(gsAdjacentSectorX, gsAdjacentSectorY, gbAdjacentSectorZ);
 

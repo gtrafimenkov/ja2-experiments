@@ -3064,7 +3064,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
 
   // if not going anywhere else
   if (guiPendingScreen == NO_PENDING_SCREEN) {
-    if (HandleFadeOutCallback()) {
+    if (HandleFadeOutCallback(gameInput->mouse)) {
       // force mapscreen to be reinitialized even though we're already in it
       EndMapScreen(TRUE);
       return (MAP_SCREEN);
@@ -3519,7 +3519,7 @@ UINT32 MapScreenHandle(const struct GameInput *gameInput) {
 
   // if not going anywhere else
   if (guiPendingScreen == NO_PENDING_SCREEN) {
-    if (HandleFadeInCallback()) {
+    if (HandleFadeInCallback(gameInput->mouse)) {
       // force mapscreen to be reinitialized even though we're already in it
       EndMapScreen(TRUE);
     }

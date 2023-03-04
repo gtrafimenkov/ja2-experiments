@@ -94,10 +94,10 @@ BOOLEAN gfWorldWasLoaded = FALSE;
 UINT8 ubCurrentMeanWhileId = 0;
 
 void BeginMeanwhileCallback(UINT8 bExitValue, const struct MouseInput mouse);
-void DoneFadeOutMeanwhile(void);
-void DoneFadeInMeanwhile(void);
-void DoneFadeOutMeanwhileOnceDone(void);
-void DoneFadeInMeanwhileOnceDone(void);
+static void DoneFadeOutMeanwhile(const struct MouseInput mouse);
+static void DoneFadeInMeanwhile(const struct MouseInput mouse);
+static void DoneFadeOutMeanwhileOnceDone(const struct MouseInput mouse);
+static void DoneFadeInMeanwhileOnceDone(const struct MouseInput mouse);
 void LocateMeanWhileGrid(void);
 
 UINT32 uiMeanWhileFlags = 0;
@@ -522,7 +522,7 @@ void StartMeanwhile() {
   gFadeOutDoneCallback = DoneFadeOutMeanwhile;
 }
 
-void DoneFadeOutMeanwhile() {
+static void DoneFadeOutMeanwhile(const struct MouseInput mouse) {
   // OK, insertion data found, enter sector!
 
   SetCurrentWorldSector(gCurrentMeanwhileDef.sSectorX, gCurrentMeanwhileDef.sSectorY, 0);
@@ -535,7 +535,7 @@ void DoneFadeOutMeanwhile() {
   FadeInNextFrame();
 }
 
-void DoneFadeInMeanwhile() {
+static void DoneFadeInMeanwhile(const struct MouseInput mouse) {
   // ATE: double check that we are in meanwhile
   // this is if we cancel right away.....
   if (gfInMeanwhile) {
@@ -713,7 +713,7 @@ void EndMeanwhile() {
   }
 }
 
-void DoneFadeOutMeanwhileOnceDone() {
+static void DoneFadeOutMeanwhileOnceDone(const struct MouseInput mouse) {
   UINT32 cnt;
   UINT8 ubProfile;
 
@@ -769,7 +769,7 @@ void DoneFadeOutMeanwhileOnceDone() {
   FadeInNextFrame();
 }
 
-void DoneFadeInMeanwhileOnceDone() {}
+static void DoneFadeInMeanwhileOnceDone(const struct MouseInput mouse) {}
 
 void LocateMeanWhileGrid(void) {
   INT16 sGridNo = 0;

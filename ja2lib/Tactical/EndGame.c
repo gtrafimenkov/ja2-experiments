@@ -181,7 +181,7 @@ void HandleDeidrannaDeath(struct SOLDIERTYPE *pKillerSoldier, INT16 sGridNo, INT
                                 MULTIPURPOSE_SPECIAL_EVENT_DONE_KILLING_DEIDRANNA, 0, 0, 0, 0);
 }
 
-void DoneFadeInKilledQueen(void) {
+static void DoneFadeInKilledQueen(const struct MouseInput mouse) {
   struct SOLDIERTYPE *pNPCSoldier;
 
   // Locate gridno.....
@@ -197,7 +197,7 @@ void DoneFadeInKilledQueen(void) {
   TriggerNPCRecordImmediately(pNPCSoldier->ubProfile, 6);
 }
 
-void DoneFadeOutKilledQueen(void) {
+static void DoneFadeOutKilledQueen(const struct MouseInput mouse) {
   INT32 cnt;
   struct SOLDIERTYPE *pSoldier, *pTeamSoldier;
 
@@ -328,7 +328,7 @@ void EndQueenDeathEndgame() {
   gTacticalStatus.uiFlags &= (~IN_DEIDRANNA_ENDGAME);
 }
 
-void DoneFadeOutEndCinematic(void) {
+static void DoneFadeOutEndCinematic(const struct MouseInput mouse) {
   // DAVE PUT SMAKER STUFF HERE!!!!!!!!!!!!
   // :)
   gTacticalStatus.uiFlags &= (~IN_ENDGAME_SEQUENCE);

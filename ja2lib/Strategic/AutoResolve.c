@@ -295,7 +295,7 @@ void ProcessBattleFrame();
 BOOLEAN IsBattleOver();
 BOOLEAN AttemptPlayerCapture();
 
-void AutoBandageFinishedCallback(UINT8 ubResult);
+static void AutoBandageFinishedCallback(UINT8 ubResultconst, struct MouseInput mouse);
 
 // Debug utilities
 void ResetAutoResolveInterface();
@@ -4135,4 +4135,6 @@ BOOLEAN GetCurrentBattleSectorXYZAndReturnTRUEIfThereIsABattle(INT16 *psSectorX,
   }
 }
 
-void AutoBandageFinishedCallback(UINT8 ubResult) { SetupDoneInterface(); }
+static void AutoBandageFinishedCallback(UINT8 ubResult, const struct MouseInput mouse) {
+  SetupDoneInterface();
+}

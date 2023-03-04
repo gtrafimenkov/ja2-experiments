@@ -95,12 +95,12 @@ BOOLEAN HandleBeginFadeOut(UINT32 uiScreenExit) {
   return (FALSE);
 }
 
-BOOLEAN HandleFadeOutCallback() {
+BOOLEAN HandleFadeOutCallback(const struct MouseInput mouse) {
   if (gfFadeOutDone) {
     gfFadeOutDone = FALSE;
 
     if (gFadeOutDoneCallback != NULL) {
-      gFadeOutDoneCallback();
+      gFadeOutDoneCallback(mouse);
 
       gFadeOutDoneCallback = NULL;
 
@@ -111,12 +111,12 @@ BOOLEAN HandleFadeOutCallback() {
   return (FALSE);
 }
 
-BOOLEAN HandleFadeInCallback() {
+BOOLEAN HandleFadeInCallback(const struct MouseInput mouse) {
   if (gfFadeInDone) {
     gfFadeInDone = FALSE;
 
     if (gFadeInDoneCallback != NULL) {
-      gFadeInDoneCallback();
+      gFadeInDoneCallback(mouse);
     }
 
     gFadeInDoneCallback = NULL;

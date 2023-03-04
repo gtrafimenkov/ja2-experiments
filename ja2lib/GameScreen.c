@@ -481,7 +481,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
 #endif
   }
 
-  if (HandleFadeOutCallback()) {
+  if (HandleFadeOutCallback(gameInput->mouse)) {
     return (GAME_SCREEN);
   }
 
@@ -688,7 +688,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
   /////////////////////////////////////////////////////
   EndFrameBufferRender();
 
-  if (HandleFadeInCallback()) {
+  if (HandleFadeInCallback(gameInput->mouse)) {
     // Re-render the scene!
     SetRenderFlags(RENDER_FLAG_FULL);
     fInterfacePanelDirty = DIRTYLEVEL2;

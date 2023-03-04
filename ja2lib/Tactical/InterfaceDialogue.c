@@ -84,12 +84,12 @@ INT16 sBasementExitGridNos[] = {8047, 8207, 8208, 8048, 7888, 7728, 7727, 7567};
 
 extern UINT8 gubWaitingForAllMercsToExitCode;
 extern BOOLEAN fFoundTixa;
-void DoneFadeOutActionBasement(void);
-void DoneFadeOutActionSex(void);
-void DoneFadeInActionBasement(void);
+static void DoneFadeOutActionBasement(const struct MouseInput mouse);
+// static void DoneFadeOutActionSex(const struct MouseInput mouse);
+static void DoneFadeInActionBasement(const struct MouseInput mouse);
 
-void DoneFadeOutActionLeaveBasement(void);
-void DoneFadeInActionLeaveBasement(void);
+static void DoneFadeOutActionLeaveBasement(const struct MouseInput mouse);
+static void DoneFadeInActionLeaveBasement(const struct MouseInput mouse);
 
 BOOLEAN NPCOpenThing(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor);
 
@@ -4124,7 +4124,7 @@ static void DialogueMessageBoxCallback(UINT8 ubExitValue, const struct MouseInpu
   }
 }
 
-void DoneFadeOutActionBasement() {
+static void DoneFadeOutActionBasement(const struct MouseInput mouse) {
   // OK, insertion data found, enter sector!
   SetCurrentWorldSector(10, 1, 1);
 
@@ -4146,9 +4146,10 @@ void DoneFadeOutActionBasement() {
   FadeInGameScreen();
 }
 
-void DoneFadeOutActionSex() { SetPendingNewScreen(SEX_SCREEN); }
+// static void DoneFadeOutActionSex(const struct MouseInput mouse) {
+// SetPendingNewScreen(SEX_SCREEN); }
 
-void DoneFadeInActionBasement() {
+static void DoneFadeInActionBasement(const struct MouseInput mouse) {
   // Start conversation, etc
   struct SOLDIERTYPE *pSoldier, *pNPCSoldier;
   INT32 cnt;
@@ -4176,7 +4177,7 @@ void DoneFadeInActionBasement() {
   TriggerNPCRecordImmediately(pNPCSoldier->ubProfile, 1);
 }
 
-void DoneFadeOutActionLeaveBasement() {
+static void DoneFadeOutActionLeaveBasement(const struct MouseInput mouse) {
   // OK, insertion data found, enter sector!
   SetCurrentWorldSector(10, 1, 0);
 
@@ -4189,7 +4190,7 @@ void DoneFadeOutActionLeaveBasement() {
   FadeInGameScreen();
 }
 
-void DoneFadeInActionLeaveBasement() {
+static void DoneFadeInActionLeaveBasement(const struct MouseInput mouse) {
   // Start conversation, etc
 }
 
