@@ -56,8 +56,6 @@ extern void QueueEvent(UINT16 ubInputEvent, UINT32 usParam, UINT32 uiParam);
 extern void KeyDown(UINT32 usParam, UINT32 uiParam);
 extern void KeyUp(UINT32 usParam, UINT32 uiParam);
 
-extern void GetMousePos(SGPPoint *Point);
-
 extern BOOLEAN DequeueSpecificEvent(InputAtom *Event, UINT32 uiMaskFlags);
 
 extern void RestrictMouseToXYXY(UINT16 usX1, UINT16 usY1, UINT16 usX2, UINT16 usY2);

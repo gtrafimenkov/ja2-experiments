@@ -104,8 +104,6 @@ BOOLEAN DequeueSpecificEvent(InputAtom *Event, UINT32 uiMaskFlags) { return FALS
 
 BOOLEAN DequeueEvent(InputAtom *Event) { return FALSE; }
 
-void GetMousePos(SGPPoint *Point) {}
-
 void RestrictMouseToXYXY(UINT16 usX1, UINT16 usY1, UINT16 usX2, UINT16 usY2) {}
 
 void RestrictMouseCursor(SGPRect *pRectangle) {}

@@ -93,7 +93,8 @@ INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 u
   UINT16 usCursor;
   INT32 iId = -1;
 
-  GetMousePos(&pOldMousePosition);
+  pOldMousePosition.iX = mouse.x;
+  pOldMousePosition.iY = mouse.y;
 
   // this variable can be unset if ur in a non gamescreen and DONT want the msg box to use the save
   // buffer

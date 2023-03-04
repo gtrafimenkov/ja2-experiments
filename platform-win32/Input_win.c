@@ -779,15 +779,6 @@ void KeyUp(UINT32 usParam, UINT32 uiParam) {  // Are we RELEASING one of SHIFT, 
   }
 }
 
-void GetMousePos(SGPPoint *Point) {
-  struct Point MousePos = GetMousePoint();
-
-  Point->iX = (UINT32)MousePos.x;
-  Point->iY = (UINT32)MousePos.y;
-
-  return;
-}
-
 BOOLEAN CharacterIsValid(UINT16 usCharacter, UINT16 *pFilter) {
   UINT32 uiIndex, uiEndIndex;
 
