@@ -6287,7 +6287,7 @@ void CheckToSeeIfMouseHasLeftMapRegionDuringPathPlotting() {
   return;
 }
 
-void BlitBackgroundToSaveBuffer(void) {
+static void BlitBackgroundToSaveBuffer(const struct MouseInput mouse) {
   // render map
   RenderMapRegionBackground();
 
@@ -6301,7 +6301,6 @@ void BlitBackgroundToSaveBuffer(void) {
     ForceButtonUnDirty(giMapContractButton);
     ForceButtonUnDirty(giCharInfoButton[0]);
     ForceButtonUnDirty(giCharInfoButton[1]);
-    const struct MouseInput mouse = XXX_GetMouseInput();
     RenderPreBattleInterface(mouse);
   }
 
