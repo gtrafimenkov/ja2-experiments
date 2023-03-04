@@ -159,6 +159,9 @@ void GameLoop(void) {
   UINT32 uiOldScreen = guiCurrentScreen;
 
   struct Point MousePos = GetMousePoint();
+  g_gameInput.mouse.x = MousePos.x;
+  g_gameInput.mouse.y = MousePos.y;
+
   // Hook into mouse stuff for MOVEMENT MESSAGES
   MouseSystemHook(MOUSE_POS, (UINT16)MousePos.x, (UINT16)MousePos.y, _LeftButtonDown,
                   _RightButtonDown, mouse);

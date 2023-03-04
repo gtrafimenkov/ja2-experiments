@@ -642,7 +642,6 @@ BOOLEAN RenderGIOScreen() {
 
 void GetGIOScreenUserInput() {
   InputAtom Event;
-  //	struct Point MousePos = GetMousePoint();
 
   while (DequeueEvent(&Event)) {
     if (Event.usEvent == KEY_DOWN) {
