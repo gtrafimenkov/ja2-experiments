@@ -1308,7 +1308,7 @@ void SoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGr
   // Deduct points!
   // sAPCost = GetAPsToPickupItem( pSoldier, sGridNo );
   // DeductPoints( pSoldier, sAPCost, 0 );
-  SetUIBusy(pSoldier->ubID, mouse);
+  SetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
 
   // CHECK IF NOT AT SAME GRIDNO
   if (pSoldier->sGridNo != sActionGridNo) {
