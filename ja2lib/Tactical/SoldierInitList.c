@@ -1801,7 +1801,7 @@ BOOLEAN ValidateSoldierInitLinks(UINT8 ubCode) {
                  L"  This is the bug responsible for mercs disappearing.  Be prepared to answer "
                  L"lots of questions...");
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, str, SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK,
-                             ErrorDetectedInSaveCallback);
+                             ErrorDetectedInSaveCallback, XXX_GetMouseInput());
         break;
       case 2:  // saving game
         break;

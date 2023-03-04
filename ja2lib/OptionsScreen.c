@@ -990,14 +990,14 @@ void MusicSliderChangeCallback(INT32 iNewValue) { MusicSetVolume(iNewValue); }
 
 BOOLEAN DoOptionsMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                     UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                    SGPRect *pCenteringRect) {
+                                    SGPRect *pCenteringRect, const struct MouseInput mouse) {
   // reset exit mode
   gfExitOptionsDueToMessageBox = TRUE;
 
   // do message box and return
   giOptionsMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                      (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                     ReturnCallback, pCenteringRect, XXX_GetMouseInput());
+                                     ReturnCallback, pCenteringRect, mouse);
 
   // send back return state
   return ((giOptionsMessageBox != -1));

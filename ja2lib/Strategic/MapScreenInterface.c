@@ -928,8 +928,9 @@ void EnableTeamInfoPanels(void) {
 }
 
 INT32 DoMapMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                              MSGBOX_CALLBACK ReturnCallback,
-                              SGPRect *pCenteringRect) {  // reset the highlighted line
+                              MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect,
+                              const struct MouseInput mouse) {
+  // reset the highlighted line
   giHighLine = -1;
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,

@@ -29,6 +29,11 @@
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
 
+static void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
+                                                  MSGBOX_CALLBACK ReturnCallback,
+                                                  SGPRect *pCenteringRect,
+                                                  const struct MouseInput mouse);
+
 #define MSGBOX_DEFAULT_WIDTH 300
 
 #define MSGBOX_BUTTON_WIDTH 61
@@ -1017,26 +1022,30 @@ UINT32 MessageBoxScreenShutdown() { return (FALSE); }
 void DoScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                    MSGBOX_CALLBACK ReturnCallback) {
   SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
-  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
+  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect,
+                                        XXX_GetMouseInput());
 }
 
 // a basic box that don't care what screen we came from
 void DoUpperScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback) {
   SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y / 2};
-  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
+  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect,
+                                        XXX_GetMouseInput());
 }
 
 // a basic box that don't care what screen we came from
 void DoLowerScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback) {
   SGPRect CenteringRect = {0, INV_INTERFACE_START_Y / 2, 640, INV_INTERFACE_START_Y};
-  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
+  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect,
+                                        XXX_GetMouseInput());
 }
 
-void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
-                                           MSGBOX_CALLBACK ReturnCallback,
-                                           SGPRect *pCenteringRect) {
+static void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
+                                                  MSGBOX_CALLBACK ReturnCallback,
+                                                  SGPRect *pCenteringRect,
+                                                  const struct MouseInput mouse) {
   /// which screen are we in?
 
   // Map Screen (excluding AI Viewer)
@@ -1050,11 +1059,11 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
     // auto resolve is a special case
     if (guiCurrentScreen == AUTORESOLVE_SCREEN) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, zString, AUTORESOLVE_SCREEN, usFlags, ReturnCallback,
-                   pCenteringRect, XXX_GetMouseInput());
+                   pCenteringRect, mouse);
     } else {
       // set up for mapscreen
       DoMapMessageBoxWithRect(MSG_BOX_BASIC_STYLE, zString, MAP_SCREEN, usFlags, ReturnCallback,
-                              pCenteringRect);
+                              pCenteringRect, mouse);
     }
   }
 
@@ -1068,19 +1077,19 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
   // Save Load Screen
   else if (guiCurrentScreen == SAVE_LOAD_SCREEN) {
     DoSaveLoadMessageBoxWithRect(MSG_BOX_BASIC_STYLE, zString, SAVE_LOAD_SCREEN, usFlags,
-                                 ReturnCallback, pCenteringRect);
+                                 ReturnCallback, pCenteringRect, mouse);
   }
 
   // Options Screen
   else if (guiCurrentScreen == OPTIONS_SCREEN) {
     DoOptionsMessageBoxWithRect(MSG_BOX_BASIC_STYLE, zString, OPTIONS_SCREEN, usFlags,
-                                ReturnCallback, pCenteringRect);
+                                ReturnCallback, pCenteringRect, mouse);
   }
 
   // Tactical
   else if (guiCurrentScreen == GAME_SCREEN) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zString, guiCurrentScreen, usFlags, ReturnCallback,
-                 pCenteringRect, XXX_GetMouseInput());
+                 pCenteringRect, mouse);
   }
 }
 

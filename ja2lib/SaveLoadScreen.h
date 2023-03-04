@@ -24,7 +24,7 @@ UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput);
 UINT32 SaveLoadScreenInit(void);
 
 BOOLEAN DoSaveLoadMessageBox(UINT8 ubStyle, STR16 zString, UINT32 uiExitScreen, UINT16 usFlags,
-                             MSGBOX_CALLBACK ReturnCallback);
+                             MSGBOX_CALLBACK ReturnCallback, const struct MouseInput mouse);
 
 BOOLEAN InitSaveGameArray();
 
