@@ -745,7 +745,6 @@ UINT32 HandleTacticalUI(const struct MouseInput mouse) {
     if (gEvents[guiOldEvent].uiFlags & UIEVENT_SNAPMOUSE) {
       SimulateMouseMovement((UINT32)gusSavedMouseX, (UINT32)gusSavedMouseY);
     }
-
     ClearEvent(&gEvents[uiNewEvent], mouse);
   }
 
