@@ -14,6 +14,7 @@
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
@@ -25,7 +26,6 @@
 #include "Strategic/StrategicStatus.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/DialogueControl.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/RottingCorpses.h"
 #include "Tactical/SoldierAdd.h"
 #include "Tactical/SoldierCreate.h"
@@ -1140,7 +1140,7 @@ void FindOutIfAnyMercAboutToLeaveIsGonnaRenew(void) {
 
   gfFirstMercSayQuote = FALSE;
 
-  pSoldier = &Menptr[0];
+  pSoldier = GetSoldierByID(0);
   iNumberOnTeam = gTacticalStatus.Team[OUR_TEAM].bLastID;
 
   // run through list of grunts whoose contract are up in the next 2 hours
@@ -1150,7 +1150,7 @@ void FindOutIfAnyMercAboutToLeaveIsGonnaRenew(void) {
   // is any merc that does not want to stay and only display that quote
   // if they are the only one here....
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     // valid soldier?
     if ((pSoldier->bActive == FALSE) || (pSoldier->bLife == 0) ||

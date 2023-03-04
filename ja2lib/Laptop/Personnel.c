@@ -15,6 +15,7 @@
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreen.h"
@@ -1267,7 +1268,7 @@ void DisplayCharStats(INT32 iId, INT32 iSlot) {
   //	wchar_t sStringA[ 50 ];
   INT16 sX, sY;
   UINT32 uiHits = 0;
-  struct SOLDIERTYPE *pSoldier = &Menptr[iId];
+  struct SOLDIERTYPE *pSoldier = GetSoldierByID(iId);
   BOOLEAN fAmIaRobot = AM_A_ROBOT(pSoldier);
 
   if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
@@ -2226,7 +2227,7 @@ void RenderInventoryForCharacter(INT32 iId, INT32 iSlot) {
   // render the bar for the character
   RenderSliderBarForPersonnelInventory();
 
-  pSoldier = &Menptr[iId];
+  pSoldier = GetSoldierByID(iId);
 
   // if this is a robot, dont display any inventory
   if (AM_A_ROBOT(pSoldier)) {
@@ -2452,7 +2453,7 @@ INT32 GetNumberOfInventoryItemsOnCurrentMerc(void) {
 
   iId = GetIdOfThisSlot(iCurrentPersonSelectedId);
 
-  pSoldier = &Menptr[iId];
+  pSoldier = GetSoldierByID(iId);
 
   for (ubCounter = 0; ubCounter < NUM_INV_SLOTS; ubCounter++) {
     if ((pSoldier->inv[ubCounter].ubNumberOfObjects) && (pSoldier->inv[ubCounter].usItem)) {
@@ -5864,7 +5865,7 @@ void DisplayEmploymentinformation(INT32 iId, INT32 iSlot) {
 
         if (Menptr[iId].ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC ||
             Menptr[iId].ubProfile == SLAY) {
-          INT32 iTimeLeftOnContract = CalcTimeLeftOnMercContract(&Menptr[iId]);
+          INT32 iTimeLeftOnContract = CalcTimeLeftOnMercContract(GetSoldierByID(iId));
 
           // if the merc is in transit
           if (Menptr[iId].bAssignment == IN_TRANSIT) {

@@ -16,6 +16,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CreatureSpreading.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -62,7 +63,7 @@
 #include "Utils/WordWrap.h"
 #include "platform_strings.h"
 
-//#define INVULNERABILITY
+// #define INVULNERABILITY
 
 extern BOOLEAN AutoReload(struct SOLDIERTYPE *pSoldier);
 BOOLEAN gfTransferTacticalOppositionToAutoResolve = FALSE;
@@ -3748,7 +3749,7 @@ BOOLEAN IsBattleOver() {
   return TRUE;
 }
 
-//#define TESTSURRENDER
+// #define TESTSURRENDER
 
 BOOLEAN AttemptPlayerCapture() {
   INT32 i;

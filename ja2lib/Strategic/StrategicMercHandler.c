@@ -13,6 +13,7 @@
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -446,7 +447,7 @@ void MercDailyUpdate() {
 void MercsContractIsFinished(UINT8 ubID) {
   struct SOLDIERTYPE *pSoldier;
 
-  pSoldier = &Menptr[ubID];
+  pSoldier = GetSoldierByID(ubID);
 
   // if the soldier was removed before getting into this function, return
   if (!pSoldier->bActive) return;
@@ -493,7 +494,7 @@ void MercsContractIsFinished(UINT8 ubID) {
 void RPCWhineAboutNoPay(UINT8 ubID) {
   struct SOLDIERTYPE *pSoldier;
 
-  pSoldier = &Menptr[ubID];
+  pSoldier = GetSoldierByID(ubID);
 
   // if the soldier was removed before getting into this function, return
   if (!pSoldier->bActive) return;

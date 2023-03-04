@@ -18,6 +18,7 @@
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CreatureSpreading.h"
 #include "Strategic/GameClock.h"
@@ -62,7 +63,6 @@
 #include "Tactical/Items.h"
 #include "Tactical/Keys.h"
 #include "Tactical/LOS.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/Morale.h"
 #include "Tactical/OppList.h"
 #include "Tactical/PathAI.h"
@@ -494,7 +494,7 @@ BOOLEAN InitOverhead() {
 
   // Set pointers list
   for (cnt = 0; cnt < TOTAL_SOLDIERS; cnt++) {
-    MercPtrs[cnt] = &Menptr[cnt];
+    MercPtrs[cnt] = GetSoldierByID(cnt);
     MercPtrs[cnt]->bActive = FALSE;
   }
 

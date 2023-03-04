@@ -6,6 +6,7 @@
 #include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/AutoResolve.h"
 #include "Strategic/CampaignInit.h"
@@ -26,7 +27,6 @@
 #include "Tactical/AnimationData.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/Items.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/Morale.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/OverheadTypes.h"
@@ -356,7 +356,7 @@ UINT8 NumFreeEnemySlots() {
   // maximum.
   for (i = gTacticalStatus.Team[ENEMY_TEAM].bFirstID; i <= gTacticalStatus.Team[ENEMY_TEAM].bLastID;
        i++) {
-    pSoldier = &Menptr[i];
+    pSoldier = GetSoldierByID(i);
     if (!pSoldier->bActive) ubNumFreeSlots++;
   }
   return ubNumFreeSlots;
@@ -562,7 +562,7 @@ BOOLEAN PrepareEnemyForSectorBattle() {
   pGroup = gpGroupList;
   while (pGroup && sNumSlots) {
     i = gTacticalStatus.Team[ENEMY_TEAM].bFirstID;
-    pSoldier = &Menptr[i];
+    pSoldier = GetSoldierByID(i);
     if (!pGroup->fPlayer && !pGroup->fVehicle && pGroup->ubSectorX == gWorldSectorX &&
         pGroup->ubSectorY == gWorldSectorY && !gbWorldSectorZ) {
       num = pGroup->ubGroupSize;
@@ -571,7 +571,7 @@ BOOLEAN PrepareEnemyForSectorBattle() {
       ubNumElites = pGroup->pEnemyGroup->ubElitesInBattle;
       while (num && sNumSlots && i <= gTacticalStatus.Team[ENEMY_TEAM].bLastID) {
         while (!pSoldier->bActive || pSoldier->ubGroupID) {
-          pSoldier = &Menptr[++i];
+          pSoldier = GetSoldierByID(++i);
           if (i > gTacticalStatus.Team[ENEMY_TEAM].bLastID) {
             AssertMsg(
                 0,
@@ -604,7 +604,7 @@ BOOLEAN PrepareEnemyForSectorBattle() {
             }
             break;
         }
-        pSoldier = &Menptr[++i];
+        pSoldier = GetSoldierByID(++i);
       }
     }
     pGroup = pGroup->next;

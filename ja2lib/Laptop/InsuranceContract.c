@@ -17,6 +17,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -379,7 +380,7 @@ void RenderInsuranceContract() {
          (sNextMercID <= gTacticalStatus.Team[gbPlayerNum].bLastID)) {
     sMercID = gubInsuranceMercArray[sNextMercID];
 
-    pSoldier = &Menptr[GetSoldierIDFromMercID((UINT8)sMercID)];
+    pSoldier = GetSoldierByID(GetSoldierIDFromMercID((UINT8)sMercID));
 
     if ((sMercID != -1) && MercIsInsurable(pSoldier)) {
       DisplayOrderGrid(ubCount, (UINT8)sMercID);
@@ -476,7 +477,7 @@ BOOLEAN DisplayOrderGrid(UINT8 ubGridNumber, UINT8 ubMercID) {
 
   struct SOLDIERTYPE *pSoldier;
 
-  pSoldier = &Menptr[GetSoldierIDFromMercID(ubMercID)];
+  pSoldier = GetSoldierByID(GetSoldierIDFromMercID(ubMercID));
 
   usPosX = usPosY = 0;
 
@@ -1005,7 +1006,8 @@ void HandleAcceptButton(UINT8 ubSoldierID, UINT8 ubFormID) {
   ubFormID--;
 
   PurchaseOrExtendInsuranceForSoldier(
-      &Menptr[ubSoldierID], CalculateSoldiersInsuranceContractLength(&Menptr[ubSoldierID]));
+      GetSoldierByID(ubSoldierID),
+      CalculateSoldiersInsuranceContractLength(GetSoldierByID(ubSoldierID)));
 
   RenderInsuranceContract();
 }
@@ -1053,7 +1055,7 @@ INT32 CalculateInsuranceContractCost(INT32 iLength, UINT8 ubMercID) {
   UINT32 uiTotalInsurancePremium;
   struct SOLDIERTYPE *pSoldier;
 
-  pSoldier = &Menptr[GetSoldierIDFromMercID(ubMercID)];
+  pSoldier = GetSoldierByID(GetSoldierIDFromMercID(ubMercID));
 
   // only mercs with at least 2 days to go on their employment contract are insurable
   // def: 2/5/99.  However if they already have insurance is SHOULD be ok
@@ -1392,7 +1394,7 @@ void EnableDisableIndividualInsuranceContractButton(UINT8 ubMercIDForMercInForm,
   if (sSoldierID == -1) return;
 
   // if the soldiers contract can be extended, enable the button
-  if (CanSoldierExtendInsuranceContract(&Menptr[sSoldierID])) EnableButton(*puiAcceptButton);
+  if (CanSoldierExtendInsuranceContract(GetSoldierByID(sSoldierID))) EnableButton(*puiAcceptButton);
 
   // else the soldier cant extend their insurance contract, disable the button
   else
@@ -1600,7 +1602,7 @@ BOOLEAN AreAnyAimMercsOnTeam() {
   struct SOLDIERTYPE *pSoldier = NULL;
 
   for (sNextMercID = 0; sNextMercID <= gTacticalStatus.Team[gbPlayerNum].bLastID; sNextMercID++) {
-    pSoldier = &Menptr[GetSoldierIDFromMercID((UINT8)sNextMercID)];
+    pSoldier = GetSoldierByID(GetSoldierIDFromMercID((UINT8)sNextMercID));
 
     // check to see if any of the mercs are AIM mercs
     if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {

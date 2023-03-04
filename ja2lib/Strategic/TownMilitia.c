@@ -5,6 +5,7 @@
 #include "Laptop/LaptopSave.h"
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -17,7 +18,6 @@
 #include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicTownLoyalty.h"
 #include "Tactical/DialogueControl.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/MilitiaControl.h"
 #include "Tactical/Overhead.h"
 #include "UI.h"
@@ -761,7 +761,7 @@ void AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(struct SOLDI
 
   while (giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] != -1) {
     // get the current soldier
-    pCurrentSoldier = &Menptr[giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]];
+    pCurrentSoldier = GetSoldierByID(giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]);
 
     // get the current sector value
     sCurrentSector = pCurrentSoldier->sSectorX + pCurrentSoldier->sSectorY * MAP_WORLD_X;
@@ -801,7 +801,7 @@ void HandleContinueOfTownTraining(void) {
 
   while (giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] != -1) {
     // get the soldier
-    pSoldier = &Menptr[giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]];
+    pSoldier = GetSoldierByID(giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]);
 
     if (pSoldier->bActive) {
       fContinueEventPosted = TRUE;
@@ -947,7 +947,7 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector) {
   struct SOLDIERTYPE *pSoldier = NULL;
 
   for (iCounter = 0; iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     if (pSoldier->bActive) {
       if (pSoldier->bAssignment == TRAIN_TOWN) {

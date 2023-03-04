@@ -1,4 +1,5 @@
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Tactical/Items.h"
 #include "Tactical/Menptr.h"
 #include "Tactical/OppList.h"

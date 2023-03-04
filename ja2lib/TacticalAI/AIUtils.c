@@ -1,5 +1,6 @@
 #include "GameSettings.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/Items.h"

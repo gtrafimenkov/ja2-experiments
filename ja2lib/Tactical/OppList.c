@@ -5,6 +5,7 @@
 #include "GameSettings.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/Meanwhile.h"
 #include "Strategic/QueenCommand.h"
@@ -76,7 +77,7 @@ void DecayWatchedLocs(INT8 bTeam);
 void HandleManNoLongerSeen(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOpponent,
                            INT8 *pPersOL, INT8 *pbPublOL);
 
-//#define TESTOPPLIST
+// #define TESTOPPLIST
 
 // for ManSeesMan()
 #define MANLOOKSFORMAN 0

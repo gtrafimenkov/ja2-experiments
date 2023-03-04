@@ -5,6 +5,7 @@
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -20,7 +21,6 @@
 #include "Tactical/AnimationControl.h"
 #include "Tactical/Interface.h"
 #include "Tactical/InterfacePanels.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/OppList.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierAdd.h"
@@ -1515,7 +1515,7 @@ struct SOLDIERTYPE *GetSoldierStructureForVehicle(INT32 iId) {
   iNumberOnTeam = TOTAL_SOLDIERS;  // gTacticalStatus.Team[ OUR_TEAM ].bLastID;
 
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     if (pSoldier->bActive) {
       if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
@@ -2002,7 +2002,7 @@ BOOLEAN OnlyThisSoldierCanDriveVehicle(struct SOLDIERTYPE *pThisSoldier, INT32 i
   for (iCounter = gTacticalStatus.Team[OUR_TEAM].bFirstID;
        iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
     // get the current soldier
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     // skip checking THIS soldier, we wanna know about everyone else
     if (pSoldier == pThisSoldier) {

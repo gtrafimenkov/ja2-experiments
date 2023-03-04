@@ -17,6 +17,7 @@
 #include "SGP/WCheck.h"
 #include "SaveLoadScreen.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/CreatureSpreading.h"
 #include "Strategic/GameClock.h"
@@ -33,7 +34,6 @@
 #include "Tactical/AirRaid.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/InterfaceItems.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierMacros.h"
 #include "Tactical/TacticalSave.h"
@@ -1299,7 +1299,7 @@ BOOLEAN AnyUsableRealMercenariesOnTeam(void) {
 
   // get number of mercs on team who are not vehicles or robot, POWs or EPCs
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     if ((pSoldier->bActive) && (pSoldier->bLife > 0) &&
         !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && !AM_A_ROBOT(pSoldier) &&

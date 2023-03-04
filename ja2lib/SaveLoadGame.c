@@ -30,6 +30,7 @@
 #include "SGP/Video.h"
 #include "SaveLoadScreen.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CreatureSpreading.h"
 #include "Strategic/GameClock.h"
@@ -2340,9 +2341,9 @@ BOOLEAN SaveSoldierStructure(HWFILE hFile) {
       Menptr[cnt].uiMercChecksum = MercChecksum(&(Menptr[cnt]));
       // Save the soldier structure
       if (guiSavedGameVersion < 87) {
-        JA2EncryptedFileWrite(hFile, &Menptr[cnt], uiSaveSize, &uiNumBytesWritten);
+        JA2EncryptedFileWrite(hFile, GetSoldierByID(cnt), uiSaveSize, &uiNumBytesWritten);
       } else {
-        NewJA2EncryptedFileWrite(hFile, &Menptr[cnt], uiSaveSize, &uiNumBytesWritten);
+        NewJA2EncryptedFileWrite(hFile, GetSoldierByID(cnt), uiSaveSize, &uiNumBytesWritten);
       }
       if (uiNumBytesWritten != uiSaveSize) {
         return (FALSE);
@@ -3768,7 +3769,7 @@ BOOLEAN LoadGeneralInfo(HWFILE hFile) {
   if (sGeneralInfo.sContractRehireSoldierID == -1)
     pContractReHireSoldier = NULL;
   else
-    pContractReHireSoldier = &Menptr[sGeneralInfo.sContractRehireSoldierID];
+    pContractReHireSoldier = GetSoldierByID(sGeneralInfo.sContractRehireSoldierID);
 
   memcpy(&gGameOptions, &sGeneralInfo.GameOptions, sizeof(GAME_OPTIONS));
 
@@ -3784,7 +3785,7 @@ BOOLEAN LoadGeneralInfo(HWFILE hFile) {
   if (sGeneralInfo.ubSMCurrentMercID == 255)
     gpSMCurrentMerc = NULL;
   else
-    gpSMCurrentMerc = &Menptr[sGeneralInfo.ubSMCurrentMercID];
+    gpSMCurrentMerc = GetSoldierByID(sGeneralInfo.ubSMCurrentMercID);
 
   // Set the interface panel to the team panel
   ShutdownCurrentPanel();

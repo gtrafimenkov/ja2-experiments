@@ -9,6 +9,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
@@ -483,7 +484,7 @@ void SetUpAutoBandageUpdatePanel(void) {
 
   // run through mercs on squad...if they can doctor, add to list
   for (iCounterA = 0; iCounterA < iNumberOnTeam; iCounterA++) {
-    if (CanCharacterAutoBandageTeammate(&Menptr[iCounterA])) {
+    if (CanCharacterAutoBandageTeammate(GetSoldierByID(iCounterA))) {
       // add to list, up the count
       iDoctorList[iNumberDoctoring] = iCounterA;
       iNumberDoctoring++;
@@ -492,7 +493,7 @@ void SetUpAutoBandageUpdatePanel(void) {
 
   // run through mercs on squad, if they can patient, add to list
   for (iCounterA = 0; iCounterA < iNumberOnTeam; iCounterA++) {
-    if (CanCharacterBeAutoBandagedByTeammate(&Menptr[iCounterA])) {
+    if (CanCharacterBeAutoBandagedByTeammate(GetSoldierByID(iCounterA))) {
       // add to list, up the count
       iPatientList[iNumberPatienting] = iCounterA;
       iNumberPatienting++;
@@ -1026,7 +1027,7 @@ BOOLEAN RenderSoldierSmallFaceForAutoBandagePanel(INT32 iIndex, INT16 sCurrentXP
   // see if we are looking into doctor or patient lists?
   if (iIndexCount > iIndex) {
     // HEALTH BAR
-    pSoldier = &Menptr[iDoctorList[iIndex]];
+    pSoldier = GetSoldierByID(iDoctorList[iIndex]);
   } else {
     // HEALTH BAR
     pSoldier = &Menptr[iPatientList[iIndex - iIndexCount]];

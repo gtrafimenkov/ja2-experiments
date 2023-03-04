@@ -6,6 +6,7 @@
 #include "SGP/FileMan.h"
 #include "SGP/Font.h"
 #include "SGP/Random.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CreatureSpreading.h"
 #include "Strategic/GameClock.h"

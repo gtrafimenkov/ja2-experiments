@@ -20,6 +20,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
 #include "Strategic/Quests.h"
@@ -1024,7 +1025,7 @@ BOOLEAN EnterShopKeeperInterface() {
     } else {
       // add the item back to the current PC into the slot it came from
       CopyObj(&gItemToAdd.ItemObject,
-              &Menptr[gpSMCurrentMerc->ubID].inv[gItemToAdd.bPreviousInvPos]);
+              &GetSoldierByID(gpSMCurrentMerc->ubID)->inv[gItemToAdd.bPreviousInvPos]);
     }
 
     // Clear the contents of the structure
@@ -6146,7 +6147,7 @@ void IfMercOwnedRemoveItemFromMercInv2(UINT8 ubOwnerProfileId, INT8 bOwnerSlotId
     Assert(CanMercInteractWithSelectedShopkeeper(MercPtrs[sSoldierID]));
 
     // remove the object from that merc's original inventory slot
-    fSuccess = RemoveObjectFromSlot(&Menptr[sSoldierID], bOwnerSlotId, &ObjectToRemove);
+    fSuccess = RemoveObjectFromSlot(GetSoldierByID(sSoldierID), bOwnerSlotId, &ObjectToRemove);
     Assert(fSuccess);
   }
 }
@@ -6674,7 +6675,7 @@ UINT32 EvaluateInvSlot(INVENTORY_IN_SLOT *pInvSlot) {
   if (gbSelectedArmsDealerID == ARMS_DEALER_MICKY) {
     INT16 sSoldierID;
     sSoldierID = GetSoldierIDFromMercID(ArmsDealerInfo[gbSelectedArmsDealerID].ubShopKeeperID);
-    if ((sSoldierID != -1) && (GetDrunkLevel(&Menptr[sSoldierID]) == DRUNK)) {
+    if ((sSoldierID != -1) && (GetDrunkLevel(GetSoldierByID(sSoldierID)) == DRUNK)) {
       // Micky is DRUNK, pays more!
       dPriceModifier = ArmsDealerInfo[gbSelectedArmsDealerID].dSellModifier;
     } else {

@@ -36,6 +36,7 @@
 #include "SaveLoadScreen.h"
 #include "ScreenIDs.h"
 #include "Screens.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/AutoResolve.h"
 #include "Strategic/CreatureSpreading.h"
@@ -990,7 +991,8 @@ void DisplayDestinationOfCurrentDestMerc(void) {
 
   SetFont(MAP_SCREEN_FONT);
 
-  sSector = GetLastSectorIdInCharactersPath(&Menptr[gCharactersList[bSelectedDestChar].usSolID]);
+  sSector =
+      GetLastSectorIdInCharactersPath(GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID));
 
   SetBoxForeground(ghVehicleBox, FONT_LTGREEN);
   SetBoxBackground(ghVehicleBox, FONT_BLACK);
@@ -1458,7 +1460,7 @@ void DrawCharStats(INT16 sCharNum) {
   // struct VObject* hCrossHandle;
   struct SOLDIERTYPE *pSoldier = NULL;
 
-  pSoldier = &Menptr[gCharactersList[sCharNum].usSolID];
+  pSoldier = GetSoldierByID(gCharactersList[sCharNum].usSolID);
 
   // set up font
   SetFont(CHAR_FONT);
@@ -1656,7 +1658,7 @@ void DrawCharHealth(INT16 sCharNum) {
   INT16 usX, usY;
   struct SOLDIERTYPE *pSoldier = NULL;
 
-  pSoldier = &Menptr[gCharactersList[sCharNum].usSolID];
+  pSoldier = GetSoldierByID(gCharactersList[sCharNum].usSolID);
 
   if (pSoldier->bAssignment != ASSIGNMENT_POW) {
     // find starting X coordinate by centering all 3 substrings together, then print them separately
@@ -3935,13 +3937,13 @@ UINT32 HandleMapUI() {
         if (bSelectedDestChar == -1) break;
 
         // check if last sector in character's path is same as where mouse is
-        if (GetLastSectorIdInCharactersPath(&Menptr[gCharactersList[bSelectedDestChar].usSolID]) !=
-            (sMapX + (sMapY * MAP_WORLD_X))) {
+        if (GetLastSectorIdInCharactersPath(GetSoldierByID(
+                gCharactersList[bSelectedDestChar].usSolID)) != (sMapX + (sMapY * MAP_WORLD_X))) {
           sX = (GetLastSectorIdInCharactersPath(
-                    &Menptr[gCharactersList[bSelectedDestChar].usSolID]) %
+                    GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID)) %
                 MAP_WORLD_X);
           sY = (GetLastSectorIdInCharactersPath(
-                    &Menptr[gCharactersList[bSelectedDestChar].usSolID]) /
+                    GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID)) /
                 MAP_WORLD_X);
           RestoreBackgroundForMapGrid(sX, sY);
         }
@@ -3951,8 +3953,8 @@ UINT32 HandleMapUI() {
              GROUNDBARRIER)) {
           // Can we get go there?  (NULL temp character path)
           if (GetLengthOfPath(pTempCharacterPath) > 0) {
-            PlotPathForCharacter(&Menptr[gCharactersList[bSelectedDestChar].usSolID], sMapX, sMapY,
-                                 FALSE);
+            PlotPathForCharacter(GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID), sMapX,
+                                 sMapY, FALSE);
 
             // copy the path to every other selected character
             CopyPathToAllSelectedCharacters(
@@ -4519,8 +4521,8 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 #ifdef JA2TESTVERSION
           if (fCtrl) {
             if (bSelectedInfoChar != -1) {
-              TownMilitiaTrainingCompleted(&Menptr[gCharactersList[bSelectedInfoChar].usSolID],
-                                           sSelMapX, sSelMapY);
+              TownMilitiaTrainingCompleted(
+                  GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID), sSelMapX, sSelMapY);
             }
           }
 #endif
@@ -4555,7 +4557,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 #ifdef JA2TESTVERSION
           if (fAlt) {
             if (bSelectedInfoChar != -1) {
-              StatChange(&Menptr[gCharactersList[bSelectedInfoChar].usSolID], EXPERAMT, 1000,
+              StatChange(GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID), EXPERAMT, 1000,
                          FROM_SUCCESS);
             }
           }
@@ -5792,7 +5794,7 @@ void HandleCursorOverRifleAmmo() {
   }
 
   if (gfCheckForMouseOverItem) {
-    if (HandleCompatibleAmmoUI(&Menptr[gCharactersList[bSelectedInfoChar].usSolID],
+    if (HandleCompatibleAmmoUI(GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID),
                                (INT8)gbCheckForMouseOverItemPos, TRUE)) {
       if ((GetJA2Clock() - guiMouseOverItemTime) > 100) {
         fTeamPanelDirty = TRUE;
@@ -6526,7 +6528,7 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
 
       ChangeSelectedInfoChar((INT8)iValue, TRUE);
 
-      pSoldier = &Menptr[gCharactersList[iValue].usSolID];
+      pSoldier = GetSoldierByID(gCharactersList[iValue].usSolID);
 
       // highlight
       giDestHighLine = -1;
@@ -6567,7 +6569,7 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
     }
 
     if (gCharactersList[iValue].fValid == TRUE) {
-      pSoldier = &Menptr[gCharactersList[iValue].usSolID];
+      pSoldier = GetSoldierByID(gCharactersList[iValue].usSolID);
 
       // select this character
       ChangeSelectedInfoChar((INT8)iValue, TRUE);
@@ -6650,7 +6652,7 @@ void TeamListAssignmentRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iRe
       ChangeSelectedInfoChar((INT8)iValue,
                              (BOOLEAN)(IsEntryInSelectedListSet((INT8)iValue) == FALSE));
 
-      pSoldier = &Menptr[gCharactersList[iValue].usSolID];
+      pSoldier = GetSoldierByID(gCharactersList[iValue].usSolID);
 
       // if alive (dead guys keep going, use remove menu instead),
       // and it's between sectors and it can be reassigned (non-vehicles)
@@ -6919,7 +6921,7 @@ void TeamListSleepRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason)
 
       // if this slot's sleep status can be changed
       if (CanChangeSleepStatusForCharSlot((INT8)iValue)) {
-        pSoldier = &Menptr[gCharactersList[iValue].usSolID];
+        pSoldier = GetSoldierByID(gCharactersList[iValue].usSolID);
 
         if (pSoldier->fMercAsleep == TRUE) {
           // try to wake him up
@@ -7124,7 +7126,7 @@ void PlotPermanentPaths(void) {
   if (fPlotForHelicopter == TRUE) {
     DisplayHelicopterPath();
   } else if (bSelectedDestChar != -1) {
-    DisplaySoldierPath(&Menptr[gCharactersList[bSelectedDestChar].usSolID]);
+    DisplaySoldierPath(GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID));
   }
 }
 
@@ -7174,8 +7176,8 @@ void PlotTemporaryPaths(void) {
                                 }
         */
 
-        PlotATemporaryPathForCharacter(&Menptr[gCharactersList[bSelectedDestChar].usSolID], sMapX,
-                                       sMapY);
+        PlotATemporaryPathForCharacter(GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID),
+                                       sMapX, sMapY);
 
         // check to see if we are drawing path
         DisplayThePotentialPathForCurrentDestinationCharacterForMapScreenInterface(sMapX, sMapY);
@@ -7185,7 +7187,7 @@ void PlotTemporaryPaths(void) {
           // clip region
           ClipBlitsToMapViewRegion();
           // blit
-          DisplaySoldierTempPath(&Menptr[gCharactersList[bSelectedDestChar].usSolID]);
+          DisplaySoldierTempPath(GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID));
           // restore
           RestoreClipRegionToFullScreen();
         }
@@ -7483,7 +7485,7 @@ void HandleShadingOfLinesForContractMenu(void) {
   Assert(CanExtendContractForCharSlot(bSelectedContractChar));
 
   // grab the character
-  pSoldier = &Menptr[gCharactersList[bSelectedContractChar].usSolID];
+  pSoldier = GetSoldierByID(gCharactersList[bSelectedContractChar].usSolID);
 
   // is guy in AIM? and well enough to talk and make such decisions?
   if ((pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) && (pSoldier->bLife >= OKLIFE)) {
@@ -7537,7 +7539,7 @@ void ReBuildCharactersList(void) {
 
   for (sCount = 0; sCount < MAX_CHARACTER_COUNT; sCount++) {
     // add character into the cleared slot
-    AddCharacter(&Menptr[gTacticalStatus.Team[OUR_TEAM].bFirstID + sCount]);
+    AddCharacter(GetSoldierByID(gTacticalStatus.Team[OUR_TEAM].bFirstID + sCount));
   }
 
   // sort them according to current sorting method
@@ -7756,7 +7758,7 @@ BOOLEAN ContinueDialogue(struct SOLDIERTYPE *pSoldier, BOOLEAN fDone) {
   // otherwise, find this character
   for (bCounter = 0; bCounter < MAX_CHARACTER_COUNT; bCounter++) {
     if (gCharactersList[bCounter].fValid == TRUE) {
-      if ((&Menptr[gCharactersList[bCounter].usSolID]) == pSoldier) {
+      if ((GetSoldierByID(gCharactersList[bCounter].usSolID)) == pSoldier) {
         if (bSelectedInfoChar != bCounter) {
           ChangeSelectedInfoChar(bCounter, TRUE);
         }
@@ -7774,7 +7776,7 @@ void HandleSpontanousTalking() {
 
   if (DialogueActive() == FALSE) {
     if ((bSelectedInfoChar != -1) && (bSelectedInfoChar < MAX_CHARACTER_COUNT)) {
-      ContinueDialogue((&Menptr[gCharactersList[bSelectedInfoChar].usSolID]), TRUE);
+      ContinueDialogue((GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID)), TRUE);
     }
   }
 
@@ -7817,8 +7819,8 @@ BOOLEAN CheckIfClickOnLastSectorInPath(INT16 sX, INT16 sY) {
       return (FALSE);
     }
 
-    if (sX + (sY * MAP_WORLD_X) ==
-        GetLastSectorIdInCharactersPath((&Menptr[gCharactersList[bSelectedDestChar].usSolID]))) {
+    if (sX + (sY * MAP_WORLD_X) == GetLastSectorIdInCharactersPath((GetSoldierByID(
+                                       gCharactersList[bSelectedDestChar].usSolID)))) {
       // clicked on last sector, reset plotting mode
 
       // if he's IN a vehicle or IS a vehicle
@@ -7940,9 +7942,8 @@ void UpdateCursorIfInLastSector(void) {
     if (fShowAircraftFlag == FALSE) {
       if (bSelectedDestChar != -1) {
         // c heck if we are in the last sector of the characters path?
-        if (sMapX + (sMapY * MAP_WORLD_X) ==
-            GetLastSectorIdInCharactersPath(
-                (&Menptr[gCharactersList[bSelectedDestChar].usSolID]))) {
+        if (sMapX + (sMapY * MAP_WORLD_X) == GetLastSectorIdInCharactersPath((GetSoldierByID(
+                                                 gCharactersList[bSelectedDestChar].usSolID)))) {
           // set cursor to checkmark
           ChangeMapScreenMaskCursor(CURSOR_CHECKMARK);
         } else if (fCheckCursorWasSet) {
@@ -9017,7 +9018,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
   if (fRetainSelectedMercs) {
     // if we have anyone valid selected
     if ((bSelectedInfoChar != -1) && (gCharactersList[bSelectedInfoChar].fValid)) {
-      pPreviousSelectedInfoChar = &Menptr[gCharactersList[bSelectedInfoChar].usSolID];
+      pPreviousSelectedInfoChar = GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID);
     }
 
     for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
@@ -9147,7 +9148,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
             sEndSectorB = 9999;
           } else {
             sEndSectorB =
-                GetLastSectorIdInCharactersPath(&Menptr[gCharactersList[iCounterA].usSolID]);
+                GetLastSectorIdInCharactersPath(GetSoldierByID(gCharactersList[iCounterA].usSolID));
           }
 
           if ((sEndSectorB > sEndSectorA) && (iCounterA < iCounter)) {
@@ -9193,7 +9194,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
           }
 
           // grab current soldier
-          pCurrentSoldier = &Menptr[gCharactersList[iCounterA].usSolID];
+          pCurrentSoldier = GetSoldierByID(gCharactersList[iCounterA].usSolID);
 
           // check if soldier is active
           if (pCurrentSoldier->bActive == FALSE) {
@@ -9615,7 +9616,7 @@ void CancelOrShortenPlottedPath(void) {
 
     // try to delete portion of path AFTER the current sector for the helicopter
     uiReturnValue = ClearPathAfterThisSectorForCharacter(
-        &Menptr[gCharactersList[bSelectedDestChar].usSolID], sMapX, sMapY);
+        GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID), sMapX, sMapY);
   }
 
   switch (uiReturnValue) {
@@ -9906,7 +9907,7 @@ BOOLEAN AnyMovableCharsInOrBetweenThisSector(INT16 sSectorX, INT16 sSectorY, INT
 
   for (iCounter = iFirstId; iCounter <= iLastId; iCounter++) {
     // get the soldier
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     // is the soldier active
     if (pSoldier->bActive == FALSE) {
@@ -10693,7 +10694,7 @@ void RequestContractMenu(void) {
 
   if (CanExtendContractForCharSlot(bSelectedInfoChar)) {
     // create
-    RebuildContractBoxForMerc(&Menptr[gCharactersList[bSelectedInfoChar].usSolID]);
+    RebuildContractBoxForMerc(GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID));
 
     // reset selected characters
     ResetAllSelectedCharacterModes();

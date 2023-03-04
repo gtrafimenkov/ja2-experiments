@@ -3,6 +3,7 @@
 #include "SGP/FileMan.h"
 #include "SGP/Timer.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/Meanwhile.h"
 #include "Strategic/QueenCommand.h"

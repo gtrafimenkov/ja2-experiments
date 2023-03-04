@@ -10,6 +10,7 @@
 #include "SGP/Types.h"
 #include "SGP/Video.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -21,7 +22,6 @@
 #include "Tactical/DialogueControl.h"
 #include "Tactical/Interface.h"
 #include "Tactical/LOS.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/Morale.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/OverheadTypes.h"
@@ -1128,7 +1128,7 @@ BOOLEAN LoadAirRaidInfoFromSaveGameFile(HWFILE hFile) {
   giNumFrames = sAirRaidSaveStruct.iNumFrames;
 
   if (sAirRaidSaveStruct.sRaidSoldierID != -1) {
-    gpRaidSoldier = &Menptr[sAirRaidSaveStruct.sRaidSoldierID];
+    gpRaidSoldier = GetSoldierByID(sAirRaidSaveStruct.sRaidSoldierID);
 
     gpRaidSoldier->bLevel = sAirRaidSaveStruct.bLevel;
     gpRaidSoldier->bTeam = sAirRaidSaveStruct.bTeam;

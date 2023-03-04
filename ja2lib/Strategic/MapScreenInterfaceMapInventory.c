@@ -10,6 +10,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
 #include "Strategic/MapScreenInterfaceBorder.h"
@@ -741,7 +742,8 @@ void MapInvenPoolSlots(struct MOUSE_REGION *pRegion, INT32 iReason) {
       // gWorldSectorX ) && ( sSelMapY == gWorldSectorY ) && ( iCurrentMapSectorZ == gbWorldSectorZ
       // )
       //&& ( gTacticalStatus.uiFlags & INCOMBAT ) ) ) )
-      if (!CanPlayerUseSectorInventory(&Menptr[gCharactersList[bSelectedInfoChar].usSolID])) {
+      if (!CanPlayerUseSectorInventory(
+              GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID))) {
         DoMapMessageBox(MSG_BOX_BASIC_STYLE, pMapInventoryErrorString[3], MAP_SCREEN,
                         MSG_BOX_FLAG_OK, NULL);
         return;
@@ -755,7 +757,8 @@ void MapInvenPoolSlots(struct MOUSE_REGION *pRegion, INT32 iReason) {
           pInventoryPoolList[(iCurrentInventoryPoolPage * MAP_INVENTORY_POOL_SLOT_COUNT) + iCounter]
               .o));
     } else {
-      if (!CanPlayerUseSectorInventory(&Menptr[gCharactersList[bSelectedInfoChar].usSolID])) {
+      if (!CanPlayerUseSectorInventory(
+              GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID))) {
         DoMapMessageBox(MSG_BOX_BASIC_STYLE, pMapInventoryErrorString[4], MAP_SCREEN,
                         MSG_BOX_FLAG_OK, NULL);
         return;
@@ -1713,7 +1716,7 @@ void HandleMouseInCompatableItemForMapSectorInventory(INT32 iCurrentSlot) {
   if (fShowInventoryFlag) {
     // check if any compatable items in the soldier inventory matches with this item
     if (gfCheckForCursorOverMapSectorInventoryItem) {
-      pSoldier = &Menptr[gCharactersList[bSelectedInfoChar].usSolID];
+      pSoldier = GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID);
       if (pSoldier) {
         if (HandleCompatibleAmmoUIForMapScreen(
                 pSoldier,

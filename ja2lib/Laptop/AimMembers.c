@@ -22,6 +22,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -188,7 +189,7 @@
 
 #define AIM_MEMBER_OPTIONAL_GEAR_X AIM_MERC_INFO_X
 #define AIM_MEMBER_OPTIONAL_GEAR_Y WEAPONBOX_Y - 13
-//#define		AIM_MEMBER_OPTIONAL_GEAR_NUMBER_X		AIM_MEMBER_OPTIONAL_GEAR_X
+// #define		AIM_MEMBER_OPTIONAL_GEAR_NUMBER_X		AIM_MEMBER_OPTIONAL_GEAR_X
 
 #define AIM_MEMBER_WEAPON_NAME_X WEAPONBOX_X
 #define AIM_MEMBER_WEAPON_NAME_Y WEAPONBOX_Y + WEAPONBOX_SIZE_Y + 1

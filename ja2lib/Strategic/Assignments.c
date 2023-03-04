@@ -16,6 +16,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
 #include "Strategic/MapScreen.h"
@@ -6085,7 +6086,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   struct SOLDIERTYPE *pSoldier = NULL;
 
   if ((IsMapScreen())) {
-    pSoldier = &Menptr[gCharactersList[bSelectedInfoChar].usSolID];
+    pSoldier = GetSoldierByID(gCharactersList[bSelectedInfoChar].usSolID);
   } else {
     // can't renew contracts from tactical!
   }
@@ -7879,7 +7880,7 @@ void HandleRestFatigueAndSleepStatus(void) {
 
   // run through all player characters and handle their rest, fatigue, and going to sleep
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     if (pSoldier->bActive) {
       if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || AM_A_ROBOT(pSoldier)) {
@@ -7982,7 +7983,7 @@ void HandleRestFatigueAndSleepStatus(void) {
 
   // now handle waking (needs seperate list queue, that's why it has its own loop)
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     if (pSoldier->bActive) {
       if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || AM_A_ROBOT(pSoldier)) {
@@ -8792,7 +8793,7 @@ void ResetAssignmentsForAllSoldiersInSectorWhoAreTrainingTown(struct SOLDIERTYPE
   iNumberOnTeam = gTacticalStatus.Team[OUR_TEAM].bLastID;
 
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pCurSoldier = &Menptr[iCounter];
+    pCurSoldier = GetSoldierByID(iCounter);
 
     if ((pCurSoldier->bActive) && (pCurSoldier->bLife >= OKLIFE)) {
       if (pCurSoldier->bAssignment == TRAIN_TOWN) {
@@ -8815,7 +8816,7 @@ void ReportTrainersTraineesWithoutPartners(void) {
 
   // check for each instructor
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pTeamSoldier = &Menptr[iCounter];
+    pTeamSoldier = GetSoldierByID(iCounter);
 
     if ((pTeamSoldier->bAssignment == TRAIN_TEAMMATE) && (pTeamSoldier->bLife > 0)) {
       if (!ValidTrainingPartnerInSameSectorOnAssignmentFound(pTeamSoldier, TRAIN_BY_OTHER,
@@ -8827,7 +8828,7 @@ void ReportTrainersTraineesWithoutPartners(void) {
 
   // check each trainee
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
-    pTeamSoldier = &Menptr[iCounter];
+    pTeamSoldier = GetSoldierByID(iCounter);
 
     if ((pTeamSoldier->bAssignment == TRAIN_BY_OTHER) && (pTeamSoldier->bLife > 0)) {
       if (!ValidTrainingPartnerInSameSectorOnAssignmentFound(pTeamSoldier, TRAIN_TEAMMATE,
@@ -9145,7 +9146,7 @@ BOOLEAN IsAnyOneOnPlayersTeamOnThisAssignment(INT8 bAssignment) {
   for (iCounter = gTacticalStatus.Team[OUR_TEAM].bFirstID;
        iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
     // get the current soldier
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     // active?
     if (pSoldier->bActive == FALSE) {
@@ -9183,7 +9184,7 @@ void BandageBleedingDyingPatientsBeingTreated() {
   for (iCounter = gTacticalStatus.Team[OUR_TEAM].bFirstID;
        iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
     // get the soldier
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     // check if the soldier is currently active?
     if (pSoldier->bActive == FALSE) {
@@ -9247,7 +9248,7 @@ void ReEvaluateEveryonesNothingToDo() {
   BOOLEAN fNothingToDo;
 
   for (iCounter = 0; iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     if (pSoldier->bActive) {
       switch (pSoldier->bAssignment) {
@@ -9338,7 +9339,7 @@ void SetAssignmentForList(INT8 bAssignment, INT8 bParam) {
   // RepairMenuBtnCallback()
   if (bSelectedAssignChar != -1) {
     if (gCharactersList[bSelectedAssignChar].fValid == TRUE) {
-      pSelectedSoldier = &Menptr[gCharactersList[bSelectedAssignChar].usSolID];
+      pSelectedSoldier = GetSoldierByID(gCharactersList[bSelectedAssignChar].usSolID);
     }
   }
 
@@ -9565,7 +9566,7 @@ BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pT
   Assert((bTargetAssignment == TRAIN_TEAMMATE) || (bTargetAssignment == TRAIN_BY_OTHER));
 
   for (iCounter = 0; iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     if (pSoldier->bActive) {
       // if the guy is not the target, has the assignment we want, is training the same stat, and is
@@ -9797,7 +9798,7 @@ struct SOLDIERTYPE *GetSelectedAssignSoldier(BOOLEAN fNullOK) {
     // mapscreen version
     if ((bSelectedAssignChar >= 0) && (bSelectedAssignChar < MAX_CHARACTER_COUNT) &&
         (gCharactersList[bSelectedAssignChar].fValid)) {
-      pSoldier = &Menptr[gCharactersList[bSelectedAssignChar].usSolID];
+      pSoldier = GetSoldierByID(gCharactersList[bSelectedAssignChar].usSolID);
     }
   } else {
     // tactical version

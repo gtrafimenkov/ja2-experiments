@@ -18,6 +18,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenHelicopter.h"
 #include "Strategic/MapScreenInterface.h"
@@ -37,7 +38,6 @@
 #include "Tactical/InterfaceDialogue.h"
 #include "Tactical/InterfaceUtils.h"
 #include "Tactical/LOS.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/OppList.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/QArray.h"
@@ -781,7 +781,7 @@ void HandleDialogue() {
 
       switch (iReason) {
         case (UPDATE_BOX_REASON_ADDSOLDIER):
-          pUpdateSoldier = &Menptr[QItem->uiSpecialEventData2];
+          pUpdateSoldier = GetSoldierByID(QItem->uiSpecialEventData2);
           if (pUpdateSoldier->bActive == TRUE) {
             AddSoldierToUpdateBox(pUpdateSoldier);
           }

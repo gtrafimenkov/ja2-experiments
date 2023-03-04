@@ -3,6 +3,7 @@
 #include "SGP/Types.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/QueenCommand.h"
 #include "Strategic/Quests.h"
 #include "Strategic/StrategicMap.h"
@@ -73,7 +74,7 @@ UINT8 gubAICounter;
 // Very representing if this computer is the host, therefore controlling the ai
 extern BYTE gfAmIHost;
 
-//#define TESTAI
+// #define TESTAI
 
 INT8 GameOption[MAXGAMEOPTIONS] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0};
 
@@ -218,8 +219,8 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
   } else if (!(pSoldier->fAIFlags &
                AI_HANDLE_EVERY_FRAME))  // if set to handle every frame, ignore delay!
   {
-    //#ifndef AI_PROFILING
-    // Time to handle guys in realtime (either combat or not )
+    // #ifndef AI_PROFILING
+    //  Time to handle guys in realtime (either combat or not )
     if (!TIMECOUNTERDONE(pSoldier->AICounter, pSoldier->uiAIDelay)) {
       // CAMFIELD, LOOK HERE!
       return;
@@ -229,7 +230,7 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
       // DebugMsg( TOPIC_JA2, DBG_LEVEL_0, String( "%s waiting %d from %d", pSoldier->name,
       // pSoldier->AICounter, uiCurrTime ) );
     }
-    //#endif
+    // #endif
   }
 
   if (pSoldier->fAIFlags & AI_HANDLE_EVERY_FRAME)  // if set to handle every frame, ignore delay!

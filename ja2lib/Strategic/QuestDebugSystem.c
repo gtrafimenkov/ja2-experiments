@@ -18,6 +18,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/QuestText.h"
 #include "Strategic/Quests.h"
@@ -45,7 +46,7 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 
-//#ifdef JA2BETAVERSION
+// #ifdef JA2BETAVERSION
 
 //*******************************
 //
@@ -3247,7 +3248,7 @@ void RefreshAllNPCInventory() {
         // refresh the mercs inventory
         for (usItemCnt = 0; usItemCnt < NUM_INV_SLOTS; usItemCnt++) {
           // null out the items in the npc inventory
-          memset(&Menptr[usCnt].inv[usItemCnt], 0, sizeof(struct OBJECTTYPE));
+          memset(&GetSoldierByID(usCnt)->inv[usItemCnt], 0, sizeof(struct OBJECTTYPE));
 
           if (gMercProfiles[Menptr[usCnt].ubProfile].inv[usItemCnt] != NOTHING) {
             // get the item
@@ -3257,7 +3258,7 @@ void RefreshAllNPCInventory() {
             CreateItem(usItem, 100, &TempObject);
 
             // copy the item into the soldiers inventory
-            memcpy(&Menptr[usCnt].inv[usItemCnt], &TempObject, sizeof(struct OBJECTTYPE));
+            memcpy(&GetSoldierByID(usCnt)->inv[usItemCnt], &TempObject, sizeof(struct OBJECTTYPE));
           }
         }
       }
@@ -3419,7 +3420,7 @@ void SetQDSMercProfile() {
       gfNpcPanelIsUsedForTalkingMerc = TRUE;
 
       InternalInitTalkingMenu(gTalkingMercSoldier->ubProfile, 10, 10);
-      gpDestSoldier = &Menptr[21];
+      gpDestSoldier = GetSoldierByID(21);
     }
   }
 }

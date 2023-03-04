@@ -19,6 +19,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -3611,23 +3612,6 @@ void HandleSettingTheSelectedListOfMercs(void) {
     RememberPreviousPathForAllSelectedChars();
   }
 }
-
-/*
-INT32 GetSquadListIndexForSquadNumber( INT32 iSquadNumber )
-{
-        INT32 iCounter = 0;
-
-        for( iCounter = 0; iCounter < giNumberOfSquadsInSectorMoving; iCounter++ )
-        {
-                if( iSquadMovingList[ iCounter ] == iSquadNumber )
-                {
-                        return( iCounter );
-                }
-        }
-
-        return( -1 );
-}
-*/
 
 BOOLEAN AllOtherSoldiersInListAreSelected(void) {
   INT32 iCounter = 0, iCount = 0;

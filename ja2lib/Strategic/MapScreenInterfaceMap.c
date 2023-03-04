@@ -11,6 +11,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -30,7 +31,6 @@
 #include "Strategic/TownMilitia.h"
 #include "Tactical/AirRaid.h"
 #include "Tactical/MapInformation.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/MilitiaControl.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierProfile.h"
@@ -5668,7 +5668,7 @@ BOOLEAN CanMercsScoutThisSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
 
   for (iCounter = iFirstId; iCounter <= iLastId; iCounter++) {
     // get the soldier
-    pSoldier = &Menptr[iCounter];
+    pSoldier = GetSoldierByID(iCounter);
 
     // is the soldier active
     if (pSoldier->bActive == FALSE) {

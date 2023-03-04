@@ -5,6 +5,7 @@
 #include "SGP/FileMan.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/MapScreenHelicopter.h"
 #include "Strategic/StrategicMap.h"
@@ -958,7 +959,7 @@ BOOLEAN LoadSquadInfoFromSavedGameFile(HWFILE hFile) {
   for (iCounter = 0; iCounter < NUMBER_OF_SQUADS; iCounter++) {
     for (iCounterB = 0; iCounterB < NUMBER_OF_SOLDIERS_PER_SQUAD; iCounterB++) {
       if (sSquadSaveStruct[iCounter][iCounterB].uiID != -1)
-        Squad[iCounter][iCounterB] = &Menptr[sSquadSaveStruct[iCounter][iCounterB].uiID];
+        Squad[iCounter][iCounterB] = GetSoldierByID(sSquadSaveStruct[iCounter][iCounterB].uiID);
       else
         Squad[iCounter][iCounterB] = NULL;
     }

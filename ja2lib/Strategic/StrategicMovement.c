@@ -11,6 +11,7 @@
 #include "SGP/Random.h"
 #include "SGP/Video.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/AutoResolve.h"
 #include "Strategic/CampaignTypes.h"
@@ -36,7 +37,6 @@
 #include "Tactical/DialogueControl.h"
 #include "Tactical/InventoryChoosing.h"
 #include "Tactical/MapInformation.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierAdd.h"
 #include "Tactical/SoldierControl.h"
@@ -3197,7 +3197,7 @@ BOOLEAN LoadPlayerGroupList(HWFILE hFile, struct GROUP **pGroup) {
     // Assert( sTempID != -1 );
     pTemp->ubID = (UINT8)sTempID;
 
-    pTemp->pSoldier = &Menptr[pTemp->ubID];
+    pTemp->pSoldier = GetSoldierByID(pTemp->ubID);
 
     pTemp->next = NULL;
 

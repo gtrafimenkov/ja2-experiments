@@ -1,3 +1,4 @@
+#include "Soldier.h"
 #include "Strategic/MapScreenInterfaceMap.h"
 #include "Strategic/Quests.h"
 #include "Strategic/Scheduling.h"

@@ -15,6 +15,7 @@
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/AutoResolve.h"
 #include "Strategic/GameClock.h"
@@ -32,7 +33,6 @@
 #include "Tactical/DialogueControl.h"
 #include "Tactical/Interface.h"
 #include "Tactical/Items.h"
-#include "Tactical/Menptr.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/Points.h"
 #include "Tactical/SoldierAdd.h"
@@ -138,7 +138,7 @@ INT8 HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
   // record how long the merc will be gone for
   pMerc->bMercStatus = (UINT8)pHireMerc->iTotalContractLength;
 
-  pSoldier = &Menptr[iNewIndex];
+  pSoldier = GetSoldierByID(iNewIndex);
 
   // Copy over insertion data....
   pSoldier->ubStrategicInsertionCode = pHireMerc->ubInsertionCode;
@@ -273,7 +273,7 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
   // stop time compression until player restarts it
   StopTimeCompression();
 
-  pSoldier = &Menptr[ubSoldierID];
+  pSoldier = GetSoldierByID(ubSoldierID);
 
   pMerc = &gMercProfiles[pSoldier->ubProfile];
 
