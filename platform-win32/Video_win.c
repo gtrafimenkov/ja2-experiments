@@ -1142,18 +1142,6 @@ void ScrollJA2Background(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScr
   }
 
   if (fRenderStrip) {
-    // Memset to 0
-#ifdef SCROLL_TEST
-    {
-      DDBLTFX BlitterFX;
-
-      BlitterFX.dwSize = sizeof(DDBLTFX);
-      BlitterFX.dwFillColor = 0;
-
-      DDBltSurface((LPDIRECTDRAWSURFACE2)pDest, NULL, NULL, NULL, DDBLT_COLORFILL, &BlitterFX);
-    }
-#endif
-
     for (cnt = 0; cnt < usNumStrips; cnt++) {
       RenderStaticWorldRect((INT16)StripRegions[cnt].left, (INT16)StripRegions[cnt].top,
                             (INT16)StripRegions[cnt].right, (INT16)StripRegions[cnt].bottom, TRUE,

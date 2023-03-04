@@ -963,13 +963,6 @@ INT16 FindBestNearbyCover(struct SOLDIERTYPE *pSoldier, INT32 morale, INT32 *piP
     InvalidateScreen();
     EndFrameBufferRender();
     RefreshScreen(NULL);
-    /*
-iLoop = GetJA2Clock();
-do
-{
-
-} while( ( GetJA2Clock( ) - iLoop ) < 2000 );
-*/
   }
 #endif
 

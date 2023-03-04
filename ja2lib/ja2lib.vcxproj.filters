@@ -1078,9 +1078,6 @@
     <ClInclude Include="SGP\MouseSystem.h">
       <Filter>Header Files\SGP</Filter>
     </ClInclude>
-    <ClInclude Include="SGP\MouseSystemMacros.h">
-      <Filter>Header Files\SGP</Filter>
-    </ClInclude>
     <ClInclude Include="SGP\PCX.h">
       <Filter>Header Files\SGP</Filter>
     </ClInclude>

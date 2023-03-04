@@ -470,7 +470,6 @@
     <ClInclude Include="SGP\Line.h" />
     <ClInclude Include="SGP\MemMan.h" />
     <ClInclude Include="SGP\MouseSystem.h" />
-    <ClInclude Include="SGP\MouseSystemMacros.h" />
     <ClInclude Include="SGP\PCX.h" />
     <ClInclude Include="SGP\Random.h" />
     <ClInclude Include="SGP\SGP.h" />

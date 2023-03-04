@@ -272,17 +272,6 @@ BUILDING* GenerateBuilding(INT16 sDesiredSpot) {
 
   // at end could prune # of locations if there are too many
 
-  /*
-  #ifdef ROOF_DEBUG
-          SetRenderFlags( RENDER_FLAG_FULL );
-          RenderWorld(mouse);
-          RenderCoverDebug( );
-          InvalidateScreen( );
-          EndFrameBufferRender();
-          RefreshScreen( NULL );
-  #endif
-  */
-
   return (pBuilding);
 }
 

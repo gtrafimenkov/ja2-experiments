@@ -21,6 +21,8 @@
 #include "TileEngine/RenderDirty.h"
 #include "Utils/FontControl.h"
 
+static void MSYS_UpdateMouseRegion(const struct MouseInput mouse);
+
 #define BASE_REGION_FLAGS (MSYS_REGION_ENABLED | MSYS_SET_CURSOR)
 
 // Kris:	Nov 31, 1999 -- Added support for double clicking
@@ -190,13 +192,8 @@ void MSYS_Shutdown(void) {
   UnRegisterDebugTopic(TOPIC_MOUSE_SYSTEM, "Mouse Region System");
 }
 
-//======================================================================================================
-//	MSYS_SGP_Mouse_Handler_Hook
-//
-//	Hook to the SGP's mouse handler
-//
-void MSYS_SGP_Mouse_Handler_Hook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButton,
-                                 BOOLEAN RightButton) {
+void MouseSystemHook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButton,
+                     BOOLEAN RightButton, const struct MouseInput mouse) {
   // If the mouse system isn't initialized, get out o' here
   if (!MSYS_SystemInitialized) return;
 
@@ -243,7 +240,7 @@ void MSYS_SGP_Mouse_Handler_Hook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOL
         MSYS_CurrentMY = Ycoord;
       }
 
-      MSYS_UpdateMouseRegion();
+      MSYS_UpdateMouseRegion(mouse);
       break;
 
     // ATE: Checks here for mouse button repeats.....
@@ -262,7 +259,7 @@ void MSYS_SGP_Mouse_Handler_Hook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOL
         MSYS_CurrentMY = Ycoord;
       }
 
-      MSYS_UpdateMouseRegion();
+      MSYS_UpdateMouseRegion(mouse);
       break;
 
     case MOUSE_POS:
@@ -273,7 +270,7 @@ void MSYS_SGP_Mouse_Handler_Hook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOL
 
         gfRefreshUpdate = FALSE;
 
-        MSYS_UpdateMouseRegion();
+        MSYS_UpdateMouseRegion(mouse);
       }
       break;
 
@@ -461,7 +458,7 @@ void MSYS_DeleteRegionFromList(struct MOUSE_REGION *region) {
 //	Searches the list for the highest priority region and updates it's info. It also dispatches
 //	the callback functions
 //
-void MSYS_UpdateMouseRegion(void) {
+static MSYS_UpdateMouseRegion(const struct MouseInput mouse) {
   INT32 found;
   UINT32 ButtonReason;
   struct MOUSE_REGION *pTempRegion;
@@ -509,7 +506,7 @@ void MSYS_UpdateMouseRegion(void) {
       if (MSYS_PrevRegion->uiFlags & MSYS_MOVE_CALLBACK &&
           MSYS_PrevRegion->uiFlags & MSYS_REGION_ENABLED)
         (*(MSYS_PrevRegion->MovementCallback))(MSYS_PrevRegion, MSYS_CALLBACK_REASON_LOST_MOUSE,
-                                               XXX_GetMouseInput());
+                                               mouse);
     }
   }
 
@@ -532,7 +529,7 @@ void MSYS_UpdateMouseRegion(void) {
         }
         if (MSYS_CurrRegion->uiFlags & MSYS_REGION_ENABLED) {
           (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_GAIN_MOUSE,
-                                                 XXX_GetMouseInput());
+                                                 mouse);
         }
       }
 
@@ -574,8 +571,7 @@ void MSYS_UpdateMouseRegion(void) {
 
       if (MSYS_CurrRegion->uiFlags & MSYS_REGION_ENABLED &&
           MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK && MSYS_Action & MSYS_DO_MOVE) {
-        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE,
-                                               XXX_GetMouseInput());
+        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE, mouse);
       }
 
       // ExecuteMouseHelpEndCallback( MSYS_CurrRegion );
@@ -672,8 +668,7 @@ void MSYS_UpdateMouseRegion(void) {
               }
             }
 
-            (*(MSYS_CurrRegion->ButtonCallback))(MSYS_CurrRegion, ButtonReason,
-                                                 XXX_GetMouseInput());
+            (*(MSYS_CurrRegion->ButtonCallback))(MSYS_CurrRegion, ButtonReason, mouse);
           }
         }
       }
@@ -697,8 +692,7 @@ void MSYS_UpdateMouseRegion(void) {
       MSYS_CurrRegion->RelativeYPos = MSYS_CurrentMY - MSYS_CurrRegion->RegionTopLeftY;
 
       if ((MSYS_CurrRegion->uiFlags & MSYS_MOVE_CALLBACK) && (MSYS_Action & MSYS_DO_MOVE)) {
-        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE,
-                                               XXX_GetMouseInput());
+        (*(MSYS_CurrRegion->MovementCallback))(MSYS_CurrRegion, MSYS_CALLBACK_REASON_MOVE, mouse);
       }
 
       MSYS_Action &= (~MSYS_DO_MOVE);
@@ -917,37 +911,6 @@ INT32 MSYS_GetRegionUserData(struct MOUSE_REGION *region, INT32 index) {
   return (region->UserData[index]);
 }
 
-//=================================================================================================
-//	MSYS_GrabMouse
-//
-//	Assigns all mouse activity to a region, effectively blocking any other region from having
-//	control.
-//
-INT32 MSYS_GrabMouse(struct MOUSE_REGION *region) {
-  if (!MSYS_RegionInList(region)) return (MSYS_REGION_NOT_IN_LIST);
-
-  if (MSYS_Mouse_Grabbed == TRUE) return (MSYS_ALREADY_GRABBED);
-
-  MSYS_Mouse_Grabbed = TRUE;
-  MSYS_GrabRegion = region;
-  return (MSYS_GRABBED_OK);
-}
-
-//=================================================================================================
-//	MSYS_ReleaseMouse
-//
-//	Releases a previously grabbed mouse region
-//
-void MSYS_ReleaseMouse(struct MOUSE_REGION *region) {
-  if (MSYS_GrabRegion != region) return;
-
-  if (MSYS_Mouse_Grabbed == TRUE) {
-    MSYS_Mouse_Grabbed = FALSE;
-    MSYS_GrabRegion = NULL;
-    MSYS_UpdateMouseRegion();
-  }
-}
-
 /* ==================================================================================
    MSYS_MoveMouseRegionTo( struct MOUSE_REGION *region, INT16 sX, INT16 sY)
 
@@ -973,31 +936,12 @@ void MSYS_MoveMouseRegionTo(struct MOUSE_REGION *region, INT16 sX, INT16 sY) {
   return;
 }
 
-/* ==================================================================================
-   MSYS_MoveMouseRegionBy( struct MOUSE_REGION *region, INT16 sDeltaX, INT16 sDeltaY)
-
-         Moves a Mouse region by sDeltaX sDeltaY on the screen
-
-*/
-
-void MSYS_MoveMouseRegionBy(struct MOUSE_REGION *region, INT16 sDeltaX, INT16 sDeltaY) {
-  // move top left
-  region->RegionTopLeftX = region->RegionTopLeftX + sDeltaX;
-  region->RegionTopLeftY = region->RegionTopLeftY + sDeltaY;
-
-  // now move bottom right
-  region->RegionBottomRightX = region->RegionBottomRightX + sDeltaX;
-  region->RegionBottomRightY = region->RegionBottomRightY + sDeltaY;
-
-  return;
-}
-
 // This function will force a re-evaluation of mouse regions
 // Usually used to force change of mouse cursor if panels switch, etc
 void RefreshMouseRegions() {
   MSYS_Action |= MSYS_DO_MOVE;
 
-  MSYS_UpdateMouseRegion();
+  MSYS_UpdateMouseRegion(mouse);
 }
 
 void SetRegionFastHelpText(struct MOUSE_REGION *region, STR16 szText) {
@@ -1194,10 +1138,6 @@ void RenderFastHelp() {
     }
   }
 }
-
-BOOLEAN SetRegionSavedRect(struct MOUSE_REGION *region) { return FALSE; }
-
-void FreeRegionSavedRect(struct MOUSE_REGION *region) {}
 
 void MSYS_AllowDisabledRegionFastHelp(struct MOUSE_REGION *region, BOOLEAN fAllow) {
   if (fAllow) {

@@ -2,7 +2,6 @@
 #define _MOUSE_SYSTEM_H_
 
 #include "MouseInput.h"
-#include "SGP/MouseSystemMacros.h"
 #include "SGP/Types.h"
 
 struct MOUSE_REGION;
@@ -128,8 +127,8 @@ struct MOUSE_REGION {
 #define MSYS_ALREADY_GRABBED 1
 #define MSYS_REGION_NOT_IN_LIST 2
 
-// Note:
-//		The prototype for MSYS_SGP_Mouse_Handler_Hook() is defined in mousesystem_macros.h
+extern void MouseSystemHook(UINT16 Type, UINT16 Xcoord, UINT16 Ycoord, BOOLEAN LeftButton,
+                            BOOLEAN RightButton, const struct MouseInput mouse);
 
 // Internal Functions
 INT32 MSYS_GetNewID(void);
@@ -137,7 +136,6 @@ void MSYS_TrashRegList(void);
 void MSYS_AddRegionToList(struct MOUSE_REGION *region);
 INT32 MSYS_RegionInList(struct MOUSE_REGION *region);
 void MSYS_DeleteRegionFromList(struct MOUSE_REGION *region);
-void MSYS_UpdateMouseRegion(void);
 void MSYS_SetCurrentCursor(UINT16 Cursor);
 
 // External
@@ -155,9 +153,6 @@ void MSYS_ChangeRegionPriority(struct MOUSE_REGION *region, INT8 priority);
 void MSYS_SetRegionUserData(struct MOUSE_REGION *region, INT32 index, INT32 userdata);
 INT32 MSYS_GetRegionUserData(struct MOUSE_REGION *region, INT32 index);
 
-INT32 MSYS_GrabMouse(struct MOUSE_REGION *region);
-void MSYS_ReleaseMouse(struct MOUSE_REGION *region);
-void MSYS_MoveMouseRegionBy(struct MOUSE_REGION *region, INT16 sDeltaX, INT16 sDeltaY);
 void MSYS_MoveMouseRegionTo(struct MOUSE_REGION *region, INT16 sX, INT16 sY);
 
 void MSYS_AllowDisabledRegionFastHelp(struct MOUSE_REGION *region, BOOLEAN fAllow);
@@ -180,8 +175,5 @@ void EnableMouseFastHelp(void);
 void DisableMouseFastHelp(void);
 
 void ResetClickedMode(void);
-
-BOOLEAN SetRegionSavedRect(struct MOUSE_REGION *region);
-void FreeRegionSavedRect(struct MOUSE_REGION *region);
 
 #endif
