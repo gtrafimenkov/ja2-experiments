@@ -232,9 +232,9 @@ void SelectedSLSEntireRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason
 BOOLEAN EnterSaveLoadScreen();
 void RenderSaveLoadScreen();
 void ExitSaveLoadScreen();
-void HandleSaveLoadScreen();
+static void HandleSaveLoadScreen(const struct MouseInput mouse);
 static void GetSaveLoadScreenUserInput(const struct MouseInput mouse);
-void SaveLoadGameNumber(INT8 bSaveGameID);
+static void SaveLoadGameNumber(INT8 bSaveGameID, const struct MouseInput mouse);
 BOOLEAN LoadSavedGameHeader(INT8 bEntry, SAVED_GAME_HEADER *pSaveGameHeader);
 BOOLEAN DisplaySaveGameEntry(INT8 bEntryID);  //, UINT16 usPosY );
 BOOLEAN DisplaySaveGameList();
@@ -312,7 +312,7 @@ UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput) {
 
   RenderAllTextFields();
 
-  HandleSaveLoadScreen();
+  HandleSaveLoadScreen(gameInput->mouse);
 
   if (gfRedrawSaveLoadScreen) {
     RenderSaveLoadScreen();
@@ -327,7 +327,7 @@ UINT32 SaveLoadScreenHandle(const struct GameInput *gameInput) {
 
     if (gubSaveGameNextPass == 5) {
       gubSaveGameNextPass = 0;
-      SaveLoadGameNumber(gbSelectedSaveLocation);
+      SaveLoadGameNumber(gbSelectedSaveLocation, gameInput->mouse);
     }
   }
 
@@ -712,13 +712,13 @@ void RenderSaveLoadScreen() {
   InvalidateRegion(0, 0, 639, 479);
 }
 
-void HandleSaveLoadScreen() {
+void HandleSaveLoadScreen(const struct MouseInput mouse) {
   // If the game failed when in a message box, pop up a message box stating this
   if (gfFailedToSaveGameWhenInsideAMessageBox) {
     gfFailedToSaveGameWhenInsideAMessageBox = FALSE;
 
     DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVE_GAME_ERROR], SAVE_LOAD_SCREEN,
-                         MSG_BOX_FLAG_OK, RedrawSaveLoadScreenAfterMessageBox, XXX_GetMouseInput());
+                         MSG_BOX_FLAG_OK, RedrawSaveLoadScreenAfterMessageBox, mouse);
 
     //		gbSelectedSaveLocation = -1;
     gbHighLightedLocation = -1;
@@ -883,11 +883,11 @@ static void GetSaveLoadScreenUserInput(const struct MouseInput mouse) {
 
               DestroySaveLoadTextInputBoxes();
 
-              SaveLoadGameNumber(gbSelectedSaveLocation);
+              SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
               return;
             } else {
               if (gbSelectedSaveLocation != -1) {
-                SaveLoadGameNumber(gbSelectedSaveLocation);
+                SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
                 return;
               }
             }
@@ -897,7 +897,7 @@ static void GetSaveLoadScreenUserInput(const struct MouseInput mouse) {
 
             gfRedrawSaveLoadScreen = TRUE;
           } else
-            SaveLoadGameNumber(gbSelectedSaveLocation);
+            SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
 
           break;
       }
@@ -905,7 +905,7 @@ static void GetSaveLoadScreenUserInput(const struct MouseInput mouse) {
   }
 }
 
-void SaveLoadGameNumber(INT8 bSaveGameID) {
+static void SaveLoadGameNumber(INT8 bSaveGameID, const struct MouseInput mouse) {
   //	CHAR16	zTemp[128];
   UINT8 ubRetVal = 0;
 
@@ -929,7 +929,7 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
       swprintf(sText, ARR_SIZE(sText), zSaveLoadText[SLG_CONFIRM_SAVE], bSaveGameID);
 
       DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, sText, SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                           ConfirmSavedGameMessageBoxCallback, XXX_GetMouseInput());
+                           ConfirmSavedGameMessageBoxCallback, mouse);
     } else {
       // else do NOT put up a confirmation
 
@@ -943,15 +943,15 @@ void SaveLoadGameNumber(INT8 bSaveGameID) {
       if (ubRetVal == SLS_GAME_VERSION_OUT_OF_DATE) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_GAME_VERSION_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallback, XXX_GetMouseInput());
+                             LoadSavedGameWarningMessageBoxCallback, mouse);
       } else if (ubRetVal == SLS_SAVED_GAME_VERSION_OUT_OF_DATE) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVED_GAME_VERSION_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallback, XXX_GetMouseInput());
+                             LoadSavedGameWarningMessageBoxCallback, mouse);
       } else {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_BOTH_GAME_AND_SAVED_GAME_DIF],
                              SAVE_LOAD_SCREEN, MSG_BOX_FLAG_YESNO,
-                             LoadSavedGameWarningMessageBoxCallback, XXX_GetMouseInput());
+                             LoadSavedGameWarningMessageBoxCallback, mouse);
       }
     } else {
       // Setup up the fade routines
@@ -1376,7 +1376,7 @@ void BtnSlgSaveLoadCallback(GUI_BUTTON *btn, INT32 reason) {
   if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
 
-    SaveLoadGameNumber(gbSelectedSaveLocation);
+    SaveLoadGameNumber(gbSelectedSaveLocation, XXX_GetMouseInput());
 
     InvalidateRegion(btn->Area.RegionTopLeftX, btn->Area.RegionTopLeftY,
                      btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
@@ -1482,11 +1482,9 @@ void SelectedSaveRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       if (gfSaveGame) {
         // if the user is not currently editing the game desc
         if (!gfUserInTextInputMode) {
-          //					SaveLoadGameNumber( gbSelectedSaveLocation );
-
           if ((uiCurTime - uiLastTime) < SLG_DOUBLE_CLICK_DELAY) {
             // Load the saved game
-            SaveLoadGameNumber(gbSelectedSaveLocation);
+            SaveLoadGameNumber(gbSelectedSaveLocation, mouse);
           } else {
             uiLastTime = GetJA2Clock();
           }
@@ -1529,7 +1527,7 @@ void SelectedSaveRegionCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       else {
         if ((uiCurTime - uiLastTime) < SLG_DOUBLE_CLICK_DELAY) {
           // Load the saved game
-          SaveLoadGameNumber(bSelected);
+          SaveLoadGameNumber(bSelected, mouse);
         } else {
           uiLastTime = GetJA2Clock();
         }
