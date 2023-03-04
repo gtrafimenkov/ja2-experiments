@@ -17,7 +17,6 @@
 #include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicTownLoyalty.h"
 #include "Tactical/DialogueControl.h"
-#include "Tactical/Interface.h"
 #include "Tactical/Menptr.h"
 #include "Tactical/MilitiaControl.h"
 #include "Tactical/Overhead.h"
@@ -859,7 +858,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
     }
   } else {
     // handle for tactical
-    pSoldier = &Menptr[gusUIFullTargetID];
+    pSoldier = GetTacticalContextMenuMerc();
     iCounter = 0;
 
     if (CanCharacterTrainMilitia(pSoldier) == TRUE) {

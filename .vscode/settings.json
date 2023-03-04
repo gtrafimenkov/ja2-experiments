@@ -8,6 +8,7 @@
         "vobject.h": "c",
         "jascreens.h": "c",
         "gameinputinternal.h": "c",
-        "himage.h": "c"
+        "himage.h": "c",
+        "menptr.h": "c"
     }
 }

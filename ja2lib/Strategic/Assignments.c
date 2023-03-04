@@ -9801,7 +9801,7 @@ struct SOLDIERTYPE *GetSelectedAssignSoldier(BOOLEAN fNullOK) {
     }
   } else {
     // tactical version
-    pSoldier = &Menptr[gusUIFullTargetID];
+    pSoldier = GetTacticalContextMenuMerc();
   }
 
   if (!fNullOK) {

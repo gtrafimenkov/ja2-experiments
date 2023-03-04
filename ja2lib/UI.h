@@ -9,4 +9,7 @@ bool IsMapScreen();
 
 const SGPRect* GetMapCenteringRect();
 
+// Get Merc associated with the context menu on tactical screen.
+struct SOLDIERTYPE* GetTacticalContextMenuMerc();
+
 #endif

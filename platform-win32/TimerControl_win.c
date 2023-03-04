@@ -3,6 +3,7 @@
 #include "SGP/Debug.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
+#include "UI.h"
 #include "Utils/TimerControl.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
