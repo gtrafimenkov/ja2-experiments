@@ -38,6 +38,7 @@
 #include "Tactical/TacticalSave.h"
 #include "TileEngine/MapEdgepoints.h"
 #include "TileEngine/RenderWorld.h"
+#include "UI.h"
 #include "Utils/Message.h"
 
 #ifdef JA2BETAVERSION
