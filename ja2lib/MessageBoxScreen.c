@@ -854,9 +854,6 @@ UINT32 MessageBoxScreenHandle(const struct GameInput *gameInput) {
   if (gfNewMessageBox) {
     // If in game screen....
     if ((gfStartedFromGameScreen) || (gfStartedFromMapScreen)) {
-      // UINT32 uiDestPitchBYTES, uiSrcPitchBYTES;
-      // UINT8	 *pDestBuf, *pSrcBuf;
-
       if (gfStartedFromGameScreen) {
         HandleTacticalUILoseCursorFromOtherScreen(gameInput);
       } else {
