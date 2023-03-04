@@ -1013,6 +1013,9 @@
     <ClCompile Include="StrUtils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UI.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGP\Bitmap.h">

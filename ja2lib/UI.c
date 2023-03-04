@@ -5,7 +5,7 @@
 #include "Tactical/Interface.h"
 #include "Tactical/InterfaceControl.h"
 
-bool IsTacticalMode() { return IsTacticalMode(); }
+bool IsTacticalMode() { return guiCurrentScreen == GAME_SCREEN; }
 
 static SGPRect mapCenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
 
