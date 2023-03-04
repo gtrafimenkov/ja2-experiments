@@ -5261,17 +5261,17 @@ BOOLEAN GetMouseMapXY(INT16 *psMapWorldX, INT16 *psMapWorldY) {
     return (FALSE);
   }
 
-  struct Point MousePos = GetMousePoint();
+  struct MouseInput mouse = XXX_GetMouseInput();
 
   if (fZoomFlag) {
-    if (MousePos.x > MAP_GRID_X + MAP_VIEW_START_X) MousePos.x -= MAP_GRID_X;
-    if (MousePos.x > MAP_VIEW_START_X + MAP_VIEW_WIDTH) MousePos.x = -1;
-    if (MousePos.y > MAP_GRID_Y + MAP_VIEW_START_Y) MousePos.y -= MAP_GRID_Y;
-    if (MousePos.y > MAP_VIEW_START_Y + MAP_VIEW_HEIGHT - 11) MousePos.y = -11;
-    if (MousePos.y < MAP_VIEW_START_Y) MousePos.y = -1;
+    if (mouse.x > MAP_GRID_X + MAP_VIEW_START_X) mouse.x -= MAP_GRID_X;
+    if (mouse.x > MAP_VIEW_START_X + MAP_VIEW_WIDTH) mouse.x = -1;
+    if (mouse.y > MAP_GRID_Y + MAP_VIEW_START_Y) mouse.y -= MAP_GRID_Y;
+    if (mouse.y > MAP_VIEW_START_Y + MAP_VIEW_HEIGHT - 11) mouse.y = -11;
+    if (mouse.y < MAP_VIEW_START_Y) mouse.y = -1;
   }
 
-  return (GetMapXY((INT16)MousePos.x, (INT16)MousePos.y, psMapWorldX, psMapWorldY));
+  return (GetMapXY((INT16)mouse.x, (INT16)mouse.y, psMapWorldX, psMapWorldY));
 }
 
 BOOLEAN GetMapXY(INT16 sX, INT16 sY, INT16 *psMapWorldX, INT16 *psMapWorldY) {
@@ -7049,16 +7049,8 @@ INT32 GetIndexForThisSoldier(struct SOLDIERTYPE *pSoldier) {
 }
 
 BOOLEAN IsCursorWithInRegion(INT16 sLeft, INT16 sRight, INT16 sTop, INT16 sBottom) {
-  struct Point MousePos = GetMousePoint();
-
-  // is it within region?
-
-  if ((sLeft < MousePos.x) && (sRight > MousePos.x) && (sTop < MousePos.y) &&
-      (sBottom > MousePos.y)) {
-    return (TRUE);
-  } else {
-    return (FALSE);
-  }
+  const struct MouseInput mouse = XXX_GetMouseInput();
+  return (sLeft < mouse.x) && (sRight > mouse.x) && (sTop < mouse.y) && (sBottom > mouse.y);
 }
 
 void HandleHighLightingOfLinesInTeamPanel(void) {

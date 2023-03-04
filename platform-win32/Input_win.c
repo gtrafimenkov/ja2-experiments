@@ -678,7 +678,7 @@ void KeyChange(UINT32 usParam, UINT32 uiParam, UINT8 ufKeyState) {
     }
   }
 
-  struct Point MousePos = GetMousePoint();
+  struct Point MousePos = Plat_GetMousePoint();
   uiTmpLParam = ((MousePos.y << 16) & 0xffff0000) | (MousePos.x & 0x0000ffff);
 
   if (ufKeyState == TRUE) {  // Key has been PRESSED
@@ -1069,7 +1069,7 @@ void HandleSingleClicksAndButtonRepeats(void) {
   if (gfLeftButtonState) {
     if ((guiLeftButtonRepeatTimer > 0) && (guiLeftButtonRepeatTimer <= uiTimer)) {
       UINT32 uiTmpLParam;
-      struct Point MousePos = GetMousePoint();
+      struct Point MousePos = Plat_GetMousePoint();
       uiTmpLParam = ((MousePos.y << 16) & 0xffff0000) | (MousePos.x & 0x0000ffff);
       QueueEvent(LEFT_BUTTON_REPEAT, 0, uiTmpLParam);
       guiLeftButtonRepeatTimer = uiTimer + BUTTON_REPEAT_TIME;
@@ -1082,7 +1082,7 @@ void HandleSingleClicksAndButtonRepeats(void) {
   if (gfRightButtonState) {
     if ((guiRightButtonRepeatTimer > 0) && (guiRightButtonRepeatTimer <= uiTimer)) {
       UINT32 uiTmpLParam;
-      struct Point MousePos = GetMousePoint();
+      struct Point MousePos = Plat_GetMousePoint();
       uiTmpLParam = ((MousePos.y << 16) & 0xffff0000) | (MousePos.x & 0x0000ffff);
       QueueEvent(RIGHT_BUTTON_REPEAT, 0, uiTmpLParam);
       guiRightButtonRepeatTimer = uiTimer + BUTTON_REPEAT_TIME;
@@ -1092,7 +1092,7 @@ void HandleSingleClicksAndButtonRepeats(void) {
   }
 }
 
-struct Point GetMousePoint() {
+struct Point Plat_GetMousePoint() {
   POINT p;
   GetCursorPos(&p);
   struct Point res = {p.x, p.y};

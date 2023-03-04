@@ -845,9 +845,7 @@ static void MapScreenMessageScrollBarCallback(struct MOUSE_REGION *pRegion, INT3
     // this
     if (ubNumMessages > MAX_MESSAGES_ON_MAP_BOTTOM) {
       // where is the mouse?
-      struct Point MousePos = GetMousePoint();
-
-      ubMouseYOffset = (INT8)(MousePos.y - MESSAGE_SCROLL_AREA_START_Y);
+      ubMouseYOffset = (INT8)(mouse.y - MESSAGE_SCROLL_AREA_START_Y);
 
       // if clicking in the top 5 pixels of the slider bar
       if (ubMouseYOffset < (SLIDER_HEIGHT / 2)) {

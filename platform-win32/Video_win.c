@@ -1221,35 +1221,7 @@ void ScrollJA2Background(UINT32 uiDirection, INT16 sScrollXIncrement, INT16 sScr
 
     // BLIT NEW
     ExecuteVideoOverlaysToAlternateBuffer(BACKBUFFER);
-
-#if 0
-
-		// Erase mouse from old position
-		if (gMouseCursorBackground[ uiCurrentMouseBackbuffer ].fRestore == TRUE )
-		{
-
-			do
-			{
-				ReturnCode = IDirectDrawSurface2_SGPBltFast(gpBackBuffer, usMouseXPos, usMouseYPos, gMouseCursorBackground[uiCurrentMouseBackbuffer].pSurface, (LPRECT)&MouseRegion, DDBLTFAST_NOCOLORKEY);
-				if ((ReturnCode != DD_OK)&&(ReturnCode != DDERR_WASSTILLDRAWING))
-				{
-					DirectXAttempt ( ReturnCode, __LINE__, __FILE__ );
-
-					if (ReturnCode == DDERR_SURFACELOST)
-					{
-
-					}
-				}
-			} while (ReturnCode != DD_OK);
-		}
-
-#endif
   }
-
-  // InvalidateRegion( sLeftDraw, sTopDraw, sRightDraw, sBottomDraw );
-
-  // UpdateSaveBuffer();
-  // SaveBackgroundRects();
 }
 
 void RefreshScreen(void *DummyVariable) {
@@ -1301,7 +1273,7 @@ void RefreshScreen(void *DummyVariable) {
   // Get the current mouse position
   //
 
-  struct Point MousePos = GetMousePoint();
+  const struct MouseInput mouse = XXX_GetMouseInput();
 
   // RESTORE OLD POSITION OF MOUSE
   if (gMouseCursorBackground[CURRENT_MOUSE_DATA].fRestore == TRUE) {
@@ -1632,8 +1604,8 @@ void RefreshScreen(void *DummyVariable) {
     // Step (1) - Save mouse background
     //
 
-    Region.left = MousePos.x - gsMouseCursorXOffset;
-    Region.top = MousePos.y - gsMouseCursorYOffset;
+    Region.left = mouse.x - gsMouseCursorXOffset;
+    Region.top = mouse.y - gsMouseCursorYOffset;
     Region.right = Region.left + gusMouseCursorWidth;
     Region.bottom = Region.top + gusMouseCursorHeight;
 
@@ -1662,7 +1634,7 @@ void RefreshScreen(void *DummyVariable) {
         Region.left = 0;
       } else {
         gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos =
-            (UINT16)MousePos.x - gsMouseCursorXOffset;
+            (UINT16)mouse.x - gsMouseCursorXOffset;
         gMouseCursorBackground[CURRENT_MOUSE_DATA].usLeft = 0;
       }
       if (Region.top < 0) {
@@ -1671,7 +1643,7 @@ void RefreshScreen(void *DummyVariable) {
         Region.top = 0;
       } else {
         gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos =
-            (UINT16)MousePos.y - gsMouseCursorYOffset;
+            (UINT16)mouse.y - gsMouseCursorYOffset;
         gMouseCursorBackground[CURRENT_MOUSE_DATA].usTop = 0;
       }
 

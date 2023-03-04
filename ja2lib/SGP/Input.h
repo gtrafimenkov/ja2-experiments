@@ -96,6 +96,4 @@ extern BOOLEAN gfSGPInputReceived;
 #define _EvCtrlDown(a) (((InputAtom *)(a))->usKeyState & CTRL_DOWN)
 #define _EvAltDown(a) (((InputAtom *)(a))->usKeyState & ALT_DOWN)
 
-extern struct Point GetMousePoint();
-
 #endif

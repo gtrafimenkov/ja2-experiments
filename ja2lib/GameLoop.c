@@ -158,7 +158,7 @@ void GameLoop(void) {
   InputAtom InputEvent;
   UINT32 uiOldScreen = guiCurrentScreen;
 
-  struct Point MousePos = GetMousePoint();
+  struct Point MousePos = Plat_GetMousePoint();
   g_gameInput.mouse.x = MousePos.x;
   g_gameInput.mouse.y = MousePos.y;
 

@@ -118,7 +118,7 @@ void SimulateMouseMovement(UINT32 uiNewXPos, UINT32 uiNewYPos) {}
 
 void DequeueAllKeyBoardEvents() {}
 
-struct Point GetMousePoint() {
+struct Point Plat_GetMousePoint() {
   struct Point res = {0, 0};
   return res;
 }
