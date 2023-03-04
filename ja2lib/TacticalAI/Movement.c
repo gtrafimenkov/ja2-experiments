@@ -690,8 +690,7 @@ void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier, const struct 
       NPCDoesAct(pSoldier);
 
       // perform the chosen action
-      pSoldier->bActionInProgress =
-          ExecuteAction(pSoldier, XXX_GetMouseInput());  // if started, mark us as busy
+      pSoldier->bActionInProgress = ExecuteAction(pSoldier, mouse);  // if started, mark us as busy
     } else {
       // otherwise we shouldn't have to do anything(?)
     }

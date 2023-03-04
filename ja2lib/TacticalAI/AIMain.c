@@ -1816,13 +1816,6 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier, const struct MouseInput mouse) 
           }
         }
       }
-#ifdef RECORDNET
-      fprintf(NetDebugFile,
-              "\tExecuteAction: %d calling HandleItem(), inHand %d, actionData %d, anitype %d, "
-              "oldani %d\n",
-              pSoldier->ubID, pSoldier->inv[HANDPOS].item, pSoldier->usActionData,
-              pSoldier->anitype[pSoldier->anim], pSoldier->oldani);
-#endif
 
 #ifdef TESTVERSION
       if (pSoldier->bAction == AI_ACTION_KNIFE_MOVE) {
