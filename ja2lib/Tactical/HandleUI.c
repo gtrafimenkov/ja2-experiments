@@ -218,9 +218,10 @@ void SetMovementModeCursor(struct SOLDIERTYPE *pSoldier);
 void SetConfirmMovementModeCursor(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromMove);
 void SetUIbasedOnStance(struct SOLDIERTYPE *pSoldier, INT8 bNewStance);
 INT8 DrawUIMovementPath(struct SOLDIERTYPE *pSoldier, UINT16 usMapPos, UINT32 uiFlags);
-INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
-                                               BOOLEAN fUseOKCursor,
-                                               BOOLEAN fItemsOnlyIfOnIntTiles);
+static INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
+                                                      BOOLEAN fUseOKCursor,
+                                                      BOOLEAN fItemsOnlyIfOnIntTiles,
+                                                      const struct MouseInput mouse);
 
 extern void EVENT_InternalSetSoldierDesiredDirection(struct SOLDIERTYPE *pSoldier,
                                                      UINT16 usNewDirection, BOOLEAN fInitalMove,
@@ -654,7 +655,7 @@ UINT32 HandleTacticalUI(const struct MouseInput mouse) {
                String("Setting attack busy count to 0 due to ending AI lock"));
 
       guiPendingOverrideEvent = LU_ENDUILOCK;
-      UIHandleLUIEndLock(NULL, XXX_GetMouseInput());
+      UIHandleLUIEndLock(NULL, mouse);
     }
   }
 
@@ -1398,7 +1399,7 @@ static UINT32 UIHandleMOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mou
         guiNewUICursor = CANNOT_MOVE_UICURSOR;
 
       } else {
-        if (!UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, FALSE, TRUE)) {
+        if (!UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, FALSE, TRUE, mouse)) {
           // Are we in combat?
           if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.uiFlags & TURNBASED)) {
             // If so, draw path, etc
@@ -2631,7 +2632,7 @@ static UINT32 UIHandleHCOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mo
     } else {
       guiNewUICursor = NORMALHANDCURSOR_UICURSOR;
 
-      UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, TRUE, FALSE);
+      UIHandleInteractiveTilesAndItemsOnTerrain(pSoldier, usMapPos, TRUE, FALSE, mouse);
     }
   }
   return (GAME_SCREEN);
@@ -3942,7 +3943,7 @@ static UINT32 UIHandleTOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mou
   if (ValidQuickExchangePosition()) {
     // Do new cursor!
     guiPendingOverrideEvent = M_ON_TERRAIN;
-    return (UIHandleMOnTerrain(pUIEvent, XXX_GetMouseInput()));
+    return (UIHandleMOnTerrain(pUIEvent, mouse));
   }
 
   sTargetGridNo = usMapPos;
@@ -4028,7 +4029,7 @@ static UINT32 UIHandleLUIOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput m
 static UINT32 UIHandleLUIBeginLock(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // Don't let both versions of the locks to happen at the same time!
   // ( They are mutually exclusive )!
-  UIHandleLAEndLockOurTurn(NULL, XXX_GetMouseInput());
+  UIHandleLAEndLockOurTurn(NULL, mouse);
 
   if (!gfDisableRegionActive) {
     gfDisableRegionActive = TRUE;
@@ -4062,7 +4063,7 @@ UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
     // SetCurrentCursorFromDatabase( guiCurrentUICursor );
 
     guiForceRefreshMousePositionCalculation = TRUE;
-    UIHandleMOnTerrain(NULL, XXX_GetMouseInput());
+    UIHandleMOnTerrain(NULL, mouse);
 
     if (gViewportRegion.uiFlags & MSYS_MOUSE_IN_AREA) {
       SetCurrentCursorFromDatabase(gUICursors[guiNewUICursor].usFreeCursorName);
@@ -4465,7 +4466,7 @@ static UINT32 UIHandleJumpOver(UI_EVENT *pUIEvent, const struct MouseInput mouse
 static UINT32 UIHandleLABeginLockOurTurn(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
   // Don't let both versions of the locks to happen at the same time!
   // ( They are mutually exclusive )!
-  UIHandleLUIEndLock(NULL, XXX_GetMouseInput());
+  UIHandleLUIEndLock(NULL, mouse);
 
   if (!gfUserTurnRegionActive) {
     gfUserTurnRegionActive = TRUE;
@@ -4507,7 +4508,7 @@ static UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent, const struct MouseInp
     gfPlotNewMovement = TRUE;
 
     guiForceRefreshMousePositionCalculation = TRUE;
-    UIHandleMOnTerrain(NULL, XXX_GetMouseInput());
+    UIHandleMOnTerrain(NULL, mouse);
 
     if (gViewportRegion.uiFlags & MSYS_MOUSE_IN_AREA) {
       SetCurrentCursorFromDatabase(gUICursors[guiNewUICursor].usFreeCursorName);
@@ -4841,9 +4842,10 @@ void BeginDisplayTimedCursor(UINT32 uiCursorID, UINT32 uiDelay) {
   guiTimerCursorDelay = uiDelay;
 }
 
-INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
-                                               BOOLEAN fUseOKCursor,
-                                               BOOLEAN fItemsOnlyIfOnIntTiles) {
+static INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT16 usMapPos,
+                                                      BOOLEAN fUseOKCursor,
+                                                      BOOLEAN fItemsOnlyIfOnIntTiles,
+                                                      const struct MouseInput mouse) {
   struct ITEM_POOL *pItemPool;
   UINT32 uiCursorFlags;
   struct LEVELNODE *pIntTile;
@@ -4862,7 +4864,7 @@ INT8 UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, INT
     fOverEnemy = FALSE;
   }
 
-  GetCursorMovementFlags(&uiCursorFlags, XXX_GetMouseInput());
+  GetCursorMovementFlags(&uiCursorFlags, mouse);
 
   // Default gridno to mouse pos
   sActionGridNo = usMapPos;

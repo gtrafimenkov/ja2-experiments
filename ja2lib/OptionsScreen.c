@@ -278,7 +278,7 @@ UINT32 OptionsScreenHandle(const struct GameInput *gameInput) {
   }
 
   // Render the active slider bars
-  RenderAllSliderBars();
+  RenderAllSliderBars(gameInput->mouse);
 
   // render buttons marked dirty
   MarkButtonsDirty();

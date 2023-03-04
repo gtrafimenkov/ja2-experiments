@@ -242,14 +242,13 @@ INT32 AddSlider(UINT8 ubStyle, UINT16 usCursor, UINT16 usPosX, UINT16 usPosY, UI
   return (pNewSlider->uiSliderID);
 }
 
-void RenderAllSliderBars() {
+void RenderAllSliderBars(const struct MouseInput mouse) {
   SLIDER *pTemp = NULL;
 
   // set the currently selectd slider bar
   if (gfLeftButtonState && gpCurrentSlider != NULL) {
     UINT16 usPosY = 0;
 
-    const struct MouseInput mouse = XXX_GetMouseInput();
     if (mouse.y < gpCurrentSlider->usPosY)
       usPosY = 0;
     else
