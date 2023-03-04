@@ -4187,7 +4187,7 @@ static void GetMapKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mou
   fAlt = _KeyDown(ALT);
 
   while (DequeueEvent(&InputEvent)) {
-    struct Point MousePos = GetMousePoint();
+    // struct Point MousePos = GetMousePoint();
 
     // HOOK INTO MOUSE HOOKS
     switch (InputEvent.usEvent) {

@@ -162,8 +162,10 @@ void GameLoop(void) {
   g_gameInput.mouse.x = MousePos.x;
   g_gameInput.mouse.y = MousePos.y;
 
+  const struct MouseInput mouse = g_gameInput.mouse;
+
   // Hook into mouse stuff for MOVEMENT MESSAGES
-  MouseSystemHook(MOUSE_POS, _LeftButtonDown, _RightButtonDown, g_gameInput.mouse);
+  MouseSystemHook(MOUSE_POS, _LeftButtonDown, _RightButtonDown, mouse);
   MusicPoll(FALSE);
 
   while (DequeueSpecificEvent(&InputEvent, LEFT_BUTTON_REPEAT | RIGHT_BUTTON_REPEAT |

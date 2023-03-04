@@ -124,7 +124,7 @@ void ExitCharProfile() {
   ExitOldIMPMode();
 }
 
-void HandleCharProfile() {
+void HandleCharProfile(const struct MouseInput mouse) {
   if (fReDrawCharProfile) {
     // re draw
     RenderCharProfile();

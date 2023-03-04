@@ -6,6 +6,7 @@
         "message.h": "c",
         "textinput.h": "c",
         "vobject.h": "c",
-        "jascreens.h": "c"
+        "jascreens.h": "c",
+        "gameinputinternal.h": "c"
     }
 }

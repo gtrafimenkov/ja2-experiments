@@ -4058,7 +4058,7 @@ UINT32 UIHandleLUIEndLock(UI_EVENT *pUIEvent, const struct MouseInput mouse) {
 
     // Add region
     MSYS_RemoveRegion(&gDisableRegion);
-    RefreshMouseRegions();
+    RefreshMouseRegions(mouse);
 
     // SetCurrentCursorFromDatabase( guiCurrentUICursor );
 
@@ -4502,7 +4502,7 @@ static UINT32 UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent, const struct MouseInp
 
     // Add region
     MSYS_RemoveRegion(&gUserTurnRegion);
-    RefreshMouseRegions();
+    RefreshMouseRegions(mouse);
     // SetCurrentCursorFromDatabase( guiCurrentUICursor );
 
     gfPlotNewMovement = TRUE;

@@ -5,6 +5,7 @@
 
 #include "JAScreens.h"
 #include "Local.h"
+#include "MouseInput.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
@@ -458,7 +459,7 @@ void MSYS_DeleteRegionFromList(struct MOUSE_REGION *region) {
 //	Searches the list for the highest priority region and updates it's info. It also dispatches
 //	the callback functions
 //
-static MSYS_UpdateMouseRegion(const struct MouseInput mouse) {
+static void MSYS_UpdateMouseRegion(const struct MouseInput mouse) {
   INT32 found;
   UINT32 ButtonReason;
   struct MOUSE_REGION *pTempRegion;
@@ -938,7 +939,7 @@ void MSYS_MoveMouseRegionTo(struct MOUSE_REGION *region, INT16 sX, INT16 sY) {
 
 // This function will force a re-evaluation of mouse regions
 // Usually used to force change of mouse cursor if panels switch, etc
-void RefreshMouseRegions() {
+void RefreshMouseRegions(const struct MouseInput mouse) {
   MSYS_Action |= MSYS_DO_MOVE;
 
   MSYS_UpdateMouseRegion(mouse);

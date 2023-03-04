@@ -947,7 +947,7 @@ void CreateHelpScreenButtons() {
 
 static void GetHelpScreenUserInput(const struct MouseInput mouse) {
   InputAtom Event;
-  struct Point MousePos = GetMousePoint();
+  // struct Point MousePos = GetMousePoint();
 
   while (DequeueEvent(&Event)) {
     // HOOK INTO MOUSE HOOKS

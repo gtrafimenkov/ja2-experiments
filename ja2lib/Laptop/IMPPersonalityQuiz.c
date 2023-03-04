@@ -68,7 +68,7 @@ void ResetQuizAnswerButtons();
 void CompileQuestionsInStatsAndWhatNot(void);
 void PrintQuizQuestionNumber(void);
 void CheckStateOfTheConfirmButton(void);
-static HandleIMPQuizKeyBoard(const struct MouseInput mouse);
+static void HandleIMPQuizKeyBoard(const struct MouseInput mouse);
 void ToggleQuestionNumberButtonOn(INT32 iAnswerNumber);
 void MoveBackAQuestion(void);
 void MoveAheadAQuestion(void);
@@ -1406,7 +1406,7 @@ static void HandleIMPQuizKeyBoard(const struct MouseInput mouse) {
   InputAtom InputEvent;
   BOOLEAN fSkipFrame = FALSE;
 
-  struct Point MousePos = GetMousePoint();
+  // struct Point MousePos = GetMousePoint();
 
   while ((DequeueEvent(&InputEvent) == TRUE)) {
     if (fSkipFrame == FALSE) {

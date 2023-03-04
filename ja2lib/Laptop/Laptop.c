@@ -616,7 +616,7 @@ void HandleLapTopCursorUpDate() {
 
 static void GetLaptopKeyboardInput(const struct MouseInput mouse) {
   InputAtom InputEvent;
-  struct Point MousePos = GetMousePoint();
+  // struct Point MousePos = GetMousePoint();
 
   fTabHandled = FALSE;
 

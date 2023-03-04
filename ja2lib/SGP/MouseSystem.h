@@ -159,7 +159,7 @@ void MSYS_AllowDisabledRegionFastHelp(struct MOUSE_REGION *region, BOOLEAN fAllo
 
 // This function will force a re-evaluation of mous regions
 // Usually used to force change of mouse cursor if panels switch, etc
-void RefreshMouseRegions();
+void RefreshMouseRegions(const struct MouseInput mouse);
 
 void SetRegionFastHelpText(struct MOUSE_REGION *region, STR16 szText);
 

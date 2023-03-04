@@ -1161,7 +1161,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse) {
   INT16 usMapPos;
   BOOLEAN fGoodCheatLevelKey = FALSE;
 
-  struct Point MousePos = GetMousePoint();
+  // struct Point MousePos = GetMousePoint();
 
   GetMouseMapPos(&usMapPos);
 
