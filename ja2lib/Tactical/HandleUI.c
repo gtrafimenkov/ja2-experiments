@@ -2114,8 +2114,8 @@ static UINT32 UIHandleCAOnTerrain(UI_EVENT *pUIEvent, const struct MouseInput mo
   return (GAME_SCREEN);
 }
 
-void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTargetSoldier,
-                        UINT16 usMapPos) {
+static void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTargetSoldier,
+                               UINT16 usMapPos, const struct MouseInput mouse) {
   INT32 iHandleReturn;
   INT16 sTargetGridNo;
   INT8 bTargetLevel;
@@ -2211,10 +2211,10 @@ void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarge
   }
 
   if (pSoldier->bWeaponMode == WM_ATTACHED) {
-    iHandleReturn = HandleItem(pSoldier, sTargetGridNo, bTargetLevel, UNDER_GLAUNCHER, TRUE);
+    iHandleReturn = HandleItem(pSoldier, sTargetGridNo, bTargetLevel, UNDER_GLAUNCHER, TRUE, mouse);
   } else {
     iHandleReturn =
-        HandleItem(pSoldier, sTargetGridNo, bTargetLevel, pSoldier->inv[HANDPOS].usItem, TRUE);
+        HandleItem(pSoldier, sTargetGridNo, bTargetLevel, pSoldier->inv[HANDPOS].usItem, TRUE, mouse);
   }
 
   if (iHandleReturn < 0) {
@@ -2236,11 +2236,10 @@ void UIHandleMercAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pTarge
   gfUIForceReExamineCursorData = TRUE;
 }
 
-void AttackRequesterCallback(UINT8 bExitValue) {
+static void AttackRequesterCallback(UINT8 bExitValue, const struct MouseInput mouse) {
   if (bExitValue == MSG_BOX_RETURN_YES) {
     gTacticalStatus.ubLastRequesterTargetID = gpRequesterTargetMerc->ubProfile;
-
-    UIHandleMercAttack(gpRequesterMerc, gpRequesterTargetMerc, gsRequesterGridNo);
+    UIHandleMercAttack(gpRequesterMerc, gpRequesterTargetMerc, gsRequesterGridNo, mouse);
   }
 }
 
@@ -2280,12 +2279,12 @@ static UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent, const struct MouseInput mo
           swprintf(zStr, ARR_SIZE(zStr), TacticalStr[ATTACK_OWN_GUY_PROMPT], pTSoldier->name);
 
           DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                       AttackRequesterCallback, NULL, XXX_GetMouseInput());
+                       AttackRequesterCallback, NULL, mouse);
         }
       }
 
       if (!fDidRequester) {
-        UIHandleMercAttack(pSoldier, pTSoldier, usMapPos);
+        UIHandleMercAttack(pSoldier, pTSoldier, usMapPos, mouse);
       }
     }
   }

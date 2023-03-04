@@ -76,7 +76,7 @@ typedef struct {
 } ITEM_POOL_LOCATOR;
 
 INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UINT16 usHandItem,
-                 BOOLEAN fFromUI);
+                 BOOLEAN fFromUI, const struct MouseInput mouse);
 void SoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGridNo, INT8 bZLevel);
 void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 sGridNo,
                              INT8 bZLevel, const struct MouseInput mouse);

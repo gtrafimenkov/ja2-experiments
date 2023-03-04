@@ -174,7 +174,7 @@ BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
 }
 
 INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UINT16 usHandItem,
-                 BOOLEAN fFromUI) {
+                 BOOLEAN fFromUI, const struct MouseInput mouse) {
   struct SOLDIERTYPE *pTargetSoldier = NULL;
   UINT16 usSoldierIndex;
   INT16 sTargetGridNo;

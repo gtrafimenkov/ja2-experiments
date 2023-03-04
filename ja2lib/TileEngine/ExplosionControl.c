@@ -1127,7 +1127,8 @@ static BOOLEAN DamageSoldierFromBlast(UINT8 ubPerson, UINT8 ubOwner, INT16 sBomb
 
   if (ubOwner != NOBODY && MercPtrs[ubOwner]->bTeam == gbPlayerNum &&
       pSoldier->bTeam != gbPlayerNum) {
-    ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION);
+    ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION,
+                                  XXX_GetMouseInput());
   }
 
   return (TRUE);
@@ -1239,7 +1240,8 @@ BOOLEAN DishOutGasDamage(struct SOLDIERTYPE *pSoldier, EXPLOSIVETYPE *pExplosive
 
     if (ubOwner != NOBODY && MercPtrs[ubOwner]->bTeam == gbPlayerNum &&
         pSoldier->bTeam != gbPlayerNum) {
-      ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION);
+      ProcessImplicationsOfPCAttack(MercPtrs[ubOwner], &pSoldier, REASON_EXPLOSION,
+                                    XXX_GetMouseInput());
     }
   }
   return (fRecompileMovementCosts);

@@ -5934,7 +5934,7 @@ void HandleSuppressionFire(UINT8 ubTargetedMerc, UINT8 ubCausedAttacker) {
 }
 
 BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE **ppTarget,
-                                      INT8 bReason) {
+                                      INT8 bReason, const struct MouseInput mouse) {
   INT16 sTargetXPos, sTargetYPos;
   BOOLEAN fEnterCombat = TRUE;
   struct SOLDIERTYPE *pTarget = *ppTarget;
@@ -6056,7 +6056,7 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
 
           // Fire back!
           HandleItem(pTarget, pSoldier->sGridNo, pSoldier->bLevel, pTarget->inv[HANDPOS].usItem,
-                     FALSE);
+                     FALSE, mouse);
         }
       }
 
@@ -6173,7 +6173,8 @@ static struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCa
       // stuff that only applies to when we attack
       if (pTarget->ubBodyType != CROW) {
         if (pSoldier->bTeam == gbPlayerNum) {
-          fEnterCombat = ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK);
+          fEnterCombat = ProcessImplicationsOfPCAttack(pSoldier, &pTarget, REASON_NORMAL_ATTACK,
+                                                       XXX_GetMouseInput());
           if (!fEnterCombat) {
             DebugMsg(TOPIC_JA2, DBG_LEVEL_3, ">>Not entering combat as a result of PC attack");
           }
