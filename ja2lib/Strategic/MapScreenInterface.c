@@ -4945,10 +4945,6 @@ void RequestIncreaseInTimeCompression(void) {
   if (IsTimeBeingCompressed()) {
     IncreaseGameTimeCompressionRate();
   } else {
-    /*
-                    // start compressing
-                    StartTimeCompression();
-    */
     // ARM Change: start over at 5x compression
     SetGameTimeCompressionLevel(TIME_COMPRESS_5MINS);
   }
