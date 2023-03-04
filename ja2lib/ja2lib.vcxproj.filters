@@ -1022,6 +1022,15 @@
     <ClCompile Include="Soldier.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Militia.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sector.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Team.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGP\Bitmap.h">

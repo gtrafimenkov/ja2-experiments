@@ -111,11 +111,13 @@
     <ClCompile Include="LoadingScreen.c" />
     <ClCompile Include="MainMenuScreen.c" />
     <ClCompile Include="MessageBoxScreen.c" />
+    <ClCompile Include="Militia.c" />
     <ClCompile Include="Money.c" />
     <ClCompile Include="OptionsScreen.c" />
     <ClCompile Include="SaveLoadGame.c" />
     <ClCompile Include="SaveLoadScreen.c" />
     <ClCompile Include="Screens.c" />
+    <ClCompile Include="Sector.c" />
     <ClCompile Include="SGP\ButtonSoundControl.c" />
     <ClCompile Include="SGP\ButtonSystem.c" />
     <ClCompile Include="SGP\Container.c" />
@@ -267,6 +269,7 @@
     <ClCompile Include="Tactical\Vehicles.c" />
     <ClCompile Include="Tactical\Weapons.c" />
     <ClCompile Include="Tactical\WorldItems.c" />
+    <ClCompile Include="Team.c" />
     <ClCompile Include="TileEngine\AmbientControl.c" />
     <ClCompile Include="TileEngine\Buildings.c" />
     <ClCompile Include="TileEngine\Environment.c" />

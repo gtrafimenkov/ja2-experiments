@@ -4,8 +4,8 @@
 
 struct SoldierIDRange GetSoldierRangeForTeam(u8 teamID) {
   struct SoldierIDRange res = {
-    firstIndex : gTacticalStatus.Team[teamID].bFirstID,
-    lastIndex : gTacticalStatus.Team[teamID].bLastID,
+    gTacticalStatus.Team[teamID].bFirstID,
+    gTacticalStatus.Team[teamID].bLastID,
   };
   return res;
 }
