@@ -2192,12 +2192,10 @@ void SMInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
               FreeMouseCursor();
 
               DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_MERGE_ITEMS], SHOPKEEPER_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL,
-                           XXX_GetMouseInput());
+                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL, mouse);
             } else
               DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_MERGE_ITEMS], GAME_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL,
-                           XXX_GetMouseInput());
+                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL, mouse);
             return;
           }
           // else handle normally
@@ -3449,7 +3447,7 @@ void EnemyIndicatorClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
       if (pSoldier->bOppCnt > 0) {  // Cycle....
         CycleVisibleEnemies(pSoldier);
       } else {
-        MercFacePanelCallback(pRegion, iReason, XXX_GetMouseInput());
+        MercFacePanelCallback(pRegion, iReason, mouse);
       }
     }
   }
@@ -4607,10 +4605,10 @@ void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
           }
 
           DoMessageBox(MSG_BOX_BASIC_STYLE, zText, SHOPKEEPER_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                       ConfirmationToDepositMoneyToPlayersAccount, NULL, XXX_GetMouseInput());
+                       ConfirmationToDepositMoneyToPlayersAccount, NULL, mouse);
         } else
           DoMessageBox(MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                       ConfirmationToDepositMoneyToPlayersAccount, NULL, XXX_GetMouseInput());
+                       ConfirmationToDepositMoneyToPlayersAccount, NULL, mouse);
       }
     }
 

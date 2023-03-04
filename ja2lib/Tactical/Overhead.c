@@ -1210,7 +1210,7 @@ BOOLEAN ExecuteOverhead(const struct MouseInput mouse) {
                           SoldierGotoStationaryStance(pSoldier);
                         }
                       } else {
-                        UnSetUIBusy(pSoldier->ubID, XXX_GetMouseInput());
+                        UnSetUIBusy(pSoldier->ubID, mouse);
 
                         SoldierGotoStationaryStance(pSoldier);
                       }
