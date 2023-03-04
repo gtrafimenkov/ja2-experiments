@@ -32,6 +32,7 @@
 #include "Tactical/TacticalSave.h"
 #include "TacticalAI/NPC.h"
 #include "TileEngine/WorldDef.h"
+#include "UI.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
 
@@ -361,7 +362,7 @@ void CheckForMeanwhileOKStart() {
 
     guiOldScreen = guiCurrentScreen;
 
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       LeaveTacticalScreen(GAME_SCREEN);
     }
 

@@ -22,6 +22,7 @@
 #include "Tactical/Menptr.h"
 #include "Tactical/MilitiaControl.h"
 #include "Tactical/Overhead.h"
+#include "UI.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 
@@ -820,7 +821,7 @@ void HandleContinueOfTownTraining(void) {
 
   if (fContinueEventPosted) {
     // ATE: If this event happens in tactical mode we will be switching at some time to mapscreen...
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       gfEnteringMapScreen = TRUE;
     }
 

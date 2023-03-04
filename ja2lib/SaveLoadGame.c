@@ -91,6 +91,7 @@
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SmokeEffects.h"
 #include "TileEngine/TacticalPlacementGUI.h"
+#include "UI.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/MercTextBox.h"
 #include "Utils/Message.h"
@@ -492,7 +493,7 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
   //
 
   // if we are in the game screen
-  if (guiCurrentScreen == GAME_SCREEN) {
+  if (IsTacticalMode()) {
     SetRenderFlags(RENDER_FLAG_FULL);
   }
 
@@ -1010,13 +1011,13 @@ BOOLEAN SaveGame(UINT8 ubSaveGameID, STR16 pGameDesc, size_t bufSize) {
   if (ubSaveGameID == 0) {
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_INTERFACE, pMessageStrings[MSG_SAVESUCCESS]);
   }
-  //#ifdef JA2BETAVERSION
+  // #ifdef JA2BETAVERSION
   else if (ubSaveGameID == SAVE__END_TURN_NUM) {
     //		ScreenMsg( FONT_MCOLOR_WHITE, MSG_INTERFACE, pMessageStrings[ MSG_END_TURN_AUTO_SAVE
     //]
     //);
   }
-  //#endif
+  // #endif
   else {
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_INTERFACE, pMessageStrings[MSG_SAVESLOTSUCCESS]);
   }
@@ -3257,7 +3258,7 @@ void CreateSavedGameFileNameFromNumber(UINT8 ubSaveGameID, STR pzNewFileName) {
       sprintf(pzNewFileName, "%S\\%S.%S", pMessageStrings[MSG_SAVEDIRECTORY],
               pMessageStrings[MSG_QUICKSAVE_NAME], pMessageStrings[MSG_SAVEEXTENSION]);
   }
-  //#ifdef JA2BETAVERSION
+  // #ifdef JA2BETAVERSION
   else if (ubSaveGameID == SAVE__END_TURN_NUM) {
     // The name of the file
     sprintf(pzNewFileName, "%S\\Auto%02d.%S", pMessageStrings[MSG_SAVEDIRECTORY],
@@ -3271,7 +3272,7 @@ void CreateSavedGameFileNameFromNumber(UINT8 ubSaveGameID, STR pzNewFileName) {
       guiLastSaveGameNum = 0;
     }
   }
-  //#endif
+  // #endif
 
   else
     sprintf(pzNewFileName, "%S\\%S%02d.%S", pMessageStrings[MSG_SAVEDIRECTORY],

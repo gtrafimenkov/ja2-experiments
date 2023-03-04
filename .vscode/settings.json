@@ -7,6 +7,7 @@
         "textinput.h": "c",
         "vobject.h": "c",
         "jascreens.h": "c",
-        "gameinputinternal.h": "c"
+        "gameinputinternal.h": "c",
+        "himage.h": "c"
     }
 }

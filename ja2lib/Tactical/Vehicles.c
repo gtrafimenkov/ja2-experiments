@@ -33,6 +33,7 @@
 #include "TileEngine/ExplosionControl.h"
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/TileAnimation.h"
+#include "UI.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
@@ -144,7 +145,7 @@ helicopter
 // ap cost per crit
 #define COST_PER_ENGINE_CRIT 15
 #define COST_PER_TIRE_HIT 5
-//#define VEHICLE_MAX_INTERNAL 250
+// #define VEHICLE_MAX_INTERNAL 250
 
 // set the driver of the vehicle
 void SetDriver(INT32 iID, UINT8 ubID);
@@ -428,7 +429,7 @@ BOOLEAN AddSoldierToVehicle(struct SOLDIERTYPE *pSoldier, INT32 iId) {
 
   if (pVehicleSoldier) {
     // can't call SelectSoldier in mapscreen, that will initialize interface panels!!!
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       SelectSoldier(pVehicleSoldier->ubID, FALSE, TRUE);
     }
 
@@ -500,7 +501,7 @@ BOOLEAN AddSoldierToVehicle(struct SOLDIERTYPE *pSoldier, INT32 iId) {
 
         // can't call SetCurrentSquad OR SelectSoldier in mapscreen, that will initialize interface
         // panels!!!
-        if (guiCurrentScreen == GAME_SCREEN) {
+        if (IsTacticalMode()) {
           SetCurrentSquad(pVehicleSoldier->bAssignment, TRUE);
         }
       }
@@ -1169,9 +1170,7 @@ BOOLEAN AnyAccessibleVehiclesInSoldiersSector(struct SOLDIERTYPE *pSoldier) {
   return (FALSE);
 }
 
-struct SOLDIERTYPE *GetDriver(INT32 iID) {
-  return (MercPtrs[pVehicleList[iID].ubDriver]);
-}
+struct SOLDIERTYPE *GetDriver(INT32 iID) { return (MercPtrs[pVehicleList[iID].ubDriver]); }
 
 void SetDriver(INT32 iID, UINT8 ubID) { pVehicleList[iID].ubDriver = ubID; }
 
@@ -1316,7 +1315,7 @@ BOOLEAN ExitVehicle(struct SOLDIERTYPE *pSoldier) {
 
     // can't call SetCurrentSquad OR SelectSoldier in mapscreen, that will initialize interface
     // panels!!!
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       SetCurrentSquad(pSoldier->bAssignment, TRUE);
 
       SelectSoldier(pSoldier->ubID, FALSE, TRUE);

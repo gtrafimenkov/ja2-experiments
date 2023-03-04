@@ -24,6 +24,7 @@
 #include "TileEngine/Lighting.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
+#include "UI.h"
 #include "Utils/EventPump.h"
 #include "Utils/FontControl.h"
 #include "Utils/MercTextBox.h"
@@ -31,7 +32,7 @@
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
 
-//#define DEBUG_GAME_CLOCK
+// #define DEBUG_GAME_CLOCK
 
 extern BOOLEAN gfFadeOut;
 
@@ -407,7 +408,7 @@ void DecreaseGameTimeCompressionRate() {
 void SetGameTimeCompressionLevel(UINT32 uiCompressionRate) {
   Assert(uiCompressionRate < NUM_TIME_COMPRESS_SPEEDS);
 
-  if (guiCurrentScreen == GAME_SCREEN) {
+  if (IsTacticalMode()) {
     if (uiCompressionRate != TIME_COMPRESS_X1) {
       uiCompressionRate = TIME_COMPRESS_X1;
     }
@@ -846,7 +847,7 @@ void HandlePlayerPauseUnPauseOfGame(void) {
   // check if the game is paused BY THE PLAYER or not and reverse
   if (gfGamePaused && gfPauseDueToPlayerGamePause) {
     // If in game screen...
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       if (giTimeCompressMode == TIME_COMPRESS_X0) {
         giTimeCompressMode++;
       }

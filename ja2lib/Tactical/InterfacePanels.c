@@ -66,6 +66,7 @@
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
@@ -3247,7 +3248,7 @@ void BtnRostermodeCallback(GUI_BUTTON *btn, INT32 reason) {
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     btn->uiFlags &= (~BUTTON_CLICKED_ON);
 
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       GoToMapScreenFromTactical();
       //			EnableRadarScreenRender( );
     }

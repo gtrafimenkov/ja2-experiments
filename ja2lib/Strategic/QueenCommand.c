@@ -721,7 +721,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
           DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, NULL);
           break;
         }
-        if (guiCurrentScreen == GAME_SCREEN) {
+        if (IsTacticalMode()) {
           if (pGroup->ubGroupSize <= MAX_STRATEGIC_TEAM_SIZE &&
                   pGroup->pEnemyGroup->ubNumElites != pGroup->pEnemyGroup->ubElitesInBattle &&
                   !gfPendingEnemies ||
@@ -752,7 +752,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
           DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, NULL);
           break;
         }
-        if (guiCurrentScreen == GAME_SCREEN) {
+        if (IsTacticalMode()) {
           if (pGroup->ubGroupSize <= MAX_STRATEGIC_TEAM_SIZE &&
                   pGroup->pEnemyGroup->ubNumTroops != pGroup->pEnemyGroup->ubTroopsInBattle &&
                   !gfPendingEnemies ||
@@ -783,7 +783,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
           DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, NULL);
           break;
         }
-        if (guiCurrentScreen == GAME_SCREEN) {
+        if (IsTacticalMode()) {
           if (pGroup->ubGroupSize <= MAX_STRATEGIC_TEAM_SIZE &&
                   pGroup->pEnemyGroup->ubNumAdmins != pGroup->pEnemyGroup->ubAdminsInBattle &&
                   !gfPendingEnemies ||
@@ -829,7 +829,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
       switch (pSoldier->ubSoldierClass) {
         case SOLDIER_CLASS_ADMINISTRATOR:
 #ifdef JA2BETAVERSION
-          if (guiCurrentScreen == GAME_SCREEN) {
+          if (IsTacticalMode()) {
             if (ubTotalEnemies <= 32 && pSector->ubNumAdmins != pSector->ubAdminsInBattle ||
                 !pSector->ubNumAdmins || !pSector->ubAdminsInBattle || pSector->ubNumAdmins > 100 ||
                 pSector->ubAdminsInBattle > 32) {
@@ -849,7 +849,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
           break;
         case SOLDIER_CLASS_ARMY:
 #ifdef JA2BETAVERSION
-          if (guiCurrentScreen == GAME_SCREEN) {
+          if (IsTacticalMode()) {
             if (ubTotalEnemies <= 32 && pSector->ubNumTroops != pSector->ubTroopsInBattle ||
                 !pSector->ubNumTroops || !pSector->ubTroopsInBattle || pSector->ubNumTroops > 100 ||
                 pSector->ubTroopsInBattle > 32) {
@@ -869,7 +869,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
           break;
         case SOLDIER_CLASS_ELITE:
 #ifdef JA2BETAVERSION
-          if (guiCurrentScreen == GAME_SCREEN) {
+          if (IsTacticalMode()) {
             if (ubTotalEnemies <= 32 && pSector->ubNumElites != pSector->ubElitesInBattle ||
                 !pSector->ubNumElites || !pSector->ubElitesInBattle || pSector->ubNumElites > 100 ||
                 pSector->ubElitesInBattle > 32) {
@@ -890,7 +890,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
         case SOLDIER_CLASS_CREATURE:
           if (pSoldier->ubBodyType != BLOODCAT) {
 #ifdef JA2BETAVERSION
-            if (guiCurrentScreen == GAME_SCREEN) {
+            if (IsTacticalMode()) {
               if (ubTotalEnemies <= MAX_STRATEGIC_TEAM_SIZE &&
                       pSector->ubNumCreatures != pSector->ubCreaturesInBattle ||
                   !pSector->ubNumCreatures || !pSector->ubCreaturesInBattle ||

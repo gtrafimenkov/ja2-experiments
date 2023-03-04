@@ -35,6 +35,7 @@
 #include "Tactical/TacticalSave.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/SysUtil.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
@@ -2079,7 +2080,7 @@ BOOLEAN DoQuickLoad() {
   gbSelectedSaveLocation = 0;
 
   // if the game is paused, and we are in tactical, unpause
-  if (guiCurrentScreen == GAME_SCREEN) {
+  if (IsTacticalMode()) {
     PauseTime(FALSE);
   }
 

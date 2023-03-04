@@ -33,6 +33,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
@@ -583,7 +584,7 @@ BOOLEAN CreateDestroyMouseRegionsForSquadList(void) {
     // set fact regions are destroyed
     fCreated = FALSE;
 
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       // dirty region
       fInterfacePanelDirty = DIRTYLEVEL2;
 

@@ -61,6 +61,7 @@
 #include "TileEngine/ExplosionControl.h"
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/RenderWorld.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/PopUpBox.h"
@@ -3739,20 +3740,20 @@ void AssignmentAborted(struct SOLDIERTYPE *pSoldier, UINT8 ubReason) {
 void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMeToo) {
   if ((pSoldier->bInSector) && (gfWorldLoaded)) {
     if (pSoldier->bAssignment == DOCTOR) {
-      if (guiCurrentScreen == GAME_SCREEN) {
+      if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, END_DOCTOR, 1, TRUE);
       } else {
         ChangeSoldierState(pSoldier, STANDING, 1, TRUE);
       }
 
     } else if (pSoldier->bAssignment == REPAIR) {
-      if (guiCurrentScreen == GAME_SCREEN) {
+      if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, END_REPAIRMAN, 1, TRUE);
       } else {
         ChangeSoldierState(pSoldier, STANDING, 1, TRUE);
       }
     } else if (pSoldier->bAssignment == PATIENT) {
-      if (guiCurrentScreen == GAME_SCREEN) {
+      if (IsTacticalMode()) {
         ChangeSoldierStance(pSoldier, ANIM_CROUCH);
       } else {
         ChangeSoldierState(pSoldier, STANDING, 1, TRUE);
@@ -8856,7 +8857,7 @@ BOOLEAN SetMercAsleep(struct SOLDIERTYPE *pSoldier, BOOLEAN fGiveWarning) {
 BOOLEAN PutMercInAsleepState(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->fMercAsleep == FALSE) {
     if ((gfWorldLoaded) && (pSoldier->bInSector)) {
-      if (guiCurrentScreen == GAME_SCREEN) {
+      if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, GOTO_SLEEP, 1, TRUE);
       } else {
         ChangeSoldierState(pSoldier, SLEEPING, 1, TRUE);
@@ -8889,7 +8890,7 @@ BOOLEAN SetMercAwake(struct SOLDIERTYPE *pSoldier, BOOLEAN fGiveWarning, BOOLEAN
 BOOLEAN PutMercInAwakeState(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->fMercAsleep) {
     if ((gfWorldLoaded) && (pSoldier->bInSector)) {
-      if (guiCurrentScreen == GAME_SCREEN) {
+      if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, WKAEUP_FROM_SLEEP, 1, TRUE);
       } else {
         ChangeSoldierState(pSoldier, STANDING, 1, TRUE);

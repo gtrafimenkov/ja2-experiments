@@ -23,6 +23,7 @@
 #include "TileEngine/OverheadMap.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/MercTextBox.h"
@@ -232,7 +233,7 @@ INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 u
   gMsgBox.sX = (INT16)((((aRect.iRight - aRect.iLeft) - usTextBoxWidth) / 2) + aRect.iLeft);
   gMsgBox.sY = (INT16)((((aRect.iBottom - aRect.iTop) - usTextBoxHeight) / 2) + aRect.iTop);
 
-  if (guiCurrentScreen == GAME_SCREEN) {
+  if (IsTacticalMode()) {
     gfStartedFromGameScreen = TRUE;
   }
 
@@ -1094,7 +1095,7 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
   }
 
   // Tactical
-  else if (guiCurrentScreen == GAME_SCREEN) {
+  else if (IsTacticalMode()) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zString, guiCurrentScreen, usFlags, ReturnCallback,
                  pCenteringRect);
   }

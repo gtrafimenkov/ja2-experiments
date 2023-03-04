@@ -42,6 +42,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/TacticalPlacementGUI.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/MultiLanguageGraphicUtils.h"
@@ -381,7 +382,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
   RenderMapScreenInterfaceBottom();
 
   // If we are currently in tactical, then set the flag to automatically bring up the mapscreen.
-  if (guiCurrentScreen == GAME_SCREEN) {
+  if (IsTacticalMode()) {
     gfEnteringMapScreen = TRUE;
   }
 

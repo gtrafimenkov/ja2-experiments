@@ -26,6 +26,7 @@
 #include "Tactical/SoldierInitList.h"
 #include "TileEngine/Lighting.h"
 #include "TileEngine/MapEdgepoints.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
@@ -43,7 +44,7 @@ extern UINT32 uiMeanWhileFlags;
 //								XXX_VALUE + Random( 1 + XXX_BONUS )
 
 // The start day random bonus that the queen begins
-//#define EASY_QUEEN_START_DAY								10
+// #define EASY_QUEEN_START_DAY								10
 ////easy start day 10-13 #define EASY_QUEEN_START_BONUS 3 #define NORMAL_QUEEN_START_DAY 8
 // //normal start day 8-10 #define NORMAL_QUEEN_START_BONUS
 // 2 #define HARD_QUEEN_START_DAY								7
@@ -413,7 +414,7 @@ void InitCreatureQuest() {
   AddEveryDayStrategicEvent(EVENT_CREATURE_NIGHT_PLANNING, 1320, 0);
 
   // Got to give the queen some early protection, so do some creature spreading.
-  while (i--) {  //# times spread is based on difficulty, and the values in the defines.
+  while (i--) {  // # times spread is based on difficulty, and the values in the defines.
     SpreadCreatures();
   }
 }
@@ -827,7 +828,7 @@ void CreatureAttackTown(
         !gbWorldSectorZ) {  // This is the currently loaded sector.  All we have to do is change the
                             // music and insert
       // the creatures tactically.
-      if (guiCurrentScreen == GAME_SCREEN) {
+      if (IsTacticalMode()) {
         gubCreatureBattleCode = CREATURE_BATTLE_CODE_TACTICALLYADD;
       } else {
         gubCreatureBattleCode = CREATURE_BATTLE_CODE_PREBATTLEINTERFACE;

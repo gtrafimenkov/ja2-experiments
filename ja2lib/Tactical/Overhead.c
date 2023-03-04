@@ -96,6 +96,7 @@
 #include "TileEngine/TileAnimation.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/EventPump.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
@@ -6507,7 +6508,7 @@ void RemoveSoldierFromTacticalSector(struct SOLDIERTYPE *pSoldier, BOOLEAN fAdju
 
   // Select next avialiable guy....
   if (fAdjustSelected) {
-    if (guiCurrentScreen == GAME_SCREEN) {
+    if (IsTacticalMode()) {
       if (gusSelectedSoldier == pSoldier->ubID) {
         ubID = FindNextActiveAndAliveMerc(pSoldier, FALSE, FALSE);
 
@@ -6530,7 +6531,7 @@ void RemoveSoldierFromTacticalSector(struct SOLDIERTYPE *pSoldier, BOOLEAN fAdju
     } else {
       gusSelectedSoldier = NOBODY;
 
-      if (guiCurrentScreen == GAME_SCREEN) {
+      if (IsTacticalMode()) {
         // otherwise, make sure interface is team panel...
         UpdateTeamPanelAssignments();
         SetCurrentInterfacePanel((UINT8)TEAM_PANEL);

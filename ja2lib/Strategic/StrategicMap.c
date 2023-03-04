@@ -85,6 +85,7 @@
 #include "TileEngine/TacticalPlacementGUI.h"
 #include "TileEngine/WorldDat.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Cursors.h"
 #include "Utils/EventPump.h"
@@ -521,7 +522,7 @@ BOOLEAN InitStrategicEngine() {
   // town distances are pre-calculated and read in from a data file
   // since it takes quite a while to plot strategic paths between all pairs of town sectors...
 
-//#define RECALC_TOWN_DISTANCES
+// #define RECALC_TOWN_DISTANCES
 #ifdef RECALC_TOWN_DISTANCES
   CalcDistancesBetweenTowns();
   WriteOutDistancesBetweenTowns();
@@ -1327,12 +1328,12 @@ BOOLEAN EnterSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
 #endif
 
   // CreateProgressBar( 0, 160, 380, 480, 400 );
-  //#ifdef JA2TESTVERSION
+  // #ifdef JA2TESTVERSION
   //	//add more detailed progress bar
   //	DefineProgressBarPanel( 0, 65, 79, 94, 130, 350, 510, 430 );
   //	swprintf( str, L"Loading map:  %S", bFilename );
   //	SetProgressBarTitle( 0, str, FONT12POINT1, FONT_BLACK, FONT_BLACK );
-  //#endif
+  // #endif
   if (!LoadWorld(bFilename)) {
     return (FALSE);
   }
@@ -3982,7 +3983,7 @@ BOOLEAN CheckAndHandleUnloadingOfCurrentWorld() {
   // JA2Gold: Leaving sector, so get rid of ambients!
   DeleteAllAmbients();
 
-  if (guiCurrentScreen == GAME_SCREEN) {
+  if (IsTacticalMode()) {
     if (!gfTacticalTraversal) {  // if we are in tactical and don't intend on going to another
                                  // sector immediately, then
       gfEnteringMapScreen = TRUE;
