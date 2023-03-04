@@ -60,7 +60,6 @@ void NOMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void NumberedMsgBoxCallback(GUI_BUTTON *btn, INT32 reason);
 void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
                          const struct MouseInput mouse);
-UINT32 ExitMsgBox(INT8 ubExitCode);
 UINT16 GetMSgBoxButtonWidth(INT32 iButtonImage);
 
 SGPRect gOldCursorLimitRectangle;
@@ -700,7 +699,7 @@ void NumberedMsgBoxCallback(GUI_BUTTON *btn, INT32 reason) {
   }
 }
 
-UINT32 ExitMsgBox(INT8 ubExitCode) {
+static UINT32 ExitMsgBox(INT8 ubExitCode, const struct MouseInput mouse) {
   UINT32 uiDestPitchBYTES, uiSrcPitchBYTES;
   UINT8 *pDestBuf, *pSrcBuf;
   SGPPoint pPosition;
@@ -805,12 +804,10 @@ UINT32 ExitMsgBox(INT8 ubExitCode) {
   gfDontOverRideSaveBuffer = TRUE;
 
   if (fCursorLockedToArea == TRUE) {
-    GetMousePos(&pPosition);
-
-    if ((pPosition.iX > MessageBoxRestrictedCursorRegion.iRight) ||
-        ((pPosition.iX > MessageBoxRestrictedCursorRegion.iLeft) &&
-         (pPosition.iY < MessageBoxRestrictedCursorRegion.iTop) &&
-         (pPosition.iY > MessageBoxRestrictedCursorRegion.iBottom))) {
+    if ((mouse.x > MessageBoxRestrictedCursorRegion.iRight) ||
+        ((mouse.x > MessageBoxRestrictedCursorRegion.iLeft) &&
+         (mouse.y < MessageBoxRestrictedCursorRegion.iTop) &&
+         (mouse.y > MessageBoxRestrictedCursorRegion.iBottom))) {
       SimulateMouseMovement(pOldMousePosition.iX, pOldMousePosition.iY);
     }
 
@@ -1006,7 +1003,7 @@ UINT32 MessageBoxScreenHandle(const struct GameInput *gameInput) {
 
   if (gMsgBox.bHandled) {
     SetRenderFlags(RENDER_FLAG_FULL);
-    return (ExitMsgBox(gMsgBox.bHandled));
+    return (ExitMsgBox(gMsgBox.bHandled, gameInput->mouse));
   }
 
   return (MSG_BOX_SCREEN);
