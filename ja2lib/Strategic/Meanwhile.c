@@ -335,10 +335,10 @@ void BringupMeanwhileBox() {
 #endif
   {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, MSG_BOX_FLAG_OKSKIP,
-                 BeginMeanwhileCallback, NULL);
+                 BeginMeanwhileCallback, NULL, XXX_GetMouseInput());
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, guiCurrentScreen, (UINT8)MSG_BOX_FLAG_OK,
-                 BeginMeanwhileCallback, NULL);
+                 BeginMeanwhileCallback, NULL, XXX_GetMouseInput());
   }
 }
 

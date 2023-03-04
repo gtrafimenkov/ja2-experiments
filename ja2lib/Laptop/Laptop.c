@@ -3736,7 +3736,7 @@ BOOLEAN DoLapTopMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, 
   // do message box and return
   iLaptopMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                    (UINT8)(ubFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                   ReturnCallback, &pCenteringRect);
+                                   ReturnCallback, &pCenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((iLaptopMessageBox != -1));
@@ -3751,7 +3751,7 @@ BOOLEAN DoLapTopSystemMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 
   // do message box and return
   iLaptopMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                    (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                   ReturnCallback, pCenteringRect);
+                                   ReturnCallback, pCenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((iLaptopMessageBox != -1));
@@ -3766,7 +3766,7 @@ BOOLEAN DoLapTopSystemMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitSc
   // do message box and return
   iLaptopMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                    (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                   ReturnCallback, &CenteringRect);
+                                   ReturnCallback, &CenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((iLaptopMessageBox != -1));

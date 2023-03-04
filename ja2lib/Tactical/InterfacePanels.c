@@ -2192,10 +2192,12 @@ void SMInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
               FreeMouseCursor();
 
               DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_MERGE_ITEMS], SHOPKEEPER_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL);
+                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL,
+                           XXX_GetMouseInput());
             } else
               DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_MERGE_ITEMS], GAME_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL);
+                           (UINT8)MSG_BOX_FLAG_YESNO, MergeMessageBoxCallback, NULL,
+                           XXX_GetMouseInput());
             return;
           }
           // else handle normally
@@ -4605,10 +4607,10 @@ void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, INT32 iReason,
           }
 
           DoMessageBox(MSG_BOX_BASIC_STYLE, zText, SHOPKEEPER_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                       ConfirmationToDepositMoneyToPlayersAccount, NULL);
+                       ConfirmationToDepositMoneyToPlayersAccount, NULL, XXX_GetMouseInput());
         } else
           DoMessageBox(MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                       ConfirmationToDepositMoneyToPlayersAccount, NULL);
+                       ConfirmationToDepositMoneyToPlayersAccount, NULL, XXX_GetMouseInput());
       }
     }
 
@@ -4670,7 +4672,7 @@ void GoToMapScreenFromTactical(void) {
   if (gTacticalStatus.bBoxingState != NOT_BOXING) {
     // pop up dialogue asking whether the player wants to abandon the fight
     DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_ABANDON_FIGHT], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_YESNO, AbandonBoxingCallback, NULL);
+                 (UINT8)MSG_BOX_FLAG_YESNO, AbandonBoxingCallback, NULL, XXX_GetMouseInput());
     return;
   }
   // ok, proceed!

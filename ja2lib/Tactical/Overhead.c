@@ -6601,20 +6601,23 @@ void DeathTimerCallback(void) {
       gTacticalStatus.Team[ENEMY_TEAM].bMenInSector) {
     DoMessageBox(MSG_BOX_BASIC_STYLE,
                  LargeTacticalStr[LARGESTR_NOONE_LEFT_CAPABLE_OF_BATTLE_AGAINST_CREATURES_STR],
-                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL);
+                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL,
+                 XXX_GetMouseInput());
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, LargeTacticalStr[LARGESTR_NOONE_LEFT_CAPABLE_OF_BATTLE_STR],
-                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL);
+                 GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL,
+                 XXX_GetMouseInput());
   }
 }
 
 void CaptureTimerCallback(void) {
   if (gfSurrendered) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, LargeTacticalStr[3], GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK,
-                 EndBattleWithUnconsciousGuysCallback, NULL);
+                 EndBattleWithUnconsciousGuysCallback, NULL, XXX_GetMouseInput());
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, LargeTacticalStr[LARGESTR_HAVE_BEEN_CAPTURED], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL);
+                 (UINT8)MSG_BOX_FLAG_OK, EndBattleWithUnconsciousGuysCallback, NULL,
+                 XXX_GetMouseInput());
   }
   gfSurrendered = FALSE;
 }

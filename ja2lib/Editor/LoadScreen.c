@@ -752,7 +752,7 @@ void InitErrorCatchDialog() {
 
   // do message box and return
   giErrorCatchMessageBox = DoMessageBox(MSG_BOX_BASIC_STYLE, gzErrorCatchString, EDIT_SCREEN,
-                                        MSG_BOX_FLAG_OK, NULL, &CenteringRect);
+                                        MSG_BOX_FLAG_OK, NULL, &CenteringRect, XXX_GetMouseInput());
   gfErrorCatch = FALSE;
 }
 

@@ -2412,7 +2412,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse) {
                 // Display a message saying the player cant save now
                 DoMessageBox(MSG_BOX_BASIC_STYLE,
                              zNewTacticalMessages[TCTL_MSG__IRON_MAN_CANT_SAVE_NOW], GAME_SCREEN,
-                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
               }
             }
           } else if (fAlt) {
@@ -2426,7 +2426,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent, const struct MouseInput mouse) {
                 // Display a message saying the player cant save now
                 DoMessageBox(MSG_BOX_BASIC_STYLE,
                              zNewTacticalMessages[TCTL_MSG__IRON_MAN_CANT_SAVE_NOW], GAME_SCREEN,
-                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                             (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
               }
             }
           } else if (gusSelectedSoldier != NOBODY) {
@@ -3664,8 +3664,6 @@ INT8 HandleMoveModeInteractiveClick(UINT16 usMapPos, UINT32 *puiNewEvent) {
           gpExchangeSoldier2 = MercPtrs[gusUIFullTargetID];
 
           // Do message box...
-          // DoMessageBox( MSG_BOX_BASIC_STYLE, TacticalStr[ EXCHANGE_PLACES_REQUESTER ],
-          // GAME_SCREEN, ( UINT8 )MSG_BOX_FLAG_YESNO, ExchangeMessageBoxCallback, NULL );
           SwapMercPositions(gpExchangeSoldier1, gpExchangeSoldier2);
         }
       }

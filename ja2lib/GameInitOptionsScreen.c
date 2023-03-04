@@ -1011,7 +1011,7 @@ BOOLEAN DoGioMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UIN
   // do message box and return
   giGioMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                  (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                 ReturnCallback, &CenteringRect);
+                                 ReturnCallback, &CenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((giGioMessageBox != -1));

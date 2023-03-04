@@ -96,7 +96,7 @@ void BeginAutoBandage() {
   // If we are in combat, we con't...
   if ((gTacticalStatus.uiFlags & INCOMBAT) || (NumEnemyInSector() != 0)) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, Message[STR_SECTOR_NOT_CLEARED], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
     return;
   }
 
@@ -127,18 +127,18 @@ void BeginAutoBandage() {
 
   if (!fFoundAGuy) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[AUTOBANDAGE_NOT_NEEDED], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                 (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
   } else if (!fFoundAMedKit) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, gzLateLocalizedString[9], GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK,
-                 NULL, NULL);
+                 NULL, NULL, XXX_GetMouseInput());
   } else {
     if (!CanAutoBandage(FALSE)) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[CANT_AUTOBANDAGE_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                   (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
     } else {
       // Confirm if we want to start or not....
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[BEGIN_AUTOBANDAGE_PROMPT_STR], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, BeginAutoBandageCallback, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, BeginAutoBandageCallback, NULL, XXX_GetMouseInput());
     }
   }
 }

@@ -3877,7 +3877,7 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
                  gMercProfiles[ubProfileID].zNickname);
       }
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     case NPC_ACTION_ASK_ABOUT_PAYING_RPC:
     case NPC_ACTION_ASK_ABOUT_PAYING_RPC_WITH_DAILY_SALARY:
@@ -3887,12 +3887,13 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[HIRE_PROMPT],
                gMercProfiles[ubProfileID].zNickname, zTemp2);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     case NPC_ACTION_DARREN_REQUESTOR:
     case NPC_ACTION_FIGHT_AGAIN_REQUESTOR:
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[BOXING_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, DialogueMessageBoxCallback, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, DialogueMessageBoxCallback, NULL,
+                   XXX_GetMouseInput());
       break;
     case NPC_ACTION_BUY_LEATHER_KEVLAR_VEST:
       swprintf(zTemp2, ARR_SIZE(zTemp2), L"%d", Item[LEATHER_JACKET_W_KEVLAR].usPrice);
@@ -3900,16 +3901,17 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[BUY_VEST_PROMPT],
                ItemNames[LEATHER_JACKET_W_KEVLAR], zTemp2);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     case NPC_ACTION_PROMPT_PLAYER_TO_LIE:
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[YESNOLIE_STR], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNOLIE, DialogueMessageBoxCallback, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNOLIE, DialogueMessageBoxCallback, NULL,
+                   XXX_GetMouseInput());
       break;
     case NPC_ACTION_MEDICAL_REQUESTOR_2:
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[FREE_MEDICAL_PROMPT]);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     case NPC_ACTION_MEDICAL_REQUESTOR:
       iTemp = (INT32)CalcMedicalCost(ubProfileID);
@@ -3923,7 +3925,7 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[PAY_MONEY_PROMPT], zTemp2);
 
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     case NPC_ACTION_BUY_VEHICLE_REQUESTOR:
       swprintf(zTemp2, ARR_SIZE(zTemp2), L"%ld", 10000);
@@ -3931,17 +3933,17 @@ void StartDialogueMessageBox(UINT8 ubProfileID, UINT16 usMessageBoxType) {
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[PAY_MONEY_PROMPT], zTemp2);
 
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     case NPC_ACTION_TRIGGER_MARRY_DARYL_PROMPT:
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[MARRY_DARYL_PROMPT]);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     case NPC_ACTION_KROTT_REQUESTOR:
       swprintf(zTemp, ARR_SIZE(zTemp), TacticalStr[SPARE_KROTT_PROMPT]);
       DoMessageBox(MSG_BOX_BASIC_STYLE, zTemp, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                   DialogueMessageBoxCallback, NULL);
+                   DialogueMessageBoxCallback, NULL, XXX_GetMouseInput());
       break;
     default:
       break;

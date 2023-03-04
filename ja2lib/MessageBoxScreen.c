@@ -78,7 +78,8 @@ CHAR16 gzUserDefinedButton1[128];
 CHAR16 gzUserDefinedButton2[128];
 
 INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect) {
+                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect,
+                   const struct MouseInput mouse) {
   VSURFACE_DESC vs_desc;
   UINT16 usTextBoxWidth;
   UINT16 usTextBoxHeight;
@@ -1048,7 +1049,7 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
     // auto resolve is a special case
     if (guiCurrentScreen == AUTORESOLVE_SCREEN) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, zString, AUTORESOLVE_SCREEN, usFlags, ReturnCallback,
-                   pCenteringRect);
+                   pCenteringRect, XXX_GetMouseInput());
     } else {
       // set up for mapscreen
       DoMapMessageBoxWithRect(MSG_BOX_BASIC_STYLE, zString, MAP_SCREEN, usFlags, ReturnCallback,
@@ -1078,7 +1079,7 @@ void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
   // Tactical
   else if (guiCurrentScreen == GAME_SCREEN) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, zString, guiCurrentScreen, usFlags, ReturnCallback,
-                 pCenteringRect);
+                 pCenteringRect, XXX_GetMouseInput());
   }
 }
 

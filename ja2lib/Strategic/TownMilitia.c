@@ -465,7 +465,7 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
                     PayMilitiaTrainingYesNoBoxCallback);
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, sString, GAME_SCREEN, MSG_BOX_FLAG_YESNO,
-                 PayMilitiaTrainingYesNoBoxCallback, &pCenteringRect);
+                 PayMilitiaTrainingYesNoBoxCallback, &pCenteringRect, XXX_GetMouseInput());
   }
 
   return;

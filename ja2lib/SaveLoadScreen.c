@@ -976,7 +976,7 @@ BOOLEAN DoSaveLoadMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiEx
   // do message box and return
   giSaveLoadMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                       (UINT8)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                      ReturnCallback, pCenteringRect);
+                                      ReturnCallback, pCenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((giSaveLoadMessageBox != -1));
@@ -989,7 +989,7 @@ BOOLEAN DoSaveLoadMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen
   // do message box and return
   giSaveLoadMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                       (UINT8)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                      ReturnCallback, &CenteringRect);
+                                      ReturnCallback, &CenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((giSaveLoadMessageBox != -1));
@@ -2022,35 +2022,6 @@ void FailedLoadingGameCallback(UINT8 bExitValue) {
 BOOLEAN DoQuickSave() {
   gzGameDescTextField[0] = '\0';
 
-  /*
-          // Make sure the user has enough hard drive space
-          if( !DoesUserHaveEnoughHardDriveSpace() )
-          {
-                  CHAR16	zText[512];
-                  CHAR16	zSpaceOnDrive[512];
-                  UINT32	uiSpaceOnDrive;
-                  CHAR16	zSizeNeeded[512];
-
-                  swprintf( zSizeNeeded, L"%d", REQUIRED_FREE_SPACE / BYTESINMEGABYTE );
-                  InsertCommasForDollarFigure( zSizeNeeded );
-
-                  uiSpaceOnDrive = Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom( );
-
-                  swprintf( zSpaceOnDrive, L"%.2f", uiSpaceOnDrive / (FLOAT)BYTESINMEGABYTE );
-
-                  swprintf( zText, pMessageStrings[ MSG_LOWDISKSPACE_WARNING ], zSpaceOnDrive,
-     zSizeNeeded );
-
-                  if( guiPreviousOptionScreen == MAP_SCREEN )
-                          DoMapMessageBox( MSG_BOX_BASIC_STYLE, zText, MAP_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback ); else DoMessageBox(
-     MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallback, NULL );
-
-                  return( FALSE );
-          }
-  */
-
   if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
@@ -2060,7 +2031,7 @@ BOOLEAN DoQuickSave() {
                       MSG_BOX_FLAG_OK, NULL);
     else
       DoMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVE_GAME_ERROR], GAME_SCREEN,
-                   MSG_BOX_FLAG_OK, NULL, NULL);
+                   MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
   }
 
   return (TRUE);

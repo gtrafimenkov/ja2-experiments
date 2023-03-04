@@ -1003,12 +1003,12 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
           MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
           (UINT16)(MSG_BOX_FLAG_USE_CENTERING_RECT |
                    (fAddRehireButton ? MSG_BOX_FLAG_GENERICCONTRACT : MSG_BOX_FLAG_GENERIC)),
-          MercDepartEquipmentBoxCallback, &pCenteringRect);
+          MercDepartEquipmentBoxCallback, &pCenteringRect, XXX_GetMouseInput());
     } else {
       DoMessageBox(MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
                    (UINT16)(MSG_BOX_FLAG_USE_CENTERING_RECT |
                             (fAddRehireButton ? MSG_BOX_FLAG_OKCONTRACT : MSG_BOX_FLAG_OK)),
-                   MercDepartEquipmentBoxCallback, &pCenteringRect);
+                   MercDepartEquipmentBoxCallback, &pCenteringRect, XXX_GetMouseInput());
     }
   }
 

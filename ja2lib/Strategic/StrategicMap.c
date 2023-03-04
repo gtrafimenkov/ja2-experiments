@@ -1447,7 +1447,7 @@ void UpdateMercsInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
                 // ATE: If we are in i13 - pop up message!
                 if (sSectorY == MAP_ROW_I && sSectorX == 13) {
                   DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[POW_MERCS_ARE_HERE], GAME_SCREEN,
-                               (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                               (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
                 } else {
                   AddCharacterToUniqueSquad(pSoldier);
                   ubPOWSquad = pSoldier->bAssignment;

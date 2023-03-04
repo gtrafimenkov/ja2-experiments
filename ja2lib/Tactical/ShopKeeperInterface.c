@@ -5417,7 +5417,7 @@ BOOLEAN DoSkiMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UIN
   // do message box and return
   giSKIMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                  (UINT8)(ubFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
-                                 &pCenteringRect);
+                                 &pCenteringRect, XXX_GetMouseInput());
 
   // send back return state
   return ((giSKIMessageBox != -1));

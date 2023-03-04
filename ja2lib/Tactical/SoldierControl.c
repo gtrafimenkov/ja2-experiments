@@ -9264,12 +9264,6 @@ void DebugValidateSoldierData() {
 
     if (fProblemDetected) {
       SAIReportError(sString);
-      /*
-                              if ( guiCurrentScreen == MAP_SCREEN )
-                                      DoMapMessageBox( MSG_BOX_BASIC_STYLE, sString, MAP_SCREEN,
-         MSG_BOX_FLAG_OK, MapScreenDefaultOkBoxCallback ); else DoMessageBox( MSG_BOX_BASIC_STYLE,
-         sString, GAME_SCREEN, ( UINT8 )MSG_BOX_FLAG_OK, NULL, NULL );
-      */
       break;
     }
   }

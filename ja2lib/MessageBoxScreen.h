@@ -84,7 +84,8 @@ extern BOOLEAN gfDontOverRideSaveBuffer;
 ////////////////////////////////
 
 INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect);
+                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect,
+                   const struct MouseInput mouse);
 void DoScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback);
 void DoUpperScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback);

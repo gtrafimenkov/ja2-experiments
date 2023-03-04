@@ -6197,11 +6197,12 @@ void BtnMoneyButtonCallback(GUI_BUTTON *btn, INT32 reason) {
             if (guiCurrentScreen == SHOPKEEPER_SCREEN)
               DoMessageBox(MSG_BOX_BASIC_STYLE,
                            gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                           SHOPKEEPER_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                           SHOPKEEPER_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL,
+                           XXX_GetMouseInput());
             else
               DoMessageBox(MSG_BOX_BASIC_STYLE,
                            gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                           GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                           GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
             return;
           }
 
@@ -6217,7 +6218,7 @@ void BtnMoneyButtonCallback(GUI_BUTTON *btn, INT32 reason) {
               (gRemoveMoney.uiMoneyRemoving + 100) > MAX_MONEY_PER_SLOT) {
             DoMessageBox(MSG_BOX_BASIC_STYLE,
                          gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
             return;
           }
 
@@ -6233,7 +6234,7 @@ void BtnMoneyButtonCallback(GUI_BUTTON *btn, INT32 reason) {
               (gRemoveMoney.uiMoneyRemoving + 10) > MAX_MONEY_PER_SLOT) {
             DoMessageBox(MSG_BOX_BASIC_STYLE,
                          gzMoneyWithdrawMessageText[MONEY_TEXT_WITHDRAW_MORE_THEN_MAXIMUM],
-                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL);
+                         GAME_SCREEN, (UINT8)MSG_BOX_FLAG_OK, NULL, NULL, XXX_GetMouseInput());
             return;
           }
 

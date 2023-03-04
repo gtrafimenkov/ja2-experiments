@@ -2685,8 +2685,6 @@ void CheckForAndHandleEndPlayerTimeLimit() {
           gTacticalStatus.usTactialTurnLimitCounter++;
 
           // OK, set message that time limit has expired....
-          // DoMessageBox( MSG_BOX_BASIC_STYLE, L"Turn has Expired!", GAME_SCREEN, ( UINT8
-          // )MSG_BOX_FLAG_OK, TurnExpiredCallback, NULL );
 
           // End turn...
           UIHandleEndTurn(NULL, XXX_GetMouseInput());

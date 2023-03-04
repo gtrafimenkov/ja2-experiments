@@ -371,7 +371,7 @@ UINT32 MainGameScreenHandle(const struct GameInput *gameInput) {
     gfFailedToSaveGameWhenInsideAMessageBox = FALSE;
 
     DoMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_SAVE_GAME_ERROR], GAME_SCREEN,
-                 MSG_BOX_FLAG_OK, NULL, NULL);
+                 MSG_BOX_FLAG_OK, NULL, NULL, gameInput->mouse);
 
     return (GAME_SCREEN);
   }

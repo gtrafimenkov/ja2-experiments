@@ -1395,7 +1395,8 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
               bTempFrequency = Object.bFrequency;
               gpTempSoldier = pSoldier;
               DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[ACTIVATE_SWITCH_PROMPT], GAME_SCREEN,
-                           (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallback, NULL);
+                           (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallback, NULL,
+                           XXX_GetMouseInput());
               pItemPool = pItemPool->pNext;
             } else {
               if (!AutoPlaceObject(pSoldier, &Object, TRUE)) {
@@ -1476,29 +1477,9 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
           bTempFrequency = Object.bFrequency;
           gpTempSoldier = pSoldier;
           DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[ACTIVATE_SWITCH_PROMPT], GAME_SCREEN,
-                       (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallback, NULL);
+                       (UINT8)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallback, NULL,
+                       XXX_GetMouseInput());
         } else {
-          /*
-                                                  // handle theft.. will return true if theft has
-             failed ( if soldier was caught ) if( pSoldier->bTeam == OUR_TEAM )
-                                                  {
-                                                          // check to see if object was owned by
-             another if( Object.fFlags & OBJECT_OWNED_BY_CIVILIAN )
-                                                          {
-                                                                  // owned by a civilian
-                                                                  if(
-             HandleLoyaltyAdjustmentForRobbery( pSoldier ) == TRUE )
-                                                                  {
-                                                                          // implememnt actual
-             tactical reaction for theft..shoot robber, yell out, etc
-                                                                  }
-
-                                                                  // reset who owns object
-                                                                  Object.fFlags &= ~(
-             OBJECT_OWNED_BY_CIVILIAN );
-                                                          }
-                                                  }
-          */
           RemoveItemFromPool(sGridNo, iItemIndex, pSoldier->bLevel);
 
           if (!AutoPlaceObject(pSoldier, &(gWorldItems[iItemIndex].o), TRUE)) {
@@ -1581,7 +1562,8 @@ void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
         gbTrapDifficulty = gWorldItems[iItemIndex].o.bTrap;
 
         DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_TRAP_PROMPT], GAME_SCREEN,
-                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallback, NULL);
+                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallback, NULL,
+                     XXX_GetMouseInput());
       } else {
         // OK, only hidden items exist...
         if (pSoldier->bTeam == gbPlayerNum && DoesItemPoolContainAllHiddenItems(pItemPool)) {
@@ -3305,7 +3287,8 @@ void StartBombMessageBox(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) {
   gsTempGridno = sGridNo;
   if (pSoldier->inv[HANDPOS].usItem == REMOTEBOMBTRIGGER) {
     DoMessageBox(MSG_BOX_BASIC_SMALL_BUTTONS, TacticalStr[CHOOSE_BOMB_FREQUENCY_STR], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL);
+                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL,
+                 XXX_GetMouseInput());
   } else if (pSoldier->inv[HANDPOS].usItem == REMOTETRIGGER) {
     // PLay sound....
     PlayJA2Sample(USE_STATUE_REMOTE, RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
@@ -3327,10 +3310,12 @@ void StartBombMessageBox(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) {
 
   } else if (FindAttachment(&(pSoldier->inv[HANDPOS]), DETONATOR) != ITEM_NOT_FOUND) {
     DoMessageBox(MSG_BOX_BASIC_SMALL_BUTTONS, TacticalStr[CHOOSE_TIMER_STR], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL);
+                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL,
+                 XXX_GetMouseInput());
   } else if (FindAttachment(&(pSoldier->inv[HANDPOS]), REMDETONATOR) != ITEM_NOT_FOUND) {
     DoMessageBox(MSG_BOX_BASIC_SMALL_BUTTONS, TacticalStr[CHOOSE_REMOTE_FREQUENCY_STR], GAME_SCREEN,
-                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL);
+                 (UINT8)MSG_BOX_FLAG_FOUR_NUMBERED_BUTTONS, BombMessageBoxCallback, NULL,
+                 XXX_GetMouseInput());
   }
 }
 
@@ -3527,10 +3512,12 @@ BOOLEAN ContinuePastBoobyTrap(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 
 
         if (fInStrategic) {
           DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_BOOBYTRAP_PROMPT], MAP_SCREEN,
-                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallback, NULL);
+                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallback, NULL,
+                       XXX_GetMouseInput());
         } else {
           DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_BOOBYTRAP_PROMPT], GAME_SCREEN,
-                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallback, NULL);
+                       (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapMessageBoxCallback, NULL,
+                       XXX_GetMouseInput());
         }
       } else {
         // oops!
@@ -3640,7 +3627,8 @@ void BoobyTrapMessageBoxCallback(UINT8 ubExitValue) {
   } else {
     if (gfDisarmingBuriedBomb) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[REMOVE_BLUE_FLAG_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallback, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallback, NULL,
+                   XXX_GetMouseInput());
     }
     // otherwise do nothing
   }
@@ -3712,7 +3700,8 @@ void BoobyTrapInMapScreenMessageBoxCallback(UINT8 ubExitValue) {
   } else {
     if (gfDisarmingBuriedBomb) {
       DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[REMOVE_BLUE_FLAG_PROMPT], GAME_SCREEN,
-                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallback, NULL);
+                   (UINT8)MSG_BOX_FLAG_YESNO, RemoveBlueFlagDialogueCallback, NULL,
+                   XXX_GetMouseInput());
     }
     // otherwise do nothing
   }
@@ -3900,7 +3889,7 @@ void MineSpottedLocatorCallback(void) {
 
   // now ask the player if he wants to place a blue flag.
   DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[PLACE_BLUE_FLAG_PROMPT], GAME_SCREEN,
-               (UINT8)MSG_BOX_FLAG_YESNO, MineSpottedMessageBoxCallback, NULL);
+               (UINT8)MSG_BOX_FLAG_YESNO, MineSpottedMessageBoxCallback, NULL, XXX_GetMouseInput());
 }
 
 void MineSpottedMessageBoxCallback(UINT8 ubExitValue) {
@@ -4113,7 +4102,8 @@ BOOLEAN ContinuePastBoobyTrapInMapScreen(struct OBJECTTYPE *pObject, struct SOLD
         gpBoobyTrapSoldier = pSoldier;
         gbTrapDifficulty = pObject->bTrap;
         DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[DISARM_BOOBYTRAP_PROMPT], MAP_SCREEN,
-                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallback, NULL);
+                     (UINT8)MSG_BOX_FLAG_YESNO, BoobyTrapInMapScreenMessageBoxCallback, NULL,
+                     XXX_GetMouseInput());
       } else {
         // oops!
         SetOffBoobyTrapInMapScreen(pSoldier, pObject);

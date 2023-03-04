@@ -228,7 +228,8 @@ void GameLoop(void) {
           if (guiPreviousOptionScreen == MAP_SCREEN)
             DoMapMessageBox(MSG_BOX_BASIC_STYLE, zText, MAP_SCREEN, MSG_BOX_FLAG_OK, NULL);
           else
-            DoMessageBox(MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, NULL);
+            DoMessageBox(MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK, NULL, NULL,
+                         mouse);
         }
         gubCheckForFreeSpaceOnHardDriveCount = DONT_CHECK_FOR_FREE_SPACE;
       }
@@ -312,7 +313,7 @@ void HandleShortCutExitState(void) {
   if (guiCurrentScreen == AUTORESOLVE_SCREEN) {
     DoMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], guiCurrentScreen,
                  (UINT8)(MSG_BOX_FLAG_YESNO | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                 EndGameMessageBoxCallback, &pCenteringRect);
+                 EndGameMessageBoxCallback, &pCenteringRect, XXX_GetMouseInput());
     return;
   }
 
@@ -349,7 +350,7 @@ void HandleShortCutExitState(void) {
     // set up for all otherscreens
     DoMessageBox(MSG_BOX_BASIC_STYLE, pMessageStrings[MSG_EXITGAME], guiCurrentScreen,
                  (UINT8)(MSG_BOX_FLAG_YESNO | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                 EndGameMessageBoxCallback, &pCenteringRect);
+                 EndGameMessageBoxCallback, &pCenteringRect, XXX_GetMouseInput());
   }
 }
 

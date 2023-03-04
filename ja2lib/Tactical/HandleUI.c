@@ -2280,7 +2280,7 @@ static UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent, const struct MouseInput mo
           swprintf(zStr, ARR_SIZE(zStr), TacticalStr[ATTACK_OWN_GUY_PROMPT], pTSoldier->name);
 
           DoMessageBox(MSG_BOX_BASIC_STYLE, zStr, GAME_SCREEN, (UINT8)MSG_BOX_FLAG_YESNO,
-                       AttackRequesterCallback, NULL);
+                       AttackRequesterCallback, NULL, XXX_GetMouseInput());
         }
       }
 

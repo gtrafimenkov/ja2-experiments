@@ -927,83 +927,13 @@ void EnableTeamInfoPanels(void) {
   return;
 }
 
-/*
-void ActivateSoldierPopup( struct SOLDIERTYPE *pSoldier, UINT8 ubPopupType, INT16 xp, INT16 yp )
-{
-        // will activate the pop up for prebattle interface
-
-        // get the soldier id number
-        INT8 bCounter = 0;
-        INT8 bCharacter = -1;
-
-
-        for( bCounter = 0; bCounter < MAX_CHARACTER_COUNT; bCounter++ )
-        {
-                if( gCharactersList[ bCounter ].fValid == TRUE )
-                {
-                        // is this guy the passed soldier?
-                        if( pSoldier == &( Menptr[ gCharactersList[ bCounter ].usSolID ] ) )
-                        {
-                                bCharacter = bCounter;
-                                break;
-                        }
-                }
-        }
-
-        giBoxY = ( INT32 ) yp;
-        // which type of box do we show?
-        switch( ubPopupType )
-        {
-                case( ASSIGNMENT_POPUP ):
-                        bSelectedDestChar = -1;
-                        bSelectedContractChar = -1;
-                        bSelectedAssignChar = bCharacter;
-                        if( ( pSoldier->bLife > 0 ) &&( pSoldier->bAssignment != ASSIGNMENT_POW ) )
-                        {
-                                fShowAssignmentMenu = TRUE;
-                        }
-                        else
-                        {
-                                fShowRemoveMenu = TRUE;
-                        }
-
-                        // set box y positions
-                        AssignmentPosition.iY =  giBoxY;
-                        TrainPosition.iY = AssignmentPosition.iY + GetFontHeight( MAP_SCREEN_FONT )*
-ASSIGN_MENU_TRAIN; AttributePosition.iY = 	TrainPosition.iY; SquadPosition.iY =
-AssignmentPosition.iY; break; case( DESTINATION_POPUP ): bSelectedDestChar = bCharacter;
-                        bSelectedContractChar = -1;
-                        bSelectedAssignChar = -1;
-
-                        // set box y value
-                        ContractPosition.iY = giBoxY;
-                        break;
-                case( CONTRACT_POPUP ):
-                        bSelectedDestChar = -1;
-                        bSelectedContractChar = bCharacter;
-                        bSelectedAssignChar = -1;
-                        RebuildContractBoxForMerc( pSoldier );
-
-                        if( ( pSoldier->bLife > 0 ) &&( pSoldier->bAssignment != ASSIGNMENT_POW ) )
-                        {
-                                fShowContractMenu = TRUE;
-                        }
-                        else
-                        {
-                                fShowRemoveMenu = TRUE;
-                        }
-                        break;
-        }
-}
-*/
-
 INT32 DoMapMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
                               MSGBOX_CALLBACK ReturnCallback,
                               SGPRect *pCenteringRect) {  // reset the highlighted line
   giHighLine = -1;
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
-                      pCenteringRect);
+                      pCenteringRect, XXX_GetMouseInput());
 }
 
 INT32 DoMapMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
@@ -1016,7 +946,7 @@ INT32 DoMapMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT1
   // do message box and return
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
-                      &CenteringRect);
+                      &CenteringRect, XXX_GetMouseInput());
 }
 
 void GoDownOneLevelInMap(void) { JumpToLevel(iCurrentMapSectorZ + 1); }
