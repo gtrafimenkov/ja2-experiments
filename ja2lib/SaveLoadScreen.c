@@ -44,6 +44,8 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 
+static void DoneFadeInForSaveLoadScreen(const struct MouseInput mouse);
+
 BOOLEAN gfSchedulesHosed = FALSE;
 extern UINT32 guiBrokenSaveGameVersion;
 
@@ -1840,7 +1842,7 @@ void DisplayOnScreenNumber(BOOLEAN fErase) {
 extern BOOLEAN ValidateSoldierInitLinks(UINT8 ubCode);
 #endif
 
-void DoneFadeOutForSaveLoadScreen(void) {
+static void DoneFadeOutForSaveLoadScreen(const struct MouseInput mouse) {
   // Make sure we DONT reset the levels if we are loading a game
   gfHadToMakeBasementLevels = FALSE;
 
@@ -1850,8 +1852,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
       gfSchedulesHosed = TRUE;
       if (!LoadSavedGame(gbSelectedSaveLocation)) {
         DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                             SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback,
-                             XXX_GetMouseInput());
+                             SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback, mouse);
         NextLoopCheckForEnoughFreeHardDriveSpace();
       } else {
         gfSchedulesHosed = FALSE;
@@ -1860,8 +1861,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
       gfSchedulesHosed = FALSE;
     } else {
       DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                           SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback,
-                           XXX_GetMouseInput());
+                           SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallback, mouse);
       NextLoopCheckForEnoughFreeHardDriveSpace();
     }
   } else {
@@ -1900,7 +1900,7 @@ void DoneFadeOutForSaveLoadScreen(void) {
   gfStartedFadingOut = FALSE;
 }
 
-void DoneFadeInForSaveLoadScreen(void) {
+static void DoneFadeInForSaveLoadScreen(const struct MouseInput mouse) {
   // Leave the screen
   // if we are supposed to stay in tactical, due nothing,
   // if we are supposed to goto mapscreen, leave tactical and go to mapscreen

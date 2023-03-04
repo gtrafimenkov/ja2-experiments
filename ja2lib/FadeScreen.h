@@ -1,6 +1,7 @@
 #ifndef FADE_SCREEN_H
 #define FADE_SCREEN_H
 
+#include "MouseInput.h"
 #include "SGP/Types.h"
 
 #define FADE_OUT_VERSION_ONE 1
@@ -13,7 +14,7 @@
 #define FADE_IN_SQUARE 11
 #define FADE_IN_REALFADE 12
 
-typedef void (*FADE_HOOK)(void);
+typedef void (*FADE_HOOK)(const struct MouseInput mouse);
 
 extern FADE_HOOK gFadeInDoneCallback;
 extern FADE_HOOK gFadeOutDoneCallback;
