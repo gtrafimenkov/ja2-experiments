@@ -102,7 +102,7 @@
 
 // Slider bar defines
 #define OPT_GAP_BETWEEN_SLIDER_BARS 60
-//#define		OPT_SLIDER_BAR_WIDTH 200
+// #define		OPT_SLIDER_BAR_WIDTH 200
 #define OPT_SLIDER_BAR_SIZE 258
 
 #define OPT_SLIDER_TEXT_WIDTH 45
@@ -994,7 +994,7 @@ void MusicSliderChangeCallBack(INT32 iNewValue) { MusicSetVolume(iNewValue); }
 
 BOOLEAN DoOptionsMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                     UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                    SGPRect *pCenteringRect) {
+                                    const SGPRect *pCenteringRect) {
   // reset exit mode
   gfExitOptionsDueToMessageBox = TRUE;
 

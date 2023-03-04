@@ -2,6 +2,7 @@
 #define __TYPES_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef _SIRTECH_TYPES_
 #define _SIRTECH_TYPES_

@@ -79,7 +79,7 @@ CHAR16 gzUserDefinedButton1[128];
 CHAR16 gzUserDefinedButton2[128];
 
 INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect) {
+                   MSGBOX_CALLBACK ReturnCallback, const SGPRect *pCenteringRect) {
   VSURFACE_DESC vs_desc;
   UINT16 usTextBoxWidth;
   UINT16 usTextBoxHeight;
@@ -1033,8 +1033,7 @@ UINT32 MessageBoxScreenShutdown() { return (FALSE); }
 // a basic box that don't care what screen we came from
 void DoScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                    MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
-  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
+  DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, GetMapCenteringRect());
 }
 
 // a basic box that don't care what screen we came from
@@ -1053,7 +1052,7 @@ void DoLowerScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
 
 void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
                                            MSGBOX_CALLBACK ReturnCallback,
-                                           SGPRect *pCenteringRect) {
+                                           const SGPRect *pCenteringRect) {
   /// which screen are we in?
 
   // Map Screen (excluding AI Viewer)

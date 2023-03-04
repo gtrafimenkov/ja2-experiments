@@ -55,6 +55,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderFun.h"
 #include "TileEngine/RenderWorld.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/PopUpBox.h"
@@ -994,7 +995,7 @@ AssignmentPosition.iY; break; case( DESTINATION_POPUP ): bSelectedDestChar = bCh
 
 INT32 DoMapMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
                               MSGBOX_CALLBACK ReturnCallback,
-                              SGPRect *pCenteringRect) {  // reset the highlighted line
+                              const SGPRect *pCenteringRect) {  // reset the highlighted line
   giHighLine = -1;
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
@@ -1003,15 +1004,13 @@ INT32 DoMapMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScree
 
 INT32 DoMapMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
                       MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
-
   // reset the highlighted line
   giHighLine = -1;
 
   // do message box and return
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
-                      &CenteringRect);
+                      GetMapCenteringRect());
 }
 
 void GoDownOneLevelInMap(void) { JumpToLevel(iCurrentMapSectorZ + 1); }

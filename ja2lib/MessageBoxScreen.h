@@ -84,26 +84,27 @@ extern BOOLEAN gfDontOverRideSaveBuffer;
 ////////////////////////////////
 
 INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect);
+                   MSGBOX_CALLBACK ReturnCallback, const SGPRect *pCenteringRect);
 void DoScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback);
 void DoUpperScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback);
 void DoLowerScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback);
 void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
-                                           MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect);
+                                           MSGBOX_CALLBACK ReturnCallback,
+                                           const SGPRect *pCenteringRect);
 
 // wrappers for other screens
 BOOLEAN DoLapTopSystemMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                          UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                         SGPRect *pCenteringRect);
+                                         const SGPRect *pCenteringRect);
 INT32 DoMapMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                              MSGBOX_CALLBACK ReturnCallback, SGPRect *pCenteringRect);
+                              MSGBOX_CALLBACK ReturnCallback, const SGPRect *pCenteringRect);
 BOOLEAN DoOptionsMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                     UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                    SGPRect *pCenteringRect);
+                                    const SGPRect *pCenteringRect);
 BOOLEAN DoSaveLoadMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                      UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                     SGPRect *pCenteringRect);
+                                     const SGPRect *pCenteringRect);
 
 #endif

@@ -429,7 +429,6 @@ BOOLEAN ServeNextFriendlySectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
 
 void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier) {
   CHAR16 sString[128];
-  SGPRect pCenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
   INT32 iNumberOfSectors = 0;
 
   pMilitiaTrainerSoldier = pSoldier;
@@ -466,7 +465,7 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
                     PayMilitiaTrainingYesNoBoxCallback);
   } else {
     DoMessageBox(MSG_BOX_BASIC_STYLE, sString, GAME_SCREEN, MSG_BOX_FLAG_YESNO,
-                 PayMilitiaTrainingYesNoBoxCallback, &pCenteringRect);
+                 PayMilitiaTrainingYesNoBoxCallback, GetMapCenteringRect());
   }
 
   return;

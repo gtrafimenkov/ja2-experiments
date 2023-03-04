@@ -75,6 +75,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/EventPump.h"
 #include "Utils/Message.h"
@@ -3747,7 +3748,7 @@ BOOLEAN DoLapTopMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, 
 
 BOOLEAN DoLapTopSystemMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                          UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                         SGPRect *pCenteringRect) {
+                                         const SGPRect *pCenteringRect) {
   // reset exit mode
   fExitDueToMessageBox = TRUE;
 
@@ -3762,14 +3763,13 @@ BOOLEAN DoLapTopSystemMessageBoxWithRect(UINT8 ubStyle, CHAR16 *zString, UINT32 
 
 BOOLEAN DoLapTopSystemMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen,
                                  UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y};
   // reset exit mode
   fExitDueToMessageBox = TRUE;
 
   // do message box and return
   iLaptopMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                    (UINT16)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
-                                   ReturnCallback, &CenteringRect);
+                                   ReturnCallback, GetMapCenteringRect());
 
   // send back return state
   return ((iLaptopMessageBox != -1));
