@@ -87,6 +87,7 @@
 #include "TileEngine/TileAnimation.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/EventPump.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
@@ -6276,7 +6277,7 @@ static int trig[8] = { 2, 3, 4, 5, 6, 7, 8, 1 };
 }
 #endif
 
-//#if 0
+// #if 0
 UINT8 atan8(INT16 sXPos, INT16 sYPos, INT16 sXPos2, INT16 sYPos2) {
   DOUBLE test_x = sXPos2 - sXPos;
   DOUBLE test_y = sYPos2 - sYPos;
@@ -6689,7 +6690,7 @@ void ReviveSoldier(struct SOLDIERTYPE *pSoldier) {
 }
 
 void HandleAnimationProfile(struct SOLDIERTYPE *pSoldier, UINT16 usAnimState, BOOLEAN fRemove) {
-  //#if 0
+  // #if 0
   struct ANIM_PROF *pProfile;
   struct ANIM_PROF_DIR *pProfileDir;
   struct ANIM_PROF_TILE *pProfileTile;
@@ -6739,7 +6740,7 @@ void HandleAnimationProfile(struct SOLDIERTYPE *pSoldier, UINT16 usAnimState, BO
     }
   }
 
-  //#endif
+  // #endif
 }
 
 struct LEVELNODE *GetAnimProfileFlags(UINT16 sGridNo, UINT16 *usFlags,
@@ -6756,7 +6757,7 @@ struct LEVELNODE *GetAnimProfileFlags(UINT16 sGridNo, UINT16 *usFlags,
     pNode = pGivenNode->pNext;
   }
 
-  //#if 0
+  // #if 0
 
   if (pNode != NULL) {
     if (pNode->uiFlags & LEVELNODE_MERCPLACEHOLDER) {
@@ -6765,7 +6766,7 @@ struct LEVELNODE *GetAnimProfileFlags(UINT16 sGridNo, UINT16 *usFlags,
     }
   }
 
-  //#endif
+  // #endif
 
   return (pNode);
 }
@@ -8148,7 +8149,7 @@ void SoldierBleed(struct SOLDIERTYPE *pSoldier, BOOLEAN fBandagedBleed) {
   // A banaged bleed does not show damage taken , just through existing bandages
 
   // ATE: Do this ONLY if buddy is in sector.....
-  if ((pSoldier->bInSector && guiCurrentScreen == GAME_SCREEN) || guiCurrentScreen != GAME_SCREEN) {
+  if ((pSoldier->bInSector && IsTacticalMode()) || guiCurrentScreen != GAME_SCREEN) {
     pSoldier->fFlashPortrait = TRUE;
     pSoldier->bFlashPortraitFrame = FLASH_PORTRAIT_STARTSHADE;
     RESETTIMECOUNTER(pSoldier->PortraitFlashCounter, FLASH_PORTRAIT_DELAY);
@@ -8434,8 +8435,8 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
           // we have a strucxture with items in it
           // look for orientation and use angle accordingly....
           if (bZLevel > 0) {
-            //#if 0
-            // Get direction to face....
+            // #if 0
+            //  Get direction to face....
             if ((pStructure = FindStructure(
                      (INT16)sGridNo, (STRUCTURE_HASITEMONTOP | STRUCTURE_OPENABLE))) != NULL) {
               fDoNormalPickup = FALSE;
@@ -8467,7 +8468,7 @@ void PickPickupAnimation(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT16 s
               // Change to pickup animation
               EVENT_InitNewSoldierAnim(pSoldier, ADJACENT_GET_ITEM, 0, FALSE);
             }
-            //#endif
+            // #endif
           }
 
           if (fDoNormalPickup) {

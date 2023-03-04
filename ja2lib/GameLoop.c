@@ -28,6 +28,7 @@
 #include "Tactical/InterfaceControl.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/TacticalSave.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
@@ -202,7 +203,7 @@ void GameLoop(void) {
   // if we are to check for free space on the hard drive
   if (gubCheckForFreeSpaceOnHardDriveCount < DONT_CHECK_FOR_FREE_SPACE) {
     // only if we are in a screen that can get this check
-    if (guiCurrentScreen == MAP_SCREEN || guiCurrentScreen == GAME_SCREEN ||
+    if (guiCurrentScreen == MAP_SCREEN || IsTacticalMode() ||
         guiCurrentScreen == SAVE_LOAD_SCREEN) {
       if (gubCheckForFreeSpaceOnHardDriveCount < 1) {
         gubCheckForFreeSpaceOnHardDriveCount++;

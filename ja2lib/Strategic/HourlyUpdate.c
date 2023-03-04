@@ -17,6 +17,7 @@
 #include "Tactical/Morale.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
+#include "UI.h"
 
 void HourlyQuestUpdate(void);
 void HourlyLarryUpdate(void);
@@ -169,7 +170,7 @@ void HourlyLarryUpdate(void) {
       return;
     }
     if (pSoldier->bActive && pSoldier->bInSector &&
-        (gTacticalStatus.fEnemyInSector || guiCurrentScreen == GAME_SCREEN)) {
+        (gTacticalStatus.fEnemyInSector || IsTacticalMode())) {
       return;
     }
 

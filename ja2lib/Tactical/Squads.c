@@ -18,6 +18,7 @@
 #include "Tactical/SoldierMacros.h"
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/Vehicles.h"
+#include "UI.h"
 
 typedef struct {
   INT16 uiID;  // The soldiers ID
@@ -391,7 +392,7 @@ BOOLEAN RemoveCharacterFromSquads(struct SOLDIERTYPE *pCharacter) {
         }
 
         // if we are not loading a saved game
-        if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME) && guiCurrentScreen == GAME_SCREEN) {
+        if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME) && IsTacticalMode()) {
           UpdateCurrentlySelectedMerc(pCharacter, (INT8)iCounterA);
         }
 

@@ -11,6 +11,7 @@
 #include "Strategic/StrategicMap.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
+#include "UI.h"
 #include "Utils/TimerControl.h"
 
 UINT32 uiMusicHandle = NO_SAMPLE;
@@ -265,7 +266,7 @@ BOOLEAN MusicPoll(BOOLEAN fForce) {
       }
     }
 
-    //#endif
+    // #endif
 
     if (gfMusicEnded) {
       // OK, based on our music mode, play another!
@@ -273,7 +274,7 @@ BOOLEAN MusicPoll(BOOLEAN fForce) {
 
       // If we were in victory mode, change!
       if (gbVictorySongCount == 1 || gbDeathSongCount == 1) {
-        if (gbDeathSongCount == 1 && guiCurrentScreen == GAME_SCREEN) {
+        if (gbDeathSongCount == 1 && IsTacticalMode()) {
           CheckAndHandleUnloadingOfCurrentWorld();
         }
 

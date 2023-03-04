@@ -53,6 +53,7 @@
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
+#include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/EncryptedFile.h"
 #include "Utils/MercTextBox.h"
@@ -503,7 +504,7 @@ void HandleDialogue() {
         }
 
         guiScreenIDUsedWhenUICreated = guiCurrentScreen;
-      } else if (guiScreenIDUsedWhenUICreated == MAP_SCREEN && guiCurrentScreen == GAME_SCREEN) {
+      } else if (guiScreenIDUsedWhenUICreated == MAP_SCREEN && IsTacticalMode()) {
         HandleTacticalSpeechUI(gubCurrentTalkingID, gpCurrentTalkingFace->iID);
         guiScreenIDUsedWhenUICreated = guiCurrentScreen;
       }
@@ -1832,7 +1833,7 @@ void HandleTacticalSpeechUI(UINT8 ubCharacterNum, INT32 iFaceIndex) {
     gFacesData[iFaceIndex].uiFlags |= (FACE_INACTIVE_HANDLED_ELSEWHERE | FACE_MAKEACTIVE_ONCE_DONE);
 
     // IF we are in tactical and this soldier is on the current squad
-    if ((guiCurrentScreen == GAME_SCREEN) && (pSoldier != NULL) &&
+    if ((IsTacticalMode()) && (pSoldier != NULL) &&
         (pSoldier->bAssignment == iCurrentTacticalSquad)) {
       // Make the interface panel dirty..
       // This will dirty the panel next frame...

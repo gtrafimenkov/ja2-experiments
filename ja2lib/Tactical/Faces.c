@@ -36,6 +36,7 @@
 #include "Tactical/TeamTurns.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/SysUtil.h"
+#include "UI.h"
 #include "Utils/FontControl.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Utilities.h"
@@ -574,7 +575,7 @@ void SetAutoFaceInActive(INT32 iFaceIndex) {
       pSoldier = MercPtrs[pFace->ubSoldierID];
 
       // IF we are in tactical
-      if (pSoldier->bAssignment == iCurrentTacticalSquad && guiCurrentScreen == GAME_SCREEN) {
+      if (pSoldier->bAssignment == iCurrentTacticalSquad && IsTacticalMode()) {
         // Make the interfac panel dirty..
         // This will dirty the panel next frame...
         gfRerenderInterfaceFromHelpText = TRUE;
@@ -717,7 +718,7 @@ void HandleFaceHilights(FACETYPE *pFace, UINT32 uiBuffer, INT16 sFaceX, INT16 sF
   iFaceIndex = pFace->iID;
 
   if (!gFacesData[iFaceIndex].fDisabled) {
-    if (pFace->uiAutoDisplayBuffer == FRAME_BUFFER && guiCurrentScreen == GAME_SCREEN) {
+    if (pFace->uiAutoDisplayBuffer == FRAME_BUFFER && IsTacticalMode()) {
       // If we are highlighted, do this now!
       if ((pFace->uiFlags & FACE_SHOW_WHITE_HILIGHT)) {
         // Lock buffer
@@ -1717,7 +1718,7 @@ void HandleAutoFaces() {
           fRerender = TRUE;
         }
 
-        if (fInterfacePanelDirty == DIRTYLEVEL2 && guiCurrentScreen == GAME_SCREEN) {
+        if (fInterfacePanelDirty == DIRTYLEVEL2 && IsTacticalMode()) {
           fRerender = TRUE;
         }
 
