@@ -152,9 +152,4 @@ extern BOOLEAN gfRobotWithoutControllerAttemptingTraversal;
 extern UINT8 gubLoneMercAttemptingToAbandonEPCs;
 extern INT8 gbPotentiallyAbandonedEPCSlotID;
 
-extern INT8 gbGreenToElitePromotions;
-extern INT8 gbGreenToRegPromotions;
-extern INT8 gbRegToElitePromotions;
-extern INT8 gbMilitiaPromotions;
-
 #endif

@@ -1051,39 +1051,48 @@ void PrepareMilitiaForTactical() {
   AddSoldierInitListMilitia(ubGreen, ubRegs, ubElites);
 }
 
-static void handlePromotions(void) {
-  UINT8 cnt;
-  UINT8 ubMilitiaRank;
-  struct SOLDIERTYPE *pTeamSoldier;
-  UINT8 ubPromotions;
+i8 gbGreenToElitePromotions = 0;
+i8 gbGreenToRegPromotions = 0;
+i8 gbRegToElitePromotions = 0;
+i8 gbMilitiaPromotions = 0;
 
+void PrepMilitiaPromotion() {
   gbGreenToElitePromotions = 0;
   gbGreenToRegPromotions = 0;
   gbRegToElitePromotions = 0;
   gbMilitiaPromotions = 0;
+}
 
-  cnt = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
+void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 rank, u8 soldierClass, u8 kills) {
+  u8 ubPromotions = CheckOneMilitiaForPromotion(sMapX, sMapY, rank, kills);
+  if (ubPromotions) {
+    if (ubPromotions == 2) {
+      gbGreenToElitePromotions++;
+      gbMilitiaPromotions++;
+    } else if (soldierClass == SOLDIER_CLASS_GREEN_MILITIA) {
+      gbGreenToRegPromotions++;
+      gbMilitiaPromotions++;
+    } else if (soldierClass == SOLDIER_CLASS_REG_MILITIA) {
+      gbRegToElitePromotions++;
+      gbMilitiaPromotions++;
+    }
+  }
+}
+
+static void handlePromotions(void) {
+  struct SOLDIERTYPE *pTeamSoldier;
+
+  PrepMilitiaPromotion();
+
+  UINT8 cnt = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
 
   for (pTeamSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[MILITIA_TEAM].bLastID;
        cnt++, pTeamSoldier++) {
     if (pTeamSoldier->bActive && pTeamSoldier->bInSector && pTeamSoldier->bLife > 0) {
       if (pTeamSoldier->ubMilitiaKills > 0) {
-        ubMilitiaRank = SoldierClassToMilitiaRank(pTeamSoldier->ubSoldierClass);
-        ubPromotions = CheckOneMilitiaForPromotion(gWorldSectorX, gWorldSectorY, ubMilitiaRank,
-                                                   pTeamSoldier->ubMilitiaKills);
-        if (ubPromotions) {
-          if (ubPromotions == 2) {
-            gbGreenToElitePromotions++;
-            gbMilitiaPromotions++;
-          } else if (pTeamSoldier->ubSoldierClass == SOLDIER_CLASS_GREEN_MILITIA) {
-            gbGreenToRegPromotions++;
-            gbMilitiaPromotions++;
-          } else if (pTeamSoldier->ubSoldierClass == SOLDIER_CLASS_REG_MILITIA) {
-            gbRegToElitePromotions++;
-            gbMilitiaPromotions++;
-          }
-        }
-
+        UINT8 ubMilitiaRank = SoldierClassToMilitiaRank(pTeamSoldier->ubSoldierClass);
+        HandleSingleMilitiaPromotion(gWorldSectorX, gWorldSectorY, ubMilitiaRank,
+                                     pTeamSoldier->ubSoldierClass, pTeamSoldier->ubMilitiaKills);
         pTeamSoldier->ubMilitiaKills = 0;
       }
     }
@@ -1091,3 +1100,58 @@ static void handlePromotions(void) {
 }
 
 void Event_UIMilitiaChanges() { gfStrategicMilitiaChangesMade = FALSE; }
+
+void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize) {
+  CHAR16 pStr[256];
+  BOOLEAN fAddSpace = FALSE;
+  swprintf(str, bufSize, L"");
+
+  if (!gbMilitiaPromotions) {
+    return;
+  }
+  if (gbGreenToElitePromotions > 1) {
+    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[22], gbGreenToElitePromotions);
+    wcsncat(str, pStr, bufSize);
+    fAddSpace = TRUE;
+  } else if (gbGreenToElitePromotions == 1) {
+    wcsncat(str, gzLateLocalizedString[29], bufSize);
+    fAddSpace = TRUE;
+  }
+
+  if (gbGreenToRegPromotions > 1) {
+    if (fAddSpace) {
+      wcsncat(str, L" ", bufSize);
+    }
+    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[23], gbGreenToRegPromotions);
+    wcsncat(str, pStr, bufSize);
+    fAddSpace = TRUE;
+  } else if (gbGreenToRegPromotions == 1) {
+    if (fAddSpace) {
+      wcsncat(str, L" ", bufSize);
+    }
+    wcsncat(str, gzLateLocalizedString[30], bufSize);
+    fAddSpace = TRUE;
+  }
+
+  if (gbRegToElitePromotions > 1) {
+    if (fAddSpace) {
+      wcsncat(str, L" ", bufSize);
+    }
+    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[24], gbRegToElitePromotions);
+    wcsncat(str, pStr, bufSize);
+  } else if (gbRegToElitePromotions == 1) {
+    if (fAddSpace) {
+      wcsncat(str, L" ", bufSize);
+    }
+    wcsncat(str, gzLateLocalizedString[31], bufSize);
+    fAddSpace = TRUE;
+  }
+
+  // Clear the fields
+  gbGreenToElitePromotions = 0;
+  gbGreenToRegPromotions = 0;
+  gbRegToElitePromotions = 0;
+  gbMilitiaPromotions = 0;
+}
+
+bool HasNewMilitiaPromotions() { return gbMilitiaPromotions > 0; }

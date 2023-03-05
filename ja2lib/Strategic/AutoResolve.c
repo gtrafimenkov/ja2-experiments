@@ -2026,11 +2026,8 @@ void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
       gpMercs[i].pRegion = NULL;
     }
   }
-  // Delete all militia
-  gbGreenToElitePromotions = 0;
-  gbGreenToRegPromotions = 0;
-  gbRegToElitePromotions = 0;
-  gbMilitiaPromotions = 0;
+
+  PrepMilitiaPromotion();
   for (i = 0; i < MAX_ALLOWABLE_MILITIA_PER_SECTOR; i++) {
     if (gpCivs[i].pSoldier) {
       ubCurrentRank = 255;
@@ -2058,24 +2055,11 @@ void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
         StrategicRemoveMilitiaFromSector(gpAR->ubSectorX, gpAR->ubSectorY, ubCurrentRank, 1);
         HandleGlobalLoyaltyEvent(GLOBAL_LOYALTY_NATIVE_KILLED, gpAR->ubSectorX, gpAR->ubSectorY, 0);
       } else {
-        UINT8 ubPromotions;
-        // this will check for promotions and handle them for you
         if (fDeleteForGood && (gpCivs[i].pSoldier->ubMilitiaKills > 0) &&
             (ubCurrentRank < ELITE_MILITIA)) {
-          ubPromotions = CheckOneMilitiaForPromotion(
-              gpAR->ubSectorX, gpAR->ubSectorY, ubCurrentRank, gpCivs[i].pSoldier->ubMilitiaKills);
-          if (ubPromotions) {
-            if (ubPromotions == 2) {
-              gbGreenToElitePromotions++;
-              gbMilitiaPromotions++;
-            } else if (gpCivs[i].pSoldier->ubSoldierClass == SOLDIER_CLASS_GREEN_MILITIA) {
-              gbGreenToRegPromotions++;
-              gbMilitiaPromotions++;
-            } else if (gpCivs[i].pSoldier->ubSoldierClass == SOLDIER_CLASS_REG_MILITIA) {
-              gbRegToElitePromotions++;
-              gbMilitiaPromotions++;
-            }
-          }
+          HandleSingleMilitiaPromotion(gpAR->ubSectorX, gpAR->ubSectorY, ubCurrentRank,
+                                       gpCivs[i].pSoldier->ubSoldierClass,
+                                       gpCivs[i].pSoldier->ubMilitiaKills);
         }
       }
       TacticalRemoveSoldierPointer(gpCivs[i].pSoldier, FALSE);

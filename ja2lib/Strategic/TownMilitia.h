@@ -61,4 +61,8 @@ void ResetMilitia();
 
 void Event_UIMilitiaChanges();
 
+void PrepMilitiaPromotion();
+void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 rank, u8 soldierClass, u8 kills);
+bool HasNewMilitiaPromotions();
+
 #endif

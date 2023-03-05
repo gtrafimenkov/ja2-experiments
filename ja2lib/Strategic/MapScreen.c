@@ -10307,11 +10307,11 @@ void HandlePostAutoresolveMessages() {
     SetThisSectorAsEnemyControlled(SectorID8_X(gsEnemyGainedControlOfSectorID),
                                    SectorID8_Y(gsEnemyGainedControlOfSectorID), 0, TRUE);
     gsEnemyGainedControlOfSectorID = -2;
-  } else if (gsEnemyGainedControlOfSectorID ==
-             -2) {  // dirty the mapscreen after the dialog box goes away.
+  } else if (gsEnemyGainedControlOfSectorID == -2) {
+    // dirty the mapscreen after the dialog box goes away.
     MarkForRedrawalStrategicMap();
     gsEnemyGainedControlOfSectorID = -1;
-  } else if (gbMilitiaPromotions) {
+  } else if (HasNewMilitiaPromotions()) {
     CHAR16 str[512];
     BuildMilitiaPromotionsString(str, ARR_SIZE(str));
     DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, MapScreenDefaultOkBoxCallback);
