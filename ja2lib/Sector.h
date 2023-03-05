@@ -4,8 +4,15 @@
 #include "Militia.h"
 #include "SGP/Types.h"
 
+// Sector ID 0-255
+typedef u8 SectorID8;
+
+// Convert coordinates (1-16, 1-16) to 0-255 index.
+// This function should be prefered over SECTOR_STATIC macro.
+SectorID8 SECTOR(u8 x, u8 y);
+
 // Macro to convert sector coordinates (1-16,1-16) to 0-255
-#define SECTOR(x, y) ((y - 1) * 16 + x - 1)
+#define SECTOR_STATIC(x, y) ((y - 1) * 16 + x - 1)
 #define SECTORX(SectorID) ((SectorID % 16) + 1)
 #define SECTORY(SectorID) ((SectorID / 16) + 1)
 

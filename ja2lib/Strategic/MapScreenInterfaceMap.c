@@ -371,18 +371,18 @@ BOOLEAN sBadSectorsList[WORLD_MAP_X][WORLD_MAP_X];
 INT16 sBaseSectorList[] = {
     // NOTE: These co-ordinates must match the top left corner of the 3x3 town tiles cutouts in
     // Interface/MilitiaMaps.sti!
-    SECTOR(9, 1),    // Omerta
-    SECTOR(13, 2),   // Drassen
-    SECTOR(13, 8),   // Alma
-    SECTOR(1, 7),    // Grumm
-    SECTOR(8, 9),    // Tixa
-    SECTOR(8, 6),    // Cambria
-    SECTOR(4, 2),    // San Mona
-    SECTOR(5, 8),    // Estoni
-    SECTOR(3, 10),   // Orta
-    SECTOR(11, 11),  // Balime
-    SECTOR(3, 14),   // Meduna
-    SECTOR(2, 1),    // Chitzena
+    SECTOR_STATIC(9, 1),    // Omerta
+    SECTOR_STATIC(13, 2),   // Drassen
+    SECTOR_STATIC(13, 8),   // Alma
+    SECTOR_STATIC(1, 7),    // Grumm
+    SECTOR_STATIC(8, 9),    // Tixa
+    SECTOR_STATIC(8, 6),    // Cambria
+    SECTOR_STATIC(4, 2),    // San Mona
+    SECTOR_STATIC(5, 8),    // Estoni
+    SECTOR_STATIC(3, 10),   // Orta
+    SECTOR_STATIC(11, 11),  // Balime
+    SECTOR_STATIC(3, 14),   // Meduna
+    SECTOR_STATIC(2, 1),    // Chitzena
 };
 
 // position of town names on the map
