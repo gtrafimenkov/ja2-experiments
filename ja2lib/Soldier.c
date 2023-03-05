@@ -14,3 +14,8 @@ i8 GetSolSectorZ(const struct SOLDIERTYPE *s) { return s->bSectorZ; }
 i8 GetSolAssignment(const struct SOLDIERTYPE *s) { return s->bAssignment; }
 
 bool IsSolActive(const struct SOLDIERTYPE *s) { return s->bActive; }
+
+void SetSolAssignmentDone(struct SOLDIERTYPE *s) {
+  s->fDoneAssignmentAndNothingToDoFlag = FALSE;
+  s->usQuoteSaidExtFlags &= ~SOLDIER_QUOTE_SAID_DONE_ASSIGNMENT;
+}

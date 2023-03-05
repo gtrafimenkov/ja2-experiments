@@ -925,8 +925,7 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector) {
       if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
         if ((SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) == ubSector) &&
             (GetSolSectorZ(pSoldier) == 0)) {
-          pSoldier->fDoneAssignmentAndNothingToDoFlag = FALSE;
-          pSoldier->usQuoteSaidExtFlags &= ~SOLDIER_QUOTE_SAID_DONE_ASSIGNMENT;
+          SetSolAssignmentDone(pSoldier);
         }
       }
     }

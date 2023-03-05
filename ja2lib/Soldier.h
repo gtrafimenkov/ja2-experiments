@@ -20,4 +20,6 @@ i8 GetSolAssignment(const struct SOLDIERTYPE *s);
 
 bool IsSolActive(const struct SOLDIERTYPE *s);
 
+void SetSolAssignmentDone(struct SOLDIERTYPE *s);
+
 #endif
