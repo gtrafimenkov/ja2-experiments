@@ -3954,7 +3954,7 @@ UINT32 HandleMapUI() {
         }
 
         if ((IsTheCursorAllowedToHighLightThisSector(sMapX, sMapY) == TRUE) &&
-            (SectorInfo[(SECTOR(sMapX, sMapY))].ubTraversability[THROUGH_STRATEGIC_MOVE] !=
+            (SectorInfo[(GetSectorID8(sMapX, sMapY))].ubTraversability[THROUGH_STRATEGIC_MOVE] !=
              GROUNDBARRIER)) {
           // Can we get go there?  (NULL temp character path)
           if (GetLengthOfPath(pTempCharacterPath) > 0) {
@@ -4063,7 +4063,7 @@ UINT32 HandleMapUI() {
 
         // this doesn't change selected sector
         if (gfInChangeArrivalSectorMode) {
-          if (SectorInfo[(SECTOR(sMapX, sMapY))].ubTraversability[THROUGH_STRATEGIC_MOVE] !=
+          if (SectorInfo[(GetSectorID8(sMapX, sMapY))].ubTraversability[THROUGH_STRATEGIC_MOVE] !=
               GROUNDBARRIER) {
             // if it's not enemy air controlled
             if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sMapX, sMapY)].fEnemyAirControlled ==
@@ -9857,7 +9857,7 @@ INT16 CalcLocationValueForChar(INT32 iCounter) {
 
   // don't reveal location of POWs!
   if (pSoldier->bAssignment != ASSIGNMENT_POW) {
-    sLocValue = SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+    sLocValue = GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     // underground: add 1000 per sublevel
     sLocValue += 1000 * (GetSolSectorZ(pSoldier));
   }
@@ -10188,7 +10188,7 @@ void DumpSectorDifficultyInfo(void) {
 
   GetSectorIDString(sSelMapX, sSelMapY, (INT8)iCurrentMapSectorZ, wSectorName,
                     ARR_SIZE(wSectorName), TRUE);
-  ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_TESTVERSION, L"SECTOR: %s", wSectorName);
+  ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_TESTVERSION, L"GetSectorID8: %s", wSectorName);
 
   ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_TESTVERSION, L"Pyth. Distance From Meduna (0-20) = %d",
             GetPythDistanceFromPalace(sSelMapX, sSelMapY));

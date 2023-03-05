@@ -2737,7 +2737,7 @@ void HandleVictoryInNPCSector(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ) {
   }
 
   // grab sector value
-  sSector = SECTOR(sSectorX, sSectorY);
+  sSector = GetSectorID8(sSectorX, sSectorY);
 
   switch (sSector) {
     case (SEC_F10): {

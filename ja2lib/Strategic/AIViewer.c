@@ -660,7 +660,7 @@ void RenderInfoInSector() {
     UINT8 ubNumAdmins = 0, ubNumTroops = 0, ubNumElites = 0, ubAdminsInBattle = 0,
           ubTroopsInBattle = 0, ubElitesInBattle = 0, ubNumGroups = 0;
 
-    pSector = &SectorInfo[SECTOR(ubSectorX, ubSectorY)];
+    pSector = &SectorInfo[GetSectorID8(ubSectorX, ubSectorY)];
 
     // Now count the number of mobile groups in the sector.
     pGroup = gpGroupList;
@@ -678,8 +678,8 @@ void RenderInfoInSector() {
       pGroup = pGroup->next;
     }
     ClearViewerRegion(280, 375, 640, 480);
-    mprintf(280, yp, L"SECTOR INFO:  %c%d  (ID: %d)", ubSectorY + 'A' - 1, ubSectorX,
-            SECTOR(ubSectorX, ubSectorY));
+    mprintf(280, yp, L"GetSectorID8 INFO:  %c%d  (ID: %d)", ubSectorY + 'A' - 1, ubSectorX,
+            GetSectorID8(ubSectorX, ubSectorY));
     yp += 10;
     SetFontForeground(FONT_LTGREEN);
     mprintf(280, yp, L"%d Player Mercs:  (%d Active, %d Unconcious, %d Collapsed)", ubMercs,
@@ -717,7 +717,7 @@ void RenderInfoInSector() {
     if (!pSector) {
       return;
     }
-    mprintf(280, yp, L"SECTOR INFO:  %c%d_b%d", ubSectorY + 'A' - 1, ubSectorX, gbViewLevel);
+    mprintf(280, yp, L"GetSectorID8 INFO:  %c%d_b%d", ubSectorY + 'A' - 1, ubSectorX, gbViewLevel);
     yp += 10;
     SetFontForeground(FONT_LTGREEN);
     mprintf(280, yp, L"%d Player Mercs:  (%d Active, %d Unconcious, %d Collapsed)", ubMercs,
@@ -869,14 +869,14 @@ void HandleViewerInput() {
           if (Event.usKeyState & ALT_DOWN) {
             pSector = NULL;
             if (gsSelSectorX && gsSelSectorY) {
-              pSector = &SectorInfo[SECTOR(gsSelSectorX, gsSelSectorY)];
+              pSector = &SectorInfo[GetSectorID8(gsSelSectorX, gsSelSectorY)];
               pSector->ubNumberOfCivsAtLevel[0] = 15;
               pSector->ubNumberOfCivsAtLevel[1] = 4;
               pSector->ubNumberOfCivsAtLevel[2] = 1;
               gfRenderMap = TRUE;
               EliminateAllEnemies((UINT8)gsSelSectorX, (UINT8)gsSelSectorY);
             } else if (gsHiSectorX && gsHiSectorY) {
-              pSector = &SectorInfo[SECTOR(gsHiSectorX, gsHiSectorY)];
+              pSector = &SectorInfo[GetSectorID8(gsHiSectorX, gsHiSectorY)];
               pSector->ubNumberOfCivsAtLevel[0] = 15;
               pSector->ubNumberOfCivsAtLevel[1] = 4;
               pSector->ubNumberOfCivsAtLevel[2] = 1;
@@ -901,11 +901,11 @@ void HandleViewerInput() {
         case 'g':
           // Add a group of 8 stationary enemies
           if (gsSelSectorX && gsSelSectorY) {
-            pSector = &SectorInfo[SECTOR(gsSelSectorX, gsSelSectorY)];
+            pSector = &SectorInfo[GetSectorID8(gsSelSectorX, gsSelSectorY)];
             pSector->ubNumElites += 1;
             pSector->ubNumTroops += 7;
           } else if (gsHiSectorX && gsHiSectorY) {
-            pSector = &SectorInfo[SECTOR(gsHiSectorX, gsHiSectorY)];
+            pSector = &SectorInfo[GetSectorID8(gsHiSectorX, gsHiSectorY)];
             pSector->ubNumElites += 1;
             pSector->ubNumTroops += 7;
           }
@@ -913,10 +913,10 @@ void HandleViewerInput() {
         case 'c':
           // Add a group of 8 creatures.
           if (gsSelSectorX && gsSelSectorY) {
-            pSector = &SectorInfo[SECTOR(gsSelSectorX, gsSelSectorY)];
+            pSector = &SectorInfo[GetSectorID8(gsSelSectorX, gsSelSectorY)];
             pSector->ubNumCreatures += 8;
           } else if (gsHiSectorX && gsHiSectorY) {
-            pSector = &SectorInfo[SECTOR(gsHiSectorX, gsHiSectorY)];
+            pSector = &SectorInfo[GetSectorID8(gsHiSectorX, gsHiSectorY)];
             pSector->ubNumCreatures += 8;
           }
           break;
@@ -1120,7 +1120,7 @@ void TestIncoming4SidesCallback(GUI_BUTTON *btn, INT32 reason) {
     Compression0Callback(ButtonList[iViewerButton[COMPRESSION0]], MSYS_CALLBACK_REASON_LBUTTON_UP);
     if ((gsSelSectorX == 0) || (gsSelSectorY == 0)) gsSelSectorX = 9, gsSelSectorY = 1;
 
-    ubSector = SECTOR(gsSelSectorX, gsSelSectorY);
+    ubSector = GetSectorID8(gsSelSectorX, gsSelSectorY);
     uiWorldMin = GetWorldTotalMin();
     gfRenderViewer = TRUE;
     if (gsSelSectorY > 1) {
@@ -1198,9 +1198,9 @@ void CreatureAttackCallback(GUI_BUTTON *btn, INT32 reason) {
     if ((gsSelSectorX != 0) && (gsSelSectorX != 0)) {
       if (_KeyDown(ALT)) {
         AddStrategicEventUsingSeconds(EVENT_CREATURE_ATTACK, GetWorldTotalSeconds() + 4,
-                                      SECTOR(gsSelSectorX, gsSelSectorY));
+                                      GetSectorID8(gsSelSectorX, gsSelSectorY));
       } else {
-        CreatureAttackTown((UINT8)SECTOR(gsSelSectorX, gsSelSectorY), TRUE);
+        CreatureAttackTown((UINT8)GetSectorID8(gsSelSectorX, gsSelSectorY), TRUE);
       }
     }
   }
@@ -1650,7 +1650,7 @@ void PrintDetailedEnemiesInSectorInfo(INT32 iScreenX, INT32 iScreenY, UINT8 ubSe
   INT16 iPatrolIndex;
   WAYPOINT *pFinalWaypoint;
 
-  pSector = &SectorInfo[SECTOR(ubSectorX, ubSectorY)];
+  pSector = &SectorInfo[GetSectorID8(ubSectorX, ubSectorY)];
 
   // handle garrisoned enemies
   if (pSector->ubGarrisonID != NO_GARRISON) {

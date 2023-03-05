@@ -157,7 +157,7 @@ UINT8 CreateNewPlayerGroupDepartingFromSector(UINT8 ubSectorX, UINT8 ubSectorY) 
   pNew->pWaypoints = NULL;
   pNew->ubSectorX = pNew->ubNextX = ubSectorX;
   pNew->ubSectorY = pNew->ubNextY = ubSectorY;
-  pNew->ubOriginalSector = (UINT8)SECTOR(ubSectorX, ubSectorY);
+  pNew->ubOriginalSector = (UINT8)GetSectorID8(ubSectorX, ubSectorY);
   pNew->fPlayer = TRUE;
   pNew->ubMoveType = ONE_WAY;
   pNew->ubNextWaypointID = 0;
@@ -184,7 +184,7 @@ UINT8 CreateNewVehicleGroupDepartingFromSector(UINT8 ubSectorX, UINT8 ubSectorY,
   pNew->pWaypoints = NULL;
   pNew->ubSectorX = pNew->ubNextX = ubSectorX;
   pNew->ubSectorY = pNew->ubNextY = ubSectorY;
-  pNew->ubOriginalSector = (UINT8)SECTOR(ubSectorX, ubSectorY);
+  pNew->ubOriginalSector = (UINT8)GetSectorID8(ubSectorX, ubSectorY);
   pNew->ubMoveType = ONE_WAY;
   pNew->ubNextWaypointID = 0;
   pNew->ubFatigueLevel = 100;
@@ -272,7 +272,7 @@ BOOLEAN RemoveAllPlayersFromPGroup(struct GROUP *pGroup) {
   while (curr) {
     pGroup->pPlayerList = pGroup->pPlayerList->next;
 
-    curr->pSoldier->ubPrevSectorID = (UINT8)SECTOR(pGroup->ubPrevX, pGroup->ubPrevY);
+    curr->pSoldier->ubPrevSectorID = (UINT8)GetSectorID8(pGroup->ubPrevX, pGroup->ubPrevY);
     curr->pSoldier->ubGroupID = 0;
 
     MemFree(curr);
@@ -308,7 +308,7 @@ BOOLEAN RemovePlayerFromPGroup(struct GROUP *pGroup, struct SOLDIERTYPE *pSoldie
 
     // process info for soldier
     pGroup->ubGroupSize--;
-    pSoldier->ubPrevSectorID = (UINT8)SECTOR(pGroup->ubPrevX, pGroup->ubPrevY);
+    pSoldier->ubPrevSectorID = (UINT8)GetSectorID8(pGroup->ubPrevX, pGroup->ubPrevY);
     pSoldier->ubGroupID = 0;
 
     // if there's nobody left in the group
@@ -336,7 +336,7 @@ BOOLEAN RemovePlayerFromPGroup(struct GROUP *pGroup, struct SOLDIERTYPE *pSoldie
       // process info for soldier
       pSoldier->ubGroupID = 0;
       pGroup->ubGroupSize--;
-      pSoldier->ubPrevSectorID = (UINT8)SECTOR(pGroup->ubPrevX, pGroup->ubPrevY);
+      pSoldier->ubPrevSectorID = (UINT8)GetSectorID8(pGroup->ubPrevX, pGroup->ubPrevY);
 
       return TRUE;
     }
@@ -1375,7 +1375,7 @@ void GroupArrivedAtSector(UINT8 ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fNev
 
   if (pGroup->fPlayer) {
     if (pGroup->ubSectorZ == 0) {
-      SectorInfo[SECTOR(pGroup->ubSectorX, pGroup->ubSectorY)].bLastKnownEnemies =
+      SectorInfo[GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY)].bLastKnownEnemies =
           NumEnemiesInSector(pGroup->ubSectorX, pGroup->ubSectorY);
     }
 
@@ -1456,7 +1456,7 @@ void GroupArrivedAtSector(UINT8 ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fNev
         curr->pSoldier->sSectorX = pGroup->ubSectorX;
         curr->pSoldier->sSectorY = pGroup->ubSectorY;
         curr->pSoldier->bSectorZ = pGroup->ubSectorZ;
-        curr->pSoldier->ubPrevSectorID = (UINT8)SECTOR(pGroup->ubPrevX, pGroup->ubPrevY);
+        curr->pSoldier->ubPrevSectorID = (UINT8)GetSectorID8(pGroup->ubPrevX, pGroup->ubPrevY);
         curr->pSoldier->ubInsertionDirection = ubInsertionDirection;
 
         // don't override if a tactical traversal
@@ -1589,7 +1589,7 @@ void GroupArrivedAtSector(UINT8 ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fNev
       // on foot, or in a vehicle other than the chopper
       if (!pGroup->fVehicle || !IsGroupTheHelicopterGroup(pGroup)) {
         // ATE: Add a few corpse to the bloodcat lair...
-        if (SECTOR(pGroup->ubSectorX, pGroup->ubSectorY) == SEC_I16 && fFirstTimeInSector) {
+        if (GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY) == SEC_I16 && fFirstTimeInSector) {
           AddCorpsesToBloodcatLair(pGroup->ubSectorX, pGroup->ubSectorY);
         }
 
@@ -1966,7 +1966,7 @@ void InitiateGroupMovementToNextSector(struct GROUP *pGroup) {
   pGroup->ubNextX = (UINT8)(dx + pGroup->ubSectorX);
   pGroup->ubNextY = (UINT8)(dy + pGroup->ubSectorY);
   // Calc time to get to next waypoint...
-  ubSector = (UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY);
+  ubSector = (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY);
   if (!pGroup->ubSectorZ) {
     BOOLEAN fCalcRegularTime = TRUE;
     if (!pGroup->fPlayer) {  // Determine if the enemy group is "sleeping".  If so, then simply
@@ -2216,7 +2216,7 @@ void SetGroupSectorValue(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ, UINT8 u
   pGroup->fBetweenSectors = FALSE;
 
   // set next sectors same as current
-  pGroup->ubOriginalSector = (UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY);
+  pGroup->ubOriginalSector = (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY);
   DeleteStrategicEvent(EVENT_GROUP_ARRIVAL, pGroup->ubGroupID);
 
   // set all of the mercs in the group so that they are in the new sector too.
@@ -2269,7 +2269,7 @@ void SetGroupNextSectorValue(INT16 sSectorX, INT16 sSectorY, UINT8 ubGroupID) {
   pGroup->fBetweenSectors = FALSE;
 
   // set next sectors same as current
-  pGroup->ubOriginalSector = (UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY);
+  pGroup->ubOriginalSector = (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY);
 }
 
 // get eta of the group with this id
@@ -2302,8 +2302,8 @@ INT32 CalculateTravelTimeOfGroup(struct GROUP *pGroup) {
   pNode = pGroup->pWaypoints;
 
   // now get the delta in current sector and next sector
-  iDelta = (INT32)(SECTOR(pGroup->ubSectorX, pGroup->ubSectorY) -
-                   SECTOR(pGroup->ubNextX, pGroup->ubNextY));
+  iDelta = (INT32)(GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY) -
+                   GetSectorID8(pGroup->ubNextX, pGroup->ubNextY));
 
   if (iDelta == 0) {
     // not going anywhere...return current time
@@ -2359,8 +2359,8 @@ INT32 FindTravelTimeBetweenWaypoints(WAYPOINT *pSource, WAYPOINT *pDest, struct 
   }
 
   // get start and end setor values
-  ubStart = SECTOR(pSource->x, pSource->y);
-  ubEnd = SECTOR(pDest->x, pDest->y);
+  ubStart = GetSectorID8(pSource->x, pSource->y);
+  ubEnd = GetSectorID8(pDest->x, pDest->y);
 
   // are we in fact moving?
   if (ubStart == ubEnd) {
@@ -2730,7 +2730,7 @@ void HandleArrivalOfReinforcements(struct GROUP *pGroup) {
     AddPossiblePendingEnemiesToBattle();
   }
   // Update the known number of enemies in the sector.
-  pSector = &SectorInfo[SECTOR(pGroup->ubSectorX, pGroup->ubSectorY)];
+  pSector = &SectorInfo[GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY)];
   iNumEnemiesInSector = NumEnemiesInSector(pGroup->ubSectorX, pGroup->ubSectorY);
   if (iNumEnemiesInSector) {
     if (pSector->bLastKnownEnemies >= 0) {
@@ -2757,7 +2757,7 @@ BOOLEAN PlayersBetweenTheseSectors(INT16 sSource, INT16 sDest, INT32 *iCountEnte
 
   if (gpBattleGroup) {
     // Assert( gfPreBattleInterfaceActive );
-    sBattleSector = (INT16)SECTOR(gpBattleGroup->ubSectorX, gpBattleGroup->ubSectorY);
+    sBattleSector = (INT16)GetSectorID8(gpBattleGroup->ubSectorX, gpBattleGroup->ubSectorY);
   }
 
   // debug only
@@ -2786,20 +2786,22 @@ BOOLEAN PlayersBetweenTheseSectors(INT16 sSource, INT16 sDest, INT32 *iCountEnte
           fMayRetreatFromBattle = FALSE;
           fRetreatingFromBattle = FALSE;
 
-          if ((sBattleSector == sSource) && (SECTOR(curr->ubSectorX, curr->ubSectorY) == sSource) &&
-              (SECTOR(curr->ubPrevX, curr->ubPrevY) == sDest)) {
+          if ((sBattleSector == sSource) &&
+              (GetSectorID8(curr->ubSectorX, curr->ubSectorY) == sSource) &&
+              (GetSectorID8(curr->ubPrevX, curr->ubPrevY) == sDest)) {
             fMayRetreatFromBattle = TRUE;
           }
 
-          if ((sBattleSector == sDest) && (SECTOR(curr->ubSectorX, curr->ubSectorY) == sDest) &&
-              (SECTOR(curr->ubPrevX, curr->ubPrevY) == sSource)) {
+          if ((sBattleSector == sDest) &&
+              (GetSectorID8(curr->ubSectorX, curr->ubSectorY) == sDest) &&
+              (GetSectorID8(curr->ubPrevX, curr->ubPrevY) == sSource)) {
             fRetreatingFromBattle = TRUE;
           }
 
           ubMercsInGroup = curr->ubGroupSize;
 
-          if (((SECTOR(curr->ubSectorX, curr->ubSectorY) == sSource) &&
-               (SECTOR(curr->ubNextX, curr->ubNextY) == sDest)) ||
+          if (((GetSectorID8(curr->ubSectorX, curr->ubSectorY) == sSource) &&
+               (GetSectorID8(curr->ubNextX, curr->ubNextY) == sDest)) ||
               (fMayRetreatFromBattle == TRUE)) {
             // if it's a valid vehicle, but not the helicopter (which can fly empty)
             if (curr->fVehicle && !fHelicopterGroup &&
@@ -2817,8 +2819,8 @@ BOOLEAN PlayersBetweenTheseSectors(INT16 sSource, INT16 sDest, INT32 *iCountEnte
                 (fMayRetreatFromBattle == TRUE)) {
               *fAboutToArriveEnter = TRUE;
             }
-          } else if ((SECTOR(curr->ubSectorX, curr->ubSectorY) == sDest) &&
-                     ((SECTOR(curr->ubNextX, curr->ubNextY) == sSource) ||
+          } else if ((GetSectorID8(curr->ubSectorX, curr->ubSectorY) == sDest) &&
+                     ((GetSectorID8(curr->ubNextX, curr->ubNextY) == sSource) ||
                       (fRetreatingFromBattle == TRUE))) {
             // if it's a valid vehicle, but not the helicopter (which can fly empty)
             if (curr->fVehicle && !fHelicopterGroup &&
@@ -3386,7 +3388,7 @@ void CalculateGroupRetreatSector(struct GROUP *pGroup) {
   SECTORINFO *pSector;
   UINT32 uiSectorID;
 
-  uiSectorID = SECTOR(pGroup->ubSectorX, pGroup->ubSectorY);
+  uiSectorID = GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY);
   pSector = &SectorInfo[uiSectorID];
 
   if (pSector->ubTraversability[NORTH_STRATEGIC_MOVE] != GROUNDBARRIER &&
@@ -3414,7 +3416,7 @@ void CalculateGroupRetreatSector(struct GROUP *pGroup) {
     PLAYERGROUP *pPlayer;
     pPlayer = pGroup->pPlayerList;
     while (pPlayer) {
-      pPlayer->pSoldier->ubPrevSectorID = (UINT8)SECTOR(pGroup->ubPrevX, pGroup->ubPrevY);
+      pPlayer->pSoldier->ubPrevSectorID = (UINT8)GetSectorID8(pGroup->ubPrevX, pGroup->ubPrevY);
       pPlayer = pPlayer->next;
     }
   }
@@ -3454,7 +3456,7 @@ void RetreatGroupToPreviousSector(struct GROUP *pGroup) {
   }
 
   // Calc time to get to next waypoint...
-  ubSector = (UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY);
+  ubSector = (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY);
   pGroup->uiTraverseTime = GetSectorMvtTimeForGroup(ubSector, ubDirection, pGroup);
   if (pGroup->uiTraverseTime == 0xffffffff) {
     AssertMsg(
@@ -3931,7 +3933,7 @@ void RandomizePatrolGroupLocation(
   Assert(wp);
 
   // Move the group to the location of this chosen waypoint.
-  ubSectorID = (UINT8)SECTOR(wp->x, wp->y);
+  ubSectorID = (UINT8)GetSectorID8(wp->x, wp->y);
 
   // Set up this global var to randomize the arrival time of the group from
   // 1 minute to actual traverse time between the sectors.
@@ -3960,7 +3962,7 @@ BOOLEAN TestForBloodcatAmbush(struct GROUP *pGroup) {
     return FALSE;
   }
 
-  ubSectorID = (UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY);
+  ubSectorID = (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY);
   pSector = &SectorInfo[ubSectorID];
 
   ubChance = 5 * gGameOptions.ubDifficultyLevel;

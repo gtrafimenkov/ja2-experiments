@@ -730,7 +730,7 @@ current one!!!) ubCurrent = CALCULATE_STRATEGIC_INDEX( pGroup->ubSectorX, pGroup
 
 
         // calculate how long the entire trip would have taken on foot
-        ubSector = ( UINT8 ) SECTOR( pGroup->ubSectorX, pGroup->ubSectorY );
+        ubSector = ( UINT8 ) GetSectorID8( pGroup->ubSectorX, pGroup->ubSectorY );
         iCurrentCostInTime = GetSectorMvtTimeForGroup( ubSector, ubDirection, pGroup );
 
         if( iCurrentCostInTime == 0xffffffff )

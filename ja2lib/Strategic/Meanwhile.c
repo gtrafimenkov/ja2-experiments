@@ -627,16 +627,16 @@ void ProcessImplicationsOfMeanwhile(void) {
 
       StartQuest(QUEST_FIND_SCIENTIST, -1, -1);
       // place Madlab and robot!
-      if (SectorInfo[SECTOR(7, MAP_ROW_H)].uiFlags & SF_USE_ALTERNATE_MAP) {
+      if (SectorInfo[GetSectorID8(7, MAP_ROW_H)].uiFlags & SF_USE_ALTERNATE_MAP) {
         sSectorX = 7;
         sSectorY = MAP_ROW_H;
-      } else if (SectorInfo[SECTOR(16, MAP_ROW_H)].uiFlags & SF_USE_ALTERNATE_MAP) {
+      } else if (SectorInfo[GetSectorID8(16, MAP_ROW_H)].uiFlags & SF_USE_ALTERNATE_MAP) {
         sSectorX = 16;
         sSectorY = MAP_ROW_H;
-      } else if (SectorInfo[SECTOR(11, MAP_ROW_I)].uiFlags & SF_USE_ALTERNATE_MAP) {
+      } else if (SectorInfo[GetSectorID8(11, MAP_ROW_I)].uiFlags & SF_USE_ALTERNATE_MAP) {
         sSectorX = 11;
         sSectorY = MAP_ROW_I;
-      } else if (SectorInfo[SECTOR(4, MAP_ROW_E)].uiFlags & SF_USE_ALTERNATE_MAP) {
+      } else if (SectorInfo[GetSectorID8(4, MAP_ROW_E)].uiFlags & SF_USE_ALTERNATE_MAP) {
         sSectorX = 4;
         sSectorY = MAP_ROW_E;
       } else {

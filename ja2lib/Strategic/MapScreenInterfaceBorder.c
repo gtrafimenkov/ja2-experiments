@@ -1324,9 +1324,9 @@ BOOLEAN DoesPlayerHaveAnyMilitia(void) {
   // run through list of towns that might have militia..if any return TRUE..else return FALSE
   for (sX = 1; sX < MAP_WORLD_X - 1; sX++) {
     for (sY = 1; sY < MAP_WORLD_Y - 1; sY++) {
-      if ((SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-           SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-           SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[ELITE_MILITIA]) > 0) {
+      if ((SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
+           SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
+           SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ELITE_MILITIA]) > 0) {
         // found at least one
         return (TRUE);
       }

@@ -1406,8 +1406,8 @@ void AffectAllTownsLoyaltyByDistanceFrom(INT32 iLoyaltyChange, INT16 sSectorX, I
   // need a temporary group create to use for laying down distance paths
   ubTempGroupId = CreateNewPlayerGroupDepartingFromSector((UINT8)sSectorX, (UINT8)sSectorY);
 
-  // calc distance to the event sector from EACH SECTOR of each town, keeping only the shortest one
-  // for every town
+  // calc distance to the event sector from EACH GetSectorID8 of each town, keeping only the
+  // shortest one for every town
   uiIndex = 0;
   const TownSectors *townSectors = GetAllTownSectors();
   while ((*townSectors)[uiIndex].townID != 0) {

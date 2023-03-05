@@ -5029,7 +5029,7 @@ BOOLEAN CheckForEndOfBattle(BOOLEAN fAnEnemyRetreated) {
 
   if ((fBattleLost) || (fBattleWon)) {
     if (!gbWorldSectorZ) {
-      SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)].bLastKnownEnemies =
+      SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)].bLastKnownEnemies =
           NumEnemiesInSector(gWorldSectorX, gWorldSectorY);
     }
   }

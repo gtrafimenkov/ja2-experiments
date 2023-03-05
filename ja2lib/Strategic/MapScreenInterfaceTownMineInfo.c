@@ -261,7 +261,7 @@ void AddTextToTownBox(void) {
   ubTownId = GetTownIdForSector(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
   Assert((ubTownId >= FIRST_TOWN) && (ubTownId < NUM_TOWNS));
 
-  usTownSectorIndex = SECTOR(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
+  usTownSectorIndex = GetSectorID8(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
 
   switch (usTownSectorIndex) {
     case SEC_B13:
@@ -467,7 +467,7 @@ void AddTextToBlankSectorBox(void) {
   UINT16 usSectorValue = 0;
 
   // get the sector value
-  usSectorValue = SECTOR(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
+  usSectorValue = GetSectorID8(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
 
   switch (usSectorValue) {
     case SEC_D2:  // Chitzena SAM
@@ -529,7 +529,7 @@ void AddCommonInfoToBox(void) {
   UINT8 ubMilitiaTotal = 0;
   UINT8 ubNumEnemies;
 
-  switch (SECTOR(bCurrentTownMineSectorX, bCurrentTownMineSectorY)) {
+  switch (GetSectorID8(bCurrentTownMineSectorX, bCurrentTownMineSectorY)) {
     case SEC_D2:  // Chitzena SAM
       if (!fSamSiteFound[SAM_SITE_ONE]) fUnknownSAMSite = TRUE;
       break;
@@ -585,7 +585,7 @@ void AddCommonInfoToBox(void) {
     swprintf(wString, ARR_SIZE(wString), L"%s:", pwTownInfoStrings[10]);
     AddMonoString(&hStringHandle, wString);
     swprintf(wString, ARR_SIZE(wString), L"%d%%%%",
-             SectorInfo[SECTOR(bCurrentTownMineSectorX, bCurrentTownMineSectorY)]
+             SectorInfo[GetSectorID8(bCurrentTownMineSectorX, bCurrentTownMineSectorY)]
                  .ubMilitiaTrainingPercentDone);
     AddSecondColumnMonoString(&hStringHandle, wString);
   }

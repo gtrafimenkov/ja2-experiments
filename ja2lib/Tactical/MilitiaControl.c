@@ -48,7 +48,7 @@ void PrepareMilitiaForTactical() {
   // Do we have a loaded sector?
   if (gWorldSectorX == 0 && gWorldSectorY == 0) return;
 
-  pSector = &SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)];
+  pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
   ubGreen = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA];
   ubRegs = pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA];
   ubElites = pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA];

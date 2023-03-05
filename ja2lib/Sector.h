@@ -14,11 +14,11 @@ typedef i16 SectorID16;
 SectorID8 SectorFrom015(u8 x, u8 y);
 
 // Convert coordinates (1-16, 1-16) to 0-255 index.
-// This function should be prefered over SECTOR_STATIC macro.
-SectorID8 SECTOR(u8 x, u8 y);
+// This function should be prefered over GetSectorID8_STATIC macro.
+SectorID8 GetSectorID8(u8 x, u8 y);
 
 // Macro to convert sector coordinates (1-16,1-16) to 0-255
-#define SECTOR_STATIC(x, y) ((y - 1) * 16 + x - 1)
+#define GetSectorID8_STATIC(x, y) ((y - 1) * 16 + x - 1)
 #define SECTORX(SectorID) ((SectorID % 16) + 1)
 #define SECTORY(SectorID) ((SectorID / 16) + 1)
 
@@ -33,7 +33,7 @@ SectorID8 SECTOR(u8 x, u8 y);
 // macros to convert between the 2 different sector numbering systems
 #define SECTOR_INFO_TO_STRATEGIC_INDEX(i) (CALCULATE_STRATEGIC_INDEX(SECTORX(i), SECTORY(i)))
 #define STRATEGIC_INDEX_TO_SECTOR_INFO(i) \
-  (SECTOR(GET_X_FROM_STRATEGIC_INDEX(i), GET_Y_FROM_STRATEGIC_INDEX(i)))
+  (GetSectorID8(GET_X_FROM_STRATEGIC_INDEX(i), GET_Y_FROM_STRATEGIC_INDEX(i)))
 
 struct SectorInfo;
 

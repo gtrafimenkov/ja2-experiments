@@ -8,7 +8,7 @@
 // Get SectorID8 from 0..15 coordinates.
 SectorID8 SectorFrom015(u8 x, u8 y) { return x + y * MAP_WORLD_X; }
 
-SectorID8 SECTOR(u8 x, u8 y) { return (y - 1) * 16 + x - 1; }
+SectorID8 GetSectorID8(u8 x, u8 y) { return (y - 1) * 16 + x - 1; }
 
 struct SectorInfo* GetSectorInfoByIndex(SectorID8 sectorIndex) { return &SectorInfo[sectorIndex]; }
 

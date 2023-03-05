@@ -279,7 +279,7 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
         if (GetNumberOfMilitiaInSector(sSectorX, sSectorY, 0)) {
           continue;
         }
-        if (!OkayForEnemyToMoveThroughSector((UINT8)SECTOR(sSectorX, sSectorY))) {
+        if (!OkayForEnemyToMoveThroughSector((UINT8)GetSectorID8(sSectorX, sSectorY))) {
           continue;
         }
       }
@@ -287,9 +287,9 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
       // are we plotting path or checking for existance of one?
       if (sMvtGroupNumber != 0) {
         if (iHelicopterVehicleId != -1) {
-          nextCost =
-              GetTravelTimeForGroup((UINT8)(SECTOR((curLoc % MAP_WORLD_X), (curLoc / MAP_WORLD_X))),
-                                    (UINT8)(iCnt / 2), (UINT8)sMvtGroupNumber);
+          nextCost = GetTravelTimeForGroup(
+              (UINT8)(GetSectorID8((curLoc % MAP_WORLD_X), (curLoc / MAP_WORLD_X))),
+              (UINT8)(iCnt / 2), (UINT8)sMvtGroupNumber);
           if (nextCost != 0xffffffff &&
               sMvtGroupNumber == pVehicleList[iHelicopterVehicleId].ubMovementGroup) {
             // is a heli, its pathing is determined not by time (it's always the same) but by total
@@ -301,13 +301,13 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
             }
           }
         } else {
-          nextCost =
-              GetTravelTimeForGroup((UINT8)(SECTOR((curLoc % MAP_WORLD_X), (curLoc / MAP_WORLD_X))),
-                                    (UINT8)(iCnt / 2), (UINT8)sMvtGroupNumber);
+          nextCost = GetTravelTimeForGroup(
+              (UINT8)(GetSectorID8((curLoc % MAP_WORLD_X), (curLoc / MAP_WORLD_X))),
+              (UINT8)(iCnt / 2), (UINT8)sMvtGroupNumber);
         }
       } else {
         nextCost = GetTravelTimeForFootTeam(
-            (UINT8)(SECTOR(curLoc % MAP_WORLD_X, curLoc / MAP_WORLD_X)), (UINT8)(iCnt / 2));
+            (UINT8)(GetSectorID8(curLoc % MAP_WORLD_X, curLoc / MAP_WORLD_X)), (UINT8)(iCnt / 2));
       }
 
       if (nextCost == 0xffffffff) {
@@ -321,8 +321,8 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
       if (fTacticalTraversal) {
         // if it's the first sector only (no cost yet)
         if (curCost == 0 && (newLoc == sDestination)) {
-          if (GetTraversability((INT16)(SECTOR(curLoc % 18, curLoc / 18)),
-                                (INT16)(SECTOR(newLoc % 18, newLoc / 18))) != GROUNDBARRIER) {
+          if (GetTraversability((INT16)(GetSectorID8(curLoc % 18, curLoc / 18)),
+                                (INT16)(GetSectorID8(newLoc % 18, newLoc / 18))) != GROUNDBARRIER) {
             nextCost = 0;
           }
         }
@@ -339,8 +339,8 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
       //make the destination look very attractive
       if( ( newLoc == sDestination ) )
       {
-              if( GetTraversability( ( INT16 )( SECTOR( curLoc % 18, curLoc / 18 ) ), ( INT16 ) (
-      SECTOR( newLoc %18,  newLoc / 18 ) ) ) != GROUNDBARRIER )
+              if( GetTraversability( ( INT16 )( GetSectorID8( curLoc % 18, curLoc / 18 ) ), ( INT16
+      ) ( GetSectorID8( newLoc %18,  newLoc / 18 ) ) ) != GROUNDBARRIER )
               {
                       nextCost = 0;
               }

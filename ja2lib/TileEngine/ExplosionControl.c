@@ -2840,7 +2840,7 @@ BOOLEAN DoesSAMExistHere(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ, INT16 s
     return (FALSE);
   }
 
-  sSectorNo = SECTOR(sSectorX, sSectorY);
+  sSectorNo = GetSectorID8(sSectorX, sSectorY);
 
   for (cnt = 0; cnt < NUMBER_OF_SAMS; cnt++) {
     // Are we i nthe same sector...
@@ -2894,7 +2894,7 @@ void UpdateSAMDoneRepair(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ) {
     fInSector = TRUE;
   }
 
-  sSectorNo = SECTOR(sSectorX, sSectorY);
+  sSectorNo = GetSectorID8(sSectorX, sSectorY);
 
   for (cnt = 0; cnt < NUMBER_OF_SAMS; cnt++) {
     // Are we i nthe same sector...

@@ -222,7 +222,7 @@ void ValidateAndCorrectInBattleCounters(struct GROUP *pLocGroup) {
     }
   }
 
-  ubSectorID = (UINT8)SECTOR(pLocGroup->ubSectorX, pLocGroup->ubSectorY);
+  ubSectorID = (UINT8)GetSectorID8(pLocGroup->ubSectorX, pLocGroup->ubSectorY);
   pSector = &SectorInfo[ubSectorID];
 
   if (ubInvalidGroups || pSector->ubAdminsInBattle || pSector->ubTroopsInBattle ||
@@ -334,7 +334,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
       gubPBSectorZ = gpBattleGroup->ubSectorZ;
 
       // get number of enemies thought to be here
-      SectorInfo[SECTOR(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies =
+      SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies =
           NumEnemiesInSector(gubPBSectorX, gubPBSectorY);
       MarkForRedrawalStrategicMap();
     } else {
@@ -351,7 +351,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
                                              // allowed
       gubExplicitEnemyEncounterCode = HOSTILE_BLOODCATS_CODE;
     } else if (gbWorldSectorZ) {  // We are underground, so no autoresolve allowed
-      pSector = &SectorInfo[SECTOR(gubPBSectorX, gubPBSectorY)];
+      pSector = &SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)];
       if (pSector->ubCreaturesInBattle) {
         gubExplicitEnemyEncounterCode = FIGHTING_CREATURES_CODE;
       } else if (pSector->ubAdminsInBattle || pSector->ubTroopsInBattle ||
@@ -522,7 +522,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
                                         // small chance of the enemies ambushing the group
             if (ubNumMobileEnemies > ubNumMercs) {
               INT32 iChance;
-              pSector = &SectorInfo[SECTOR(gubPBSectorX, gubPBSectorY)];
+              pSector = &SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)];
               if (!(pSector->uiFlags & SF_ALREADY_VISITED)) {
                 iChance = (UINT8)(4 - bBestExpLevel + 2 * gGameOptions.ubDifficultyLevel +
                                   CurrentPlayerProgressPercentage() / 10);
@@ -544,7 +544,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
       if (GetTownIdForSector(gubPBSectorX, gubPBSectorY)) {
         gubEnemyEncounterCode = ENEMY_INVASION_CODE;
       } else {
-        switch (SECTOR(gubPBSectorX, gubPBSectorY)) {
+        switch (GetSectorID8(gubPBSectorX, gubPBSectorY)) {
           case SEC_D2:
           case SEC_D15:
           case SEC_G8:
@@ -591,7 +591,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
       ENEMY_ENCOUNTER_CODE) {  // we know how many enemies are here, so until we leave the sector,
                                // we will continue to display the value.
     // the flag will get cleared when time advances after the fEnemyInSector flag is clear.
-    pSector = &SectorInfo[SECTOR(gubPBSectorX, gubPBSectorY)];
+    pSector = &SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)];
 
     // ALWAYS use these 2 statements together, without setting the boolean, the flag will never be
     // cleaned up!
@@ -1012,12 +1012,12 @@ void RenderPreBattleInterface() {
         WhatPlayerKnowsAboutEnemiesInSector(gubPBSectorX, gubPBSectorY) != KNOWS_HOW_MANY) {
       // don't know how many
       swprintf(str, ARR_SIZE(str), L"?");
-      SectorInfo[SECTOR(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies = -2;
+      SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies = -2;
     } else {
       // know exactly how many
       i = NumEnemiesInSector(gubPBSectorX, gubPBSectorY);
       swprintf(str, ARR_SIZE(str), L"%d", i);
-      SectorInfo[SECTOR(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies = (INT8)i;
+      SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies = (INT8)i;
     }
     x = 57 + (27 - StringPixLength(str, FONT14ARIAL)) / 2;
     y = 36;
@@ -1508,7 +1508,7 @@ void CalculateNonPersistantPBIInfo() {
         gubEnemyEncounterCode = ENTERING_ENEMY_SECTOR_CODE;
       }
     } else {
-      SECTORINFO *pSector = &SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)];
+      SECTORINFO *pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
       Assert(pSector);
       if (pSector->ubCreaturesInBattle) {
         gubExplicitEnemyEncounterCode = FIGHTING_CREATURES_CODE;

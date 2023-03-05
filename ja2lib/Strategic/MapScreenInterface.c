@@ -488,7 +488,7 @@ void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList() {
     }
 
     if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
-      if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+      if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
               .fMilitiaTrainingPaid == FALSE) {
         ResumeOldAssignment(pSoldier);
       }
@@ -4791,7 +4791,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   switch (GetSolProfile(pSoldier)) {
     case (MARIA):
       // Maria can't move if she's in sector C5
-      sSector = SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+      sSector = GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
       if (sSector == SEC_C5) {
         // can't move at this time
         fProblemExists = TRUE;

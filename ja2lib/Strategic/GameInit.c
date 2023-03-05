@@ -101,23 +101,23 @@ void InitNPCs(void) {
             pProfile->sSectorX);
 #endif
   // use alternate map, with Skyrider's shack, in this sector
-  SectorInfo[SECTOR(pProfile->sSectorX, pProfile->sSectorY)].uiFlags |= SF_USE_ALTERNATE_MAP;
+  SectorInfo[GetSectorID8(pProfile->sSectorX, pProfile->sSectorY)].uiFlags |= SF_USE_ALTERNATE_MAP;
 
   // set up Madlab's secret lab (he'll be added when the meanwhile scene occurs)
 
   switch (Random(4)) {
     case 0:
       // use alternate map in this sector
-      SectorInfo[SECTOR(7, MAP_ROW_H)].uiFlags |= SF_USE_ALTERNATE_MAP;
+      SectorInfo[GetSectorID8(7, MAP_ROW_H)].uiFlags |= SF_USE_ALTERNATE_MAP;
       break;
     case 1:
-      SectorInfo[SECTOR(16, MAP_ROW_H)].uiFlags |= SF_USE_ALTERNATE_MAP;
+      SectorInfo[GetSectorID8(16, MAP_ROW_H)].uiFlags |= SF_USE_ALTERNATE_MAP;
       break;
     case 2:
-      SectorInfo[SECTOR(11, MAP_ROW_I)].uiFlags |= SF_USE_ALTERNATE_MAP;
+      SectorInfo[GetSectorID8(11, MAP_ROW_I)].uiFlags |= SF_USE_ALTERNATE_MAP;
       break;
     case 3:
-      SectorInfo[SECTOR(4, MAP_ROW_E)].uiFlags |= SF_USE_ALTERNATE_MAP;
+      SectorInfo[GetSectorID8(4, MAP_ROW_E)].uiFlags |= SF_USE_ALTERNATE_MAP;
       break;
   }
 
@@ -158,7 +158,8 @@ void InitNPCs(void) {
 #endif
 
   // use alternate map in this sector
-  // SectorInfo[ SECTOR( pProfile->sSectorX, pProfile->sSectorY ) ].uiFlags |= SF_USE_ALTERNATE_MAP;
+  // SectorInfo[ GetSectorID8( pProfile->sSectorX, pProfile->sSectorY ) ].uiFlags |=
+  // SF_USE_ALTERNATE_MAP;
 
   gfPlayerTeamSawJoey = FALSE;
 
@@ -190,7 +191,8 @@ void InitNPCs(void) {
 #endif
 
     // use alternate map in this sector
-    SectorInfo[SECTOR(pProfile->sSectorX, pProfile->sSectorY)].uiFlags |= SF_USE_ALTERNATE_MAP;
+    SectorInfo[GetSectorID8(pProfile->sSectorX, pProfile->sSectorY)].uiFlags |=
+        SF_USE_ALTERNATE_MAP;
   } else {  // not scifi, so use alternate map in Tixa's b1 level that doesn't have the stairs going
             // down to the caves.
     UNDERGROUND_SECTORINFO *pSector;

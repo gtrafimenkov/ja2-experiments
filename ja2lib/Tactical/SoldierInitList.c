@@ -1555,7 +1555,7 @@ void AddSoldierInitListBloodcats() {
     return;  // no bloodcats underground.
   }
 
-  ubSectorID = (UINT8)SECTOR(gWorldSectorX, gWorldSectorY);
+  ubSectorID = (UINT8)GetSectorID8(gWorldSectorX, gWorldSectorY);
   pSector = &SectorInfo[ubSectorID];
 
   if (!pSector->bBloodCatPlacements) {  // This map has no bloodcat placements, so don't waste CPU
@@ -1948,7 +1948,7 @@ void StripEnemyDetailedPlacementsIfSectorWasPlayerLiberated() {
     return;
   }
 
-  pSector = &SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)];
+  pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
 
   if (!pSector->uiTimeLastPlayerLiberated) {  // The player has never owned the sector.
     return;

@@ -226,7 +226,7 @@ BOOLEAN LoadEnemySoldiersFromTempFile() {
     ubStrategicCreatures = pSector->ubNumCreatures;
   } else {
     SECTORINFO *pSector;
-    pSector = &SectorInfo[SECTOR(sSectorX, sSectorY)];
+    pSector = &SectorInfo[GetSectorID8(sSectorX, sSectorY)];
     ubStrategicCreatures = pSector->ubNumCreatures;
     GetNumberOfEnemiesInSector(sSectorX, sSectorY, &ubStrategicAdmins, &ubStrategicTroops,
                                &ubStrategicElites);
@@ -348,7 +348,7 @@ BOOLEAN LoadEnemySoldiersFromTempFile() {
 #endif
     goto FAIL_LOAD;
   }
-  if (ubSectorID != SECTOR(sSectorX, sSectorY)) {
+  if (ubSectorID != GetSectorID8(sSectorX, sSectorY)) {
 #ifdef JA2TESTVERSION
     sprintf(zReason, "EnemySoldier -- ubSectorID mismatch.  KM");
 #endif
@@ -650,7 +650,7 @@ BOOLEAN SaveEnemySoldiersToTempFile(INT16 sSectorX, INT16 sSectorY, INT8 bSector
 
   // if we are to append to the file
   if (!fAppendToFile) {
-    ubSectorID = SECTOR(sSectorX, sSectorY);
+    ubSectorID = GetSectorID8(sSectorX, sSectorY);
     FileMan_Write(hfile, &ubSectorID, 1, &uiNumBytesWritten);
     if (uiNumBytesWritten != 1) {
       goto FAIL_SAVE;
@@ -714,7 +714,7 @@ BOOLEAN NewWayOfLoadingEnemySoldiersFromTempFile() {
     }
   } else {
     SECTORINFO *pSector;
-    pSector = &SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)];
+    pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
 
     ubNumElites = pSector->ubNumElites;
     ubNumTroops = pSector->ubNumTroops;
@@ -864,7 +864,7 @@ BOOLEAN NewWayOfLoadingEnemySoldiersFromTempFile() {
     ubStrategicCreatures = pSector->ubNumCreatures;
   } else {
     SECTORINFO *pSector;
-    pSector = &SectorInfo[SECTOR(sSectorX, sSectorY)];
+    pSector = &SectorInfo[GetSectorID8(sSectorX, sSectorY)];
     ubStrategicCreatures = pSector->ubNumCreatures;
     GetNumberOfEnemiesInSector(sSectorX, sSectorY, &ubStrategicAdmins, &ubStrategicTroops,
                                &ubStrategicElites);
@@ -984,7 +984,7 @@ BOOLEAN NewWayOfLoadingEnemySoldiersFromTempFile() {
 #endif
     goto FAIL_LOAD;
   }
-  if (ubSectorID != SECTOR(sSectorX, sSectorY)) {
+  if (ubSectorID != GetSectorID8(sSectorX, sSectorY)) {
 #ifdef JA2TESTVERSION
     sprintf(zReason, "EnemySoldier -- ubSectorID mismatch.  KM");
 #endif
@@ -1290,7 +1290,7 @@ BOOLEAN NewWayOfLoadingCiviliansFromTempFile() {
   }
 
   /*
-  if( ubSectorID != SECTOR( sSectorX, sSectorY ) )
+  if( ubSectorID != GetSectorID8( sSectorX, sSectorY ) )
   {
           #ifdef JA2TESTVERSION
                   sprintf( zReason, "Civilian -- ubSectorID mismatch.  KM" );
@@ -1354,9 +1354,8 @@ BOOLEAN NewWayOfSavingEnemyAndCivliansToTempFile(INT16 sSectorX, INT16 sSectorY,
 
     // make sure the person is active, alive, in the sector, and is not a profiled person
     if (IsSolActive(pSoldier) /*&& pSoldier->bInSector*/ && pSoldier->bLife &&
-        GetSolProfile(pSoldier) ==
-            NO_PROFILE) {  // soldier is valid, so find the matching soldier init
-                           // list entry for modification.
+        GetSolProfile(pSoldier) == NO_PROFILE) {  // soldier is valid, so find the matching soldier
+                                                  // init list entry for modification.
       curr = gSoldierInitHead;
       while (curr && curr->pSoldier != pSoldier) {
         curr = curr->next;
@@ -1569,7 +1568,7 @@ BOOLEAN NewWayOfSavingEnemyAndCivliansToTempFile(INT16 sSectorX, INT16 sSectorY,
     }
   }
 
-  ubSectorID = SECTOR(sSectorX, sSectorY);
+  ubSectorID = GetSectorID8(sSectorX, sSectorY);
   FileMan_Write(hfile, &ubSectorID, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) {
     goto FAIL_SAVE;
@@ -1733,7 +1732,7 @@ BOOLEAN CountNumberOfElitesRegularsAdminsAndCreaturesFromEnemySoldiersTempFile(
           else
           {
                   SECTORINFO *pSector;
-                  pSector = &SectorInfo[ SECTOR( sSectorX, sSectorY ) ];
+                  pSector = &SectorInfo[ GetSectorID8( sSectorX, sSectorY ) ];
                   ubStrategicCreatures = pSector->ubNumCreatures;
                   GetNumberOfEnemiesInSector( sSectorX, sSectorY, &ubStrategicAdmins,
      &ubStrategicTroops, &ubStrategicElites );
@@ -1899,7 +1898,7 @@ BOOLEAN CountNumberOfElitesRegularsAdminsAndCreaturesFromEnemySoldiersTempFile(
     goto FAIL_LOAD;
   }
 
-  if (ubSectorID != SECTOR(sSectorX, sSectorY)) {
+  if (ubSectorID != GetSectorID8(sSectorX, sSectorY)) {
 #ifdef JA2TESTVERSION
     sprintf(zReason, "Check EnemySoldier -- ubSectorID mismatch.  KM");
 #endif

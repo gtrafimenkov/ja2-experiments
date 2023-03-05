@@ -174,7 +174,7 @@ BOOLEAN BeginAirRaid() {
           }
   */
 
-  // CHECK IF WE CURRENTLY HAVE THIS SECTOR OPEN....
+  // CHECK IF WE CURRENTLY HAVE THIS GetSectorID8 OPEN....
   /*if (	gAirRaidDef.sSectorX == gWorldSectorX &&
                           gAirRaidDef.sSectorY == gWorldSectorY &&
                           gAirRaidDef.sSectorZ == gbWorldSectorZ )

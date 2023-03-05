@@ -171,7 +171,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
 }
 
 void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(SECTOR(sMapX, sMapY));
+  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(GetSectorID8(sMapX, sMapY));
 
   pSectorInfo->ubNumberOfCivsAtLevel[ubRank] += ubHowMany;
 
@@ -181,7 +181,7 @@ void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 u
 
 void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
                                      UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(SECTOR(sMapX, sMapY));
+  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(GetSectorID8(sMapX, sMapY));
 
   // damn well better have that many around to promote!
   Assert(pSectorInfo->ubNumberOfCivsAtLevel[ubCurrentRank] >= ubHowMany);
@@ -199,7 +199,7 @@ void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRa
 }
 
 void StrategicRemoveMilitiaFromSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(SECTOR(sMapX, sMapY));
+  SECTORINFO *pSectorInfo = GetSectorInfoByIndex(GetSectorID8(sMapX, sMapY));
 
   // damn well better have that many around to remove!
   Assert(pSectorInfo->ubNumberOfCivsAtLevel[ubRank] >= ubHowMany);
@@ -296,8 +296,8 @@ UINT8 CountAllMilitiaInSector(INT16 sMapX, INT16 sMapY) {
   UINT8 ubMilitiaTotal = 0;
   UINT8 ubRank;
 
-  // find out if there are any town militia in this SECTOR (don't care about other sectors in same
-  // town)
+  // find out if there are any town militia in this GetSectorID8 (don't care about other sectors in
+  // same town)
   for (ubRank = 0; ubRank < MAX_MILITIA_LEVELS; ubRank++) {
     ubMilitiaTotal += MilitiaInSectorOfRank(sMapX, sMapY, ubRank);
   }
@@ -306,7 +306,7 @@ UINT8 CountAllMilitiaInSector(INT16 sMapX, INT16 sMapY) {
 }
 
 UINT8 MilitiaInSectorOfRank(INT16 sMapX, INT16 sMapY, UINT8 ubRank) {
-  return GetSectorInfoByIndex(SECTOR(sMapX, sMapY))->ubNumberOfCivsAtLevel[ubRank];
+  return GetSectorInfoByIndex(GetSectorID8(sMapX, sMapY))->ubNumberOfCivsAtLevel[ubRank];
 }
 
 static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
@@ -424,7 +424,7 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
   sSectorX = GetSolSectorX(pSoldier);
   sSectorY = GetSolSectorY(pSoldier);
 
-  Assert(GetSectorInfoByIndex(SECTOR(sSectorX, sSectorY))->fMilitiaTrainingPaid == FALSE);
+  Assert(GetSectorInfoByIndex(GetSectorID8(sSectorX, sSectorY))->fMilitiaTrainingPaid == FALSE);
 
   pMilitiaTrainerSoldier = pSoldier;
 
@@ -579,7 +579,7 @@ BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY) {
         continue;
       }
 
-      sSectorValue = SECTOR(sCounterA, sCounterB);
+      sSectorValue = GetSectorID8(sCounterA, sCounterB);
 
       // check if any sort of militia here
       if (GetSectorInfoByIndex(sSectorValue)->ubNumberOfCivsAtLevel[GREEN_MILITIA]) {
@@ -784,7 +784,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
           pSoldier = GetMercFromCharacterList(iCounter);
 
           if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-            if (GetSectorInfoByIndex(SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
+            if (GetSectorInfoByIndex(GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
                     ->fMilitiaTrainingPaid == FALSE) {
               // check to see if this sector is a town and needs equipment
               gsUnpaidStrategicSector[iCounter] =
@@ -800,7 +800,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
     iCounter = 0;
 
     if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-      if (GetSectorInfoByIndex(SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
+      if (GetSectorInfoByIndex(GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
               ->fMilitiaTrainingPaid == FALSE) {
         // check to see if this sector is a town and needs equipment
         gsUnpaidStrategicSector[iCounter] =
@@ -885,7 +885,7 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector) {
 
     if (IsSolActive(pSoldier)) {
       if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
-        if ((SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) == ubSector) &&
+        if ((GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) == ubSector) &&
             (GetSolSectorZ(pSoldier) == 0)) {
           SetSolAssignmentDone(pSoldier);
         }

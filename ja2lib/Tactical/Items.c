@@ -2848,7 +2848,7 @@ BOOLEAN PlaceObject(struct SOLDIERTYPE *pSoldier, INT8 bPos, struct OBJECTTYPE *
     if (KeyTable[pObj->ubKeyID].usDateFound == 0) {
       KeyTable[pObj->ubKeyID].usDateFound = (UINT16)GetWorldDay();
       KeyTable[pObj->ubKeyID].usSectorFound =
-          SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+          GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     }
   }
 
@@ -3261,7 +3261,7 @@ UINT8 AddKeysToSlot(struct SOLDIERTYPE *pSoldier, INT8 bKeyRingPosition, struct 
     if (KeyTable[pObj->ubKeyID].usDateFound == 0) {
       KeyTable[pObj->ubKeyID].usDateFound = (UINT16)GetWorldDay();
       KeyTable[pObj->ubKeyID].usSectorFound =
-          SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+          GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     }
   }
 

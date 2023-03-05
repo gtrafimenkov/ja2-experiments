@@ -1039,7 +1039,7 @@ void DetermineCreatureTownCompositionBasedOnTacticalInformation(UINT8 *pubNumCre
   INT32 i;
   struct SOLDIERTYPE *pSoldier;
 
-  pSector = &SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)];
+  pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
   *pubNumCreatures = 0;
   pSector->ubNumCreatures = 0;
   pSector->ubCreaturesInBattle = 0;
@@ -1218,7 +1218,7 @@ BOOLEAN PrepareCreaturesForBattle() {
     pUndergroundSector->ubCreaturesInBattle = pUndergroundSector->ubNumCreatures;
   } else {
     SECTORINFO *pSector;
-    pSector = &SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)];
+    pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
     pSector->ubNumCreatures = ubNumCreatures;
     pSector->ubCreaturesInBattle = ubNumCreatures;
   }

@@ -528,7 +528,7 @@ void ChangeSoldiersAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment) {
 
 BOOLEAN BasicCanCharacterAssignment(struct SOLDIERTYPE *pSoldier, BOOLEAN fNotInCombat) {
   // global conditions restricting all assignment changes
-  if (SectorIsImpassable((INT16)SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))) {
+  if (SectorIsImpassable((INT16)GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))) {
     return (FALSE);
   }
 
@@ -1718,7 +1718,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     if (IsSolActive(pSoldier) && (GetSolAssignment(pSoldier) == TRAIN_TOWN)) {
       // make sure that sector is paid up!
-      if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+      if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
               .fMilitiaTrainingPaid == FALSE) {
         // NOPE!  We've got a bug somewhere
         StopTimeCompression();
@@ -3617,7 +3617,7 @@ void TrainSoldierWithPts(struct SOLDIERTYPE *pSoldier, INT16 sTrainPts) {
 // will train a town in sector by character
 BOOLEAN TrainTownInSector(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT16 sMapY,
                           UINT16 sTrainingPts) {
-  SECTORINFO *pSectorInfo = &(SectorInfo[SECTOR(sMapX, sMapY)]);
+  SECTORINFO *pSectorInfo = &(SectorInfo[GetSectorID8(sMapX, sMapY)]);
   UINT8 ubTownId = 0;
   BOOLEAN fSamSiteInSector = FALSE;
 
@@ -6495,7 +6495,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
           // assign to a movement group
           AssignMercToAMovementGroup(pSoldier);
-          if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+          if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
                   .fMilitiaTrainingPaid == FALSE) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
@@ -8328,7 +8328,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment, INT32 
         ChangeSoldiersAssignment(pSoldier, TRAIN_TOWN);
 
         if (pMilitiaTrainerSoldier == NULL) {
-          if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+          if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
                   .fMilitiaTrainingPaid == FALSE) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
@@ -8543,7 +8543,7 @@ BOOLEAN IsTheSAMSiteInSectorRepairable( INT16 sSectorX, INT16 sSectorY, INT16 sS
 
         for( iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++ )
         {
-                if( pSamList[ iCounter ] == SECTOR( sSectorX, sSectorY ) )
+                if( pSamList[ iCounter ] == GetSectorID8( sSectorX, sSectorY ) )
                 {
                         bSAMCondition = StrategicMap[ CALCULATE_STRATEGIC_INDEX( sSectorX, sSectorY
 ) ].bSAMCondition;
@@ -8578,7 +8578,8 @@ BOOLEAN SoldierInSameSectorAsSAM( struct SOLDIERTYPE *pSoldier )
         // now check each sam site in the list
         for( iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++ )
         {
-                if( pSamList[ iCounter] == SECTOR( pSoldier -> sSectorX, pSoldier -> sSectorY ) )
+                if( pSamList[ iCounter] == GetSectorID8( pSoldier -> sSectorX, pSoldier -> sSectorY
+) )
                 {
                         return( TRUE );
                 }
@@ -8595,7 +8596,8 @@ BOOLEAN IsSoldierCloseEnoughToSAMControlPanel( struct SOLDIERTYPE *pSoldier )
                 // now check each sam site in the list
         for( iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++ )
         {
-                if( pSamList[ iCounter ] == SECTOR( pSoldier -> sSectorX, pSoldier -> sSectorY ) )
+                if( pSamList[ iCounter ] == GetSectorID8( pSoldier -> sSectorX, pSoldier -> sSectorY
+) )
                 {
 // Assignment distance limits removed.  Sep/11/98.  ARM
 //			if( ( PythSpacesAway( pSamGridNoAList[ iCounter ], pSoldier -> sGridNo ) <

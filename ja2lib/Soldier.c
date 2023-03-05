@@ -13,7 +13,9 @@ u8 GetSolProfile(const struct SOLDIERTYPE *s) { return s->ubProfile; }
 i16 GetSolSectorX(const struct SOLDIERTYPE *s) { return s->sSectorX; }
 i16 GetSolSectorY(const struct SOLDIERTYPE *s) { return s->sSectorY; }
 i8 GetSolSectorZ(const struct SOLDIERTYPE *s) { return s->bSectorZ; }
-SectorID8 GetSolSectorID8(const struct SOLDIERTYPE *s) { return SECTOR(s->sSectorX, s->sSectorY); }
+SectorID8 GetSolSectorID8(const struct SOLDIERTYPE *s) {
+  return GetSectorID8(s->sSectorX, s->sSectorY);
+}
 
 i8 GetSolAssignment(const struct SOLDIERTYPE *s) { return s->bAssignment; }
 

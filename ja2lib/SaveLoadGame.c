@@ -2057,7 +2057,7 @@ BOOLEAN LoadSavedGame(UINT8 ubSavedGameID) {
   if (gbWorldSectorZ == 0) LightSetBaseLevel(GetTimeOfDayAmbientLightLevel());
 
   // if we have been to this sector before
-  //	if( SectorInfo[ SECTOR( gWorldSectorX,gWorldSectorY) ].uiFlags & SF_ALREADY_VISITED )
+  //	if( SectorInfo[ GetSectorID8( gWorldSectorX,gWorldSectorY) ].uiFlags & SF_ALREADY_VISITED )
   {
     // Reset the fact that we are loading a saved game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;

@@ -158,10 +158,10 @@ BOOLEAN fSamSiteFound[NUMBER_OF_SAMS] = {
 };
 
 INT16 pSamList[NUMBER_OF_SAMS] = {
-    SECTOR_STATIC(SAM_1_X, SAM_1_Y),
-    SECTOR_STATIC(SAM_2_X, SAM_2_Y),
-    SECTOR_STATIC(SAM_3_X, SAM_3_Y),
-    SECTOR_STATIC(SAM_4_X, SAM_4_Y),
+    GetSectorID8_STATIC(SAM_1_X, SAM_1_Y),
+    GetSectorID8_STATIC(SAM_2_X, SAM_2_Y),
+    GetSectorID8_STATIC(SAM_3_X, SAM_3_Y),
+    GetSectorID8_STATIC(SAM_4_X, SAM_4_Y),
 };
 
 INT16 pSamGridNoAList[NUMBER_OF_SAMS] = {
@@ -430,10 +430,10 @@ void EndLoadScreen() {
   SetFontForeground(FONT_YELLOW);
   SetFontBackground(FONT_NEARBLACK);
   if (!gbWorldSectorZ) {
-    swprintf(str, ARR_SIZE(str), L"%c%d ENTER SECTOR TIME:  %d.%02d seconds.",
+    swprintf(str, ARR_SIZE(str), L"%c%d ENTER GetSectorID8 TIME:  %d.%02d seconds.",
              'A' + gWorldSectorY - 1, gWorldSectorX, uiSeconds, uiHundreths);
   } else {
-    swprintf(str, ARR_SIZE(str), L"%c%d_b%d ENTER SECTOR TIME:  %d.%02d seconds.",
+    swprintf(str, ARR_SIZE(str), L"%c%d_b%d ENTER GetSectorID8 TIME:  %d.%02d seconds.",
              'A' + gWorldSectorY - 1, gWorldSectorX, gbWorldSectorZ, uiSeconds, uiHundreths);
   }
   ScreenMsg(FONT_YELLOW, MSG_TESTVERSION, str);
@@ -783,7 +783,7 @@ BOOLEAN SetCurrentWorldSector(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
         PrepareEnemyForSectorBattle();
       }
       if (gubNumCreaturesAttackingTown && !gbWorldSectorZ &&
-          gubSectorIDOfCreatureAttack == SECTOR(gWorldSectorX, gWorldSectorY)) {
+          gubSectorIDOfCreatureAttack == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
         PrepareCreaturesForBattle();
       }
       if (gfGotoSectorTransition) {
@@ -996,7 +996,7 @@ void PrepareLoadedSector() {
       // gWorldSectorY, gbWorldSectorZ );
     } else {
       // we always think we control underground sectors once we've visited them
-      SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)].fPlayer[gbWorldSectorZ] = TRUE;
+      SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)].fPlayer[gbWorldSectorZ] = TRUE;
     }
   }
 
@@ -1047,7 +1047,7 @@ void PrepareLoadedSector() {
         pSector->ubNumCreatures = (UINT8)(gsAINumCreatures > 0 ? gsAINumCreatures : 0);
       } else if (!gbWorldSectorZ) {
         SECTORINFO *pSector;
-        pSector = &SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)];
+        pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
         pSector->ubNumAdmins = (UINT8)(gsAINumAdmins > 0 ? gsAINumAdmins : 0);
         pSector->ubNumTroops = (UINT8)(gsAINumTroops > 0 ? gsAINumTroops : 0);
         pSector->ubNumElites = (UINT8)(gsAINumElites > 0 ? gsAINumElites : 0);
@@ -1081,7 +1081,7 @@ void PrepareLoadedSector() {
 
     if (gbWorldSectorZ > 0) {
       // we always think we control underground sectors once we've visited them
-      SectorInfo[SECTOR(gWorldSectorX, gWorldSectorY)].fPlayer[gbWorldSectorZ] = TRUE;
+      SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)].fPlayer[gbWorldSectorZ] = TRUE;
     }
 
     //@@@Evaluate
@@ -1740,7 +1740,7 @@ void GetSectorIDString(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ, CHAR16 *zS
         swprintf(zString, bufSize, L"%c%d: %s %s", 'A' + sSectorY - 1, sSectorX,
                  pTownNames[GetTownAssociatedWithMine(bMineIndex)], pwMineStrings[0]);
       } else
-        switch (SECTOR(sSectorX, sSectorY)) {
+        switch (GetSectorID8(sSectorX, sSectorY)) {
           case SEC_A10:
             swprintf(zString, bufSize, L"A10: %s", pLandTypeStrings[REBEL_HIDEOUT]);
             break;
@@ -1766,7 +1766,7 @@ void GetSectorIDString(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ, CHAR16 *zS
     }
   } else {
     bTownNameID = StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bNameId;
-    ubSectorID = (UINT8)SECTOR(sSectorX, sSectorY);
+    ubSectorID = (UINT8)GetSectorID8(sSectorX, sSectorY);
     pSector = &SectorInfo[ubSectorID];
     ubLandType = pSector->ubTraversability[4];
     swprintf(zString, bufSize, L"%c%d: ", 'A' + sSectorY - 1, sSectorX);
@@ -2092,8 +2092,8 @@ void JumpIntoAdjacentSector(UINT8 ubTacticalDirection, UINT8 ubJumpCode, INT16 s
   // If we are going through an exit grid, don't get traversal direction!
   if (ubTacticalDirection != 255) {
     if (!gbWorldSectorZ) {
-      uiTraverseTime = GetSectorMvtTimeForGroup((UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY),
-                                                ubDirection, pGroup);
+      uiTraverseTime = GetSectorMvtTimeForGroup(
+          (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY), ubDirection, pGroup);
     } else if (gbWorldSectorZ > 0) {  // We are attempting to traverse in an underground
                                       // environment.  We need to use a complete different
       // method.  When underground, all sectors are instantly adjacent.
@@ -2761,7 +2761,7 @@ BOOLEAN OKForSectorExit(INT8 bExitDirection, UINT16 usAdditionalData,
                                    pValidSoldier->name, pValidSoldier->ubGroupID));
           if (!gbWorldSectorZ) {
             *puiTraverseTimeInMinutes = GetSectorMvtTimeForGroup(
-                (UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY), bExitDirection, pGroup);
+                (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY), bExitDirection, pGroup);
           } else if (gbWorldSectorZ > 1) {  // We are attempting to traverse in an underground
                                             // environment.  We need to use a complete different
             // method.  When underground, all sectors are instantly adjacent.
@@ -2815,7 +2815,7 @@ BOOLEAN OKForSectorExit(INT8 bExitDirection, UINT16 usAdditionalData,
                                pValidSoldier->name, pValidSoldier->ubGroupID));
       if (!gbWorldSectorZ) {
         *puiTraverseTimeInMinutes = GetSectorMvtTimeForGroup(
-            (UINT8)SECTOR(pGroup->ubSectorX, pGroup->ubSectorY), bExitDirection, pGroup);
+            (UINT8)GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY), bExitDirection, pGroup);
       } else if (gbWorldSectorZ > 0) {  // We are attempting to traverse in an underground
                                         // environment.  We need to use a complete different
         // method.  When underground, all sectors are instantly adjacent.
@@ -2910,7 +2910,7 @@ INT8 GetSAMIdFromSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
   }
 
   // get the sector value
-  sSectorValue = SECTOR(sSectorX, sSectorY);
+  sSectorValue = GetSectorID8(sSectorX, sSectorY);
 
   // run through list of sam sites
   for (bCounter = 0; bCounter < 4; bCounter++) {
@@ -3785,7 +3785,8 @@ void HandleSlayDailyEvent(void) {
 }
 
 BOOLEAN IsSectorDesert(INT16 sSectorX, INT16 sSectorY) {
-  if (SectorInfo[SECTOR(sSectorX, sSectorY)].ubTraversability[THROUGH_STRATEGIC_MOVE] == SAND) {
+  if (SectorInfo[GetSectorID8(sSectorX, sSectorY)].ubTraversability[THROUGH_STRATEGIC_MOVE] ==
+      SAND) {
     // desert
     return (TRUE);
   } else {

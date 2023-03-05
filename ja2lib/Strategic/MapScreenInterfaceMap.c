@@ -371,18 +371,18 @@ BOOLEAN sBadSectorsList[WORLD_MAP_X][WORLD_MAP_X];
 INT16 sBaseSectorList[] = {
     // NOTE: These co-ordinates must match the top left corner of the 3x3 town tiles cutouts in
     // Interface/MilitiaMaps.sti!
-    SECTOR_STATIC(9, 1),    // Omerta
-    SECTOR_STATIC(13, 2),   // Drassen
-    SECTOR_STATIC(13, 8),   // Alma
-    SECTOR_STATIC(1, 7),    // Grumm
-    SECTOR_STATIC(8, 9),    // Tixa
-    SECTOR_STATIC(8, 6),    // Cambria
-    SECTOR_STATIC(4, 2),    // San Mona
-    SECTOR_STATIC(5, 8),    // Estoni
-    SECTOR_STATIC(3, 10),   // Orta
-    SECTOR_STATIC(11, 11),  // Balime
-    SECTOR_STATIC(3, 14),   // Meduna
-    SECTOR_STATIC(2, 1),    // Chitzena
+    GetSectorID8_STATIC(9, 1),    // Omerta
+    GetSectorID8_STATIC(13, 2),   // Drassen
+    GetSectorID8_STATIC(13, 8),   // Alma
+    GetSectorID8_STATIC(1, 7),    // Grumm
+    GetSectorID8_STATIC(8, 9),    // Tixa
+    GetSectorID8_STATIC(8, 6),    // Cambria
+    GetSectorID8_STATIC(4, 2),    // San Mona
+    GetSectorID8_STATIC(5, 8),    // Estoni
+    GetSectorID8_STATIC(3, 10),   // Orta
+    GetSectorID8_STATIC(11, 11),  // Balime
+    GetSectorID8_STATIC(3, 14),   // Meduna
+    GetSectorID8_STATIC(2, 1),    // Chitzena
 };
 
 // position of town names on the map
@@ -3486,9 +3486,10 @@ void ShowPeopleInMotion(INT16 sX, INT16 sY) {
 
     // if not at edge of map
     if (sDest != sSource) {
-      if (PlayersBetweenTheseSectors((INT16)SECTOR(sSource % MAP_WORLD_X, sSource / MAP_WORLD_X),
-                                     (INT16)SECTOR(sDest % MAP_WORLD_X, sDest / MAP_WORLD_X),
-                                     &sExiting, &sEntering, &fAboutToEnter)) {
+      if (PlayersBetweenTheseSectors(
+              (INT16)GetSectorID8(sSource % MAP_WORLD_X, sSource / MAP_WORLD_X),
+              (INT16)GetSectorID8(sDest % MAP_WORLD_X, sDest / MAP_WORLD_X), &sExiting, &sEntering,
+              &fAboutToEnter)) {
         // someone is leaving
 
         // now find position
@@ -4368,7 +4369,7 @@ void DisplayLevelString(void) {
 // function to manipulate the number of towns people on the cursor
 BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
   // see if there are any militia of this type in this sector
-  if (!SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[ubType]) {
+  if (!SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ubType]) {
     // failed, no one here
     return (FALSE);
   }
@@ -4382,7 +4383,7 @@ BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
     return (FALSE);
   }
 
-  if (SECTOR(sX, sY) == SECTOR(gWorldSectorX, gWorldSectorY)) {
+  if (GetSectorID8(sX, sY) == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
     gfStrategicMilitiaChangesMade = TRUE;
   }
 
@@ -4400,7 +4401,7 @@ BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   // reduce number in this sector
-  SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[ubType]--;
+  SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ubType]--;
 
   MarkForRedrawalStrategicMap();
 
@@ -4413,9 +4414,9 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
     return (FALSE);
   }
 
-  if (SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-          SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-          SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[ELITE_MILITIA] >=
+  if (SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
+          SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
+          SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ELITE_MILITIA] >=
       MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
     return (FALSE);
   }
@@ -4424,7 +4425,7 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
     return (FALSE);
   }
 
-  if (SECTOR(sX, sY) == SECTOR(gWorldSectorX, gWorldSectorY)) {
+  if (GetSectorID8(sX, sY) == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
     gfStrategicMilitiaChangesMade = TRUE;
   }
 
@@ -4454,7 +4455,7 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   // up the number in this sector of this type of militia
-  SectorInfo[SECTOR(sX, sY)].ubNumberOfCivsAtLevel[ubType]++;
+  SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ubType]++;
 
   MarkForRedrawalStrategicMap();
 
@@ -5096,7 +5097,7 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
         }
 
         if (STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID) ==
-            SECTOR(gWorldSectorX, gWorldSectorY)) {
+            GetSectorID8(gWorldSectorX, gWorldSectorY)) {
           gfStrategicMilitiaChangesMade = TRUE;
         }
       }
@@ -5204,7 +5205,7 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
 
       if (!StrategicMap[(*townSectors)[iCounter].sectorID].fEnemyControlled &&
           !NumHostilesInSector(sSectorX, sSectorY, 0)) {
-        sSector = SECTOR(sSectorX, sSectorY);
+        sSector = GetSectorID8(sSectorX, sSectorY);
 
         // distribute here
         SectorInfo[sSector].ubNumberOfCivsAtLevel[GREEN_MILITIA] =
@@ -5237,7 +5238,7 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
         }
 
         // if this sector is currently loaded
-        if (sSector == SECTOR(gWorldSectorX, gWorldSectorY) && gWorldSectorY != 0) {
+        if (sSector == GetSectorID8(gWorldSectorX, gWorldSectorY) && gWorldSectorY != 0) {
           gfStrategicMilitiaChangesMade = TRUE;
         }
       }
@@ -5599,9 +5600,9 @@ INT32 GetNumberOfMilitiaInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) 
 
   if (!bSectorZ) {
     iNumberInSector =
-        SectorInfo[SECTOR(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-        SectorInfo[SECTOR(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-        SectorInfo[SECTOR(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[ELITE_MILITIA];
+        SectorInfo[GetSectorID8(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
+        SectorInfo[GetSectorID8(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
+        SectorInfo[GetSectorID8(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[ELITE_MILITIA];
   }
 
   return (iNumberInSector);
@@ -5622,7 +5623,7 @@ void ClearAnySectorsFlashingNumberOfEnemies() {
 }
 
 UINT32 WhatPlayerKnowsAboutEnemiesInSector(INT16 sSectorX, INT16 sSectorY) {
-  UINT32 uiSectorFlags = SectorInfo[SECTOR(sSectorX, sSectorY)].uiFlags;
+  UINT32 uiSectorFlags = SectorInfo[GetSectorID8(sSectorX, sSectorY)].uiFlags;
 
   // if player has militia close enough to scout this sector out, if there are mercs who can scout
   // here, OR
@@ -5657,7 +5658,7 @@ UINT32 WhatPlayerKnowsAboutEnemiesInSector(INT16 sSectorX, INT16 sSectorY) {
       return KNOWS_THEYRE_THERE;
     } else {
       // Skyrider is gone, reset the flag that he noticed enemies here
-      SectorInfo[SECTOR(sSectorX, sSectorY)].uiFlags &= ~SF_SKYRIDER_NOTICED_ENEMIES_HERE;
+      SectorInfo[GetSectorID8(sSectorX, sSectorY)].uiFlags &= ~SF_SKYRIDER_NOTICED_ENEMIES_HERE;
     }
   }
 

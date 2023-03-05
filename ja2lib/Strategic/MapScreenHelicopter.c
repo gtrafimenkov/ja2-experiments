@@ -292,7 +292,7 @@ BOOLEAN HandleHeliEnteringSector(INT16 sX, INT16 sY) {
         }
 
         // make their presence appear on the map while Skyrider remains in the sector
-        SectorInfo[SECTOR(sX, sY)].uiFlags |= SF_SKYRIDER_NOTICED_ENEMIES_HERE;
+        SectorInfo[GetSectorID8(sX, sY)].uiFlags |= SF_SKYRIDER_NOTICED_ENEMIES_HERE;
       }
     }
   }
