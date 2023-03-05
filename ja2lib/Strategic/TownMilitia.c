@@ -1015,8 +1015,6 @@ void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kill
   }
 }
 
-#include "Tactical/SoldierControl.h"
-
 void HandleMilitiaPromotions(INT16 sMapX, INT16 sMapY) {
   PrepMilitiaPromotion();
 
@@ -1027,7 +1025,7 @@ void HandleMilitiaPromotions(INT16 sMapX, INT16 sMapY) {
     struct SOLDIERTYPE *sol = mil.soldiers[i];
     u8 kills = GetSolMilitiaKills(sol);
     if (IsSolInSector(sol) && IsSolAlive(sol) && kills > 0) {
-      HandleSingleMilitiaPromotion(sMapX, sMapY, sol->ubSoldierClass, kills);
+      HandleSingleMilitiaPromotion(sMapX, sMapY, GetSolClass(sol), kills);
       SetSolMilitiaKills(sol, 0);
     }
   }

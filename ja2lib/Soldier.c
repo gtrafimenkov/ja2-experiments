@@ -18,6 +18,7 @@ SectorID8 GetSolSectorID8(const struct SOLDIERTYPE *s) {
 }
 
 i8 GetSolAssignment(const struct SOLDIERTYPE *s) { return s->bAssignment; }
+u8 GetSolClass(const struct SOLDIERTYPE *s) { return s->ubSoldierClass; }
 
 bool IsSolActive(const struct SOLDIERTYPE *s) { return s->bActive; }
 bool IsSolAlive(const struct SOLDIERTYPE *s) { return s->bLife > 0; }

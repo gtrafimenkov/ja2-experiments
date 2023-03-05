@@ -19,6 +19,7 @@ i8 GetSolSectorZ(const struct SOLDIERTYPE *s);
 SectorID8 GetSolSectorID8(const struct SOLDIERTYPE *s);
 
 i8 GetSolAssignment(const struct SOLDIERTYPE *s);
+u8 GetSolClass(const struct SOLDIERTYPE *s);
 
 bool IsSolActive(const struct SOLDIERTYPE *s);
 bool IsSolAlive(const struct SOLDIERTYPE *s);
