@@ -3,6 +3,7 @@
 
 #include "SGP/Types.h"
 #include "Strategic/MapScreen.h"
+#include "Town.h"
 
 struct SOLDIERTYPE;
 

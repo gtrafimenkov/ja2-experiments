@@ -32,6 +32,7 @@
 #include "Tactical/TacticalSave.h"
 #include "TacticalAI/NPC.h"
 #include "TileEngine/WorldDef.h"
+#include "Town.h"
 #include "UI.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"

@@ -6,24 +6,6 @@
 struct SOLDIERTYPE;
 struct path;
 
-// Sector name identifiers
-typedef enum {
-  BLANK_SECTOR = 0,
-  OMERTA,
-  DRASSEN,
-  ALMA,
-  GRUMM,
-  TIXA,
-  CAMBRIA,
-  SAN_MONA,
-  ESTONI,
-  ORTA,
-  BALIME,
-  MEDUNA,
-  CHITZENA,
-  NUM_TOWNS
-} Towns;
-
 #define FIRST_TOWN OMERTA
 // #define PALACE			NUM_TOWNS
 
