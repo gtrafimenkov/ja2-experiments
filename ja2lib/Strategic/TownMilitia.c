@@ -154,7 +154,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
   // if anyone actually got trained
   if (ubMilitiaTrained > 0) {
     // update the screen display
-    fMapPanelDirty = TRUE;
+    MarkForRedrawalStrategicMap();
 
     if (ubTownId != BLANK_SECTOR) {
       // loyalty in this town increases a bit because we obviously care about them...
@@ -175,7 +175,7 @@ void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 u
   pSectorInfo->ubNumberOfCivsAtLevel[ubRank] += ubHowMany;
 
   // update the screen display
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 }
 
 void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
@@ -194,7 +194,7 @@ void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRa
   pSectorInfo->ubNumberOfCivsAtLevel[ubCurrentRank + 1] += ubHowMany;
 
   // update the screen display
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 }
 
 void StrategicRemoveMilitiaFromSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {
@@ -211,7 +211,7 @@ void StrategicRemoveMilitiaFromSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UI
   pSectorInfo->ubNumberOfCivsAtLevel[ubRank] -= ubHowMany;
 
   // update the screen display
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 }
 
 // kill pts are (2 * kills) + assists

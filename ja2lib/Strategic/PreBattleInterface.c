@@ -336,7 +336,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
       // get number of enemies thought to be here
       SectorInfo[SECTOR(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies =
           NumEnemiesInSector(gubPBSectorX, gubPBSectorY);
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
     } else {
       gubPBSectorX = (UINT8)SECTORX(gubSectorIDOfCreatureAttack);
       gubPBSectorY = (UINT8)SECTORY(gubSectorIDOfCreatureAttack);
@@ -808,7 +808,7 @@ void KillPreBattleInterface() {
   // UpdateCharRegionHelpText( );
 
   // re draw affected regions
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
   fTeamPanelDirty = TRUE;
   fMapScreenBottomDirty = TRUE;
   fCharacterInfoPanelDirty = TRUE;
@@ -903,7 +903,7 @@ void RenderPreBattleInterface() {
       fMouseInRetreatButtonArea = TRUE;
     if (fMouseInRetreatButtonArea != gfDisplayPotentialRetreatPaths) {
       gfDisplayPotentialRetreatPaths = fMouseInRetreatButtonArea;
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
     }
   }
 

@@ -2891,7 +2891,7 @@ UINT32 MapScreenHandle(void) {
     fInMapMode = TRUE;
 
     // dirty map
-    fMapPanelDirty = TRUE;
+    MarkForRedrawalStrategicMap();
 
     // dirty team region
     fTeamPanelDirty = TRUE;
@@ -3966,7 +3966,7 @@ UINT32 HandleMapUI() {
                 GetSoldierMercPathPtr(MercPtrs[gCharactersList[bSelectedDestChar].usSolID]));
 
             StartConfirmMapMoveMode(sMapY);
-            fMapPanelDirty = TRUE;
+            MarkForRedrawalStrategicMap();
             fTeamPanelDirty = TRUE;  // update team panel desinations
           } else {
             // means it's a vehicle and we've clicked an off-road sector
@@ -4302,13 +4302,13 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
           } else if (fShowAssignmentMenu) {
             // dirty region
             fTeamPanelDirty = TRUE;
-            fMapPanelDirty = TRUE;
+            MarkForRedrawalStrategicMap();
             fCharacterInfoPanelDirty = TRUE;
 
             // stop showing current assignment box
             if (fShowAttributeMenu == TRUE) {
               fShowAttributeMenu = FALSE;
-              fMapPanelDirty = TRUE;
+              MarkForRedrawalStrategicMap();
             } else if (fShowTrainingMenu == TRUE) {
               fShowTrainingMenu = FALSE;
             } else if (fShowSquadMenu == TRUE) {
@@ -4334,7 +4334,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
           else if ((sSelectedMilitiaTown != 0) && (sGreensOnCursor == 0) &&
                    (sRegularsOnCursor == 0) && (sElitesOnCursor == 0)) {
             sSelectedMilitiaTown = 0;
-            fMapPanelDirty = TRUE;
+            MarkForRedrawalStrategicMap();
           } else if (fShowTownInfo == TRUE) {
             fShowTownInfo = FALSE;
             CreateDestroyScreenMaskForAssignmentAndContractMenus();
@@ -4490,7 +4490,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
                                                           if( fAlt )
                                                           {
                                                                   // ALT-F11: make all sectors
-             player controlled ClearMapControlledFlags( ); fMapPanelDirty = TRUE;
+             player controlled ClearMapControlledFlags( ); MarkForRedrawalStrategicMap();
                                                           }
                                                   #endif
                                                   break;
@@ -4791,7 +4791,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 #ifdef JA2TESTVERSION
             fFoundOrta = !fFoundOrta;
             fFoundTixa = !fFoundTixa;
-            fMapPanelDirty = TRUE;
+            MarkForRedrawalStrategicMap();
 #endif
           } else {
             // go to OPTIONS screen
@@ -4820,7 +4820,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 
             fTeamPanelDirty = TRUE;
             fCharacterInfoPanelDirty = TRUE;
-            fMapPanelDirty = TRUE;
+            MarkForRedrawalStrategicMap();
           }
 #endif
           break;
@@ -5396,7 +5396,7 @@ void PollLeftButtonInMapView(UINT32 *puiNewEvent) {
         if (fShowMapScreenHelpText) {
           fShowMapScreenHelpText = FALSE;
           fCharacterInfoPanelDirty = TRUE;
-          fMapPanelDirty = TRUE;
+          MarkForRedrawalStrategicMap();
           return;
         }
 
@@ -5492,7 +5492,7 @@ void PollRightButtonInMapView(UINT32 *puiNewEvent) {
         if (fShowMapScreenHelpText) {
           fShowMapScreenHelpText = FALSE;
           fCharacterInfoPanelDirty = TRUE;
-          fMapPanelDirty = TRUE;
+          MarkForRedrawalStrategicMap();
           return;
         }
 
@@ -5554,7 +5554,7 @@ void PollRightButtonInMapView(UINT32 *puiNewEvent) {
                                        SF_ALREADY_VISITED) == TRUE)) {
                 // toggle sector info for this sector
                 fShowTownInfo = !fShowTownInfo;
-                fMapPanelDirty = TRUE;
+                MarkForRedrawalStrategicMap();
               }
             }
 
@@ -5714,7 +5714,7 @@ void BltCharInvPanel() {
   if (gbCheckForMouseOverItemPos != -1) {
     if (HandleCompatibleAmmoUIForMapScreen(pSoldier, (INT32)gbCheckForMouseOverItemPos, TRUE,
                                            TRUE) == TRUE) {
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
     }
   }
 
@@ -5974,7 +5974,7 @@ void MAPInvClickCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
         // Dirty
         fInterfacePanelDirty = DIRTYLEVEL2;
         fCharacterInfoPanelDirty = TRUE;
-        fMapPanelDirty = TRUE;
+        MarkForRedrawalStrategicMap();
 
         // Check if cursor is empty now
         if (gpItemPointer->ubNumberOfObjects == 0) {
@@ -6202,7 +6202,7 @@ void DisplayThePotentialPathForCurrentDestinationCharacterForMapScreenInterface(
 
     // path was plotted and we moved, re draw map..to clean up mess
     if (fTempPathAlreadyDrawn == TRUE) {
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
     }
 
     fTempPathAlreadyDrawn = FALSE;
@@ -6304,7 +6304,7 @@ void AbortMovementPlottingMode(void) {
   RestoreBackgroundForDestinationGlowRegionList();
 
   // we might be on the map, redraw to remove old path stuff
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
   fTeamPanelDirty = TRUE;
 
   gfRenderPBInterface = TRUE;
@@ -6322,7 +6322,7 @@ void CheckToSeeIfMouseHasLeftMapRegionDuringPathPlotting() {
            (fDrawTempHeliPath == TRUE)) &&
           (fTempPathAlreadyDrawn == TRUE)) {
         fDrawTempHeliPath = FALSE;
-        fMapPanelDirty = TRUE;
+        MarkForRedrawalStrategicMap();
         gfRenderPBInterface = TRUE;
 
         // clear the temp path
@@ -6557,7 +6557,7 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
 
       // dirty team and map regions
       fTeamPanelDirty = TRUE;
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
       // fMapScreenBottomDirty = TRUE;
       gfRenderPBInterface = TRUE;
     } else {
@@ -6604,7 +6604,7 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
 
       // dirty team and map regions
       fTeamPanelDirty = TRUE;
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
       //			fMapScreenBottomDirty = TRUE;
       gfRenderPBInterface = TRUE;
     }
@@ -6685,7 +6685,7 @@ void TeamListAssignmentRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iRe
 
       // dirty team and map regions
       fTeamPanelDirty = TRUE;
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
       gfRenderPBInterface = TRUE;
 
       // if this thing can be re-assigned
@@ -6831,7 +6831,7 @@ void TeamListDestinationRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iR
 
         // dirty team and map regions
         fTeamPanelDirty = TRUE;
-        fMapPanelDirty = TRUE;
+        MarkForRedrawalStrategicMap();
         gfRenderPBInterface = TRUE;
 
         // set cursor
@@ -8440,7 +8440,7 @@ void CancelMapUIMessage(void) {
   // and kill the message overlay
   EndUIMessage();
 
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 }
 
 // automatically turns off mapscreen ui overlay messages when appropriate
@@ -8958,7 +8958,7 @@ void TellPlayerWhyHeCantCompressTime(void) {
 void MapScreenDefaultOkBoxCallback(UINT8 bExitValue) {
   // yes, load the game
   if (bExitValue == MSG_BOX_RETURN_OK) {
-    fMapPanelDirty = TRUE;
+    MarkForRedrawalStrategicMap();
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
   }
@@ -9473,7 +9473,7 @@ void ChangeSelectedMapSector(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
     ToggleAirspaceMode();
   }
 
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
   fMapScreenBottomDirty = TRUE;
 
   // also need this, to update the text coloring of mercs in this sector
@@ -9651,7 +9651,7 @@ void CancelOrShortenPlottedPath(void) {
   // this triggers the path node animation to reset itself back to the first node
   fDeletedNode = TRUE;
 
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 
   fTeamPanelDirty = TRUE;
   fCharacterInfoPanelDirty = TRUE;  // to update ETAs if path reversed or shortened
@@ -9740,7 +9740,7 @@ void ChangeSelectedInfoChar(INT8 bCharNumber, BOOLEAN fResetSelectedList) {
     // if showing sector inventory
     if (fShowMapInventoryPool) {
       // redraw right side to update item hatches
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
     }
   }
 
@@ -9872,7 +9872,7 @@ void CancelChangeArrivalSectorMode() {
   // change the cursor to that mode
   SetUpCursorForStrategicMap();
 
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 }
 
 void MakeMapModesSuitableForDestPlotting(INT8 bCharNumber) {
@@ -10127,7 +10127,7 @@ void DestinationPlottingCompleted(void) {
   bSelectedDestChar = -1;
   giDestHighLine = -1;
 
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 
   // reset cursor
   SetUpCursorForStrategicMap();
@@ -10151,7 +10151,7 @@ void HandleMilitiaRedistributionClick(void) {
         if (fShowTownInfo == TRUE) {
           fShowTownInfo = FALSE;
         }
-        fMapPanelDirty = TRUE;
+        MarkForRedrawalStrategicMap();
 
         // check if there's combat in any of the town's sectors
         if (CanRedistributeMilitiaInSector(sSelMapX, sSelMapY, bTownId)) {
@@ -10211,7 +10211,7 @@ void StartChangeSectorArrivalMode(void) {
   gfInChangeArrivalSectorMode = TRUE;
 
   // redraw map with bullseye removed
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
 
   // change the cursor to that mode
   SetUpCursorForStrategicMap();
@@ -10301,7 +10301,7 @@ void HandlePostAutoresolveMessages() {
                                         (UINT8)gsCiviliansEatenByMonsters);
     gsCiviliansEatenByMonsters = -2;
   } else if (gsCiviliansEatenByMonsters == -2) {
-    fMapPanelDirty = TRUE;
+    MarkForRedrawalStrategicMap();
     gsCiviliansEatenByMonsters = -1;
     gsEnemyGainedControlOfSectorID = -1;
   } else if (gsEnemyGainedControlOfSectorID >= 0) {  // bring up the dialog box
@@ -10310,7 +10310,7 @@ void HandlePostAutoresolveMessages() {
     gsEnemyGainedControlOfSectorID = -2;
   } else if (gsEnemyGainedControlOfSectorID ==
              -2) {  // dirty the mapscreen after the dialog box goes away.
-    fMapPanelDirty = TRUE;
+    MarkForRedrawalStrategicMap();
     gsEnemyGainedControlOfSectorID = -1;
   } else if (gbMilitiaPromotions) {
     CHAR16 str[512];

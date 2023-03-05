@@ -3,6 +3,8 @@
 
 #include "SGP/Types.h"
 
+void MarkForRedrawalStrategicMap();
+
 bool IsTacticalMode();
 
 // Are we on the map screen?

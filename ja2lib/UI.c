@@ -3,6 +3,7 @@
 #include "JAScreens.h"
 #include "ScreenIDs.h"
 #include "Soldier.h"
+#include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
 #include "Strategic/MapScreenInterfaceBorder.h"
 #include "Strategic/MapScreenInterfaceMap.h"
@@ -38,3 +39,5 @@ bool IsGoingToAutoresolve() { return gfAutomaticallyStartAutoResolve; }
 
 // Return index of the character selected for assignment
 i8 GetCharForAssignmentIndex() { return bSelectedAssignChar; }
+
+void MarkForRedrawalStrategicMap() { MarkForRedrawalStrategicMap(); }

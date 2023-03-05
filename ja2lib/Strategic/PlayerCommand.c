@@ -230,7 +230,7 @@ BOOLEAN SetThisSectorAsPlayerControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BO
   UpdateAirspaceControl();
 
   // redraw map/income if in mapscreen
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
   fMapScreenBottomDirty = TRUE;
 
   return fWasEnemyControlled;
@@ -340,7 +340,7 @@ BOOLEAN SetThisSectorAsEnemyControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BOO
   UpdateAirspaceControl();
 
   // redraw map/income if in mapscreen
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
   fMapScreenBottomDirty = TRUE;
 
   return fWasPlayerControlled;
@@ -388,7 +388,7 @@ CALCULATE_STRATEGIC_INDEX( sMapX, sMapY ) ].fEnemyControlled );
         // else nothing, underground sector control is always up to date, because we don't track
 control down there
 
-        fMapPanelDirty = TRUE;
+        MarkForRedrawalStrategicMap();
 }
 */
 

@@ -198,7 +198,7 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
 
     if (fPlotDirectPath != fPreviousPlotDirectPath) {
       // must redraw map to erase the previous path...
-      fMapPanelDirty = TRUE;
+      MarkForRedrawalStrategicMap();
       fPreviousPlotDirectPath = fPlotDirectPath;
     }
   }
@@ -1252,7 +1252,7 @@ void MoveCharacterOnPath( struct SOLDIERTYPE *pCharacter )
                 pCharacter -> sSectorY = ( INT16 )( pNode -> uiSectorId ) / MAP_WORLD_X;
 
                 // dirty map panel
-                fMapPanelDirty = TRUE;
+                MarkForRedrawalStrategicMap();
 
                 if( pNode -> pNext == NULL )
                 {

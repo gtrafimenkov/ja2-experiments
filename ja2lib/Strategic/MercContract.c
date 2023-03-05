@@ -838,7 +838,7 @@ BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier) {
     ReBuildCharactersList();
   }
 
-  fMapPanelDirty = TRUE;
+  MarkForRedrawalStrategicMap();
   fTeamPanelDirty = TRUE;
   fCharacterInfoPanelDirty = TRUE;
 

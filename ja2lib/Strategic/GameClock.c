@@ -882,7 +882,7 @@ void CreateDestroyScreenMaskForPauseGame(void) {
     iPausedPopUpBox = -1;
     SetRenderFlags(RENDER_FLAG_FULL);
     fTeamPanelDirty = TRUE;
-    fMapPanelDirty = TRUE;
+    MarkForRedrawalStrategicMap();
     fMapScreenBottomDirty = TRUE;
     gfJustFinishedAPause = TRUE;
     MarkButtonsDirty();
