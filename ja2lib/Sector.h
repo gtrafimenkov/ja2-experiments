@@ -27,13 +27,14 @@ u8 SectorID8_Y(SectorID8 sectorID);
 
 // Convert coordinates (1-16, 1-16) to 0-324 index.
 SectorID16 GetSectorID16(u8 x, u8 y);
-#define GET_X_FROM_STRATEGIC_INDEX(i) (i % MAP_WORLD_X)
-#define GET_Y_FROM_STRATEGIC_INDEX(i) (i / MAP_WORLD_X)
+// Get X [1-16] from SectorID16
+u8 SectorID16_X(SectorID16 sectorID);
+// Get Y [1-16] from SectorID16
+u8 SectorID16_Y(SectorID16 sectorID);
 
 // macros to convert between the 2 different sector numbering systems
 #define SECTOR_INFO_TO_STRATEGIC_INDEX(i) (GetSectorID16(SectorID8_X(i), SectorID8_Y(i)))
-#define STRATEGIC_INDEX_TO_SECTOR_INFO(i) \
-  (GetSectorID8(GET_X_FROM_STRATEGIC_INDEX(i), GET_Y_FROM_STRATEGIC_INDEX(i)))
+#define STRATEGIC_INDEX_TO_SECTOR_INFO(i) (GetSectorID8(SectorID16_X(i), SectorID16_Y(i)))
 
 struct SectorInfo;
 

@@ -1839,8 +1839,8 @@ INT16 GetNumSafeSectorsInPath(void) {
     // AFTER plotting is done)
     if (((INT32)pNode->uiSectorId == iHeliSector) && (pNode->pNext != NULL) &&
         !GroupBetweenSectorsAndSectorXYIsInDifferentDirection(
-            pGroup, (UINT8)GET_X_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId),
-            (UINT8)GET_Y_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId))) {
+            pGroup, SectorID16_X(pNode->pNext->uiSectorId),
+            SectorID16_Y(pNode->pNext->uiSectorId))) {
       pNode = pNode->pNext;
     }
 
@@ -1864,8 +1864,8 @@ INT16 GetNumSafeSectorsInPath(void) {
     // of it that would count the sector twice
     if ((((INT32)pNode->uiSectorId == iHeliSector) && (pNode->pNext != NULL) &&
          !GroupBetweenSectorsAndSectorXYIsInDifferentDirection(
-             pGroup, (UINT8)GET_X_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId),
-             (UINT8)GET_Y_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId))) ||
+             pGroup, SectorID16_X(pNode->pNext->uiSectorId),
+             SectorID16_Y(pNode->pNext->uiSectorId))) ||
         (GetLengthOfPath(pVehicleList[iHelicopterVehicleId].pMercPath) > 0)) {
       pNode = pNode->pNext;
     }
@@ -1915,8 +1915,8 @@ INT16 GetNumUnSafeSectorsInPath(void) {
     // AFTER plotting is done)
     if (((INT32)pNode->uiSectorId == iHeliSector) && (pNode->pNext != NULL) &&
         !GroupBetweenSectorsAndSectorXYIsInDifferentDirection(
-            pGroup, (UINT8)GET_X_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId),
-            (UINT8)GET_Y_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId))) {
+            pGroup, SectorID16_X(pNode->pNext->uiSectorId),
+            SectorID16_Y(pNode->pNext->uiSectorId))) {
       pNode = pNode->pNext;
     }
 
@@ -1940,8 +1940,8 @@ INT16 GetNumUnSafeSectorsInPath(void) {
     // of it that would count the sector twice
     if ((((INT32)pNode->uiSectorId == iHeliSector) && (pNode->pNext != NULL) &&
          !GroupBetweenSectorsAndSectorXYIsInDifferentDirection(
-             pGroup, (UINT8)GET_X_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId),
-             (UINT8)GET_Y_FROM_STRATEGIC_INDEX(pNode->pNext->uiSectorId))) ||
+             pGroup, SectorID16_X(pNode->pNext->uiSectorId),
+             SectorID16_Y(pNode->pNext->uiSectorId))) ||
         (GetLengthOfPath(pVehicleList[iHelicopterVehicleId].pMercPath) > 0)) {
       pNode = pNode->pNext;
     }

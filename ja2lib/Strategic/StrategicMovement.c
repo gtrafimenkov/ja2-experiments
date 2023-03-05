@@ -613,8 +613,8 @@ BOOLEAN AddWaypointStrategicIDToGroup(UINT8 ubGroupID, UINT32 uiSectorID) {
 
 BOOLEAN AddWaypointStrategicIDToPGroup(struct GROUP *pGroup, UINT32 uiSectorID) {
   UINT8 ubSectorX, ubSectorY;
-  ubSectorX = (UINT8)GET_X_FROM_STRATEGIC_INDEX(uiSectorID);
-  ubSectorY = (UINT8)GET_Y_FROM_STRATEGIC_INDEX(uiSectorID);
+  ubSectorX = SectorID16_X(uiSectorID);
+  ubSectorY = SectorID16_Y(uiSectorID);
   return AddWaypointToPGroup(pGroup, ubSectorX, ubSectorY);
 }
 

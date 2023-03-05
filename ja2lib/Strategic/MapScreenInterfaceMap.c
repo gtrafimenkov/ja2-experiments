@@ -5200,8 +5200,8 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
   const TownSectors *townSectors = GetAllTownSectors();
   while ((*townSectors)[iCounter].townID != 0) {
     if ((*townSectors)[iCounter].townID == sSelectedMilitiaTown) {
-      sSectorX = GET_X_FROM_STRATEGIC_INDEX((*townSectors)[iCounter].sectorID);
-      sSectorY = GET_Y_FROM_STRATEGIC_INDEX((*townSectors)[iCounter].sectorID);
+      sSectorX = SectorID16_X((*townSectors)[iCounter].sectorID);
+      sSectorY = SectorID16_Y((*townSectors)[iCounter].sectorID);
 
       if (!StrategicMap[(*townSectors)[iCounter].sectorID].fEnemyControlled &&
           !NumHostilesInSector(sSectorX, sSectorY, 0)) {
@@ -5391,8 +5391,8 @@ void DrawTownMilitiaForcesOnMap(void) {
   while ((*townSectors)[iCounter].townID != 0) {
     // run through each town sector and plot the icons for the militia forces in the town
     if (!StrategicMap[(*townSectors)[iCounter].sectorID].fEnemyControlled) {
-      sSectorX = GET_X_FROM_STRATEGIC_INDEX((*townSectors)[iCounter].sectorID);
-      sSectorY = GET_Y_FROM_STRATEGIC_INDEX((*townSectors)[iCounter].sectorID);
+      sSectorX = SectorID16_X((*townSectors)[iCounter].sectorID);
+      sSectorY = SectorID16_Y((*townSectors)[iCounter].sectorID);
 
       // get number of each
       iNumberOfGreens =
