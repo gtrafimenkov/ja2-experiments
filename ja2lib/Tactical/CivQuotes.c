@@ -8,6 +8,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/QueenCommand.h"
 #include "Strategic/Quests.h"

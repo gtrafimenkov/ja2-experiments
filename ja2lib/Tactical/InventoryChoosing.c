@@ -4,6 +4,7 @@
 
 #include "GameSettings.h"
 #include "SGP/Random.h"
+#include "Soldier.h"
 #include "Strategic/AutoResolve.h"
 #include "Strategic/MapScreenInterfaceMap.h"
 #include "Strategic/Strategic.h"

@@ -29,4 +29,17 @@ INT8 SoldierClassToMilitiaRank(UINT8 ubSoldierClass);
 // feed this a _MITILIA rank, it will return you a SOLDIER_CLASS_, or -1 if the guy's not militia
 INT8 MilitiaRankToSoldierClass(UINT8 ubRank);
 
+// used for color codes, but also shows the enemy type for debugging purposes
+enum {
+  SOLDIER_CLASS_NONE,
+  SOLDIER_CLASS_ADMINISTRATOR,
+  SOLDIER_CLASS_ELITE,
+  SOLDIER_CLASS_ARMY,
+  SOLDIER_CLASS_GREEN_MILITIA,
+  SOLDIER_CLASS_REG_MILITIA,
+  SOLDIER_CLASS_ELITE_MILITIA,
+  SOLDIER_CLASS_CREATURE,
+  SOLDIER_CLASS_MINER,
+};
+
 #endif
