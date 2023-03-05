@@ -1008,7 +1008,7 @@ BOOLEAN StandardInterruptConditionsMet(struct SOLDIERTYPE *pSoldier, UINT8 ubOpp
     }
   }
 
-  if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector)) {
+  if (!(IsSolActive(pSoldier)) || !IsSolInSector(pSoldier)) {
     return (FALSE);
   }
 

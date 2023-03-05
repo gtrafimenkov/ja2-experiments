@@ -21,6 +21,7 @@ i8 GetSolAssignment(const struct SOLDIERTYPE *s) { return s->bAssignment; }
 
 bool IsSolActive(const struct SOLDIERTYPE *s) { return s->bActive; }
 bool IsSolAlive(const struct SOLDIERTYPE *s) { return s->bLife > 0; }
+bool IsSolInSector(const struct SOLDIERTYPE *s) { return s->bInSector; }
 
 void SetSolAssignmentDone(struct SOLDIERTYPE *s) {
   s->fDoneAssignmentAndNothingToDoFlag = FALSE;

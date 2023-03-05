@@ -4394,7 +4394,7 @@ void WaterDamage(struct SOLDIERTYPE *pSoldier) {
     }
     if (pSoldier->bCamo == 0) {
       // Reload palettes....
-      if (pSoldier->bInSector) {
+      if (IsSolInSector(pSoldier)) {
         CreateSoldierPalettes(pSoldier);
       }
       ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, Message[STR_CAMMO_WASHED_OFF], pSoldier->name);
@@ -4451,7 +4451,7 @@ BOOLEAN ApplyCammo(struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObj, BOOLEA
   DeductPoints(pSoldier, AP_CAMOFLAGE, 0);
 
   // Reload palettes....
-  if (pSoldier->bInSector) {
+  if (IsSolInSector(pSoldier)) {
     CreateSoldierPalettes(pSoldier);
   }
 

@@ -813,7 +813,7 @@ void HourlyCamouflageUpdate(void) {
         if (pSoldier->bCamo <= 0) {
           pSoldier->bCamo = 0;
           // Reload palettes....
-          if (pSoldier->bInSector) {
+          if (IsSolInSector(pSoldier)) {
             CreateSoldierPalettes(pSoldier);
           }
 

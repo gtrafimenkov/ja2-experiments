@@ -4813,7 +4813,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 
             EnemyCapturesPlayerSoldier(pSoldier);
 
-            if (pSoldier->bInSector) {
+            if (IsSolInSector(pSoldier)) {
               RemoveSoldierFromTacticalSector(pSoldier, TRUE);
             }
 

@@ -107,7 +107,7 @@ void BeginAutoBandage() {
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
     // if the soldier isn't active or in sector, we have problems..leave
-    if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector) ||
+    if (!(IsSolActive(pSoldier)) || !IsSolInSector(pSoldier) ||
         (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (GetSolAssignment(pSoldier) == VEHICLE)) {
       continue;
     }

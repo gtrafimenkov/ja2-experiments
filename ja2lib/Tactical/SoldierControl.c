@@ -3985,7 +3985,7 @@ void EVENT_BeginMercTurn(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromRealTime,
         iBlood = CheckBleeding(pSoldier);  // check if he might lose another life point
 
         // ATE: Only if in sector!
-        if (pSoldier->bInSector) {
+        if (IsSolInSector(pSoldier)) {
           if (iBlood != NOBLOOD) {
             DropBlood(pSoldier, (INT8)iBlood, pSoldier->bVisible);
           }
@@ -4062,7 +4062,7 @@ savedPts = MAX_AP_CARRIED;
       pSoldier->ubTurnsUntilCanSayHeardNoise--;
     }
 
-    if (pSoldier->bInSector) {
+    if (IsSolInSector(pSoldier)) {
       CheckForBreathCollapse(pSoldier);
     }
 
@@ -4070,7 +4070,7 @@ savedPts = MAX_AP_CARRIED;
 
     pSoldier->bTilesMoved = 0;
 
-    if (pSoldier->bInSector) {
+    if (IsSolInSector(pSoldier)) {
       BeginSoldierGetup(pSoldier);
 
       // CJC Nov 30: handle RT opplist decaying in another function which operates less often
@@ -5253,7 +5253,7 @@ void HandleTakeDamageDeath(struct SOLDIERTYPE *pSoldier, UINT8 bOldLife, UINT8 u
     case TAKE_DAMAGE_ELECTRICITY:
     case TAKE_DAMAGE_GAS:
 
-      if (pSoldier->bInSector) {
+      if (IsSolInSector(pSoldier)) {
         if (pSoldier->bVisible != -1) {
           if (ubReason != TAKE_DAMAGE_BLOODLOSS) {
             DoMercBattleSound(pSoldier, BATTLE_SOUND_DIE1);
@@ -5590,7 +5590,7 @@ UINT8 SoldierTakeDamage(struct SOLDIERTYPE *pSoldier, INT8 bHeight, INT16 sLifeD
 
   if (!(pSoldier->uiStatusFlags & (SOLDIER_VEHICLE | SOLDIER_ROBOT))) {
     if (ubBlood != 0) {
-      if (pSoldier->bInSector) {
+      if (IsSolInSector(pSoldier)) {
         DropBlood(pSoldier, ubBlood, pSoldier->bVisible);
       }
     }
@@ -5604,7 +5604,7 @@ UINT8 SoldierTakeDamage(struct SOLDIERTYPE *pSoldier, INT8 bHeight, INT16 sLifeD
     }
   }
 
-  if (pSoldier->bInSector) {
+  if (IsSolInSector(pSoldier)) {
     CheckForBreathCollapse(pSoldier);
   }
 

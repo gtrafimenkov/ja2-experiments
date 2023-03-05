@@ -4657,7 +4657,7 @@ void ExitCombatMode() {
   // Loop through all mercs and make go
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
     if (IsSolActive(pSoldier)) {
-      if (pSoldier->bInSector) {
+      if (IsSolInSector(pSoldier)) {
         // Reset some flags
         if (pSoldier->fNoAPToFinishMove && pSoldier->bLife >= OKLIFE) {
           AdjustNoAPToFinishMove(pSoldier, FALSE);
@@ -6454,7 +6454,7 @@ void CencelAllActionsForTimeCompression(void) {
 
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
     if (IsSolActive(pSoldier)) {
-      if (pSoldier->bInSector) {
+      if (IsSolInSector(pSoldier)) {
         // Hault!
         EVENT_StopMerc(pSoldier, pSoldier->sGridNo, pSoldier->bDirection);
 

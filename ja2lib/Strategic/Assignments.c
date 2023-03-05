@@ -3717,7 +3717,7 @@ INT16 GetTownTrainPtsForCharacter(struct SOLDIERTYPE *pTrainer, UINT16 *pusMaxPt
 
 void MakeSoldiersTacticalAnimationReflectAssignment(struct SOLDIERTYPE *pSoldier) {
   // soldier is in tactical, world loaded, he's OKLIFE
-  if ((pSoldier->bInSector) && gfWorldLoaded && (pSoldier->bLife >= OKLIFE)) {
+  if (IsSolInSector(pSoldier) && gfWorldLoaded && (pSoldier->bLife >= OKLIFE)) {
     // Set animation based on his assignment
     if (GetSolAssignment(pSoldier) == DOCTOR) {
       SoldierInSectorDoctor(pSoldier, pSoldier->usStrategicInsertionData);
@@ -3748,7 +3748,7 @@ void AssignmentAborted(struct SOLDIERTYPE *pSoldier, UINT8 ubReason) {
 }
 
 void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMeToo) {
-  if ((pSoldier->bInSector) && (gfWorldLoaded)) {
+  if (IsSolInSector(pSoldier) && (gfWorldLoaded)) {
     if (GetSolAssignment(pSoldier) == DOCTOR) {
       if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, END_DOCTOR, 1, TRUE);
@@ -3992,7 +3992,7 @@ void CheckIfSoldierUnassigned(struct SOLDIERTYPE *pSoldier) {
     // unassigned
     AddCharacterToAnySquad(pSoldier);
 
-    if ((gfWorldLoaded) && (pSoldier->bInSector)) {
+    if ((gfWorldLoaded) && IsSolInSector(pSoldier)) {
       ChangeSoldierState(pSoldier, STANDING, 1, TRUE);
     }
   }
@@ -8876,7 +8876,7 @@ BOOLEAN SetMercAsleep(struct SOLDIERTYPE *pSoldier, BOOLEAN fGiveWarning) {
 
 BOOLEAN PutMercInAsleepState(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->fMercAsleep == FALSE) {
-    if ((gfWorldLoaded) && (pSoldier->bInSector)) {
+    if ((gfWorldLoaded) && IsSolInSector(pSoldier)) {
       if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, GOTO_SLEEP, 1, TRUE);
       } else {
@@ -8909,7 +8909,7 @@ BOOLEAN SetMercAwake(struct SOLDIERTYPE *pSoldier, BOOLEAN fGiveWarning, BOOLEAN
 
 BOOLEAN PutMercInAwakeState(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->fMercAsleep) {
-    if ((gfWorldLoaded) && (pSoldier->bInSector)) {
+    if ((gfWorldLoaded) && IsSolInSector(pSoldier)) {
       if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, WKAEUP_FROM_SLEEP, 1, TRUE);
       } else {

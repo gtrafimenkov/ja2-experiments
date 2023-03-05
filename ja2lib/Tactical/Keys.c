@@ -1711,7 +1711,7 @@ void ExamineDoorsOnEnteringSector() {
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[LAST_TEAM].bLastID;
        cnt++, pSoldier++) {
     if (IsSolActive(pSoldier)) {
-      if (pSoldier->bInSector) {
+      if (IsSolInSector(pSoldier)) {
         fOK = TRUE;
         break;
       }

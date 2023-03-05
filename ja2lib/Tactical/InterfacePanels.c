@@ -4664,7 +4664,7 @@ void HandleTacticalEffectsOfEquipmentChange(struct SOLDIERTYPE *pSoldier, UINT32
   }
 
   // if he is loaded tactically
-  if (pSoldier->bInSector) {
+  if (IsSolInSector(pSoldier)) {
     // If this is our main hand
     if (uiInvPos == HANDPOS || uiInvPos == SECONDHANDPOS) {
       // check if we need to change animation!
