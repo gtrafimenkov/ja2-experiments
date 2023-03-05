@@ -55,7 +55,7 @@ BOOLEAN MilitiaTrainingAllowedInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSec
 BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId);
 
 void PrepMilitiaPromotion();
-void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 rank, u8 soldierClass, u8 kills);
+void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kills);
 bool HasNewMilitiaPromotions();
 
 #endif

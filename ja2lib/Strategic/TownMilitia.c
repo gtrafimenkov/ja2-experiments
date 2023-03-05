@@ -1021,7 +1021,8 @@ void PrepMilitiaPromotion() {
   gbMilitiaPromotions = 0;
 }
 
-void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 rank, u8 soldierClass, u8 kills) {
+void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kills) {
+  u8 rank = SoldierClassToMilitiaRank(soldierClass);
   u8 ubPromotions = CheckOneMilitiaForPromotion(sMapX, sMapY, rank, kills);
   if (ubPromotions) {
     if (ubPromotions == 2) {
@@ -1038,20 +1039,18 @@ void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 rank, u8 soldierClass
 }
 
 static void handlePromotions(void) {
-  struct SOLDIERTYPE *pTeamSoldier;
-
   PrepMilitiaPromotion();
 
-  UINT8 cnt = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
+  struct SoldierList mil;
+  GetTeamSoldiers(MILITIA_TEAM, &mil);
 
-  for (pTeamSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[MILITIA_TEAM].bLastID;
-       cnt++, pTeamSoldier++) {
-    if (pTeamSoldier->bActive && pTeamSoldier->bInSector && pTeamSoldier->bLife > 0) {
-      if (pTeamSoldier->ubMilitiaKills > 0) {
-        UINT8 ubMilitiaRank = SoldierClassToMilitiaRank(pTeamSoldier->ubSoldierClass);
-        HandleSingleMilitiaPromotion(gWorldSectorX, gWorldSectorY, ubMilitiaRank,
-                                     pTeamSoldier->ubSoldierClass, pTeamSoldier->ubMilitiaKills);
-        pTeamSoldier->ubMilitiaKills = 0;
+  for (int i = 0; i < mil.num; i++) {
+    struct SOLDIERTYPE *sol = mil.soldiers[i];
+    if (sol->bActive && sol->bInSector && sol->bLife > 0) {
+      if (sol->ubMilitiaKills > 0) {
+        HandleSingleMilitiaPromotion(gWorldSectorX, gWorldSectorY, sol->ubSoldierClass,
+                                     sol->ubMilitiaKills);
+        sol->ubMilitiaKills = 0;
       }
     }
   }

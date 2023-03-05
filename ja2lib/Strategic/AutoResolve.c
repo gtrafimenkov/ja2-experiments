@@ -1942,11 +1942,8 @@ void CreateAutoResolveInterface() {
 
 void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
   INT32 i;
-  UINT8 ubCurrentRank;
   UINT8 ubCurrentGroupID = 0;
   BOOLEAN fFirstGroup = TRUE;
-
-  // VtResumeSampling();
 
   MSYS_RemoveRegion(&gpAR->AutoResolveRegion);
   DeleteVideoObjectFromIndex(gpAR->iPanelImages);
@@ -2030,34 +2027,15 @@ void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
   PrepMilitiaPromotion();
   for (i = 0; i < MAX_ALLOWABLE_MILITIA_PER_SECTOR; i++) {
     if (gpCivs[i].pSoldier) {
-      ubCurrentRank = 255;
-      switch (gpCivs[i].pSoldier->ubSoldierClass) {
-        case SOLDIER_CLASS_GREEN_MILITIA:
-          ubCurrentRank = GREEN_MILITIA;
-          break;
-        case SOLDIER_CLASS_REG_MILITIA:
-          ubCurrentRank = REGULAR_MILITIA;
-          break;
-        case SOLDIER_CLASS_ELITE_MILITIA:
-          ubCurrentRank = ELITE_MILITIA;
-          break;
-        default:
-#ifdef JA2BETAVERSION
-          ScreenMsg(FONT_RED, MSG_ERROR,
-                    L"Removing autoresolve militia with invalid ubSoldierClass %d.",
-                    gpCivs[i].pSoldier->ubSoldierClass);
-#endif
-          break;
-      }
+      UINT8 rank = SoldierClassToMilitiaRank(gpCivs[i].pSoldier->ubSoldierClass);
       if (fDeleteForGood && gpCivs[i].pSoldier->bLife < OKLIFE / 2) {
         AddDeadSoldierToUnLoadedSector(gpAR->ubSectorX, gpAR->ubSectorY, 0, gpCivs[i].pSoldier,
                                        RandomGridNo(), ADD_DEAD_SOLDIER_TO_SWEETSPOT);
-        StrategicRemoveMilitiaFromSector(gpAR->ubSectorX, gpAR->ubSectorY, ubCurrentRank, 1);
+        StrategicRemoveMilitiaFromSector(gpAR->ubSectorX, gpAR->ubSectorY, rank, 1);
         HandleGlobalLoyaltyEvent(GLOBAL_LOYALTY_NATIVE_KILLED, gpAR->ubSectorX, gpAR->ubSectorY, 0);
       } else {
-        if (fDeleteForGood && (gpCivs[i].pSoldier->ubMilitiaKills > 0) &&
-            (ubCurrentRank < ELITE_MILITIA)) {
-          HandleSingleMilitiaPromotion(gpAR->ubSectorX, gpAR->ubSectorY, ubCurrentRank,
+        if (fDeleteForGood && (gpCivs[i].pSoldier->ubMilitiaKills > 0) && (rank < ELITE_MILITIA)) {
+          HandleSingleMilitiaPromotion(gpAR->ubSectorX, gpAR->ubSectorY,
                                        gpCivs[i].pSoldier->ubSoldierClass,
                                        gpCivs[i].pSoldier->ubMilitiaKills);
         }
