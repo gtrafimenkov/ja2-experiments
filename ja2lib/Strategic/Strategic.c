@@ -25,7 +25,7 @@ BOOLEAN HandleStrategicDeath(struct SOLDIERTYPE *pSoldier) {
   // AddCharacterToDeadList( pSoldier );
 
   // If in a vehicle, remove them!
-  if ((pSoldier->bAssignment == VEHICLE) && (pSoldier->iVehicleId != -1)) {
+  if ((GetSolAssignment(pSoldier) == VEHICLE) && (pSoldier->iVehicleId != -1)) {
     // remove from vehicle
     TakeSoldierOutOfVehicle(pSoldier);
   }

@@ -6,6 +6,7 @@
 #include "Money.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -879,7 +880,7 @@ UINT8 MoveAllInHelicopterToFootMovementGroup(void) {
 
     if (pSoldier != NULL) {
       // better really be in there!
-      Assert(pSoldier->bAssignment == VEHICLE);
+      Assert(GetSolAssignment(pSoldier) == VEHICLE);
       Assert(pSoldier->iVehicleId == iHelicopterVehicleId);
 
       fAnyoneAboard = TRUE;

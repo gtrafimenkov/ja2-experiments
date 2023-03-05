@@ -1439,7 +1439,7 @@ void UpdateMercsInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
           UpdateMercInSector(pSoldier, sSectorX, sSectorY, bSectorZ);
 
           if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
-            if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+            if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
               if (!fPOWSquadSet) {
                 fPOWSquadSet = TRUE;
 
@@ -2028,7 +2028,7 @@ void JumpIntoAdjacentSector(UINT8 ubTacticalDirection, UINT8 ubJumpCode, INT16 s
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
          cnt++, pSoldier++) {
       // If we are controllable
-      if (OK_CONTROLLABLE_MERC(pSoldier) && pSoldier->bAssignment == CurrentSquad()) {
+      if (OK_CONTROLLABLE_MERC(pSoldier) && GetSolAssignment(pSoldier) == CurrentSquad()) {
         pValidSoldier = pSoldier;
         // This now gets handled by strategic movement.  It is possible that the
         // group won't move instantaneously.
@@ -2719,7 +2719,7 @@ BOOLEAN OKForSectorExit(INT8 bExitDirection, UINT16 usAdditionalData,
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
     // If we are controllable
-    if (OK_CONTROLLABLE_MERC(pSoldier) && pSoldier->bAssignment == CurrentSquad()) {
+    if (OK_CONTROLLABLE_MERC(pSoldier) && GetSolAssignment(pSoldier) == CurrentSquad()) {
       // Need to keep a copy of a good soldier, so we can access it later, and
       // not more than once.
       pValidSoldier = pSoldier;
@@ -3766,7 +3766,8 @@ void HandleSlayDailyEvent(void) {
 
   // valid soldier?
   if ((IsSolActive(pSoldier) == FALSE) || (pSoldier->bLife == 0) ||
-      (pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+      (GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+      (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
     // no
     return;
   }

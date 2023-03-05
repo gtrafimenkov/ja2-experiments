@@ -715,7 +715,7 @@ void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrain
       continue;
     }
 
-    if ((pSoldier->bAssignment == TRAIN_TOWN) && (GetSolSectorX(pSoldier) == sSectorX) &&
+    if ((GetSolAssignment(pSoldier) == TRAIN_TOWN) && (GetSolSectorX(pSoldier) == sSectorX) &&
         (GetSolSectorY(pSoldier) == sSectorY) && (GetSolSectorZ(pSoldier) == bSectorZ)) {
       // done assignment
       AssignmentDone(pSoldier, FALSE, FALSE);
@@ -922,7 +922,7 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector) {
     pSoldier = GetSoldierByID(iCounter);
 
     if (IsSolActive(pSoldier)) {
-      if (pSoldier->bAssignment == TRAIN_TOWN) {
+      if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
         if ((SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) == ubSector) &&
             (GetSolSectorZ(pSoldier) == 0)) {
           pSoldier->fDoneAssignmentAndNothingToDoFlag = FALSE;

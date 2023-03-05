@@ -1430,8 +1430,8 @@ void DrawCharBars(void) {
     }
 
     // skip POWs, dead guys
-    if ((pSoldier->bLife == 0) || (pSoldier->bAssignment == ASSIGNMENT_DEAD) ||
-        (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+    if ((pSoldier->bLife == 0) || (GetSolAssignment(pSoldier) == ASSIGNMENT_DEAD) ||
+        (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
       return;
     }
 
@@ -1781,7 +1781,7 @@ void DrawCharacterInfo(INT16 sCharNumber) {
   DrawString(sString, usX, usY, CHAR_FONT);
 
   // Assignment
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     // show vehicle type
     wcscpy(sString, pShortVehicleStrings[pVehicleList[pSoldier->iVehicleId].ubVehicleType]);
   } else {
@@ -1795,17 +1795,18 @@ void DrawCharacterInfo(INT16 sCharNumber) {
   // second assignment line
 
   // train self / teammate / by other ?
-  if ((pSoldier->bAssignment == TRAIN_SELF) || (pSoldier->bAssignment == TRAIN_TEAMMATE) ||
-      (pSoldier->bAssignment == TRAIN_BY_OTHER)) {
+  if ((GetSolAssignment(pSoldier) == TRAIN_SELF) ||
+      (GetSolAssignment(pSoldier) == TRAIN_TEAMMATE) ||
+      (GetSolAssignment(pSoldier) == TRAIN_BY_OTHER)) {
     wcscpy(sString, pAttributeMenuStrings[pSoldier->bTrainStat]);
   }
   // train town?
-  else if (pSoldier->bAssignment == TRAIN_TOWN) {
+  else if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
     wcscpy(sString,
            pTownNames[GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]);
   }
   // repairing?
-  else if (pSoldier->bAssignment == REPAIR) {
+  else if (GetSolAssignment(pSoldier) == REPAIR) {
     if (pSoldier->fFixingRobot) {
       // robot
       wcscpy(sString, pRepairStrings[3]);
@@ -1827,7 +1828,7 @@ void DrawCharacterInfo(INT16 sCharNumber) {
     }
   }
   // in transit?
-  else if (pSoldier->bAssignment == IN_TRANSIT) {
+  else if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
     // show ETA
     ConvertMinTimeToETADayHourMinString(pSoldier->uiTimeSoldierWillArrive, sString,
                                         ARR_SIZE(sString));
@@ -1875,7 +1876,7 @@ void DrawCharacterInfo(INT16 sCharNumber) {
     iTimeRemaining = pSoldier->iEndofContractTime - GetWorldTotalMin();
 
     // if the merc is in transit
-    if (pSoldier->bAssignment == IN_TRANSIT) {
+    if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
       // and if the ttime left on the cotract is greater then the contract time
       if (iTimeRemaining > (INT32)(pSoldier->iTotalContractLength * NUM_MIN_IN_DAY)) {
         iTimeRemaining = (pSoldier->iTotalContractLength * NUM_MIN_IN_DAY);
@@ -6691,7 +6692,7 @@ void TeamListAssignmentRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iRe
 
         fShowAssignmentMenu = TRUE;
 
-        if ((pSoldier->bLife == 0) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+        if ((pSoldier->bLife == 0) || (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
           fShowRemoveMenu = TRUE;
         }
       } else {
@@ -7896,8 +7897,8 @@ void RebuildWayPointsForAllSelectedCharsGroups(void) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       // if he's IN a vehicle or IS a vehicle
-      if ((pSoldier->bAssignment == VEHICLE) || (pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
-        if (pSoldier->bAssignment == VEHICLE) {
+      if ((GetSolAssignment(pSoldier) == VEHICLE) || (pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
+        if (GetSolAssignment(pSoldier) == VEHICLE) {
           // IN a vehicle
           iVehicleId = pSoldier->iVehicleId;
         } else {
@@ -9415,7 +9416,8 @@ BOOLEAN MapCharacterHasAccessibleInventory(INT8 bCharNumber) {
 
   pSoldier = MercPtrs[gCharactersList[bCharNumber].usSolID];
 
-  if ((pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW) ||
+  if ((GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+      (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) ||
       (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (AM_A_ROBOT(pSoldier)) ||
       (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__EPC) || (pSoldier->bLife < OKLIFE)) {
     return (FALSE);
@@ -9517,8 +9519,8 @@ BOOLEAN CanExtendContractForCharSlot(INT8 bCharNumber) {
   Assert(IsSolActive(pSoldier));
 
   // if a vehicle, in transit, or a POW
-  if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == IN_TRANSIT) ||
-      (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+  if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+      (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
     // can't extend contracts at this time
     return (FALSE);
   }
@@ -9549,13 +9551,14 @@ BOOLEAN CanChangeSleepStatusForSoldier(struct SOLDIERTYPE *pSoldier) {
 
   // if a vehicle, robot, in transit, or a POW
   if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || AM_A_ROBOT(pSoldier) ||
-      (pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+      (GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+      (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
     // can't change the sleep status of such mercs
     return (FALSE);
   }
 
   // if dead
-  if ((pSoldier->bLife <= 0) || (pSoldier->bAssignment == ASSIGNMENT_DEAD)) {
+  if ((pSoldier->bLife <= 0) || (GetSolAssignment(pSoldier) == ASSIGNMENT_DEAD)) {
     return (FALSE);
   }
 
@@ -9756,7 +9759,7 @@ void CopyPathToAllSelectedCharacters(struct path *pPath) {
         if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
           pVehicleList[pSoldier->bVehicleID].pMercPath =
               CopyPaths(pPath, pVehicleList[pSoldier->bVehicleID].pMercPath);
-        } else if (pSoldier->bAssignment == VEHICLE) {
+        } else if (GetSolAssignment(pSoldier) == VEHICLE) {
           pVehicleList[pSoldier->iVehicleId].pMercPath =
               CopyPaths(pPath, pVehicleList[pSoldier->iVehicleId].pMercPath);
         } else {
@@ -9784,8 +9787,8 @@ void CancelPathsOfAllSelectedCharacters() {
       // and he has a route set
       if (GetLengthOfMercPath(pSoldier) > 0) {
         // if he's in the chopper, but player can't redirect it
-        if ((pSoldier->bAssignment == VEHICLE) && (pSoldier->iVehicleId == iHelicopterVehicleId) &&
-            (CanHelicopterFly() == FALSE)) {
+        if ((GetSolAssignment(pSoldier) == VEHICLE) &&
+            (pSoldier->iVehicleId == iHelicopterVehicleId) && (CanHelicopterFly() == FALSE)) {
           if (!fSkyriderMsgShown) {
             // explain
             ExplainWhySkyriderCantFly();
@@ -9880,7 +9883,7 @@ void MakeMapModesSuitableForDestPlotting(INT8 bCharNumber) {
 
     TurnOnShowTeamsMode();
 
-    if ((pSoldier->bAssignment == VEHICLE) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
+    if ((GetSolAssignment(pSoldier) == VEHICLE) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       if (fShowAircraftFlag == FALSE) {
         // turn on airspace mode automatically
         ToggleAirspaceMode();
@@ -9919,13 +9922,14 @@ BOOLEAN AnyMovableCharsInOrBetweenThisSector(INT16 sSectorX, INT16 sSectorY, INT
     }
 
     // POWs, dead guys, guys in transit can't move
-    if ((pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW) ||
-        (pSoldier->bAssignment == ASSIGNMENT_DEAD) || (pSoldier->bLife == 0)) {
+    if ((GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+        (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) ||
+        (GetSolAssignment(pSoldier) == ASSIGNMENT_DEAD) || (pSoldier->bLife == 0)) {
       continue;
     }
 
     // don't count mercs aboard Skyrider
-    if ((pSoldier->bAssignment == VEHICLE) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
+    if ((GetSolAssignment(pSoldier) == VEHICLE) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       continue;
     }
 
@@ -10268,7 +10272,7 @@ void WakeUpAnySleepingSelectedMercsOnFootOrDriving(void) {
       if (pSoldier->fMercAsleep) {
         // and on foot or driving
         if ((pSoldier->bAssignment < ON_DUTY) ||
-            ((pSoldier->bAssignment == VEHICLE) &&
+            ((GetSolAssignment(pSoldier) == VEHICLE) &&
              SoldierMustDriveVehicle(pSoldier, pSoldier->iVehicleId, FALSE))) {
           // we should be guaranteed that he CAN wake up to get this far, so report errors, but
           // don't force it
@@ -10325,11 +10329,11 @@ void GetMapscreenMercLocationString(struct SOLDIERTYPE *pSoldier, wchar_t sStrin
                                     int sStringSize) {
   wchar_t pTempString[32];
 
-  if (pSoldier->bAssignment == IN_TRANSIT) {
+  if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
     // show blank
     wcscpy(sString, L"--");
   } else {
-    if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+    if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
       // POW - location unknown
       swprintf(sString, sStringSize, L"%s", pPOWStrings[1]);
     } else {
@@ -10356,12 +10360,12 @@ void GetMapscreenMercDestinationString(struct SOLDIERTYPE *pSoldier, wchar_t sSt
   wcsncpy(sString, L"", sStringSize);
 
   // if dead or POW - has no destination (no longer part of a group, for that matter)
-  if ((pSoldier->bAssignment == ASSIGNMENT_DEAD) || (pSoldier->bAssignment == ASSIGNMENT_POW) ||
-      (pSoldier->bLife == 0)) {
+  if ((GetSolAssignment(pSoldier) == ASSIGNMENT_DEAD) ||
+      (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) || (pSoldier->bLife == 0)) {
     return;
   }
 
-  if (pSoldier->bAssignment == IN_TRANSIT) {
+  if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
     // show the sector he'll be arriving in
     iSectorX = gsMercArriveSectorX;
     iSectorY = gsMercArriveSectorY;
@@ -10405,7 +10409,7 @@ void GetMapscreenMercDepartureString(struct SOLDIERTYPE *pSoldier, wchar_t sStri
     iMinsRemaining = pSoldier->iEndofContractTime - GetWorldTotalMin();
 
     // if the merc is in transit
-    if (pSoldier->bAssignment == IN_TRANSIT) {
+    if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
       // and if the time left on the cotract is greater then the contract time
       if (iMinsRemaining > (INT32)(pSoldier->iTotalContractLength * NUM_MIN_IN_DAY)) {
         iMinsRemaining = (pSoldier->iTotalContractLength * NUM_MIN_IN_DAY);
@@ -10518,7 +10522,7 @@ void RestorePreviousPaths(void) {
         if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
           ppMovePath = &(pVehicleList[pSoldier->bVehicleID].pMercPath);
           ubGroupId = pVehicleList[pSoldier->bVehicleID].ubMovementGroup;
-        } else if (pSoldier->bAssignment == VEHICLE) {
+        } else if (GetSolAssignment(pSoldier) == VEHICLE) {
           ppMovePath = &(pVehicleList[pSoldier->iVehicleId].pMercPath);
           ubGroupId = pVehicleList[pSoldier->iVehicleId].ubMovementGroup;
         } else if (pSoldier->bAssignment < ON_DUTY) {
@@ -10597,7 +10601,7 @@ void SelectAllCharactersInSquad(INT8 bSquadNumber) {
 
       // if this guy is on that squad or in a vehicle which is assigned to that squad
       // NOTE: There's no way to select everyone aboard Skyrider with this function...
-      if ((pSoldier->bAssignment == bSquadNumber) ||
+      if ((GetSolAssignment(pSoldier) == bSquadNumber) ||
           IsSoldierInThisVehicleSquad(pSoldier, bSquadNumber)) {
         if (fFirstOne) {
           // make the first guy in the list who is in this squad the selected info char

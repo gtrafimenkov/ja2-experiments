@@ -3302,12 +3302,13 @@ UINT8 FindNextActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
     if (fGoodForLessOKLife) {
       if (pTeamSoldier->bLife > 0 && pTeamSoldier->bActive && pTeamSoldier->bInSector &&
           pTeamSoldier->bTeam == gbPlayerNum && pTeamSoldier->bAssignment < ON_DUTY &&
-          OK_INTERRUPT_MERC(pTeamSoldier) && pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          OK_INTERRUPT_MERC(pTeamSoldier) &&
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     } else {
       if (OK_CONTROLLABLE_MERC(pTeamSoldier) && OK_INTERRUPT_MERC(pTeamSoldier) &&
-          pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     }
@@ -3328,12 +3329,13 @@ UINT8 FindNextActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
     if (fGoodForLessOKLife) {
       if (pTeamSoldier->bLife > 0 && pTeamSoldier->bActive && pTeamSoldier->bInSector &&
           pTeamSoldier->bTeam == gbPlayerNum && pTeamSoldier->bAssignment < ON_DUTY &&
-          OK_INTERRUPT_MERC(pTeamSoldier) && pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          OK_INTERRUPT_MERC(pTeamSoldier) &&
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     } else {
       if (OK_CONTROLLABLE_MERC(pTeamSoldier) && OK_INTERRUPT_MERC(pTeamSoldier) &&
-          pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     }
@@ -3393,12 +3395,13 @@ UINT8 FindPrevActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
       // Check for bLife > 0
       if (pTeamSoldier->bLife > 0 && pTeamSoldier->bActive && pTeamSoldier->bInSector &&
           pTeamSoldier->bTeam == gbPlayerNum && pTeamSoldier->bAssignment < ON_DUTY &&
-          OK_INTERRUPT_MERC(pTeamSoldier) && pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          OK_INTERRUPT_MERC(pTeamSoldier) &&
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     } else {
       if (OK_CONTROLLABLE_MERC(pTeamSoldier) && OK_INTERRUPT_MERC(pTeamSoldier) &&
-          pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     }
@@ -3418,12 +3421,13 @@ UINT8 FindPrevActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
     if (fGoodForLessOKLife) {
       if (pTeamSoldier->bLife > 0 && pTeamSoldier->bActive && pTeamSoldier->bInSector &&
           pTeamSoldier->bTeam == gbPlayerNum && pTeamSoldier->bAssignment < ON_DUTY &&
-          OK_INTERRUPT_MERC(pTeamSoldier) && pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          OK_INTERRUPT_MERC(pTeamSoldier) &&
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     } else {
       if (OK_CONTROLLABLE_MERC(pTeamSoldier) && OK_INTERRUPT_MERC(pTeamSoldier) &&
-          pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+          GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
         return ((UINT8)cnt);
       }
     }
@@ -6634,7 +6638,8 @@ void DoPOWPathChecks(void) {
        iLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; iLoop++) {
     pSoldier = MercPtrs[iLoop];
 
-    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bAssignment == ASSIGNMENT_POW) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector &&
+        GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
       // check to see if POW has been freed!
       // this will be true if a path can be made from the POW to either of 3 gridnos
       // 10492 (hallway) or 10482 (outside), or 9381 (outside)

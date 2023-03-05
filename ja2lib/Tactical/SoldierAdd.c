@@ -1364,11 +1364,11 @@ void AddSoldierToSectorGridNo(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT8
           SoldierInSectorIncompaciated(pSoldier, pSoldier->sInsertionGridNo);
         } else if (pSoldier->fMercAsleep == TRUE) {
           InternalSoldierInSectorSleep(pSoldier, pSoldier->sInsertionGridNo, FALSE);
-        } else if (pSoldier->bAssignment == PATIENT) {
+        } else if (GetSolAssignment(pSoldier) == PATIENT) {
           SoldierInSectorPatient(pSoldier, pSoldier->sInsertionGridNo);
-        } else if (pSoldier->bAssignment == DOCTOR) {
+        } else if (GetSolAssignment(pSoldier) == DOCTOR) {
           SoldierInSectorDoctor(pSoldier, pSoldier->sInsertionGridNo);
-        } else if (pSoldier->bAssignment == REPAIR) {
+        } else if (GetSolAssignment(pSoldier) == REPAIR) {
           SoldierInSectorRepair(pSoldier, pSoldier->sInsertionGridNo);
         }
 

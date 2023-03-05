@@ -1066,7 +1066,7 @@ INT32 CalculateInsuranceContractCost(INT32 iLength, UINT8 ubMercID) {
   }
 
   // If the merc is currently being held captive, get out
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     return (0);
   }
 
@@ -1587,7 +1587,7 @@ INT32 CalcStartDayOfInsurance(struct SOLDIERTYPE *pSoldier) {
   UINT32 uiDayToStartInsurance = 0;
 
   // if the soldier was just hired ( in transit ), and the game didnt just start
-  if (pSoldier->bAssignment == IN_TRANSIT && !DidGameJustStart()) {
+  if (GetSolAssignment(pSoldier) == IN_TRANSIT && !DidGameJustStart()) {
     uiDayToStartInsurance = GetWorldDay();
   } else {
     // Get tomorows date ( and convert it to days )

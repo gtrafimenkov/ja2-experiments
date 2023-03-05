@@ -1462,7 +1462,7 @@ BOOLEAN DisplayMercsFace() {
 
   // else if the merc is currently a POW or, the merc was fired as a pow
   else if (gMercProfiles[gbCurrentSoldier].bMercStatus == MERC_FIRED_AS_A_POW ||
-           (pSoldier && pSoldier->bAssignment == ASSIGNMENT_POW)) {
+           (pSoldier && GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
     ShadowVideoSurfaceRect(FRAME_BUFFER, FACE_X, FACE_Y, FACE_X + FACE_WIDTH, FACE_Y + FACE_HEIGHT);
     DrawTextToScreen(pPOWStrings[0], FACE_X + 1, FACE_Y + 107, FACE_WIDTH, FONT14ARIAL, 145,
                      FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);

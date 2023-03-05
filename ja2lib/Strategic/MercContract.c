@@ -130,7 +130,8 @@ void BeginContractRenewalSequence() {
 
       if (pSoldier) {
         if ((IsSolActive(pSoldier) == FALSE) || (pSoldier->bLife == 0) ||
-            (pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+            (GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+            (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
           // no
           continue;
         }
@@ -766,7 +767,7 @@ BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier) {
   }
 
   // else if the merc was fired
-  else if (ubHistoryCode == HISTORY_MERC_FIRED || pSoldier->bAssignment == ASSIGNMENT_POW) {
+  else if (ubHistoryCode == HISTORY_MERC_FIRED || GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     AddCharacterToFiredList(pSoldier);
   }
 
@@ -817,7 +818,7 @@ BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier) {
   }
 
   // if the merc was a POW, remember it becuase the merc cant show up in AIM or MERC anymore
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     gMercProfiles[pSoldier->ubProfile].bMercStatus = MERC_FIRED_AS_A_POW;
   }
 
@@ -1152,7 +1153,8 @@ void FindOutIfAnyMercAboutToLeaveIsGonnaRenew(void) {
 
     // valid soldier?
     if ((IsSolActive(pSoldier) == FALSE) || (pSoldier->bLife == 0) ||
-        (pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+        (GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+        (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
       // no
       continue;
     }

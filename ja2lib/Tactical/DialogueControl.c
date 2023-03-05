@@ -1039,7 +1039,7 @@ BOOLEAN DelayedTacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 us
 
   if (pSoldier->bLife < OKLIFE && usQuoteNum != QUOTE_SERIOUSLY_WOUNDED) return (FALSE);
 
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     return (FALSE);
   }
 
@@ -1083,7 +1083,7 @@ BOOLEAN TacticalCharacterDialogueWithSpecialEventEx(struct SOLDIERTYPE *pSoldier
 
     if (pSoldier->bLife < OKLIFE && usQuoteNum != QUOTE_SERIOUSLY_WOUNDED) return (FALSE);
 
-    if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+    if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
       return (FALSE);
     }
   }
@@ -1112,7 +1112,7 @@ BOOLEAN TacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNu
     return (FALSE);
   }
 
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     return (FALSE);
   }
 
@@ -1354,7 +1354,7 @@ BOOLEAN ExecuteCharacterDialogue(UINT8 ubCharacterNum, UINT16 usQuoteNum, INT32 
       return (FALSE);
     }
 
-    if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+    if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
       return (FALSE);
     }
 
@@ -1834,7 +1834,7 @@ void HandleTacticalSpeechUI(UINT8 ubCharacterNum, INT32 iFaceIndex) {
 
     // IF we are in tactical and this soldier is on the current squad
     if ((IsTacticalMode()) && (pSoldier != NULL) &&
-        (pSoldier->bAssignment == iCurrentTacticalSquad)) {
+        (GetSolAssignment(pSoldier) == iCurrentTacticalSquad)) {
       // Make the interface panel dirty..
       // This will dirty the panel next frame...
       gfRerenderInterfaceFromHelpText = TRUE;

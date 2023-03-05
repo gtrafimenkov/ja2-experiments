@@ -1705,7 +1705,7 @@ UINT32 UIHandleCMoveMerc(UI_EVENT *pUIEvent) {
       // TODO: Only our squad!
       for (bLoop = gTacticalStatus.Team[gbPlayerNum].bFirstID, pSoldier = MercPtrs[bLoop];
            bLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; bLoop++, pSoldier++) {
-        if (OK_CONTROLLABLE_MERC(pSoldier) && pSoldier->bAssignment == CurrentSquad() &&
+        if (OK_CONTROLLABLE_MERC(pSoldier) && GetSolAssignment(pSoldier) == CurrentSquad() &&
             !pSoldier->fMercAsleep) {
           // If we can't be controlled, returninvalid...
           if (pSoldier->uiStatusFlags & SOLDIER_ROBOT) {

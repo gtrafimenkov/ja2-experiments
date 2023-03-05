@@ -10,6 +10,7 @@
 #include "SGP/Input.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -1334,7 +1335,7 @@ void VerifyAllMercsInGroupAreOnSameSquad(struct GROUP* pGroup) {
         bSquad = pSoldier->bAssignment;
       } else {
         // better be the same squad!
-        Assert(pSoldier->bAssignment == bSquad);
+        Assert(GetSolAssignment(pSoldier) == bSquad);
       }
     }
 
@@ -1651,7 +1652,7 @@ struct path* GetSoldierMercPathPtr(struct SOLDIERTYPE* pSoldier) {
   Assert(pSoldier);
 
   // IN a vehicle?
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     pMercPath = pVehicleList[pSoldier->iVehicleId].pMercPath;
   }
   // IS a vehicle?
@@ -1693,7 +1694,7 @@ UINT8 GetSoldierGroupId(struct SOLDIERTYPE* pSoldier) {
   UINT8 ubGroupId = 0;
 
   // IN a vehicle?
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     ubGroupId = pVehicleList[pSoldier->iVehicleId].ubMovementGroup;
   }
   // IS a vehicle?
@@ -1757,7 +1758,7 @@ void ClearPathForSoldier(struct SOLDIERTYPE* pSoldier) {
     pVehicle = &(pVehicleList[pSoldier->bVehicleID]);
   }
   // or in a vehicle
-  else if (pSoldier->bAssignment == VEHICLE) {
+  else if (GetSolAssignment(pSoldier) == VEHICLE) {
     pVehicle = &(pVehicleList[pSoldier->iVehicleId]);
   }
 

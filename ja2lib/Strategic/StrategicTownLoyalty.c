@@ -423,8 +423,8 @@ OUR_TEAM ].bLastID; iCounter++ )
 GetSolSectorY(pSoldier) ) == TRUE )
                         {
                                 // if onduty or in a vehicle
-                                if( ( pSoldier->bAssignment < ON_DUTY ) || pSoldier->bAssignment ==
-VEHICLE ) )
+                                if( ( pSoldier->bAssignment < ON_DUTY ) ||
+GetSolAssignment(pSoldier) == VEHICLE ) )
                                 {
                                         // increment soldier count
                                         iSoldierCount++;

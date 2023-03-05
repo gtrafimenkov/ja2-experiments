@@ -107,7 +107,7 @@ void BeginAutoBandage() {
        cnt++, pSoldier++) {
     // if the soldier isn't active or in sector, we have problems..leave
     if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector) ||
-        (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == VEHICLE)) {
+        (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (GetSolAssignment(pSoldier) == VEHICLE)) {
       continue;
     }
 

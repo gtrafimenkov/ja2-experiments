@@ -303,7 +303,7 @@ void MercDailyUpdate() {
 
       CheckIfMercGetsAnotherContract(pSoldier);
     } else {
-      if ((IsSolActive(pSoldier)) && (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+      if ((IsSolActive(pSoldier)) && (GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
         pSoldier->iEndofContractTime += 1440;
       }
     }

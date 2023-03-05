@@ -962,8 +962,8 @@ INT32 ShowOnDutyTeam(INT16 sMapX, INT16 sMapY) {
 
     if (!(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && (GetSolSectorX(pSoldier) == sMapX) &&
         (GetSolSectorY(pSoldier) == sMapY) && (GetSolSectorZ(pSoldier) == iCurrentMapSectorZ) &&
-        ((pSoldier->bAssignment < ON_DUTY) ||
-         ((pSoldier->bAssignment == VEHICLE) && (pSoldier->iVehicleId != iHelicopterVehicleId))) &&
+        ((pSoldier->bAssignment < ON_DUTY) || ((GetSolAssignment(pSoldier) == VEHICLE) &&
+                                               (pSoldier->iVehicleId != iHelicopterVehicleId))) &&
         (pSoldier->bLife > 0) && (!PlayerIDGroupInMotion(pSoldier->ubGroupID))) {
       DrawMapBoxIcon(hIconHandle, SMALL_YELLOW_BOX, sMapX, sMapY, ubIconPosition);
       ubIconPosition++;
@@ -5682,14 +5682,15 @@ BOOLEAN CanMercsScoutThisSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
     }
 
     // POWs, dead guys, guys in transit, sleeping, and really hurt guys can't scout!
-    if ((pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW) ||
-        (pSoldier->bAssignment == ASSIGNMENT_DEAD) || (pSoldier->fMercAsleep == TRUE) ||
+    if ((GetSolAssignment(pSoldier) == IN_TRANSIT) ||
+        (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) ||
+        (GetSolAssignment(pSoldier) == ASSIGNMENT_DEAD) || (pSoldier->fMercAsleep == TRUE) ||
         (pSoldier->bLife < OKLIFE)) {
       continue;
     }
 
     // don't count mercs aboard Skyrider
-    if ((pSoldier->bAssignment == VEHICLE) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
+    if ((GetSolAssignment(pSoldier) == VEHICLE) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       continue;
     }
 

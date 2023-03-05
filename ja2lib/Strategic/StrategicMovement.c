@@ -4345,9 +4345,9 @@ BOOLEAN GroupHasInTransitDeadOrPOWMercs(struct GROUP *pGroup) {
   pPlayer = pGroup->pPlayerList;
   while (pPlayer) {
     if (pPlayer->pSoldier) {
-      if ((pPlayer->pSoldier->bAssignment == IN_TRANSIT) ||
-          (pPlayer->pSoldier->bAssignment == ASSIGNMENT_POW) ||
-          (pPlayer->pSoldier->bAssignment == ASSIGNMENT_DEAD)) {
+      if ((GetSolAssignment(pPlayer->pSoldier) == IN_TRANSIT) ||
+          (GetSolAssignment(pPlayer->pSoldier) == ASSIGNMENT_POW) ||
+          (GetSolAssignment(pPlayer->pSoldier) == ASSIGNMENT_DEAD)) {
         // yup!
         return (TRUE);
       }

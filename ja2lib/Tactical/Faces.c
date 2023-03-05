@@ -576,7 +576,7 @@ void SetAutoFaceInActive(INT32 iFaceIndex) {
       pSoldier = MercPtrs[pFace->ubSoldierID];
 
       // IF we are in tactical
-      if (pSoldier->bAssignment == iCurrentTacticalSquad && IsTacticalMode()) {
+      if (GetSolAssignment(pSoldier) == iCurrentTacticalSquad && IsTacticalMode()) {
         // Make the interfac panel dirty..
         // This will dirty the panel next frame...
         gfRerenderInterfaceFromHelpText = TRUE;

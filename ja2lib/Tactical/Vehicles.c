@@ -443,7 +443,7 @@ BOOLEAN AddSoldierToVehicle(struct SOLDIERTYPE *pSoldier, INT32 iId) {
       // add person in
       pVehicleList[iId].pPassengers[iCounter] = pSoldier;
 
-      if (pSoldier->bAssignment == VEHICLE) {
+      if (GetSolAssignment(pSoldier) == VEHICLE) {
         TakeSoldierOutOfVehicle(pSoldier);
         // NOTE: This will leave the soldier on a squad.  Must be done PRIOR TO and in AS WELL AS
         // the call to RemoveCharacterFromSquads() that's coming up, to permit direct

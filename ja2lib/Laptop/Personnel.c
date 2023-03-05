@@ -2819,7 +2819,7 @@ INT32 GetIdOfDepartedMercWithHighestStat(INT32 iStat) {
 
         // if the soldier is a pow, dont use the health cause it aint known
         pSoldier = FindSoldierByProfileID((UINT8)cnt, FALSE);
-        if (pSoldier && pSoldier->bAssignment == ASSIGNMENT_POW) {
+        if (pSoldier && GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
           continue;
         }
 
@@ -2969,7 +2969,7 @@ INT32 GetIdOfDepartedMercWithLowestStat(INT32 iStat) {
         // health
 
         pSoldier = FindSoldierByProfileID((UINT8)cnt, FALSE);
-        if (pSoldier && pSoldier->bAssignment == ASSIGNMENT_POW) {
+        if (pSoldier && GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
           continue;
         }
 

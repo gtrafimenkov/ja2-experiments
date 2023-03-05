@@ -1577,7 +1577,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
              cnt++, pSoldier++) {
           // Are we in this sector, On the current squad?
           if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE && pSoldier->bInSector &&
-              pSoldier->bAssignment == CurrentSquad()) {
+              GetSolAssignment(pSoldier) == CurrentSquad()) {
             gfTacticalTraversal = TRUE;
             SetGroupSectorValue(10, 1, 1, pSoldier->ubGroupID);
 
@@ -4182,7 +4182,7 @@ void DoneFadeInActionBasement() {
        cnt++, pSoldier++) {
     // Are we in this sector, On the current squad?
     if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE && pSoldier->bInSector &&
-        pSoldier->bAssignment == CurrentSquad()) {
+        GetSolAssignment(pSoldier) == CurrentSquad()) {
       break;
     }
   }

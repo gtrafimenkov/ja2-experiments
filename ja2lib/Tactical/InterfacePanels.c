@@ -4086,9 +4086,9 @@ void CheckForAndAddMercToTeamPanel(struct SOLDIERTYPE *pSoldier) {
           GetSolSectorZ(pSoldier) == gbWorldSectorZ && !pSoldier->fBetweenSectors &&
           pSoldier->bInSector) {
         // IF on duty....
-        if ((pSoldier->bAssignment == CurrentSquad()) ||
+        if ((GetSolAssignment(pSoldier) == CurrentSquad()) ||
             (SoldierIsDeadAndWasOnSquad(pSoldier, (INT8)(CurrentSquad())))) {
-          if (pSoldier->bAssignment == ASSIGNMENT_DEAD) {
+          if (GetSolAssignment(pSoldier) == ASSIGNMENT_DEAD) {
             pSoldier->fUICloseMerc = FALSE;
           }
           // ATE: ALrighty, if we have the insertion code of helicopter..... don't add just yet!
@@ -4140,12 +4140,13 @@ UINT8 FindNextMercInTeamPanel(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForLess
       if (fGoodForLessOKLife) {
         if (pTeamSoldier->bLife > 0 && pTeamSoldier->bActive && pTeamSoldier->bInSector &&
             pTeamSoldier->bTeam == gbPlayerNum && pTeamSoldier->bAssignment < ON_DUTY &&
-            OK_INTERRUPT_MERC(pTeamSoldier) && pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+            OK_INTERRUPT_MERC(pTeamSoldier) &&
+            GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
           return ((UINT8)gTeamPanel[cnt].ubID);
         }
       } else {
         if (OK_CONTROLLABLE_MERC(pTeamSoldier) && OK_INTERRUPT_MERC(pTeamSoldier) &&
-            pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+            GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
           return ((UINT8)gTeamPanel[cnt].ubID);
         }
       }
@@ -4167,12 +4168,13 @@ UINT8 FindNextMercInTeamPanel(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForLess
       if (fGoodForLessOKLife) {
         if (pTeamSoldier->bLife > 0 && pTeamSoldier->bActive && pTeamSoldier->bInSector &&
             pTeamSoldier->bTeam == gbPlayerNum && pTeamSoldier->bAssignment < ON_DUTY &&
-            OK_INTERRUPT_MERC(pTeamSoldier) && pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+            OK_INTERRUPT_MERC(pTeamSoldier) &&
+            GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
           return ((UINT8)gTeamPanel[cnt].ubID);
         }
       } else {
         if (OK_CONTROLLABLE_MERC(pTeamSoldier) && OK_INTERRUPT_MERC(pTeamSoldier) &&
-            pSoldier->bAssignment == pTeamSoldier->bAssignment) {
+            GetSolAssignment(pSoldier) == pTeamSoldier->bAssignment) {
           return ((UINT8)gTeamPanel[cnt].ubID);
         }
       }

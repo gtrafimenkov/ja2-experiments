@@ -66,7 +66,7 @@ void StatChange(struct SOLDIERTYPE *pSoldier, UINT8 ubStat, UINT16 usNumChances,
   if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->uiStatusFlags & SOLDIER_ROBOT))
     return;
 
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     ScreenMsg(FONT_ORANGE, MSG_BETAVERSION,
               L"ERROR: StatChange: %s improving stats while POW! ubStat %d", pSoldier->name,
               ubStat);
@@ -722,7 +722,7 @@ void ProcessUpdateStats(MERCPROFILESTRUCT *pProfile, struct SOLDIERTYPE *pSoldie
     if (pSoldier->bLife < OKLIFE) return;
 
     // ignore POWs - shouldn't ever be getting this far
-    if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+    if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
       return;
     }
   } else {

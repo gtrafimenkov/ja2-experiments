@@ -602,7 +602,7 @@ BOOLEAN CanCharacterDoctorButDoesntHaveMedKit(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -815,7 +815,7 @@ BOOLEAN BasicCanCharacterRepair(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -880,7 +880,7 @@ BOOLEAN CanCharacterPatient(struct SOLDIERTYPE *pSoldier) {
     return (FALSE);
   }
 
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     return (FALSE);
   }
 
@@ -901,7 +901,7 @@ BOOLEAN CanCharacterPatient(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -954,7 +954,7 @@ BOOLEAN BasicCanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -1124,7 +1124,7 @@ BOOLEAN CanCharacterTrainStat(struct SOLDIERTYPE *pSoldier, INT8 bStat, BOOLEAN 
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -1256,7 +1256,7 @@ BOOLEAN CanCharacterOnDuty(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -1320,7 +1320,7 @@ BOOLEAN CanCharacterPractise(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -1391,7 +1391,7 @@ BOOLEAN CanCharacterSleep(struct SOLDIERTYPE *pSoldier, BOOLEAN fExplainWhyNot) 
   }
 
   // POW?
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     return (FALSE);
   }
 
@@ -1515,7 +1515,7 @@ BOOLEAN CanCharacterVehicle(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check in helicopter in hostile sector
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
       if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
@@ -1552,7 +1552,7 @@ INT8 CanCharacterSquad(struct SOLDIERTYPE *pSoldier, INT8 bSquadValue) {
 
   Assert(bSquadValue < ON_DUTY);
 
-  if (pSoldier->bAssignment == bSquadValue) {
+  if (GetSolAssignment(pSoldier) == bSquadValue) {
     return (CHARACTER_CANT_JOIN_SQUAD_ALREADY_IN_IT);
   }
 
@@ -1567,7 +1567,7 @@ INT8 CanCharacterSquad(struct SOLDIERTYPE *pSoldier, INT8 bSquadValue) {
     return (CHARACTER_CANT_JOIN_SQUAD);
   }
 
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     // not allowed to be put on a squad
     return (CHARACTER_CANT_JOIN_SQUAD);
   }
@@ -1622,7 +1622,7 @@ BOOLEAN IsCharacterInTransit(struct SOLDIERTYPE *pSoldier) {
   }
 
   // check if character is currently in transit
-  if (pSoldier->bAssignment == IN_TRANSIT) {
+  if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
     // yep
     return (TRUE);
   }
@@ -1715,7 +1715,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     pSoldier = GetMercFromCharacterList(iCounter);
 
-    if (IsSolActive(pSoldier) && (pSoldier->bAssignment == TRAIN_TOWN)) {
+    if (IsSolActive(pSoldier) && (GetSolAssignment(pSoldier) == TRAIN_TOWN)) {
       // make sure that sector is paid up!
       if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
               .fMilitiaTrainingPaid == FALSE) {
@@ -2138,7 +2138,7 @@ GetSolSectorY(pSoldier) == pPatient->sSectorY ) && ( GetSolSectorZ(pSoldier) == 
                         {
 
                                 // is a doctor
-                                if( pSoldier->bAssignment == DOCTOR )
+                                if( GetSolAssignment(pSoldier) == DOCTOR )
                                 {
 
                                         // the doctor is in the house
@@ -2951,7 +2951,7 @@ void FatigueCharacter(struct SOLDIERTYPE *pSoldier) {
   }
 
   // POW?
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     return;
   }
 
@@ -3718,11 +3718,11 @@ void MakeSoldiersTacticalAnimationReflectAssignment(struct SOLDIERTYPE *pSoldier
   // soldier is in tactical, world loaded, he's OKLIFE
   if ((pSoldier->bInSector) && gfWorldLoaded && (pSoldier->bLife >= OKLIFE)) {
     // Set animation based on his assignment
-    if (pSoldier->bAssignment == DOCTOR) {
+    if (GetSolAssignment(pSoldier) == DOCTOR) {
       SoldierInSectorDoctor(pSoldier, pSoldier->usStrategicInsertionData);
-    } else if (pSoldier->bAssignment == PATIENT) {
+    } else if (GetSolAssignment(pSoldier) == PATIENT) {
       SoldierInSectorPatient(pSoldier, pSoldier->usStrategicInsertionData);
-    } else if (pSoldier->bAssignment == REPAIR) {
+    } else if (GetSolAssignment(pSoldier) == REPAIR) {
       SoldierInSectorRepair(pSoldier, pSoldier->usStrategicInsertionData);
     } else {
       if (pSoldier->usAnimState != WKAEUP_FROM_SLEEP && !(pSoldier->bOldAssignment < ON_DUTY)) {
@@ -3748,20 +3748,20 @@ void AssignmentAborted(struct SOLDIERTYPE *pSoldier, UINT8 ubReason) {
 
 void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMeToo) {
   if ((pSoldier->bInSector) && (gfWorldLoaded)) {
-    if (pSoldier->bAssignment == DOCTOR) {
+    if (GetSolAssignment(pSoldier) == DOCTOR) {
       if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, END_DOCTOR, 1, TRUE);
       } else {
         ChangeSoldierState(pSoldier, STANDING, 1, TRUE);
       }
 
-    } else if (pSoldier->bAssignment == REPAIR) {
+    } else if (GetSolAssignment(pSoldier) == REPAIR) {
       if (IsTacticalMode()) {
         ChangeSoldierState(pSoldier, END_REPAIRMAN, 1, TRUE);
       } else {
         ChangeSoldierState(pSoldier, STANDING, 1, TRUE);
       }
-    } else if (pSoldier->bAssignment == PATIENT) {
+    } else if (GetSolAssignment(pSoldier) == PATIENT) {
       if (IsTacticalMode()) {
         ChangeSoldierStance(pSoldier, ANIM_CROUCH);
       } else {
@@ -3770,16 +3770,16 @@ void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMe
     }
   }
 
-  if (pSoldier->bAssignment == ASSIGNMENT_HOSPITAL) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_HOSPITAL) {
     // hack - reset AbsoluteFinalDestination in case it was left non-nowhere
     pSoldier->sAbsoluteFinalDestination = NOWHERE;
   }
 
   if (fSayQuote) {
-    if ((fMeToo == FALSE) && (pSoldier->bAssignment == TRAIN_TOWN)) {
+    if ((fMeToo == FALSE) && (GetSolAssignment(pSoldier) == TRAIN_TOWN)) {
       TacticalCharacterDialogue(pSoldier, QUOTE_ASSIGNMENT_COMPLETE);
 
-      if (pSoldier->bAssignment == TRAIN_TOWN) {
+      if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
         AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(pSoldier);
       }
     }
@@ -3790,8 +3790,9 @@ void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMe
     pSoldier->usQuoteSaidExtFlags |= SOLDIER_QUOTE_SAID_DONE_ASSIGNMENT;
 
     if (fSayQuote) {
-      if (pSoldier->bAssignment == DOCTOR || pSoldier->bAssignment == REPAIR ||
-          pSoldier->bAssignment == PATIENT || pSoldier->bAssignment == ASSIGNMENT_HOSPITAL) {
+      if (GetSolAssignment(pSoldier) == DOCTOR || GetSolAssignment(pSoldier) == REPAIR ||
+          GetSolAssignment(pSoldier) == PATIENT ||
+          GetSolAssignment(pSoldier) == ASSIGNMENT_HOSPITAL) {
         TacticalCharacterDialogue(pSoldier, QUOTE_ASSIGNMENT_COMPLETE);
       }
     }
@@ -3866,12 +3867,12 @@ void HandleHealingByNaturalCauses(struct SOLDIERTYPE *pSoldier) {
 
   // not bleeding and injured...
 
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     // use high activity level to simulate stress, torture, poor conditions for healing
     bActivityLevelDivisor = HIGH_ACTIVITY_LEVEL;
   }
-  if ((pSoldier->fMercAsleep == TRUE) || (pSoldier->bAssignment == PATIENT) ||
-      (pSoldier->bAssignment == ASSIGNMENT_HOSPITAL)) {
+  if ((pSoldier->fMercAsleep == TRUE) || (GetSolAssignment(pSoldier) == PATIENT) ||
+      (GetSolAssignment(pSoldier) == ASSIGNMENT_HOSPITAL)) {
     bActivityLevelDivisor = LOW_ACTIVITY_LEVEL;
   } else if (pSoldier->bAssignment < ON_DUTY) {
     // if time is being compressed, and the soldier is not moving strategically
@@ -3986,7 +3987,7 @@ pSoldier -> name );
 */
 
 void CheckIfSoldierUnassigned(struct SOLDIERTYPE *pSoldier) {
-  if (pSoldier->bAssignment == NO_ASSIGNMENT) {
+  if (GetSolAssignment(pSoldier) == NO_ASSIGNMENT) {
     // unassigned
     AddCharacterToAnySquad(pSoldier);
 
@@ -7900,7 +7901,8 @@ void HandleRestFatigueAndSleepStatus(void) {
         continue;
       }
 
-      if ((pSoldier->bAssignment == ASSIGNMENT_POW) || (pSoldier->bAssignment == IN_TRANSIT)) {
+      if ((GetSolAssignment(pSoldier) == ASSIGNMENT_POW) ||
+          (GetSolAssignment(pSoldier) == IN_TRANSIT)) {
         continue;
       }
 
@@ -7929,7 +7931,7 @@ void HandleRestFatigueAndSleepStatus(void) {
           // he goes to sleep, provided it's at all possible (it still won't happen in a hostile
           // sector, etc.)
           if (SetMercAsleep(pSoldier, FALSE)) {
-            if ((pSoldier->bAssignment < ON_DUTY) || (pSoldier->bAssignment == VEHICLE)) {
+            if ((pSoldier->bAssignment < ON_DUTY) || (GetSolAssignment(pSoldier) == VEHICLE)) {
               // on a squad/vehicle, complain, then drop
               TacticalCharacterDialogue(pSoldier, QUOTE_NEED_SLEEP);
               TacticalCharacterDialogueWithSpecialEvent(pSoldier, QUOTE_NEED_SLEEP,
@@ -8003,7 +8005,8 @@ void HandleRestFatigueAndSleepStatus(void) {
         continue;
       }
 
-      if ((pSoldier->bAssignment == ASSIGNMENT_POW) || (pSoldier->bAssignment == IN_TRANSIT)) {
+      if ((GetSolAssignment(pSoldier) == ASSIGNMENT_POW) ||
+          (GetSolAssignment(pSoldier) == IN_TRANSIT)) {
         continue;
       }
 
@@ -8941,7 +8944,7 @@ BOOLEAN IsThereASoldierInThisSector(INT16 sSectorX, INT16 sSectorY, INT8 bSector
 void SetTimeOfAssignmentChangeForMerc(struct SOLDIERTYPE *pSoldier) {
   // if someone is being taken off of HOSPITAL then track how much
   // of payment wasn't used up
-  if (pSoldier->bAssignment == ASSIGNMENT_HOSPITAL) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_HOSPITAL) {
     giHospitalRefund += CalcPatientMedicalCost(pSoldier);
     pSoldier->bHospitalPriceModifier = 0;
   }
@@ -9041,12 +9044,12 @@ BOOLEAN AssignMercToAMovementGroup(struct SOLDIERTYPE *pSoldier) {
   }
 
   // in a vehicle?
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     return (FALSE);
   }
 
   // in transit
-  if (pSoldier->bAssignment == IN_TRANSIT) {
+  if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
     return (FALSE);
   }
 
@@ -9167,7 +9170,7 @@ BOOLEAN IsAnyOneOnPlayersTeamOnThisAssignment(INT8 bAssignment) {
       continue;
     }
 
-    if (pSoldier->bAssignment == bAssignment) {
+    if (GetSolAssignment(pSoldier) == bAssignment) {
       return (TRUE);
     }
   }
@@ -9208,10 +9211,11 @@ void BandageBleedingDyingPatientsBeingTreated() {
     // and he is bleeding or dying
     if ((pSoldier->bBleeding) || (pSoldier->bLife < OKLIFE)) {
       // if soldier is receiving care
-      if ((pSoldier->bAssignment == PATIENT) || (pSoldier->bAssignment == ASSIGNMENT_HOSPITAL) ||
-          (pSoldier->bAssignment == DOCTOR)) {
+      if ((GetSolAssignment(pSoldier) == PATIENT) ||
+          (GetSolAssignment(pSoldier) == ASSIGNMENT_HOSPITAL) ||
+          (GetSolAssignment(pSoldier) == DOCTOR)) {
         // if in the hospital
-        if (pSoldier->bAssignment == ASSIGNMENT_HOSPITAL) {
+        if (GetSolAssignment(pSoldier) == ASSIGNMENT_HOSPITAL) {
           // this is instantaneous, and doesn't use up any bandages!
 
           // stop bleeding automatically
@@ -9520,7 +9524,7 @@ void SetAssignmentForList(INT8 bAssignment, INT8 bParam) {
 
         default:
           // remove from current vehicle/squad, if any
-          if (pSoldier->bAssignment == VEHICLE) {
+          if (GetSolAssignment(pSoldier) == VEHICLE) {
             TakeSoldierOutOfVehicle(pSoldier);
           }
           RemoveCharacterFromSquads(pSoldier);
@@ -9585,7 +9589,7 @@ BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pT
     if (IsSolActive(pSoldier)) {
       // if the guy is not the target, has the assignment we want, is training the same stat, and is
       // in our sector, alive and is training the stat we want
-      if ((pSoldier != pTargetSoldier) && (pSoldier->bAssignment == bTargetAssignment) &&
+      if ((pSoldier != pTargetSoldier) && (GetSolAssignment(pSoldier) == bTargetAssignment) &&
           // CJC: this seems incorrect in light of the check for bTargetStat and in any case would
           // cause a problem if the trainer was assigned and we weren't!
           //( pSoldier -> bTrainStat == pTargetSoldier -> bTrainStat ) &&
@@ -9601,7 +9605,7 @@ BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pT
           fAtGunRange = TRUE;
         }
 
-        if (pSoldier->bAssignment == TRAIN_TEAMMATE) {
+        if (GetSolAssignment(pSoldier) == TRAIN_TEAMMATE) {
           // pSoldier is the instructor, target is the student
           sTrainingPts = GetBonusTrainingPtsDueToInstructor(pSoldier, pTargetSoldier, bTargetStat,
                                                             fAtGunRange, &usMaxPts);
@@ -9706,12 +9710,13 @@ BOOLEAN CharacterIsTakingItEasy(struct SOLDIERTYPE *pSoldier) {
   if (CanCharacterSleep(pSoldier, FALSE)) {
     // on duty, but able to catch naps (either not traveling, or not the driver of the vehicle)
     // The actual checks for this are in the "can he sleep" check above
-    if ((pSoldier->bAssignment < ON_DUTY) || (pSoldier->bAssignment == VEHICLE)) {
+    if ((pSoldier->bAssignment < ON_DUTY) || (GetSolAssignment(pSoldier) == VEHICLE)) {
       return (TRUE);
     }
 
     // and healing up?
-    if ((pSoldier->bAssignment == PATIENT) || (pSoldier->bAssignment == ASSIGNMENT_HOSPITAL)) {
+    if ((GetSolAssignment(pSoldier) == PATIENT) ||
+        (GetSolAssignment(pSoldier) == ASSIGNMENT_HOSPITAL)) {
       return (TRUE);
     }
 

@@ -160,7 +160,7 @@ BOOLEAN CanCharacterAutoBandageTeammate(struct SOLDIERTYPE *pSoldier)
 {
   // if the soldier isn't active or in sector, we have problems..leave
   if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector) ||
-      (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == VEHICLE)) {
+      (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (GetSolAssignment(pSoldier) == VEHICLE)) {
     return (FALSE);
   }
 
@@ -178,7 +178,7 @@ BOOLEAN CanCharacterAutoBandageTeammate(struct SOLDIERTYPE *pSoldier)
 BOOLEAN CanCharacterBeAutoBandagedByTeammate(struct SOLDIERTYPE *pSoldier) {
   // if the soldier isn't active or in sector, we have problems..leave
   if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector) ||
-      (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == VEHICLE)) {
+      (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (GetSolAssignment(pSoldier) == VEHICLE)) {
     return (FALSE);
   }
 

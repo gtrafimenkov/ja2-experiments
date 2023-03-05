@@ -507,7 +507,7 @@ void UpdateAnyInTransitMercsWithGlobalArrivalSector() {
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
     if (IsSolActive(pSoldier)) {
-      if (pSoldier->bAssignment == IN_TRANSIT) {
+      if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
         if (pSoldier->fUseLandingZoneForArrival) {
           pSoldier->sSectorX = gsMercArriveSectorX;
           pSoldier->sSectorY = gsMercArriveSectorY;

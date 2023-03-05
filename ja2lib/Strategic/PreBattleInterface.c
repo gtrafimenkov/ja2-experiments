@@ -1589,7 +1589,7 @@ void PutNonSquadMercsInPlayerGroupOnSquads(struct GROUP *pGroup, BOOLEAN fExitVe
       // if involved, but off-duty (includes mercs inside vehicles!)
       if (PlayerMercInvolvedInThisCombat(pSoldier) && (pSoldier->bAssignment >= ON_DUTY)) {
         // if in a vehicle, pull him out
-        if (pSoldier->bAssignment == VEHICLE) {
+        if (GetSolAssignment(pSoldier) == VEHICLE) {
           if (fExitVehicles) {
             TakeSoldierOutOfVehicle(pSoldier);
 

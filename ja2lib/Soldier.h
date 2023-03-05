@@ -13,6 +13,8 @@ i16 GetSolSectorX(const struct SOLDIERTYPE *s);
 i16 GetSolSectorY(const struct SOLDIERTYPE *s);
 i8 GetSolSectorZ(const struct SOLDIERTYPE *s);
 
+i8 GetSolAssignment(const struct SOLDIERTYPE *s);
+
 bool IsSolActive(const struct SOLDIERTYPE *s);
 
 #endif

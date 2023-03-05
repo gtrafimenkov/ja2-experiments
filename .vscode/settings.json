@@ -17,6 +17,7 @@
         "queencommand.h": "c",
         "mapscreeninterface.h": "c",
         "drugsandalcohol.h": "c",
-        "text.h": "c"
+        "text.h": "c",
+        "mapscreeninterfacebottom.h": "c"
     }
 }

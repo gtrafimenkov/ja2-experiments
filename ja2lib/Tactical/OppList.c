@@ -4628,7 +4628,7 @@ void ProcessNoise(UINT8 ubNoiseMaker, INT16 sGridNo, INT8 bLevel, UINT8 ubTerrTy
         continue;  // skip
       }
 
-      if (bTeam == gbPlayerNum && pSoldier->bAssignment == ASSIGNMENT_POW) {
+      if (bTeam == gbPlayerNum && GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
         // POWs should not be processed for noise
         continue;
       }
@@ -4887,7 +4887,7 @@ UINT8 CalcEffVolume(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bLevel, UI
     iEffVolume -= 5;
   }
 
-  if (pSoldier->bAssignment == SLEEPING) {
+  if (GetSolAssignment(pSoldier) == SLEEPING) {
     // decrease effective volume since we're asleep!
     iEffVolume -= 5;
   }

@@ -1055,11 +1055,11 @@ BOOLEAN IsSquadInSector(struct SOLDIERTYPE *pSoldier, UINT8 ubSquad) {
     return (FALSE);
   }
 
-  if (pSoldier->bAssignment == IN_TRANSIT) {
+  if (GetSolAssignment(pSoldier) == IN_TRANSIT) {
     return (FALSE);
   }
 
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     return (FALSE);
   }
 

@@ -486,7 +486,7 @@ void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList() {
       continue;
     }
 
-    if (pSoldier->bAssignment == TRAIN_TOWN) {
+    if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
       if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
               .fMilitiaTrainingPaid == FALSE) {
         ResumeOldAssignment(pSoldier);
@@ -512,7 +512,7 @@ void ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(INT16 sSectorX, I
       continue;
     }
 
-    if (pSoldier->bAssignment == TRAIN_TOWN) {
+    if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
       if ((GetSolSectorX(pSoldier) == sSectorX) && (GetSolSectorY(pSoldier) == sSectorY) &&
           (GetSolSectorZ(pSoldier) == 0)) {
         ResumeOldAssignment(pSoldier);
@@ -562,7 +562,7 @@ void DeselectSelectedListMercsWhoCantMoveWithThisGuy(struct SOLDIERTYPE *pSoldie
         // now
 
         // if anchor guy is IN a vehicle
-        if (pSoldier->bAssignment == VEHICLE) {
+        if (GetSolAssignment(pSoldier) == VEHICLE) {
           if (!CanSoldierMoveWithVehicleId(pSoldier2, pSoldier->iVehicleId)) {
             // reset entry for selected list
             ResetEntryForSelectedList((INT8)iCounter);
@@ -626,7 +626,7 @@ void SelectUnselectedMercsWhoMustMoveWithThisGuy(void) {
         pSoldier = &(Menptr[gCharactersList[iCounter].usSolID]);
 
         // if on a squad or in a vehicle
-        if ((pSoldier->bAssignment < ON_DUTY) || (pSoldier->bAssignment == VEHICLE)) {
+        if ((pSoldier->bAssignment < ON_DUTY) || (GetSolAssignment(pSoldier) == VEHICLE)) {
           // and a member of that squad or vehicle is selected
           if (AnyMercInSameSquadOrVehicleIsSelected(pSoldier)) {
             // then also select this guy
@@ -649,21 +649,22 @@ BOOLEAN AnyMercInSameSquadOrVehicleIsSelected(struct SOLDIERTYPE *pSoldier) {
         pSoldier2 = &(Menptr[gCharactersList[iCounter].usSolID]);
 
         // if they have the same assignment
-        if (pSoldier->bAssignment == pSoldier2->bAssignment) {
+        if (GetSolAssignment(pSoldier) == pSoldier2->bAssignment) {
           // same squad?
           if (pSoldier->bAssignment < ON_DUTY) {
             return (TRUE);
           }
 
           // same vehicle?
-          if ((pSoldier->bAssignment == VEHICLE) &&
+          if ((GetSolAssignment(pSoldier) == VEHICLE) &&
               (pSoldier->iVehicleId == pSoldier2->iVehicleId)) {
             return (TRUE);
           }
         }
 
         // target guy is in a vehicle, and this guy IS that vehicle
-        if ((pSoldier->bAssignment == VEHICLE) && (pSoldier2->uiStatusFlags & SOLDIER_VEHICLE) &&
+        if ((GetSolAssignment(pSoldier) == VEHICLE) &&
+            (pSoldier2->uiStatusFlags & SOLDIER_VEHICLE) &&
             (pSoldier->iVehicleId == pSoldier2->bVehicleID)) {
           return (TRUE);
         }
@@ -3281,7 +3282,7 @@ void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
         if (IsSoldierSelectedForMovement(pSoldier)) {
           // change him to NOT move instead
 
-          if (pSoldier->bAssignment == VEHICLE) {
+          if (GetSolAssignment(pSoldier) == VEHICLE) {
             // if he's the only one left moving in the vehicle, deselect whole vehicle
             if (HowManyMovingSoldiersInVehicle(pSoldier->iVehicleId) == 1) {
               // whole vehicle stays
@@ -3317,7 +3318,7 @@ void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
               }
             }
             /* ARM: it's more flexible without this - player can take the vehicle along or not
-               without having to exit it. else if( pSoldier->bAssignment == VEHICLE )
+               without having to exit it. else if( GetSolAssignment(pSoldier) == VEHICLE )
                                                             {
                                                                     // his vehicle MUST also go
                while he's moving, but not necessarily others on board SelectVehicleForMovement(
@@ -3429,7 +3430,7 @@ void HandleMoveoutOfSectorMovementTroops(void) {
       }
     }
     // if in a vehicle
-    else if (pSoldier->bAssignment == VEHICLE) {
+    else if (GetSolAssignment(pSoldier) == VEHICLE) {
       // if he and his vehicle are parting ways (soldier is staying behind, but vehicle is leaving,
       // or vice versa)
       if (fSoldierIsMoving[iCounter] != IsVehicleSelectedForMovement(pSoldier->iVehicleId)) {
@@ -4628,7 +4629,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   }
 
   // a POW?
-  if (pSoldier->bAssignment == ASSIGNMENT_POW) {
+  if (GetSolAssignment(pSoldier) == ASSIGNMENT_POW) {
     *pbErrorNumber = 5;
     return (FALSE);
   }
@@ -4754,7 +4755,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   // a robot?
   if (AM_A_ROBOT(pSoldier)) {
     // going alone?
-    if (((pSoldier->bAssignment == VEHICLE) &&
+    if (((GetSolAssignment(pSoldier) == VEHICLE) &&
          (!IsRobotControllerInVehicle(pSoldier->iVehicleId))) ||
         ((pSoldier->bAssignment < ON_DUTY) && (!IsRobotControllerInSquad(pSoldier->bAssignment)))) {
       *pbErrorNumber = 49;
@@ -4764,7 +4765,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   // an Escorted NPC?
   else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__EPC) {
     // going alone?
-    if (((pSoldier->bAssignment == VEHICLE) &&
+    if (((GetSolAssignment(pSoldier) == VEHICLE) &&
          (GetNumberOfNonEPCsInVehicle(pSoldier->iVehicleId) == 0)) ||
         ((pSoldier->bAssignment < ON_DUTY) &&
          (NumberOfNonEPCsInSquad(pSoldier->bAssignment) == 0))) {
@@ -4827,7 +4828,7 @@ BOOLEAN CanEntireMovementGroupMercIsInMove(struct SOLDIERTYPE *pSoldier, INT8 *p
   if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
     // IS a vehicle - use vehicle's group
     ubGroup = pVehicleList[pSoldier->bVehicleID].ubMovementGroup;
-  } else if (pSoldier->bAssignment == VEHICLE) {
+  } else if (GetSolAssignment(pSoldier) == VEHICLE) {
     // IN a vehicle - use vehicle's group
     ubGroup = pVehicleList[pSoldier->iVehicleId].ubMovementGroup;
   } else {
@@ -4954,7 +4955,7 @@ BOOLEAN CanSoldierMoveWithVehicleId(struct SOLDIERTYPE *pSoldier, INT32 iVehicle
   Assert(iVehicle1Id != -1);
 
   // if soldier is IN a vehicle
-  if (pSoldier->bAssignment == VEHICLE) {
+  if (GetSolAssignment(pSoldier) == VEHICLE) {
     iVehicle2Id = pSoldier->iVehicleId;
   } else
     // if soldier IS a vehicle
