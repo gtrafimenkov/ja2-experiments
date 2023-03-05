@@ -986,10 +986,6 @@ BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId) {
   }
 }
 
-#include "Strategic/StrategicMap.h"
-#include "Tactical/Overhead.h"
-#include "Tactical/SoldierControl.h"
-
 i8 gbGreenToElitePromotions = 0;
 i8 gbGreenToRegPromotions = 0;
 i8 gbRegToElitePromotions = 0;
@@ -1019,7 +1015,9 @@ void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kill
   }
 }
 
-void HandleMilitiaPromotions(void) {
+#include "Tactical/SoldierControl.h"
+
+void HandleMilitiaPromotions(INT16 sMapX, INT16 sMapY) {
   PrepMilitiaPromotion();
 
   struct SoldierList mil;
@@ -1028,8 +1026,7 @@ void HandleMilitiaPromotions(void) {
   for (int i = 0; i < mil.num; i++) {
     struct SOLDIERTYPE *sol = mil.soldiers[i];
     if (sol->bInSector && sol->bLife > 0 && sol->ubMilitiaKills > 0) {
-      HandleSingleMilitiaPromotion(gWorldSectorX, gWorldSectorY, sol->ubSoldierClass,
-                                   sol->ubMilitiaKills);
+      HandleSingleMilitiaPromotion(sMapX, sMapY, sol->ubSoldierClass, sol->ubMilitiaKills);
       sol->ubMilitiaKills = 0;
     }
   }

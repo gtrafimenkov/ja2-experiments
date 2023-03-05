@@ -3853,7 +3853,7 @@ BOOLEAN HandleDefiniteUnloadingOfWorld(UINT8 ubUnloadCode) {
   } else if (!IsGoingToAutoresolve()) {
     // Don't promote militia if we are going directly
     // to autoresolve to finish the current battle.
-    HandleMilitiaPromotions();
+    HandleMilitiaPromotions(GetLoadedSectorX(), GetLoadedSectorY());
   }
   return TRUE;
 }
