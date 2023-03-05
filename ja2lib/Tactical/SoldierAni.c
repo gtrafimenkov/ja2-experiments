@@ -15,6 +15,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Meanwhile.h"
 #include "Strategic/StrategicStatus.h"
 #include "Strategic/StrategicTownLoyalty.h"
@@ -1704,7 +1705,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
 
               // ATE: OK - the above call can potentially
               // render the soldier bactive to false - check heare
-              if (!pSoldier->bActive) {
+              if (!IsSolActive(pSoldier)) {
                 return (FALSE);
               }
 

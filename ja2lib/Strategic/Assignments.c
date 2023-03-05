@@ -531,7 +531,8 @@ BOOLEAN BasicCanCharacterAssignment(struct SOLDIERTYPE *pSoldier, BOOLEAN fNotIn
     return (FALSE);
   }
 
-  if (fNotInCombat && pSoldier->bActive && pSoldier->bInSector && gTacticalStatus.fEnemyInSector) {
+  if (fNotInCombat && IsSolActive(pSoldier) && pSoldier->bInSector &&
+      gTacticalStatus.fEnemyInSector) {
     return (FALSE);
   }
 
@@ -1714,7 +1715,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     pSoldier = GetMercFromCharacterList(iCounter);
 
-    if (pSoldier->bActive && (pSoldier->bAssignment == TRAIN_TOWN)) {
+    if (IsSolActive(pSoldier) && (pSoldier->bAssignment == TRAIN_TOWN)) {
       // make sure that sector is paid up!
       if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
               .fMilitiaTrainingPaid == FALSE) {
@@ -2127,7 +2128,7 @@ pPatient->bSectorZ != gbWorldSectorZ ) )
         {
                 pSoldier = &Menptr[ iCounter ];
 
-                if( pSoldier->bActive )
+                if( IsSolActive(pSoldier) )
                 {
 
                         // are they two of these guys in the same sector?
@@ -2171,7 +2172,7 @@ BOOLEAN CanSoldierBeHealedByDoctor(struct SOLDIERTYPE *pSoldier, struct SOLDIERT
                                    BOOLEAN fIgnoreAssignment, BOOLEAN fThisHour,
                                    BOOLEAN fSkipKitCheck, BOOLEAN fSkipSkillCheck) {
   // must be an active guy
-  if (pSoldier->bActive == FALSE) {
+  if (IsSolActive(pSoldier) == FALSE) {
     return (FALSE);
   }
 
@@ -4661,7 +4662,7 @@ void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
   pSoldier = GetSelectedAssignSoldier(FALSE);
 
-  if (pSoldier && pSoldier->bActive && (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP)) {
+  if (pSoldier && IsSolActive(pSoldier) && (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP)) {
     if ((iRepairWhat >= REPAIR_MENU_VEHICLE1) && (iRepairWhat <= REPAIR_MENU_VEHICLE3)) {
       // repair VEHICLE
 
@@ -4869,7 +4870,7 @@ void HandleShadingOfLinesForAssignmentMenus(void) {
 
   pSoldier = GetSelectedAssignSoldier(FALSE);
 
-  if (pSoldier && pSoldier->bActive) {
+  if (pSoldier && IsSolActive(pSoldier)) {
     if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__EPC) {
       // patient
       if (CanCharacterPatient(pSoldier)) {
@@ -6103,7 +6104,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
     // can't renew contracts from tactical!
   }
 
-  Assert(pSoldier && pSoldier->bActive);
+  Assert(pSoldier && IsSolActive(pSoldier));
 
   iValue = MSYS_GetRegionUserData(pRegion, 0);
 
@@ -7894,7 +7895,7 @@ void HandleRestFatigueAndSleepStatus(void) {
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || AM_A_ROBOT(pSoldier)) {
         continue;
       }
@@ -7997,7 +7998,7 @@ void HandleRestFatigueAndSleepStatus(void) {
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || AM_A_ROBOT(pSoldier)) {
         continue;
       }
@@ -9098,7 +9099,7 @@ BOOLEAN HandleSelectedMercsBeingPutAsleep(BOOLEAN fWakeUp, BOOLEAN fDisplayWarni
       // get the soldier pointer
       pSoldier = GetMercFromCharacterList(iCounter);
 
-      if (pSoldier->bActive == FALSE) {
+      if (IsSolActive(pSoldier) == FALSE) {
         continue;
       }
 
@@ -9162,7 +9163,7 @@ BOOLEAN IsAnyOneOnPlayersTeamOnThisAssignment(INT8 bAssignment) {
     pSoldier = GetSoldierByID(iCounter);
 
     // active?
-    if (pSoldier->bActive == FALSE) {
+    if (IsSolActive(pSoldier) == FALSE) {
       continue;
     }
 
@@ -9200,7 +9201,7 @@ void BandageBleedingDyingPatientsBeingTreated() {
     pSoldier = GetSoldierByID(iCounter);
 
     // check if the soldier is currently active?
-    if (pSoldier->bActive == FALSE) {
+    if (IsSolActive(pSoldier) == FALSE) {
       continue;
     }
 
@@ -9263,7 +9264,7 @@ void ReEvaluateEveryonesNothingToDo() {
   for (iCounter = 0; iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       switch (pSoldier->bAssignment) {
         case DOCTOR:
           fNothingToDo = !CanCharacterDoctor(pSoldier) ||
@@ -9581,7 +9582,7 @@ BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pT
   for (iCounter = 0; iCounter <= gTacticalStatus.Team[OUR_TEAM].bLastID; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       // if the guy is not the target, has the assignment we want, is training the same stat, and is
       // in our sector, alive and is training the stat we want
       if ((pSoldier != pTargetSoldier) && (pSoldier->bAssignment == bTargetAssignment) &&
@@ -9824,7 +9825,7 @@ struct SOLDIERTYPE *GetSelectedAssignSoldier(BOOLEAN fNullOK) {
 
   if (pSoldier != NULL) {
     // better be an active person, not a vehicle
-    Assert(pSoldier->bActive);
+    Assert(IsSolActive(pSoldier));
     Assert(!(pSoldier->uiStatusFlags & SOLDIER_VEHICLE));
   }
 

@@ -647,7 +647,7 @@ struct SOLDIERTYPE *FindSoldierByProfileID(UINT8 ubProfileID, BOOLEAN fPlayerMer
   }
 
   for (ubLoop = 0, pSoldier = MercPtrs[0]; ubLoop < ubLoopLimit; ubLoop++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->ubProfile == ubProfileID) {
+    if (IsSolActive(pSoldier) && pSoldier->ubProfile == ubProfileID) {
       return (pSoldier);
     }
   }

@@ -11,6 +11,7 @@
 #include "SGP/Types.h"
 #include "SaveLoadScreen.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/MapScreenInterfaceMap.h"
 #include "Strategic/Meanwhile.h"
@@ -576,7 +577,7 @@ BOOLEAN AddPlacementToWorld(SOLDIERINITNODE *curr) {
     curr->ubSoldierID = ubID;
     AddSoldierToSectorNoCalculateDirection(ubID);
 
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bTeam == ENEMY_TEAM &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bTeam == ENEMY_TEAM &&
         !pSoldier->inv[HANDPOS].usItem) {
       pSoldier = pSoldier;
     }
@@ -1490,7 +1491,7 @@ BOOLEAN SaveSoldierInitListLinks(HWFILE hfile) {
   // Now, go through each node, and save just the ubSoldierID, if that soldier is alive.
   curr = gSoldierInitHead;
   while (curr) {
-    if (curr->pSoldier && !curr->pSoldier->bActive) {
+    if (curr->pSoldier && !IsSolActive(curr->pSoldier)) {
       curr->ubSoldierID = 0;
     }
     FileMan_Write(hfile, &curr->ubNodeID, 1, &uiNumBytesWritten);

@@ -1381,7 +1381,7 @@ INT16 DistanceToClosestFriend(struct SOLDIERTYPE *pSoldier) {
 
     pTargetSoldier = Menptr + ubLoop;
 
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (!pTargetSoldier->bActive || !pTargetSoldier->bInSector) {
         continue;
       }
@@ -2125,7 +2125,7 @@ BOOLEAN ArmySeesOpponents(void) {
        cnt <= gTacticalStatus.Team[ENEMY_TEAM].bLastID; cnt++) {
     pSoldier = MercPtrs[cnt];
 
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
         pSoldier->bOppCnt > 0) {
       return (TRUE);
     }

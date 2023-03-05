@@ -20,6 +20,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/Scheduling.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/AnimationControl.h"
@@ -247,11 +248,11 @@ CHAR16 *EditMercAttitudes[6] = {L"Defensive",     L"Brave Loner",   L"Brave Budd
 #endif
 #define RANDOM -1
 #define MAX_ENEMYTYPES 7
-//#define MAX_ENEMYRANDOMTYPES	5
+// #define MAX_ENEMYRANDOMTYPES	5
 #define MAX_CREATURETYPES 8
 #define MAX_REBELTYPES 7
 #define MAX_CIVTYPES 18
-//#define MAX_CIVRANDOMTYPES		11
+// #define MAX_CIVRANDOMTYPES		11
 INT8 bEnemyArray[MAX_ENEMYTYPES] = {RANDOM,    REGMALE, BIGMALE, STOCKYMALE,
                                     REGFEMALE, TANK_NW, TANK_NE};
 INT8 bCreatureArray[MAX_CREATURETYPES] = {BLOODCAT,    LARVAE_MONSTER, INFANT_MONSTER,
@@ -1171,7 +1172,7 @@ void DisplayWayPoints(void) {
     return;
 
   GetSoldier(&pSoldier, (UINT16)gsSelectedMercID);
-  if (pSoldier == NULL || !pSoldier->bActive) return;
+  if (pSoldier == NULL || !IsSolActive(pSoldier)) return;
 
   // point 0 is not used!
   for (bPoint = 1; bPoint <= pSoldier->bPatrolCnt; bPoint++) {

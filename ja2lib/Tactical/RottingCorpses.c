@@ -9,6 +9,7 @@
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/Strategic.h"
 #include "Strategic/StrategicMap.h"
@@ -48,7 +49,7 @@
 
 #define CORPSE_INDEX_OFFSET 10000
 
-//#define		DELAY_UNTIL_ROTTING		( 1 * NUM_SEC_IN_DAY )
+// #define		DELAY_UNTIL_ROTTING		( 1 * NUM_SEC_IN_DAY )
 #define DELAY_UNTIL_ROTTING (1 * NUM_SEC_IN_DAY / 60)
 #define DELAY_UNTIL_DONE_ROTTING (3 * NUM_SEC_IN_DAY / 60)
 
@@ -979,7 +980,7 @@ void HandleRottingCorpses() {
 
     for (bLoop = gTacticalStatus.Team[CIV_TEAM].bFirstID, pSoldier = MercPtrs[bLoop];
          bLoop <= gTacticalStatus.Team[CIV_TEAM].bLastID; bLoop++, pSoldier++) {
-      if (pSoldier->bActive && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
+      if (IsSolActive(pSoldier) && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
           !(pSoldier->uiStatusFlags & SOLDIER_GASSED)) {
         if (pSoldier->ubBodyType == CROW) {
           bNumCrows++;
@@ -1056,7 +1057,7 @@ void AllMercsOnTeamLookForCorpse(ROTTING_CORPSE *pCorpse, INT8 bTeam) {
   // look for all mercs on the same team,
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[bTeam].bLastID; cnt++, pSoldier++) {
     // ATE: Ok, lets check for some basic things here!
-    if (pSoldier->bLife >= OKLIFE && pSoldier->sGridNo != NOWHERE && pSoldier->bActive &&
+    if (pSoldier->bLife >= OKLIFE && pSoldier->sGridNo != NOWHERE && IsSolActive(pSoldier) &&
         pSoldier->bInSector) {
       // is he close enough to see that gridno if he turns his head?
       sDistVisible = DistanceVisible(pSoldier, DIRECTION_IRRELEVANT, DIRECTION_IRRELEVANT, sGridNo,

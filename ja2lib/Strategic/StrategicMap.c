@@ -979,7 +979,7 @@ void RemoveMercsInSector() {
   // added...
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       RemoveSoldierFromGridNo(pSoldier);
     }
   }
@@ -1210,7 +1210,7 @@ void HandleQuestCodeOnSectorEntry(INT16 sNewSectorX, INT16 sNewSectorY, INT8 bNe
 
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (FindObj(pSoldier, CHALICE) != ITEM_NOT_FOUND) {
         SetFactTrue(FACT_CHALICE_STOLEN);
       }
@@ -1418,7 +1418,7 @@ void UpdateMercsInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
 
       pSoldier->bInSector = FALSE;
 
-      if (pSoldier->bActive) {
+      if (IsSolActive(pSoldier)) {
         if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
           if (gMapInformation.sCenterGridNo != -1 && gfBlitBattleSectorLocator &&
               (gubEnemyEncounterCode == ENEMY_AMBUSH_CODE ||
@@ -1492,7 +1492,7 @@ void UpdateMercInSector(struct SOLDIERTYPE *pSoldier, INT16 sSectorX, INT16 sSec
   // OK, determine entrence direction and get sweetspot
   // Only if we are an OK guy to control....
   // SOME CHECKS HERE MUST BE FLESHED OUT......
-  if (pSoldier->bActive)  // This was in the if, removed by DEF:  pSoldier->bLife >= OKLIFE &&
+  if (IsSolActive(pSoldier))  // This was in the if, removed by DEF:  pSoldier->bLife >= OKLIFE &&
   {
     // If we are not in transit...
     if (pSoldier->bAssignment != IN_TRANSIT) {
@@ -2935,9 +2935,10 @@ BOOLEAN CanGoToTacticalInSector(INT16 sX, INT16 sY, UINT8 ubZ) {
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
     // ARM: now allows loading of sector with all mercs below OKLIFE as long as they're alive
-    if ((pSoldier->bActive && pSoldier->bLife) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
-        (pSoldier->bAssignment != IN_TRANSIT) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
-        (pSoldier->bAssignment != ASSIGNMENT_DEAD) && !SoldierAboardAirborneHeli(pSoldier)) {
+    if ((IsSolActive(pSoldier) && pSoldier->bLife) &&
+        !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && (pSoldier->bAssignment != IN_TRANSIT) &&
+        (pSoldier->bAssignment != ASSIGNMENT_POW) && (pSoldier->bAssignment != ASSIGNMENT_DEAD) &&
+        !SoldierAboardAirborneHeli(pSoldier)) {
       if (!pSoldier->fBetweenSectors && GetSolSectorX(pSoldier) == sX &&
           GetSolSectorY(pSoldier) == sY && GetSolSectorZ(pSoldier) == ubZ) {
         return (TRUE);
@@ -3764,7 +3765,7 @@ void HandleSlayDailyEvent(void) {
   }
 
   // valid soldier?
-  if ((pSoldier->bActive == FALSE) || (pSoldier->bLife == 0) ||
+  if ((IsSolActive(pSoldier) == FALSE) || (pSoldier->bLife == 0) ||
       (pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
     // no
     return;
@@ -4028,7 +4029,7 @@ void SetupProfileInsertionDataForSoldier(struct SOLDIERTYPE *pSoldier) {
     return;
   }
 
-  if (gfWorldLoaded && pSoldier->bActive &&
+  if (gfWorldLoaded && IsSolActive(pSoldier) &&
       pSoldier->bInSector) {  // This soldier is currently in the sector
 
     //@@@Evaluate -- insert code here

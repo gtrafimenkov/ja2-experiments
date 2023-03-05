@@ -1259,7 +1259,7 @@ struct SOLDIERTYPE *GetVehicleSoldierPointerFromPassenger(struct SOLDIERTYPE *pS
   // look for all mercs on the same team,
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
+    if (IsSolActive(pSoldier) && pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
       // Check ubID....
       if (pSoldier->bVehicleID == pSrcSoldier->iVehicleId) {
         return (pSoldier);
@@ -1519,7 +1519,7 @@ struct SOLDIERTYPE *GetSoldierStructureForVehicle(INT32 iId) {
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
         if (pSoldier->bVehicleID == iId) {
           pFoundSoldier = pSoldier;
@@ -2011,7 +2011,7 @@ BOOLEAN OnlyThisSoldierCanDriveVehicle(struct SOLDIERTYPE *pThisSoldier, INT32 i
       continue;
     }
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       // don't count mercs who are asleep here
       if (CanSoldierDriveVehicle(pSoldier, iVehicleId, FALSE)) {
         // this guy can drive it, too

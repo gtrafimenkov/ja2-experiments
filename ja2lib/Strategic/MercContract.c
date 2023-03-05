@@ -129,7 +129,7 @@ void BeginContractRenewalSequence() {
           FindSoldierByProfileID(ContractRenewalList[cnt].ubProfileID, FALSE);  // Steve Willis, 80
 
       if (pSoldier) {
-        if ((pSoldier->bActive == FALSE) || (pSoldier->bLife == 0) ||
+        if ((IsSolActive(pSoldier) == FALSE) || (pSoldier->bLife == 0) ||
             (pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
           // no
           continue;
@@ -1151,7 +1151,7 @@ void FindOutIfAnyMercAboutToLeaveIsGonnaRenew(void) {
     pSoldier = GetSoldierByID(iCounter);
 
     // valid soldier?
-    if ((pSoldier->bActive == FALSE) || (pSoldier->bLife == 0) ||
+    if ((IsSolActive(pSoldier) == FALSE) || (pSoldier->bLife == 0) ||
         (pSoldier->bAssignment == IN_TRANSIT) || (pSoldier->bAssignment == ASSIGNMENT_POW)) {
       // no
       continue;

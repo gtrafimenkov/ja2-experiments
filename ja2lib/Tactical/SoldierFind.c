@@ -14,6 +14,7 @@
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/AnimationData.h"
@@ -197,7 +198,7 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
     fInGridNo = FALSE;
 
     if (pSoldier != NULL) {
-      if (pSoldier->bActive && !(pSoldier->uiStatusFlags & SOLDIER_DEAD) &&
+      if (IsSolActive(pSoldier) && !(pSoldier->uiStatusFlags & SOLDIER_DEAD) &&
           (pSoldier->bVisible != -1 || (gTacticalStatus.uiFlags & SHOW_ALL_MERCS))) {
         // OK, ignore if we are a passenger...
         if (pSoldier->uiStatusFlags & (SOLDIER_PASSENGER | SOLDIER_DRIVER)) {
@@ -441,7 +442,7 @@ BOOLEAN IsValidTargetMerc(UINT8 ubSoldierID) {
   struct SOLDIERTYPE *pSoldier = MercPtrs[ubSoldierID];
 
   // CHECK IF ACTIVE!
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
     return (FALSE);
   }
 

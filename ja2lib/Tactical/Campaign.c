@@ -11,6 +11,7 @@
 #include "SGP/MemMan.h"
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
 #include "Strategic/MapScreen.h"
@@ -36,7 +37,7 @@ extern UINT8 gbPlayerNum;
 
 #ifdef JA2TESTVERSION
 // comment out to get rid of stat change msgs
-//#define STAT_CHANGE_DEBUG
+// #define STAT_CHANGE_DEBUG
 #endif
 
 #ifdef STAT_CHANGE_DEBUG
@@ -53,7 +54,7 @@ UINT8 CalcImportantSectorControl(void);
 // experience level gain
 void StatChange(struct SOLDIERTYPE *pSoldier, UINT8 ubStat, UINT16 usNumChances, UINT8 ubReason) {
   Assert(pSoldier != NULL);
-  Assert(pSoldier->bActive);
+  Assert(IsSolActive(pSoldier));
 
   // ignore non-player soldiers
   if (!PTR_OURTEAM) return;
@@ -843,7 +844,7 @@ void HandleAnyStatChangesAfterAttack(void) {
   // must check everyone on player's team, not just the shooter
   for (cnt = 0, pSoldier = MercPtrs[0]; cnt <= gTacticalStatus.Team[MercPtrs[0]->bTeam].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       ProcessUpdateStats(&(gMercProfiles[pSoldier->ubProfile]), pSoldier);
     }
   }
@@ -1295,7 +1296,7 @@ void AwardExperienceBonusToActiveSquad(UINT8 ubExpBonusType) {
   // amount in XPs
   for (ubGuynum = gTacticalStatus.Team[gbPlayerNum].bFirstID, pSoldier = MercPtrs[ubGuynum];
        ubGuynum <= gTacticalStatus.Team[gbPlayerNum].bLastID; ubGuynum++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && IsMercOnCurrentSquad(pSoldier) &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && IsMercOnCurrentSquad(pSoldier) &&
         (pSoldier->bLife >= CONSCIOUSNESS) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
         !AM_A_ROBOT(pSoldier)) {
       StatChange(pSoldier, EXPERAMT, usXPs, FALSE);

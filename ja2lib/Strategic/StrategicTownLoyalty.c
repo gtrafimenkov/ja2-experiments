@@ -416,7 +416,7 @@ OUR_TEAM ].bLastID; iCounter++ )
         {
                 pSoldier = MercPtrs[ iCounter ];
 
-                if ( pSoldier->bLife >= OKLIFE && pSoldier->bActive )
+                if ( pSoldier->bLife >= OKLIFE && IsSolActive(pSoldier) )
                 {
                         // if soldier is in this sector
                         if( SectorIsPartOfTown( bTownId, GetSolSectorX(pSoldier),
@@ -1615,7 +1615,7 @@ UINT32 PlayerStrength(void) {
   for (ubLoop = gTacticalStatus.Team[gbPlayerNum].bFirstID;
        ubLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; ubLoop++) {
     pSoldier = MercPtrs[ubLoop];
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->bInSector ||
           (pSoldier->fBetweenSectors && ((pSoldier->ubPrevSectorID % 16) + 1) == gWorldSectorX &&
            ((pSoldier->ubPrevSectorID / 16) + 1) == gWorldSectorY &&
@@ -1638,7 +1638,7 @@ UINT32 EnemyStrength(void) {
   for (ubLoop = gTacticalStatus.Team[ENEMY_TEAM].bFirstID;
        ubLoop <= gTacticalStatus.Team[CIV_TEAM].bLastID; ubLoop++) {
     pSoldier = MercPtrs[ubLoop];
-    if (pSoldier->bActive && pSoldier->bInSector && !pSoldier->bNeutral) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && !pSoldier->bNeutral) {
       // count this person's strength (condition), calculated as life reduced up to half according
       // to maxbreath
       uiStrength = pSoldier->bLife * (pSoldier->bBreathMax + 100) / 200;

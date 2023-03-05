@@ -8,6 +8,7 @@
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
 #include "Strategic/Quests.h"
@@ -40,7 +41,7 @@ BOOLEAN ScheduleHasMorningNonSleepEntries(SCHEDULENODE *pSchedule);
 // waketime is the # of minutes in the day minus the sleep time
 #define WAKETIME(x) (NUM_SEC_IN_DAY / NUM_SEC_IN_MIN - x)
 
-//#define DISABLESCHEDULES
+// #define DISABLESCHEDULES
 
 SCHEDULENODE *gpScheduleList = NULL;
 UINT8 gubScheduleID = 0;
@@ -172,7 +173,7 @@ void ProcessTacticalSchedule(UINT8 ubScheduleID) {
     return;
   }
 
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_RED, MSG_BETAVERSION, L"Schedule callback:  Soldier isn't active.  Name is %s.",
               pSoldier->name);
@@ -1105,7 +1106,7 @@ void ReconnectSchedules( void )
 CIV_TEAM ].bLastID; uiLoop++ )
         {
                 pSoldier = MercPtrs[ uiLoop ];
-                if ( pSoldier->bActive && pSoldier->bInSector && pSoldier->ubScheduleID != 0 )
+                if ( IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->ubScheduleID != 0 )
                 {
                         pSchedule = GetSchedule( pSoldier->ubScheduleID );
                         if ( pSchedule )
@@ -1188,7 +1189,7 @@ void SecureSleepSpots( void )
 CIV_TEAM ].bLastID; uiLoop++ )
         {
                 pSoldier = MercPtrs[ uiLoop ];
-                if ( pSoldier->bActive && pSoldier->bInSector && pSoldier->ubScheduleID != 0 )
+                if ( IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->ubScheduleID != 0 )
                 {
                         pSchedule = GetSchedule( pSoldier->ubScheduleID );
                         if ( pSchedule )

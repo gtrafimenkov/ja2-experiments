@@ -710,7 +710,7 @@ BOOLEAN ExecuteOverhead() {
   gfMovingAnimation = FALSE;
 
   if (GetSoldier(&pSoldier, gusSelectedSoldier)) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->uiStatusFlags & SOLDIER_GREEN_RAY)
         LightShowRays((INT16)(pSoldier->dXPos / CELL_X_SIZE),
                       (INT16)(pSoldier->dYPos / CELL_Y_SIZE), FALSE);
@@ -2547,7 +2547,7 @@ void RebuildAllSoldierShadeTables() {
 
   // Loop through all mercs and make go
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       CreateSoldierPalettes(pSoldier);
     }
   }
@@ -2942,7 +2942,7 @@ UINT8 LastActiveTeamMember(UINT8 ubTeam) {
 
   // look for all mercs on the same team,
   for (pSoldier = MercPtrs[cnt]; cnt >= gTacticalStatus.Team[ubTeam].bFirstID; cnt--, pSoldier--) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       return ((INT8)cnt);
     }
   }
@@ -3087,7 +3087,7 @@ UINT8 CivilianGroupMembersChangeSidesWithinProximity(struct SOLDIERTYPE *pAttack
 
   cnt = gTacticalStatus.Team[CIV_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[CIV_TEAM].bLastID; cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife && pSoldier->bNeutral) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife && pSoldier->bNeutral) {
       if (pSoldier->ubCivilianGroup == pAttacked->ubCivilianGroup && pSoldier->ubBodyType != COW) {
         // if in LOS of this guy's attacker
         if ((pAttacked->ubAttackerID != NOBODY &&
@@ -3128,7 +3128,7 @@ struct SOLDIERTYPE *CivilianGroupMemberChangesSides(struct SOLDIERTYPE *pAttacke
   // remove anyone (rebels) on our team and put them back in the civ team
   cnt = gTacticalStatus.Team[OUR_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       if (pSoldier->ubCivilianGroup == pAttacked->ubCivilianGroup) {
         // should become hostile
         if (pSoldier->ubProfile != NO_PROFILE && (ubFirstProfile == NO_PROFILE || Random(2))) {
@@ -3185,7 +3185,7 @@ void CivilianGroupChangesSides(UINT8 ubCivilianGroup) {
   // now change sides for anyone on the civ team
   cnt = gTacticalStatus.Team[CIV_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[CIV_TEAM].bLastID; cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife && pSoldier->bNeutral) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife && pSoldier->bNeutral) {
       if (pSoldier->ubCivilianGroup == ubCivilianGroup && pSoldier->ubBodyType != COW) {
         MakeCivHostile(pSoldier, 2);
         if (pSoldier->bOppCnt > 0) {
@@ -3217,7 +3217,7 @@ void HickCowAttacked(struct SOLDIERTYPE *pNastyGuy, struct SOLDIERTYPE *pTarget)
   // now change sides for anyone on the civ team
   cnt = gTacticalStatus.Team[CIV_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[CIV_TEAM].bLastID; cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife && pSoldier->bNeutral &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife && pSoldier->bNeutral &&
         pSoldier->ubCivilianGroup == HICKS_CIV_GROUP) {
       if (SoldierToSoldierLineOfSightTest(pSoldier, pNastyGuy, (UINT8)MaxDistanceVisible(), TRUE)) {
         CivilianGroupMemberChangesSides(pSoldier);
@@ -3241,7 +3241,7 @@ void MilitiaChangesSides(void) {
   cnt = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[MILITIA_TEAM].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       MakeCivHostile(pSoldier, 2);
       RecalculateOppCntsDueToNoLongerNeutral(pSoldier);
     }
@@ -3445,7 +3445,7 @@ BOOLEAN CheckForPlayerTeamInMissionExit() {
   // look for all mercs on the same team,
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bLife >= OKLIFE) {
+    if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE) {
       if (pSoldier->fInMissionExitNode) {
         bGuysIn++;
       }
@@ -3805,7 +3805,7 @@ BOOLEAN TeamMemberNear(INT8 bTeam, INT16 sGridNo, INT32 iRange) {
 
   for (bLoop = gTacticalStatus.Team[bTeam].bFirstID, pSoldier = MercPtrs[bLoop];
        bLoop <= gTacticalStatus.Team[bTeam].bLastID; bLoop++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
         !(pSoldier->uiStatusFlags & SOLDIER_GASSED)) {
       if (PythSpacesAway(pSoldier->sGridNo, sGridNo) <= iRange) {
         return (TRUE);
@@ -4521,7 +4521,7 @@ void CommonEnterCombatModeCode() {
   // OK, loop thorugh all guys and stop them!
   // Loop through all mercs and make go
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->bInSector && pSoldier->ubBodyType != CROW) {
         // Set some flags for quotes
         pSoldier->usQuoteSaidFlags &= (~SOLDIER_QUOTE_SAID_IN_SHIT);
@@ -4652,7 +4652,7 @@ void ExitCombatMode() {
 
   // Loop through all mercs and make go
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->bInSector) {
         // Reset some flags
         if (pSoldier->fNoAPToFinishMove && pSoldier->bLife >= OKLIFE) {
@@ -4745,7 +4745,7 @@ BOOLEAN SoldierHasSeenEnemiesLastFewTurns(struct SOLDIERTYPE *pTeamSoldier) {
       cnt2 = gTacticalStatus.Team[cnt].bFirstID;
       for (pSoldier = MercPtrs[cnt2]; cnt2 <= gTacticalStatus.Team[cnt].bLastID;
            cnt2++, pSoldier++) {
-        if (pSoldier->bActive && pSoldier->bInSector &&
+        if (IsSolActive(pSoldier) && pSoldier->bInSector &&
             (pSoldier->bTeam == gbPlayerNum || pSoldier->bLife >= OKLIFE)) {
           if (!CONSIDERED_NEUTRAL(pTeamSoldier, pSoldier) &&
               (pTeamSoldier->bSide != pSoldier->bSide)) {
@@ -5280,7 +5280,7 @@ void CycleThroughKnownEnemies() {
   for (cnt = gTacticalStatus.Team[gbPlayerNum].bLastID, pSoldier = MercPtrs[cnt];
        cnt < TOTAL_SOLDIERS; cnt++, pSoldier++) {
     // try to find first active, OK enemy
-    if (pSoldier->bActive && pSoldier->bInSector && !pSoldier->bNeutral &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && !pSoldier->bNeutral &&
         (pSoldier->bSide != gbPlayerNum) && (pSoldier->bLife > 0)) {
       if (pSoldier->bVisible != -1) {
         fEnemiesFound = TRUE;
@@ -5323,7 +5323,7 @@ void CycleVisibleEnemies(struct SOLDIERTYPE *pSrcSoldier) {
   for (cnt = gTacticalStatus.Team[gbPlayerNum].bLastID, pSoldier = MercPtrs[cnt];
        cnt < TOTAL_SOLDIERS; cnt++, pSoldier++) {
     // try to find first active, OK enemy
-    if (pSoldier->bActive && pSoldier->bInSector && !pSoldier->bNeutral &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && !pSoldier->bNeutral &&
         (pSoldier->bSide != gbPlayerNum) && (pSoldier->bLife > 0)) {
       if (pSrcSoldier->bOppList[pSoldier->ubID] == SEEN_CURRENTLY) {
         // If we are > ok start, this is the one!
@@ -5346,7 +5346,7 @@ void CycleVisibleEnemies(struct SOLDIERTYPE *pSrcSoldier) {
   for (cnt = gTacticalStatus.Team[gbPlayerNum].bLastID, pSoldier = MercPtrs[cnt];
        cnt < TOTAL_SOLDIERS; cnt++, pSoldier++) {
     // try to find first active, OK enemy
-    if (pSoldier->bActive && pSoldier->bInSector && !pSoldier->bNeutral &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && !pSoldier->bNeutral &&
         (pSoldier->bSide != gbPlayerNum) && (pSoldier->bLife > 0)) {
       if (pSrcSoldier->bOppList[pSoldier->ubID] == SEEN_CURRENTLY) {
         // If we are > ok start, this is the one!
@@ -5371,7 +5371,7 @@ INT8 CountNonVehiclesOnPlayerTeam(void) {
 
   for (cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID, pSoldier = MercPtrs[cnt];
        cnt <= (UINT32)(gTacticalStatus.Team[gbPlayerNum].bLastID); cnt++, pSoldier++) {
-    if (pSoldier->bActive && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
+    if (IsSolActive(pSoldier) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
       bNumber++;
     }
   }
@@ -6401,7 +6401,7 @@ void ResetAllMercSpeeds() {
   for (cnt = 0; cnt < TOTAL_SOLDIERS; cnt++) {
     pSoldier = MercPtrs[cnt];
 
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       SetSoldierAniSpeed(pSoldier);
     }
   }
@@ -6449,7 +6449,7 @@ void CencelAllActionsForTimeCompression(void) {
   INT32 cnt;
 
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->bInSector) {
         // Hault!
         EVENT_StopMerc(pSoldier, pSoldier->sGridNo, pSoldier->bDirection);
@@ -6634,7 +6634,7 @@ void DoPOWPathChecks(void) {
        iLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; iLoop++) {
     pSoldier = MercPtrs[iLoop];
 
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bAssignment == ASSIGNMENT_POW) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bAssignment == ASSIGNMENT_POW) {
       // check to see if POW has been freed!
       // this will be true if a path can be made from the POW to either of 3 gridnos
       // 10492 (hallway) or 10482 (outside), or 9381 (outside)
@@ -6668,7 +6668,8 @@ BOOLEAN HostileCiviliansPresent(void) {
        iLoop <= gTacticalStatus.Team[CIV_TEAM].bLastID; iLoop++) {
     pSoldier = MercPtrs[iLoop];
 
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife > 0 && !pSoldier->bNeutral) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife > 0 &&
+        !pSoldier->bNeutral) {
       return (TRUE);
     }
   }
@@ -6688,7 +6689,8 @@ BOOLEAN HostileCiviliansWithGunsPresent(void) {
        iLoop <= gTacticalStatus.Team[CIV_TEAM].bLastID; iLoop++) {
     pSoldier = MercPtrs[iLoop];
 
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife > 0 && !pSoldier->bNeutral) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife > 0 &&
+        !pSoldier->bNeutral) {
       if (FindAIUsableObjClass(pSoldier, IC_WEAPON) == -1) {
         return (TRUE);
       }
@@ -6714,7 +6716,7 @@ BOOLEAN HostileBloodcatsPresent(void) {
     // become hostile 		 on site.  Because the check used to be there, it was possible to
     // get into a 2nd battle elsewhere
     //     which is BAD BAD BAD!
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife > 0 &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife > 0 &&
         pSoldier->ubBodyType == BLOODCAT) {
       return (TRUE);
     }

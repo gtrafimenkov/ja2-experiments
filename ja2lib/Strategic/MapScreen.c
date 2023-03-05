@@ -9323,7 +9323,8 @@ void DisplayIconsForMercsAsleep(void) {
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     if (gCharactersList[iCounter].fValid == TRUE) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
-      if (pSoldier->bActive && pSoldier->fMercAsleep && CanChangeSleepStatusForSoldier(pSoldier)) {
+      if (IsSolActive(pSoldier) && pSoldier->fMercAsleep &&
+          CanChangeSleepStatusForSoldier(pSoldier)) {
         BltVideoObject(guiSAVEBUFFER, hHandle, 0, 125, (INT16)(Y_START + (iCounter * (Y_SIZE + 2))),
                        VO_BLT_SRCTRANSPARENCY, NULL);
       }
@@ -9487,7 +9488,7 @@ BOOLEAN CanChangeDestinationForCharSlot(INT8 bCharNumber, BOOLEAN fShowErrorMess
 
   // valid soldier?
   Assert(pSoldier);
-  Assert(pSoldier->bActive);
+  Assert(IsSolActive(pSoldier));
 
   if (CanEntireMovementGroupMercIsInMove(pSoldier, &bErrorNumber)) {
     return (TRUE);
@@ -9513,7 +9514,7 @@ BOOLEAN CanExtendContractForCharSlot(INT8 bCharNumber) {
 
   // valid soldier?
   Assert(pSoldier);
-  Assert(pSoldier->bActive);
+  Assert(IsSolActive(pSoldier));
 
   // if a vehicle, in transit, or a POW
   if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == IN_TRANSIT) ||
@@ -9544,7 +9545,7 @@ BOOLEAN CanChangeSleepStatusForCharSlot(INT8 bCharNumber) {
 BOOLEAN CanChangeSleepStatusForSoldier(struct SOLDIERTYPE *pSoldier) {
   // valid soldier?
   Assert(pSoldier);
-  Assert(pSoldier->bActive);
+  Assert(IsSolActive(pSoldier));
 
   // if a vehicle, robot, in transit, or a POW
   if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || AM_A_ROBOT(pSoldier) ||
@@ -9913,7 +9914,7 @@ BOOLEAN AnyMovableCharsInOrBetweenThisSector(INT16 sSectorX, INT16 sSectorY, INT
     pSoldier = GetSoldierByID(iCounter);
 
     // is the soldier active
-    if (pSoldier->bActive == FALSE) {
+    if (IsSolActive(pSoldier) == FALSE) {
       continue;
     }
 

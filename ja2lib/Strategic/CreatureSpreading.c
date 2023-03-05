@@ -1046,7 +1046,7 @@ void DetermineCreatureTownCompositionBasedOnTacticalInformation(UINT8 *pubNumCre
   for (i = gTacticalStatus.Team[CREATURE_TEAM].bFirstID;
        i <= gTacticalStatus.Team[CREATURE_TEAM].bLastID; i++) {
     pSoldier = MercPtrs[i];
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       switch (pSoldier->ubBodyType) {
         case ADULTFEMALEMONSTER:
           (*pubNumCreatures)++;
@@ -1413,7 +1413,7 @@ BOOLEAN PlayerGroupIsInACreatureInfestedMine() {
     for (i = gTacticalStatus.Team[OUR_TEAM].bFirstID; i <= gTacticalStatus.Team[OUR_TEAM].bLastID;
          i++) {
       pSoldier = MercPtrs[i];
-      if (pSoldier->bActive && pSoldier->bLife && GetSolSectorX(pSoldier) == sSectorX &&
+      if (IsSolActive(pSoldier) && pSoldier->bLife && GetSolSectorX(pSoldier) == sSectorX &&
           GetSolSectorY(pSoldier) == sSectorY && GetSolSectorZ(pSoldier) == bSectorZ &&
           !pSoldier->fBetweenSectors) {
         return TRUE;

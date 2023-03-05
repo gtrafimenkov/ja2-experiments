@@ -7,6 +7,7 @@
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CreatureSpreading.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/Overhead.h"
@@ -60,7 +61,7 @@ BOOLEAN NoEnemiesInSight() {
   // look for all mercs on the same team,
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bLife >= OKLIFE) {
+    if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE) {
       if (pSoldier->bOppCnt != 0) {
         return (FALSE);
       }

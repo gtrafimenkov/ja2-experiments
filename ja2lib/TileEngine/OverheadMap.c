@@ -15,6 +15,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "SysGlobals.h"
 #include "Tactical/Faces.h"
@@ -974,7 +975,7 @@ void RenderOverheadOverlays() {
   for (i = 0; i < end; i++) {
     // First, check to see if the soldier exists and is in the sector.
     pSoldier = MercPtrs[i];
-    if (!pSoldier->bActive || !pSoldier->bInSector) continue;
+    if (!IsSolActive(pSoldier) || !pSoldier->bInSector) continue;
     // Soldier is here.  Calculate his screen position based on his current gridno.
     GetOverheadScreenXYFromGridNo(pSoldier->sGridNo, &sX, &sY);
     // Now, draw his "doll"

@@ -1585,7 +1585,7 @@ void PutNonSquadMercsInPlayerGroupOnSquads(struct GROUP *pGroup, BOOLEAN fExitVe
     // store ptr to next soldier in group, once removed from group, his info will get memfree'd!
     pNextPlayer = pPlayer->next;
 
-    if (pSoldier->bActive && pSoldier->bLife && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
+    if (IsSolActive(pSoldier) && pSoldier->bLife && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
       // if involved, but off-duty (includes mercs inside vehicles!)
       if (PlayerMercInvolvedInThisCombat(pSoldier) && (pSoldier->bAssignment >= ON_DUTY)) {
         // if in a vehicle, pull him out
@@ -1631,7 +1631,7 @@ void WakeUpAllMercsInSectorUnderAttack(void) {
   for (iCounter = 0; iCounter < iNumberOfMercsOnTeam; iCounter++) {
     pSoldier = &(Menptr[iCounter]);
 
-    if (pSoldier->bActive && pSoldier->bLife && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
+    if (IsSolActive(pSoldier) && pSoldier->bLife && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
       // if involved, but asleep
       if (PlayerMercInvolvedInThisCombat(pSoldier) && (pSoldier->fMercAsleep == TRUE)) {
         // FORCE him wake him up
@@ -1677,7 +1677,7 @@ void RetreatAllInvolvedPlayerGroups(void) {
 
 BOOLEAN PlayerMercInvolvedInThisCombat(struct SOLDIERTYPE *pSoldier) {
   Assert(pSoldier);
-  Assert(pSoldier->bActive);
+  Assert(IsSolActive(pSoldier));
 
   if (!pSoldier->fBetweenSectors && pSoldier->bAssignment != IN_TRANSIT &&
       pSoldier->bAssignment != ASSIGNMENT_POW && pSoldier->bAssignment != ASSIGNMENT_DEAD &&

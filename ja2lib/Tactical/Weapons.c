@@ -3983,7 +3983,7 @@ void DishoutQueenSwipeDamage(struct SOLDIERTYPE *pQueenSoldier) {
     if (pSoldier != NULL) {
       if (pSoldier->ubID != pQueenSoldier->ubID) {
         // ATE: Ok, lets check for some basic things here!
-        if (pSoldier->bLife >= OKLIFE && pSoldier->sGridNo != NOWHERE && pSoldier->bActive &&
+        if (pSoldier->bLife >= OKLIFE && pSoldier->sGridNo != NOWHERE && IsSolActive(pSoldier) &&
             pSoldier->bInSector) {
           // Get Pyth spaces away....
           if (GetRangeInCellCoordsFromGridNoDiff(pQueenSoldier->sGridNo, pSoldier->sGridNo) <=

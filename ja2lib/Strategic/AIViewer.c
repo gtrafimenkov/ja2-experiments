@@ -638,7 +638,7 @@ void RenderInfoInSector() {
     struct SOLDIERTYPE *pSoldier;
 
     pSoldier = MercPtrs[i];
-    if (pSoldier->bActive && GetSolSectorX(pSoldier) == ubSectorX &&
+    if (IsSolActive(pSoldier) && GetSolSectorX(pSoldier) == ubSectorX &&
         GetSolSectorY(pSoldier) == ubSectorY && GetSolSectorZ(pSoldier) == gbViewLevel) {
       if (pSoldier->bLife) {
         ubMercs++;

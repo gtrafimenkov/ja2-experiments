@@ -868,7 +868,7 @@ void HandleAllReachAbleItemsInTheSector(INT16 sSectorX, INT16 sSectorY, INT8 bSe
     for (uiCounter = gTacticalStatus.Team[gbPlayerNum].bFirstID;
          uiCounter < gTacticalStatus.Team[gbPlayerNum].bLastID; uiCounter++) {
       pSoldier = MercPtrs[uiCounter];
-      if (pSoldier && pSoldier->bActive && pSoldier->bLife > 0 &&
+      if (pSoldier && IsSolActive(pSoldier) && pSoldier->bLife > 0 &&
           GetSolSectorX(pSoldier) == sSectorX && GetSolSectorY(pSoldier) == sSectorY &&
           GetSolSectorZ(pSoldier) == bSectorZ) {
         if (FindBestPath(pSoldier, sGridNo2, pSoldier->bLevel, WALKING, NO_COPYROUTE, 0)) {

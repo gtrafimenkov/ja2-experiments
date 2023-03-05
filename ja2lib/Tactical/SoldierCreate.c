@@ -1095,7 +1095,7 @@ BOOLEAN InternalTacticalRemoveSoldier(UINT16 usSoldierIndex, BOOLEAN fRemoveVehi
 }
 
 BOOLEAN TacticalRemoveSoldierPointer(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemoveVehicle) {
-  if (!pSoldier->bActive) return FALSE;
+  if (!IsSolActive(pSoldier)) return FALSE;
 
   if (pSoldier->ubScheduleID) {
     DeleteSchedule(pSoldier->ubScheduleID);
@@ -1120,7 +1120,7 @@ BOOLEAN TacticalRemoveSoldierPointer(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemo
 
     // Check if a guy exists here
     // Does another soldier exist here?
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       RemoveSoldierFromGridNo(pSoldier);
 
       // Delete shadow of crow....
@@ -2258,7 +2258,7 @@ void TrashAllSoldiers() {
   cnt = 0;
 
   for (pSoldier = MercPtrs[cnt]; cnt < MAX_NUM_SOLDIERS; pSoldier++, cnt++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       // Delete from world
       TacticalRemoveSoldier((UINT16)cnt);
     }

@@ -1,6 +1,7 @@
 #include "Tactical/SkillCheck.h"
 
 #include "SGP/Random.h"
+#include "Soldier.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/DrugsAndAlcohol.h"
@@ -119,7 +120,7 @@ INT8 EffectiveExpLevel(struct SOLDIERTYPE *pSoldier) {
 
   if (pSoldier->ubProfile != NO_PROFILE) {
     if ((gMercProfiles[pSoldier->ubProfile].bPersonalityTrait == CLAUSTROPHOBIC) &&
-        pSoldier->bActive && pSoldier->bInSector && gbWorldSectorZ > 0) {
+        IsSolActive(pSoldier) && pSoldier->bInSector && gbWorldSectorZ > 0) {
       // claustrophobic!
       iEffExpLevel--;
     }

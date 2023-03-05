@@ -544,7 +544,7 @@ void CheckForDisabledForGiveItem() {
     cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
          cnt++, pSoldier++) {
-      if (pSoldier->bActive && pSoldier->bLife >= OKLIFE &&
+      if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE &&
           !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && !AM_A_ROBOT(pSoldier) &&
           pSoldier->bInSector && IsMercOnCurrentSquad(pSoldier)) {
         sDist = PythSpacesAway(gpSMCurrentMerc->sGridNo, pSoldier->sGridNo);
@@ -3385,7 +3385,7 @@ void MercFacePanelMoveCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
   pSoldier = MercPtrs[ubSoldierID];
 
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
     return;
   }
 
@@ -3620,7 +3620,7 @@ void EndRadioLocator(UINT8 ubID) {
 }
 
 void CheckForFacePanelStartAnims(struct SOLDIERTYPE *pSoldier, INT16 sPanelX, INT16 sPanelY) {
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
     return;
   }
 
@@ -3655,7 +3655,7 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
     return;
   }
 
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
     return;
   }
 
@@ -3803,7 +3803,7 @@ void HandleSoldierFaceFlash(struct SOLDIERTYPE *pSoldier, INT16 sFaceX, INT16 sF
 
 void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, INT16 sX, INT16 sY, UINT8 ubPanelNum,
                           BOOLEAN fDirty) {
-  if (pSoldier->bActive && !(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
+  if (IsSolActive(pSoldier) && !(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
     if (pSoldier->uiStatusFlags & SOLDIER_DRIVER) {
       BltVideoObjectFromIndex(guiSAVEBUFFER, guiVEHINV, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
       RestoreExternBackgroundRect(sX, sY, (INT16)(TM_INV_WIDTH), (INT16)(TM_INV_HEIGHT));
@@ -4078,7 +4078,7 @@ void RenderTownIDString() {
 }
 
 void CheckForAndAddMercToTeamPanel(struct SOLDIERTYPE *pSoldier) {
-  if (pSoldier->bActive) {
+  if (IsSolActive(pSoldier)) {
     // Add to interface if the are ours
     if (pSoldier->bTeam == gbPlayerNum) {
       // Are we in the loaded sector?

@@ -2907,7 +2907,7 @@ void AddNPCsInSectorToArray() {
   // Setup array of merc who are in the current sector
   i = 0;
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
-    if ((pSoldier != NULL) && pSoldier->bActive) {
+    if ((pSoldier != NULL) && IsSolActive(pSoldier)) {
       // if soldier is a NPC, add him to the local NPC array
       if ((pSoldier->ubProfile >= FIRST_RPC) && (pSoldier->ubProfile < NUM_PROFILES)) {
         gubCurrentNpcInSector[i] = pSoldier->ubProfile;
@@ -3560,7 +3560,7 @@ void GetDebugLocationString(UINT16 usProfileID, STR16 pzText, size_t bufSize) {
   pSoldier = FindSoldierByProfileID((UINT8)usProfileID, FALSE);
 
   // if their is a soldier, the soldier is alive and the soldier is off the map
-  if (pSoldier != NULL && pSoldier->bActive && pSoldier->uiStatusFlags & SOLDIER_OFF_MAP) {
+  if (pSoldier != NULL && IsSolActive(pSoldier) && pSoldier->uiStatusFlags & SOLDIER_OFF_MAP) {
     // the soldier is on schedule
     swprintf(pzText, bufSize, L"On Schdl.");
   }

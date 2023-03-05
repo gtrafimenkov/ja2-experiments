@@ -24,6 +24,7 @@
 #include "SaveLoadGame.h"
 #include "ScreenIDs.h"
 #include "Screens.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -2448,7 +2449,7 @@ void AdjustSoldierCreationStartValues() {
 
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        pSoldier++, cnt++) {
-    if (!pSoldier->bActive) {
+    if (!IsSolActive(pSoldier)) {
       guiCreateGuyIndex = (INT16)cnt;
       break;
     }
@@ -2459,7 +2460,7 @@ void AdjustSoldierCreationStartValues() {
 
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[LAST_TEAM].bLastID;
        pSoldier++, cnt++) {
-    if (!pSoldier->bActive && cnt > gTacticalStatus.Team[gbPlayerNum].bLastID) {
+    if (!IsSolActive(pSoldier) && cnt > gTacticalStatus.Team[gbPlayerNum].bLastID) {
       guiCreateBadGuyIndex = (INT16)cnt;
       break;
     }
@@ -3887,7 +3888,7 @@ UINT32 UIHandleLCLook(UI_EVENT *pUIEvent) {
     cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
          cnt++, pSoldier++) {
-      if (pSoldier->bActive && pSoldier->bInSector) {
+      if (IsSolActive(pSoldier) && pSoldier->bInSector) {
         if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
           MakeSoldierTurn(pSoldier, sXPos, sYPos);
         }
@@ -4146,7 +4147,7 @@ void EndMultiSoldierSelection(BOOLEAN fAcknowledge) {
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
         gTacticalStatus.fAtLeastOneGuyOnMultiSelect = TRUE;
 
@@ -4188,7 +4189,7 @@ void StopRubberBandedMercFromMoving() {
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
         pSoldier->fDelayedMovement = FALSE;
         pSoldier->sFinalDestination = pSoldier->sGridNo;
@@ -4224,7 +4225,7 @@ BOOLEAN HandleMultiSelectionMove(INT16 sDestGridNo) {
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
         if (pSoldier->ubID == gusSelectedSoldier) {
           fMoveFast = pSoldier->fUIMovementFast;
@@ -4237,7 +4238,7 @@ BOOLEAN HandleMultiSelectionMove(INT16 sDestGridNo) {
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
         // If we can't be controlled, returninvalid...
         if (pSoldier->uiStatusFlags & SOLDIER_ROBOT) {
@@ -4288,7 +4289,7 @@ void ResetMultiSelection() {
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
         pSoldier->uiStatusFlags &= (~SOLDIER_MULTI_SELECTED);
       }
@@ -4533,7 +4534,7 @@ BOOLEAN IsValidTalkableNPC(UINT8 ubSoldierID, BOOLEAN fGive, BOOLEAN fAllowMercs
   }
 
   // CHECK IF ACTIVE!
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
     return (FALSE);
   }
 

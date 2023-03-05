@@ -170,7 +170,7 @@ void HourlyLarryUpdate(void) {
     if (pSoldier->fBetweenSectors) {
       return;
     }
-    if (pSoldier->bActive && pSoldier->bInSector &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector &&
         (gTacticalStatus.fEnemyInSector || IsTacticalMode())) {
       return;
     }
@@ -270,7 +270,7 @@ void HourlyCheckIfSlayAloneSoHeCanLeave() {
   if (pSoldier->fBetweenSectors) {
     return;
   }
-  if (!pSoldier->bActive || !pSoldier->bLife) {
+  if (!IsSolActive(pSoldier) || !pSoldier->bLife) {
     return;
   }
   if (PlayerMercsInSector((UINT8)GetSolSectorX(pSoldier), (UINT8)GetSolSectorY(pSoldier),

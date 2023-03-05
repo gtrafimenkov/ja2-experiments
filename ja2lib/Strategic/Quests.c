@@ -300,7 +300,7 @@ BOOLEAN PCInSameRoom(UINT8 ubProfileID) {
   for (bLoop = gTacticalStatus.Team[gbPlayerNum].bFirstID;
        bLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; bLoop++) {
     pSoldier = MercPtrs[bLoop];
-    if (pSoldier && pSoldier->bActive && pSoldier->bInSector) {
+    if (pSoldier && IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (gubWorldRoomInfo[pSoldier->sGridNo] == ubRoom) {
         return (TRUE);
       }
@@ -408,7 +408,7 @@ BOOLEAN CheckPlayerHasHead(void) {
        bLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; bLoop++) {
     pSoldier = MercPtrs[bLoop];
 
-    if (pSoldier->bActive && pSoldier->bLife > 0) {
+    if (IsSolActive(pSoldier) && pSoldier->bLife > 0) {
       if (FindObjInObjRange(pSoldier, HEAD_2, HEAD_7) != NO_SLOT) {
         return (TRUE);
       }

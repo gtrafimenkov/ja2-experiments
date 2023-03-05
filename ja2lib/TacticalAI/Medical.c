@@ -1,5 +1,6 @@
 #include "SGP/Types.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/Items.h"
@@ -158,7 +159,7 @@ BOOLEAN CanCharacterAutoBandageTeammate(struct SOLDIERTYPE *pSoldier)
 // can this soldier autobandage others in sector
 {
   // if the soldier isn't active or in sector, we have problems..leave
-  if (!(pSoldier->bActive) || !(pSoldier->bInSector) ||
+  if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector) ||
       (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == VEHICLE)) {
     return (FALSE);
   }
@@ -176,7 +177,7 @@ BOOLEAN CanCharacterAutoBandageTeammate(struct SOLDIERTYPE *pSoldier)
 // can this soldier autobandage others in sector
 BOOLEAN CanCharacterBeAutoBandagedByTeammate(struct SOLDIERTYPE *pSoldier) {
   // if the soldier isn't active or in sector, we have problems..leave
-  if (!(pSoldier->bActive) || !(pSoldier->bInSector) ||
+  if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector) ||
       (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == VEHICLE)) {
     return (FALSE);
   }

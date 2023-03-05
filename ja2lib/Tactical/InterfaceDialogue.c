@@ -20,6 +20,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -1575,7 +1576,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
         for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
              cnt++, pSoldier++) {
           // Are we in this sector, On the current squad?
-          if (pSoldier->bActive && pSoldier->bLife >= OKLIFE && pSoldier->bInSector &&
+          if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE && pSoldier->bInSector &&
               pSoldier->bAssignment == CurrentSquad()) {
             gfTacticalTraversal = TRUE;
             SetGroupSectorValue(10, 1, 1, pSoldier->ubGroupID);
@@ -1836,7 +1837,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
         for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
              cnt++, pSoldier++) {
           // Are we in this sector, On the current squad?
-          if (pSoldier->bActive && pSoldier->bLife >= OKLIFE && pSoldier->bInSector) {
+          if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE && pSoldier->bInSector) {
             gfTacticalTraversal = TRUE;
             SetGroupSectorValue(10, 1, 0, pSoldier->ubGroupID);
 
@@ -3147,7 +3148,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
           for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
                cnt++, pSoldier++) {
             // Are we in this sector, On the current squad?
-            if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife > 0 &&
+            if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife > 0 &&
                 pSoldier->bLife < pSoldier->bLifeMax &&
                 pSoldier->bAssignment != ASSIGNMENT_HOSPITAL &&
                 PythSpacesAway(pSoldier->sGridNo, pSoldier2->sGridNo) < HOSPITAL_PATIENT_DISTANCE) {
@@ -3246,7 +3247,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
         // find doctors available and trigger record 12 or 13
         pSoldier = FindSoldierByProfileID(STEVE, FALSE);  // Steve Willis, 80
         if (pSoldier) {
-          if (!pSoldier->bActive || !pSoldier->bInSector || !(pSoldier->bTeam == CIV_TEAM) ||
+          if (!IsSolActive(pSoldier) || !pSoldier->bInSector || !(pSoldier->bTeam == CIV_TEAM) ||
               !(pSoldier->bNeutral) || (pSoldier->bLife < OKLIFE)) {
             pSoldier = NULL;
           }
@@ -3815,7 +3816,7 @@ UINT32 CalcMedicalCost(UINT8 ubId) {
   for (cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
        cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID; cnt++) {
     pSoldier = MercPtrs[cnt];
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife > 0 &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife > 0 &&
         pSoldier->bAssignment != ASSIGNMENT_HOSPITAL) {
       if (pSoldier->bLife < pSoldier->bLifeMax) {
         if (PythSpacesAway(sGridNo, pSoldier->sGridNo) <= HOSPITAL_PATIENT_DISTANCE) {
@@ -3841,7 +3842,7 @@ BOOLEAN PlayerTeamHasTwoSpotsLeft() {
 
   for (cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID, pSoldier = MercPtrs[cnt];
        cnt <= (UINT32)(gTacticalStatus.Team[gbPlayerNum].bLastID - 2); cnt++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       uiCount++;
     }
   }
@@ -4035,7 +4036,7 @@ void DialogueMessageBoxCallBack(UINT8 ubExitValue) {
         cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
         for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
              cnt++, pSoldier++) {
-          if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
+          if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
               pSoldier->bBreath >= OKBREATH) {
             if (!pLier || (EffectiveWisdom(pSoldier) + EffectiveLeadership(pSoldier) >
                            EffectiveWisdom(pLier) + EffectiveLeadership(pSoldier))) {
@@ -4180,7 +4181,7 @@ void DoneFadeInActionBasement() {
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
     // Are we in this sector, On the current squad?
-    if (pSoldier->bActive && pSoldier->bLife >= OKLIFE && pSoldier->bInSector &&
+    if (IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE && pSoldier->bInSector &&
         pSoldier->bAssignment == CurrentSquad()) {
       break;
     }

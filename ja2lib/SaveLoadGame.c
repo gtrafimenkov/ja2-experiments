@@ -4082,7 +4082,7 @@ void GetBestPossibleSectorXYZValues(INT16 *psSectorX, INT16 *psSectorY, INT8 *pb
 
     // loop through all the mercs on the players team to find the one that is not moving
     for (pSoldier = MercPtrs[sSoldierCnt]; sSoldierCnt <= bLastTeamID; sSoldierCnt++, pSoldier++) {
-      if (pSoldier->bActive) {
+      if (IsSolActive(pSoldier)) {
         if (pSoldier->bAssignment != IN_TRANSIT && !pSoldier->fBetweenSectors) {
           // we found an alive, merc that is not moving
           *psSectorX = GetSolSectorX(pSoldier);
@@ -4103,7 +4103,7 @@ void GetBestPossibleSectorXYZValues(INT16 *psSectorX, INT16 *psSectorY, INT8 *pb
       // loop through all the mercs and find one that is moving
       for (pSoldier = MercPtrs[sSoldierCnt]; sSoldierCnt <= bLastTeamID;
            sSoldierCnt++, pSoldier++) {
-        if (pSoldier->bActive) {
+        if (IsSolActive(pSoldier)) {
           // we found an alive, merc that is not moving
           *psSectorX = GetSolSectorX(pSoldier);
           *psSectorY = GetSolSectorY(pSoldier);

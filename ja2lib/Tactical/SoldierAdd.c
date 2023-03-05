@@ -2,6 +2,7 @@
 
 #include "SGP/Random.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Strategic/Meanwhile.h"
 #include "Strategic/Strategic.h"
 #include "Strategic/StrategicMap.h"
@@ -971,7 +972,7 @@ BOOLEAN InternalAddSoldierToSector(UINT8 ubID, BOOLEAN fCalculateDirection, BOOL
 
   pSoldier = MercPtrs[ubID];
 
-  if (pSoldier->bActive) {
+  if (IsSolActive(pSoldier)) {
     // ATE: Make sure life of elliot is OK if from a meanwhile
     if (AreInMeanwhile() && pSoldier->ubProfile == ELLIOT) {
       if (pSoldier->bLife < OKLIFE) {

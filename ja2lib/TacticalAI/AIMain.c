@@ -261,8 +261,8 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
   }
 
   // if this NPC is dying, bail
-  if (pSoldier->bLife < OKLIFE || !pSoldier->bActive) {
-    if (pSoldier->bActive && pSoldier->fMuzzleFlash) {
+  if (pSoldier->bLife < OKLIFE || !IsSolActive(pSoldier)) {
+    if (IsSolActive(pSoldier) && pSoldier->fMuzzleFlash) {
       EndMuzzleFlash(pSoldier);
     }
 #ifdef TESTAICONTROL
@@ -648,7 +648,7 @@ void EndAIDeadlock(void) {
 
   // find enemy with problem and free him up...
   for (cnt = 0, pSoldier = Menptr; cnt < MAXMERCS; cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (pSoldier->uiStatusFlags & SOLDIER_UNDERAICONTROL) {
         CancelAIAction(pSoldier, FORCE);
 #ifdef TESTAICONTROL
@@ -1357,7 +1357,7 @@ void TurnBasedHandleNPCAI(struct SOLDIERTYPE *pSoldier) {
   //
 
    // If man is inactive/at base/dead/unconscious
-   if (!pSoldier->bActive || !pSoldier->bInSector || (pSoldier->bLife < OKLIFE))
+   if (!IsSolActive(pSoldier) || !pSoldier->bInSector || (pSoldier->bLife < OKLIFE))
     {
   #ifdef DEBUGDECISIONS
      AINumMessage("HandleManAI - Unavailable man, skipping guy#",pSoldier->ubID);

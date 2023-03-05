@@ -190,7 +190,7 @@ void MercDailyUpdate() {
   // loop though all the mercs
   for (pSoldier = MercPtrs[cnt]; cnt <= bLastTeamID; cnt++, pSoldier++) {
     // if the merc is active
-    if ((pSoldier->bActive) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
+    if ((IsSolActive(pSoldier)) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
         (pSoldier->bAssignment != IN_TRANSIT)) {
       // CJC: Reset dialogue flags for quotes that can be said once/day
       pSoldier->usQuoteSaidFlags &= (~SOLDIER_QUOTE_SAID_ANNOYING_MERC);
@@ -303,13 +303,13 @@ void MercDailyUpdate() {
 
       CheckIfMercGetsAnotherContract(pSoldier);
     } else {
-      if ((pSoldier->bActive) && (pSoldier->bAssignment == ASSIGNMENT_POW)) {
+      if ((IsSolActive(pSoldier)) && (pSoldier->bAssignment == ASSIGNMENT_POW)) {
         pSoldier->iEndofContractTime += 1440;
       }
     }
 
     // if active, here, & alive (POW is ok, don't care)
-    if ((pSoldier->bActive) && (pSoldier->bAssignment != ASSIGNMENT_DEAD) &&
+    if ((IsSolActive(pSoldier)) && (pSoldier->bAssignment != ASSIGNMENT_DEAD) &&
         (pSoldier->bAssignment != IN_TRANSIT)) {
       // increment the "man days" played counter for each such merc in the player's employment
       gStrategicStatus.uiManDaysPlayed++;
@@ -321,7 +321,7 @@ void MercDailyUpdate() {
 
   for (pSoldier = MercPtrs[cnt]; cnt <= bLastTeamID; cnt++, pSoldier++) {
     // if the merc is active
-    if ((pSoldier->bActive) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
+    if ((IsSolActive(pSoldier)) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
         (pSoldier->bAssignment != IN_TRANSIT)) {
       // if its a MERC merc, determine if the merc should leave ( because player refused to pay for
       // merc )
@@ -450,7 +450,7 @@ void MercsContractIsFinished(UINT8 ubID) {
   pSoldier = GetSoldierByID(ubID);
 
   // if the soldier was removed before getting into this function, return
-  if (!pSoldier->bActive) return;
+  if (!IsSolActive(pSoldier)) return;
 
   if (fShowContractMenu) {
     fShowContractMenu = FALSE;
@@ -497,7 +497,7 @@ void RPCWhineAboutNoPay(UINT8 ubID) {
   pSoldier = GetSoldierByID(ubID);
 
   // if the soldier was removed before getting into this function, return
-  if (!pSoldier->bActive) return;
+  if (!IsSolActive(pSoldier)) return;
 
   if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__NPC) {
     // Say quote for needing pay!
@@ -602,7 +602,7 @@ void UpdateBuddyAndHatedCounters(void) {
     fSameGroupOnly = FALSE;
 
     // if the merc is active and on a combat assignment
-    if (pSoldier->bActive && pSoldier->bAssignment < ON_DUTY) {
+    if (IsSolActive(pSoldier) && pSoldier->bAssignment < ON_DUTY) {
       pProfile = &(gMercProfiles[pSoldier->ubProfile]);
 
       // if we're moving, we only check vs other people in our squad
@@ -805,7 +805,7 @@ void HourlyCamouflageUpdate(void) {
 
   // loop through all mercs
   for (pSoldier = MercPtrs[bMercID]; bMercID <= bLastTeamID; bMercID++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       // if the merc has non-zero camo, degrade it by 1%
       if ((pSoldier->bCamo > 0) && (!(HAS_SKILL_TRAIT(pSoldier, CAMOUFLAGED)))) {
         pSoldier->bCamo -= 2;

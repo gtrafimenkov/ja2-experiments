@@ -74,7 +74,7 @@ void ValidateEnemiesHaveWeapons() {
   for (i = gTacticalStatus.Team[ENEMY_TEAM].bFirstID; i <= gTacticalStatus.Team[ENEMY_TEAM].bLastID;
        i++) {
     pSoldier = MercPtrs[i];
-    if (!pSoldier->bActive || !pSoldier->bInSector) {
+    if (!IsSolActive(pSoldier) || !pSoldier->bInSector) {
       continue;
     }
     if (!pSoldier->inv[HANDPOS].usItem) {
@@ -358,7 +358,7 @@ UINT8 NumFreeEnemySlots() {
   for (i = gTacticalStatus.Team[ENEMY_TEAM].bFirstID; i <= gTacticalStatus.Team[ENEMY_TEAM].bLastID;
        i++) {
     pSoldier = GetSoldierByID(i);
-    if (!pSoldier->bActive) ubNumFreeSlots++;
+    if (!IsSolActive(pSoldier)) ubNumFreeSlots++;
   }
   return ubNumFreeSlots;
 }
@@ -571,7 +571,7 @@ BOOLEAN PrepareEnemyForSectorBattle() {
       ubNumTroops = pGroup->pEnemyGroup->ubTroopsInBattle;
       ubNumElites = pGroup->pEnemyGroup->ubElitesInBattle;
       while (num && sNumSlots && i <= gTacticalStatus.Team[ENEMY_TEAM].bLastID) {
-        while (!pSoldier->bActive || pSoldier->ubGroupID) {
+        while (!IsSolActive(pSoldier) || pSoldier->ubGroupID) {
           pSoldier = GetSoldierByID(++i);
           if (i > gTacticalStatus.Team[ENEMY_TEAM].bLastID) {
             AssertMsg(
@@ -1139,7 +1139,7 @@ void NotifyPlayersOfNewEnemies() {
   for (i = gTacticalStatus.Team[OUR_TEAM].bFirstID; i <= gTacticalStatus.Team[OUR_TEAM].bLastID;
        i++) {  // find a merc that is aware.
     pSoldier = MercPtrs[i];
-    if (pSoldier->bInSector && pSoldier->bActive && pSoldier->bLife >= OKLIFE &&
+    if (pSoldier->bInSector && IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE &&
         pSoldier->bBreath >= OKBREATH) {
       iSoldiers++;
     }
@@ -1150,7 +1150,7 @@ void NotifyPlayersOfNewEnemies() {
     for (i = gTacticalStatus.Team[OUR_TEAM].bFirstID; i <= gTacticalStatus.Team[OUR_TEAM].bLastID;
          i++) {  // find a merc that is aware.
       pSoldier = MercPtrs[i];
-      if (pSoldier->bInSector && pSoldier->bActive && pSoldier->bLife >= OKLIFE) {
+      if (pSoldier->bInSector && IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE) {
         iSoldiers++;
       }
     }
@@ -1160,7 +1160,7 @@ void NotifyPlayersOfNewEnemies() {
     for (i = gTacticalStatus.Team[OUR_TEAM].bFirstID; i <= gTacticalStatus.Team[OUR_TEAM].bLastID;
          i++) {  // find a merc that is aware.
       pSoldier = MercPtrs[i];
-      if (pSoldier->bInSector && pSoldier->bActive && pSoldier->bLife >= OKLIFE &&
+      if (pSoldier->bInSector && IsSolActive(pSoldier) && pSoldier->bLife >= OKLIFE &&
           ((pSoldier->bBreath >= OKBREATH) || fIgnoreBreath)) {
         if (!iChosenSoldier) {
           // ATE: This is to allow special handling of initial heli drop
@@ -1699,7 +1699,7 @@ BOOLEAN OnlyHostileCivsInSector() {
   for (i = gTacticalStatus.Team[CIV_TEAM].bFirstID; i <= gTacticalStatus.Team[CIV_TEAM].bLastID;
        i++) {
     pSoldier = MercPtrs[i];
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       if (!pSoldier->bNeutral) {
         fHostileCivs = TRUE;
         break;
@@ -1713,7 +1713,7 @@ BOOLEAN OnlyHostileCivsInSector() {
   for (i = gTacticalStatus.Team[ENEMY_TEAM].bFirstID; i <= gTacticalStatus.Team[ENEMY_TEAM].bLastID;
        i++) {
     pSoldier = MercPtrs[i];
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       if (!pSoldier->bNeutral) {
         return FALSE;
       }
@@ -1722,7 +1722,7 @@ BOOLEAN OnlyHostileCivsInSector() {
   for (i = gTacticalStatus.Team[CREATURE_TEAM].bFirstID;
        i <= gTacticalStatus.Team[CREATURE_TEAM].bLastID; i++) {
     pSoldier = MercPtrs[i];
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       if (!pSoldier->bNeutral) {
         return FALSE;
       }
@@ -1731,7 +1731,7 @@ BOOLEAN OnlyHostileCivsInSector() {
   for (i = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
        i <= gTacticalStatus.Team[MILITIA_TEAM].bLastID; i++) {
     pSoldier = MercPtrs[i];
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       if (!pSoldier->bNeutral) {
         return FALSE;
       }

@@ -1219,7 +1219,7 @@ BOOLEAN IsMercOnCurrentSquad(struct SOLDIERTYPE *pSoldier) {
   }
 
   // active grunt?
-  if (pSoldier->bActive == FALSE) {
+  if (IsSolActive(pSoldier) == FALSE) {
     // no
     return (FALSE);
   }

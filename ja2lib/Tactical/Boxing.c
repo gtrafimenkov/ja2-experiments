@@ -2,6 +2,7 @@
 
 #include "Laptop/History.h"
 #include "SGP/Random.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/AnimationData.h"
@@ -375,7 +376,7 @@ BOOLEAN AnotherFightPossible(void) {
   ubLoop = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   pSoldier = MercPtrs[ubLoop];
   for (; ubLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; ubLoop++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife > (OKLIFE + 5) &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife > (OKLIFE + 5) &&
         !pSoldier->bCollapsed) {
       return (TRUE);
     }

@@ -12,6 +12,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "StrUtils.h"
 #include "Tactical/Faces.h"
 #include "Tactical/Interface.h"
@@ -396,7 +397,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, INT16 sFaceX, INT16 sFaceY,
   BOOLEAN fDoFace = FALSE;
   UINT8 ubVehicleType = 0;
 
-  if (pSoldier->bActive) {
+  if (IsSolActive(pSoldier)) {
     if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
       // get the type of vehicle
       ubVehicleType = pVehicleList[pSoldier->bVehicleID].ubVehicleType;

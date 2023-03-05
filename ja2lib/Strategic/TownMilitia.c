@@ -711,7 +711,7 @@ void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrain
     pSoldier = GetMercFromCharacterList(iCounter);
 
     // valid soldier?
-    if (pSoldier->bActive == FALSE) {
+    if (IsSolActive(pSoldier) == FALSE) {
       continue;
     }
 
@@ -777,7 +777,7 @@ void HandleContinueOfTownTraining(void) {
     // get the soldier
     pSoldier = GetSoldierByID(giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]);
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       fContinueEventPosted = TRUE;
       SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_CONTINUE_TRAINING_MILITIA,
                                     pSoldier->ubProfile, 0, 0, 0, 0);
@@ -921,7 +921,7 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector) {
   for (iCounter = range.firstIndex; iCounter <= range.lastIndex; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->bAssignment == TRAIN_TOWN) {
         if ((SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) == ubSector) &&
             (GetSolSectorZ(pSoldier) == 0)) {

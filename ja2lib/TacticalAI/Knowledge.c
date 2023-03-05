@@ -1,3 +1,4 @@
+#include "Soldier.h"
 #include "Strategic/Quests.h"
 #include "Tactical/LOS.h"
 #include "Tactical/OppList.h"
@@ -28,7 +29,7 @@ void CallAvailableEnemiesTo(INT16 sGridNo) {
         iLoop2 = gTacticalStatus.Team[iLoop].bFirstID;
         for (pSoldier = MercPtrs[iLoop2]; iLoop2 <= gTacticalStatus.Team[iLoop].bLastID;
              iLoop2++, pSoldier++) {
-          if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
+          if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
             SetNewSituation(pSoldier);
             WearGasMaskIfAvailable(pSoldier);
           }
@@ -55,7 +56,7 @@ void CallAvailableTeamEnemiesTo(INT16 sGridno, INT8 bTeam) {
       iLoop2 = gTacticalStatus.Team[bTeam].bFirstID;
       for (pSoldier = MercPtrs[iLoop2]; iLoop2 <= gTacticalStatus.Team[bTeam].bLastID;
            iLoop2++, pSoldier++) {
-        if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
+        if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
           SetNewSituation(pSoldier);
           WearGasMaskIfAvailable(pSoldier);
         }
@@ -83,7 +84,7 @@ void CallAvailableKingpinMenTo(INT16 sGridNo) {
     iLoop2 = gTacticalStatus.Team[CIV_TEAM].bFirstID;
     for (pSoldier = MercPtrs[iLoop2]; iLoop2 <= gTacticalStatus.Team[CIV_TEAM].bLastID;
          iLoop2++, pSoldier++) {
-      if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
+      if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
           pSoldier->ubCivilianGroup == KINGPIN_CIV_GROUP && pSoldier->ubProfile == NO_PROFILE) {
         SetNewSituation(pSoldier);
       }
@@ -100,7 +101,7 @@ void CallEldinTo(INT16 sGridNo) {
   if (gTacticalStatus.Team[CIV_TEAM].bTeamActive) {
     // new situation for Eldin
     pSoldier = FindSoldierByProfileID(ELDIN, FALSE);
-    if (pSoldier && pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
+    if (pSoldier && IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
         (pSoldier->bAlertStatus == STATUS_GREEN ||
          pSoldier->ubNoiseVolume < (MAX_MISC_NOISE_DURATION / 2))) {
       if (SoldierToLocationLineOfSightTest(pSoldier, sGridNo, (UINT8)MaxDistanceVisible(), TRUE)) {

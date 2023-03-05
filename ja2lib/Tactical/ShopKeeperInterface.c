@@ -835,7 +835,7 @@ BOOLEAN EnterShopKeeperInterface() {
        ubCnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; ubCnt++) {
     pSoldier = MercPtrs[ubCnt];
 
-    if (pSoldier->bActive && (pSoldier->ubProfile != NO_PROFILE) &&
+    if (IsSolActive(pSoldier) && (pSoldier->ubProfile != NO_PROFILE) &&
         !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && !AM_A_ROBOT(pSoldier)) {
       // remember whose face is in this slot
       gubArrayOfEmployedMercs[gubNumberMercsInArray] = pSoldier->ubProfile;
@@ -6250,7 +6250,7 @@ BOOLEAN CanMercInteractWithSelectedShopkeeper(struct SOLDIERTYPE *pSoldier) {
     return (FALSE);
   }
 
-  if (pSoldier->bActive && pSoldier->bInSector && IsMercOnCurrentSquad(pSoldier) &&
+  if (IsSolActive(pSoldier) && pSoldier->bInSector && IsMercOnCurrentSquad(pSoldier) &&
       (pSoldier->bLife >= OKLIFE) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
       !AM_A_ROBOT(pSoldier)) {
     sDestGridNo = pShopkeeper->sGridNo;

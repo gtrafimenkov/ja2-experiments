@@ -142,7 +142,7 @@ void DecayTacticalMoraleModifiers(void) {
        ubLoop++, pSoldier++) {
     // if the merc is active, in Arulco
     // CJC: decay modifiers while asleep! or POW!
-    if (pSoldier->bActive && pSoldier->ubProfile != NO_PROFILE &&
+    if (IsSolActive(pSoldier) && pSoldier->ubProfile != NO_PROFILE &&
         !(pSoldier->bAssignment == IN_TRANSIT || pSoldier->bAssignment == ASSIGNMENT_DEAD)) {
       // only let morale mod decay if it is positive while merc is a POW
       if (pSoldier->bAssignment == ASSIGNMENT_POW && pSoldier->bTacticalMoraleMod < 0) {
@@ -168,7 +168,7 @@ void DecayTacticalMoraleModifiers(void) {
               } else {
                 fHandleNervous = FALSE;
               }
-            } else if (pSoldier->bActive && pSoldier->bInSector) {
+            } else if (IsSolActive(pSoldier) && pSoldier->bInSector) {
               if (DistanceToClosestFriend(pSoldier) > NERVOUS_RADIUS) {
                 fHandleNervous = TRUE;
               } else {
@@ -223,7 +223,7 @@ void DecayStrategicMoraleModifiers(void) {
        ubLoop++, pSoldier++) {
     // if the merc is active, in Arulco
     // CJC: decay modifiers while asleep! or POW!
-    if (pSoldier->bActive && pSoldier->ubProfile != NO_PROFILE &&
+    if (IsSolActive(pSoldier) && pSoldier->ubProfile != NO_PROFILE &&
         !(pSoldier->bAssignment == IN_TRANSIT || pSoldier->bAssignment == ASSIGNMENT_DEAD)) {
       // only let morale mod decay if it is positive while merc is a POW
       if (pSoldier->bAssignment == ASSIGNMENT_POW && pSoldier->bStrategicMoraleMod < 0) {
@@ -265,7 +265,7 @@ void UpdateSoldierMorale(struct SOLDIERTYPE *pSoldier, UINT8 ubType, INT8 bMoral
   MERCPROFILESTRUCT *pProfile;
   INT32 iMoraleModTotal;
 
-  if (!pSoldier->bActive || (pSoldier->bLife < CONSCIOUSNESS) ||
+  if (!IsSolActive(pSoldier) || (pSoldier->bLife < CONSCIOUSNESS) ||
       (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || AM_A_ROBOT(pSoldier) || AM_AN_EPC(pSoldier)) {
     return;
   }
@@ -664,7 +664,7 @@ void HourlyMoraleUpdate(void) {
   // loop through all mercs to calculate their morale
   for (pSoldier = MercPtrs[bMercID]; bMercID <= bLastTeamID; bMercID++, pSoldier++) {
     // if the merc is active, in Arulco, and conscious, not POW
-    if (pSoldier->bActive && pSoldier->ubProfile != NO_PROFILE &&
+    if (IsSolActive(pSoldier) && pSoldier->ubProfile != NO_PROFILE &&
         !(pSoldier->bAssignment == IN_TRANSIT || pSoldier->fMercAsleep == TRUE ||
           pSoldier->bAssignment == ASSIGNMENT_DEAD || pSoldier->bAssignment == ASSIGNMENT_POW)) {
       // calculate the guy's opinion of the people he is with

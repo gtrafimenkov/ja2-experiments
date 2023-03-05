@@ -1948,7 +1948,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
                   if (CHEATER_CHEAT_LEVEL()) {
                     for (pSoldier = MercPtrs[gbPlayerNum], cnt = 0;
                          cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID; cnt++, pSoldier++) {
-                      if (pSoldier->bActive && pSoldier->bLife > 0) {
+                      if (IsSolActive(pSoldier) && pSoldier->bLife > 0) {
                         // Get APs back...
                         CalcNewActionPoints(pSoldier);
 
@@ -2513,7 +2513,7 @@ void GetKeyboardInput(UINT32 *puiNewEvent) {
             if (CHEATER_CHEAT_LEVEL() && gusSelectedSoldier != NOBODY) {
               for (pSoldier = MercPtrs[gbPlayerNum], cnt = 0;
                    cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID; cnt++, pSoldier++) {
-                if (pSoldier->bActive && pSoldier->bLife > 0) {
+                if (IsSolActive(pSoldier) && pSoldier->bLife > 0) {
                   // Get breath back
                   pSoldier->bBreath = pSoldier->bBreathMax;
 
@@ -3840,7 +3840,7 @@ void TestMeanWhile(INT32 iID) {
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
          cnt++, pSoldier++) {
       // Are we a POW in this sector?
-      if (pSoldier->bActive && pSoldier->bInSector) {
+      if (IsSolActive(pSoldier) && pSoldier->bInSector) {
         ChangeSoldiersAssignment(pSoldier, ASSIGNMENT_POW);
 
         pSoldier->sSectorX = 7;
@@ -3903,7 +3903,7 @@ void HandleStanceChangeFromUIKeys(UINT8 ubAnimHeight) {
     cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
          cnt++, pSoldier++) {
-      if (pSoldier->bActive && pSoldier->bInSector) {
+      if (IsSolActive(pSoldier) && pSoldier->bInSector) {
         if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
           UIHandleSoldierStanceChange(pSoldier->ubID, ubAnimHeight);
         }
@@ -3951,7 +3951,7 @@ void HandleStealthChangeFromUIKeys() {
     cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
          cnt++, pSoldier++) {
-      if (pSoldier->bActive && !AM_A_ROBOT(pSoldier) && pSoldier->bInSector) {
+      if (IsSolActive(pSoldier) && !AM_A_ROBOT(pSoldier) && pSoldier->bInSector) {
         if (pSoldier->uiStatusFlags & SOLDIER_MULTI_SELECTED) {
           ToggleStealthMode(pSoldier);
         }
@@ -3981,7 +3981,7 @@ void TestCapture() {
   // loop through sodliers and pick 3 lucky ones....
   for (cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID, pSoldier = MercPtrs[cnt];
        cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID; cnt++, pSoldier++) {
-    if (pSoldier->bLife >= OKLIFE && pSoldier->bActive && pSoldier->bInSector) {
+    if (pSoldier->bLife >= OKLIFE && IsSolActive(pSoldier) && pSoldier->bInSector) {
       if (uiNumChosen < 3) {
         EnemyCapturesPlayerSoldier(pSoldier);
 

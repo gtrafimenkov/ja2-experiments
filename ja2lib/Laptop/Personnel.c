@@ -714,7 +714,7 @@ BOOLEAN RenderPersonnelPictures(void) {
     cnt = gTacticalStatus.Team[pSoldier->bTeam].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[pSoldier->bTeam].bLastID;
          cnt++, pSoldier++) {
-      if (pSoldier->bLife >= OKLIFE && pSoldier->bActive) {
+      if (pSoldier->bLife >= OKLIFE && IsSolActive(pSoldier)) {
         fFound = TRUE;
         iStartPersonId = cnt;
         break;
@@ -2579,7 +2579,7 @@ INT32 GetTotalDailyCostOfCurrentTeam(void) {
   for (pSoldier = MercPtrs[0]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; cnt++) {
     pSoldier = MercPtrs[cnt];
 
-    if ((pSoldier->bActive) && (pSoldier->bLife > 0)) {
+    if ((IsSolActive(pSoldier)) && (pSoldier->bLife > 0)) {
       // valid soldier, get cost
       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
         // daily rate
@@ -2621,7 +2621,7 @@ INT32 GetLowestDailyCostOfCurrentTeam(void) {
   for (pSoldier = MercPtrs[0]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; cnt++) {
     pSoldier = MercPtrs[cnt];
 
-    if ((pSoldier->bActive) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
+    if ((IsSolActive(pSoldier)) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
         (pSoldier->bLife > 0)) {
       // valid soldier, get cost
       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
@@ -2674,7 +2674,7 @@ INT32 GetHighestDailyCostOfCurrentTeam(void) {
   for (pSoldier = MercPtrs[0]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; cnt++) {
     pSoldier = MercPtrs[cnt];
 
-    if ((pSoldier->bActive) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
+    if ((IsSolActive(pSoldier)) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
         (pSoldier->bLife > 0)) {
       // valid soldier, get cost
       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
@@ -4890,7 +4890,7 @@ INT32 GetIdOfFirstDisplayedMerc() {
     // cnt = gTacticalStatus.Team[ pSoldier->bTeam ].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[pSoldier->bTeam].bLastID;
          cnt++, pSoldier++) {
-      if ((pSoldier->bActive) && (pSoldier->bLife > 0)) {
+      if ((IsSolActive(pSoldier)) && (pSoldier->bLife > 0)) {
         return (0);
       }
     }
@@ -4914,7 +4914,7 @@ INT32 GetIdOfThisSlot(INT32 iSlot) {
     cnt = gTacticalStatus.Team[pSoldier->bTeam].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[pSoldier->bTeam].bLastID;
          cnt++, pSoldier++) {
-      if ((pSoldier->bActive)) {
+      if ((IsSolActive(pSoldier))) {
         // same character as slot, return this value
         if (iCounter == iSlot) {
           return (cnt);

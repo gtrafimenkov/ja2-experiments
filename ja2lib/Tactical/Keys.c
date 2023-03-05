@@ -1125,7 +1125,7 @@ BOOLEAN AllMercsLookForDoor(INT16 sGridNo, BOOLEAN fUpdateValue) {
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
     // ATE: Ok, lets check for some basic things here!
-    if (pSoldier->bLife >= OKLIFE && pSoldier->sGridNo != NOWHERE && pSoldier->bActive &&
+    if (pSoldier->bLife >= OKLIFE && pSoldier->sGridNo != NOWHERE && IsSolActive(pSoldier) &&
         pSoldier->bInSector) {
       // is he close enough to see that gridno if he turns his head?
       sDistVisible =
@@ -1710,7 +1710,7 @@ void ExamineDoorsOnEnteringSector() {
   // look for all mercs on the same team,
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[LAST_TEAM].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       if (pSoldier->bInSector) {
         fOK = TRUE;
         break;
@@ -1761,7 +1761,7 @@ void HandleDoorsChangeWhenEnteringSectorCurrentlyLoaded() {
   // look for all mercs on the same team,
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[LAST_TEAM].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector) {
       fOK = TRUE;
       break;
     }
@@ -1771,7 +1771,7 @@ void HandleDoorsChangeWhenEnteringSectorCurrentlyLoaded() {
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && gbMercIsNewInThisSector[cnt]) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && gbMercIsNewInThisSector[cnt]) {
       iNumNewMercs++;
     }
   }

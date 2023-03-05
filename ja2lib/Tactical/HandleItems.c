@@ -7,6 +7,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/MapScreenHelicopter.h"
 #include "Strategic/MapScreenInterfaceMapInventory.h"
 #include "Strategic/Quests.h"
@@ -4024,7 +4025,7 @@ void MakeNPCGrumpyForMinorOffense(struct SOLDIERTYPE *pSoldier,
 }
 
 void TestPotentialOwner(struct SOLDIERTYPE *pSoldier) {
-  if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
+  if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
     if (SoldierToSoldierLineOfSightTest(
             pSoldier, gpTempSoldier,
             (UINT8)DistanceVisible(pSoldier, DIRECTION_IRRELEVANT, 0, gpTempSoldier->sGridNo,

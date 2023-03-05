@@ -5672,7 +5672,7 @@ BOOLEAN CanMercsScoutThisSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
     pSoldier = GetSoldierByID(iCounter);
 
     // is the soldier active
-    if (pSoldier->bActive == FALSE) {
+    if (IsSolActive(pSoldier) == FALSE) {
       continue;
     }
 
@@ -5762,7 +5762,7 @@ UINT8 NumActiveCharactersInSector( INT16 sSectorX, INT16 sSectorY, INT16 bSector
                 {
                         pSoldier = &( Menptr[ gCharactersList[ iCounter ].usSolID ] );
 
-                        if( pSoldier->bActive && ( pSoldier->bLife > 0 ) &&
+                        if( IsSolActive(pSoldier) && ( pSoldier->bLife > 0 ) &&
                                         ( pSoldier->bAssignment != ASSIGNMENT_POW ) && (
 pSoldier->bAssignment != IN_TRANSIT ) )
                         {

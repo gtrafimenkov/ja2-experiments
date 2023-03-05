@@ -1024,7 +1024,7 @@ void DailyUpdateOfInsuredMercs() {
 
   for (pSoldier = MercPtrs[cnt]; cnt <= bLastTeamID; cnt++, pSoldier++) {
     // if the soldier is in the team array
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       // if the merc has life insurance
       if (pSoldier->usLifeInsurance) {
         // if the merc wasn't just hired
@@ -1348,7 +1348,7 @@ void InsuranceContractEndGameShutDown() {
 
 BOOLEAN MercIsInsurable(struct SOLDIERTYPE *pSoldier) {
   // only A.I.M. mercs currently on player's team
-  if ((pSoldier->bActive) && (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC)) {
+  if ((IsSolActive(pSoldier)) && (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC)) {
     // with more than one day left on their employment contract are eligible for insurance
     // the second part is because the insurance doesn't pay for any working day already started at
     // time of death

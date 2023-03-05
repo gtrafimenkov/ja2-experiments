@@ -482,7 +482,7 @@ void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList() {
 
     pSoldier = GetMercFromCharacterList(iCounter);
 
-    if (pSoldier->bActive == FALSE) {
+    if (IsSolActive(pSoldier) == FALSE) {
       continue;
     }
 
@@ -508,7 +508,7 @@ void ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(INT16 sSectorX, I
 
     pSoldier = GetMercFromCharacterList(iCounter);
 
-    if (pSoldier->bActive == FALSE) {
+    if (IsSolActive(pSoldier) == FALSE) {
       continue;
     }
 
@@ -2428,7 +2428,7 @@ void SelectSquadForMovement(INT32 iSquadNumber) {
       for (iCount = 0; iCount < NUMBER_OF_SOLDIERS_PER_SQUAD; iCount++) {
         pSoldier = Squad[iSquadNumber][iCount];
 
-        if (pSoldier && pSoldier->bActive) {
+        if (pSoldier && IsSolActive(pSoldier)) {
           // is he able & allowed to move?  (Report only the first reason for failure encountered)
           if (CanMoveBoxSoldierMoveStrategically(pSoldier, fFirstFailure)) {
             SelectSoldierForMovement(pSoldier);
@@ -2462,7 +2462,7 @@ void DeselectSquadForMovement(INT32 iSquadNumber) {
       for (iCount = 0; iCount < NUMBER_OF_SOLDIERS_PER_SQUAD; iCount++) {
         pSoldier = Squad[iSquadNumber][iCount];
 
-        if (pSoldier && pSoldier->bActive) {
+        if (pSoldier && IsSolActive(pSoldier)) {
           DeselectSoldierForMovement(pSoldier);
         }
       }
@@ -2765,7 +2765,7 @@ void SetUpMovingListsForSector(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ) {
     if (gCharactersList[iCounter].fValid) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
-      if ((pSoldier->bActive) && (pSoldier->bAssignment != IN_TRANSIT) &&
+      if ((IsSolActive(pSoldier)) && (pSoldier->bAssignment != IN_TRANSIT) &&
           (pSoldier->bAssignment != ASSIGNMENT_POW) && (GetSolSectorX(pSoldier) == sSectorX) &&
           (GetSolSectorY(pSoldier) == sSectorY) && (GetSolSectorZ(pSoldier) == sSectorZ)) {
         if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
@@ -3358,7 +3358,7 @@ BOOLEAN CanMoveBoxSoldierMoveStrategically(struct SOLDIERTYPE *pSoldier,
 
   // valid soldier?
   Assert(pSoldier);
-  Assert(pSoldier->bActive);
+  Assert(IsSolActive(pSoldier));
 
   if (CanCharacterMoveInStrategic(pSoldier, &bErrorNumber)) {
     return (TRUE);
@@ -3760,7 +3760,7 @@ void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
     return;
   }
 
-  if (pSoldier->bActive == FALSE) {
+  if (IsSolActive(pSoldier) == FALSE) {
     return;
   }
 
@@ -4616,7 +4616,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
 
   // valid soldier?
   Assert(pSoldier);
-  Assert(pSoldier->bActive);
+  Assert(IsSolActive(pSoldier));
 
   // NOTE: Check for the most permanent conditions first, and the most easily remedied ones last!
   // In case several cases apply, only the reason found first will be given, so make it a good one!

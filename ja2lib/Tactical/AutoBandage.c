@@ -106,7 +106,7 @@ void BeginAutoBandage() {
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
     // if the soldier isn't active or in sector, we have problems..leave
-    if (!(pSoldier->bActive) || !(pSoldier->bInSector) ||
+    if (!(IsSolActive(pSoldier)) || !(pSoldier->bInSector) ||
         (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->bAssignment == VEHICLE)) {
       continue;
     }
@@ -167,7 +167,7 @@ void HandleAutoBandagePending() {
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID;
          cnt++, pSoldier++) {
       // Are we in sector?
-      if (pSoldier->bActive) {
+      if (IsSolActive(pSoldier)) {
         if (GetSolSectorX(pSoldier) == gWorldSectorX && GetSolSectorY(pSoldier) == gWorldSectorY &&
             GetSolSectorZ(pSoldier) == gbWorldSectorZ && !pSoldier->fBetweenSectors) {
           if (pSoldier->ubPendingAction != NO_PENDING_ACTION) {
@@ -274,7 +274,7 @@ BOOLEAN CreateAutoBandageString(void) {
 
   cnt = gTacticalStatus.Team[OUR_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
         !(pSoldier->bCollapsed) && pSoldier->bMedical > 0 &&
         FindObjClass(pSoldier, IC_MEDKIT) != NO_SLOT) {
       ubDoctor[ubDoctors] = pSoldier->ubID;
@@ -361,7 +361,7 @@ void AutoBandage(BOOLEAN fStart) {
     cnt = gTacticalStatus.Team[OUR_TEAM].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID;
          cnt++, pSoldier++) {
-      if (pSoldier->bActive) {
+      if (IsSolActive(pSoldier)) {
         pSoldier->bSlotItemTakenFrom = NO_SLOT;
         pSoldier->ubAutoBandagingMedic = NOBODY;
       }
@@ -398,7 +398,7 @@ void AutoBandage(BOOLEAN fStart) {
     cnt = gTacticalStatus.Team[OUR_TEAM].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID;
          cnt++, pSoldier++) {
-      if (pSoldier->bActive) {
+      if (IsSolActive(pSoldier)) {
         ActionDone(pSoldier);
         if (pSoldier->bSlotItemTakenFrom != NO_SLOT) {
           // swap our old hand item back to the main hand

@@ -835,7 +835,7 @@ BOOLEAN ReCreateSoldierLight(struct SOLDIERTYPE *pSoldier) {
     return (FALSE);
   }
 
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
     return (FALSE);
   }
 
@@ -5995,7 +5995,7 @@ BOOLEAN DoMercBattleSound(struct SOLDIERTYPE *pSoldier, UINT8 ubBattleSoundID) {
 BOOLEAN PreloadSoldierBattleSounds(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemove) {
   UINT32 cnt;
 
-  CHECKF(pSoldier->bActive != FALSE);
+  CHECKF(IsSolActive(pSoldier) != FALSE);
 
   for (cnt = 0; cnt < NUM_MERC_BATTLE_SOUNDS; cnt++) {
     // OK, build file and play!
@@ -6660,7 +6660,7 @@ void RevivePlayerTeam() {
 void ReviveSoldier(struct SOLDIERTYPE *pSoldier) {
   INT16 sX, sY;
 
-  if (pSoldier->bLife < OKLIFE && pSoldier->bActive) {
+  if (pSoldier->bLife < OKLIFE && IsSolActive(pSoldier)) {
     // If dead or unconscious, revive!
     pSoldier->uiStatusFlags &= (~SOLDIER_DEAD);
 
@@ -8936,7 +8936,7 @@ BOOLEAN ControllingRobot(struct SOLDIERTYPE *pSoldier) {
   struct SOLDIERTYPE *pRobot;
   INT8 bPos;
 
-  if (!pSoldier->bActive) {
+  if (!IsSolActive(pSoldier)) {
     return (FALSE);
   }
 
@@ -9225,7 +9225,7 @@ void DebugValidateSoldierData() {
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       // OK, first check for alive people
       // Don't do this check if we are a vehicle...
       if (pSoldier->bLife > 0 && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
@@ -9305,7 +9305,7 @@ void SetSoldierAsUnderAiControl(struct SOLDIERTYPE *pSoldierToSet) {
   cnt = gTacticalStatus.Team[OUR_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[LAST_TEAM].bLastID;
        cnt++, pSoldier++) {
-    if (pSoldier->bActive) {
+    if (IsSolActive(pSoldier)) {
       pSoldier->uiStatusFlags &= ~SOLDIER_UNDERAICONTROL;
     }
   }
@@ -9333,7 +9333,7 @@ void EnableDisableSoldierLightEffects(BOOLEAN fEnableLights) {
   cnt = gTacticalStatus.Team[OUR_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; cnt++, pSoldier++) {
     // if the soldier is in the sector
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE) {
       // if we are to enable the lights
       if (fEnableLights) {
         // Add the light around the merc

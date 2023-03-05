@@ -19,6 +19,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "SysGlobals.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/AnimationData.h"
@@ -1304,8 +1305,8 @@ void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT
                   }
 
                   // IF we are not active, or are a placeholder for multi-tile animations do nothing
-                  // if ( !pSoldier->bActive  )
-                  if (!pSoldier->bActive || (uiLevelNodeFlags & LEVELNODE_MERCPLACEHOLDER)) {
+                  // if ( !IsSolActive(pSoldier)  )
+                  if (!IsSolActive(pSoldier) || (uiLevelNodeFlags & LEVELNODE_MERCPLACEHOLDER)) {
                     pNode = pNode->pNext;
                     continue;
                   }

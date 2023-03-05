@@ -13,6 +13,7 @@
 #include "TacticalAI/AIList.h"
 
 #include "SGP/Debug.h"
+#include "Soldier.h"
 #include "Tactical/Interface.h"
 #include "Tactical/OppList.h"
 #include "Tactical/Overhead.h"
@@ -158,7 +159,7 @@ BOOLEAN SatisfiesAIListConditions(struct SOLDIERTYPE* pSoldier, UINT8* pubDoneCo
     return (FALSE);
   }
 
-  if (!(pSoldier->bActive && pSoldier->bInSector)) {
+  if (!(IsSolActive(pSoldier) && pSoldier->bInSector)) {
     // the check for
     return (FALSE);
   }

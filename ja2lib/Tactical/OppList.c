@@ -682,7 +682,7 @@ void HandleSight(struct SOLDIERTYPE *pSoldier, UINT8 ubSightFlags) {
   struct SOLDIERTYPE *pThem;
   INT8 bTempNewSituation;
 
-  if (!pSoldier->bActive || !pSoldier->bInSector || pSoldier->uiStatusFlags & SOLDIER_DEAD) {
+  if (!IsSolActive(pSoldier) || !pSoldier->bInSector || pSoldier->uiStatusFlags & SOLDIER_DEAD) {
     // I DON'T THINK SO!
     return;
   }
@@ -855,7 +855,7 @@ void OurTeamRadiosRandomlyAbout(UINT8 ubAbout) {
   for (pSoldier = MercPtrs[iLoop]; iLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        iLoop++, pSoldier++) {
     // if this merc is active, in this sector, and well enough to look
-    if (pSoldier->bActive && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE))
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE))
       // put him on our list, and increment the counter
       radioMan[radioCnt++] = (INT8)iLoop;
   }
@@ -1461,7 +1461,7 @@ INT16 ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOpponent
  */
 
   // if we're somehow looking while inactive, at base, dead or dying
-  if (!pSoldier->bActive || !pSoldier->bInSector || (pSoldier->bLife < OKLIFE)) {
+  if (!IsSolActive(pSoldier) || !pSoldier->bInSector || (pSoldier->bLife < OKLIFE)) {
     /*
     #ifdef BETAVERSION
        sprintf(tempstr,"ManLooksForMan: ERROR - %s is looking while inactive/at base/dead/dying.
@@ -1709,7 +1709,7 @@ NumMessage("ManSeesMan: ERROR - oppPtr->guynum = ",oppPtr->guynum);
   }
 
   // if we're somehow looking while inactive, at base, dying or already dead
-  if (!pSoldier->bActive || !pSoldier->bInSector || (pSoldier->bLife < OKLIFE)) {
+  if (!IsSolActive(pSoldier) || !pSoldier->bInSector || (pSoldier->bLife < OKLIFE)) {
     /*
 #ifdef BETAVERSION
 sprintf(tempstr,"ManSeesMan: ERROR - %s is SEEING ManSeesMan while inactive/at
@@ -2387,7 +2387,7 @@ void UpdatePublic(UINT8 ubTeam, UINT8 ubID, INT8 bNewOpplist, INT16 sGridno, INT
 
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[ubTeam].bLastID; cnt++, pSoldier++) {
       // if this soldier is active, in this sector, and well enough to look
-      if (pSoldier->bActive && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
+      if (IsSolActive(pSoldier) && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
           !(pSoldier->uiStatusFlags & SOLDIER_GASSED)) {
         // if soldier isn't aware of guynum, give him another chance to see
         if (pSoldier->bOppList[ubID] == NOT_HEARD_OR_SEEN) {
@@ -2591,7 +2591,7 @@ void BetweenTurnsVisibilityAdjustments(void) {
 
   // make all soldiers on other teams that are no longer seen not visible
   for (cnt = 0, pSoldier = Menptr; cnt < MAXMERCS; cnt++, pSoldier++) {
-    if (pSoldier->bActive && pSoldier->bInSector && pSoldier->bLife) {
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
 #ifdef WE_SEE_WHAT_MILITIA_SEES_AND_VICE_VERSA
       if (!PTR_OURTEAM && pSoldier->bTeam != MILITIA_TEAM)
 #else
@@ -4618,8 +4618,9 @@ void ProcessNoise(UINT8 ubNoiseMaker, INT16 sGridNo, INT8 bLevel, UINT8 ubTerrTy
     for (bLoop = gTacticalStatus.Team[bTeam].bFirstID, pSoldier = Menptr + bLoop;
          bLoop <= gTacticalStatus.Team[bTeam].bLastID; bLoop++, pSoldier++) {
       // if this "listener" is inactive, or in no condition to care
-      if (!pSoldier->bActive || !pSoldier->bInSector || pSoldier->uiStatusFlags & SOLDIER_DEAD ||
-          (pSoldier->bLife < OKLIFE) || pSoldier->ubBodyType == LARVAE_MONSTER) {
+      if (!IsSolActive(pSoldier) || !pSoldier->bInSector ||
+          pSoldier->uiStatusFlags & SOLDIER_DEAD || (pSoldier->bLife < OKLIFE) ||
+          pSoldier->ubBodyType == LARVAE_MONSTER) {
         continue;  // skip him!
       }
 
@@ -5798,7 +5799,7 @@ void CheckForAlertWhenEnemyDies(struct SOLDIERTYPE *pDyingSoldier) {
        ubID <= gTacticalStatus.Team[pDyingSoldier->bTeam].bLastID; ubID++) {
     pSoldier = MercPtrs[ubID];
 
-    if (pSoldier->bActive && pSoldier->bInSector && (pSoldier != pDyingSoldier) &&
+    if (IsSolActive(pSoldier) && pSoldier->bInSector && (pSoldier != pDyingSoldier) &&
         (pSoldier->bLife >= OKLIFE) && (pSoldier->bAlertStatus < STATUS_RED)) {
       // this guy might have seen the man die
 
@@ -5834,7 +5835,7 @@ BOOLEAN ArmyKnowsOfPlayersPresence(void) {
          ubID <= gTacticalStatus.Team[ENEMY_TEAM].bLastID; ubID++) {
       pSoldier = MercPtrs[ubID];
 
-      if (pSoldier->bActive && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
+      if (IsSolActive(pSoldier) && pSoldier->bInSector && (pSoldier->bLife >= OKLIFE) &&
           (pSoldier->bAlertStatus >= STATUS_RED)) {
         return (TRUE);
       }
@@ -6089,7 +6090,7 @@ void MakeBloodcatsHostile(void) {
 
   for (pSoldier = MercPtrs[iLoop]; iLoop <= gTacticalStatus.Team[CREATURE_TEAM].bLastID;
        iLoop++, pSoldier++) {
-    if (pSoldier->ubBodyType == BLOODCAT && pSoldier->bActive && pSoldier->bInSector &&
+    if (pSoldier->ubBodyType == BLOODCAT && IsSolActive(pSoldier) && pSoldier->bInSector &&
         pSoldier->bLife > 0) {
       SetSoldierNonNeutral(pSoldier);
       RecalculateOppCntsDueToNoLongerNeutral(pSoldier);
