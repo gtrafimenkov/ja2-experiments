@@ -774,34 +774,6 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
       return;
   }
 
-  /* Delayed loyalty effects elimininated.  Sep.12/98.  ARM
-          // figure out how long before the news of the murder spreads and lowers town loyalty
-          if (bSeenState == 0)
-          {
-                  // nobody saw nothing.  Will be some time before the grisly remains are
-     discovered... uiLoyaltyEffectDelay = 60 * (1 + Random(12));	// 1-12 hrs in minutes
-          }
-          else
-          {
-                  // there are witnesses, news reported & spread very quickly
-                  uiLoyaltyEffectDelay = 30;
-          }
-
-
-          // create the event value, with bTownId & for iLoyaltyChange as data
-          uiValue = BuildLoyaltyEventValue( bTownId , iLoyaltyChange, fIncrement );
-          // post the event
-          AddStrategicEvent( EVENT_TOWN_LOYALTY_UPDATE, GetWorldTotalMin() + uiLoyaltyEffectDelay,
-     uiValue );
-
-          // ideally, we'd like to also call AffectAllTownsLoyaltyByDistanceFrom() here to spread
-     the news to all other towns,
-          // but we don't have that available on a delay right now, and it would be a bit of a pain,
-     since we only have 32 bits
-          // of event data to pass in, and that would have to store iLoyaltyChange, sSectorX, and
-     sSectorY (64 bits)
-  */
-
   // if it's a decrement, negate the value
   if (!fIncrement) {
     iLoyaltyChange *= -1;
@@ -843,28 +815,6 @@ void HandleTownLoyaltyForNPCRecruitment(struct SOLDIERTYPE *pSoldier) {
 BOOLEAN HandleLoyaltyAdjustmentForRobbery(struct SOLDIERTYPE *pSoldier) {
   // not to be implemented at this time
   return (FALSE);
-
-  /*
-          // this function will handle robbery by the passed soldiertype of an object from a town
-    he/she is in
-          // it will check LOS code for all civilians around the stealing soldier if any of them
-    have LOS to the soldier
-          // then roll against thief's dexterity, if fail then you were caught( adjust loyalty base
-    on theft and value of the object and if the object is owned by one of the people with LOS) and
-    return a TRUE
-          // otherwise return false.
-
-          TownID bTownId = 0;
-
-          // get town id
-          bTownId = GetTownIdForSector( GetSolSectorX(pSoldier), GetSolSectorY(pSoldier) );
-
-
-          // debug message
-    ScreenMsg( MSG_FONT_RED, MSG_DEBUG, L"Theft not yet implemented.");
-
-          return ( FALSE );
-  */
 }
 
 // handle loyalty adjustment for dmg inflicted on a building
@@ -1124,57 +1074,6 @@ void ReadInDistancesBetweenTowns(void) {
 }
 
 INT32 GetTownDistances(UINT8 ubTown, UINT8 ubTownA) { return (iTownDistances[ubTown][ubTownA]); }
-
-/* Delayed loyalty effects elimininated.  Sep.12/98.  ARM
-void HandleDelayedTownLoyaltyEvent( UINT32 uiValue )
-{
-        TownID bTownId = 0;
-        UINT32 uiLoyaltyChange = 0;
-        BOOLEAN fIncrement = FALSE;
-
-        // first 8 bits are town id, 23 are amount and last is increment or decrement
-
-        // get increment
-        fIncrement = ( BOOLEAN )( GET_TOWN_INCREMENT( iValue ) ) ;
-
-        // town id
-        bTownId = ( INT8 )( GET_TOWN_ID_FOR_LOYALTY( iValue ) );
-
-        // the amount
-        uiLoyaltyChange = ( INT32 )( GET_TOWN_LOYALTY_CHANGE( iValue ) );
-
-        if (fIncrement)
-        {
-                IncrementTownLoyalty( bTownId, uiLoyaltyChange );
-        }
-        else
-        {
-                DecrementTownLoyalty( bTownId, uiLoyaltyChange );
-        }
-}
-
-
-UINT32 BuildLoyaltyEventValue( TownID bTownId, UINT32 uiValue, BOOLEAN fIncrement )
-{
-        UINT32 uiReturnValue  = 0;
-        UINT32 uiTempValue = 0;
-
-        // the town name in 8 most sig bits
-        uiTempValue = ( UINT32 )( bTownValue );
-
-        uiReturnValue += ( uiTempValue << 24 );
-
-        // the incrment decrement amount is
-        uiTempValue = ( UINT32 )( uiValue );
-
-        uiTempValue = ( ( uiTempValue << 8 ) >> 7 );
-        uiReturnValue += uiTempValue;
-
-        uiReturnValue += ( fIncrement != 0 ? 1: 0 );
-
-        return( uiReturnValue );
-}
-*/
 
 BOOLEAN SaveStrategicTownLoyaltyToSaveGameFile(HWFILE hFile) {
   UINT32 uiNumBytesWritten;
