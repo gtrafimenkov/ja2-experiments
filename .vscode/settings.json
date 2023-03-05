@@ -19,6 +19,7 @@
         "drugsandalcohol.h": "c",
         "text.h": "c",
         "mapscreeninterfacebottom.h": "c",
-        "town.h": "c"
+        "town.h": "c",
+        "townmilitia.h": "c"
     }
 }

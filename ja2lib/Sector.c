@@ -21,7 +21,8 @@ SectorID8 SectorID16To8(SectorID16 sectorID) {
   return GetSectorID8(SectorID16_X(sectorID), SectorID16_Y(sectorID));
 }
 
-struct SectorInfo* GetSectorInfoByIndex(SectorID8 sectorIndex) { return &SectorInfo[sectorIndex]; }
+struct SectorInfo* GetSectorInfoByID8(SectorID8 sectorID) { return &SectorInfo[sectorID]; }
+struct SectorInfo* GetSectorInfoByXY(u8 x, u8 y) { return &SectorInfo[GetSectorID8(x, y)]; }
 
 BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
   // if this sector is currently loaded

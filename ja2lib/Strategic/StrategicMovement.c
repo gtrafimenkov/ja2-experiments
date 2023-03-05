@@ -1992,7 +1992,7 @@ void InitiateGroupMovementToNextSector(struct GROUP *pGroup) {
         0, String("Group %d (%s) attempting illegal move from %c%d to %c%d (%s).",
                   pGroup->ubGroupID, (pGroup->fPlayer) ? "Player" : "AI", pGroup->ubSectorY + 'A',
                   pGroup->ubSectorX, pGroup->ubNextY + 'A', pGroup->ubNextX,
-                  gszTerrain[GetSectorInfoByIndex(ubSector)->ubTraversability[ubDirection]]));
+                  gszTerrain[GetSectorInfoByID8(ubSector)->ubTraversability[ubDirection]]));
   }
 
   // add sleep, if any
@@ -2435,7 +2435,7 @@ INT32 GetSectorMvtTimeForGroup(UINT8 ubSector, UINT8 ubDirection, struct GROUP *
   fTracked = (UINT8)(pGroup->ubTransportationMask & TRACKED);
   fAir = (UINT8)(pGroup->ubTransportationMask & AIR);
 
-  ubTraverseType = GetSectorInfoByIndex(ubSector)->ubTraversability[ubDirection];
+  ubTraverseType = GetSectorInfoByID8(ubSector)->ubTraversability[ubDirection];
 
   if (ubTraverseType == EDGEOFWORLD) return 0xffffffff;  // can't travel here!
 
@@ -3463,7 +3463,7 @@ void RetreatGroupToPreviousSector(struct GROUP *pGroup) {
         0, String("Group %d (%s) attempting illegal move from %c%d to %c%d (%s).",
                   pGroup->ubGroupID, (pGroup->fPlayer) ? "Player" : "AI", pGroup->ubSectorY + 'A',
                   pGroup->ubSectorX, pGroup->ubNextY + 'A', pGroup->ubNextX,
-                  gszTerrain[GetSectorInfoByIndex(ubSector)->ubTraversability[ubDirection]]));
+                  gszTerrain[GetSectorInfoByID8(ubSector)->ubTraversability[ubDirection]]));
   }
 
   if (!pGroup->uiTraverseTime) {  // Because we are in the strategic layer, don't make the arrival
