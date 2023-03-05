@@ -199,7 +199,7 @@ void HandleContractRenewalSequence() {
 
           // Do special dialogue event...
           SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_CONTRACT_NOGO_TO_RENEW,
-                                        pSoldier->ubID, 0, 0, 0, 0);
+                                        GetSolID(pSoldier), 0, 0, 0, 0);
         } else {
           // OK check what dialogue to play
           // If we have not used this one before....
@@ -221,7 +221,7 @@ void HandleContractRenewalSequence() {
 
           // Do special dialogue event...
           SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_CONTRACT_WANTS_TO_RENEW,
-                                        pSoldier->ubID, 0, 0, 0, 0);
+                                        GetSolID(pSoldier), 0, 0, 0, 0);
         }
       } else {
         // Skip to next guy!
@@ -1170,7 +1170,7 @@ void FindOutIfAnyMercAboutToLeaveIsGonnaRenew(void) {
         ubNumContractRenewals++;
 
         if (WillMercRenew(pSoldier, FALSE)) {
-          ubPotentialMercs[ubNumMercs] = pSoldier->ubID;
+          ubPotentialMercs[ubNumMercs] = GetSolID(pSoldier);
           ubNumMercs++;
         } else {
           pSoldierWhoWillQuit = pSoldier;

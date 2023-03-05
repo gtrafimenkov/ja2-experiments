@@ -883,7 +883,7 @@ BOOLEAN ChangeSoldierState(struct SOLDIERTYPE *pSoldier, UINT16 usNewState,
 
   // Send message that we have changed states
   SChangeState.usNewState = usNewState;
-  SChangeState.usSoldierID = pSoldier->ubID;
+  SChangeState.usSoldierID = GetSolID(pSoldier);
   SChangeState.uiUniqueId = pSoldier->uiUniqueSoldierIdValue;
   SChangeState.usStartingAniCode = usStartingAniCode;
   SChangeState.sXPos = pSoldier->sX;
@@ -906,7 +906,7 @@ BOOLEAN ReevaluateEnemyStance(struct SOLDIERTYPE *pSoldier, UINT16 usAnimState) 
   INT16 sDist, sClosestDist = 10000;
 
   // make the chosen one not turn to face us
-  if (OK_ENEMY_MERC(pSoldier) && pSoldier->ubID != gTacticalStatus.ubTheChosenOne &&
+  if (OK_ENEMY_MERC(pSoldier) && GetSolID(pSoldier) != gTacticalStatus.ubTheChosenOne &&
       gAnimControl[usAnimState].ubEndHeight == ANIM_STAND &&
       !(pSoldier->uiStatusFlags & SOLDIER_UNDERAICONTROL)) {
     if (pSoldier->fTurningFromPronePosition == TURNING_FROM_PRONE_OFF) {
@@ -1357,7 +1357,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
       if (!pSoldier->usDontUpdateNewGridNoOnMoveAnimChange) {
         if (usNewState != SWATTING) {
           DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-                   String("Handling New gridNo for %d: Old %s, New %s", pSoldier->ubID,
+                   String("Handling New gridNo for %d: Old %s, New %s", GetSolID(pSoldier),
                           gAnimControl[pSoldier->usAnimState].zAnimStr,
                           gAnimControl[usNewState].zAnimStr));
 
@@ -1424,7 +1424,7 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
 
   // ATE: If this is an AI guy.. unlock him!
   if (gTacticalStatus.fEnemySightingOnTheirTurn) {
-    if (gTacticalStatus.ubEnemySightingOnTheirTurnEnemyID == pSoldier->ubID) {
+    if (gTacticalStatus.ubEnemySightingOnTheirTurnEnemyID == GetSolID(pSoldier)) {
       pSoldier->fPauseAllAnimation = FALSE;
       gTacticalStatus.fEnemySightingOnTheirTurn = FALSE;
     }
@@ -1741,8 +1741,8 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, UINT16 usNewState
 
         // Merc on fire!
         pSoldier->uiPendingActionData1 = PlaySoldierJA2Sample(
-            pSoldier->ubID, (FIRE_ON_MERC), RATE_11025, SoundVolume(HIGHVOLUME, pSoldier->sGridNo),
-            5, SoundDir(pSoldier->sGridNo), TRUE);
+            GetSolID(pSoldier), (FIRE_ON_MERC), RATE_11025,
+            SoundVolume(HIGHVOLUME, pSoldier->sGridNo), 5, SoundDir(pSoldier->sGridNo), TRUE);
         break;
     }
   }
@@ -2059,7 +2059,7 @@ void SetSoldierGridNo(struct SOLDIERTYPE *pSoldier, INT16 sNewGridNo, BOOLEAN fF
     }
 
     // Alrighty, update UI for this guy, if he's the selected guy...
-    if (gusSelectedSoldier == pSoldier->ubID) {
+    if (gusSelectedSoldier == GetSolID(pSoldier)) {
       if (guiCurrentEvent == C_WAIT_FOR_CONFIRM) {
         // Update path!
         gfPlotNewMovement = TRUE;
@@ -2897,9 +2897,9 @@ void EVENT_SoldierGotHit(struct SOLDIERTYPE *pSoldier, UINT16 usWeaponIndex, INT
 
     // ATE: If it's from GUNFIRE damage, keep in mind bullets...
     if (Item[usWeaponIndex].usItemClass & IC_GUN) {
-      pNewSoldier = FreeUpAttackerGivenTarget(pSoldier->ubAttackerID, pSoldier->ubID);
+      pNewSoldier = FreeUpAttackerGivenTarget(pSoldier->ubAttackerID, GetSolID(pSoldier));
     } else {
-      pNewSoldier = ReduceAttackBusyGivenTarget(pSoldier->ubAttackerID, pSoldier->ubID);
+      pNewSoldier = ReduceAttackBusyGivenTarget(pSoldier->ubAttackerID, GetSolID(pSoldier));
     }
 
     if (pNewSoldier != NULL) {
@@ -3576,7 +3576,7 @@ BOOLEAN EVENT_InternalGetNewSoldierPath(struct SOLDIERTYPE *pSoldier, UINT16 sDe
   // Only if we can get a path here
   if (fContinue) {
     // Debug messages
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_0, String("Soldier %d: Get new path", pSoldier->ubID));
+    DebugMsg(TOPIC_JA2, DBG_LEVEL_0, String("Soldier %d: Get new path", GetSolID(pSoldier)));
 
     // Set final destination
     pSoldier->sFinalDestination = sDestGridNo;
@@ -5635,7 +5635,7 @@ UINT8 SoldierTakeDamage(struct SOLDIERTYPE *pSoldier, INT8 bHeight, INT16 sLifeD
     // Check for quote
     if (!(pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_BEING_PUMMELED)) {
       // Check attacker!
-      if (ubAttacker != NOBODY && ubAttacker != pSoldier->ubID) {
+      if (ubAttacker != NOBODY && ubAttacker != GetSolID(pSoldier)) {
         pSoldier->bNumHitsThisTurn++;
 
         if ((pSoldier->bNumHitsThisTurn >= 3) && (pSoldier->bLife - pSoldier->bOldLife > 20)) {
@@ -6505,7 +6505,7 @@ void SendSoldierPositionEvent(struct SOLDIERTYPE *pSoldier, FLOAT dNewXPos, FLOA
   // Sent event for position update
   EV_S_SETPOSITION SSetPosition;
 
-  SSetPosition.usSoldierID = pSoldier->ubID;
+  SSetPosition.usSoldierID = GetSolID(pSoldier);
   SSetPosition.uiUniqueId = pSoldier->uiUniqueSoldierIdValue;
 
   SSetPosition.dNewXPos = dNewXPos;
@@ -6518,7 +6518,7 @@ void SendSoldierDestinationEvent(struct SOLDIERTYPE *pSoldier, UINT16 usNewDesti
   // Sent event for position update
   EV_S_CHANGEDEST SChangeDest;
 
-  SChangeDest.usSoldierID = pSoldier->ubID;
+  SChangeDest.usSoldierID = GetSolID(pSoldier);
   SChangeDest.usNewDestination = usNewDestination;
   SChangeDest.uiUniqueId = pSoldier->uiUniqueSoldierIdValue;
 
@@ -6529,7 +6529,7 @@ void SendSoldierSetDirectionEvent(struct SOLDIERTYPE *pSoldier, UINT16 usNewDire
   // Sent event for position update
   EV_S_SETDIRECTION SSetDirection;
 
-  SSetDirection.usSoldierID = pSoldier->ubID;
+  SSetDirection.usSoldierID = GetSolID(pSoldier);
   SSetDirection.usNewDirection = usNewDirection;
   SSetDirection.uiUniqueId = pSoldier->uiUniqueSoldierIdValue;
 
@@ -6540,7 +6540,7 @@ void SendSoldierSetDesiredDirectionEvent(struct SOLDIERTYPE *pSoldier, UINT16 us
   // Sent event for position update
   EV_S_SETDESIREDDIRECTION SSetDesiredDirection;
 
-  SSetDesiredDirection.usSoldierID = pSoldier->ubID;
+  SSetDesiredDirection.usSoldierID = GetSolID(pSoldier);
   SSetDesiredDirection.usDesiredDirection = usDesiredDirection;
   SSetDesiredDirection.uiUniqueId = pSoldier->uiUniqueSoldierIdValue;
 
@@ -6551,7 +6551,7 @@ void SendGetNewSoldierPathEvent(struct SOLDIERTYPE *pSoldier, UINT16 sDestGridNo
                                 UINT16 usMovementAnim) {
   EV_S_GETNEWPATH SGetNewPath;
 
-  SGetNewPath.usSoldierID = pSoldier->ubID;
+  SGetNewPath.usSoldierID = GetSolID(pSoldier);
   SGetNewPath.sDestGridNo = sDestGridNo;
   SGetNewPath.usMovementAnim = usMovementAnim;
   SGetNewPath.uiUniqueId = pSoldier->uiUniqueSoldierIdValue;
@@ -6564,12 +6564,12 @@ void SendChangeSoldierStanceEvent(struct SOLDIERTYPE *pSoldier, UINT8 ubNewStanc
 	EV_S_CHANGESTANCE			SChangeStance;
 
 #ifdef NETWORKED
-	if( !IsTheSolderUnderMyControl( pSoldier->ubID) )
+	if( !IsTheSolderUnderMyControl( GetSolID(pSoldier)) )
 		return;
 #endif
 
 	SChangeStance.ubNewStance   = ubNewStance;
-	SChangeStance.usSoldierID  = pSoldier->ubID;
+	SChangeStance.usSoldierID  = GetSolID(pSoldier);
 	SChangeStance.sXPos				= pSoldier->sX;
 	SChangeStance.sYPos				= pSoldier->sY;
 	SChangeStance.uiUniqueId = pSoldier -> uiUniqueSoldierIdValue;
@@ -6583,7 +6583,7 @@ void SendChangeSoldierStanceEvent(struct SOLDIERTYPE *pSoldier, UINT8 ubNewStanc
 void SendBeginFireWeaponEvent(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   EV_S_BEGINFIREWEAPON SBeginFireWeapon;
 
-  SBeginFireWeapon.usSoldierID = pSoldier->ubID;
+  SBeginFireWeapon.usSoldierID = GetSolID(pSoldier);
   SBeginFireWeapon.sTargetGridNo = sTargetGridNo;
   SBeginFireWeapon.bTargetLevel = pSoldier->bTargetLevel;
   SBeginFireWeapon.bTargetCubeLevel = pSoldier->bTargetCubeLevel;
@@ -6620,7 +6620,7 @@ void ReleaseSoldiersAttacker(struct SOLDIERTYPE *pSoldier) {
         DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                  String("@@@@@@@ Freeing up attacker of %d (attacker is %d) - "
                         "releasesoldierattacker num to free is %d",
-                        pSoldier->ubID, pSoldier->ubAttackerID, ubNumToFree));
+                        GetSolID(pSoldier), pSoldier->ubAttackerID, ubNumToFree));
         ReduceAttackBusyCount(pSoldier->ubAttackerID, FALSE);
       }
 
@@ -7203,7 +7203,7 @@ void EVENT_SoldierBeginFirstAid(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UIN
     pTSoldier->ubServiceCount++;
 
     // If target and doer are no the same guy...
-    if (pTSoldier->ubID != pSoldier->ubID && !pTSoldier->bCollapsed) {
+    if (pTSoldier->ubID != GetSolID(pSoldier) && !pTSoldier->bCollapsed) {
       SoldierGotoStationaryStance(pTSoldier);
     }
   }
@@ -7404,7 +7404,7 @@ void InternalReceivingSoldierCancelServices(struct SOLDIERTYPE *pSoldier, BOOLEA
     // Loop through guys who have us as servicing
     for (pTSoldier = Menptr, cnt = 0; cnt < MAX_NUM_SOLDIERS; pTSoldier++, cnt++) {
       if (pTSoldier->bActive) {
-        if (pTSoldier->ubServicePartner == pSoldier->ubID) {
+        if (pTSoldier->ubServicePartner == GetSolID(pSoldier)) {
           // END SERVICE!
           pSoldier->ubServiceCount--;
 
@@ -7465,7 +7465,7 @@ void HaultSoldierFromSighting(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromSightin
 
   // SStopMerc.sGridNo					= pSoldier->sGridNo;
   // SStopMerc.bDirection			= pSoldier->bDirection;
-  // SStopMerc.usSoldierID			= pSoldier->ubID;
+  // SStopMerc.usSoldierID			= GetSolID(pSoldier);
   // AddGameEvent( S_STOP_MERC, 0, &SStopMerc );
 
   // If we are a 'specialmove... ignore...
@@ -8246,7 +8246,7 @@ void SoldierCollapse(struct SOLDIERTYPE *pSoldier) {
 
   if (pSoldier->uiStatusFlags & SOLDIER_ENEMY) {
     if (!(gTacticalStatus.bPanicTriggerIsAlarm) &&
-        (gTacticalStatus.ubTheChosenOne == pSoldier->ubID)) {
+        (gTacticalStatus.ubTheChosenOne == GetSolID(pSoldier))) {
       // replace this guy as the chosen one!
       gTacticalStatus.ubTheChosenOne = NOBODY;
       MakeClosestEnemyChosenOne();
@@ -8255,7 +8255,7 @@ void SoldierCollapse(struct SOLDIERTYPE *pSoldier) {
     if ((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT) &&
         (pSoldier->uiStatusFlags & SOLDIER_UNDERAICONTROL)) {
 #ifdef TESTAICONTROL
-      DebugAI(String("Ending turn for %d because of error from HandleItem", pSoldier->ubID));
+      DebugAI(String("Ending turn for %d because of error from HandleItem", GetSolID(pSoldier)));
 #endif
 
       EndAIGuysTurn(pSoldier);
@@ -8266,7 +8266,7 @@ void SoldierCollapse(struct SOLDIERTYPE *pSoldier) {
   // else
   //{
   // Check if this is our selected guy...
-  //	if ( pSoldier->ubID == gusSelectedSoldier )
+  //	if ( GetSolID(pSoldier) == gusSelectedSoldier )
   //	{
   //		SelectNextAvailSoldier( pSoldier );
   //		}
@@ -8380,7 +8380,7 @@ void PositionSoldierLight(struct SOLDIERTYPE *pSoldier) {
     CreateSoldierLight(pSoldier);
   }
 
-  // if ( pSoldier->ubID == gusSelectedSoldier )
+  // if ( GetSolID(pSoldier) == gusSelectedSoldier )
   {
     LightSpritePower(pSoldier->iLight, TRUE);
     LightSpriteFake(pSoldier->iLight);
@@ -9046,7 +9046,7 @@ void UpdateRobotControllerGivenController(struct SOLDIERTYPE *pSoldier) {
   for (pTeamSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[gbPlayerNum].bLastID;
        cnt++, pTeamSoldier++) {
     if (pTeamSoldier->bActive && (pTeamSoldier->uiStatusFlags & SOLDIER_ROBOT)) {
-      pTeamSoldier->ubRobotRemoteHolderID = pSoldier->ubID;
+      pTeamSoldier->ubRobotRemoteHolderID = GetSolID(pSoldier);
     }
   }
 }
@@ -9135,7 +9135,7 @@ void InternalPlaySoldierFootstepSound(struct SOLDIERTYPE *pSoldier) {
       return;
     }
 
-    // if ( SoldierOnScreen( pSoldier->ubID ) )
+    // if ( SoldierOnScreen( GetSolID(pSoldier) ) )
     {
       if (pSoldier->usAnimState == CRAWLING) {
         ubSoundBase = CRAWL_1;

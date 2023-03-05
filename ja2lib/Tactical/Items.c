@@ -3507,7 +3507,7 @@ void DoChrisTest(struct SOLDIERTYPE *pSoldier) {
                   if ( ExtractScheduleEntryAndExitInfo( pSoldier, &uiEntryTime, &uiExitTime ) )
                   {
                           ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"Civ %d enters at %ld,
-  exits at %ld", pSoldier->ubID, uiEntryTime, uiExitTime );
+  exits at %ld", GetSolID(pSoldier), uiEntryTime, uiExitTime );
                   }
           }
   }
@@ -4581,7 +4581,7 @@ void ActivateXRayDevice(struct SOLDIERTYPE *pSoldier) {
     pSoldier2 = MercSlots[uiSlot];
     if (pSoldier2) {
       if ((pSoldier2->ubMiscSoldierFlags & SOLDIER_MISC_XRAYED) &&
-          (pSoldier2->ubXRayedBy == pSoldier->ubID)) {
+          (pSoldier2->ubXRayedBy == GetSolID(pSoldier))) {
         pSoldier2->ubMiscSoldierFlags &= (~SOLDIER_MISC_XRAYED);
         pSoldier2->ubXRayedBy = NOBODY;
       }
@@ -4594,7 +4594,7 @@ void ActivateXRayDevice(struct SOLDIERTYPE *pSoldier) {
       if (pSoldier2->bTeam != pSoldier->bTeam &&
           PythSpacesAway(pSoldier->sGridNo, pSoldier2->sGridNo) < XRAY_RANGE) {
         pSoldier2->ubMiscSoldierFlags |= SOLDIER_MISC_XRAYED;
-        pSoldier2->ubXRayedBy = pSoldier->ubID;
+        pSoldier2->ubXRayedBy = GetSolID(pSoldier);
       }
     }
   }
@@ -4615,7 +4615,7 @@ void TurnOffXRayEffects(struct SOLDIERTYPE *pSoldier) {
     pSoldier2 = MercSlots[uiSlot];
     if (pSoldier2) {
       if ((pSoldier2->ubMiscSoldierFlags & SOLDIER_MISC_XRAYED) &&
-          (pSoldier2->ubXRayedBy == pSoldier->ubID)) {
+          (pSoldier2->ubXRayedBy == GetSolID(pSoldier))) {
         pSoldier2->ubMiscSoldierFlags &= (~SOLDIER_MISC_XRAYED);
         pSoldier2->ubXRayedBy = NOBODY;
       }

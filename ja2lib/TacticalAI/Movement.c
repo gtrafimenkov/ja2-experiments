@@ -1,3 +1,4 @@
+#include "Soldier.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/Strategic.h"
 #include "Strategic/StrategicPathing.h"
@@ -116,7 +117,7 @@ int TryToResumeMovement(struct SOLDIERTYPE *pSoldier, INT16 sGridno) {
   // have occupied the destination gridno in the meantime!)
   if (LegalNPCDestination(pSoldier, sGridno, ENSURE_PATH, WATEROK, 0)) {
 #ifdef DEBUGDECISIONS
-    DebugAI(String("%d CONTINUES MOVEMENT to gridno %d...\n", pSoldier->ubID, gridno));
+    DebugAI(String("%d CONTINUES MOVEMENT to gridno %d...\n", GetSolID(pSoldier), gridno));
 #endif
 
     pSoldier->bPathStored = TRUE;  // optimization - Ian
@@ -152,7 +153,7 @@ int TryToResumeMovement(struct SOLDIERTYPE *pSoldier, INT16 sGridno) {
 
 #ifdef BETAVERSION
     sprintf(tempstr, "TryToResumeMovement: %d can't continue to gridno %d, no longer legal!",
-            pSoldier->ubID, gridno);
+            GetSolID(pSoldier), gridno);
 
 #ifdef RECORDNET
     fprintf(NetDebugFile, "\n\t%s\n", tempstr);
@@ -242,7 +243,7 @@ INT8 PointPatrolAI(struct SOLDIERTYPE *pSoldier) {
     if (pSoldier->sGridNo == sPatrolPoint) {
 #ifdef BETAVERSION
       NumMessage("PROBLEM WITH SCENARIO: All other patrol points are invalid for guynum ",
-                 pSoldier->ubID);
+                 GetSolID(pSoldier));
 #endif
       // force change of orders & an abort
       sPatrolPoint = NOWHERE;
@@ -252,7 +253,7 @@ INT8 PointPatrolAI(struct SOLDIERTYPE *pSoldier) {
   // if we don't have a legal patrol point
   if (sPatrolPoint == NOWHERE) {
 #ifdef BETAVERSION
-    NumMessage("PointPatrolAI: ERROR - no legal patrol point for %d", pSoldier->ubID);
+    NumMessage("PointPatrolAI: ERROR - no legal patrol point for %d", GetSolID(pSoldier));
 #endif
 
     // over-ride orders to something safer
@@ -329,7 +330,7 @@ INT8 RandomPointPatrolAI(struct SOLDIERTYPE *pSoldier) {
   // if we don't have a legal patrol point
   if (sPatrolPoint == NOWHERE) {
 #ifdef BETAVERSION
-    NumMessage("PointPatrolAI: ERROR - no legal patrol point for %d", pSoldier->ubID);
+    NumMessage("PointPatrolAI: ERROR - no legal patrol point for %d", GetSolID(pSoldier));
 #endif
 
     // over-ride orders to something safer
@@ -532,7 +533,7 @@ INT16 InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, INT16 sDesG
       sprintf(tempstr,
               "GoAsFarAsPossibleTowards: ERROR - gridno along valid route is invalid!  guynum %d, "
               "sTempDest = %d",
-              pSoldier->ubID, sTempDest);
+              GetSolID(pSoldier), sTempDest);
 
 #ifdef RECORDNET
       fprintf(NetDebugFile, "\n\t%s\n", tempstr);
@@ -649,8 +650,8 @@ INT16 InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, INT16 sDesG
     }
 
 #ifdef DEBUGDECISIONS
-    ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_BETAVERSION, L"%d to %d with %d APs left", pSoldier->ubID,
-              sGoToGrid, pSoldier->bActionPoints);
+    ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_BETAVERSION, L"%d to %d with %d APs left",
+              GetSolID(pSoldier), sGoToGrid, pSoldier->bActionPoints);
 #endif
 
     return (sGoToGrid);
@@ -698,7 +699,7 @@ void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier) {
     CancelAIAction(pSoldier, DONTFORCE);
 #ifdef TESTAI
     DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
-             String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", pSoldier->ubID));
+             String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", GetSolID(pSoldier)));
 #endif
   }
 
@@ -716,13 +717,14 @@ void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier) {
     // maybe we didn't actually start the action last turn...
     pSoldier->bActionInProgress = TRUE;
 #ifdef TESTAI
-    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3, String("Soldier (%d) continues along path", pSoldier->ubID));
+    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
+             String("Soldier (%d) continues along path", GetSolID(pSoldier)));
 #endif
   } else {
     CancelAIAction(pSoldier, DONTFORCE);
 #ifdef TESTAI
     DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
-             String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", pSoldier->ubID));
+             String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", GetSolID(pSoldier)));
 #endif
   }
 }
@@ -737,13 +739,13 @@ void HaltMoveForSoldierOutOfPoints(struct SOLDIERTYPE *pSoldier) {
   AdjustNoAPToFinishMove(pSoldier, TRUE);
 
   // We'll keep his action intact though...
-  DebugAI(
-      String("NO AP TO FINISH MOVE for %d (%d APs left)", pSoldier->ubID, pSoldier->bActionPoints));
+  DebugAI(String("NO AP TO FINISH MOVE for %d (%d APs left)", GetSolID(pSoldier),
+                 pSoldier->bActionPoints));
 
   // if this dude is under AI right now, then pass the baton to someone else
   if (pSoldier->uiStatusFlags & SOLDIER_UNDERAICONTROL) {
 #ifdef TESTAICONTROL
-    DebugAI(String("Ending turn for %d because out of APs for movement", pSoldier->ubID));
+    DebugAI(String("Ending turn for %d because out of APs for movement", GetSolID(pSoldier)));
 #endif
 
     EndAIGuysTurn(pSoldier);
@@ -786,7 +788,7 @@ void SetCivilianDestination(UINT8 ubWho, INT16 sGridno) {
    else
     {
      NetSend.msgType = NET_CIV_DEST;
-     NetSend.ubID  = pSoldier->ubID;
+     NetSend.ubID  = GetSolID(pSoldier);
      NetSend.gridno  = gridno;
 
      // only the civilian's controller needs to know this

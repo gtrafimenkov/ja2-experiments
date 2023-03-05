@@ -1,3 +1,4 @@
+#include "Soldier.h"
 #include "Strategic/MapScreenInterfaceMap.h"
 #include "Strategic/QueenCommand.h"
 #include "Strategic/Quests.h"
@@ -123,7 +124,7 @@ void MakeClosestEnemyChosenOne() {
     if (sPathCost || (pSoldier->sGridNo == sPanicTriggerGridNo)) {
       if (sPathCost < sShortestPath) {
         sShortestPath = sPathCost;
-        ubClosestEnemy = pSoldier->ubID;
+        ubClosestEnemy = GetSolID(pSoldier);
       }
     }
     // else
@@ -202,7 +203,7 @@ void PossiblyMakeThisEnemyChosenOne(struct SOLDIERTYPE *pSoldier) {
 
   if (iAPCost <= CalcActionPoints(pSoldier) * 2) {
     // go!!!
-    gTacticalStatus.ubTheChosenOne = pSoldier->ubID;
+    gTacticalStatus.ubTheChosenOne = GetSolID(pSoldier);
     return;
   }
   // else return keys to normal
@@ -418,7 +419,7 @@ BOOLEAN NeedToRadioAboutPanicTrigger(void) {
   if (gWorldSectorX == TIXA_SECTOR_X && gWorldSectorY == TIXA_SECTOR_Y) {
     struct SOLDIERTYPE *pSoldier;
     pSoldier = FindSoldierByProfileID(WARDEN, FALSE);
-    if (!pSoldier || pSoldier->ubID == gTacticalStatus.ubTheChosenOne) {
+    if (!pSoldier || GetSolID(pSoldier) == gTacticalStatus.ubTheChosenOne) {
       return (FALSE);
     }
   }

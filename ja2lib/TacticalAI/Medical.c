@@ -255,7 +255,7 @@ INT8 FindBestPatient(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfDoClimb) {
               // we can get there... can anyone else?
 
               if (pPatient->ubAutoBandagingMedic != NOBODY &&
-                  pPatient->ubAutoBandagingMedic != pSoldier->ubID) {
+                  pPatient->ubAutoBandagingMedic != GetSolID(pSoldier)) {
                 // only switch to this patient if our distance is closer than
                 // the other medic's
                 pOtherMedic = MercPtrs[pPatient->ubAutoBandagingMedic];
@@ -313,7 +313,7 @@ INT8 FindBestPatient(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfDoClimb) {
       // cancel that medic
       CancelAIAction(MercPtrs[pBestPatient->ubAutoBandagingMedic], TRUE);
     }
-    pBestPatient->ubAutoBandagingMedic = pSoldier->ubID;
+    pBestPatient->ubAutoBandagingMedic = GetSolID(pSoldier);
     *pfDoClimb = FALSE;
     if (CardinalSpacesAway(pSoldier->sGridNo, sBestPatientGridNo) == 1) {
       pSoldier->usActionData = sBestPatientGridNo;

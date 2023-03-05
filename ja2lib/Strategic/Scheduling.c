@@ -591,16 +591,16 @@ void AutoProcessSchedule(SCHEDULENODE *pSchedule, INT32 index) {
     DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
              String("Autoprocessing schedule action %S for %S (%d) at time %02ld:%02ld (set for "
                     "%02d:%02d), data1 = %d",
-                    gszScheduleActions[pSchedule->ubAction[index]], pSoldier->name, pSoldier->ubID,
-                    GetWorldHour(), guiMin, pSchedule->usTime[index] / 60,
+                    gszScheduleActions[pSchedule->ubAction[index]], pSoldier->name,
+                    GetSolID(pSoldier), GetWorldHour(), guiMin, pSchedule->usTime[index] / 60,
                     pSchedule->usTime[index] % 60, pSchedule->usData1[index]));
   } else {
     DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
              String("Autoprocessing schedule action %S for civ (%d) at time %02ld:%02ld (set for "
                     "%02d:%02d), data1 = %d",
-                    gszScheduleActions[pSchedule->ubAction[index]], pSoldier->ubID, GetWorldHour(),
-                    guiMin, pSchedule->usTime[index] / 60, pSchedule->usTime[index] % 60,
-                    pSchedule->usData1[index]));
+                    gszScheduleActions[pSchedule->ubAction[index]], GetSolID(pSoldier),
+                    GetWorldHour(), guiMin, pSchedule->usTime[index] / 60,
+                    pSchedule->usTime[index] % 60, pSchedule->usData1[index]));
   }
 #endif
 
@@ -757,7 +757,7 @@ void PostSchedule(struct SOLDIERTYPE *pSoldier) {
     }
   }
 
-  pSchedule->ubSoldierID = pSoldier->ubID;
+  pSchedule->ubSoldierID = GetSolID(pSoldier);
 
   // always process previous 24 hours
   uiEndTime = GetWorldTotalMin();
@@ -858,7 +858,7 @@ void PostDefaultSchedule(struct SOLDIERTYPE *pSoldier) {
   gubScheduleID++;
   // Assign all of the links
   gpScheduleList->ubScheduleID = gubScheduleID;
-  gpScheduleList->ubSoldierID = pSoldier->ubID;
+  gpScheduleList->ubSoldierID = GetSolID(pSoldier);
   pSoldier->ubScheduleID = gubScheduleID;
 
   // Clear the data inside the schedule
@@ -1112,7 +1112,7 @@ CIV_TEAM ].bLastID; uiLoop++ )
                         if ( pSchedule )
                         {
                                 // set soldier ptr to point to this guy!
-                                pSchedule->ubSoldierID = pSoldier->ubID;
+                                pSchedule->ubSoldierID = GetSolID(pSoldier);
                         }
                         else
                         {
@@ -1154,7 +1154,8 @@ void SecureSleepSpot(struct SOLDIERTYPE *pSoldier, UINT16 usSleepSpot) {
   UINT8 ubDirection;
 
   // start after this soldier's ID so we don't duplicate work done in previous passes
-  for (uiLoop = pSoldier->ubID + 1; uiLoop <= gTacticalStatus.Team[CIV_TEAM].bLastID; uiLoop++) {
+  for (uiLoop = GetSolID(pSoldier) + 1; uiLoop <= gTacticalStatus.Team[CIV_TEAM].bLastID;
+       uiLoop++) {
     pSoldier2 = MercPtrs[uiLoop];
     if (pSoldier2->bActive && pSoldier2->bInSector && pSoldier2->ubScheduleID != 0) {
       pSchedule = GetSchedule(pSoldier2->ubScheduleID);

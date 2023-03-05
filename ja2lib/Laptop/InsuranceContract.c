@@ -1194,7 +1194,7 @@ BOOLEAN AddLifeInsurancePayout(struct SOLDIERTYPE *pSoldier) {
     if (!LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].fActive) break;
   }
 
-  LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubSoldierID = pSoldier->ubID;
+  LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubSoldierID = GetSolID(pSoldier);
   LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID = pSoldier->ubProfile;
   LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].fActive = TRUE;
 

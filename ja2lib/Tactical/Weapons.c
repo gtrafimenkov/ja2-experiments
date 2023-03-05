@@ -1186,7 +1186,7 @@ BOOLEAN UseGun(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
                  String("Incrementing Attack: Exaust from LAW", gTacticalStatus.ubAttackBusyCount));
 
         EVENT_SoldierGotHit(MercPtrs[ubMerc], MINI_GRENADE, 10, 200, pSoldier->bDirection, 0,
-                            pSoldier->ubID, 0, ANIM_CROUCH, 0, sNewGridNo);
+                            GetSolID(pSoldier), 0, ANIM_CROUCH, 0, sNewGridNo);
       }
     }
   } else {
@@ -1316,7 +1316,7 @@ BOOLEAN UseBlade(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
       SWeaponHit.sYPos = (INT16)pTargetSoldier->dYPos;
       SWeaponHit.sZPos = 20;
       SWeaponHit.sRange = 1;
-      SWeaponHit.ubAttackerID = pSoldier->ubID;
+      SWeaponHit.ubAttackerID = GetSolID(pSoldier);
       SWeaponHit.fHit = TRUE;
       SWeaponHit.ubSpecial = FIRE_WEAPON_NO_SPECIAL;
       AddGameEvent(S_WEAPONHIT, (UINT16)20, &SWeaponHit);
@@ -1569,7 +1569,7 @@ BOOLEAN UseHandToHand(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo, BOOLEAN
         SWeaponHit.sYPos = (INT16)pTargetSoldier->dYPos;
         SWeaponHit.sZPos = 20;
         SWeaponHit.sRange = 1;
-        SWeaponHit.ubAttackerID = pSoldier->ubID;
+        SWeaponHit.ubAttackerID = GetSolID(pSoldier);
         SWeaponHit.fHit = TRUE;
         SWeaponHit.ubSpecial = FIRE_WEAPON_NO_SPECIAL;
         AddGameEvent(S_WEAPONHIT, (UINT16)20, &SWeaponHit);
@@ -1755,7 +1755,7 @@ BOOLEAN UseLauncher(struct SOLDIERTYPE *pSoldier, INT16 sTargetGridNo) {
   CreatePhysicalObject(
       pSoldier->pTempObject, pSoldier->pThrowParams->dLifeSpan, pSoldier->pThrowParams->dX,
       pSoldier->pThrowParams->dY, pSoldier->pThrowParams->dZ, pSoldier->pThrowParams->dForceX,
-      pSoldier->pThrowParams->dForceY, pSoldier->pThrowParams->dForceZ, pSoldier->ubID,
+      pSoldier->pThrowParams->dForceY, pSoldier->pThrowParams->dForceZ, GetSolID(pSoldier),
       pSoldier->pThrowParams->ubActionCode, pSoldier->pThrowParams->uiActionData);
 
   MemFree(pSoldier->pTempObject);

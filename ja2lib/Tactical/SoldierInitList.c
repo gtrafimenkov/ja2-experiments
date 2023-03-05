@@ -1730,7 +1730,7 @@ void AddProfilesUsingProfileInsertionData() {
       UpdateMercInSector(pSoldier, gWorldSectorX, gWorldSectorY, gbWorldSectorZ);
       // CJC: Note well that unless an error occurs, UpdateMercInSector calls
       // AddSoldierToSector
-      // AddSoldierToSector( pSoldier->ubID );
+      // AddSoldierToSector( GetSolID(pSoldier) );
 
       // check action ID values
       if (gMercProfiles[i].ubQuoteRecord) {
@@ -1746,12 +1746,12 @@ void AddProfilesUsingProfileInsertionData() {
       curr = FindSoldierInitListNodeByProfile(pSoldier->ubProfile);
       if (curr) {
         curr->pSoldier = pSoldier;
-        curr->ubSoldierID = pSoldier->ubID;
+        curr->ubSoldierID = GetSolID(pSoldier);
         // also connect schedules here
         if (curr->pDetailedPlacement->ubScheduleID != 0) {
           SCHEDULENODE *pSchedule = GetSchedule(curr->pDetailedPlacement->ubScheduleID);
           if (pSchedule) {
-            pSchedule->ubSoldierID = pSoldier->ubID;
+            pSchedule->ubSoldierID = GetSolID(pSoldier);
             pSoldier->ubScheduleID = curr->pDetailedPlacement->ubScheduleID;
           }
         }

@@ -218,7 +218,7 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
           fDoFull = FALSE;
         } else if (uiFlags & FIND_SOLDIER_SELECTIVE) {
           if (pSoldier->ubID >= gTacticalStatus.Team[gbPlayerNum].bFirstID &&
-              pSoldier->ubID <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
+              GetSolID(pSoldier) <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
             fDoFull = TRUE;
           } else {
             fDoFull = FALSE;
@@ -254,7 +254,7 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
           // ATE: If we are an enemy....
           if (!gGameSettings.fOptions[TOPTION_SMART_CURSOR]) {
             if (pSoldier->ubID >= gTacticalStatus.Team[gbPlayerNum].bFirstID &&
-                pSoldier->ubID <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
+                GetSolID(pSoldier) <= gTacticalStatus.Team[gbPlayerNum].bLastID) {
               // ATE: NOT if we are in action or comfirm action mode
               if ((gCurrentUIMode != ACTION_MODE && gCurrentUIMode != CONFIRM_ACTION_MODE) ||
                   gUIActionModeChangeDueToMouseOver) {
@@ -303,7 +303,7 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
               gfHandleStack = TRUE;
 
               // Add this one!
-              gSoldierStack.ubIDs[gSoldierStack.bNum] = pSoldier->ubID;
+              gSoldierStack.ubIDs[gSoldierStack.bNum] = GetSolID(pSoldier);
               gSoldierStack.bNum++;
 
               // Determine if it's the current
@@ -320,9 +320,9 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
               if (gSoldierStack.fUseGridNo) {
                 fSoldierFound = FALSE;
                 break;
-              } else if (gSoldierStack.ubIDs[gSoldierStack.bCur] == pSoldier->ubID) {
+              } else if (gSoldierStack.ubIDs[gSoldierStack.bCur] == GetSolID(pSoldier)) {
                 // Set it!
-                ubBestMerc = pSoldier->ubID;
+                ubBestMerc = GetSolID(pSoldier);
 
                 fSoldierFound = TRUE;
                 break;
@@ -334,7 +334,7 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
                 sHeighestMercScreenY = sMaxScreenMercY;
 
                 // Set it!
-                ubBestMerc = pSoldier->ubID;
+                ubBestMerc = GetSolID(pSoldier);
               }
 
               fSoldierFound = TRUE;
@@ -350,7 +350,7 @@ BOOLEAN FindSoldier(INT16 sGridNo, UINT16 *pusSoldierIndex, UINT32 *pMercFlags, 
           if (pSoldier->sGridNo == sGridNo &&
               !NewOKDestination(pSoldier, sGridNo, TRUE, (INT8)gsInterfaceLevel)) {
             // Set it!
-            ubBestMerc = pSoldier->ubID;
+            ubBestMerc = GetSolID(pSoldier);
 
             fSoldierFound = TRUE;
             break;

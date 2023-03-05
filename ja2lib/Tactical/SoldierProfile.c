@@ -669,7 +669,7 @@ struct SOLDIERTYPE *ChangeSoldierTeam(struct SOLDIERTYPE *pSoldier, UINT8 ubTeam
   }
 
   // Save merc id for this guy...
-  ubID = pSoldier->ubID;
+  ubID = GetSolID(pSoldier);
 
   sOldGridNo = pSoldier->sGridNo;
 
@@ -732,7 +732,7 @@ struct SOLDIERTYPE *ChangeSoldierTeam(struct SOLDIERTYPE *pSoldier, UINT8 ubTeam
       pGroupMember = MercSlots[uiSlot];
 
       if (pGroupMember != NULL) {
-        if (pGroupMember->ubTargetID == pSoldier->ubID) {
+        if (pGroupMember->ubTargetID == GetSolID(pSoldier)) {
           pGroupMember->ubTargetID = pNewSoldier->ubID;
         }
       }
@@ -920,7 +920,7 @@ BOOLEAN UnRecruitEPC(UINT8 ubCharNum) {
   RemoveCharacterFromSquads(pSoldier);
 
   // O< check if this is the only guy in the sector....
-  if (gusSelectedSoldier == pSoldier->ubID) {
+  if (gusSelectedSoldier == GetSolID(pSoldier)) {
     gusSelectedSoldier = NOBODY;
   }
 

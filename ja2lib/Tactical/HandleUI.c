@@ -2264,7 +2264,7 @@ UINT32 UIHandleCAMercShoot(UI_EVENT *pUIEvent) {
             Item[pSoldier->inv[HANDPOS].usItem].usItemClass != IC_MEDKIT &&
             pSoldier->inv[HANDPOS].usItem != GAS_CAN &&
             gTacticalStatus.ubLastRequesterTargetID != pTSoldier->ubProfile &&
-            (pTSoldier->ubID != pSoldier->ubID)) {
+            (pTSoldier->ubID != GetSolID(pSoldier))) {
           CHAR16 zStr[200];
 
           gpRequesterMerc = pSoldier;
@@ -3021,7 +3021,7 @@ BOOLEAN HandleUIMovementCursor(struct SOLDIERTYPE *pSoldier, UINT32 uiCursorFlag
   if (((gTacticalStatus.uiFlags & REALTIME) || !(gTacticalStatus.uiFlags & INCOMBAT)) ||
       ((gAnimControl[pSoldier->usAnimState].uiFlags & ANIM_STATIONARY) ||
        pSoldier->fNoAPToFinishMove) ||
-      pSoldier->ubID >= MAX_NUM_SOLDIERS) {
+      GetSolID(pSoldier) >= MAX_NUM_SOLDIERS) {
     // If we are targeting a merc for some reason, don't go thorugh normal channels if we are on
     // someone now
     if (uiFlags == MOVEUI_TARGET_MERCS || uiFlags == MOVEUI_TARGET_MERCSFORAID) {
@@ -4628,7 +4628,7 @@ BOOLEAN HandleTalkInit() {
     if (IsValidTalkableNPC((UINT8)gusUIFullTargetID, FALSE, TRUE, FALSE)) {
       GetSoldier(&pTSoldier, gusUIFullTargetID);
 
-      if (pTSoldier->ubID != pSoldier->ubID) {
+      if (pTSoldier->ubID != GetSolID(pSoldier)) {
         // ATE: Check if we have good LOS
         // is he close enough to see that gridno if he turns his head?
         sDistVisible = DistanceVisible(pSoldier, DIRECTION_IRRELEVANT, DIRECTION_IRRELEVANT,
@@ -5274,7 +5274,7 @@ BOOLEAN IsValidJumpLocation(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, BOOLEAN
     ubGuyThere = WhoIsThere2(sSpot, pSoldier->bLevel);
 
     // Alright folks, here we are!
-    if (ubGuyThere == pSoldier->ubID) {
+    if (ubGuyThere == GetSolID(pSoldier)) {
       // Double check OK destination......
       if (NewOKDestination(pSoldier, sGridNo, TRUE, (INT8)gsInterfaceLevel)) {
         // If the soldier in the middle of doing stuff?
@@ -5285,7 +5285,7 @@ BOOLEAN IsValidJumpLocation(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, BOOLEAN
           ubGuyThere = WhoIsThere2(sIntSpot, pSoldier->bLevel);
 
           // Is there a guy and is he prone?
-          if (ubGuyThere != NOBODY && ubGuyThere != pSoldier->ubID &&
+          if (ubGuyThere != NOBODY && ubGuyThere != GetSolID(pSoldier) &&
               gAnimControl[MercPtrs[ubGuyThere]->usAnimState].ubHeight == ANIM_PRONE) {
             // It's a GO!
             return (TRUE);

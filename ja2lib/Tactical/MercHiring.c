@@ -193,7 +193,7 @@ INT8 HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
   // if we are trying to hire a merc that should arrive later, put the merc in the queue
   if (pHireMerc->uiTimeTillMercArrives != 0) {
     AddStrategicEvent(EVENT_DELAYED_HIRING_OF_MERC, pHireMerc->uiTimeTillMercArrives,
-                      pSoldier->ubID);
+                      GetSolID(pSoldier));
 
     // specify that the merc is hired but hasnt arrived yet
     pMerc->bMercStatus = MERC_HIRED_BUT_NOT_ARRIVED_YET;

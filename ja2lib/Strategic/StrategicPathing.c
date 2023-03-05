@@ -684,7 +684,7 @@ ubFromDirection )
                 RemoveSoldierFromTacticalSector( pSoldier, TRUE );
 
                 // Remove from tactical team UI
-                RemovePlayerFromTeamSlotGivenMercID( pSoldier->ubID );
+                RemovePlayerFromTeamSlotGivenMercID( GetSolID(pSoldier) );
 
         }
 

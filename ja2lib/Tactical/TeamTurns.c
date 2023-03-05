@@ -414,7 +414,7 @@ void DisplayHiddenInterrupt(struct SOLDIERTYPE *pSoldier) {
   EndDeadlockMsg();
 
   if (pSoldier->bVisible != -1) {
-    SlideTo(NOWHERE, pSoldier->ubID, NOBODY, SETLOCATOR);
+    SlideTo(NOWHERE, GetSolID(pSoldier), NOBODY, SETLOCATOR);
   }
 
   guiPendingOverrideEvent = LU_BEGINUILOCK;
@@ -1304,8 +1304,8 @@ INT8 CalcInterruptDuelPts(struct SOLDIERTYPE *pSoldier, UINT8 ubOpponentID,
 
 #ifdef DEBUG_INTERRUPTS
   DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-           String("Calculating int pts for %d vs %d, number is %d", pSoldier->ubID, ubOpponentID,
-                  bPoints));
+           String("Calculating int pts for %d vs %d, number is %d", GetSolID(pSoldier),
+                  ubOpponentID, bPoints));
 #endif
 
   return (bPoints);
@@ -1329,7 +1329,7 @@ BOOLEAN InterruptDuel(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOpponen
     }
   }
   //	ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"Interrupt duel %d (%d pts) vs %d (%d
-  // pts)", pSoldier->ubID, pSoldier->bInterruptDuelPts, pOpponent->ubID,
+  // pts)", GetSolID(pSoldier), pSoldier->bInterruptDuelPts, pOpponent->ubID,
   // pOpponent->bInterruptDuelPts );
   return (fResult);
 }
@@ -1572,7 +1572,7 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, UINT8 ubInterruptType) {
                 fIntOccurs = TRUE;
 #ifdef DEBUG_INTERRUPTS
                 DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-                         String("INTERRUPT: automatic interrupt on %d by %d", pSoldier->ubID,
+                         String("INTERRUPT: automatic interrupt on %d by %d", GetSolID(pSoldier),
                                 pOpponent->ubID));
 #endif
                 break;
@@ -1586,7 +1586,7 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, UINT8 ubInterruptType) {
                 if (fIntOccurs) {
                   DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                            String("INTERRUPT: standard interrupt on %d (%d pts) by %d (%d pts)",
-                                  pSoldier->ubID, pSoldier->bInterruptDuelPts, pOpponent->ubID,
+                                  GetSolID(pSoldier), pSoldier->bInterruptDuelPts, pOpponent->ubID,
                                   pOpponent->bInterruptDuelPts));
                 }
 #endif
@@ -1608,7 +1608,7 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, UINT8 ubInterruptType) {
                       if (pOpponent->bInterruptDuelPts != NO_INTERRUPT)
                       {
                               ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"%d fails to
-                 interrupt %d (%d vs %d pts)", pOpponent->ubID, pSoldier->ubID,
+                 interrupt %d (%d vs %d pts)", pOpponent->ubID, GetSolID(pSoldier),
                  pOpponent->bInterruptDuelPts, pSoldier->bInterruptDuelPts);
                       }
                       */
@@ -1617,7 +1617,8 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, UINT8 ubInterruptType) {
 // either way, clear out both sides' bInterruptDuelPts field to prepare next one
 #ifdef DEBUG_INTERRUPTS
             if (pSoldier->bInterruptDuelPts != NO_INTERRUPT) {
-              DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Resetting int pts for %d", pSoldier->ubID));
+              DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+                       String("Resetting int pts for %d", GetSolID(pSoldier)));
             }
 #endif
 

@@ -49,7 +49,7 @@ void LoadWeaponIfNeeded(struct SOLDIERTYPE *pSoldier) {
     if (bPayloadPocket == NO_SLOT) {
 #ifdef BETAVERSION
       NumMessage("LoadWeaponIfNeeded: ERROR - no mortar shells found to load MORTAR!  Guynum",
-                 pSoldier->ubID);
+                 GetSolID(pSoldier));
 #endif
       return;  // no shells, can't fire the MORTAR
     }
@@ -60,7 +60,7 @@ void LoadWeaponIfNeeded(struct SOLDIERTYPE *pSoldier) {
     if (bPayloadPocket == NO_SLOT) {
 #ifdef BETAVERSION
       NumMessage("LoadWeaponIfNeeded: ERROR - no grenades found to load GLAUNCHER!  Guynum",
-                 pSoldier->ubID);
+                 GetSolID(pSoldier));
 #endif
       return;  // no grenades, can't fire the GLAUNCHER
     }
@@ -538,7 +538,7 @@ void CalcBestThrow(struct SOLDIERTYPE *pSoldier, ATTACKTYPE *pBestThrow) {
 
         // JA2Gold: UB checks were screwed up
         /*
-        if ( pOpponent->sGridNo == gsLastKnownOppLoc[ pSoldier->ubID ][ pOpponent->ubID ] )
+        if ( pOpponent->sGridNo == gsLastKnownOppLoc[ GetSolID(pSoldier) ][ pOpponent->ubID ] )
         {
                 continue;
         }
@@ -553,13 +553,14 @@ void CalcBestThrow(struct SOLDIERTYPE *pSoldier, ATTACKTYPE *pBestThrow) {
 
         // JA2Gold: commented out
         /*
-        if ( SpacesAway( pOpponent->sGridNo, gsLastKnownOppLoc[ pSoldier->ubID ][ pOpponent->ubID ]
-        ) > 2 )
+        if ( SpacesAway( pOpponent->sGridNo, gsLastKnownOppLoc[ GetSolID(pSoldier) ][
+        pOpponent->ubID ] ) > 2 )
         {
                 continue;
         }
-        sOpponentTile[ubOpponentCnt] = gsLastKnownOppLoc[ pSoldier->ubID ][ pOpponent->ubID ];
-        bOpponentLevel[ubOpponentCnt] = gbLastKnownOppLevel[ pSoldier->ubID ][ pOpponent->ubID ];
+        sOpponentTile[ubOpponentCnt] = gsLastKnownOppLoc[ GetSolID(pSoldier) ][ pOpponent->ubID ];
+        bOpponentLevel[ubOpponentCnt] = gbLastKnownOppLevel[ GetSolID(pSoldier) ][ pOpponent->ubID
+        ];
         */
       } else if (bPersOL == HEARD_LAST_TURN) {
         // cheat; only allow throw if person is REALLY within 2 tiles of where last seen
@@ -574,7 +575,7 @@ void CalcBestThrow(struct SOLDIERTYPE *pSoldier, ATTACKTYPE *pBestThrow) {
 
         // JA2Gold: UB checks were screwed up
         /*
-        if ( pOpponent->sGridNo == gsLastKnownOppLoc[ pSoldier->ubID ][ pOpponent->ubID ] )
+        if ( pOpponent->sGridNo == gsLastKnownOppLoc[ GetSolID(pSoldier) ][ pOpponent->ubID ] )
         {
                 continue;
         }

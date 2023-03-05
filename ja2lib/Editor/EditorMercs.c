@@ -3015,7 +3015,7 @@ void RenderMercStrings() {
         sYPos += 10;
 
         SetFontForeground(FONT_GRAY2);
-        swprintf(str, ARR_SIZE(str), L"Slot #%d", pSoldier->ubID);
+        swprintf(str, ARR_SIZE(str), L"Slot #%d", GetSolID(pSoldier));
         FindFontCenterCoordinates(sXPos, sYPos, 80, 1, str, TINYFONT1, &sX, &sY);
         if (sY < 352) {
           gprintfdirty(sX, sY, str);
@@ -3037,7 +3037,7 @@ void RenderMercStrings() {
         sYPos += 10;
 
         SetFontForeground(FONT_GRAY2);
-        swprintf(str, ARR_SIZE(str), L"Slot #%d", pSoldier->ubID);
+        swprintf(str, ARR_SIZE(str), L"Slot #%d", GetSolID(pSoldier));
         FindFontCenterCoordinates(sXPos, sYPos, 80, 1, str, TINYFONT1, &sX, &sY);
         if (sY < 352) {
           gprintfdirty(sX, sY, str);

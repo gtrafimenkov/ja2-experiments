@@ -26,6 +26,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreen.h"
@@ -4537,7 +4538,7 @@ BOOLEAN HandleItemPointerClick(UINT16 usMapPos) {
           if (SoldierCanSeeCatchComing(pSoldier, gpItemPointerSoldier->sGridNo)) {
             // Setup as being the catch target
             ubThrowActionCode = THROW_TARGET_MERC_CATCH;
-            uiThrowActionData = pSoldier->ubID;
+            uiThrowActionData = GetSolID(pSoldier);
 
             sGridNo = pSoldier->sGridNo;
 
@@ -5567,7 +5568,7 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, INT16 sGridNo,
   gfIgnoreScrolling = TRUE;
 
   HandleAnyMercInSquadHasCompatibleStuff((INT8)CurrentSquad(), NULL, TRUE);
-  gubSelectSMPanelToMerc = pSoldier->ubID;
+  gubSelectSMPanelToMerc = GetSolID(pSoldier);
   ReEvaluateDisabledINVPanelButtons();
   DisableTacticalTeamPanelButtons(TRUE);
 

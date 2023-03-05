@@ -437,7 +437,7 @@ void HandleOverheadMap() {
       if (GetClosestMercInOverheadMap(usMapPos, &pSoldier, 1)) {
         if (pSoldier->bTeam == gbPlayerNum) {
           gfUIHandleSelectionAboveGuy = TRUE;
-          gsSelectedGuy = pSoldier->ubID;
+          gsSelectedGuy = GetSolID(pSoldier);
         }
 
         DisplayMercNameInOverhead(pSoldier);
@@ -1233,7 +1233,8 @@ guy
                                                                 SetObjectShade( hVObject, 1 );
                                                         }
 
-                                                        if ( pSoldier->ubID == gusSelectedSoldier )
+                                                        if ( GetSolID(pSoldier) ==
+gusSelectedSoldier )
                                                         {
                                                                 if( gfRadarCurrentGuyFlash &&
 !gfTacticalPlacementGUIActive )

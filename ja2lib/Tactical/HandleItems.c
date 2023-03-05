@@ -142,7 +142,7 @@ BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
   if (fBadChangeToGetThrough) {
     if (gTacticalStatus.sCantGetThroughSoldierGridNo != pSoldier->sGridNo ||
         gTacticalStatus.sCantGetThroughGridNo != sTargetGridNo ||
-        gTacticalStatus.ubCantGetThroughID != pSoldier->ubID) {
+        gTacticalStatus.ubCantGetThroughID != GetSolID(pSoldier)) {
       gTacticalStatus.fCantGetThrough = FALSE;
     }
 
@@ -150,7 +150,7 @@ BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
     if (!gTacticalStatus.fCantGetThrough) {
       gTacticalStatus.fCantGetThrough = TRUE;
       gTacticalStatus.sCantGetThroughGridNo = sTargetGridNo;
-      gTacticalStatus.ubCantGetThroughID = pSoldier->ubID;
+      gTacticalStatus.ubCantGetThroughID = GetSolID(pSoldier);
       gTacticalStatus.sCantGetThroughSoldierGridNo = pSoldier->sGridNo;
 
       // PLay quote
@@ -159,11 +159,11 @@ BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
     } else {
       // Is this a different case?
       if (gTacticalStatus.sCantGetThroughGridNo != sTargetGridNo ||
-          gTacticalStatus.ubCantGetThroughID != pSoldier->ubID ||
+          gTacticalStatus.ubCantGetThroughID != GetSolID(pSoldier) ||
           gTacticalStatus.sCantGetThroughSoldierGridNo != pSoldier->sGridNo) {
         // PLay quote
         gTacticalStatus.sCantGetThroughGridNo = sTargetGridNo;
-        gTacticalStatus.ubCantGetThroughID = pSoldier->ubID;
+        gTacticalStatus.ubCantGetThroughID = GetSolID(pSoldier);
 
         TacticalCharacterDialogue(pSoldier, QUOTE_NO_LINE_OF_FIRE);
         return (FALSE);
@@ -1145,7 +1145,7 @@ void HandleSoldierDropBomb(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) {
 
       pSoldier->inv[HANDPOS].bTrap =
           min(10, (EffectiveExplosive(pSoldier) / 20) + (EffectiveExpLevel(pSoldier) / 3));
-      pSoldier->inv[HANDPOS].ubBombOwner = pSoldier->ubID + 2;
+      pSoldier->inv[HANDPOS].ubBombOwner = GetSolID(pSoldier) + 2;
 
       // we now know there is something nasty here
       gpWorldLevelData[sGridNo].uiFlags |= MAPELEMENT_PLAYER_MINE_PRESENT;
@@ -3325,7 +3325,7 @@ INT16 AdjustGridNoForItemPlacement(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) 
   // ATE: IF a person is found, use adjacent gridno for it!
   ubTargetID = WhoIsThere2(sGridNo, pSoldier->bLevel);
 
-  if (fStructFound || (ubTargetID != NOBODY && ubTargetID != pSoldier->ubID)) {
+  if (fStructFound || (ubTargetID != NOBODY && ubTargetID != GetSolID(pSoldier))) {
     // GET ADJACENT GRIDNO
     sActionGridNo =
         FindAdjacentGridEx(pSoldier, sGridNo, &ubDirection, &sAdjustedGridNo, FALSE, FALSE);

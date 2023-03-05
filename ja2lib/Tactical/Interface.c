@@ -20,6 +20,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterfaceMap.h"
 #include "SysGlobals.h"
@@ -1353,13 +1354,13 @@ void DrawSelectedUIAboveGuy(UINT16 usSoldierID) {
 
   if (!pSoldier->fShowLocator) {
     // RETURN IF MERC IS NOT SELECTED
-    if (gfUIHandleSelectionAboveGuy && pSoldier->ubID == gsSelectedGuy &&
-        pSoldier->ubID != gusSelectedSoldier && !gfIgnoreOnSelectedGuy) {
+    if (gfUIHandleSelectionAboveGuy && GetSolID(pSoldier) == gsSelectedGuy &&
+        GetSolID(pSoldier) != gusSelectedSoldier && !gfIgnoreOnSelectedGuy) {
     } else if (pSoldier->ubID == gusSelectedSoldier && !gRubberBandActive) {
       usGraphicToUse = THIRDPOINTERS2;
     }
     // show all people's names if !
-    // else if ( pSoldier->ubID >= 20 && pSoldier->bVisible != -1 )
+    // else if ( GetSolID(pSoldier) >= 20 && pSoldier->bVisible != -1 )
     //{
 
     //}
@@ -1391,21 +1392,21 @@ void DrawSelectedUIAboveGuy(UINT16 usSoldierID) {
   SetFontForeground(FONT_MCOLOR_WHITE);
 
   if (pSoldier->ubProfile != NO_PROFILE || (pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
-    if (gfUIMouseOnValidCatcher == 1 && pSoldier->ubID == gubUIValidCatcherID) {
+    if (gfUIMouseOnValidCatcher == 1 && GetSolID(pSoldier) == gubUIValidCatcherID) {
       swprintf(NameStr, ARR_SIZE(NameStr), TacticalStr[CATCH_STR]);
       FindFontCenterCoordinates(sXPos, (INT16)(sYPos), (INT16)(80), 1, NameStr, TINYFONT1, &sX,
                                 &sY);
       gprintfdirty(sX, sY, NameStr);
       mprintf(sX, sY, NameStr);
       fRaiseName = TRUE;
-    } else if (gfUIMouseOnValidCatcher == 3 && pSoldier->ubID == gubUIValidCatcherID) {
+    } else if (gfUIMouseOnValidCatcher == 3 && GetSolID(pSoldier) == gubUIValidCatcherID) {
       swprintf(NameStr, ARR_SIZE(NameStr), TacticalStr[RELOAD_STR]);
       FindFontCenterCoordinates(sXPos, (INT16)(sYPos), (INT16)(80), 1, NameStr, TINYFONT1, &sX,
                                 &sY);
       gprintfdirty(sX, sY, NameStr);
       mprintf(sX, sY, NameStr);
       fRaiseName = TRUE;
-    } else if (gfUIMouseOnValidCatcher == 4 && pSoldier->ubID == gubUIValidCatcherID) {
+    } else if (gfUIMouseOnValidCatcher == 4 && GetSolID(pSoldier) == gubUIValidCatcherID) {
       swprintf(NameStr, ARR_SIZE(NameStr), pMessageStrings[MSG_PASS]);
       FindFontCenterCoordinates(sXPos, (INT16)(sYPos), (INT16)(80), 1, NameStr, TINYFONT1, &sX,
                                 &sY);
@@ -1488,7 +1489,7 @@ void DrawSelectedUIAboveGuy(UINT16 usSoldierID) {
         DrawBarsInUIBox(pSoldier, (INT16)(sXPos), (INT16)(sYPos), 16, 1);
       }
     } else {
-      if (gfUIMouseOnValidCatcher == 2 && pSoldier->ubID == gubUIValidCatcherID) {
+      if (gfUIMouseOnValidCatcher == 2 && GetSolID(pSoldier) == gubUIValidCatcherID) {
         SetFont(TINYFONT1);
         SetFontBackground(FONT_MCOLOR_BLACK);
         SetFontForeground(FONT_MCOLOR_WHITE);

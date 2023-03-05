@@ -1400,7 +1400,7 @@ void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT
                       // If a bad guy is highlighted
                       if (gfUIHandleSelectionAboveGuy == TRUE &&
                           MercPtrs[gsSelectedGuy]->bSide != gbPlayerNum) {
-                        if (gsSelectedGuy == pSoldier->ubID) {
+                        if (gsSelectedGuy == GetSolID(pSoldier)) {
                           pShadeTable =
                               pShadeStart[gsGlowFrames[gsCurrentGlowFrame] + bGlowShadeOffset];
                           gsForceSoldierZLevel = TOPMOST_Z_LEVEL;
@@ -1977,7 +1977,7 @@ void RenderTiles(UINT32 uiFlags, INT32 iStartPointX_M, INT32 iStartPointY_M, INT
                 // RENDR APS ONTOP OF PLANNED MERC GUY
                 if (fRenderTile && !(uiFlags & TILES_DIRTY)) {
                   if (fMerc) {
-                    if (pSoldier != NULL && pSoldier->ubID >= MAX_NUM_SOLDIERS) {
+                    if (pSoldier != NULL && GetSolID(pSoldier) >= MAX_NUM_SOLDIERS) {
                       SetFont(TINYFONT1);
                       SetFontDestBuffer(guiSAVEBUFFER, 0, gsVIEWPORT_WINDOW_START_Y, 640,
                                         gsVIEWPORT_WINDOW_END_Y, FALSE);

@@ -1033,11 +1033,12 @@ INT8 DecideActionYellow(struct SOLDIERTYPE *pSoldier) {
     // then we have no business being under YELLOW status any more!
 #ifdef RECORDNET
     fprintf(NetDebugFile, "\nDecideActionYellow: ERROR - No important noise known by guynum %d\n\n",
-            pSoldier->ubID);
+            GetSolID(pSoldier));
 #endif
 
 #ifdef BETAVERSION
-    NumMessage("DecideActionYellow: ERROR - No important noise known by guynum ", pSoldier->ubID);
+    NumMessage("DecideActionYellow: ERROR - No important noise known by guynum ",
+               GetSolID(pSoldier));
 #endif
 
     return (AI_ACTION_NONE);
@@ -1461,7 +1462,7 @@ INT8 DecideActionYellow(struct SOLDIERTYPE *pSoldier) {
 #ifdef RECORDNET
     fprintf(NetDebugFile,
             "\tDecideActionYellow: guynum %d ignores noise, switching to GREEN AI...\n",
-            pSoldier->ubID);
+            GetSolID(pSoldier));
 #endif
 
 #ifdef DEBUGDECISIONS
@@ -1766,7 +1767,7 @@ INT8 DecideActionRed(struct SOLDIERTYPE *pSoldier, UINT8 ubUnconsciousOK) {
           (gTacticalStatus.ubSpottersCalledForBy == NOBODY)) {
         // then call for spotters!  Uses up the rest of his turn (whatever
         // that may be), but from now on, BLACK AI NPC may radio sightings!
-        gTacticalStatus.ubSpottersCalledForBy = pSoldier->ubID;
+        gTacticalStatus.ubSpottersCalledForBy = GetSolID(pSoldier);
         pSoldier->bActionPoints = 0;
 
 #ifdef DEBUGDECISIONS
@@ -2191,7 +2192,8 @@ INT8 DecideActionRed(struct SOLDIERTYPE *pSoldier, UINT8 ubUnconsciousOK) {
           // then wait
           bHighestWatchLoc = GetHighestVisibleWatchedLoc(pSoldier->ubID);
           // sDistVisible =  DistanceVisible( pSoldier, DIRECTION_IRRELEVANT, DIRECTION_IRRELEVANT,
-          // gsWatchedLoc[ pSoldier->ubID ][ bHighestWatchLoc ], gbWatchedLocLevel[ pSoldier->ubID
+          // gsWatchedLoc[ GetSolID(pSoldier) ][ bHighestWatchLoc ], gbWatchedLocLevel[
+          // GetSolID(pSoldier)
           // ][ bHighestWatchLoc ] );
           if (bHighestWatchLoc != -1) {
             // see if we need turn to face that location
@@ -2527,7 +2529,7 @@ INT8 DecideActionRed(struct SOLDIERTYPE *pSoldier, UINT8 ubUnconsciousOK) {
     }
 #ifdef RECORDNET
     fprintf(NetDebugFile, "\tDecideActionRed: guynum %d switching to GREEN AI...\n",
-            pSoldier->ubID);
+            GetSolID(pSoldier));
 #endif
 
 #ifdef DEBUGDECISIONS
@@ -3471,7 +3473,7 @@ INT8 DecideActionBlack(struct SOLDIERTYPE *pSoldier) {
 
 #ifdef DEBUGDECISIONS
       DebugAI(
-          String("%d(%s) %s %d(%s) at gridno %d (%d APs aim)\n", pSoldier->ubID, pSoldier->name,
+          String("%d(%s) %s %d(%s) at gridno %d (%d APs aim)\n", GetSolID(pSoldier), pSoldier->name,
                  (ubBestAttackAction == AI_ACTION_FIRE_GUN)
                      ? "SHOOTS"
                      : ((ubBestAttackAction == AI_ACTION_TOSS_PROJECTILE) ? "TOSSES AT" : "STABS"),
@@ -3522,7 +3524,7 @@ INT8 DecideActionBlack(struct SOLDIERTYPE *pSoldier) {
                    iCoverPercentBetter));
 #endif
     // ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_TESTVERSION, L"AI %d taking cover, morale %d, from %d to
-    // %d", pSoldier->ubID, pSoldier->bAIMorale, pSoldier->sGridNo, sBestCover );
+    // %d", GetSolID(pSoldier), pSoldier->bAIMorale, pSoldier->sGridNo, sBestCover );
     pSoldier->usActionData = sBestCover;
 
     return (AI_ACTION_TAKE_COVER);

@@ -673,7 +673,7 @@ void UpdateForContOverPortrait(struct SOLDIERTYPE *pSoldier, BOOLEAN fOn) {
     }
   } else {
     for (cnt = 0; cnt < 6; cnt++) {
-      if (gTeamPanel[cnt].ubID == pSoldier->ubID) {
+      if (gTeamPanel[cnt].ubID == GetSolID(pSoldier)) {
         if (IsMouseInRegion(&gTEAM_FaceRegions[cnt])) {
           HandleMouseOverSoldierFaceForContMove(pSoldier, fOn);
         }
@@ -2998,7 +2998,7 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
         }
 
         // Render Selected guy if selected
-        if (gusSelectedSoldier == pSoldier->ubID && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
+        if (gusSelectedSoldier == GetSolID(pSoldier) && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
             OK_INTERRUPT_MERC(pSoldier)) {
           BltVideoObjectFromIndex(guiSAVEBUFFER, guiTEAMObjects, 0, sTEAMFaceHighlXY[posIndex],
                                   sTEAMFaceHighlXY[posIndex + 1], VO_BLT_SRCTRANSPARENCY, NULL);

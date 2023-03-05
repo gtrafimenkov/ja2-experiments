@@ -212,7 +212,7 @@ BOOLEAN AddPlayerToGroup(UINT8 ubGroupID, struct SOLDIERTYPE *pSoldier) {
   AssertMsg(pGroup->fPlayer, "Attempting AddPlayerToGroup() on an ENEMY group!");
   pPlayer->pSoldier = pSoldier;
   pPlayer->ubProfileID = pSoldier->ubProfile;
-  pPlayer->ubID = pSoldier->ubID;
+  pPlayer->ubID = GetSolID(pSoldier);
   pPlayer->bFlags = 0;
   pPlayer->next = NULL;
 
@@ -829,7 +829,7 @@ void PrepareForPreBattleInterface(struct GROUP *pPlayerDialogGroup,
 
     if (pSoldier->bLife >= OKLIFE && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
         !AM_A_ROBOT(pSoldier) && !AM_AN_EPC(pSoldier)) {
-      ubMercsInGroup[ubNumMercs] = pSoldier->ubID;
+      ubMercsInGroup[ubNumMercs] = GetSolID(pSoldier);
       ubNumMercs++;
     }
 

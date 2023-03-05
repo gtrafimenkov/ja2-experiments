@@ -1030,7 +1030,7 @@ void UpdateCurrentlySelectedMerc(struct SOLDIERTYPE *pSoldier, INT8 bSquadValue)
   }
 
   // Are we the selected guy?
-  if (gusSelectedSoldier == pSoldier->ubID) {
+  if (gusSelectedSoldier == GetSolID(pSoldier)) {
     ubID = FindNextActiveAndAliveMerc(pSoldier, FALSE, FALSE);
 
     if (ubID != NOBODY && ubID != gusSelectedSoldier) {

@@ -752,7 +752,7 @@ void AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(struct SOLDI
   }
 
   // add merc to the list
-  giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] = pSoldier->ubID;
+  giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] = GetSolID(pSoldier);
 
   return;
 }

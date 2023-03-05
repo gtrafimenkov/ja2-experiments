@@ -528,7 +528,7 @@ INT16 RandomFriendWithin(struct SOLDIERTYPE *pSoldier) {
     }
 
     // skip ourselves
-    if (pFriend->ubID == pSoldier->ubID) {
+    if (pFriend->ubID == GetSolID(pSoldier)) {
       continue;
     }
 
@@ -1313,7 +1313,7 @@ INT16 ClosestReachableFriendInTrouble(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfC
     }
 
     // if this "friend" is actually US
-    if (pFriend->ubID == pSoldier->ubID) {
+    if (pFriend->ubID == GetSolID(pSoldier)) {
       continue;  // next merc
     }
 
@@ -1374,7 +1374,7 @@ INT16 DistanceToClosestFriend(struct SOLDIERTYPE *pSoldier) {
   ubLoop = gTacticalStatus.Team[pSoldier->bTeam].bFirstID;
 
   for (; ubLoop <= gTacticalStatus.Team[pSoldier->bTeam].bLastID; ubLoop++) {
-    if (ubLoop == pSoldier->ubID) {
+    if (ubLoop == GetSolID(pSoldier)) {
       // same guy - continue!
       continue;
     }

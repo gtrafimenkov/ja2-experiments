@@ -277,7 +277,7 @@ BOOLEAN CreateAutoBandageString(void) {
     if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
         !(pSoldier->bCollapsed) && pSoldier->bMedical > 0 &&
         FindObjClass(pSoldier, IC_MEDKIT) != NO_SLOT) {
-      ubDoctor[ubDoctors] = pSoldier->ubID;
+      ubDoctor[ubDoctors] = GetSolID(pSoldier);
       ubDoctors++;
       // increase the length of the string by the size of the name
       // plus 2, one for the comma and one for the space after that

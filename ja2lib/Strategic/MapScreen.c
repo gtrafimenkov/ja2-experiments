@@ -10097,7 +10097,7 @@ void RandomAwakeSelectedMercConfirmsStrategicMove(void) {
 
       if (pSoldier->bLife >= OKLIFE && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
           !AM_A_ROBOT(pSoldier) && !AM_AN_EPC(pSoldier) && !pSoldier->fMercAsleep) {
-        ubSelectedMercID[ubNumMercs] = pSoldier->ubID;
+        ubSelectedMercID[ubNumMercs] = GetSolID(pSoldier);
         ubSelectedMercIndex[ubNumMercs] = (UINT8)iCounter;
 
         ubNumMercs++;

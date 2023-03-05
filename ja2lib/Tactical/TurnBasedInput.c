@@ -3921,7 +3921,7 @@ void ToggleStealthMode(struct SOLDIERTYPE *pSoldier) {
   if ((gsCurInterfacePanel != SM_PANEL) ||
       (ButtonList[giSMStealthButton]->uiFlags & BUTTON_ENABLED)) {
     // ATE: Toggle stealth
-    if (gpSMCurrentMerc != NULL && pSoldier->ubID == gpSMCurrentMerc->ubID) {
+    if (gpSMCurrentMerc != NULL && GetSolID(pSoldier) == gpSMCurrentMerc->ubID) {
       gfUIStanceDifferent = TRUE;
     }
 

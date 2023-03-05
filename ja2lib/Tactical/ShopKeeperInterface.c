@@ -1072,7 +1072,7 @@ BOOLEAN InitShopKeepersFace(UINT8 ubMercID) {
 #endif
   } else {
     // Create the facial index
-    giShopKeeperFaceIndex = InitFace(ubMercID, pSoldier->ubID, FACE_BIGFACE);
+    giShopKeeperFaceIndex = InitFace(ubMercID, GetSolID(pSoldier), FACE_BIGFACE);
   }
 
   SetAutoFaceActive(FRAME_BUFFER, FACE_AUTO_RESTORE_BUFFER, giShopKeeperFaceIndex, SKI_FACE_X,

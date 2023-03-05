@@ -309,7 +309,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
 
           // SHOOT GUN
           // MAKE AN EVENT, BUT ONLY DO STUFF IF WE OWN THE GUY!
-          SFireWeapon.usSoldierID = pSoldier->ubID;
+          SFireWeapon.usSoldierID = GetSolID(pSoldier);
           SFireWeapon.uiUniqueId = pSoldier->uiUniqueSoldierIdValue;
           SFireWeapon.sTargetGridNo = pSoldier->sTargetGridNo;
           SFireWeapon.bTargetLevel = pSoldier->bTargetLevel;
@@ -672,7 +672,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               //							DebugMsg( TOPIC_JA2,
               // DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - aborting start of attack") );
               //							FreeUpAttacker(
-              // pSoldier->ubID );
+              // GetSolID(pSoldier) );
             }
 
             // ATE; Reduce it due to animation being stopped...
@@ -855,7 +855,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
                                  pSoldier->pThrowParams->dX, pSoldier->pThrowParams->dY,
                                  pSoldier->pThrowParams->dZ, pSoldier->pThrowParams->dForceX,
                                  pSoldier->pThrowParams->dForceY, pSoldier->pThrowParams->dForceZ,
-                                 pSoldier->ubID, pSoldier->pThrowParams->ubActionCode,
+                                 GetSolID(pSoldier), pSoldier->pThrowParams->ubActionCode,
                                  pSoldier->pThrowParams->uiActionData);
 
             // Remove object
@@ -1311,7 +1311,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
           // ChangeSoldierState( pSoldier, RAISE_RIFLE, 0 , FALSE );
           // return( TRUE );
           // Delete guy
-          // TacticalRemoveSoldier( pSoldier->ubID );
+          // TacticalRemoveSoldier( GetSolID(pSoldier) );
           // return( FALSE );
           break;
 
@@ -1582,7 +1582,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
                         pSoldier->ubDoorOpeningNoise, NOISE_CREAKING);
               //	gfDelayResolvingBestSighting = FALSE;
 
-              gubInterruptProvoker = pSoldier->ubID;
+              gubInterruptProvoker = GetSolID(pSoldier);
               AllTeamsLookForAll(TRUE);
 
               // ATE: Now, check AI guy to cancel what he was going....
@@ -2079,7 +2079,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
             INT32 iSoundID = 0;
             BOOLEAN fDoCry = FALSE;
 
-            // if ( SoldierOnScreen( pSoldier->ubID ) )
+            // if ( SoldierOnScreen( GetSolID(pSoldier) ) )
             {
               switch (pSoldier->usActionData) {
                 case CALL_1_PREY:
@@ -2185,8 +2185,8 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
         case 724:
 
           // Play ass scratch
-          // PlaySoldierJA2Sample( pSoldier->ubID, (UINT8)( IDLE_SCRATCH ), RATE_11025, SoundVolume(
-          // HIGHVOLUME, pSoldier->sGridNo ), 1, SoundDir( pSoldier->sGridNo ), TRUE );
+          // PlaySoldierJA2Sample( GetSolID(pSoldier), (UINT8)( IDLE_SCRATCH ), RATE_11025,
+          // SoundVolume( HIGHVOLUME, pSoldier->sGridNo ), 1, SoundDir( pSoldier->sGridNo ), TRUE );
           break;
 
         case 725:
@@ -2379,7 +2379,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
           // Dish out damage!
           EVENT_SoldierGotHit(MercPtrs[pSoldier->uiPendingActionData4], TAKE_DAMAGE_BLADE,
                               (INT16)25, (INT16)25, gOppositeDirection[pSoldier->bDirection], 50,
-                              pSoldier->ubID, 0, ANIM_PRONE, 0, 0);
+                              GetSolID(pSoldier), 0, ANIM_PRONE, 0, 0);
         } break;
 
         case 762: {
@@ -2969,7 +2969,7 @@ BOOLEAN HandleSoldierDeath(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfMadeCorpse) 
         if (MercPtrs[pSoldier->ubAttackerID]->bTeam == gbPlayerNum &&
             gTacticalStatus.ubAttackBusyCount > 0) {
           gTacticalStatus.fKilledEnemyOnAttack = TRUE;
-          gTacticalStatus.ubEnemyKilledOnAttack = pSoldier->ubID;
+          gTacticalStatus.ubEnemyKilledOnAttack = GetSolID(pSoldier);
           gTacticalStatus.ubEnemyKilledOnAttackLocation = pSoldier->sGridNo;
           gTacticalStatus.bEnemyKilledOnAttackLevel = pSoldier->bLevel;
           gTacticalStatus.ubEnemyKilledOnAttackKiller = pSoldier->ubAttackerID;
@@ -3556,7 +3556,7 @@ BOOLEAN OKFallDirection(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bLevel
 
     // must make sure that structure data can be added in the direction of the target
 
-    usStructureID = pSoldier->ubID;
+    usStructureID = GetSolID(pSoldier);
 
     // Okay this is really SCREWY but it's due to the way this function worked before and must
     // work now.  The function is passing in an adjacent gridno but we need to place the structure

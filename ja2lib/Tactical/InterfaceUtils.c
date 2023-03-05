@@ -213,7 +213,7 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, INT16 sXPos, INT16 sYPos, I
 
   // DO MAX BREATH
   if (!IsMapScreen_2()) {
-    if (gusSelectedSoldier == pSoldier->ubID && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
+    if (gusSelectedSoldier == GetSolID(pSoldier) && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
         OK_INTERRUPT_MERC(pSoldier)) {
       // gold, the second entry in the .sti
       BltVideoObject(uiBuffer, hHandle, 1, sXPos, (INT16)(sYPos - sHeight), VO_BLT_SRCTRANSPARENCY,
@@ -416,9 +416,10 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, INT16 sFaceX, INT16 sFaceY,
         // Render as an extern face...
         fAutoFace = FALSE;
       } else {
-        SetAutoFaceActiveFromSoldier(FRAME_BUFFER, guiSAVEBUFFER, pSoldier->ubID, sFaceX, sFaceY);
-        //	SetAutoFaceActiveFromSoldier( FRAME_BUFFER, FACE_AUTO_RESTORE_BUFFER, pSoldier->ubID
-        //, sFaceX, sFaceY );
+        SetAutoFaceActiveFromSoldier(FRAME_BUFFER, guiSAVEBUFFER, GetSolID(pSoldier), sFaceX,
+                                     sFaceY);
+        //	SetAutoFaceActiveFromSoldier( FRAME_BUFFER, FACE_AUTO_RESTORE_BUFFER,
+        //GetSolID(pSoldier) , sFaceX, sFaceY );
       }
     }
 
@@ -428,7 +429,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, INT16 sFaceX, INT16 sFaceY,
       if (fAutoFace) {
         RenderAutoFaceFromSoldier(pSoldier->ubID);
       } else {
-        ExternRenderFaceFromSoldier(guiSAVEBUFFER, pSoldier->ubID, sFaceX, sFaceY);
+        ExternRenderFaceFromSoldier(guiSAVEBUFFER, GetSolID(pSoldier), sFaceX, sFaceY);
       }
     }
   } else {

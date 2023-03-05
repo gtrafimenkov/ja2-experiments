@@ -784,7 +784,7 @@ BOOLEAN ExecuteOverhead() {
             pSoldier->fPauseAim = FALSE;
             /*
             DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - realtime
-            reloading") ); FreeUpAttacker( pSoldier->ubID );
+            reloading") ); FreeUpAttacker( GetSolID(pSoldier) );
             */
           }
         }
@@ -1061,7 +1061,7 @@ BOOLEAN ExecuteOverhead() {
                   } else if (pSoldier->ubPendingAction != NO_PENDING_ACTION) {
                     DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
                              String("We are inside the IF PENDING Animation with soldier #%d",
-                                    pSoldier->ubID));
+                                    GetSolID(pSoldier)));
 
                     if (pSoldier->ubPendingAction == MERC_OPENDOOR ||
                         pSoldier->ubPendingAction == MERC_OPENSTRUCT) {
@@ -1244,7 +1244,7 @@ BOOLEAN ExecuteOverhead() {
 #ifdef JA2BETAVERSION
                       ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_TESTVERSION,
                                 L"Path for %s ( %d ) did not make merc get to dest .",
-                                pSoldier->name, pSoldier->ubID);
+                                pSoldier->name, GetSolID(pSoldier));
 #endif
                     }
 
@@ -2112,7 +2112,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
 
     // ATE: Remove this if we were stopped....
     if (gTacticalStatus.fEnemySightingOnTheirTurn) {
-      if (gTacticalStatus.ubEnemySightingOnTheirTurnEnemyID == pSoldier->ubID) {
+      if (gTacticalStatus.ubEnemySightingOnTheirTurnEnemyID == GetSolID(pSoldier)) {
         pSoldier->fPauseAllAnimation = FALSE;
         gTacticalStatus.fEnemySightingOnTheirTurn = FALSE;
       }
@@ -2636,7 +2636,7 @@ void HandlePlayerTeamMemberDeath(struct SOLDIERTYPE *pSoldier) {
 
   CheckForEndOfBattle(FALSE);
 
-  if (gusSelectedSoldier == pSoldier->ubID) {
+  if (gusSelectedSoldier == GetSolID(pSoldier)) {
     if (!fMissionFailed) {
       SelectSoldier((INT16)iNewSelectedSoldier, FALSE, FALSE);
     } else {
@@ -3288,7 +3288,7 @@ UINT8 FindNextActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
   INT32 cnt;
   struct SOLDIERTYPE *pTeamSoldier;
 
-  cnt = pSoldier->ubID + 1;
+  cnt = GetSolID(pSoldier) + 1;
   bLastTeamID = gTacticalStatus.Team[pSoldier->bTeam].bLastID;
 
   // look for all mercs on the same team,
@@ -3317,7 +3317,7 @@ UINT8 FindNextActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
   // none found,
   // Now loop back
   cnt = gTacticalStatus.Team[pSoldier->bTeam].bFirstID;
-  bLastTeamID = pSoldier->ubID;
+  bLastTeamID = GetSolID(pSoldier);
 
   for (pTeamSoldier = MercPtrs[cnt]; cnt <= bLastTeamID; cnt++, pTeamSoldier++) {
     if (fOnlyRegularMercs) {
@@ -3382,7 +3382,7 @@ UINT8 FindPrevActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
 
   // loop back
   bLastTeamID = gTacticalStatus.Team[pSoldier->bTeam].bFirstID;
-  cnt = pSoldier->ubID - 1;
+  cnt = GetSolID(pSoldier) - 1;
 
   for (pTeamSoldier = MercPtrs[cnt]; cnt >= bLastTeamID; cnt--, pTeamSoldier--) {
     if (fOnlyRegularMercs) {
@@ -3407,7 +3407,7 @@ UINT8 FindPrevActiveAndAliveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForL
     }
   }
 
-  bLastTeamID = pSoldier->ubID;
+  bLastTeamID = GetSolID(pSoldier);
   cnt = gTacticalStatus.Team[pSoldier->bTeam].bLastID;
 
   // look for all mercs on the same team,
@@ -4154,7 +4154,7 @@ INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
     }
 
     ubWhoIsThere = WhoIsThere2(sSpot, pSoldier->bLevel);
-    if (ubWhoIsThere != NOBODY && ubWhoIsThere != pSoldier->ubID) {
+    if (ubWhoIsThere != NOBODY && ubWhoIsThere != GetSolID(pSoldier)) {
       // skip this direction b/c it's blocked by another merc!
       continue;
     }
@@ -4188,7 +4188,7 @@ INT16 FindNextToAdjacentGridEx(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, UINT
     }
 
     ubWhoIsThere = WhoIsThere2(sSpot2, pSoldier->bLevel);
-    if (ubWhoIsThere != NOBODY && ubWhoIsThere != pSoldier->ubID) {
+    if (ubWhoIsThere != NOBODY && ubWhoIsThere != GetSolID(pSoldier)) {
       // skip this direction b/c it's blocked by another merc!
       continue;
     }
@@ -5294,10 +5294,10 @@ void CycleThroughKnownEnemies() {
           usStartToLook = (UINT16)cnt;
 
           // Locate to!
-          // LocateSoldier( pSoldier->ubID, 1 );
+          // LocateSoldier( GetSolID(pSoldier), 1 );
 
           // ATE: Change to Slide To...
-          SlideTo(0, pSoldier->ubID, 0, SETANDREMOVEPREVIOUSLOCATOR);
+          SlideTo(0, GetSolID(pSoldier), 0, SETANDREMOVEPREVIOUSLOCATOR);
           return;
         } else {
           fEnemyBehindStartLook = TRUE;
@@ -5335,7 +5335,7 @@ void CycleVisibleEnemies(struct SOLDIERTYPE *pSrcSoldier) {
           pSrcSoldier->ubLastEnemyCycledID = (UINT8)cnt;
 
           // ATE: Change to Slide To...
-          SlideTo(0, pSoldier->ubID, 0, SETANDREMOVEPREVIOUSLOCATOR);
+          SlideTo(0, GetSolID(pSoldier), 0, SETANDREMOVEPREVIOUSLOCATOR);
 
           ChangeInterfaceLevel(pSoldier->bLevel);
           return;
@@ -5358,7 +5358,7 @@ void CycleVisibleEnemies(struct SOLDIERTYPE *pSrcSoldier) {
           pSrcSoldier->ubLastEnemyCycledID = (UINT8)cnt;
 
           // ATE: Change to Slide To...
-          SlideTo(0, pSoldier->ubID, 0, SETANDREMOVEPREVIOUSLOCATOR);
+          SlideTo(0, GetSolID(pSoldier), 0, SETANDREMOVEPREVIOUSLOCATOR);
 
           ChangeInterfaceLevel(pSoldier->bLevel);
           return;
@@ -5906,7 +5906,7 @@ void HandleSuppressionFire(UINT8 ubTargetedMerc, UINT8 ubCausedAttacker) {
         // This person will be busy while they crouch or go prone
         if ((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT)) {
           DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-                   String("!!!!!!! Starting suppression, on %d", pSoldier->ubID));
+                   String("!!!!!!! Starting suppression, on %d", GetSolID(pSoldier)));
 
           gTacticalStatus.ubAttackBusyCount++;
 
@@ -6514,7 +6514,7 @@ void RemoveSoldierFromTacticalSector(struct SOLDIERTYPE *pSoldier, BOOLEAN fAdju
   // Select next avialiable guy....
   if (fAdjustSelected) {
     if (IsTacticalMode()) {
-      if (gusSelectedSoldier == pSoldier->ubID) {
+      if (gusSelectedSoldier == GetSolID(pSoldier)) {
         ubID = FindNextActiveAndAliveMerc(pSoldier, FALSE, FALSE);
 
         if (ubID != NOBODY && ubID != gusSelectedSoldier) {

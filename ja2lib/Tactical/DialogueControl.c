@@ -2312,11 +2312,11 @@ void BeginLoggingForBleedMeToos(BOOLEAN fStart) { gubLogForMeTooBleeds = fStart;
 void SetEngagedInConvFromPCAction(struct SOLDIERTYPE *pSoldier) {
   // OK, If a good give, set engaged in conv...
   gTacticalStatus.uiFlags |= ENGAGED_IN_CONV;
-  gTacticalStatus.ubEngagedInConvFromActionMercID = pSoldier->ubID;
+  gTacticalStatus.ubEngagedInConvFromActionMercID = GetSolID(pSoldier);
 }
 
 void UnSetEngagedInConvFromPCAction(struct SOLDIERTYPE *pSoldier) {
-  if (gTacticalStatus.ubEngagedInConvFromActionMercID == pSoldier->ubID) {
+  if (gTacticalStatus.ubEngagedInConvFromActionMercID == GetSolID(pSoldier)) {
     // OK, If a good give, set engaged in conv...
     gTacticalStatus.uiFlags &= (~ENGAGED_IN_CONV);
   }

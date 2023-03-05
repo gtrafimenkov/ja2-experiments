@@ -293,7 +293,7 @@ void MercDailyUpdate() {
 
               // Add even for displaying a dialogue telling the player this....
               AddSameDayStrategicEvent(EVENT_RPC_WHINE_ABOUT_PAY, MERC_ARRIVE_TIME_SLOT_1,
-                                       pSoldier->ubID);
+                                       GetSolID(pSoldier));
             }
           }
         }

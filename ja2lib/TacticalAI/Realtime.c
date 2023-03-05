@@ -83,7 +83,7 @@ void RTHandleAI(struct SOLDIERTYPE *pSoldier) {
     // if action should remain in progress
     if (ActionInProgress(pSoldier)) {
 #ifdef DEBUGBUSY
-      AINumMessage("Busy with action, skipping guy#", pSoldier->ubID);
+      AINumMessage("Busy with action, skipping guy#", GetSolID(pSoldier));
 #endif
       // let it continue
       return;
@@ -172,7 +172,7 @@ void RTHandleAI(struct SOLDIERTYPE *pSoldier) {
     if (pSoldier->bAction == AI_ACTION_NONE) {
 #ifdef RECORDNET
       fprintf(NetDebugFile, "\tMOVED BECOMING TRUE: Chose to do nothing, guynum %d\n",
-              pSoldier->ubID);
+              GetSolID(pSoldier));
 #endif
 
       // do a standard wait before doing anything else!

@@ -1707,7 +1707,7 @@ void FindAndSetThisContractSoldier(struct SOLDIERTYPE *pSoldier) {
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     if (gCharactersList[iCounter].fValid == TRUE) {
-      if (gCharactersList[iCounter].usSolID == pSoldier->ubID) {
+      if (gCharactersList[iCounter].usSolID == GetSolID(pSoldier)) {
         ChangeSelectedInfoChar((INT8)iCounter, TRUE);
         bSelectedContractChar = (INT8)iCounter;
         fShowContractMenu = TRUE;
@@ -1826,7 +1826,7 @@ void RandomMercInGroupSaysQuote(struct GROUP *pGroup, UINT16 usQuoteNum) {
 
     if (pSoldier->bLife >= OKLIFE && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
         !AM_A_ROBOT(pSoldier) && !AM_AN_EPC(pSoldier) && !pSoldier->fMercAsleep) {
-      ubMercsInGroup[ubNumMercs] = pSoldier->ubID;
+      ubMercsInGroup[ubNumMercs] = GetSolID(pSoldier);
       ubNumMercs++;
     }
 
@@ -3725,7 +3725,7 @@ void AddSoldierToWaitingListQueue(struct SOLDIERTYPE *pSoldier) {
   INT32 iSoldierId = 0;
 
   // get soldier profile
-  iSoldierId = pSoldier->ubID;
+  iSoldierId = GetSolID(pSoldier);
 
   SpecialCharacterDialogueEvent(DIALOGUE_ADD_EVENT_FOR_SOLDIER_UPDATE_BOX,
                                 UPDATE_BOX_REASON_ADDSOLDIER, iSoldierId, 0, 0, 0);

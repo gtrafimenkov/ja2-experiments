@@ -576,7 +576,7 @@ void HandleDoorTrap(struct SOLDIERTYPE *pSoldier, DOOR *pDoor) {
                     SoundDir(pDoor->sGridNo));
 
       // Set attacker's ID
-      pSoldier->ubAttackerID = pSoldier->ubID;
+      pSoldier->ubAttackerID = GetSolID(pSoldier);
       // Increment  being attacked count
       pSoldier->bBeingAttackedCount++;
       gTacticalStatus.ubAttackBusyCount++;
@@ -594,7 +594,7 @@ void HandleDoorTrap(struct SOLDIERTYPE *pSoldier, DOOR *pDoor) {
                     SoundDir(pDoor->sGridNo));
 
       // Set attacker's ID
-      pSoldier->ubAttackerID = pSoldier->ubID;
+      pSoldier->ubAttackerID = GetSolID(pSoldier);
       // Increment  being attacked count
       pSoldier->bBeingAttackedCount++;
       gTacticalStatus.ubAttackBusyCount++;

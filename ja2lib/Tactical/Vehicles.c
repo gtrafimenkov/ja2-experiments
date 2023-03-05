@@ -481,7 +481,7 @@ BOOLEAN AddSoldierToVehicle(struct SOLDIERTYPE *pSoldier, INT32 iId) {
         // Set as driver...
         pSoldier->uiStatusFlags |= SOLDIER_DRIVER;
 
-        SetDriver(iId, pSoldier->ubID);
+        SetDriver(iId, GetSolID(pSoldier));
 
       } else {
         // Set as driver...
@@ -1416,7 +1416,7 @@ void HandleCriticalHitForVehicleInLocation(UINT8 ubID, INT16 sDmg, INT16 sGridNo
     if (pSoldier != NULL) {
       // Tacticlly remove soldier....
       // EVENT_InitNewSoldierAnim( pSoldier, VEHICLE_DIE, 0, FALSE );
-      // TacticalRemoveSoldier( pSoldier->ubID );
+      // TacticalRemoveSoldier( GetSolID(pSoldier) );
 
       CheckForAndHandleSoldierDeath(pSoldier, &fMadeCorpse);
     }
