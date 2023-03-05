@@ -667,7 +667,7 @@ void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrain
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     // valid character?
-    if (gCharactersList[iCounter].fValid == FALSE) {
+    if (!IsCharListEntryValid(iCounter)) {
       // nope
       continue;
     }
@@ -775,7 +775,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
   if (IsMapScreen()) {
     for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
       // valid character?
-      if (gCharactersList[iCounter].fValid) {
+      if (IsCharListEntryValid(iCounter)) {
         // selected?
         if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE) ||
             (iCounter == GetCharForAssignmentIndex())) {

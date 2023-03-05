@@ -1709,7 +1709,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     // valid character?
-    if (gCharactersList[iCounter].fValid == FALSE) {
+    if (!IsCharListEntryValid(iCounter)) {
       // nope
       continue;
     }
@@ -9099,7 +9099,7 @@ BOOLEAN HandleSelectedMercsBeingPutAsleep(BOOLEAN fWakeUp, BOOLEAN fDisplayWarni
     pSoldier = NULL;
 
     // if the current character in the list is valid...then grab soldier pointer for the character
-    if (gCharactersList[iCounter].fValid) {
+    if (IsCharListEntryValid(iCounter)) {
       // get the soldier pointer
       pSoldier = GetMercFromCharacterList(iCounter);
 
@@ -9366,8 +9366,8 @@ void SetAssignmentForList(INT8 bAssignment, INT8 bParam) {
 
   // sets assignment for the list
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if ((gCharactersList[iCounter].fValid) &&
-        (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) && (iCounter != bSelectedAssignChar) &&
+    if ((IsCharListEntryValid(iCounter)) && (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) &&
+        (iCounter != bSelectedAssignChar) &&
         !(Menptr[gCharactersList[iCounter].usSolID].uiStatusFlags & SOLDIER_VEHICLE)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 

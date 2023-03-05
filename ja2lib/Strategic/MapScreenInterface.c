@@ -476,7 +476,7 @@ void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList() {
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     // valid character?
-    if (gCharactersList[iCounter].fValid == FALSE) {
+    if (!IsCharListEntryValid(iCounter)) {
       // nope
       continue;
     }
@@ -502,7 +502,7 @@ void ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(INT16 sSectorX, I
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     // valid character?
-    if (gCharactersList[iCounter].fValid == FALSE) {
+    if (!IsCharListEntryValid(iCounter)) {
       // nope
       continue;
     }
@@ -547,7 +547,7 @@ void DeselectSelectedListMercsWhoCantMoveWithThisGuy(struct SOLDIERTYPE *pSoldie
 
   // deselect any other selected mercs that can't travel together with pSoldier
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
         pSoldier2 = &(Menptr[gCharactersList[iCounter].usSolID]);
 
@@ -621,7 +621,7 @@ void SelectUnselectedMercsWhoMustMoveWithThisGuy(void) {
   struct SOLDIERTYPE *pSoldier = NULL;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       // if not already selected
       if (fSelectedListOfMercsForMapScreen[iCounter] == FALSE) {
         pSoldier = &(Menptr[gCharactersList[iCounter].usSolID]);
@@ -644,7 +644,7 @@ BOOLEAN AnyMercInSameSquadOrVehicleIsSelected(struct SOLDIERTYPE *pSoldier) {
   struct SOLDIERTYPE *pSoldier2 = NULL;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       // if selected
       if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
         pSoldier2 = &(Menptr[gCharactersList[iCounter].usSolID]);
@@ -986,7 +986,7 @@ void CheckAndUpdateBasedOnContractTimes(void) {
   INT32 iTimeRemaining = 0;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       // what kind of merc
       if (Menptr[gCharactersList[iCounter].usSolID].ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
         // amount of time left on contract
@@ -1707,7 +1707,7 @@ void FindAndSetThisContractSoldier(struct SOLDIERTYPE *pSoldier) {
   fShowContractMenu = FALSE;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       if (gCharactersList[iCounter].usSolID == GetSolID(pSoldier)) {
         ChangeSelectedInfoChar((INT8)iCounter, TRUE);
         bSelectedContractChar = (INT8)iCounter;
@@ -1848,7 +1848,7 @@ INT32 GetNumberOfPeopleInCharacterList(void) {
 
   // get the number of valid mercs in the mapscreen character list
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       // another valid character
       iCount++;
     }
@@ -2764,7 +2764,7 @@ void SetUpMovingListsForSector(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ) {
   // is not in the char list
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid) {
+    if (IsCharListEntryValid(iCounter)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       if ((IsSolActive(pSoldier)) && (pSoldier->bAssignment != IN_TRANSIT) &&
@@ -3502,7 +3502,7 @@ void HandleSettingTheSelectedListOfMercs(void) {
   // run through the list of grunts
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     // is the current guy a valid character?
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
@@ -4841,7 +4841,7 @@ BOOLEAN CanEntireMovementGroupMercIsInMove(struct SOLDIERTYPE *pSoldier, INT8 *p
 
   // if anyone in the merc's group or also selected cannot move for whatever reason return false
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       // get soldier
       pCurrentSoldier = &(Menptr[gCharactersList[iCounter].usSolID]);
 

@@ -7082,7 +7082,7 @@ INT32 GetIndexForThisSoldier(struct SOLDIERTYPE *pSoldier) {
   iLastGuy = gTacticalStatus.Team[OUR_TEAM].bLastID;
 
   for (iCounter = 0; iCounter < iLastGuy; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       if ((GetMercFromCharacterList(iCounter)) == pSoldier) {
         iIndex = iCounter;
         iCounter = iLastGuy;
@@ -8196,7 +8196,7 @@ INT8 GetLastValidCharacterInTeamPanelList(void) {
 
   // run through the list and find the last valid guy in the list
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       if ((Menptr[gCharactersList[iCounter].usSolID].bLife >= OKLIFE)) {
         if (fShowMapInventoryPool) {
           if (Menptr[gCharactersList[iCounter].usSolID].sSectorX == sSelMapX &&
@@ -8477,7 +8477,7 @@ void UpdateBadAssignments(void) {
   UINT32 iCounter;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       CheckIfSoldierUnassigned(GetMercFromCharacterList(iCounter));
     }
   }
@@ -9032,7 +9032,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
       pSelectedSoldier[iCounter] = NULL;
 
       // is this entry even valid
-      if (gCharactersList[iCounter].fValid == FALSE) {
+      if (!IsCharListEntryValid(iCounter)) {
         continue;
       }
 
@@ -9055,7 +9055,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
   // do the sort
   for (iCounter = 1; iCounter < FIRST_VEHICLE; iCounter++) {
     // have we gone too far
-    if (gCharactersList[iCounter].fValid == FALSE) {
+    if (!IsCharListEntryValid(iCounter)) {
       break;
     }
 
@@ -9292,7 +9292,7 @@ void HandleAssignmentsDoneAndAwaitingFurtherOrders(void) {
     giFlashAssignBaseTime = iCurrentTime;
 
     for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-      if (gCharactersList[iCounter].fValid == FALSE) {
+      if (!IsCharListEntryValid(iCounter)) {
         break;
       }
 
@@ -9324,7 +9324,7 @@ void DisplayIconsForMercsAsleep(void) {
   GetVideoObject(&hHandle, guiSleepIcon);
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gCharactersList[iCounter].fValid == TRUE) {
+    if (IsCharListEntryValid(iCounter)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
       if (IsSolActive(pSoldier) && pSoldier->fMercAsleep &&
           CanChangeSleepStatusForSoldier(pSoldier)) {
@@ -9851,7 +9851,7 @@ INT16 CalcLocationValueForChar(INT32 iCounter) {
 
   Assert(iCounter < MAX_CHARACTER_COUNT);
 
-  if (gCharactersList[iCounter].fValid == FALSE) return (sLocValue);
+  if (!IsCharListEntryValid(iCounter)) return (sLocValue);
 
   pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
