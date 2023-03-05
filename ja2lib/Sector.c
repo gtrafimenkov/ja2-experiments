@@ -5,11 +5,9 @@
 #include "Strategic/StrategicMap.h"
 #include "Tactical/Overhead.h"
 
-SectorID8 SECTOR(u8 x, u8 y) {
-  return (y - 1) * 16 + x - 1;
-}
+SectorID8 SECTOR(u8 x, u8 y) { return (y - 1) * 16 + x - 1; }
 
-struct SectorInfo* GetSectorInfoByIndex(u8 sectorIndex) { return &SectorInfo[sectorIndex]; }
+struct SectorInfo* GetSectorInfoByIndex(SectorID8 sectorIndex) { return &SectorInfo[sectorIndex]; }
 
 BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
   // if this sector is currently loaded

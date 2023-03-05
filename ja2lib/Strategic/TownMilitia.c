@@ -52,10 +52,10 @@ BOOLEAN ServeNextFriendlySectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY);
 
 void BuildListOfUnpaidTrainableSectors(void);
 INT32 GetNumberOfUnpaidTrainableSectors(void);
-void ContinueTrainingInThisSector(void);
+static void ContinueTrainingInThisSector();
 void StartTrainingInAllUnpaidTrainableSectors();
-void PayForTrainingInSector(UINT8 ubSector);
-void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector);
+void PayForTrainingInSector(SectorID8 ubSector);
+void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector);
 
 #ifdef JA2BETAVERSION
 void VerifyTownTrainingIsPaidFor(void);
@@ -838,7 +838,7 @@ INT32 GetNumberOfUnpaidTrainableSectors(void) {
 
 void StartTrainingInAllUnpaidTrainableSectors() {
   INT32 iCounter = 0;
-  UINT8 ubSector;
+  SectorID8 ubSector;
 
   SetAssignmentForList(TRAIN_TOWN, 0);
 
@@ -854,17 +854,13 @@ void StartTrainingInAllUnpaidTrainableSectors() {
   }
 }
 
-void ContinueTrainingInThisSector(void) {
-  UINT8 ubSector;
-
+static void ContinueTrainingInThisSector() {
   Assert(pMilitiaTrainerSoldier);
-
   // pay up in the sector where pMilitiaTrainerSoldier is
-  ubSector = SECTOR(pMilitiaTrainerSoldier->sSectorX, pMilitiaTrainerSoldier->sSectorY);
-  PayForTrainingInSector(ubSector);
+  PayForTrainingInSector(GetSolSectorID8(pMilitiaTrainerSoldier));
 }
 
-void PayForTrainingInSector(UINT8 ubSector) {
+void PayForTrainingInSector(SectorID8 ubSector) {
   Assert(GetSectorInfoByIndex(ubSector)->fMilitiaTrainingPaid == FALSE);
 
   // spend the money
@@ -877,7 +873,7 @@ void PayForTrainingInSector(UINT8 ubSector) {
   ResetDoneFlagForAllMilitiaTrainersInSector(ubSector);
 }
 
-void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector) {
+void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector) {
   INT32 iCounter = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
 

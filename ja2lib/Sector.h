@@ -31,7 +31,7 @@ SectorID8 SECTOR(u8 x, u8 y);
 
 struct SectorInfo;
 
-struct SectorInfo* GetSectorInfoByIndex(u8 sectorIndex);
+struct SectorInfo* GetSectorInfoByIndex(SectorID8 sectorIndex);
 
 typedef struct SectorInfo SECTORINFO;
 

@@ -2,6 +2,7 @@
 #define __SOLDIER_H
 
 #include "SGP/Types.h"
+#include "Sector.h"
 
 struct SOLDIERTYPE;
 
@@ -15,6 +16,7 @@ u8 GetSolProfile(const struct SOLDIERTYPE *s);
 i16 GetSolSectorX(const struct SOLDIERTYPE *s);
 i16 GetSolSectorY(const struct SOLDIERTYPE *s);
 i8 GetSolSectorZ(const struct SOLDIERTYPE *s);
+SectorID8 GetSolSectorID8(const struct SOLDIERTYPE *s);
 
 i8 GetSolAssignment(const struct SOLDIERTYPE *s);
 
