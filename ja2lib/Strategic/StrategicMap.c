@@ -558,10 +558,11 @@ UINT8 GetMilitiaCountAtLevelAnywhereInTown(UINT8 ubTownValue, UINT8 ubLevelValue
   INT32 iCounter = 0;
   UINT8 ubCount = 0;
 
-  while (pTownNamesList[iCounter] != 0) {
-    if (StrategicMap[pTownLocationsList[iCounter]].bNameId == ubTownValue) {
+  const TownSectors *townSectors = GetAllTownSectors();
+  while ((*townSectors)[iCounter].townID != 0) {
+    if (StrategicMap[(*townSectors)[iCounter].sectorID].bNameId == ubTownValue) {
       // match.  Add the number of civs at this level
-      ubCount += SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO(pTownLocationsList[iCounter])]
+      ubCount += SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
                      .ubNumberOfCivsAtLevel[ubLevelValue];
     }
 

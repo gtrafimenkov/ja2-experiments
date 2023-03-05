@@ -13,7 +13,6 @@
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterface.h"
-#include "Strategic/StrategicTownLoyalty.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/MilitiaControl.h"
 #include "Team.h"
@@ -27,7 +26,7 @@ struct sectorSearch {
   UINT8 townID;
   INT16 skipX;
   INT16 skipY;
-  UINT8 townListIndex;
+  UINT8 townSectorsIndex;
 };
 static struct sectorSearch sectorSearch;
 
@@ -314,25 +313,26 @@ static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkip
   sectorSearch.townID = ubTownId;
   sectorSearch.skipX = sSkipSectorX;
   sectorSearch.skipY = sSkipSectorY;
-  sectorSearch.townListIndex = 0;
+  sectorSearch.townSectorsIndex = 0;
 }
 
 // this feeds the X,Y of the next town sector on the town list for the town specified at
 // initialization it will skip an entry that matches the skip X/Y value if one was specified at
 // initialization MUST CALL initNextSectorSearch() before using!!!
 static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
-  INT32 iTownSector;
   INT16 sMapX, sMapY;
   BOOLEAN fStopLooking = FALSE;
 
+  const TownSectors *townSectors = GetAllTownSectors();
+
   do {
     // have we reached the end of the town list?
-    if (pTownNamesList[sectorSearch.townListIndex] == BLANK_SECTOR) {
+    if ((*townSectors)[sectorSearch.townSectorsIndex].townID == BLANK_SECTOR) {
       // end of list reached
       return (FALSE);
     }
 
-    iTownSector = pTownLocationsList[sectorSearch.townListIndex];
+    INT32 iTownSector = (*townSectors)[sectorSearch.townSectorsIndex].sectorID;
 
     // if this sector is in the town we're looking for
     if (GetTownIdForStrategicMapIndex(iTownSector) == sectorSearch.townID) {
@@ -354,7 +354,7 @@ static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
     }
 
     // advance to next entry in town list
-    sectorSearch.townListIndex++;
+    sectorSearch.townSectorsIndex++;
 
   } while (!fStopLooking);
 
@@ -601,11 +601,13 @@ BOOLEAN IsTownFullMilitia(TownID bTownId) {
   INT32 iNumberOfMilitia = 0;
   INT32 iMaxNumber = 0;
 
-  while (pTownNamesList[iCounter] != 0) {
-    if (pTownNamesList[iCounter] == bTownId) {
+  const TownSectors *townSectors = GetAllTownSectors();
+
+  while ((*townSectors)[iCounter].townID != 0) {
+    if ((*townSectors)[iCounter].townID == bTownId) {
       // get the sector x and y
-      sSectorX = pTownLocationsList[iCounter] % MAP_WORLD_X;
-      sSectorY = pTownLocationsList[iCounter] / MAP_WORLD_X;
+      sSectorX = (*townSectors)[iCounter].sectorID % MAP_WORLD_X;
+      sSectorY = (*townSectors)[iCounter].sectorID / MAP_WORLD_X;
 
       // if sector is ours get number of militia here
       if (SectorOursAndPeaceful(sSectorX, sSectorY, 0)) {

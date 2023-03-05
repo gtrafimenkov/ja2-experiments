@@ -41,10 +41,6 @@ typedef struct TOWN_LOYALTY {
 // the loyalty variables for each town
 extern TOWN_LOYALTY gTownLoyalty[NUM_TOWNS];
 
-// town names list
-extern INT32 pTownNamesList[];
-// town locations list
-extern INT32 pTownLocationsList[];
 // whether town maintains/displays loyalty or not
 extern BOOLEAN gfTownUsesLoyalty[NUM_TOWNS];
 
@@ -81,9 +77,6 @@ void RemoveRandomItemsInSector(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ, U
 
 // get the shortest distance between these two towns via roads
 INT32 GetTownDistances(UINT8 ubTown, UINT8 ubTownA);
-
-// build list of town sectors
-void BuildListOfTownSectors(void);
 
 #ifdef JA2TESTVERSION
 

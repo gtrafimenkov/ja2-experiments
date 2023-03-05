@@ -6,9 +6,6 @@
 struct SOLDIERTYPE;
 struct path;
 
-#define FIRST_TOWN OMERTA
-// #define PALACE			NUM_TOWNS
-
 extern BOOLEAN fCharacterInfoPanelDirty;
 extern BOOLEAN fTeamPanelDirty;
 extern BOOLEAN fMapPanelDirty;

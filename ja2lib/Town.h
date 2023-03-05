@@ -2,6 +2,7 @@
 #define __TOWN_H
 
 #include "LeanTypes.h"
+#include "Sector.h"
 
 // Sector name identifiers.  Also town names.
 typedef enum {
@@ -21,8 +22,25 @@ typedef enum {
   NUM_TOWNS
 } TownID;
 
+#define FIRST_TOWN OMERTA
+
 i8 GetTownIdForSector(i16 sMapX, i16 sMapY);
 i8 GetTownIdForStrategicMapIndex(i32 index);
+
+// Mapping townID -> sectorID
+struct TownSector {
+  TownID townID;
+  SectorID16 sectorID;
+};
+
+// Mapping of all town sectors.  There may be max 40 mappings.
+// The mapping is over, when townID is BLANK_SECTOR.
+typedef struct TownSector TownSectors[40];
+
+const TownSectors* GetAllTownSectors();
+
+// build list of town sectors
+void BuildListOfTownSectors();
 
 // gain pts per real loyalty pt
 #define GAIN_PTS_PER_LOYALTY_PT 500
@@ -73,9 +91,9 @@ i8 GetTownIdForStrategicMapIndex(i32 index);
 #define LOYALTY_PENALTY_INACTIVE (10 * GAIN_PTS_PER_LOYALTY_PT)
 
 // increment the town loyalty rating (hundredths!)
-void IncrementTownLoyalty(TownID bTownId, UINT32 uiLoyaltyIncrease);
+void IncrementTownLoyalty(TownID bTownId, u32 uiLoyaltyIncrease);
 
 // decrement the town loyalty rating (hundredths!)
-void DecrementTownLoyalty(TownID bTownId, UINT32 uiLoyaltyDecrease);
+void DecrementTownLoyalty(TownID bTownId, u32 uiLoyaltyDecrease);
 
 #endif

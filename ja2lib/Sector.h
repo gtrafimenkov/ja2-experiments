@@ -4,8 +4,14 @@
 #include "Militia.h"
 #include "SGP/Types.h"
 
-// Sector ID 0-255
+// Sector ID 0-255 (16x16)
 typedef u8 SectorID8;
+
+// Sector ID 0-324 (18x18)
+typedef i16 SectorID16;
+
+// Get SectorID8 from 0..15 coordinates.
+SectorID8 SectorFrom015(u8 x, u8 y);
 
 // Convert coordinates (1-16, 1-16) to 0-255 index.
 // This function should be prefered over SECTOR_STATIC macro.
