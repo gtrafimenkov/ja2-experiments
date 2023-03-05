@@ -6,21 +6,14 @@
 
 // DEFINE TEAMS
 typedef enum {
- OUR_TEAM = 0,
- ENEMY_TEAM = 1,
- CREATURE_TEAM = 2,
- MILITIA_TEAM = 3,
- CIV_TEAM = 4,
- LAST_TEAM = CIV_TEAM,
- PLAYER_PLAN = 5,
+  OUR_TEAM = 0,
+  ENEMY_TEAM = 1,
+  CREATURE_TEAM = 2,
+  MILITIA_TEAM = 3,
+  CIV_TEAM = 4,
+  LAST_TEAM = CIV_TEAM,
+  PLAYER_PLAN = 5,
 } TeamID;
-
-struct SoldierIDRange {
-  i32 firstIndex;
-  i32 lastIndex;
-};
-
-struct SoldierIDRange GetSoldierRangeForTeam(u8 teamID);
 
 u8 GetTeamSide(u8 teamID);
 void SetTeamSide(u8 teamID, u8 side);
@@ -33,5 +26,6 @@ struct SoldierList {
 };
 
 void GetTeamSoldiers(TeamID teamID, struct SoldierList* list);
+void GetTeamSoldiers_Active(TeamID teamID, struct SoldierList* list);
 
 #endif

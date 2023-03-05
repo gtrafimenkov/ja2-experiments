@@ -941,19 +941,13 @@ void PayForTrainingInSector(SectorID8 ubSector) {
 }
 
 void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector) {
-  INT32 iCounter = 0;
-  struct SOLDIERTYPE *pSoldier = NULL;
-
-  struct SoldierIDRange range = GetSoldierRangeForTeam(OUR_TEAM);
-  for (iCounter = range.firstIndex; iCounter <= range.lastIndex; iCounter++) {
-    pSoldier = GetSoldierByID(iCounter);
-
-    if (IsSolActive(pSoldier)) {
-      if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
-        if ((GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) == ubSector) &&
-            (GetSolSectorZ(pSoldier) == 0)) {
-          SetSolAssignmentDone(pSoldier);
-        }
+  struct SoldierList sols;
+  GetTeamSoldiers_Active(OUR_TEAM, &sols);
+  for (int i = 0; i < sols.num; i++) {
+    struct SOLDIERTYPE *sol = sols.soldiers[i];
+    if (GetSolAssignment(sol) == TRAIN_TOWN) {
+      if (GetSolSectorID8(sol) == ubSector && GetSolSectorZ(sol) == 0) {
+        SetSolAssignmentDone(sol);
       }
     }
   }
@@ -1042,16 +1036,14 @@ static void handlePromotions(void) {
   PrepMilitiaPromotion();
 
   struct SoldierList mil;
-  GetTeamSoldiers(MILITIA_TEAM, &mil);
+  GetTeamSoldiers_Active(MILITIA_TEAM, &mil);
 
   for (int i = 0; i < mil.num; i++) {
     struct SOLDIERTYPE *sol = mil.soldiers[i];
-    if (sol->bActive && sol->bInSector && sol->bLife > 0) {
-      if (sol->ubMilitiaKills > 0) {
-        HandleSingleMilitiaPromotion(gWorldSectorX, gWorldSectorY, sol->ubSoldierClass,
-                                     sol->ubMilitiaKills);
-        sol->ubMilitiaKills = 0;
-      }
+    if (sol->bInSector && sol->bLife > 0 && sol->ubMilitiaKills > 0) {
+      HandleSingleMilitiaPromotion(gWorldSectorX, gWorldSectorY, sol->ubSoldierClass,
+                                   sol->ubMilitiaKills);
+      sol->ubMilitiaKills = 0;
     }
   }
 }
