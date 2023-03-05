@@ -1978,14 +1978,14 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
       else
         fSpeedFlag = TRUE;
       if (!fZoomFlag) {
-        iX = (pNode->uiSectorId % MAP_WORLD_X);
-        iY = (pNode->uiSectorId / MAP_WORLD_X);
+        iX = (SectorID16_X(pNode->uiSectorId));
+        iY = (SectorID16_Y(pNode->uiSectorId));
         iX = (iX * MAP_GRID_X) + MAP_VIEW_START_X;
         iY = (iY * MAP_GRID_Y) + MAP_VIEW_START_Y;
 
       } else {
-        GetScreenXYFromMapXYStationary(((UINT16)(pNode->uiSectorId % MAP_WORLD_X)),
-                                       ((UINT16)(pNode->uiSectorId / MAP_WORLD_X)), &sX, &sY);
+        GetScreenXYFromMapXYStationary(((UINT16)(SectorID16_X(pNode->uiSectorId))),
+                                       ((UINT16)(SectorID16_Y(pNode->uiSectorId))), &sX, &sY);
         iY = sY - MAP_GRID_Y;
         iX = sX - MAP_GRID_X;
       }
@@ -2323,14 +2323,14 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
       }
     } else {
       if (!fZoomFlag) {
-        iX = (pNode->uiSectorId % MAP_WORLD_X);
-        iY = (pNode->uiSectorId / MAP_WORLD_X);
+        iX = (SectorID16_X(pNode->uiSectorId));
+        iY = (SectorID16_Y(pNode->uiSectorId));
         iX = (iX * MAP_GRID_X) + MAP_VIEW_START_X;
         iY = (iY * MAP_GRID_Y) + MAP_VIEW_START_Y;
 
       } else {
-        GetScreenXYFromMapXYStationary(((UINT16)(pNode->uiSectorId % MAP_WORLD_X)),
-                                       ((UINT16)(pNode->uiSectorId / MAP_WORLD_X)), &sX, &sY);
+        GetScreenXYFromMapXYStationary(((UINT16)(SectorID16_X(pNode->uiSectorId))),
+                                       ((UINT16)(SectorID16_Y(pNode->uiSectorId))), &sX, &sY);
         iY = sY - MAP_GRID_Y;
         iX = sX - MAP_GRID_X;
       }
@@ -2685,13 +2685,13 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
       fSpeedFlag = FALSE;
     if (iDeltaA == 0) return FALSE;
     if (!fZoomFlag) {
-      iX = (pNode->uiSectorId % MAP_WORLD_X);
-      iY = (pNode->uiSectorId / MAP_WORLD_X);
+      iX = (SectorID16_X(pNode->uiSectorId));
+      iY = (SectorID16_Y(pNode->uiSectorId));
       iX = (iX * MAP_GRID_X) + MAP_VIEW_START_X;
       iY = (iY * MAP_GRID_Y) + MAP_VIEW_START_Y;
     } else {
-      GetScreenXYFromMapXYStationary(((UINT16)(pNode->uiSectorId % MAP_WORLD_X)),
-                                     ((UINT16)(pNode->uiSectorId / MAP_WORLD_X)), &sX, &sY);
+      GetScreenXYFromMapXYStationary(((UINT16)(SectorID16_X(pNode->uiSectorId))),
+                                     ((UINT16)(SectorID16_Y(pNode->uiSectorId))), &sX, &sY);
       iY = sY - MAP_GRID_Y;
       iX = sX - MAP_GRID_X;
     }
@@ -3102,13 +3102,13 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
   }
 
   else {
-    iX = (pNode->uiSectorId % MAP_WORLD_X);
-    iY = (pNode->uiSectorId / MAP_WORLD_X);
+    iX = (SectorID16_X(pNode->uiSectorId));
+    iY = (SectorID16_Y(pNode->uiSectorId));
     iX = (iX * MAP_GRID_X) + MAP_VIEW_START_X;
     iY = (iY * MAP_GRID_Y) + MAP_VIEW_START_Y;
     if (pPastNode) {
-      iPastX = (pPastNode->uiSectorId % MAP_WORLD_X);
-      iPastY = (pPastNode->uiSectorId / MAP_WORLD_X);
+      iPastX = (SectorID16_X(pPastNode->uiSectorId));
+      iPastY = (SectorID16_Y(pPastNode->uiSectorId));
       iPastX = (iPastX * MAP_GRID_X) + MAP_VIEW_START_X;
       iPastY = (iPastY * MAP_GRID_Y) + MAP_VIEW_START_Y;
     }
@@ -3487,8 +3487,8 @@ void ShowPeopleInMotion(INT16 sX, INT16 sY) {
     // if not at edge of map
     if (sDest != sSource) {
       if (PlayersBetweenTheseSectors(
-              (INT16)GetSectorID8(sSource % MAP_WORLD_X, sSource / MAP_WORLD_X),
-              (INT16)GetSectorID8(sDest % MAP_WORLD_X, sDest / MAP_WORLD_X), &sExiting, &sEntering,
+              (INT16)GetSectorID8(SectorID16_X(sSource), SectorID16_Y(sSource)),
+              (INT16)GetSectorID8(SectorID16_X(sDest), SectorID16_Y(sDest)), &sExiting, &sEntering,
               &fAboutToEnter)) {
         // someone is leaving
 
@@ -3947,8 +3947,8 @@ void DisplayDestinationOfHelicopter(void) {
   if (GetLengthOfPath(pVehicleList[iHelicopterVehicleId].pMercPath) > 1) {
     // get destination
     sSector = GetLastSectorIdInVehiclePath(iHelicopterVehicleId);
-    sMapX = sSector % MAP_WORLD_X;
-    sMapY = sSector / MAP_WORLD_X;
+    sMapX = SectorID16_X(sSector);
+    sMapY = SectorID16_Y(sSector);
 
     x = MAP_VIEW_START_X + (MAP_GRID_X * sMapX) + 1;
     y = MAP_VIEW_START_Y + (MAP_GRID_Y * sMapY) + 3;
@@ -4196,8 +4196,8 @@ void BlitTownGridMarkers(void) {
     if (((fFoundOrta != FALSE) || (townID != ORTA)) &&
         ((townID != TIXA) || (fFoundTixa != FALSE))) {
       if (fZoomFlag) {
-        GetScreenXYFromMapXYStationary((INT16)(sectorID % MAP_WORLD_X),
-                                       (INT16)(sectorID / MAP_WORLD_X), &sScreenX, &sScreenY);
+        GetScreenXYFromMapXYStationary((INT16)(SectorID16_X(sectorID)),
+                                       (INT16)(SectorID16_Y(sectorID)), &sScreenX, &sScreenY);
         sScreenX -= MAP_GRID_X - 1;
         sScreenY -= MAP_GRID_Y;
 
@@ -4205,7 +4205,7 @@ void BlitTownGridMarkers(void) {
         sHeight = 2 * MAP_GRID_Y;
       } else {
         // get location on screen
-        GetScreenXYFromMapXY((INT16)(sectorID % MAP_WORLD_X), (INT16)(sectorID / MAP_WORLD_X),
+        GetScreenXYFromMapXY((INT16)(SectorID16_X(sectorID)), (INT16)(SectorID16_Y(sectorID)),
                              &sScreenX, &sScreenY);
         sWidth = MAP_GRID_X - 1;
         sHeight = MAP_GRID_Y;
@@ -5055,8 +5055,8 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
   const TownSectors *townSectors = GetAllTownSectors();
   while ((*townSectors)[iCounter].townID != 0) {
     if ((*townSectors)[iCounter].townID == sTownValue) {
-      if (SectorOursAndPeaceful((INT16)((*townSectors)[iCounter].sectorID % MAP_WORLD_X),
-                                (INT16)((*townSectors)[iCounter].sectorID / MAP_WORLD_X), 0)) {
+      if (SectorOursAndPeaceful((INT16)(SectorID16_X((*townSectors)[iCounter].sectorID)),
+                                (INT16)(SectorID16_Y((*townSectors)[iCounter].sectorID)), 0)) {
         iCount = 0;
         iNumberThatCanFitInSector = MAX_ALLOWABLE_MILITIA_PER_SECTOR;
         iNumberThatCanFitInSector -= SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]

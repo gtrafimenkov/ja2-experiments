@@ -339,7 +339,7 @@ void AddTextToTownBox(void) {
     // Associated Mine: Sector
     swprintf(wString, ARR_SIZE(wString), L"%s:", pwTownInfoStrings[4]);
     AddMonoString(&hStringHandle, wString);
-    GetShortSectorString((INT16)(sMineSector % MAP_WORLD_X), (INT16)(sMineSector / MAP_WORLD_X),
+    GetShortSectorString((INT16)(SectorID16_X(sMineSector)), (INT16)(SectorID16_Y(sMineSector)),
                          wString, ARR_SIZE(wString));
     AddSecondColumnMonoString(&hStringHandle, wString);
   }

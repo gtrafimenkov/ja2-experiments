@@ -263,15 +263,15 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
       newLoc = curLoc + diStratDelta[iCnt];
 
       // are we going off the map?
-      if ((newLoc % MAP_WORLD_X == 0) || (newLoc % MAP_WORLD_X == MAP_WORLD_X - 1) ||
-          (newLoc / MAP_WORLD_X == 0) || (newLoc / MAP_WORLD_X == MAP_WORLD_X - 1)) {
+      if ((SectorID16_X(newLoc) == 0) || (SectorID16_X(newLoc) == MAP_WORLD_X - 1) ||
+          (SectorID16_Y(newLoc) == 0) || (SectorID16_Y(newLoc) == MAP_WORLD_X - 1)) {
         // yeppers
         continue;
       }
 
       if (gfPlotToAvoidPlayerInfuencedSectors && newLoc != sDestination) {
-        sSectorX = (INT16)(newLoc % MAP_WORLD_X);
-        sSectorY = (INT16)(newLoc / MAP_WORLD_X);
+        sSectorX = (INT16)(SectorID16_X(newLoc));
+        sSectorY = (INT16)(SectorID16_Y(newLoc));
 
         if (IsThereASoldierInThisSector(sSectorX, sSectorY, 0)) {
           continue;
@@ -288,7 +288,7 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
       if (sMvtGroupNumber != 0) {
         if (iHelicopterVehicleId != -1) {
           nextCost = GetTravelTimeForGroup(
-              (UINT8)(GetSectorID8((curLoc % MAP_WORLD_X), (curLoc / MAP_WORLD_X))),
+              (UINT8)(GetSectorID8((SectorID16_X(curLoc)), (SectorID16_Y(curLoc)))),
               (UINT8)(iCnt / 2), (UINT8)sMvtGroupNumber);
           if (nextCost != 0xffffffff &&
               sMvtGroupNumber == pVehicleList[iHelicopterVehicleId].ubMovementGroup) {
@@ -302,12 +302,12 @@ INT32 FindStratPath(INT16 sStart, INT16 sDestination, INT16 sMvtGroupNumber,
           }
         } else {
           nextCost = GetTravelTimeForGroup(
-              (UINT8)(GetSectorID8((curLoc % MAP_WORLD_X), (curLoc / MAP_WORLD_X))),
+              (UINT8)(GetSectorID8((SectorID16_X(curLoc)), (SectorID16_Y(curLoc)))),
               (UINT8)(iCnt / 2), (UINT8)sMvtGroupNumber);
         }
       } else {
         nextCost = GetTravelTimeForFootTeam(
-            (UINT8)(GetSectorID8(curLoc % MAP_WORLD_X, curLoc / MAP_WORLD_X)), (UINT8)(iCnt / 2));
+            (UINT8)(GetSectorID8(SectorID16_X(curLoc), SectorID16_Y(curLoc))), (UINT8)(iCnt / 2));
       }
 
       if (nextCost == 0xffffffff) {
@@ -498,7 +498,7 @@ struct path* BuildAStrategicPath(struct path* pPath, INT16 iStartSectorNum, INT1
   {
           // change in direction..add waypoint
           AddWaypointToGroup( ( UINT8 )sMvtGroupNumber, ( UINT8 )( iCurrentSectorNum% MAP_WORLD_X ),
-( UINT8 )( iCurrentSectorNum / MAP_WORLD_X ) );
+( UINT8 )( SectorID16_Y(iCurrentSectorNum) ) );
 }
   */
 

@@ -999,8 +999,8 @@ void DisplayDestinationOfCurrentDestMerc(void) {
   SetBoxForeground(ghVehicleBox, FONT_LTGREEN);
   SetBoxBackground(ghVehicleBox, FONT_BLACK);
 
-  swprintf(sString, ARR_SIZE(sString), L"%s%s", pMapVertIndex[sSector / MAP_WORLD_X],
-           pMapHortIndex[sSector % MAP_WORLD_X]);
+  swprintf(sString, ARR_SIZE(sString), L"%s%s", pMapVertIndex[SectorID16_Y(sSector)],
+           pMapHortIndex[SectorID16_X(sSector)]);
   FindFontCenterCoordinates(DEST_PLOT_X, DEST_PLOT_Y, 70, GetFontHeight(MAP_SCREEN_FONT), sString,
                             MAP_SCREEN_FONT, &sX, &sY);
 
@@ -2133,12 +2133,12 @@ INT32 GetPathTravelTimeDuringPlotting(struct path *pPath) {
   while (pPath->pNext) {
     if (!fSkipFirstNode) {
       // grab the current location
-      pCurrent.x = (UINT8)(pPath->uiSectorId % MAP_WORLD_X);
-      pCurrent.y = (UINT8)(pPath->uiSectorId / MAP_WORLD_X);
+      pCurrent.x = (UINT8)(SectorID16_X(pPath->uiSectorId));
+      pCurrent.y = (UINT8)(SectorID16_Y(pPath->uiSectorId));
 
       // grab the next location
-      pNext.x = (UINT8)(pPath->pNext->uiSectorId % MAP_WORLD_X);
-      pNext.y = (UINT8)(pPath->pNext->uiSectorId / MAP_WORLD_X);
+      pNext.x = (UINT8)(SectorID16_X(pPath->pNext->uiSectorId));
+      pNext.y = (UINT8)(SectorID16_Y(pPath->pNext->uiSectorId));
 
       iTravelTime += FindTravelTimeBetweenWaypoints(&pCurrent, &pNext, pGroup);
     } else {
@@ -10375,8 +10375,8 @@ void GetMapscreenMercDestinationString(struct SOLDIERTYPE *pSoldier, wchar_t sSt
     if (GetLengthOfMercPath(pSoldier) > 0) {
       sSector = GetLastSectorIdInCharactersPath(pSoldier);
       // convert
-      iSectorX = sSector % MAP_WORLD_X;
-      iSectorY = sSector / MAP_WORLD_Y;
+      iSectorX = SectorID16_X(sSector);
+      iSectorY = SectorID16_Y(sSector);
     } else  // no movement path is set...
     {
       if (pSoldier->fBetweenSectors) {

@@ -337,8 +337,8 @@ static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
     // if this sector is in the town we're looking for
     if (GetTownIdForStrategicMapIndex(iTownSector) == sectorSearch.townID) {
       // A sector in the specified town.  Calculate its X & Y sector compotents
-      sMapX = iTownSector % MAP_WORLD_X;
-      sMapY = iTownSector / MAP_WORLD_X;
+      sMapX = SectorID16_X(iTownSector);
+      sMapY = SectorID16_Y(iTownSector);
 
       // Make sure we're not supposed to skip it
       if ((sMapX != sectorSearch.skipX) || (sMapY != sectorSearch.skipY)) {
@@ -606,8 +606,8 @@ BOOLEAN IsTownFullMilitia(TownID bTownId) {
   while ((*townSectors)[iCounter].townID != 0) {
     if ((*townSectors)[iCounter].townID == bTownId) {
       // get the sector x and y
-      sSectorX = (*townSectors)[iCounter].sectorID % MAP_WORLD_X;
-      sSectorY = (*townSectors)[iCounter].sectorID / MAP_WORLD_X;
+      sSectorX = SectorID16_X((*townSectors)[iCounter].sectorID);
+      sSectorY = SectorID16_Y((*townSectors)[iCounter].sectorID);
 
       // if sector is ours get number of militia here
       if (SectorOursAndPeaceful(sSectorX, sSectorY, 0)) {

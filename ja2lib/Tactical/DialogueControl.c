@@ -900,7 +900,7 @@ void HandleDialogue() {
     else if( QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_DISPLAY_INVASION_MESSAGE )
     {
             HandlePlayerNotifyInvasionByEnemyForces( (INT16)(QItem->uiSpecialEventData %
-    MAP_WORLD_X), (INT16)(QItem->uiSpecialEventData / MAP_WORLD_X), 0, NULL );
+    MAP_WORLD_X), (INT16)(SectorID16_Y(QItem->uiSpecialEventData)), 0, NULL );
     }
     */
     else if (QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_SKYRIDERMAPSCREENEVENT) {
@@ -1370,42 +1370,6 @@ BOOLEAN ExecuteCharacterDialogue(UINT8 ubCharacterNum, UINT16 usQuoteNum, INT32 
       // may want to wake up any character that has VERY important dialogue to say
       // MC to flesh out
     }
-
-    // now being used in a different way...
-    /*
-    if ( ( (usQuoteNum == QUOTE_PERSONALITY_TRAIT &&
-                            (gMercProfiles[ubCharacterNum].bPersonalityTrait == FORGETFUL ||
-                             gMercProfiles[ubCharacterNum].bPersonalityTrait == CLAUSTROPHOBIC ||
-                             gMercProfiles[ubCharacterNum].bPersonalityTrait == NERVOUS ||
-                             gMercProfiles[ubCharacterNum].bPersonalityTrait == NONSWIMMER ||
-                             gMercProfiles[ubCharacterNum].bPersonalityTrait == FEAR_OF_INSECTS))
-                            //usQuoteNum == QUOTE_STARTING_TO_WHINE ||
-#ifdef JA2BETAVERSION
-                            || usQuoteNum == QUOTE_WHINE_EQUIPMENT) && (guiCurrentScreen !=
-QUEST_DEBUG_SCREEN) ) #else ) ) #endif
-
-    {
-            // This quote might spawn another quote from someone
-            iLoop = 0;
-            for ( pTeamSoldier = MercPtrs[ iLoop ]; iLoop <= gTacticalStatus.Team[ gbPlayerNum
-].bLastID; iLoop++,pTeamSoldier++ )
-            {
-                    if ( (pTeamSoldier->ubProfile != ubCharacterNum) && (OK_INSECTOR_MERC(
-pTeamSoldier )) && (SpacesAway( pSoldier->sGridNo, pTeamSoldier->sGridNo ) < 5) )
-                    {
-                            // if this merc disliked the whining character sufficiently and hasn't
-already retorted if ( gMercProfiles[ pTeamSoldier->ubProfile ].bMercOpinion[ ubCharacterNum ] < -2
-&& !( pTeamSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_ANNOYING_MERC ) )
-                            {
-                                    // make a comment!
-                                    TacticalCharacterDialogue( pTeamSoldier, QUOTE_ANNOYING_PC );
-                                    pTeamSoldier->usQuoteSaidFlags |=
-SOLDIER_QUOTE_SAID_ANNOYING_MERC; break;
-                            }
-                    }
-            }
-    }
-    */
   } else {
     // If from a soldier, and he does not exist anymore, donot play!
     if (fFromSoldier) {

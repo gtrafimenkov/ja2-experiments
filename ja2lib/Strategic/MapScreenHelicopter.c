@@ -340,37 +340,6 @@ BOOLEAN HandleHeliEnteringSector(INT16 sX, INT16 sY) {
   return (FALSE);
 }
 
-/*
-INT32 GetTotalDistanceHelicopterCanTravel( void )
-{
-        return( MAX_HELICOPTER_DISTANCE );
-}
-
-INT32 HowFarHelicopterhasTravelledSinceRefueling( void )
-{
-        // return total distance
-        return( iTotalHeliDistanceSinceRefuel );
-}
-
-INT32 HowFurtherCanHelicopterTravel( void )
-{
-        // how many sectors further can we go on remaining fuel?
-        return( MAX_HELICOPTER_DISTANCE - ( HowFarHelicopterhasTravelledSinceRefueling( ) +
-DistanceOfIntendedHelicopterPath( ) ) );
-}
-
-void AddSectorToHelicopterDistanceTravelled( void )
-{
-        // up the distance
-        iTotalHeliDistanceSinceRefuel++;
-
-        //reset hover time
-        uiStartHoverTime = 0;
-
-        return;
-}
-*/
-
 INT32 LocationOfNearestRefuelPoint(BOOLEAN fNotifyPlayerIfNoSafeLZ) {
   INT32 iClosestLocation = -1;
 
@@ -437,34 +406,10 @@ INT32 DistanceToNearestRefuelPoint(INT16 sX, INT16 sY) {
   return (iDistance);
 }
 
-/*
-BOOLEAN IsSectorOutOfTheWay( INT16 sX, INT16 sY )
-{
-        // check distance to nearest refuel point
-        if( DistanceToNearestRefuelPoint( sX, sY ) > HowFurtherCanHelicopterTravel( ) )
-        {
-                return( TRUE );
-        }
-
-
-        return( FALSE );
-}
-*/
-
 void ReFuelHelicopter(void) {
   // land, pay the man, and refuel
 
   LandHelicopter();
-
-  /*
-          AddStrategicEvent( EVENT_HELICOPTER_DONE_REFUELING, GetWorldTotalMin() +
-     REFUEL_HELICOPTER_DELAY, 0 );
-
-          // reset distance traveled
-          iTotalHeliDistanceSinceRefuel = 0;
-  */
-
-  return;
 }
 
 INT32 GetCostOfPassageForHelicopter(INT16 sX, INT16 sY) {
@@ -522,14 +467,6 @@ BOOLEAN CanHelicopterFly(void) {
   if (VehicleIdIsValid(iHelicopterVehicleId) == FALSE) {
     return (FALSE);
   }
-
-  /*
-          // travelled too far?
-          if( iTotalHeliDistanceSinceRefuel > MAX_HELICOPTER_DISTANCE )
-          {
-                  return( FALSE );
-          }
-  */
 
   // is the pilot alive, well, and willing to help us?
   if (IsHelicopterPilotAvailable() == FALSE) {
@@ -1235,185 +1172,6 @@ INT16 LastSectorInHelicoptersPath(void) {
   return ((INT16)uiLocation);
 }
 
-/*
-INT32 GetTotalCostOfHelicopterTrip( void )
-{
-        // get cost of helicopter trip
-
-        struct path* pNode = NULL, pTempNode = NULL;
-        UINT32 uiCost = 0;
-        UINT32 uiLastTempPathSectorId = 0;
-        UINT32 iClosestRefuelPoint = 0;
-        UINT32 uiStartSectorNum = 0;
-        UINT32 uiLength = 0;
-
-        // if the heli is on the move, what is the distance it will move..the length of the merc
-path, less the first node if( CanHelicopterFly( ) == FALSE )
-        {
-                // big number, no go
-                return( 0 );
-        }
-
-        pNode = pVehicleList[ iHelicopterVehicleId ].pMercPath;
-
-        // any path yet?
-        uiLastTempPathSectorId = pVehicleList[ iHelicopterVehicleId ].sSectorX + pVehicleList[
-iHelicopterVehicleId ].sSectorY * MAP_WORLD_X; uiStartSectorNum = uiLastTempPathSectorId;
-
-        if( pNode )
-        {
-                pNode = pNode->pNext;
-        }
-
-        if( pNode != NULL )
-        {
-                while( pNode)
-                {
-                        if( uiLength == 0 )
-                        {
-                                if( pNode->pNext )
-                                {
-                                        if( uiLastTempPathSectorId == pNode->pNext->uiSectorId )
-                                        {
-                                                // do nothing
-                                        }
-                                        else
-                                        {
-                                                uiCost += GetCostOfPassageForHelicopter( ( UINT16 )(
-pNode -> uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) );
-                                        }
-                                }
-                                else
-                                {
-                                        uiCost += GetCostOfPassageForHelicopter( ( UINT16 )( pNode
--> uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) );
-                                }
-                        }
-                        else
-                        {
-                                uiCost += GetCostOfPassageForHelicopter( ( UINT16 )( pNode ->
-uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) );
-                        }
-
-                        uiLength++;
-
-                        uiLastTempPathSectorId = pNode ->uiSectorId;
-                        pNode = pNode ->pNext;
-                }
-        }
-
-
-        pNode = NULL;
-
-        if( pTempHelicopterPath )
-        {
-                pNode = MoveToBeginningOfPathList( pTempHelicopterPath );
-        }
-
-        if( pNode )
-        {
-                pNode = pNode->pNext;
-        }
-
-        // any path yet?
-        if( pNode != NULL )
-        {
-                while( pNode )
-                {
-                        if( uiLength == 0 )
-                        {
-                                if( pNode->pNext )
-                                {
-                                        if( uiLastTempPathSectorId == pNode->pNext->uiSectorId )
-                                        {
-                                                // do nothing
-                                        }
-                                        else
-                                        {
-                                                uiCost += GetCostOfPassageForHelicopter( ( UINT16 )(
-pNode -> uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) );
-                                        }
-                                }
-                                else
-                                {
-                                        uiCost += GetCostOfPassageForHelicopter( ( UINT16 )( pNode
--> uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) );
-                                }
-                        }
-                        else
-                        {
-                                uiCost += GetCostOfPassageForHelicopter( ( UINT16 )( pNode ->
-uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) );
-                        }
-
-                        uiLength++;
-
-                        //uiCost += GetCostOfPassageForHelicopter( ( UINT16 ) ( pNode -> uiSectorId
-% MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) ); uiLastTempPathSectorId = pNode
-->uiSectorId; pNode = pNode ->pNext;
-                }
-        }
-
-        iClosestRefuelPoint = ( INT16 )( GetSectorID16( ubRefuelList[
-LocationOfNearestRefuelPoint( FALSE ) ][ 0 ], ubRefuelList[ LocationOfNearestRefuelPoint( FALSE ) ][
-1 ] ) );
-
-        pNode = NULL;
-
-        if( uiLastTempPathSectorId != iClosestRefuelPoint )
-        {
-                pNode = BuildAStrategicPath( pNode, ( INT16 )( uiLastTempPathSectorId ), ( INT16
-)iClosestRefuelPoint, pVehicleList[ iHelicopterVehicleId ].ubMovementGroup, FALSE );
-//		pNode = BuildAStrategicPath( pNode, ( INT16 )( uiLastTempPathSectorId ), ( INT16
-)iClosestRefuelPoint, pVehicleList[ iHelicopterVehicleId ].ubMovementGroup, FALSE, TRUE );
-
-                pNode = MoveToBeginningOfPathList( pNode );
-        }
-
-        pTempNode = pNode;
-        uiLength = 0;
-
-        if( pTempNode )
-        {
-                pTempNode = pTempNode->pNext;
-        }
-
-        while( pTempNode )
-        {
-                if( uiLength == 0 )
-                        {
-                                if( pTempNode->pNext )
-                                {
-                                        if( uiLastTempPathSectorId == pNode->pNext->uiSectorId )
-                                        {
-                                                // do nothing
-                                        }
-                                        else
-                                        {
-                                                uiCost += GetCostOfPassageForHelicopter( ( UINT16 )(
-pTempNode -> uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pTempNode->uiSectorId / MAP_WORLD_X ) );
-                                        }
-                                }
-                                else
-                                {
-                                        uiCost += GetCostOfPassageForHelicopter( ( UINT16 )(
-pTempNode -> uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pTempNode->uiSectorId / MAP_WORLD_X ) );
-                                }
-                        }
-                        else
-                        {
-                                uiCost += GetCostOfPassageForHelicopter( ( UINT16 )( pTempNode ->
-uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pTempNode->uiSectorId / MAP_WORLD_X ) );
-                        }
-
-                uiLength++;
-                pTempNode = pTempNode->pNext;
-        }
-
-        return( ( INT32 )uiCost );
-}
-*/
-
 void HandleHelicopterOnGroundGraphic(void) {
   UINT8 ubSite = 0;
   struct SOLDIERTYPE *pSoldier;
@@ -1535,64 +1293,6 @@ BOOLEAN IsHelicopterOnGroundAtRefuelingSite(UINT8 ubRefuelingSite) {
   // not here
   return (FALSE);
 }
-
-/*
-BOOLEAN WillAirRaidBeStopped( INT16 sSectorX, INT16 sSectorY )
-{
-        UINT8 ubSamNumber = 0;
-        INT8 bSAMCondition;
-        UINT8 ubChance;
-
-
-        // if enemy controls this SAM site, then it can't stop an air raid
-        if( StrategicMap[GetSectorID16( sSectorX, sSectorY ) ].fEnemyAirControlled ==
-TRUE )
-        {
-                return( FALSE );
-        }
-
-        // which SAM controls this sector?
-        ubSamNumber = ubSAMControlledSectors[ sSectorX ][ sSectorY ];
-
-        // if none of them
-        if (ubSamNumber == 0)
-        {
-                return( FALSE);
-        }
-
-        // get the condition of that SAM site (NOTE: SAM #s are 1-4, but indexes are 0-3!!!)
-        Assert( ubSamNumber <= NUMBER_OF_SAMS );
-        bSAMCondition = StrategicMap[ SectorID8To16( pSamList[ ubSamNumber - 1 ] )
-].bSAMCondition;
-
-        // if it's too busted to work, then it can't stop an air raid
-        if( bSAMCondition < MIN_CONDITION_FOR_SAM_SITE_TO_WORK )
-        {
-                // no problem, SAM site not working
-                return( FALSE );
-        }
-
-
-        // Friendly airspace controlled by a working SAM site, so SAM site fires a SAM at air raid
-bomber
-
-        // calc chance that chopper will be shot down
-        ubChance = bSAMCondition;
-
-        // there's a fair chance of a miss even if the SAM site is in perfect working order
-        if (ubChance > MAX_SAM_SITE_ACCURACY)
-        {
-                ubChance = MAX_SAM_SITE_ACCURACY;
-        }
-
-        if( PreRandom( 100 ) < ubChance)
-        {
-                return( TRUE );
-        }
-
-        return( FALSE );
-}
-*/
 
 void HeliCrashSoundStopCallback(void *pData) { SkyriderDestroyed(); }
 

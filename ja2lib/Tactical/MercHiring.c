@@ -522,8 +522,8 @@ void UpdateAnyInTransitMercsWithGlobalArrivalSector() {
 INT16 StrategicPythSpacesAway(INT16 sOrigin, INT16 sDest) {
   INT16 sRows, sCols, sResult;
 
-  sRows = abs((sOrigin / MAP_WORLD_X) - (sDest / MAP_WORLD_X));
-  sCols = abs((sOrigin % MAP_WORLD_X) - (sDest % MAP_WORLD_X));
+  sRows = abs((SectorID16_Y(sOrigin)) - (SectorID16_Y(sDest)));
+  sCols = abs((SectorID16_X(sOrigin)) - (SectorID16_X(sDest)));
 
   // apply Pythagoras's theorem for right-handed triangle:
   // dist^2 = rows^2 + cols^2, so use the square root to get the distance

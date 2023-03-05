@@ -1474,8 +1474,8 @@ BOOLEAN DidFirstBattleTakePlaceInThisTown(TownID bTownId) {
   INT8 bTownBattleId = 0;
 
   // get town id for sector
-  bTownBattleId = GetTownIdForSector((INT16)(sWorldSectorLocationOfFirstBattle % MAP_WORLD_X),
-                                     (INT16)(sWorldSectorLocationOfFirstBattle / MAP_WORLD_X));
+  bTownBattleId = GetTownIdForSector((INT16)(SectorID16_X(sWorldSectorLocationOfFirstBattle)),
+                                     (INT16)(SectorID16_Y(sWorldSectorLocationOfFirstBattle)));
 
   return (bTownId == bTownBattleId);
 }
