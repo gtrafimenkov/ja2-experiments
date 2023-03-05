@@ -54,13 +54,6 @@ void ClearSectorListForCompletedTrainingOfMilitia(void);
 BOOLEAN MilitiaTrainingAllowedInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ);
 BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId);
 
-void PrepareMilitiaForTactical();
-void ResetMilitia();
-
-// extern BOOLEAN gfStrategicMilitiaChangesMade;
-
-void Event_UIMilitiaChanges();
-
 void PrepMilitiaPromotion();
 void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 rank, u8 soldierClass, u8 kills);
 bool HasNewMilitiaPromotions();

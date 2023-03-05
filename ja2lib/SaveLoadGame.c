@@ -2062,11 +2062,6 @@ BOOLEAN LoadSavedGame(UINT8 ubSavedGameID) {
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
   }
 
-  // CJC January 13: we can't do this because (a) it resets militia IN THE MIDDLE OF
-  // COMBAT, and (b) if we add militia to the teams while LOADING_SAVED_GAME is set,
-  // the team counters will not be updated properly!!!
-  //	ResetMilitia();
-
   uiRelEndPerc += 1;
   SetRelativeStartAndEndPercentage(0, uiRelStartPerc, uiRelEndPerc, L"Final Checks...");
   RenderProgressBar(0, 100);

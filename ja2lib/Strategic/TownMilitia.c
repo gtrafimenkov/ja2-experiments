@@ -12,6 +12,7 @@
 #include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
+#include "Tactical.h"
 #include "Tactical/DialogueControl.h"
 #include "Team.h"
 #include "Town.h"
@@ -34,7 +35,6 @@ struct sectorSearch {
 };
 static struct sectorSearch sectorSearch;
 
-BOOLEAN gfStrategicMilitiaChangesMade = FALSE;
 BOOLEAN gfYesNoPromptIsForContinue = FALSE;  // whether we're starting new training, or continuing
 INT32 giTotalCostOfTraining = 0;
 
@@ -88,7 +88,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
   }
 
   // force tactical to update militia status
-  Event_UIMilitiaChanges();
+  TacticalMilitiaRefreshRequired();
 
   // ok, so what do we do with all this training?  Well, in order of decreasing priority:
   // 1) If there's room in training sector, create new GREEN militia guys there
@@ -1007,49 +1007,7 @@ BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId) {
 
 #include "Strategic/StrategicMap.h"
 #include "Tactical/Overhead.h"
-#include "Tactical/SoldierInitList.h"
-
-static void RemoveMilitiaFromTactical();
-
-void ResetMilitia() {
-  if (gfStrategicMilitiaChangesMade || gTacticalStatus.uiFlags & LOADING_SAVED_GAME) {
-    gfStrategicMilitiaChangesMade = FALSE;
-    RemoveMilitiaFromTactical();
-    PrepareMilitiaForTactical();
-  }
-}
-
-static void RemoveMilitiaFromTactical() {
-  SOLDIERINITNODE *curr;
-  INT32 i;
-  for (i = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
-       i <= gTacticalStatus.Team[MILITIA_TEAM].bLastID; i++) {
-    if (MercPtrs[i]->bActive) {
-      TacticalRemoveSoldier(MercPtrs[i]->ubID);
-    }
-  }
-  curr = gSoldierInitHead;
-  while (curr) {
-    if (curr->pBasicPlacement->bTeam == MILITIA_TEAM) {
-      curr->pSoldier = NULL;
-    }
-    curr = curr->next;
-  }
-}
-
-void PrepareMilitiaForTactical() {
-  UINT8 ubGreen, ubRegs, ubElites;
-  if (gbWorldSectorZ > 0) return;
-
-  // Do we have a loaded sector?
-  if (gWorldSectorX == 0 && gWorldSectorY == 0) return;
-
-  const SECTORINFO *pSector = GetSectorInfoByXY(gWorldSectorX, gWorldSectorY);
-  ubGreen = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA];
-  ubRegs = pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-  ubElites = pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA];
-  AddSoldierInitListMilitia(ubGreen, ubRegs, ubElites);
-}
+#include "Tactical/SoldierControl.h"
 
 i8 gbGreenToElitePromotions = 0;
 i8 gbGreenToRegPromotions = 0;
@@ -1098,8 +1056,6 @@ static void handlePromotions(void) {
     }
   }
 }
-
-void Event_UIMilitiaChanges() { gfStrategicMilitiaChangesMade = FALSE; }
 
 void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize) {
   CHAR16 pStr[256];

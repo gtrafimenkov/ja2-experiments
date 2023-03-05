@@ -29,6 +29,7 @@
 #include "Strategic/StrategicPathing.h"
 #include "Strategic/StrategicTownLoyalty.h"
 #include "Strategic/TownMilitia.h"
+#include "Tactical.h"
 #include "Tactical/AirRaid.h"
 #include "Tactical/MapInformation.h"
 #include "Tactical/Overhead.h"
@@ -4383,7 +4384,7 @@ static BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   if (GetSectorID8(sX, sY) == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
-    Event_UIMilitiaChanges();
+    TacticalMilitiaRefreshRequired();
   }
 
   // otherwise pick this guy up
@@ -4425,7 +4426,7 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   if (GetSectorID8(sX, sY) == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
-    Event_UIMilitiaChanges();
+    TacticalMilitiaRefreshRequired();
   }
 
   // drop the guy into this sector
@@ -5094,7 +5095,7 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
 
         if (SectorID16To8((*townSectors)[iCounter].sectorID) ==
             GetSectorID8(gWorldSectorX, gWorldSectorY)) {
-          Event_UIMilitiaChanges();
+          TacticalMilitiaRefreshRequired();
         }
       }
 
@@ -5235,7 +5236,7 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
 
         // if this sector is currently loaded
         if (sSector == GetSectorID8(gWorldSectorX, gWorldSectorY) && gWorldSectorY != 0) {
-          Event_UIMilitiaChanges();
+          TacticalMilitiaRefreshRequired();
         }
       }
     }

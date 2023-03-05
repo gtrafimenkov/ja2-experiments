@@ -46,6 +46,7 @@
 #include "Strategic/StrategicTurns.h"
 #include "Strategic/TownMilitia.h"
 #include "SysGlobals.h"
+#include "Tactical.h"
 #include "Tactical/AirRaid.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/Boxing.h"
@@ -793,7 +794,8 @@ BOOLEAN SetCurrentWorldSector(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
       // Check for helicopter being on the ground in this sector...
       HandleHelicopterOnGroundGraphic();
 
-      ResetMilitia();
+      ReinitMilitiaTactical();
+
       AllTeamsLookForAll(TRUE);
       return (TRUE);
     }
