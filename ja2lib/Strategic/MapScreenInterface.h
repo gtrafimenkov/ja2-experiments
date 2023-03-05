@@ -297,14 +297,6 @@ BOOLEAN MultipleCharacterListEntriesSelected(void);
 // toggle this entry on or off
 void ToggleEntryInSelectedList(INT8 bEntry);
 
-// reset assignments for mercs on selected list who have this assignment
-void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList();
-
-/*
-// plot path for selected character list
-void PlotPathForSelectedCharacterList( INT16 sX, INT16 sY );
-*/
-
 void RestoreBackgroundForAssignmentGlowRegionList(void);
 void RestoreBackgroundForDestinationGlowRegionList(void);
 void RestoreBackgroundForContractGlowRegionList(void);
@@ -324,10 +316,6 @@ void EnableTeamInfoPanels(void);
 
 // activate pop up for soldiers in the pre battle interface
 void ActivateSoldierPopup(struct SOLDIERTYPE *pSoldier, UINT8 ubPopupType, INT16 xp, INT16 yp);
-
-// do mapscreen message box
-INT32 DoMapMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                      MSGBOX_CALLBACK ReturnCallback);
 
 // hop up one leve,l int he map screen level interface
 void GoUpOneLevelInMap(void);
@@ -470,9 +458,6 @@ BOOLEAN SetUpFastHelpListRegions(INT32 iXPosition[], INT32 iYPosition[], INT32 i
 
 // the alternate mapscreen movement system
 void InitializeMovingLists(void);
-
-// reset assignment for mercs trainign militia in this sector
-void ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(INT16 sSectorX, INT16 sSectorY);
 
 // the sector move box
 void DeselectSquadForMovement(INT32 iSquadNumber);

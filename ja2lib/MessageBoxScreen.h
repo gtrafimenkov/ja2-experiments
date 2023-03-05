@@ -49,12 +49,7 @@ extern BOOLEAN gfDontOverRideSaveBuffer;
 // pCenteringRect	Rect to send if MSG_BOX_FLAG_USE_CENTERING_RECT set. Can be NULL
 ////////////////////////////////
 
-INT32 DoMessageBox(UINT8 ubStyle, CHAR16 *zString, UINT32 uiExitScreen, UINT16 usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, const SGPRect *pCenteringRect);
-void DoScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags, MSGBOX_CALLBACK ReturnCallback);
 void DoUpperScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
-                                        MSGBOX_CALLBACK ReturnCallback);
-void DoLowerScreenIndependantMessageBox(CHAR16 *zString, UINT16 usFlags,
                                         MSGBOX_CALLBACK ReturnCallback);
 void DoScreenIndependantMessageBoxWithRect(CHAR16 *zString, UINT16 usFlags,
                                            MSGBOX_CALLBACK ReturnCallback,

@@ -88,6 +88,8 @@ typedef struct TOWN_TRAINER_TYPE {
 
 } TOWN_TRAINER_TYPE;
 
+void ResumeOldAssignment(struct SOLDIERTYPE *pSoldier);
+
 // can character do this assignment?
 // BOOLEAN CanSoldierAssignment( struct SOLDIERTYPE *pSoldier, INT8 bAssignment );
 

@@ -12,7 +12,6 @@
 #include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
-#include "Strategic/MapScreenInterface.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/MilitiaControl.h"
 #include "Team.h"
@@ -530,16 +529,70 @@ void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue) {
   return;
 }
 
+// reset assignment for mercs trainign militia in this sector
+static void resetTrainersAssignment(INT16 sSectorX, INT16 sSectorY) {
+  INT32 iCounter = 0;
+  struct SOLDIERTYPE *pSoldier = NULL;
+
+  for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
+    // valid character?
+    if (!IsCharListEntryValid(iCounter)) {
+      // nope
+      continue;
+    }
+
+    pSoldier = GetMercFromCharacterList(iCounter);
+
+    if (IsSolActive(pSoldier) == FALSE) {
+      continue;
+    }
+
+    if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
+      if ((GetSolSectorX(pSoldier) == sSectorX) && (GetSolSectorY(pSoldier) == sSectorY) &&
+          (GetSolSectorZ(pSoldier) == 0)) {
+        ResumeOldAssignment(pSoldier);
+      }
+    }
+  }
+}
+
+// reset assignments for mercs on selected list who have this assignment
+static void resetAssignmentsForUnpaidSectors() {
+  INT32 iCounter = 0;
+  struct SOLDIERTYPE *pSoldier = NULL;
+
+  for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
+    // valid character?
+    if (!IsCharListEntryValid(iCounter)) {
+      // nope
+      continue;
+    }
+
+    pSoldier = GetMercFromCharacterList(iCounter);
+
+    if (IsSolActive(pSoldier) == FALSE) {
+      continue;
+    }
+
+    if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
+      if (GetSectorInfoByIndex(GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
+              ->fMilitiaTrainingPaid == FALSE) {
+        ResumeOldAssignment(pSoldier);
+      }
+    }
+  }
+}
+
 // IMPORTANT: This same callback is used both for initial training and for continue training prompt
 // use 'gfYesNoPromptIsForContinue' flag to tell them apart
 void MilitiaTrainingRejected(void) {
   if (gfYesNoPromptIsForContinue) {
     // take all mercs in that sector off militia training
-    ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(
-        GetSolSectorX(pMilitiaTrainerSoldier), GetSolSectorY(pMilitiaTrainerSoldier));
+    resetTrainersAssignment(GetSolSectorX(pMilitiaTrainerSoldier),
+                            GetSolSectorY(pMilitiaTrainerSoldier));
   } else {
     // take all mercs in unpaid sectors EVERYWHERE off militia training
-    ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList();
+    resetAssignmentsForUnpaidSectors();
   }
 
 #ifdef JA2BETAVERSION

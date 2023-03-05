@@ -365,15 +365,12 @@ void CreateDestroyUpdatePanelButtons(INT32 iX, INT32 iY, BOOLEAN fFourWideMode);
 void RenderSoldierSmallFaceForUpdatePanel(INT32 iIndex, INT32 iX, INT32 iY);
 void ContinueUpdateButtonCallback(GUI_BUTTON *btn, INT32 reason);
 void StopUpdateButtonCallback(GUI_BUTTON *btn, INT32 reason);
-// INT32 GetSquadListIndexForSquadNumber( INT32 iSquadNumber );
 INT8 FindSquadThatSoldierCanJoin(struct SOLDIERTYPE *pSoldier);
 BOOLEAN CanSoldierMoveWithVehicleId(struct SOLDIERTYPE *pSoldier, INT32 iVehicle1Id);
 BOOLEAN IsAnythingSelectedForMoving(void);
 BOOLEAN CanMoveBoxSoldierMoveStrategically(struct SOLDIERTYPE *pSoldier, BOOLEAN fShowErrorMessage);
 
 BOOLEAN ValidSelectableCharForNextOrPrev(INT32 iNewCharSlot);
-
-extern void ResumeOldAssignment(struct SOLDIERTYPE *pSoldier);
 
 void InitalizeVehicleAndCharacterList(void) {
   // will init the vehicle and character lists to zero
@@ -469,76 +466,6 @@ BOOLEAN MultipleCharacterListEntriesSelected(void) {
     return (FALSE);
   }
 }
-
-void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList() {
-  INT32 iCounter = 0;
-  struct SOLDIERTYPE *pSoldier = NULL;
-
-  for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    // valid character?
-    if (!IsCharListEntryValid(iCounter)) {
-      // nope
-      continue;
-    }
-
-    pSoldier = GetMercFromCharacterList(iCounter);
-
-    if (IsSolActive(pSoldier) == FALSE) {
-      continue;
-    }
-
-    if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
-      if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
-              .fMilitiaTrainingPaid == FALSE) {
-        ResumeOldAssignment(pSoldier);
-      }
-    }
-  }
-}
-
-void ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(INT16 sSectorX, INT16 sSectorY) {
-  INT32 iCounter = 0;
-  struct SOLDIERTYPE *pSoldier = NULL;
-
-  for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    // valid character?
-    if (!IsCharListEntryValid(iCounter)) {
-      // nope
-      continue;
-    }
-
-    pSoldier = GetMercFromCharacterList(iCounter);
-
-    if (IsSolActive(pSoldier) == FALSE) {
-      continue;
-    }
-
-    if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
-      if ((GetSolSectorX(pSoldier) == sSectorX) && (GetSolSectorY(pSoldier) == sSectorY) &&
-          (GetSolSectorZ(pSoldier) == 0)) {
-        ResumeOldAssignment(pSoldier);
-      }
-    }
-  }
-}
-
-/*
-void PlotPathForSelectedCharacterList( INT16 sX, INT16 sY )
-{
-        INT32 iCounter = 0;
-        // run through list and build paths for each character
-        for( iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++ )
-        {
-                if( ( fSelectedListOfMercsForMapScreen[ iCounter ] == TRUE )&&( bSelectedDestChar !=
-iCounter ) )
-                {
-                        // character is valid.. do this for every one not the bSelectedDestChar
-                        PlotPathForCharacter( &Menptr[ gCharactersList[ iCounter ].usSolID ], sX,
-sY, FALSE );
-                }
-        }
-}
-*/
 
 // check if the members of the selected list move with this guy... are they in the same mvt group?
 void DeselectSelectedListMercsWhoCantMoveWithThisGuy(struct SOLDIERTYPE *pSoldier) {
