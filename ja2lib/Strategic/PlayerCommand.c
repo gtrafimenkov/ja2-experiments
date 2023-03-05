@@ -383,7 +383,7 @@ void MakePlayerPerceptionOfSectorControlCorrect( INT16 sMapX, INT16 sMapY, INT8 
         if (bMapZ == 0)
         {
                 SectorInfo[ GetSectorID8( sMapX, sMapY ) ].fPlayer[ bMapZ ] = !( StrategicMap[
-CALCULATE_STRATEGIC_INDEX( sMapX, sMapY ) ].fEnemyControlled );
+GetSectorID16( sMapX, sMapY ) ].fEnemyControlled );
         }
         // else nothing, underground sector control is always up to date, because we don't track
 control down there

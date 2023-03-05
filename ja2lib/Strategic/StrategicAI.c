@@ -3483,7 +3483,7 @@ void SendReinforcementsForGarrison(INT32 iDstGarrisonID, UINT16 usDefencePoints,
     // KM : Sep 9, 1999
     // If the player owns sector P3, any troops that spawned there were causing serious problems,
     // seeing battle checks were not performed!
-    if (!StrategicMap[CALCULATE_STRATEGIC_INDEX(3, 16)]
+    if (!StrategicMap[GetSectorID16(3, 16)]
              .fEnemyControlled) {  // Queen can no longer send reinforcements from the palace if she
                                    // doesn't control it!
       return;
@@ -4286,7 +4286,7 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
 
   if (ubSAIVersion < 28) {
     struct GROUP *pNext;
-    if (!StrategicMap[CALCULATE_STRATEGIC_INDEX(3, 16)]
+    if (!StrategicMap[GetSectorID16(3, 16)]
              .fEnemyControlled) {  // Eliminate all enemy groups in this sector, because the player
                                    // owns the sector, and it is not
       // possible for them to spawn there!

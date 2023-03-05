@@ -406,9 +406,9 @@ INT32 FindLocationOfClosestRefuelSite(BOOLEAN fMustBeAvailable) {
     if ((fRefuelingSiteAvailable[iCounter]) || (fMustBeAvailable == FALSE)) {
       // find if sector is under control, find distance from heli to it
       iDistance = (INT32)FindStratPath(
-          (INT16)(CALCULATE_STRATEGIC_INDEX(pVehicleList[iHelicopterVehicleId].sSectorX,
-                                            pVehicleList[iHelicopterVehicleId].sSectorY)),
-          (INT16)(CALCULATE_STRATEGIC_INDEX(ubRefuelList[iCounter][0], ubRefuelList[iCounter][1])),
+          (INT16)(GetSectorID16(pVehicleList[iHelicopterVehicleId].sSectorX,
+                                pVehicleList[iHelicopterVehicleId].sSectorY)),
+          (INT16)(GetSectorID16(ubRefuelList[iCounter][0], ubRefuelList[iCounter][1])),
           pVehicleList[iHelicopterVehicleId].ubMovementGroup, FALSE);
 
       if (iDistance < iShortestDistance) {
@@ -430,11 +430,10 @@ INT32 DistanceToNearestRefuelPoint(INT16 sX, INT16 sY) {
   // don't notify player during these checks!
   iClosestLocation = LocationOfNearestRefuelPoint(FALSE);
 
-  iDistance =
-      (INT32)FindStratPath((INT16)(CALCULATE_STRATEGIC_INDEX(sX, sY)),
-                           (INT16)(CALCULATE_STRATEGIC_INDEX(ubRefuelList[iClosestLocation][0],
-                                                             ubRefuelList[iClosestLocation][1])),
-                           pVehicleList[iHelicopterVehicleId].ubMovementGroup, FALSE);
+  iDistance = (INT32)FindStratPath(
+      (INT16)(GetSectorID16(sX, sY)),
+      (INT16)(GetSectorID16(ubRefuelList[iClosestLocation][0], ubRefuelList[iClosestLocation][1])),
+      pVehicleList[iHelicopterVehicleId].ubMovementGroup, FALSE);
   return (iDistance);
 }
 
@@ -473,7 +472,7 @@ INT32 GetCostOfPassageForHelicopter(INT16 sX, INT16 sY) {
   INT32 iCost = 0;
 
   // if they don't control it
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sX, sY)].fEnemyAirControlled == FALSE) {
+  if (StrategicMap[GetSectorID16(sX, sY)].fEnemyAirControlled == FALSE) {
     iCost = COST_AIRSPACE_SAFE;
   } else {
     iCost = COST_AIRSPACE_UNSAFE;
@@ -798,11 +797,9 @@ void UpdateRefuelSiteAvailability(void) {
 
   for (iCounter = 0; iCounter < NUMBER_OF_REFUEL_SITES; iCounter++) {
     // if enemy controlled sector (ground OR air, don't want to fly into enemy air territory)
-    if ((StrategicMap[CALCULATE_STRATEGIC_INDEX(ubRefuelList[iCounter][0],
-                                                ubRefuelList[iCounter][1])]
+    if ((StrategicMap[GetSectorID16(ubRefuelList[iCounter][0], ubRefuelList[iCounter][1])]
              .fEnemyControlled == TRUE) ||
-        (StrategicMap[CALCULATE_STRATEGIC_INDEX(ubRefuelList[iCounter][0],
-                                                ubRefuelList[iCounter][1])]
+        (StrategicMap[GetSectorID16(ubRefuelList[iCounter][0], ubRefuelList[iCounter][1])]
              .fEnemyAirControlled == TRUE) ||
         ((iCounter == ESTONI_REFUELING_SITE) &&
          (CheckFact(FACT_ESTONI_REFUELLING_POSSIBLE, 0) == FALSE))) {
@@ -1108,8 +1105,7 @@ void CheckAndHandleSkyriderMonologues(void) {
       guiHelicopterSkyriderTalkState = 1;
     } else if (guiHelicopterSkyriderTalkState == 1) {
       // if enemy still controls the Cambria hospital sector
-      if (StrategicMap[CALCULATE_STRATEGIC_INDEX(HOSPITAL_SECTOR_X, HOSPITAL_SECTOR_Y)]
-              .fEnemyControlled) {
+      if (StrategicMap[GetSectorID16(HOSPITAL_SECTOR_X, HOSPITAL_SECTOR_Y)].fEnemyControlled) {
         HandleSkyRiderMonologueEvent(SKYRIDER_MONOLOGUE_EVENT_CAMBRIA_HOSPITAL, 0);
       }
       // advance state even if player already has Cambria's hospital sector!!!
@@ -1358,7 +1354,7 @@ uiSectorId % MAP_WORLD_X ), ( UINT16 ) ( pNode->uiSectorId / MAP_WORLD_X ) );
                 }
         }
 
-        iClosestRefuelPoint = ( INT16 )( CALCULATE_STRATEGIC_INDEX( ubRefuelList[
+        iClosestRefuelPoint = ( INT16 )( GetSectorID16( ubRefuelList[
 LocationOfNearestRefuelPoint( FALSE ) ][ 0 ], ubRefuelList[ LocationOfNearestRefuelPoint( FALSE ) ][
 1 ] ) );
 
@@ -1549,7 +1545,7 @@ BOOLEAN WillAirRaidBeStopped( INT16 sSectorX, INT16 sSectorY )
 
 
         // if enemy controls this SAM site, then it can't stop an air raid
-        if( StrategicMap[CALCULATE_STRATEGIC_INDEX( sSectorX, sSectorY ) ].fEnemyAirControlled ==
+        if( StrategicMap[GetSectorID16( sSectorX, sSectorY ) ].fEnemyAirControlled ==
 TRUE )
         {
                 return( FALSE );
@@ -1606,7 +1602,7 @@ BOOLEAN HandleSAMSiteAttackOfHelicopterInSector(INT16 sSectorX, INT16 sSectorY) 
   UINT8 ubChance;
 
   // if this sector is in friendly airspace, we're safe
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].fEnemyAirControlled == FALSE) {
+  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyAirControlled == FALSE) {
     // no problem, friendly airspace
     return (FALSE);
   }
@@ -1828,8 +1824,8 @@ INT16 GetNumSafeSectorsInPath(void) {
   }
 
   // may need to skip the sector the chopper is currently in
-  iHeliSector = CALCULATE_STRATEGIC_INDEX(pVehicleList[iHelicopterVehicleId].sSectorX,
-                                          pVehicleList[iHelicopterVehicleId].sSectorY);
+  iHeliSector = GetSectorID16(pVehicleList[iHelicopterVehicleId].sSectorX,
+                              pVehicleList[iHelicopterVehicleId].sSectorY);
 
   // get chopper's group ptr
   pGroup = GetGroup(pVehicleList[iHelicopterVehicleId].ubMovementGroup);
@@ -1904,8 +1900,8 @@ INT16 GetNumUnSafeSectorsInPath(void) {
   }
 
   // may need to skip the sector the chopper is currently in
-  iHeliSector = CALCULATE_STRATEGIC_INDEX(pVehicleList[iHelicopterVehicleId].sSectorX,
-                                          pVehicleList[iHelicopterVehicleId].sSectorY);
+  iHeliSector = GetSectorID16(pVehicleList[iHelicopterVehicleId].sSectorX,
+                              pVehicleList[iHelicopterVehicleId].sSectorY);
 
   // get chopper's group ptr
   pGroup = GetGroup(pVehicleList[iHelicopterVehicleId].ubMovementGroup);
@@ -2045,8 +2041,7 @@ void MakeHeliReturnToBase(void) {
     pVehicleList[iHelicopterVehicleId].pMercPath = AppendStrategicPath(
         MoveToBeginningOfPathList(BuildAStrategicPath(
             NULL, GetLastSectorIdInVehiclePath(iHelicopterVehicleId),
-            (INT16)(CALCULATE_STRATEGIC_INDEX(ubRefuelList[iLocation][0],
-                                              ubRefuelList[iLocation][1])),
+            (INT16)(GetSectorID16(ubRefuelList[iLocation][0], ubRefuelList[iLocation][1])),
             pVehicleList[iHelicopterVehicleId].ubMovementGroup, FALSE /*, FALSE */)),
         pVehicleList[iHelicopterVehicleId].pMercPath);
     pVehicleList[iHelicopterVehicleId].pMercPath =

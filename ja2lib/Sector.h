@@ -17,21 +17,23 @@ SectorID8 SectorFrom015(u8 x, u8 y);
 // This function should be prefered over GetSectorID8_STATIC macro.
 SectorID8 GetSectorID8(u8 x, u8 y);
 
+#define MAP_WORLD_X 18
+#define MAP_WORLD_Y 18
+
+// Convert coordinates (1-16, 1-16) to 0-324 index.
+// This function should be prefered over GetSectorID16_STATIC macro.
+SectorID16 GetSectorID16(u8 x, u8 y);
+#define GetSectorID16_STATIC(x, y) (x + (y * MAP_WORLD_X))
+#define GET_X_FROM_STRATEGIC_INDEX(i) (i % MAP_WORLD_X)
+#define GET_Y_FROM_STRATEGIC_INDEX(i) (i / MAP_WORLD_X)
+
 // Macro to convert sector coordinates (1-16,1-16) to 0-255
 #define GetSectorID8_STATIC(x, y) ((y - 1) * 16 + x - 1)
 #define SECTORX(SectorID) ((SectorID % 16) + 1)
 #define SECTORY(SectorID) ((SectorID / 16) + 1)
 
-#define MAP_WORLD_X 18
-#define MAP_WORLD_Y 18
-
-// get index into aray
-#define CALCULATE_STRATEGIC_INDEX(x, y) (x + (y * MAP_WORLD_X))
-#define GET_X_FROM_STRATEGIC_INDEX(i) (i % MAP_WORLD_X)
-#define GET_Y_FROM_STRATEGIC_INDEX(i) (i / MAP_WORLD_X)
-
 // macros to convert between the 2 different sector numbering systems
-#define SECTOR_INFO_TO_STRATEGIC_INDEX(i) (CALCULATE_STRATEGIC_INDEX(SECTORX(i), SECTORY(i)))
+#define SECTOR_INFO_TO_STRATEGIC_INDEX(i) (GetSectorID16(SECTORX(i), SECTORY(i)))
 #define STRATEGIC_INDEX_TO_SECTOR_INFO(i) \
   (GetSectorID8(GET_X_FROM_STRATEGIC_INDEX(i), GET_Y_FROM_STRATEGIC_INDEX(i)))
 

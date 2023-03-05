@@ -937,8 +937,8 @@ BOOLEAN BasicCanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
   }
 
   // is there a town in the character's current sector?
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
-          .bNameId == BLANK_SECTOR) {
+  if (StrategicMap[GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))].bNameId ==
+      BLANK_SECTOR) {
     fSamSitePresent = IsThisSectorASAMSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
                                              GetSolSectorZ(pSoldier));
 
@@ -2534,7 +2534,7 @@ gbWorldSectorZ )&&( pSoldier -> sSectorY == gWorldSectorY ) )
 
         // repair the SAM
 
-        sStrategicSector = CALCULATE_STRATEGIC_INDEX( GetSolSectorX(pSoldier),
+        sStrategicSector = GetSectorID16( GetSolSectorX(pSoldier),
 GetSolSectorY(pSoldier) );
 
         // do we have more than enough?
@@ -8545,7 +8545,7 @@ BOOLEAN IsTheSAMSiteInSectorRepairable( INT16 sSectorX, INT16 sSectorY, INT16 sS
         {
                 if( pSamList[ iCounter ] == GetSectorID8( sSectorX, sSectorY ) )
                 {
-                        bSAMCondition = StrategicMap[ CALCULATE_STRATEGIC_INDEX( sSectorX, sSectorY
+                        bSAMCondition = StrategicMap[ GetSectorID16( sSectorX, sSectorY
 ) ].bSAMCondition;
 
                         if( ( bSAMCondition < 100 ) && ( bSAMCondition >= MIN_CONDITION_TO_FIX_SAM )

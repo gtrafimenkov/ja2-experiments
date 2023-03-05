@@ -2865,7 +2865,7 @@ void UpdateAndDamageSAMIfFound(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ, I
   }
 
   // Damage.....
-  sSectorNo = CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY);
+  sSectorNo = GetSectorID16(sSectorX, sSectorY);
 
   if (StrategicMap[sSectorNo].bSAMCondition >= ubDamage) {
     StrategicMap[sSectorNo].bSAMCondition -= ubDamage;

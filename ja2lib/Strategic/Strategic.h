@@ -33,7 +33,7 @@ enum {
   INSERTION_CODE_CENTER,
 };
 
-// PLEASE USE CALCULATE_STRATEGIC_INDEX() macro instead (they're identical).
+// PLEASE USE GetSectorID16() macro instead (they're identical).
 // #define			GETWORLDMAPNO( x, y )		( x+(MAP_WORLD_X*y) )
 
 typedef struct strategicmapelement StrategicMapElement;

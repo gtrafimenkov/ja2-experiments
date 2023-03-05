@@ -3463,7 +3463,7 @@ void ShowPeopleInMotion(INT16 sX, INT16 sY) {
     // find how many people are coming and going in this sector
     sExiting = 0;
     sEntering = 0;
-    sSource = CALCULATE_STRATEGIC_INDEX(sX, sY);
+    sSource = GetSectorID16(sX, sY);
     sOffsetX = 0;
     sOffsetY = 0;
     iX = sX;
@@ -5003,7 +5003,7 @@ BOOLEAN IsThisMilitiaTownSectorAllowable(INT16 sSectorIndexValue) {
   sSectorY = SECTORY(sGlobalMapSector);
 
   // is this in fact part of a town?
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bNameId == BLANK_SECTOR) {
+  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId == BLANK_SECTOR) {
     return (FALSE);
   }
 
@@ -5171,7 +5171,7 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
       continue;
     }
 
-    if (!StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].fEnemyControlled) {
+    if (!StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled) {
       // get number of each
       iNumberOfGreens += SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[GREEN_MILITIA];
       iNumberOfRegulars += SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[REGULAR_MILITIA];
@@ -5438,7 +5438,7 @@ void DrawTownMilitiaForcesOnMap(void) {
     sSectorX = SECTORX(pSamList[iCounter]);
     sSectorY = SECTORY(pSamList[iCounter]);
 
-    if (!StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].fEnemyControlled) {
+    if (!StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled) {
       // get number of each
       iNumberOfGreens = SectorInfo[pSamList[iCounter]].ubNumberOfCivsAtLevel[GREEN_MILITIA];
       iNumberOfRegulars = SectorInfo[pSamList[iCounter]].ubNumberOfCivsAtLevel[REGULAR_MILITIA];
@@ -5955,7 +5955,7 @@ BOOLEAN CanMilitiaAutoDistribute(void) {
       continue;
     }
 
-    if (!StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].fEnemyControlled) {
+    if (!StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled) {
       // get number of each
       iTotalTroopsInTown += SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
                             SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
@@ -6197,7 +6197,7 @@ BOOLEAN CanRedistributeMilitiaInSector(INT16 sClickedSectorX, INT16 sClickedSect
     sSectorY = SECTORY(sCurrentSectorValue);
 
     // not in the same town?
-    if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bNameId != bClickedTownId) {
+    if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId != bClickedTownId) {
       continue;
     }
 

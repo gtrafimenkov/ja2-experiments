@@ -555,8 +555,8 @@ void AddCommonInfoToBox(void) {
 
     // No/Yes
     swprintf(wString, ARR_SIZE(wString), L"%s",
-             pwMiscSectorStrings[(StrategicMap[CALCULATE_STRATEGIC_INDEX(bCurrentTownMineSectorX,
-                                                                         bCurrentTownMineSectorY)]
+             pwMiscSectorStrings[(StrategicMap[GetSectorID16(bCurrentTownMineSectorX,
+                                                             bCurrentTownMineSectorY)]
                                       .fEnemyControlled)
                                      ? 6
                                      : 5]);

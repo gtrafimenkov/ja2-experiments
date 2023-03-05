@@ -788,7 +788,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
                     ->fMilitiaTrainingPaid == FALSE) {
               // check to see if this sector is a town and needs equipment
               gsUnpaidStrategicSector[iCounter] =
-                  CALCULATE_STRATEGIC_INDEX(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+                  GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
             }
           }
         }
@@ -804,7 +804,7 @@ void BuildListOfUnpaidTrainableSectors(void) {
               ->fMilitiaTrainingPaid == FALSE) {
         // check to see if this sector is a town and needs equipment
         gsUnpaidStrategicSector[iCounter] =
-            CALCULATE_STRATEGIC_INDEX(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+            GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
       }
     }
   }

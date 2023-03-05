@@ -1398,8 +1398,8 @@ void RebuildWayPointsForGroupPath(struct path* pHeadOfPath, INT16 sMvtGroup) {
   // if we're currently between sectors
   if (pGroup->fBetweenSectors) {
     // figure out which direction we're already going in  (Otherwise iOldDelta starts at 0)
-    iOldDelta = CALCULATE_STRATEGIC_INDEX(pGroup->ubNextX, pGroup->ubNextY) -
-                CALCULATE_STRATEGIC_INDEX(pGroup->ubSectorX, pGroup->ubSectorY);
+    iOldDelta = GetSectorID16(pGroup->ubNextX, pGroup->ubNextY) -
+                GetSectorID16(pGroup->ubSectorX, pGroup->ubSectorY);
   }
 
   // build a brand new list of waypoints, one for initial direction, and another for every
@@ -1433,7 +1433,7 @@ void RebuildWayPointsForGroupPath(struct path* pHeadOfPath, INT16 sMvtGroup) {
   // at this point, the final sector in the path must be identical to this group's last waypoint
   wp = GetFinalWaypoint(pGroup);
   AssertMsg(wp, "Path exists, but no waypoints were added!  AM-0");
-  AssertMsg(pNode->uiSectorId == (UINT32)CALCULATE_STRATEGIC_INDEX(wp->x, wp->y),
+  AssertMsg(pNode->uiSectorId == (UINT32)GetSectorID16(wp->x, wp->y),
             "Last waypoint differs from final path sector!  AM-0");
 
   // see if we've already reached the first sector in the path (we never actually left the sector
@@ -1465,9 +1465,8 @@ BOOLEAN MoveGroupFromSectorToSector(UINT8 ubGroupID, INT16 sStartX, INT16 sStart
   struct path* pNode = NULL;
 
   // build the path
-  pNode = BuildAStrategicPath(pNode, (INT16)CALCULATE_STRATEGIC_INDEX(sStartX, sStartY),
-                              (INT16)CALCULATE_STRATEGIC_INDEX(sDestX, sDestY), ubGroupID,
-                              FALSE /*, FALSE */);
+  pNode = BuildAStrategicPath(pNode, (INT16)GetSectorID16(sStartX, sStartY),
+                              (INT16)GetSectorID16(sDestX, sDestY), ubGroupID, FALSE /*, FALSE */);
 
   if (pNode == NULL) {
     return (FALSE);
@@ -1489,9 +1488,8 @@ BOOLEAN MoveGroupFromSectorToSectorButAvoidLastSector(UINT8 ubGroupID, INT16 sSt
   struct path* pNode = NULL;
 
   // build the path
-  pNode = BuildAStrategicPath(pNode, (INT16)CALCULATE_STRATEGIC_INDEX(sStartX, sStartY),
-                              (INT16)CALCULATE_STRATEGIC_INDEX(sDestX, sDestY), ubGroupID,
-                              FALSE /*, FALSE*/);
+  pNode = BuildAStrategicPath(pNode, (INT16)GetSectorID16(sStartX, sStartY),
+                              (INT16)GetSectorID16(sDestX, sDestY), ubGroupID, FALSE /*, FALSE*/);
 
   if (pNode == NULL) {
     return (FALSE);
@@ -1526,9 +1524,8 @@ BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectors(UINT8 ubGroup
   gfPlotToAvoidPlayerInfuencedSectors = TRUE;
 
   // build the path
-  pNode = BuildAStrategicPath(pNode, (INT16)CALCULATE_STRATEGIC_INDEX(sStartX, sStartY),
-                              (INT16)CALCULATE_STRATEGIC_INDEX(sDestX, sDestY), ubGroupID,
-                              FALSE /*, FALSE */);
+  pNode = BuildAStrategicPath(pNode, (INT16)GetSectorID16(sStartX, sStartY),
+                              (INT16)GetSectorID16(sDestX, sDestY), ubGroupID, FALSE /*, FALSE */);
 
   // turn off the avoid flag
   gfPlotToAvoidPlayerInfuencedSectors = FALSE;
@@ -1566,9 +1563,8 @@ BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectorsAndStopOneSect
   gfPlotToAvoidPlayerInfuencedSectors = TRUE;
 
   // build the path
-  pNode = BuildAStrategicPath(pNode, (INT16)CALCULATE_STRATEGIC_INDEX(sStartX, sStartY),
-                              (INT16)CALCULATE_STRATEGIC_INDEX(sDestX, sDestY), ubGroupID,
-                              FALSE /*, FALSE */);
+  pNode = BuildAStrategicPath(pNode, (INT16)GetSectorID16(sStartX, sStartY),
+                              (INT16)GetSectorID16(sDestX, sDestY), ubGroupID, FALSE /*, FALSE */);
 
   // turn off the avoid flag
   gfPlotToAvoidPlayerInfuencedSectors = FALSE;
@@ -1806,7 +1802,7 @@ void AddSectorToFrontOfMercPath(struct path** ppMercPath, UINT8 ubSectorX, UINT8
   // allocate and hang a new node at the front of the path list
   pNode = (struct path*)MemAlloc(sizeof(struct path));
 
-  pNode->uiSectorId = CALCULATE_STRATEGIC_INDEX(ubSectorX, ubSectorY);
+  pNode->uiSectorId = GetSectorID16(ubSectorX, ubSectorY);
   pNode->pNext = *ppMercPath;
   pNode->pPrev = NULL;
   pNode->uiEta = GetWorldTotalMin();

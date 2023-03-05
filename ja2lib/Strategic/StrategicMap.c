@@ -533,7 +533,7 @@ BOOLEAN InitStrategicEngine() {
 INT8 GetTownIdForSector(INT16 sMapX, INT16 sMapY) {
   // return the name value of the town in this sector
 
-  return GetTownIdForStrategicMapIndex(CALCULATE_STRATEGIC_INDEX(sMapX, sMapY));
+  return GetTownIdForStrategicMapIndex(GetSectorID16(sMapX, sMapY));
 }
 
 i8 GetTownIdForStrategicMapIndex(i32 index) { return StrategicMap[index].bNameId; }
@@ -545,7 +545,7 @@ UINT8 GetTownSectorSize(TownID bTownId) {
 
   for (iCounterA = 0; iCounterA < (INT32)(MAP_WORLD_X - 1); iCounterA++) {
     for (iCounterB = 0; iCounterB < (INT32)(MAP_WORLD_Y - 1); iCounterB++) {
-      if (StrategicMap[CALCULATE_STRATEGIC_INDEX(iCounterA, iCounterB)].bNameId == bTownId) {
+      if (StrategicMap[GetSectorID16(iCounterA, iCounterB)].bNameId == bTownId) {
         ubSectorSize++;
       }
     }
@@ -579,7 +579,7 @@ UINT8 GetTownSectorsUnderControl(TownID bTownId) {
 
   for (iCounterA = 0; iCounterA < (INT32)(MAP_WORLD_X - 1); iCounterA++) {
     for (iCounterB = 0; iCounterB < (INT32)(MAP_WORLD_Y - 1); iCounterB++) {
-      usSector = (UINT16)CALCULATE_STRATEGIC_INDEX(iCounterA, iCounterB);
+      usSector = (UINT16)GetSectorID16(iCounterA, iCounterB);
 
       if ((StrategicMap[usSector].bNameId == bTownId) &&
           (StrategicMap[usSector].fEnemyControlled == FALSE) &&
@@ -1765,7 +1765,7 @@ void GetSectorIDString(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ, CHAR16 *zS
       wcscpy(zString, L"");
     }
   } else {
-    bTownNameID = StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bNameId;
+    bTownNameID = StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId;
     ubSectorID = (UINT8)GetSectorID8(sSectorX, sSectorY);
     pSector = &SectorInfo[ubSectorID];
     ubLandType = pSector->ubTraversability[4];
@@ -2858,7 +2858,7 @@ void SetupNewStrategicGame() {
   // Set all sectors as enemy controlled
   for (sSectorX = 0; sSectorX < MAP_WORLD_X; sSectorX++) {
     for (sSectorY = 0; sSectorY < MAP_WORLD_Y; sSectorY++) {
-      StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].fEnemyControlled = TRUE;
+      StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled = TRUE;
     }
   }
 
@@ -2971,7 +2971,7 @@ INT32 SAMSitesUnderPlayerControl(INT16 sX, INT16 sY) {
   // is this sector a SAM sector?
   if (IsThisSectorASAMSector(sX, sY, 0) == TRUE) {
     // is it under control by the player
-    if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sX, sY)].fEnemyControlled == FALSE) {
+    if (StrategicMap[GetSectorID16(sX, sY)].fEnemyControlled == FALSE) {
       // yes
       fSamSiteUnderControl = TRUE;
     }
@@ -3007,16 +3007,15 @@ void UpdateAirspaceControl(void) {
         fEnemyControlsAir = FALSE;
       }
 
-      StrategicMap[CALCULATE_STRATEGIC_INDEX(iCounterA, iCounterB)].fEnemyAirControlled =
-          fEnemyControlsAir;
+      StrategicMap[GetSectorID16(iCounterA, iCounterB)].fEnemyAirControlled = fEnemyControlsAir;
     }
   }
 
   // check if currently selected arrival sector still has secure airspace
 
   // if it's not enemy air controlled
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(gsMercArriveSectorX, gsMercArriveSectorY)]
-          .fEnemyAirControlled == TRUE) {
+  if (StrategicMap[GetSectorID16(gsMercArriveSectorX, gsMercArriveSectorY)].fEnemyAirControlled ==
+      TRUE) {
     // NOPE!
     CHAR16 sMsgString[256], sMsgSubString1[64], sMsgSubString2[64];
 
@@ -3055,7 +3054,7 @@ BOOLEAN IsThereAFunctionalSAMSiteInSector(INT16 sSectorX, INT16 sSectorY, INT8 b
     return (FALSE);
   }
 
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bSAMCondition <
+  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bSAMCondition <
       MIN_CONDITION_FOR_SAM_SITE_TO_WORK) {
     return (FALSE);
   }
@@ -3065,7 +3064,7 @@ BOOLEAN IsThereAFunctionalSAMSiteInSector(INT16 sSectorX, INT16 sSectorY, INT8 b
 
 // is this sector part of the town?
 BOOLEAN SectorIsPartOfTown(TownID bTownId, INT16 sSectorX, INT16 sSectorY) {
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bNameId == bTownId) {
+  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId == bTownId) {
     // is in the town
     return (TRUE);
   }

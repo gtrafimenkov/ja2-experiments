@@ -9,6 +9,7 @@
 SectorID8 SectorFrom015(u8 x, u8 y) { return x + y * MAP_WORLD_X; }
 
 SectorID8 GetSectorID8(u8 x, u8 y) { return (y - 1) * 16 + x - 1; }
+SectorID16 GetSectorID16(u8 x, u8 y) { return x + y * MAP_WORLD_X; }
 
 struct SectorInfo* GetSectorInfoByIndex(SectorID8 sectorIndex) { return &SectorInfo[sectorIndex]; }
 
@@ -57,7 +58,7 @@ i16 GetLoadedSectorX() { return gWorldSectorX; }
 i16 GetLoadedSectorY() { return gWorldSectorY; }
 
 bool IsSectorEnemyControlled(i16 sMapX, i16 sMapY) {
-  return StrategicMap[CALCULATE_STRATEGIC_INDEX(sMapX, sMapY)].fEnemyControlled;
+  return StrategicMap[GetSectorID16(sMapX, sMapY)].fEnemyControlled;
 }
 
 // fEnemyControlled
