@@ -3846,7 +3846,15 @@ BOOLEAN HandleDefiniteUnloadingOfWorld(UINT8 ubUnloadCode) {
   }
 
   // Handle cases for both types of unloading
-  HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap();
+  if (GetTeamSide(MILITIA_TEAM) != 0) {
+    // handle militia defections and reset team to friendly
+    HandleMilitiaDefections(GetLoadedSectorX(), GetLoadedSectorY());
+    SetTeamSide(MILITIA_TEAM, 0);
+  } else if (!IsGoingToAutoresolve()) {
+    // Don't promote militia if we are going directly
+    // to autoresolve to finish the current battle.
+    HandleMilitiaPromotions();
+  }
   return TRUE;
 }
 

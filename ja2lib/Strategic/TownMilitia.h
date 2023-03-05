@@ -34,9 +34,6 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
 // continue training?
 void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSoldier);
 
-// call this when the sector changes...
-void HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap(void);
-
 // is there a town with militia here or nearby?
 BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY);
 
@@ -53,6 +50,9 @@ void ClearSectorListForCompletedTrainingOfMilitia(void);
 
 BOOLEAN MilitiaTrainingAllowedInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ);
 BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId);
+
+void HandleMilitiaPromotions();
+void HandleMilitiaDefections(INT16 sMapX, INT16 sMapY);
 
 void PrepMilitiaPromotion();
 void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kills);

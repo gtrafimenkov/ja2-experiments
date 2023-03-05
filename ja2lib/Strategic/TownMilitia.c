@@ -50,7 +50,6 @@ extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
 
 static void addMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
 static void promoteMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank, UINT8 ubHowMany);
-static void handlePromotions();
 
 // handle completion of assignment byt his soldier too and inform the player
 static void handleTrainingComplete(struct SOLDIERTYPE *pTrainer);
@@ -268,7 +267,7 @@ UINT8 CheckOneMilitiaForPromotion(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
 }
 
 // call this if the player attacks his own militia
-static void HandleMilitiaDefections(INT16 sMapX, INT16 sMapY) {
+void HandleMilitiaDefections(INT16 sMapX, INT16 sMapY) {
   UINT8 ubRank;
   UINT8 ubMilitiaCnt;
   UINT8 ubCount;
@@ -615,18 +614,6 @@ void MilitiaTrainingRejected(void) {
 
   // this completes the training prompt sequence
   pMilitiaTrainerSoldier = NULL;
-}
-
-void HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap(void) {
-  if (GetTeamSide(MILITIA_TEAM) != 0) {
-    // handle militia defections and reset team to friendly
-    HandleMilitiaDefections(GetLoadedSectorX(), GetLoadedSectorY());
-    SetTeamSide(MILITIA_TEAM, 0);
-  } else if (!IsGoingToAutoresolve()) {
-    // Don't promote militia if we are going directly
-    // to autoresolve to finish the current battle.
-    handlePromotions();
-  }
 }
 
 BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY) {
@@ -1032,7 +1019,7 @@ void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kill
   }
 }
 
-static void handlePromotions(void) {
+void HandleMilitiaPromotions(void) {
   PrepMilitiaPromotion();
 
   struct SoldierList mil;
