@@ -949,7 +949,7 @@ BOOLEAN CheckConditionsForBattle(struct GROUP *pGroup) {
                 if (!AM_A_ROBOT(pSoldier) && !AM_AN_EPC(pSoldier) && pSoldier->bLife >= OKLIFE) {
                   fCombatAbleMerc = TRUE;
                 }
-                if (pSoldier->bLife > 0) {
+                if (IsSolAlive(pSoldier)) {
                   fAliveMerc = TRUE;
                 }
               }

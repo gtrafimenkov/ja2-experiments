@@ -20,6 +20,7 @@ SectorID8 GetSolSectorID8(const struct SOLDIERTYPE *s) {
 i8 GetSolAssignment(const struct SOLDIERTYPE *s) { return s->bAssignment; }
 
 bool IsSolActive(const struct SOLDIERTYPE *s) { return s->bActive; }
+bool IsSolAlive(const struct SOLDIERTYPE *s) { return s->bLife > 0; }
 
 void SetSolAssignmentDone(struct SOLDIERTYPE *s) {
   s->fDoneAssignmentAndNothingToDoFlag = FALSE;

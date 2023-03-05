@@ -3062,7 +3062,7 @@ BOOLEAN HandleSoldierDeath(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfMadeCorpse) 
     }
   }
 
-  if (pSoldier->bLife > 0) {
+  if (IsSolAlive(pSoldier)) {
     // If we are here - something funny has heppende
     // We either have played a death animation when we are not dead, or we are calling
     // this ani code in an animation which is not a death animation

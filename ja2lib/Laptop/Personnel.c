@@ -2579,7 +2579,7 @@ INT32 GetTotalDailyCostOfCurrentTeam(void) {
   for (pSoldier = MercPtrs[0]; cnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; cnt++) {
     pSoldier = MercPtrs[cnt];
 
-    if ((IsSolActive(pSoldier)) && (pSoldier->bLife > 0)) {
+    if ((IsSolActive(pSoldier)) && IsSolAlive(pSoldier)) {
       // valid soldier, get cost
       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
         // daily rate
@@ -2622,7 +2622,7 @@ INT32 GetLowestDailyCostOfCurrentTeam(void) {
     pSoldier = MercPtrs[cnt];
 
     if ((IsSolActive(pSoldier)) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
-        (pSoldier->bLife > 0)) {
+        IsSolAlive(pSoldier)) {
       // valid soldier, get cost
       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
         // daily rate
@@ -2675,7 +2675,7 @@ INT32 GetHighestDailyCostOfCurrentTeam(void) {
     pSoldier = MercPtrs[cnt];
 
     if ((IsSolActive(pSoldier)) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
-        (pSoldier->bLife > 0)) {
+        IsSolAlive(pSoldier)) {
       // valid soldier, get cost
       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
         // daily rate
@@ -4890,7 +4890,7 @@ INT32 GetIdOfFirstDisplayedMerc() {
     // cnt = gTacticalStatus.Team[ pSoldier->bTeam ].bFirstID;
     for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[pSoldier->bTeam].bLastID;
          cnt++, pSoldier++) {
-      if ((IsSolActive(pSoldier)) && (pSoldier->bLife > 0)) {
+      if ((IsSolActive(pSoldier)) && IsSolAlive(pSoldier)) {
         return (0);
       }
     }

@@ -5285,7 +5285,7 @@ void CycleThroughKnownEnemies() {
        cnt < TOTAL_SOLDIERS; cnt++, pSoldier++) {
     // try to find first active, OK enemy
     if (IsSolActive(pSoldier) && pSoldier->bInSector && !pSoldier->bNeutral &&
-        (pSoldier->bSide != gbPlayerNum) && (pSoldier->bLife > 0)) {
+        (pSoldier->bSide != gbPlayerNum) && IsSolAlive(pSoldier)) {
       if (pSoldier->bVisible != -1) {
         fEnemiesFound = TRUE;
 
@@ -5328,7 +5328,7 @@ void CycleVisibleEnemies(struct SOLDIERTYPE *pSrcSoldier) {
        cnt < TOTAL_SOLDIERS; cnt++, pSoldier++) {
     // try to find first active, OK enemy
     if (IsSolActive(pSoldier) && pSoldier->bInSector && !pSoldier->bNeutral &&
-        (pSoldier->bSide != gbPlayerNum) && (pSoldier->bLife > 0)) {
+        (pSoldier->bSide != gbPlayerNum) && IsSolAlive(pSoldier)) {
       if (pSrcSoldier->bOppList[pSoldier->ubID] == SEEN_CURRENTLY) {
         // If we are > ok start, this is the one!
         if (cnt > pSrcSoldier->ubLastEnemyCycledID) {
@@ -5351,7 +5351,7 @@ void CycleVisibleEnemies(struct SOLDIERTYPE *pSrcSoldier) {
        cnt < TOTAL_SOLDIERS; cnt++, pSoldier++) {
     // try to find first active, OK enemy
     if (IsSolActive(pSoldier) && pSoldier->bInSector && !pSoldier->bNeutral &&
-        (pSoldier->bSide != gbPlayerNum) && (pSoldier->bLife > 0)) {
+        (pSoldier->bSide != gbPlayerNum) && IsSolAlive(pSoldier)) {
       if (pSrcSoldier->bOppList[pSoldier->ubID] == SEEN_CURRENTLY) {
         // If we are > ok start, this is the one!
         if (cnt > pSrcSoldier->ubLastEnemyCycledID) {

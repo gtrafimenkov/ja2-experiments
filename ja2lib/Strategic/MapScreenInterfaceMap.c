@@ -964,7 +964,7 @@ INT32 ShowOnDutyTeam(INT16 sMapX, INT16 sMapY) {
         (GetSolSectorY(pSoldier) == sMapY) && (GetSolSectorZ(pSoldier) == iCurrentMapSectorZ) &&
         ((pSoldier->bAssignment < ON_DUTY) || ((GetSolAssignment(pSoldier) == VEHICLE) &&
                                                (pSoldier->iVehicleId != iHelicopterVehicleId))) &&
-        (pSoldier->bLife > 0) && (!PlayerIDGroupInMotion(pSoldier->ubGroupID))) {
+        IsSolAlive(pSoldier) && (!PlayerIDGroupInMotion(pSoldier->ubGroupID))) {
       DrawMapBoxIcon(hIconHandle, SMALL_YELLOW_BOX, sMapX, sMapY, ubIconPosition);
       ubIconPosition++;
     }
@@ -994,7 +994,7 @@ INT32 ShowAssignedTeam(INT16 sMapX, INT16 sMapY, INT32 iCount) {
         (GetSolSectorY(pSoldier) == sMapY) && (GetSolSectorZ(pSoldier) == iCurrentMapSectorZ) &&
         (pSoldier->bAssignment >= ON_DUTY) && (pSoldier->bAssignment != VEHICLE) &&
         (pSoldier->bAssignment != IN_TRANSIT) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
-        (pSoldier->bLife > 0) && (!PlayerIDGroupInMotion(pSoldier->ubGroupID))) {
+        IsSolAlive(pSoldier) && (!PlayerIDGroupInMotion(pSoldier->ubGroupID))) {
       // skip mercs inside the helicopter if we're showing airspace level - they show up inside
       // chopper icon instead
       if (!fShowAircraftFlag || (pSoldier->bAssignment != VEHICLE) ||

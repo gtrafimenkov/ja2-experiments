@@ -1891,7 +1891,7 @@ void DrawCharacterInfo(INT16 sCharNumber) {
 
       // more than a day, display in green
       iTimeRemaining /= (60 * 24);
-      if (pSoldier->bLife > 0) {
+      if (IsSolAlive(pSoldier)) {
         SetFontForeground(FONT_LTGREEN);
       }
 
@@ -1912,7 +1912,7 @@ void DrawCharacterInfo(INT16 sCharNumber) {
         iTimeRemaining /= 60;
       }
 
-      if (pSoldier->bLife > 0) {
+      if (IsSolAlive(pSoldier)) {
         SetFontForeground(FONT_RED);
       }
 
@@ -6543,7 +6543,7 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
       fPlotForHelicopter = FALSE;
 
       // if not dead or POW, select his sector
-      if ((pSoldier->bLife > 0) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
+      if (IsSolAlive(pSoldier) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
         ChangeSelectedMapSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
                                 GetSolSectorZ(pSoldier));
       }
@@ -6590,7 +6590,7 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
       fPlotForHelicopter = FALSE;
 
       // if not dead or POW, select his sector
-      if ((pSoldier->bLife > 0) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
+      if (IsSolAlive(pSoldier) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
         ChangeSelectedMapSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
                                 GetSolSectorZ(pSoldier));
       }
@@ -6661,7 +6661,7 @@ void TeamListAssignmentRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iRe
 
       // if alive (dead guys keep going, use remove menu instead),
       // and it's between sectors and it can be reassigned (non-vehicles)
-      if ((pSoldier->bAssignment != ASSIGNMENT_DEAD) && (pSoldier->bLife > 0) &&
+      if ((pSoldier->bAssignment != ASSIGNMENT_DEAD) && IsSolAlive(pSoldier) &&
           (pSoldier->fBetweenSectors) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
         // can't reassign mercs while between sectors
         DoScreenIndependantMessageBox(pMapErrorString[41], MSG_BOX_FLAG_OK, NULL);

@@ -1301,7 +1301,7 @@ BOOLEAN AnyUsableRealMercenariesOnTeam(void) {
   for (iCounter = 0; iCounter < iNumberOnTeam; iCounter++) {
     pSoldier = GetSoldierByID(iCounter);
 
-    if ((IsSolActive(pSoldier)) && (pSoldier->bLife > 0) &&
+    if ((IsSolActive(pSoldier)) && IsSolAlive(pSoldier) &&
         !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && !AM_A_ROBOT(pSoldier) &&
         (pSoldier->bAssignment != ASSIGNMENT_POW) && (pSoldier->bAssignment != ASSIGNMENT_DEAD) &&
         (pSoldier->ubWhatKindOfMercAmI != MERC_TYPE__EPC)) {

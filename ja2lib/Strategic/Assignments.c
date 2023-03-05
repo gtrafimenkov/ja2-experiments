@@ -6024,7 +6024,7 @@ void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
 void BeginRemoveMercFromContract(struct SOLDIERTYPE *pSoldier) {
   // This function will setup the quote, then start dialogue beginning the actual leave sequence
-  if ((pSoldier->bLife > 0) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
+  if (IsSolAlive(pSoldier) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
     if ((pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__MERC) ||
         (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__NPC)) {
       HandleImportantMercQuote(pSoldier, QUOTE_RESPONSE_TO_MIGUEL_SLASH_QUOTE_MERC_OR_RPC_LETGO);
@@ -9599,7 +9599,7 @@ BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pT
           (GetSolSectorX(pSoldier) == pTargetSoldier->sSectorX) &&
           (GetSolSectorY(pSoldier) == pTargetSoldier->sSectorY) &&
           (GetSolSectorZ(pSoldier) == pTargetSoldier->bSectorZ) &&
-          (pSoldier->bTrainStat == bTargetStat) && (pSoldier->bLife > 0)) {
+          (pSoldier->bTrainStat == bTargetStat) && IsSolAlive(pSoldier)) {
         // so far so good, now let's see if the trainer can really teach the student anything new
 
         // are we training in the sector with gun range in Alma?

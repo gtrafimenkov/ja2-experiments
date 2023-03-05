@@ -182,7 +182,7 @@ BOOLEAN CanCharacterBeAutoBandagedByTeammate(struct SOLDIERTYPE *pSoldier) {
     return (FALSE);
   }
 
-  if ((pSoldier->bLife > 0) && (pSoldier->bBleeding > 0)) {
+  if (IsSolAlive(pSoldier) && (pSoldier->bBleeding > 0)) {
     // someone's bleeding and not being given first aid!
     return (TRUE);
   }
