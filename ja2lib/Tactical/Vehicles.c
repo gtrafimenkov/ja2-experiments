@@ -357,9 +357,9 @@ BOOLEAN IsThisVehicleAccessibleToSoldier(struct SOLDIERTYPE *pSoldier, INT32 iId
   }
 
   // any sector values off?
-  if ((pSoldier->sSectorX != pVehicleList[iId].sSectorX) ||
-      (pSoldier->sSectorY != pVehicleList[iId].sSectorY) ||
-      (pSoldier->bSectorZ != pVehicleList[iId].sSectorZ)) {
+  if ((GetSolSectorX(pSoldier) != pVehicleList[iId].sSectorX) ||
+      (GetSolSectorY(pSoldier) != pVehicleList[iId].sSectorY) ||
+      (GetSolSectorZ(pSoldier) != pVehicleList[iId].sSectorZ)) {
     return (FALSE);
   }
 
@@ -515,9 +515,9 @@ BOOLEAN AddSoldierToVehicle(struct SOLDIERTYPE *pSoldier, INT32 iId) {
 
 void SetSoldierExitVehicleInsertionData(struct SOLDIERTYPE *pSoldier, INT32 iId) {
   if (iId == iHelicopterVehicleId && !pSoldier->bInSector) {
-    if (pSoldier->sSectorX != BOBBYR_SHIPPING_DEST_SECTOR_X ||
-        pSoldier->sSectorY != BOBBYR_SHIPPING_DEST_SECTOR_Y ||
-        pSoldier->bSectorZ != BOBBYR_SHIPPING_DEST_SECTOR_Z) {
+    if (GetSolSectorX(pSoldier) != BOBBYR_SHIPPING_DEST_SECTOR_X ||
+        GetSolSectorY(pSoldier) != BOBBYR_SHIPPING_DEST_SECTOR_Y ||
+        GetSolSectorZ(pSoldier) != BOBBYR_SHIPPING_DEST_SECTOR_Z) {
       // Not anything different here - just use center gridno......
       pSoldier->ubStrategicInsertionCode = INSERTION_CODE_CENTER;
     } else {
@@ -644,14 +644,15 @@ BOOLEAN RemoveSoldierFromVehicle(struct SOLDIERTYPE *pSoldier, INT32 iId) {
     if (pSoldier->bLife >= OKLIFE) {
       // mark the sector as visited (flying around in the chopper doesn't, so this does it as soon
       // as we get off it)
-      SetSectorFlag(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ, SF_ALREADY_VISITED);
+      SetSectorFlag(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier),
+                    SF_ALREADY_VISITED);
     }
 
     SetSoldierExitVehicleInsertionData(pSoldier, iId);
 
     // Update in sector if this is the current sector.....
-    if (pSoldier->sSectorX == gWorldSectorX && pSoldier->sSectorY == gWorldSectorY &&
-        pSoldier->bSectorZ == gbWorldSectorZ) {
+    if (GetSolSectorX(pSoldier) == gWorldSectorX && GetSolSectorY(pSoldier) == gWorldSectorY &&
+        GetSolSectorZ(pSoldier) == gbWorldSectorZ) {
       UpdateMercInSector(pSoldier, gWorldSectorX, gWorldSectorY, gbWorldSectorZ);
     }
   }
@@ -1194,8 +1195,8 @@ BOOLEAN IsEnoughSpaceInVehicle(INT32 iID) {
 BOOLEAN PutSoldierInVehicle(struct SOLDIERTYPE *pSoldier, INT8 bVehicleId) {
   struct SOLDIERTYPE *pVehicleSoldier = NULL;
 
-  if ((pSoldier->sSectorX != gWorldSectorX) || (pSoldier->sSectorY != gWorldSectorY) ||
-      (pSoldier->bSectorZ != 0) || (bVehicleId == iHelicopterVehicleId)) {
+  if ((GetSolSectorX(pSoldier) != gWorldSectorX) || (GetSolSectorY(pSoldier) != gWorldSectorY) ||
+      (GetSolSectorZ(pSoldier) != 0) || (bVehicleId == iHelicopterVehicleId)) {
     // add the soldier
     return (AddSoldierToVehicle(pSoldier, bVehicleId));
   } else {
@@ -1213,8 +1214,8 @@ BOOLEAN TakeSoldierOutOfVehicle(struct SOLDIERTYPE *pSoldier) {
     return (FALSE);
   }
 
-  if ((pSoldier->sSectorX != gWorldSectorX) || (pSoldier->sSectorY != gWorldSectorY) ||
-      (pSoldier->bSectorZ != 0) || !pSoldier->bInSector) {
+  if ((GetSolSectorX(pSoldier) != gWorldSectorX) || (GetSolSectorY(pSoldier) != gWorldSectorY) ||
+      (GetSolSectorZ(pSoldier) != 0) || !pSoldier->bInSector) {
     // add the soldier
     return (RemoveSoldierFromVehicle(pSoldier, pSoldier->iVehicleId));
   } else {

@@ -9,6 +9,7 @@
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreen.h"
@@ -1825,11 +1826,11 @@ void DropKeysInKeyRing(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bLevel,
       if (fAddToDropList) {
         AddItemToLeaveIndex(&Object, iDropListSlot);
       } else {
-        if (pSoldier->sSectorX != gWorldSectorX || pSoldier->sSectorY != gWorldSectorY ||
-            pSoldier->bSectorZ != gbWorldSectorZ || fUseUnLoaded) {
+        if (GetSolSectorX(pSoldier) != gWorldSectorX || GetSolSectorY(pSoldier) != gWorldSectorY ||
+            GetSolSectorZ(pSoldier) != gbWorldSectorZ || fUseUnLoaded) {
           // Set flag for item...
-          AddItemsToUnLoadedSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ,
-                                   sGridNo, 1, &Object, bLevel,
+          AddItemsToUnLoadedSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                   pSoldier->bSectorZ, sGridNo, 1, &Object, bLevel,
                                    WOLRD_ITEM_FIND_SWEETSPOT_FROM_GRIDNO | WORLD_ITEM_REACHABLE, 0,
                                    bVisible, FALSE);
         } else {

@@ -8,6 +8,7 @@
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -1412,8 +1413,8 @@ BOOLEAN PlayerGroupIsInACreatureInfestedMine() {
     for (i = gTacticalStatus.Team[OUR_TEAM].bFirstID; i <= gTacticalStatus.Team[OUR_TEAM].bLastID;
          i++) {
       pSoldier = MercPtrs[i];
-      if (pSoldier->bActive && pSoldier->bLife && pSoldier->sSectorX == sSectorX &&
-          pSoldier->sSectorY == sSectorY && pSoldier->bSectorZ == bSectorZ &&
+      if (pSoldier->bActive && pSoldier->bLife && GetSolSectorX(pSoldier) == sSectorX &&
+          GetSolSectorY(pSoldier) == sSectorY && GetSolSectorZ(pSoldier) == bSectorZ &&
           !pSoldier->fBetweenSectors) {
         return TRUE;
       }

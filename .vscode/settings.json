@@ -15,6 +15,8 @@
         "types.h": "c",
         "mapscreeninterfaceborder.h": "c",
         "queencommand.h": "c",
-        "mapscreeninterface.h": "c"
+        "mapscreeninterface.h": "c",
+        "drugsandalcohol.h": "c",
+        "text.h": "c"
     }
 }

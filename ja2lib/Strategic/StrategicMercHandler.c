@@ -66,9 +66,9 @@ void StrategicHandlePlayerTeamMercDeath(struct SOLDIERTYPE *pSoldier) {
 
     // CJC Nov 11, 2002
     // Use the soldier's sector location unless impossible
-    if (pSoldier->sSectorX != 0 && pSoldier->sSectorY != 0) {
-      sSectorX = pSoldier->sSectorX;
-      sSectorY = pSoldier->sSectorY;
+    if (GetSolSectorX(pSoldier) != 0 && GetSolSectorY(pSoldier) != 0) {
+      sSectorX = GetSolSectorX(pSoldier);
+      sSectorY = GetSolSectorY(pSoldier);
     } else {
       sSectorX = gWorldSectorX;
       sSectorY = gWorldSectorY;
@@ -128,8 +128,8 @@ void StrategicHandlePlayerTeamMercDeath(struct SOLDIERTYPE *pSoldier) {
   // locals much
   if (!AM_AN_EPC(pSoldier) && !AM_A_ROBOT(pSoldier)) {
     // Change morale of others based on this
-    HandleMoraleEvent(pSoldier, MORALE_TEAMMATE_DIED, pSoldier->sSectorX, pSoldier->sSectorY,
-                      pSoldier->bSectorZ);
+    HandleMoraleEvent(pSoldier, MORALE_TEAMMATE_DIED, GetSolSectorX(pSoldier),
+                      GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
   }
 
   // if its a MERC merc, record the time of his death
@@ -626,9 +626,9 @@ void UpdateBuddyAndHatedCounters(void) {
             }
           } else {
             // check to see if the location is the same
-            if (pOtherSoldier->sSectorX != pSoldier->sSectorX ||
-                pOtherSoldier->sSectorY != pSoldier->sSectorY ||
-                pOtherSoldier->bSectorZ != pSoldier->bSectorZ) {
+            if (pOtherSoldier->sSectorX != GetSolSectorX(pSoldier) ||
+                pOtherSoldier->sSectorY != GetSolSectorY(pSoldier) ||
+                pOtherSoldier->bSectorZ != GetSolSectorZ(pSoldier)) {
               continue;
             }
 

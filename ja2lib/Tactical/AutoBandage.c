@@ -168,8 +168,8 @@ void HandleAutoBandagePending() {
          cnt++, pSoldier++) {
       // Are we in sector?
       if (pSoldier->bActive) {
-        if (pSoldier->sSectorX == gWorldSectorX && pSoldier->sSectorY == gWorldSectorY &&
-            pSoldier->bSectorZ == gbWorldSectorZ && !pSoldier->fBetweenSectors) {
+        if (GetSolSectorX(pSoldier) == gWorldSectorX && GetSolSectorY(pSoldier) == gWorldSectorY &&
+            GetSolSectorZ(pSoldier) == gbWorldSectorZ && !pSoldier->fBetweenSectors) {
           if (pSoldier->ubPendingAction != NO_PENDING_ACTION) {
             return;
           }

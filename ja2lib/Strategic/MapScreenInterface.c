@@ -487,8 +487,8 @@ void ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList() {
     }
 
     if (pSoldier->bAssignment == TRAIN_TOWN) {
-      if (SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)].fMilitiaTrainingPaid ==
-          FALSE) {
+      if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+              .fMilitiaTrainingPaid == FALSE) {
         ResumeOldAssignment(pSoldier);
       }
     }
@@ -513,8 +513,8 @@ void ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(INT16 sSectorX, I
     }
 
     if (pSoldier->bAssignment == TRAIN_TOWN) {
-      if ((pSoldier->sSectorX == sSectorX) && (pSoldier->sSectorY == sSectorY) &&
-          (pSoldier->bSectorZ == 0)) {
+      if ((GetSolSectorX(pSoldier) == sSectorX) && (GetSolSectorY(pSoldier) == sSectorY) &&
+          (GetSolSectorZ(pSoldier) == 0)) {
         ResumeOldAssignment(pSoldier);
       }
     }
@@ -594,9 +594,9 @@ void DeselectSelectedListMercsWhoCantMoveWithThisGuy(struct SOLDIERTYPE *pSoldie
           ResetEntryForSelectedList((INT8)iCounter);
         } else {
           // reject those not in the same sector
-          if ((pSoldier->sSectorX != pSoldier2->sSectorX) ||
-              (pSoldier->sSectorY != pSoldier2->sSectorY) ||
-              (pSoldier->bSectorZ != pSoldier2->bSectorZ)) {
+          if ((GetSolSectorX(pSoldier) != pSoldier2->sSectorX) ||
+              (GetSolSectorY(pSoldier) != pSoldier2->sSectorY) ||
+              (GetSolSectorZ(pSoldier) != pSoldier2->bSectorZ)) {
             ResetEntryForSelectedList((INT8)iCounter);
           }
 
@@ -2766,8 +2766,8 @@ void SetUpMovingListsForSector(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       if ((pSoldier->bActive) && (pSoldier->bAssignment != IN_TRANSIT) &&
-          (pSoldier->bAssignment != ASSIGNMENT_POW) && (pSoldier->sSectorX == sSectorX) &&
-          (pSoldier->sSectorY == sSectorY) && (pSoldier->bSectorZ == sSectorZ)) {
+          (pSoldier->bAssignment != ASSIGNMENT_POW) && (GetSolSectorX(pSoldier) == sSectorX) &&
+          (GetSolSectorY(pSoldier) == sSectorY) && (GetSolSectorZ(pSoldier) == sSectorZ)) {
         if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
           // vehicle
           // if it can move (can't be empty)
@@ -3596,8 +3596,8 @@ INT8 FindSquadThatSoldierCanJoin(struct SOLDIERTYPE *pSoldier) {
   // run through the list of squads
   for (bCounter = 0; bCounter < NUMBER_OF_SQUADS; bCounter++) {
     // is this squad in this sector
-    if (IsThisSquadInThisSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ,
-                                bCounter)) {
+    if (IsThisSquadInThisSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                pSoldier->bSectorZ, bCounter)) {
       // does it have room?
       if (IsThisSquadFull(bCounter) == FALSE) {
         // is it doing the same thing as the soldier is (staying or going) ?
@@ -4634,7 +4634,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   }
 
   // underground? (can't move strategically, must use tactical traversal )
-  if (pSoldier->bSectorZ != 0) {
+  if (GetSolSectorZ(pSoldier) != 0) {
     *pbErrorNumber = 1;
     return (FALSE);
   }
@@ -4682,8 +4682,9 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
     // and he's NOT flying above it all in a working helicopter
     if (!SoldierAboardAirborneHeli(pSoldier)) {
       // and that sector is loaded...
-      if ((pSoldier->sSectorX == gWorldSectorX) && (pSoldier->sSectorY == gWorldSectorY) &&
-          (pSoldier->bSectorZ == gbWorldSectorZ)) {
+      if ((GetSolSectorX(pSoldier) == gWorldSectorX) &&
+          (GetSolSectorY(pSoldier) == gWorldSectorY) &&
+          (GetSolSectorZ(pSoldier) == gbWorldSectorZ)) {
         // in combat?
         if (gTacticalStatus.uiFlags & INCOMBAT) {
           *pbErrorNumber = 11;
@@ -4704,7 +4705,8 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
       }
 
       // not necessarily loaded - if there are any hostiles there
-      if (NumHostilesInSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ) > 0) {
+      if (NumHostilesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                              GetSolSectorZ(pSoldier)) > 0) {
         *pbErrorNumber = 2;
         return (FALSE);
       }
@@ -4712,8 +4714,8 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   }
 
   // if in L12 museum, and the museum alarm went off, and Eldin still around?
-  if ((pSoldier->sSectorX == 12) && (pSoldier->sSectorY == MAP_ROW_L) &&
-      (pSoldier->bSectorZ == 0) && (!pSoldier->fBetweenSectors) &&
+  if ((GetSolSectorX(pSoldier) == 12) && (GetSolSectorY(pSoldier) == MAP_ROW_L) &&
+      (GetSolSectorZ(pSoldier) == 0) && (!pSoldier->fBetweenSectors) &&
       gMercProfiles[ELDIN].bMercStatus != MERC_IS_DEAD) {
     UINT8 ubRoom, cnt;
     struct SOLDIERTYPE *pSoldier2;
@@ -4787,7 +4789,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   switch (pSoldier->ubProfile) {
     case (MARIA):
       // Maria can't move if she's in sector C5
-      sSector = SECTOR(pSoldier->sSectorX, pSoldier->sSectorY);
+      sSector = SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
       if (sSector == SEC_C5) {
         // can't move at this time
         fProblemExists = TRUE;
@@ -5142,8 +5144,8 @@ void TurnOnSectorLocator(UINT8 ubProfileID) {
 
   pSoldier = FindSoldierByProfileID(ubProfileID, FALSE);
   if (pSoldier) {
-    gsSectorLocatorX = pSoldier->sSectorX;
-    gsSectorLocatorY = pSoldier->sSectorY;
+    gsSectorLocatorX = GetSolSectorX(pSoldier);
+    gsSectorLocatorY = GetSolSectorY(pSoldier);
   } else {
     // if it's Skyrider (when he's not on our team), and his chopper has been setup
     if ((ubProfileID == SKYRIDER) && fSkyRiderSetUp) {

@@ -31,7 +31,7 @@
 void AddSectorToFrontOfMercPath(struct path** ppMercPath, UINT8 ubSectorX, UINT8 ubSectorY);
 
 // mvt modifier
-//#define FOOT_MVT_MODIFIER 2
+// #define FOOT_MVT_MODIFIER 2
 
 UINT16 gusPlottedPath[256];
 UINT16 gusMapPathingData[256];
@@ -70,11 +70,11 @@ typedef struct trail_s trail_t;
 #define MAP_WIDTH 18
 #define MAP_LENGTH MAP_WIDTH* MAP_WIDTH
 
-//#define EASYWATERCOST	TRAVELCOST_FLAT / 2
-//#define ISWATER(t)	(((t)==TRAVELCOST_KNEEDEEP) || ((t)==TRAVELCOST_DEEPWATER))
-//#define NOPASS (TRAVELCOST_OBSTACLE)
-//#define VEINCOST TRAVELCOST_FLAT     //actual cost for bridges and doors and such
-//#define ISVEIN(v) ((v==TRAVELCOST_VEINMID) || (v==TRAVELCOST_VEINEND))
+// #define EASYWATERCOST	TRAVELCOST_FLAT / 2
+// #define ISWATER(t)	(((t)==TRAVELCOST_KNEEDEEP) || ((t)==TRAVELCOST_DEEPWATER))
+// #define NOPASS (TRAVELCOST_OBSTACLE)
+// #define VEINCOST TRAVELCOST_FLAT     //actual cost for bridges and doors and such
+// #define ISVEIN(v) ((v==TRAVELCOST_VEINMID) || (v==TRAVELCOST_VEINEND))
 #define TRAILCELLTYPE UINT32
 
 static path_t pathQB[MAXpathQ];

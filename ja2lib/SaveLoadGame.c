@@ -4085,9 +4085,9 @@ void GetBestPossibleSectorXYZValues(INT16 *psSectorX, INT16 *psSectorY, INT8 *pb
       if (pSoldier->bActive) {
         if (pSoldier->bAssignment != IN_TRANSIT && !pSoldier->fBetweenSectors) {
           // we found an alive, merc that is not moving
-          *psSectorX = pSoldier->sSectorX;
-          *psSectorY = pSoldier->sSectorY;
-          *pbSectorZ = pSoldier->bSectorZ;
+          *psSectorX = GetSolSectorX(pSoldier);
+          *psSectorY = GetSolSectorY(pSoldier);
+          *pbSectorZ = GetSolSectorZ(pSoldier);
           fFoundAMerc = TRUE;
           break;
         }
@@ -4105,9 +4105,9 @@ void GetBestPossibleSectorXYZValues(INT16 *psSectorX, INT16 *psSectorY, INT8 *pb
            sSoldierCnt++, pSoldier++) {
         if (pSoldier->bActive) {
           // we found an alive, merc that is not moving
-          *psSectorX = pSoldier->sSectorX;
-          *psSectorY = pSoldier->sSectorY;
-          *pbSectorZ = pSoldier->bSectorZ;
+          *psSectorX = GetSolSectorX(pSoldier);
+          *psSectorY = GetSolSectorY(pSoldier);
+          *pbSectorZ = GetSolSectorZ(pSoldier);
           fFoundAMerc = TRUE;
           break;
         }

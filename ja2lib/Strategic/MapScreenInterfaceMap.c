@@ -960,8 +960,8 @@ INT32 ShowOnDutyTeam(INT16 sMapX, INT16 sMapY) {
   while (gCharactersList[ubCounter].fValid) {
     pSoldier = MercPtrs[gCharactersList[ubCounter].usSolID];
 
-    if (!(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && (pSoldier->sSectorX == sMapX) &&
-        (pSoldier->sSectorY == sMapY) && (pSoldier->bSectorZ == iCurrentMapSectorZ) &&
+    if (!(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && (GetSolSectorX(pSoldier) == sMapX) &&
+        (GetSolSectorY(pSoldier) == sMapY) && (GetSolSectorZ(pSoldier) == iCurrentMapSectorZ) &&
         ((pSoldier->bAssignment < ON_DUTY) ||
          ((pSoldier->bAssignment == VEHICLE) && (pSoldier->iVehicleId != iHelicopterVehicleId))) &&
         (pSoldier->bLife > 0) && (!PlayerIDGroupInMotion(pSoldier->ubGroupID))) {
@@ -990,8 +990,8 @@ INT32 ShowAssignedTeam(INT16 sMapX, INT16 sMapY, INT32 iCount) {
 
     // given number of on duty members, find number of assigned chars
     // start at beginning of list, look for people who are in sector and assigned
-    if (!(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && (pSoldier->sSectorX == sMapX) &&
-        (pSoldier->sSectorY == sMapY) && (pSoldier->bSectorZ == iCurrentMapSectorZ) &&
+    if (!(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && (GetSolSectorX(pSoldier) == sMapX) &&
+        (GetSolSectorY(pSoldier) == sMapY) && (GetSolSectorZ(pSoldier) == iCurrentMapSectorZ) &&
         (pSoldier->bAssignment >= ON_DUTY) && (pSoldier->bAssignment != VEHICLE) &&
         (pSoldier->bAssignment != IN_TRANSIT) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
         (pSoldier->bLife > 0) && (!PlayerIDGroupInMotion(pSoldier->ubGroupID))) {
@@ -5699,8 +5699,8 @@ BOOLEAN CanMercsScoutThisSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
     }
 
     // is he here?
-    if ((pSoldier->sSectorX == sSectorX) && (pSoldier->sSectorY == sSectorY) &&
-        (pSoldier->bSectorZ == bSectorZ)) {
+    if ((GetSolSectorX(pSoldier) == sSectorX) && (GetSolSectorY(pSoldier) == sSectorY) &&
+        (GetSolSectorZ(pSoldier) == bSectorZ)) {
       return (TRUE);
     }
   }
@@ -5766,8 +5766,8 @@ UINT8 NumActiveCharactersInSector( INT16 sSectorX, INT16 sSectorY, INT16 bSector
                                         ( pSoldier->bAssignment != ASSIGNMENT_POW ) && (
 pSoldier->bAssignment != IN_TRANSIT ) )
                         {
-                                if( ( pSoldier->sSectorX == sSectorX ) && ( pSoldier->sSectorY ==
-sSectorY ) && ( pSoldier->bSectorZ == bSectorZ ) ) ubNumberOnTeam++;
+                                if( ( GetSolSectorX(pSoldier) == sSectorX ) && ( pSoldier->sSectorY
+== sSectorY ) && ( GetSolSectorZ(pSoldier) == bSectorZ ) ) ubNumberOnTeam++;
                         }
                 }
         }

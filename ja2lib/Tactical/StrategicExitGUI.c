@@ -13,6 +13,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CreatureSpreading.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterfaceMap.h"
@@ -200,8 +201,8 @@ BOOLEAN InternalInitSectorExitMenu(UINT8 ubDirection, INT16 sAdditionalData) {
     if (i == gusSelectedSoldier) {
       continue;
     }
-    if (!pSoldier->fBetweenSectors && pSoldier->sSectorX == gWorldSectorX &&
-        pSoldier->sSectorY == gWorldSectorY && pSoldier->bSectorZ == gbWorldSectorZ &&
+    if (!pSoldier->fBetweenSectors && GetSolSectorX(pSoldier) == gWorldSectorX &&
+        GetSolSectorY(pSoldier) == gWorldSectorY && GetSolSectorZ(pSoldier) == gbWorldSectorZ &&
         pSoldier->bLife >= OKLIFE &&
         pSoldier->bAssignment != MercPtrs[gusSelectedSoldier]->bAssignment &&
         pSoldier->bAssignment != ASSIGNMENT_POW && pSoldier->bAssignment != IN_TRANSIT &&

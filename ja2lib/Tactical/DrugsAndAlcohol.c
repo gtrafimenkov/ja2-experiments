@@ -2,6 +2,7 @@
 
 #include "SGP/Random.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Tactical/DrugsAndAlcohol.h"
 #include "Tactical/Interface.h"
 #include "Tactical/Items.h"
@@ -218,11 +219,11 @@ void HandleEndTurnDrugAdjustments(struct SOLDIERTYPE *pSoldier) {
         for (cnt2 = 0; cnt2 < iNumLoops; cnt2++) {
           // OK, give a much BIGGER morale downer
           if (cnt == DRUG_TYPE_ALCOHOL) {
-            HandleMoraleEvent(pSoldier, MORALE_ALCOHOL_CRASH, pSoldier->sSectorX,
-                              pSoldier->sSectorY, pSoldier->bSectorZ);
+            HandleMoraleEvent(pSoldier, MORALE_ALCOHOL_CRASH, GetSolSectorX(pSoldier),
+                              GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
           } else {
-            HandleMoraleEvent(pSoldier, MORALE_DRUGS_CRASH, pSoldier->sSectorX, pSoldier->sSectorY,
-                              pSoldier->bSectorZ);
+            HandleMoraleEvent(pSoldier, MORALE_DRUGS_CRASH, GetSolSectorX(pSoldier),
+                              GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
           }
         }
       }

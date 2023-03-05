@@ -221,7 +221,7 @@ BOOLEAN AddPlayerToGroup(UINT8 ubGroupID, struct SOLDIERTYPE *pSoldier) {
     pGroup->ubGroupSize = 1;
     pGroup->ubPrevX = (UINT8)((pSoldier->ubPrevSectorID % 16) + 1);
     pGroup->ubPrevY = (UINT8)((pSoldier->ubPrevSectorID / 16) + 1);
-    pGroup->ubSectorX = (UINT8)pSoldier->sSectorX;
+    pGroup->ubSectorX = (UINT8)GetSolSectorX(pSoldier);
     pGroup->ubSectorY = (UINT8)pSoldier->sSectorY;
     pGroup->ubSectorZ = (UINT8)pSoldier->bSectorZ;
 
@@ -1490,13 +1490,13 @@ void GroupArrivedAtSector(UINT8 ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fNev
             ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pMessageStrings[MSG_ARRIVE],
                       pAssignmentStrings[pGroup->pPlayerList->pSoldier->bAssignment],
                       pMapVertIndex[pGroup->pPlayerList->pSoldier->sSectorY],
-                      pMapHortIndex[pGroup->pPlayerList->pSoldier->sSectorX]);
+                      pMapHortIndex[GetSolSectorX(pGroup->pPlayerList->pSoldier)]);
           } else {
             // a loner
             ScreenMsg(FONT_MCOLOR_DKRED, MSG_INTERFACE, pMessageStrings[MSG_ARRIVE],
                       pGroup->pPlayerList->pSoldier->name,
                       pMapVertIndex[pGroup->pPlayerList->pSoldier->sSectorY],
-                      pMapHortIndex[pGroup->pPlayerList->pSoldier->sSectorX]);
+                      pMapHortIndex[GetSolSectorX(pGroup->pPlayerList->pSoldier)]);
           }
         }
       }

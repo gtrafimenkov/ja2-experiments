@@ -4082,8 +4082,8 @@ void CheckForAndAddMercToTeamPanel(struct SOLDIERTYPE *pSoldier) {
     // Add to interface if the are ours
     if (pSoldier->bTeam == gbPlayerNum) {
       // Are we in the loaded sector?
-      if (pSoldier->sSectorX == gWorldSectorX && pSoldier->sSectorY == gWorldSectorY &&
-          pSoldier->bSectorZ == gbWorldSectorZ && !pSoldier->fBetweenSectors &&
+      if (GetSolSectorX(pSoldier) == gWorldSectorX && GetSolSectorY(pSoldier) == gWorldSectorY &&
+          GetSolSectorZ(pSoldier) == gbWorldSectorZ && !pSoldier->fBetweenSectors &&
           pSoldier->bInSector) {
         // IF on duty....
         if ((pSoldier->bAssignment == CurrentSquad()) ||

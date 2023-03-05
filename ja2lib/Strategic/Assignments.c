@@ -527,7 +527,7 @@ void ChangeSoldiersAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment) {
 
 BOOLEAN BasicCanCharacterAssignment(struct SOLDIERTYPE *pSoldier, BOOLEAN fNotInCombat) {
   // global conditions restricting all assignment changes
-  if (SectorIsImpassable((INT16)SECTOR(pSoldier->sSectorX, pSoldier->sSectorY))) {
+  if (SectorIsImpassable((INT16)SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))) {
     return (FALSE);
   }
 
@@ -604,7 +604,7 @@ BOOLEAN CanCharacterDoctorButDoesntHaveMedKit(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -659,7 +659,7 @@ BOOLEAN IsAnythingAroundForSoldierToRepair(struct SOLDIERTYPE *pSoldier) {
   }
 
   // vehicles?
-  if (pSoldier->bSectorZ == 0) {
+  if (GetSolSectorZ(pSoldier) == 0) {
     for (iCounter = 0; iCounter < ubNumberOfVehicles; iCounter++) {
       if (pVehicleList[iCounter].fValid == TRUE) {
         // the helicopter, is NEVER repairable...
@@ -817,7 +817,7 @@ BOOLEAN BasicCanCharacterRepair(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -903,7 +903,7 @@ BOOLEAN CanCharacterPatient(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -930,15 +930,15 @@ BOOLEAN BasicCanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
 
   // underground training is not allowed (code doesn't support and it's a reasonable enough
   // limitation)
-  if (pSoldier->bSectorZ != 0) {
+  if (GetSolSectorZ(pSoldier) != 0) {
     return (FALSE);
   }
 
   // is there a town in the character's current sector?
-  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(pSoldier->sSectorX, pSoldier->sSectorY)].bNameId ==
-      BLANK_SECTOR) {
-    fSamSitePresent =
-        IsThisSectorASAMSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ);
+  if (StrategicMap[CALCULATE_STRATEGIC_INDEX(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+          .bNameId == BLANK_SECTOR) {
+    fSamSitePresent = IsThisSectorASAMSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                             GetSolSectorZ(pSoldier));
 
     // check if sam site
     if (fSamSitePresent == FALSE) {
@@ -947,7 +947,8 @@ BOOLEAN BasicCanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
     }
   }
 
-  if (NumEnemiesInAnySector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ)) {
+  if (NumEnemiesInAnySector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                            GetSolSectorZ(pSoldier))) {
     return (FALSE);
   }
 
@@ -955,7 +956,7 @@ BOOLEAN BasicCanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -992,7 +993,8 @@ BOOLEAN BasicCanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
 
 BOOLEAN CanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
   if (BasicCanCharacterTrainMilitia(pSoldier) &&
-      MilitiaTrainingAllowedInSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ) &&
+      MilitiaTrainingAllowedInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                     GetSolSectorZ(pSoldier)) &&
       DoesSectorMercIsInHaveSufficientLoyaltyToTrainMilitia(pSoldier) &&
       (IsMilitiaTrainableFromSoldiersSectorMaxed(pSoldier) == FALSE) &&
       (CountMilitiaTrainersInSoldiersSector(pSoldier) < MAX_MILITIA_TRAINERS_PER_SECTOR)) {
@@ -1018,16 +1020,16 @@ BOOLEAN DoesSectorMercIsInHaveSufficientLoyaltyToTrainMilitia(struct SOLDIERTYPE
 
   // underground training is not allowed (code doesn't support and it's a reasonable enough
   // limitation)
-  if (pSoldier->bSectorZ != 0) {
+  if (GetSolSectorZ(pSoldier) != 0) {
     return (FALSE);
   }
 
-  bTownId = GetTownIdForSector(pSoldier->sSectorX, pSoldier->sSectorY);
+  bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   // is there a town really here
   if (bTownId == BLANK_SECTOR) {
-    fSamSitePresent =
-        IsThisSectorASAMSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ);
+    fSamSitePresent = IsThisSectorASAMSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                             GetSolSectorZ(pSoldier));
 
     // if there is a sam site here
     if (fSamSitePresent) {
@@ -1054,9 +1056,9 @@ INT8 CountMilitiaTrainersInSoldiersSector(struct SOLDIERTYPE *pSoldier) {
        bLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID; bLoop++) {
     pOtherSoldier = MercPtrs[bLoop];
     if (pSoldier != pOtherSoldier && pOtherSoldier->bActive && pOtherSoldier->bLife >= OKLIFE &&
-        pOtherSoldier->sSectorX == pSoldier->sSectorX &&
-        pOtherSoldier->sSectorY == pSoldier->sSectorY &&
-        pSoldier->bSectorZ == pOtherSoldier->bSectorZ) {
+        pOtherSoldier->sSectorX == GetSolSectorX(pSoldier) &&
+        pOtherSoldier->sSectorY == GetSolSectorY(pSoldier) &&
+        GetSolSectorZ(pSoldier) == pOtherSoldier->bSectorZ) {
       if (pOtherSoldier->bAssignment == TRAIN_TOWN) {
         bCount++;
       }
@@ -1069,20 +1071,20 @@ BOOLEAN IsMilitiaTrainableFromSoldiersSectorMaxed(struct SOLDIERTYPE *pSoldier) 
   INT8 bTownId = 0;
   BOOLEAN fSamSitePresent = FALSE;
 
-  if (pSoldier->bSectorZ != 0) {
+  if (GetSolSectorZ(pSoldier) != 0) {
     return (TRUE);
   }
 
-  bTownId = GetTownIdForSector(pSoldier->sSectorX, pSoldier->sSectorY);
+  bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   // is there a town really here
   if (bTownId == BLANK_SECTOR) {
-    fSamSitePresent =
-        IsThisSectorASAMSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ);
+    fSamSitePresent = IsThisSectorASAMSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                             GetSolSectorZ(pSoldier));
 
     // if there is a sam site here
     if (fSamSitePresent) {
-      if (IsSAMSiteFullOfMilitia(pSoldier->sSectorX, pSoldier->sSectorY)) {
+      if (IsSAMSiteFullOfMilitia(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
         return (TRUE);
       }
       return (FALSE);
@@ -1116,7 +1118,7 @@ BOOLEAN CanCharacterTrainStat(struct SOLDIERTYPE *pSoldier, INT8 bStat, BOOLEAN 
 
   // underground training is not allowed (code doesn't support and it's a reasonable enough
   // limitation)
-  if (pSoldier->bSectorZ != 0) {
+  if (GetSolSectorZ(pSoldier) != 0) {
     return (FALSE);
   }
 
@@ -1124,7 +1126,7 @@ BOOLEAN CanCharacterTrainStat(struct SOLDIERTYPE *pSoldier, INT8 bStat, BOOLEAN 
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -1256,7 +1258,7 @@ BOOLEAN CanCharacterOnDuty(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -1302,7 +1304,7 @@ BOOLEAN CanCharacterPractise(struct SOLDIERTYPE *pSoldier) {
     return (FALSE);
   }
 
-  if (pSoldier->bSectorZ != 0) {
+  if (GetSolSectorZ(pSoldier) != 0) {
     return (FALSE);
   }
 
@@ -1320,7 +1322,7 @@ BOOLEAN CanCharacterPractise(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -1343,8 +1345,8 @@ BOOLEAN CanCharacterTrainTeammates(struct SOLDIERTYPE *pSoldier) {
   }
 
   // if alone in sector, can't enter the attributes submenu at all
-  if (PlayerMercsInSector((UINT8)pSoldier->sSectorX, (UINT8)pSoldier->sSectorY,
-                          pSoldier->bSectorZ) == 0) {
+  if (PlayerMercsInSector((UINT8)GetSolSectorX(pSoldier), (UINT8)GetSolSectorY(pSoldier),
+                          GetSolSectorZ(pSoldier)) == 0) {
     return (FALSE);
   }
 
@@ -1359,8 +1361,8 @@ BOOLEAN CanCharacterBeTrainedByOther(struct SOLDIERTYPE *pSoldier) {
   }
 
   // if alone in sector, can't enter the attributes submenu at all
-  if (PlayerMercsInSector((UINT8)pSoldier->sSectorX, (UINT8)pSoldier->sSectorY,
-                          pSoldier->bSectorZ) == 0) {
+  if (PlayerMercsInSector((UINT8)GetSolSectorX(pSoldier), (UINT8)GetSolSectorY(pSoldier),
+                          GetSolSectorZ(pSoldier)) == 0) {
     return (FALSE);
   }
 
@@ -1433,8 +1435,9 @@ BOOLEAN CanCharacterSleep(struct SOLDIERTYPE *pSoldier, BOOLEAN fExplainWhyNot) 
       }
 
       // on surface, and enemies are in the sector
-      if ((pSoldier->bSectorZ == 0) &&
-          (NumEnemiesInAnySector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ) > 0)) {
+      if ((GetSolSectorZ(pSoldier) == 0) &&
+          (NumEnemiesInAnySector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                 GetSolSectorZ(pSoldier)) > 0)) {
         if (fExplainWhyNot) {
           DoScreenIndependantMessageBox(Message[STR_SECTOR_NOT_CLEARED], MSG_BOX_FLAG_OK, NULL);
         }
@@ -1506,7 +1509,7 @@ BOOLEAN CanCharacterVehicle(struct SOLDIERTYPE *pSoldier) {
   }
 
   // underground?
-  if (pSoldier->bSectorZ != 0) {
+  if (GetSolSectorZ(pSoldier) != 0) {
     return (FALSE);
   }
 
@@ -1514,7 +1517,7 @@ BOOLEAN CanCharacterVehicle(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->bAssignment == VEHICLE) {
     if ((iHelicopterVehicleId != -1) && (pSoldier->iVehicleId == iHelicopterVehicleId)) {
       // enemies in sector
-      if (NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY) > 0) {
+      if (NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) > 0) {
         return (FALSE);
       }
     }
@@ -1533,8 +1536,8 @@ BOOLEAN CanCharacterVehicle(struct SOLDIERTYPE *pSoldier) {
 
   // if we're in BATTLE in the current sector, disallow
   if (gTacticalStatus.fEnemyInSector) {
-    if ((pSoldier->sSectorX == gWorldSectorX) && (pSoldier->sSectorY == gWorldSectorY) &&
-        (pSoldier->bSectorZ == gbWorldSectorZ)) {
+    if ((GetSolSectorX(pSoldier) == gWorldSectorX) && (GetSolSectorY(pSoldier) == gWorldSectorY) &&
+        (GetSolSectorZ(pSoldier) == gbWorldSectorZ)) {
       return (FALSE);
     }
   }
@@ -1586,7 +1589,8 @@ INT8 CanCharacterSquad(struct SOLDIERTYPE *pSoldier, INT8 bSquadValue) {
   SectorSquadIsIn(bSquadValue, &sX, &sY, &sZ);
 
   // check sector x y and z, if not same, cannot join squad
-  if ((sX != pSoldier->sSectorX) || (sY != pSoldier->sSectorY) || (sZ != pSoldier->bSectorZ)) {
+  if ((sX != GetSolSectorX(pSoldier)) || (sY != GetSolSectorY(pSoldier)) ||
+      (sZ != GetSolSectorZ(pSoldier))) {
     // is there anyone on this squad?
     if (NumberOfPeopleInSquad(bSquadValue) > 0) {
       return (CHARACTER_CANT_JOIN_SQUAD_TOO_FAR);
@@ -1712,8 +1716,8 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     if (pSoldier->bActive && (pSoldier->bAssignment == TRAIN_TOWN)) {
       // make sure that sector is paid up!
-      if (SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)].fMilitiaTrainingPaid ==
-          FALSE) {
+      if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+              .fMilitiaTrainingPaid == FALSE) {
         // NOPE!  We've got a bug somewhere
         StopTimeCompression();
 
@@ -2127,8 +2131,9 @@ pPatient->bSectorZ != gbWorldSectorZ ) )
                 {
 
                         // are they two of these guys in the same sector?
-                        if( ( pSoldier->sSectorX == pPatient->sSectorX ) && ( pSoldier->sSectorY ==
-pPatient->sSectorY ) && ( pSoldier->bSectorZ == pPatient->bSectorZ ) )
+                        if( ( GetSolSectorX(pSoldier) == pPatient->sSectorX ) && (
+GetSolSectorY(pSoldier) == pPatient->sSectorY ) && ( GetSolSectorZ(pSoldier) == pPatient->bSectorZ )
+)
                         {
 
                                 // is a doctor
@@ -2187,8 +2192,9 @@ BOOLEAN CanSoldierBeHealedByDoctor(struct SOLDIERTYPE *pSoldier, struct SOLDIERT
   }
 
   // must be in the same sector
-  if ((pSoldier->sSectorX != pDoctor->sSectorX) || (pSoldier->sSectorY != pDoctor->sSectorY) ||
-      (pSoldier->bSectorZ != pDoctor->bSectorZ)) {
+  if ((GetSolSectorX(pSoldier) != pDoctor->sSectorX) ||
+      (GetSolSectorY(pSoldier) != pDoctor->sSectorY) ||
+      (GetSolSectorZ(pSoldier) != pDoctor->bSectorZ)) {
     return (FALSE);
   }
 
@@ -2526,7 +2532,8 @@ gbWorldSectorZ )&&( pSoldier -> sSectorY == gWorldSectorY ) )
 
         // repair the SAM
 
-        sStrategicSector = CALCULATE_STRATEGIC_INDEX( pSoldier->sSectorX, pSoldier->sSectorY );
+        sStrategicSector = CALCULATE_STRATEGIC_INDEX( GetSolSectorX(pSoldier),
+GetSolSectorY(pSoldier) );
 
         // do we have more than enough?
         if( 100 - StrategicMap[ sStrategicSector ].bSAMCondition >= bPointsAvailable /
@@ -3524,8 +3531,9 @@ INT16 GetSoldierStudentPts(struct SOLDIERTYPE *pSoldier, INT8 bTrainStat, BOOLEA
   // search team for active instructors in this sector
   for (uiCnt = 0, pTrainer = MercPtrs[uiCnt];
        uiCnt <= gTacticalStatus.Team[MercPtrs[0]->bTeam].bLastID; uiCnt++, pTrainer++) {
-    if (pTrainer->bActive && (pTrainer->sSectorX == pSoldier->sSectorX) &&
-        (pTrainer->sSectorY == pSoldier->sSectorY) && (pTrainer->bSectorZ == pSoldier->bSectorZ)) {
+    if (pTrainer->bActive && (pTrainer->sSectorX == GetSolSectorX(pSoldier)) &&
+        (pTrainer->sSectorY == GetSolSectorY(pSoldier)) &&
+        (pTrainer->bSectorZ == GetSolSectorZ(pSoldier))) {
       // if he's training teammates in this stat
       // NB skip the EnoughTime requirement to display what the value should be even if haven't been
       // training long yet...
@@ -4338,7 +4346,7 @@ BOOLEAN DisplayRepairMenu(struct SOLDIERTYPE *pSoldier) {
   // remain in synch: CreateDestroyMouseRegionForRepairMenu(), DisplayRepairMenu(), and
   // HandleShadingOfLinesForRepairMenu().
 
-  if (pSoldier->bSectorZ == 0) {
+  if (GetSolSectorZ(pSoldier) == 0) {
     // run through list of vehicles and see if any in sector
     for (iVehicleIndex = 0; iVehicleIndex < ubNumberOfVehicles; iVehicleIndex++) {
       if (pVehicleList[iVehicleIndex].fValid == TRUE) {
@@ -4355,9 +4363,10 @@ BOOLEAN DisplayRepairMenu(struct SOLDIERTYPE *pSoldier) {
 
   /* No point in allowing SAM site repair any more.  Jan/13/99.  ARM
           // is there a SAM SITE Here?
-          if( ( IsThisSectorASAMSector( pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ )
-     == TRUE ) && ( IsTheSAMSiteInSectorRepairable( pSoldier->sSectorX, pSoldier->sSectorY,
-     pSoldier->bSectorZ ) ) )
+          if( ( IsThisSectorASAMSector( GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+     pSoldier->bSectorZ )
+     == TRUE ) && ( IsTheSAMSiteInSectorRepairable( GetSolSectorX(pSoldier),
+     GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier) ) ) )
           {
                   // SAM site
                   AddMonoString(&hStringHandle, pRepairStrings[ 1 ] );
@@ -4365,7 +4374,8 @@ BOOLEAN DisplayRepairMenu(struct SOLDIERTYPE *pSoldier) {
   */
 
   // is the ROBOT here?
-  if (IsRobotInThisSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ)) {
+  if (IsRobotInThisSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                          GetSolSectorZ(pSoldier))) {
     // robot
     AddMonoString(&hStringHandle, pRepairStrings[3]);
   }
@@ -4405,7 +4415,7 @@ void HandleShadingOfLinesForRepairMenu(void) {
   // remain in synch: CreateDestroyMouseRegionForRepairMenu(), DisplayRepairMenu(), and
   // HandleShadingOfLinesForRepairMenu().
 
-  if (pSoldier->bSectorZ == 0) {
+  if (GetSolSectorZ(pSoldier) == 0) {
     for (iVehicleIndex = 0; iVehicleIndex < ubNumberOfVehicles; iVehicleIndex++) {
       if (pVehicleList[iVehicleIndex].fValid == TRUE) {
         // don't even list the helicopter, because it's NEVER repairable...
@@ -4447,7 +4457,8 @@ void HandleShadingOfLinesForRepairMenu(void) {
           }
   */
 
-  if (IsRobotInThisSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ)) {
+  if (IsRobotInThisSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                          GetSolSectorZ(pSoldier))) {
     // handle shading of repair robot option
     if (CanCharacterRepairRobot(pSoldier)) {
       // unshade robot line
@@ -4518,7 +4529,7 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
     // remain in synch: CreateDestroyMouseRegionForRepairMenu(), DisplayRepairMenu(), and
     // HandleShadingOfLinesForRepairMenu().
 
-    if (pSoldier->bSectorZ == 0) {
+    if (GetSolSectorZ(pSoldier) == 0) {
       // vehicles
       for (iVehicleIndex = 0; iVehicleIndex < ubNumberOfVehicles; iVehicleIndex++) {
         if (pVehicleList[iVehicleIndex].fValid == TRUE) {
@@ -4566,7 +4577,8 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
     */
 
     // robot
-    if (IsRobotInThisSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ)) {
+    if (IsRobotInThisSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                            GetSolSectorZ(pSoldier))) {
       MSYS_DefineRegion(
           &gRepairMenuRegion[iCount], (INT16)(iBoxXPosition),
           (INT16)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight)*iCount),
@@ -6414,13 +6426,13 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
         break;
       case (TRAIN_MENU_TOWN):
         if (BasicCanCharacterTrainMilitia(pSoldier)) {
-          bTownId = GetTownIdForSector(pSoldier->sSectorX, pSoldier->sSectorY);
+          bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
           // if it's a town sector (the following 2 errors can't happen at non-town SAM sites)
           if (bTownId != BLANK_SECTOR) {
             // can we keep militia in this town?
-            if (MilitiaTrainingAllowedInSector(pSoldier->sSectorX, pSoldier->sSectorY,
-                                               pSoldier->bSectorZ) == FALSE) {
+            if (MilitiaTrainingAllowedInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                               GetSolSectorZ(pSoldier)) == FALSE) {
               swprintf(sString, ARR_SIZE(sString), pMapErrorString[31], pTownNames[bTownId]);
               DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_OK, NULL);
               break;
@@ -6436,7 +6448,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
           if (IsMilitiaTrainableFromSoldiersSectorMaxed(pSoldier)) {
             if (bTownId == BLANK_SECTOR) {
               // SAM site
-              GetShortSectorString(pSoldier->sSectorX, pSoldier->sSectorY, sStringA,
+              GetShortSectorString(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), sStringA,
                                    ARR_SIZE(sStringA));
               swprintf(sString, ARR_SIZE(sString), zMarksMapScreenText[21], sStringA);
             } else {
@@ -6480,8 +6492,8 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
           // assign to a movement group
           AssignMercToAMovementGroup(pSoldier);
-          if (SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)].fMilitiaTrainingPaid ==
-              FALSE) {
+          if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+                  .fMilitiaTrainingPaid == FALSE) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
           } else {
@@ -6822,7 +6834,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
             pSoldier->bOldAssignment = pSoldier->bAssignment;
 
-            if (pSoldier->bSectorZ == 0) {
+            if (GetSolSectorZ(pSoldier) == 0) {
               fShowRepairMenu = FALSE;
 
               if (DisplayRepairMenu(pSoldier)) {
@@ -8064,8 +8076,8 @@ BOOLEAN CanCharacterRepairVehicle(struct SOLDIERTYPE *pSoldier, INT32 iVehicleId
 
   /* Assignment distance limits removed.  Sep/11/98.  ARM
           // if currently loaded sector, are we close enough?
-          if( ( pSoldier->sSectorX == gWorldSectorX ) && ( pSoldier->sSectorY == gWorldSectorY ) &&
-     ( pSoldier->bSectorZ == gbWorldSectorZ ) )
+          if( ( GetSolSectorX(pSoldier) == gWorldSectorX ) && ( GetSolSectorY(pSoldier) ==
+     gWorldSectorY ) && ( GetSolSectorZ(pSoldier) == gbWorldSectorZ ) )
           {
                   if( PythSpacesAway( pSoldier -> sGridNo, pVehicleList[ iVehicleId ].sGridNo ) >
      MAX_DISTANCE_FOR_REPAIR )
@@ -8084,8 +8096,8 @@ BOOLEAN IsRobotInThisSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
   pSoldier = GetRobotSoldier();
 
   if (pSoldier != NULL) {
-    if ((pSoldier->sSectorX == sSectorX) && (pSoldier->sSectorY == sSectorY) &&
-        (pSoldier->bSectorZ == bSectorZ) && (pSoldier->fBetweenSectors == FALSE)) {
+    if ((GetSolSectorX(pSoldier) == sSectorX) && (GetSolSectorY(pSoldier) == sSectorY) &&
+        (GetSolSectorZ(pSoldier) == bSectorZ) && (pSoldier->fBetweenSectors == FALSE)) {
       return (TRUE);
     }
   }
@@ -8128,7 +8140,8 @@ BOOLEAN CanCharacterRepairRobot(struct SOLDIERTYPE *pSoldier) {
   }
 
   // is the robot in the same sector
-  if (IsRobotInThisSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ) == FALSE) {
+  if (IsRobotInThisSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                          GetSolSectorZ(pSoldier)) == FALSE) {
     return (FALSE);
   }
 
@@ -8310,8 +8323,8 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment, INT32 
         ChangeSoldiersAssignment(pSoldier, TRAIN_TOWN);
 
         if (pMilitiaTrainerSoldier == NULL) {
-          if (SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)].fMilitiaTrainingPaid ==
-              FALSE) {
+          if (SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
+                  .fMilitiaTrainingPaid == FALSE) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
           }
@@ -8797,8 +8810,8 @@ void ResetAssignmentsForAllSoldiersInSectorWhoAreTrainingTown(struct SOLDIERTYPE
 
     if ((pCurSoldier->bActive) && (pCurSoldier->bLife >= OKLIFE)) {
       if (pCurSoldier->bAssignment == TRAIN_TOWN) {
-        if ((pCurSoldier->sSectorX == pSoldier->sSectorX) &&
-            (pCurSoldier->sSectorY == pSoldier->sSectorY) && (pSoldier->bSectorZ == 0)) {
+        if ((pCurSoldier->sSectorX == GetSolSectorX(pSoldier)) &&
+            (pCurSoldier->sSectorY == GetSolSectorY(pSoldier)) && (GetSolSectorZ(pSoldier) == 0)) {
           AddCharacterToAnySquad(pCurSoldier);
         }
       }
@@ -9042,8 +9055,8 @@ BOOLEAN AssignMercToAMovementGroup(struct SOLDIERTYPE *pSoldier) {
   }
 
   // create group
-  bGroupId = CreateNewPlayerGroupDepartingFromSector((UINT8)(pSoldier->sSectorX),
-                                                     (UINT8)(pSoldier->sSectorY));
+  bGroupId = CreateNewPlayerGroupDepartingFromSector((UINT8)(GetSolSectorX(pSoldier)),
+                                                     (UINT8)(GetSolSectorY(pSoldier)));
 
   if (bGroupId) {
     // add merc
@@ -9575,15 +9588,15 @@ BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pT
           // CJC: this seems incorrect in light of the check for bTargetStat and in any case would
           // cause a problem if the trainer was assigned and we weren't!
           //( pSoldier -> bTrainStat == pTargetSoldier -> bTrainStat ) &&
-          (pSoldier->sSectorX == pTargetSoldier->sSectorX) &&
-          (pSoldier->sSectorY == pTargetSoldier->sSectorY) &&
-          (pSoldier->bSectorZ == pTargetSoldier->bSectorZ) &&
+          (GetSolSectorX(pSoldier) == pTargetSoldier->sSectorX) &&
+          (GetSolSectorY(pSoldier) == pTargetSoldier->sSectorY) &&
+          (GetSolSectorZ(pSoldier) == pTargetSoldier->bSectorZ) &&
           (pSoldier->bTrainStat == bTargetStat) && (pSoldier->bLife > 0)) {
         // so far so good, now let's see if the trainer can really teach the student anything new
 
         // are we training in the sector with gun range in Alma?
-        if ((pSoldier->sSectorX == GUN_RANGE_X) && (pSoldier->sSectorY == GUN_RANGE_Y) &&
-            (pSoldier->bSectorZ == GUN_RANGE_Z)) {
+        if ((GetSolSectorX(pSoldier) == GUN_RANGE_X) && (GetSolSectorY(pSoldier) == GUN_RANGE_Y) &&
+            (GetSolSectorZ(pSoldier) == GUN_RANGE_Z)) {
           fAtGunRange = TRUE;
         }
 
@@ -9770,9 +9783,9 @@ BOOLEAN CanCharacterRepairAnotherSoldiersStuff(struct SOLDIERTYPE *pSoldier,
   if (pOtherSoldier->bLife == 0) {
     return (FALSE);
   }
-  if (pOtherSoldier->sSectorX != pSoldier->sSectorX ||
-      pOtherSoldier->sSectorY != pSoldier->sSectorY ||
-      pOtherSoldier->bSectorZ != pSoldier->bSectorZ) {
+  if (pOtherSoldier->sSectorX != GetSolSectorX(pSoldier) ||
+      pOtherSoldier->sSectorY != GetSolSectorY(pSoldier) ||
+      pOtherSoldier->bSectorZ != GetSolSectorZ(pSoldier)) {
     return (FALSE);
   }
 

@@ -419,8 +419,8 @@ OUR_TEAM ].bLastID; iCounter++ )
                 if ( pSoldier->bLife >= OKLIFE && pSoldier->bActive )
                 {
                         // if soldier is in this sector
-                        if( SectorIsPartOfTown( bTownId, pSoldier->sSectorX, pSoldier->sSectorY ) ==
-TRUE )
+                        if( SectorIsPartOfTown( bTownId, GetSolSectorX(pSoldier),
+GetSolSectorY(pSoldier) ) == TRUE )
                         {
                                 // if onduty or in a vehicle
                                 if( ( pSoldier->bAssignment < ON_DUTY ) || pSoldier->bAssignment ==
@@ -614,7 +614,7 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
   }
 
   // get town id
-  bTownId = GetTownIdForSector(pSoldier->sSectorX, pSoldier->sSectorY);
+  bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   // if civilian is NOT in a town
   if (bTownId == BLANK_SECTOR) {
@@ -717,7 +717,7 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
 
     case ENEMY_TEAM:
       // check whose sector this is
-      if (StrategicMap[(pSoldier->sSectorX) + (MAP_WORLD_X * (pSoldier->sSectorY))]
+      if (StrategicMap[(GetSolSectorX(pSoldier)) + (MAP_WORLD_X * (GetSolSectorY(pSoldier)))]
               .fEnemyControlled == TRUE) {
         // enemy soldiers... in enemy controlled sector.  Gain loyalty
         fIncrement = TRUE;
@@ -761,7 +761,7 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
         iLoyaltyChange *= MULTIPLIER_FOR_MURDER_BY_MONSTER;
 
         // check whose sector this is
-        if (StrategicMap[(pSoldier->sSectorX) + (MAP_WORLD_X * (pSoldier->sSectorY))]
+        if (StrategicMap[(GetSolSectorX(pSoldier)) + (MAP_WORLD_X * (GetSolSectorY(pSoldier)))]
                 .fEnemyControlled == TRUE) {
           // enemy controlled sector - gain loyalty
           fIncrement = TRUE;
@@ -815,8 +815,8 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
   iLoyaltyChange *= 100;
   iLoyaltyChange /= (100 + (25 * LOYALTY_EVENT_DISTANCE_THRESHOLD));
 
-  AffectAllTownsLoyaltyByDistanceFrom(iLoyaltyChange, pSoldier->sSectorX, pSoldier->sSectorY,
-                                      pSoldier->bSectorZ);
+  AffectAllTownsLoyaltyByDistanceFrom(iLoyaltyChange, GetSolSectorX(pSoldier),
+                                      GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
 }
 
 // check town and raise loyalty value for hiring a merc from a town...not a lot of a gain, but some
@@ -825,7 +825,7 @@ void HandleTownLoyaltyForNPCRecruitment(struct SOLDIERTYPE *pSoldier) {
   UINT32 uiLoyaltyValue = 0;
 
   // get town id civilian
-  bTownId = GetTownIdForSector(pSoldier->sSectorX, pSoldier->sSectorY);
+  bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   // is the merc currently in their home town?
   if (bTownId == gMercProfiles[pSoldier->ubProfile].bTown) {
@@ -860,7 +860,7 @@ BOOLEAN HandleLoyaltyAdjustmentForRobbery(struct SOLDIERTYPE *pSoldier) {
           INT8 bTownId = 0;
 
           // get town id
-          bTownId = GetTownIdForSector( pSoldier->sSectorX, pSoldier->sSectorY );
+          bTownId = GetTownIdForSector( GetSolSectorX(pSoldier), GetSolSectorY(pSoldier) );
 
 
           // debug message
@@ -886,7 +886,7 @@ void HandleLoyaltyForDemolitionOfBuilding(struct SOLDIERTYPE *pSoldier, INT16 sP
   sPolicingLoyalty = sPointsDmg * MULTIPLIER_FOR_NOT_PREVENTING_BUILDING_DAMAGE;
 
   // get town id
-  bTownId = GetTownIdForSector(pSoldier->sSectorX, pSoldier->sSectorY);
+  bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   // penalize the side that did it
   if (pSoldier->bTeam == OUR_TEAM) {
@@ -905,7 +905,7 @@ void HandleLoyaltyForDemolitionOfBuilding(struct SOLDIERTYPE *pSoldier, INT16 sP
   }
 
   // penalize the side that should have stopped it
-  if (StrategicMap[pSoldier->sSectorX + pSoldier->sSectorY * MAP_WORLD_X].fEnemyControlled ==
+  if (StrategicMap[GetSolSectorX(pSoldier) + pSoldier->sSectorY * MAP_WORLD_X].fEnemyControlled ==
       TRUE) {
     // enemy should have prevented it, let them suffer a little
     IncrementTownLoyalty(bTownId, sPolicingLoyalty);
@@ -1619,7 +1619,7 @@ UINT32 PlayerStrength(void) {
       if (pSoldier->bInSector ||
           (pSoldier->fBetweenSectors && ((pSoldier->ubPrevSectorID % 16) + 1) == gWorldSectorX &&
            ((pSoldier->ubPrevSectorID / 16) + 1) == gWorldSectorY &&
-           (pSoldier->bSectorZ == gbWorldSectorZ))) {
+           (GetSolSectorZ(pSoldier) == gbWorldSectorZ))) {
         // count this person's strength (condition), calculated as life reduced up to half according
         // to maxbreath
         uiStrength = pSoldier->bLife * (pSoldier->bBreathMax + 100) / 200;

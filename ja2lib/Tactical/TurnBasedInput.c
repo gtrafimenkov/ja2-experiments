@@ -24,6 +24,7 @@
 #include "SaveLoadGame.h"
 #include "SaveLoadScreen.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEvents.h"
@@ -3116,8 +3117,8 @@ void ChangeSoldiersBodyType(UINT8 ubBodyType, BOOLEAN fCreateNewPalette) {
             // pSoldier->inv[ HANDPOS ].usItem = TANK_CANNON;
 
             pSoldier->inv[HANDPOS].usItem = MINIMI;
-            pSoldier->bVehicleID = (INT8)AddVehicleToList(pSoldier->sSectorX, pSoldier->sSectorY,
-                                                          pSoldier->bSectorZ, HUMMER);
+            pSoldier->bVehicleID = (INT8)AddVehicleToList(
+                GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier), HUMMER);
 
             break;
         }

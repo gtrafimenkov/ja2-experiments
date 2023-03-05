@@ -5,6 +5,7 @@
 #include "MessageBoxScreen.h"
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/AutoResolve.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -2846,7 +2847,8 @@ BOOLEAN PlaceObject(struct SOLDIERTYPE *pSoldier, INT8 bPos, struct OBJECTTYPE *
   if (Item[pObj->usItem].usItemClass == IC_KEY && pSoldier->uiStatusFlags & SOLDIER_PC) {
     if (KeyTable[pObj->ubKeyID].usDateFound == 0) {
       KeyTable[pObj->ubKeyID].usDateFound = (UINT16)GetWorldDay();
-      KeyTable[pObj->ubKeyID].usSectorFound = SECTOR(pSoldier->sSectorX, pSoldier->sSectorY);
+      KeyTable[pObj->ubKeyID].usSectorFound =
+          SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     }
   }
 
@@ -3258,7 +3260,8 @@ UINT8 AddKeysToSlot(struct SOLDIERTYPE *pSoldier, INT8 bKeyRingPosition, struct 
   {
     if (KeyTable[pObj->ubKeyID].usDateFound == 0) {
       KeyTable[pObj->ubKeyID].usDateFound = (UINT16)GetWorldDay();
-      KeyTable[pObj->ubKeyID].usSectorFound = SECTOR(pSoldier->sSectorX, pSoldier->sSectorY);
+      KeyTable[pObj->ubKeyID].usSectorFound =
+          SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     }
   }
 

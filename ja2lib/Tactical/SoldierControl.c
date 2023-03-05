@@ -2823,8 +2823,8 @@ void EVENT_SoldierGotHit(struct SOLDIERTYPE *pSoldier, UINT16 usWeaponIndex, INT
                         MercPtrs[pSoldier->ubAttackerID]->bSectorZ);
     }
     if (pSoldier->bTeam == gbPlayerNum) {
-      HandleMoraleEvent(pSoldier, MORALE_TOOK_LOTS_OF_DAMAGE, pSoldier->sSectorX,
-                        pSoldier->sSectorY, pSoldier->bSectorZ);
+      HandleMoraleEvent(pSoldier, MORALE_TOOK_LOTS_OF_DAMAGE, GetSolSectorX(pSoldier),
+                        GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
     }
   }
 
@@ -4087,8 +4087,9 @@ savedPts = MAX_AP_CARRIED;
         switch (gMercProfiles[pSoldier->ubProfile].bPersonalityTrait) {
           case FEAR_OF_INSECTS:
             if (MercSeesCreature(pSoldier)) {
-              HandleMoraleEvent(pSoldier, MORALE_INSECT_PHOBIC_SEES_CREATURE, pSoldier->sSectorX,
-                                pSoldier->sSectorY, pSoldier->bSectorZ);
+              HandleMoraleEvent(pSoldier, MORALE_INSECT_PHOBIC_SEES_CREATURE,
+                                GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                GetSolSectorZ(pSoldier));
               if (!(pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_PERSONALITY)) {
                 TacticalCharacterDialogue(pSoldier, QUOTE_PERSONALITY_TRAIT);
                 pSoldier->usQuoteSaidFlags |= SOLDIER_QUOTE_SAID_PERSONALITY;
@@ -4098,8 +4099,8 @@ savedPts = MAX_AP_CARRIED;
           case CLAUSTROPHOBIC:
             if (gbWorldSectorZ > 0 && Random(6 - gbWorldSectorZ) == 0) {
               // underground!
-              HandleMoraleEvent(pSoldier, MORALE_CLAUSTROPHOBE_UNDERGROUND, pSoldier->sSectorX,
-                                pSoldier->sSectorY, pSoldier->bSectorZ);
+              HandleMoraleEvent(pSoldier, MORALE_CLAUSTROPHOBE_UNDERGROUND, GetSolSectorX(pSoldier),
+                                GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
               if (!(pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_PERSONALITY)) {
                 TacticalCharacterDialogue(pSoldier, QUOTE_PERSONALITY_TRAIT);
                 pSoldier->usQuoteSaidFlags |= SOLDIER_QUOTE_SAID_PERSONALITY;
@@ -4110,8 +4111,8 @@ savedPts = MAX_AP_CARRIED;
             if (DistanceToClosestFriend(pSoldier) > NERVOUS_RADIUS) {
               // augh!!
               if (pSoldier->bMorale < 50) {
-                HandleMoraleEvent(pSoldier, MORALE_NERVOUS_ALONE, pSoldier->sSectorX,
-                                  pSoldier->sSectorY, pSoldier->bSectorZ);
+                HandleMoraleEvent(pSoldier, MORALE_NERVOUS_ALONE, GetSolSectorX(pSoldier),
+                                  GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
                 if (!(pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_PERSONALITY)) {
                   TacticalCharacterDialogue(pSoldier, QUOTE_PERSONALITY_TRAIT);
                   pSoldier->usQuoteSaidFlags |= SOLDIER_QUOTE_SAID_PERSONALITY;
@@ -8971,8 +8972,9 @@ BOOLEAN ControllingRobot(struct SOLDIERTYPE *pSoldier) {
   if (pRobot->bActive) {
     // Are we in the same sector....?
     // ARM: CHANGED TO WORK IN MAPSCREEN, DON'T USE WorldSector HERE
-    if (pRobot->sSectorX == pSoldier->sSectorX && pRobot->sSectorY == pSoldier->sSectorY &&
-        pRobot->bSectorZ == pSoldier->bSectorZ) {
+    if (pRobot->sSectorX == GetSolSectorX(pSoldier) &&
+        pRobot->sSectorY == GetSolSectorY(pSoldier) &&
+        pRobot->bSectorZ == GetSolSectorZ(pSoldier)) {
       // they have to be either both in sector, or both on the road
       if (pRobot->fBetweenSectors == pSoldier->fBetweenSectors) {
         // if they're on the road...
@@ -9252,11 +9254,12 @@ void DebugValidateSoldierData() {
 
       // check for invalid sector data
       if ((pSoldier->bAssignment != IN_TRANSIT) &&
-          ((pSoldier->sSectorX <= 0) || (pSoldier->sSectorX >= 17) || (pSoldier->sSectorY <= 0) ||
-           (pSoldier->sSectorY >= 17) || (pSoldier->bSectorZ < 0) || (pSoldier->bSectorZ > 3))) {
+          ((GetSolSectorX(pSoldier) <= 0) || (GetSolSectorX(pSoldier) >= 17) ||
+           (pSoldier->sSectorY <= 0) || (pSoldier->sSectorY >= 17) || (pSoldier->bSectorZ < 0) ||
+           (pSoldier->bSectorZ > 3))) {
         swprintf(sString, ARR_SIZE(sString),
-                 L"Soldier Data Error: Soldier %d is located at %d/%d/%d.", cnt, pSoldier->sSectorX,
-                 pSoldier->sSectorY, pSoldier->bSectorZ);
+                 L"Soldier Data Error: Soldier %d is located at %d/%d/%d.", cnt,
+                 GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
         fProblemDetected = TRUE;
       }
     }

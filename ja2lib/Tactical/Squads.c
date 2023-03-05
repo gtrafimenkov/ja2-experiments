@@ -1067,9 +1067,9 @@ BOOLEAN IsSquadInSector(struct SOLDIERTYPE *pSoldier, UINT8 ubSquad) {
     return (TRUE);
   }
 
-  if ((pSoldier->sSectorX != Squad[ubSquad][0]->sSectorX) ||
-      (pSoldier->sSectorY != Squad[ubSquad][0]->sSectorY) ||
-      (pSoldier->bSectorZ != Squad[ubSquad][0]->bSectorZ)) {
+  if ((GetSolSectorX(pSoldier) != Squad[ubSquad][0]->sSectorX) ||
+      (GetSolSectorY(pSoldier) != Squad[ubSquad][0]->sSectorY) ||
+      (GetSolSectorZ(pSoldier) != Squad[ubSquad][0]->bSectorZ)) {
     return (FALSE);
   }
 

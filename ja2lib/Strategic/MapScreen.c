@@ -1801,7 +1801,8 @@ void DrawCharacterInfo(INT16 sCharNumber) {
   }
   // train town?
   else if (pSoldier->bAssignment == TRAIN_TOWN) {
-    wcscpy(sString, pTownNames[GetTownIdForSector(pSoldier->sSectorX, pSoldier->sSectorY)]);
+    wcscpy(sString,
+           pTownNames[GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]);
   }
   // repairing?
   else if (pSoldier->bAssignment == REPAIR) {
@@ -4870,7 +4871,7 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
               struct SOLDIERTYPE *pSoldier = MercPtrs[gCharactersList[bSelectedDestChar].usSolID];
 
               // can't teleport to where we already are
-              if ((sMapX == pSoldier->sSectorX) && (sMapY == pSoldier->sSectorY)) break;
+              if ((sMapX == GetSolSectorX(pSoldier)) && (sMapY == GetSolSectorY(pSoldier))) break;
 
               /*
                                                                       if( fZoomFlag == TRUE )
@@ -4896,14 +4897,14 @@ void GetMapKeyboardInput(UINT32 *puiNewEvent) {
 
               // check to see if this person is moving, if not...then assign them to mvt group
               if (pSoldier->ubGroupID == 0) {
-                ubGroupId = CreateNewPlayerGroupDepartingFromSector((INT8)(pSoldier->sSectorX),
-                                                                    (INT8)(pSoldier->sSectorY));
+                ubGroupId = CreateNewPlayerGroupDepartingFromSector(
+                    (INT8)(GetSolSectorX(pSoldier)), (INT8)(GetSolSectorY(pSoldier)));
                 // assign to a group
                 AddPlayerToGroup(ubGroupId, pSoldier);
               }
 
               // figure out where they would've come from
-              sDeltaX = sMapX - pSoldier->sSectorX;
+              sDeltaX = sMapX - GetSolSectorX(pSoldier);
               sDeltaY = sMapY - pSoldier->sSectorY;
 
               if (abs(sDeltaX) >= abs(sDeltaY)) {
@@ -6541,7 +6542,8 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
 
       // if not dead or POW, select his sector
       if ((pSoldier->bLife > 0) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
-        ChangeSelectedMapSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ);
+        ChangeSelectedMapSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                GetSolSectorZ(pSoldier));
       }
 
       // unhilight contract line
@@ -6587,7 +6589,8 @@ void TeamListInfoRegionBtnCallBack(struct MOUSE_REGION *pRegion, INT32 iReason) 
 
       // if not dead or POW, select his sector
       if ((pSoldier->bLife > 0) && (pSoldier->bAssignment != ASSIGNMENT_POW)) {
-        ChangeSelectedMapSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ);
+        ChangeSelectedMapSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                GetSolSectorZ(pSoldier));
       }
 
       // unhilight contract line
@@ -9388,8 +9391,8 @@ BOOLEAN CanToggleSelectedCharInventory(void) {
       ((gMPanelRegion.Cursor == EXTERN_CURSOR) || gpItemPointer || fMapInventoryItem) &&
       (gpItemPointerSoldier == NULL)) {
     // make sure he's in that sector
-    if ((pSoldier->sSectorX != sSelMapX) || (pSoldier->sSectorY != sSelMapY) ||
-        (pSoldier->bSectorZ != iCurrentMapSectorZ) || pSoldier->fBetweenSectors) {
+    if ((GetSolSectorX(pSoldier) != sSelMapX) || (GetSolSectorY(pSoldier) != sSelMapY) ||
+        (GetSolSectorZ(pSoldier) != iCurrentMapSectorZ) || pSoldier->fBetweenSectors) {
       return (FALSE);
     }
   }
@@ -9848,9 +9851,9 @@ INT16 CalcLocationValueForChar(INT32 iCounter) {
 
   // don't reveal location of POWs!
   if (pSoldier->bAssignment != ASSIGNMENT_POW) {
-    sLocValue = SECTOR(pSoldier->sSectorX, pSoldier->sSectorY);
+    sLocValue = SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     // underground: add 1000 per sublevel
-    sLocValue += 1000 * (pSoldier->bSectorZ);
+    sLocValue += 1000 * (GetSolSectorZ(pSoldier));
   }
 
   return (sLocValue);
@@ -9889,9 +9892,9 @@ void MakeMapModesSuitableForDestPlotting(INT8 bCharNumber) {
     }
 
     // if viewing a different sublevel
-    if (iCurrentMapSectorZ != pSoldier->bSectorZ) {
+    if (iCurrentMapSectorZ != GetSolSectorZ(pSoldier)) {
       // switch to that merc's sublevel
-      JumpToLevel(pSoldier->bSectorZ);
+      JumpToLevel(GetSolSectorZ(pSoldier));
     }
   }
 }
@@ -9931,8 +9934,8 @@ BOOLEAN AnyMovableCharsInOrBetweenThisSector(INT16 sSectorX, INT16 sSectorY, INT
     }
 
     // is he here?
-    if ((pSoldier->sSectorX == sSectorX) && (pSoldier->sSectorY == sSectorY) &&
-        (pSoldier->bSectorZ == bSectorZ)) {
+    if ((GetSolSectorX(pSoldier) == sSectorX) && (GetSolSectorY(pSoldier) == sSectorY) &&
+        (GetSolSectorZ(pSoldier) == bSectorZ)) {
       // NOTE that we consider mercs between sectors, mercs < OKLIFE, and sleeping mercs to be
       // "movable". This lets CanCharacterMoveInStrategic() itself report the appropriate error
       // message when character is clicked
@@ -10330,7 +10333,7 @@ void GetMapscreenMercLocationString(struct SOLDIERTYPE *pSoldier, wchar_t sStrin
       swprintf(sString, sStringSize, L"%s", pPOWStrings[1]);
     } else {
       swprintf(pTempString, ARR_SIZE(pTempString), L"%s%s%s", pMapVertIndex[pSoldier->sSectorY],
-               pMapHortIndex[pSoldier->sSectorX], pMapDepthIndex[pSoldier->bSectorZ]);
+               pMapHortIndex[GetSolSectorX(pSoldier)], pMapDepthIndex[pSoldier->bSectorZ]);
 
       if (pSoldier->fBetweenSectors) {
         // put brackets around it when he's between sectors!
@@ -10600,7 +10603,8 @@ void SelectAllCharactersInSquad(INT8 bSquadNumber) {
           ChangeSelectedInfoChar(bCounter, FALSE);
 
           // select his sector
-          ChangeSelectedMapSector(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ);
+          ChangeSelectedMapSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                                  GetSolSectorZ(pSoldier));
 
           fFirstOne = FALSE;
         }

@@ -2181,7 +2181,8 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
   if (pSoldier->bTeam == gbPlayerNum) {
     if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__EPC) {
       // are we there yet?
-      if (pSoldier->sSectorX == 13 && pSoldier->sSectorY == MAP_ROW_B && pSoldier->bSectorZ == 0) {
+      if (GetSolSectorX(pSoldier) == 13 && GetSolSectorY(pSoldier) == MAP_ROW_B &&
+          GetSolSectorZ(pSoldier) == 0) {
         switch (pSoldier->ubProfile) {
           case SKYRIDER:
             if (PythSpacesAway(pSoldier->sGridNo, 8842) < 11) {
@@ -2202,8 +2203,8 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
             break;
         }
       } else if (pSoldier->ubProfile == MARIA &&
-                 (pSoldier->sSectorX == 6 && pSoldier->sSectorY == MAP_ROW_C &&
-                  pSoldier->bSectorZ == 0) &&
+                 (GetSolSectorX(pSoldier) == 6 && GetSolSectorY(pSoldier) == MAP_ROW_C &&
+                  GetSolSectorZ(pSoldier) == 0) &&
                  CheckFact(FACT_MARIA_ESCORTED_AT_LEATHER_SHOP, MARIA) == TRUE) {
         // check that Angel is there!
         if (NPCInRoom(ANGEL, 2))  // room 2 is leather shop
@@ -2212,8 +2213,8 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
           TriggerNPCRecord(ANGEL, 12);
         }
       } else if ((pSoldier->ubProfile == JOEY) &&
-                 (pSoldier->sSectorX == 8 && pSoldier->sSectorY == MAP_ROW_G &&
-                  pSoldier->bSectorZ == 0)) {
+                 (GetSolSectorX(pSoldier) == 8 && GetSolSectorY(pSoldier) == MAP_ROW_G &&
+                  GetSolSectorZ(pSoldier) == 0)) {
         // if Joey walks near Martha then trigger Martha record 7
         if (CheckFact(FACT_JOEY_NEAR_MARTHA, 0)) {
           EVENT_StopMerc(pSoldier, pSoldier->sGridNo, pSoldier->bDirection);
@@ -2223,8 +2224,8 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
 
     }
     // Drassen stuff for John & Mary
-    else if (gubQuest[QUEST_ESCORT_TOURISTS] == QUESTINPROGRESS && pSoldier->sSectorX == 13 &&
-             pSoldier->sSectorY == MAP_ROW_B && pSoldier->bSectorZ == 0) {
+    else if (gubQuest[QUEST_ESCORT_TOURISTS] == QUESTINPROGRESS && GetSolSectorX(pSoldier) == 13 &&
+             GetSolSectorY(pSoldier) == MAP_ROW_B && GetSolSectorZ(pSoldier) == 0) {
       if (CheckFact(FACT_JOHN_ALIVE, 0)) {
         HandleJohnArrival(NULL);
       } else {
@@ -5813,8 +5814,8 @@ void HandleSuppressionFire(UINT8 ubTargetedMerc, UINT8 ubCausedAttacker) {
         for (ubLoop2 = 0;
              ubLoop2 < (ubTotalPointsLost / 2) - (pSoldier->ubAPsLostToSuppression / 2);
              ubLoop2++) {
-          HandleMoraleEvent(pSoldier, MORALE_SUPPRESSED, pSoldier->sSectorX, pSoldier->sSectorY,
-                            pSoldier->bSectorZ);
+          HandleMoraleEvent(pSoldier, MORALE_SUPPRESSED, GetSolSectorX(pSoldier),
+                            GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
         }
       }
 

@@ -289,13 +289,13 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
   }
 
   // Add merc to sector ( if it's the current one )
-  if (gWorldSectorX == pSoldier->sSectorX && gWorldSectorY == pSoldier->sSectorY &&
-      pSoldier->bSectorZ == gbWorldSectorZ) {
+  if (gWorldSectorX == GetSolSectorX(pSoldier) && gWorldSectorY == GetSolSectorY(pSoldier) &&
+      GetSolSectorZ(pSoldier) == gbWorldSectorZ) {
     // OK, If this sector is currently loaded, and guy does not have CHOPPER insertion code....
     // ( which means we are at beginning of game if so )
     // Setup chopper....
-    if (pSoldier->ubStrategicInsertionCode != INSERTION_CODE_CHOPPER && pSoldier->sSectorX == 9 &&
-        pSoldier->sSectorY == 1) {
+    if (pSoldier->ubStrategicInsertionCode != INSERTION_CODE_CHOPPER &&
+        GetSolSectorX(pSoldier) == 9 && GetSolSectorY(pSoldier) == 1) {
       gfTacticalDoHeliRun = TRUE;
 
       // OK, If we are in mapscreen, get out...
@@ -309,7 +309,8 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
       pSoldier->ubStrategicInsertionCode = INSERTION_CODE_CHOPPER;
     }
 
-    UpdateMercInSector(pSoldier, pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ);
+    UpdateMercInSector(pSoldier, GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                       GetSolSectorZ(pSoldier));
   } else {
     // OK, otherwise, set them in north area, so once we load again, they are here.
     pSoldier->ubStrategicInsertionCode = INSERTION_CODE_NORTH;
@@ -323,8 +324,8 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
       gTacticalStatus.bMercArrivingQuoteBeingUsed = TRUE;
 
       // Setup the highlight sector value (note this isn't for mines but using same system)
-      gsSectorLocatorX = pSoldier->sSectorX;
-      gsSectorLocatorY = pSoldier->sSectorY;
+      gsSectorLocatorX = GetSolSectorX(pSoldier);
+      gsSectorLocatorY = GetSolSectorY(pSoldier);
 
       TacticalCharacterDialogueWithSpecialEvent(pSoldier, 0, DIALOGUE_SPECIAL_EVENT_MINESECTOREVENT,
                                                 2, 0);
@@ -365,7 +366,7 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
 
   // if the currently selected sector has no one in it, select this one instead
   if (!CanGoToTacticalInSector(sSelMapX, sSelMapY, (UINT8)iCurrentMapSectorZ)) {
-    ChangeSelectedMapSector(pSoldier->sSectorX, pSoldier->sSectorY, 0);
+    ChangeSelectedMapSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), 0);
   }
 
   return;

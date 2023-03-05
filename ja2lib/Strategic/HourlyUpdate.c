@@ -3,6 +3,7 @@
 #include "Laptop/History.h"
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/Quests.h"
@@ -186,13 +187,13 @@ void HourlyLarryUpdate(void) {
     // check to see if we're in a bar sector, if we are, we have access to alcohol
     // which may be better than anything we've got...
     if (usTemptation < BAR_TEMPTATION && GetCurrentBalance() >= Item[ALCOHOL].usPrice) {
-      if (pSoldier->bSectorZ == 0 &&
-          ((pSoldier->sSectorX == 13 && pSoldier->sSectorY == MAP_ROW_B) ||
-           (pSoldier->sSectorX == 13 && pSoldier->sSectorY == MAP_ROW_C) ||
-           (pSoldier->sSectorX == 5 && pSoldier->sSectorY == MAP_ROW_C) ||
-           (pSoldier->sSectorX == 6 && pSoldier->sSectorY == MAP_ROW_C) ||
-           (pSoldier->sSectorX == 5 && pSoldier->sSectorY == MAP_ROW_D) ||
-           (pSoldier->sSectorX == 2 && pSoldier->sSectorY == MAP_ROW_H))) {
+      if (GetSolSectorZ(pSoldier) == 0 &&
+          ((GetSolSectorX(pSoldier) == 13 && GetSolSectorY(pSoldier) == MAP_ROW_B) ||
+           (GetSolSectorX(pSoldier) == 13 && GetSolSectorY(pSoldier) == MAP_ROW_C) ||
+           (GetSolSectorX(pSoldier) == 5 && GetSolSectorY(pSoldier) == MAP_ROW_C) ||
+           (GetSolSectorX(pSoldier) == 6 && GetSolSectorY(pSoldier) == MAP_ROW_C) ||
+           (GetSolSectorX(pSoldier) == 5 && GetSolSectorY(pSoldier) == MAP_ROW_D) ||
+           (GetSolSectorX(pSoldier) == 2 && GetSolSectorY(pSoldier) == MAP_ROW_H))) {
         // in a bar!
         fBar = TRUE;
         usTemptation = BAR_TEMPTATION;
@@ -272,8 +273,8 @@ void HourlyCheckIfSlayAloneSoHeCanLeave() {
   if (!pSoldier->bActive || !pSoldier->bLife) {
     return;
   }
-  if (PlayerMercsInSector((UINT8)pSoldier->sSectorX, (UINT8)pSoldier->sSectorY,
-                          pSoldier->bSectorZ) == 1) {
+  if (PlayerMercsInSector((UINT8)GetSolSectorX(pSoldier), (UINT8)GetSolSectorY(pSoldier),
+                          GetSolSectorZ(pSoldier)) == 1) {
     if (Chance(15)) {
       pSoldier->ubLeaveHistoryCode = HISTORY_SLAY_MYSTERIOUSLY_LEFT;
       TacticalCharacterDialogueWithSpecialEvent(

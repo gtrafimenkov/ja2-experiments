@@ -12,6 +12,7 @@
 #include "SGP/Types.h"
 #include "SaveLoadGame.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/MapScreenInterfaceMap.h"
@@ -867,8 +868,9 @@ void HandleAllReachAbleItemsInTheSector(INT16 sSectorX, INT16 sSectorY, INT8 bSe
     for (uiCounter = gTacticalStatus.Team[gbPlayerNum].bFirstID;
          uiCounter < gTacticalStatus.Team[gbPlayerNum].bLastID; uiCounter++) {
       pSoldier = MercPtrs[uiCounter];
-      if (pSoldier && pSoldier->bActive && pSoldier->bLife > 0 && pSoldier->sSectorX == sSectorX &&
-          pSoldier->sSectorY == sSectorY && pSoldier->bSectorZ == bSectorZ) {
+      if (pSoldier && pSoldier->bActive && pSoldier->bLife > 0 &&
+          GetSolSectorX(pSoldier) == sSectorX && GetSolSectorY(pSoldier) == sSectorY &&
+          GetSolSectorZ(pSoldier) == bSectorZ) {
         if (FindBestPath(pSoldier, sGridNo2, pSoldier->bLevel, WALKING, NO_COPYROUTE, 0)) {
           fSecondary = TRUE;
           break;

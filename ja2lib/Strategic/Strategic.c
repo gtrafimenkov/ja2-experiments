@@ -3,6 +3,7 @@
 #include "JAScreens.h"
 #include "Laptop/Personnel.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Tactical/DialogueControl.h"
@@ -65,9 +66,9 @@ BOOLEAN HandleStrategicDeath(struct SOLDIERTYPE *pSoldier) {
     HandleSoldierDeadComments(pSoldier);
 
     // put the dead guys down
-    AddDeadSoldierToUnLoadedSector((UINT8)(pSoldier->sSectorX), (UINT8)(pSoldier->sSectorY),
-                                   pSoldier->bSectorZ, pSoldier, RandomGridNo(),
-                                   ADD_DEAD_SOLDIER_TO_SWEETSPOT);
+    AddDeadSoldierToUnLoadedSector((UINT8)(GetSolSectorX(pSoldier)),
+                                   (UINT8)(GetSolSectorY(pSoldier)), GetSolSectorZ(pSoldier),
+                                   pSoldier, RandomGridNo(), ADD_DEAD_SOLDIER_TO_SWEETSPOT);
 
     fTeamPanelDirty = TRUE;
     fMapPanelDirty = TRUE;

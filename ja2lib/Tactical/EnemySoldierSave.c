@@ -8,6 +8,7 @@
 #include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/QueenCommand.h"
@@ -453,9 +454,9 @@ BOOLEAN SaveEnemySoldiersToTempFile(INT16 sSectorX, INT16 sSectorY, INT8 bSector
           }
 
           curr->pDetailedPlacement->fHasKeys = pSoldier->bHasKeys;
-          curr->pDetailedPlacement->sSectorX = pSoldier->sSectorX;
-          curr->pDetailedPlacement->sSectorY = pSoldier->sSectorY;
-          curr->pDetailedPlacement->bSectorZ = pSoldier->bSectorZ;
+          curr->pDetailedPlacement->sSectorX = GetSolSectorX(pSoldier);
+          curr->pDetailedPlacement->sSectorY = GetSolSectorY(pSoldier);
+          curr->pDetailedPlacement->bSectorZ = GetSolSectorZ(pSoldier);
           curr->pDetailedPlacement->ubSoldierClass = pSoldier->ubSoldierClass;
           curr->pDetailedPlacement->bTeam = pSoldier->bTeam;
           curr->pDetailedPlacement->bDirection = pSoldier->bDirection;
@@ -1393,9 +1394,9 @@ BOOLEAN NewWayOfSavingEnemyAndCivliansToTempFile(INT16 sSectorX, INT16 sSectorY,
             curr->pDetailedPlacement->ubCivilianGroup = pSoldier->ubCivilianGroup;
             curr->pDetailedPlacement->ubScheduleID = pSoldier->ubScheduleID;
             curr->pDetailedPlacement->fHasKeys = pSoldier->bHasKeys;
-            curr->pDetailedPlacement->sSectorX = pSoldier->sSectorX;
-            curr->pDetailedPlacement->sSectorY = pSoldier->sSectorY;
-            curr->pDetailedPlacement->bSectorZ = pSoldier->bSectorZ;
+            curr->pDetailedPlacement->sSectorX = GetSolSectorX(pSoldier);
+            curr->pDetailedPlacement->sSectorY = GetSolSectorY(pSoldier);
+            curr->pDetailedPlacement->bSectorZ = GetSolSectorZ(pSoldier);
             curr->pDetailedPlacement->ubSoldierClass = pSoldier->ubSoldierClass;
             curr->pDetailedPlacement->bTeam = pSoldier->bTeam;
             curr->pDetailedPlacement->bDirection = pSoldier->bDirection;

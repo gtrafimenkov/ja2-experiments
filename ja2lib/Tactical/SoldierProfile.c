@@ -15,6 +15,7 @@
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
@@ -680,9 +681,9 @@ struct SOLDIERTYPE *ChangeSoldierTeam(struct SOLDIERTYPE *pSoldier, UINT8 ubTeam
   MercCreateStruct.bTeam = ubTeam;
   MercCreateStruct.ubProfile = pSoldier->ubProfile;
   MercCreateStruct.bBodyType = pSoldier->ubBodyType;
-  MercCreateStruct.sSectorX = pSoldier->sSectorX;
-  MercCreateStruct.sSectorY = pSoldier->sSectorY;
-  MercCreateStruct.bSectorZ = pSoldier->bSectorZ;
+  MercCreateStruct.sSectorX = GetSolSectorX(pSoldier);
+  MercCreateStruct.sSectorY = GetSolSectorY(pSoldier);
+  MercCreateStruct.bSectorZ = GetSolSectorZ(pSoldier);
   MercCreateStruct.sInsertionGridNo = pSoldier->sGridNo;
   MercCreateStruct.bDirection = pSoldier->bDirection;
 
@@ -745,8 +746,8 @@ struct SOLDIERTYPE *ChangeSoldierTeam(struct SOLDIERTYPE *pSoldier, UINT8 ubTeam
     }
 
     if (gfWorldLoaded && pSoldier->bInSector
-        // pSoldier->sSectorX == gWorldSectorX && pSoldier->sSectorY == gWorldSectorY &&
-        // pSoldier->bSectorZ == gbWorldSectorZ
+        // GetSolSectorX(pSoldier) == gWorldSectorX && GetSolSectorY(pSoldier) == gWorldSectorY &&
+        // GetSolSectorZ(pSoldier) == gbWorldSectorZ
     ) {
       AddSoldierToSectorNoCalculateDirectionUseAnimation(ubID, pSoldier->usAnimState,
                                                          pSoldier->usAniCode);
@@ -799,7 +800,7 @@ BOOLEAN RecruitRPC(UINT8 ubCharNum) {
 
     KickOutWheelchair(pNewSoldier);
   } else if (ubCharNum == DYNAMO && gubQuest[QUEST_FREE_DYNAMO] == QUESTINPROGRESS) {
-    EndQuest(QUEST_FREE_DYNAMO, pSoldier->sSectorX, pSoldier->sSectorY);
+    EndQuest(QUEST_FREE_DYNAMO, GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
   }
   // handle town loyalty adjustment
   HandleTownLoyaltyForNPCRecruitment(pNewSoldier);
@@ -929,15 +930,15 @@ BOOLEAN UnRecruitEPC(UINT8 ubCharNum) {
   // update sector values to current
 
   // check to see if this person should disappear from the map after this
-  if ((ubCharNum == JOHN || ubCharNum == MARY) && pSoldier->sSectorX == 13 &&
-      pSoldier->sSectorY == MAP_ROW_B && pSoldier->bSectorZ == 0) {
+  if ((ubCharNum == JOHN || ubCharNum == MARY) && GetSolSectorX(pSoldier) == 13 &&
+      GetSolSectorY(pSoldier) == MAP_ROW_B && GetSolSectorZ(pSoldier) == 0) {
     gMercProfiles[ubCharNum].sSectorX = 0;
     gMercProfiles[ubCharNum].sSectorY = 0;
     gMercProfiles[ubCharNum].bSectorZ = 0;
   } else {
-    gMercProfiles[ubCharNum].sSectorX = pSoldier->sSectorX;
-    gMercProfiles[ubCharNum].sSectorY = pSoldier->sSectorY;
-    gMercProfiles[ubCharNum].bSectorZ = pSoldier->bSectorZ;
+    gMercProfiles[ubCharNum].sSectorX = GetSolSectorX(pSoldier);
+    gMercProfiles[ubCharNum].sSectorY = GetSolSectorY(pSoldier);
+    gMercProfiles[ubCharNum].bSectorZ = GetSolSectorZ(pSoldier);
   }
 
   // how do we decide whether or not to set this?
@@ -1071,8 +1072,8 @@ BOOLEAN DoesMercHaveABuddyOnTheTeam(UINT8 ubMercID) {
 BOOLEAN MercIsHot(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->ubProfile != NO_PROFILE &&
       gMercProfiles[pSoldier->ubProfile].bPersonalityTrait == HEAT_INTOLERANT) {
-    if (SectorTemperature(GetWorldMinutesInDay(), pSoldier->sSectorX, pSoldier->sSectorY,
-                          pSoldier->bSectorZ) > 0) {
+    if (SectorTemperature(GetWorldMinutesInDay(), GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                          GetSolSectorZ(pSoldier)) > 0) {
       return (TRUE);
     }
   }

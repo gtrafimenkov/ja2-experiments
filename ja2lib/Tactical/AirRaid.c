@@ -182,9 +182,9 @@ BOOLEAN BeginAirRaid() {
   // Do we have any guys in here...
   for (cnt = 0, pSoldier = MercPtrs[cnt]; cnt < 20; cnt++, pSoldier++) {
     if (pSoldier->bActive) {
-      if (pSoldier->sSectorX == gAirRaidDef.sSectorX &&
-          pSoldier->sSectorY == gAirRaidDef.sSectorY &&
-          pSoldier->bSectorZ == gAirRaidDef.sSectorZ && !pSoldier->fBetweenSectors &&
+      if (GetSolSectorX(pSoldier) == gAirRaidDef.sSectorX &&
+          GetSolSectorY(pSoldier) == gAirRaidDef.sSectorY &&
+          GetSolSectorZ(pSoldier) == gAirRaidDef.sSectorZ && !pSoldier->fBetweenSectors &&
           pSoldier->bLife && pSoldier->bAssignment != IN_TRANSIT) {
         fOK = TRUE;
       }

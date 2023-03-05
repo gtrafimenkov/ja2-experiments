@@ -1862,7 +1862,7 @@ void ValidatePlayersAreInOneGroupOnly() {
                    L"a unique squad.  "
                    L"Please send screenshot, PRIOR save (corrected by time you read this), and any "
                    L"theories.",
-                   pSoldier->name, pSoldier->sSectorY + 'A' - 1, pSoldier->sSectorX,
+                   pSoldier->name, GetSolSectorY(pSoldier) + 'A' - 1, GetSolSectorX(pSoldier),
                    pSoldier->ubGroupID, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX,
                    pOtherGroup->ubGroupID, pOtherGroup->ubSectorY + 'A' - 1, pOtherGroup->ubSectorX,
                    pSoldier->name, pSoldier->name);
@@ -1906,7 +1906,7 @@ void ValidatePlayersAreInOneGroupOnly() {
                    L"%c%d.  %s was found in %d groups "
                    L"total.  Please send screenshot, PRIOR save (corrected by time you read this), "
                    L"and any theories.",
-                   pSoldier->name, pSoldier->sSectorY + 'A' - 1, pSoldier->sSectorX,
+                   pSoldier->name, GetSolSectorY(pSoldier) + 'A' - 1, GetSolSectorX(pSoldier),
                    pGroup->ubGroupID, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX,
                    pSoldier->name, pOtherGroup->ubGroupID, pOtherGroup->ubSectorY + 'A' - 1,
                    pOtherGroup->ubSectorX, pSoldier->name, iGroups);
@@ -1919,7 +1919,7 @@ void ValidatePlayersAreInOneGroupOnly() {
                    L"Please provide details on how you think this may have happened.  Send "
                    L"screenshot and PRIOR save.  Do not send a save "
                    L"you create after this point as the info will have been corrected by then.",
-                   pSoldier->name, pSoldier->sSectorY + 'A' - 1, pSoldier->sSectorX,
+                   pSoldier->name, GetSolSectorY(pSoldier) + 'A' - 1, GetSolSectorX(pSoldier),
                    pSoldier->name);
         }
       }

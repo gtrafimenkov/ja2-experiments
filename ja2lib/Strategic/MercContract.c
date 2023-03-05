@@ -410,7 +410,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, UINT8 ubDesiredAction
 
   // add an entry in the history page for the extending of the merc contract
   AddHistoryToPlayersLog(ubHistoryContractType, pSoldier->ubProfile, GetWorldTotalMin(),
-                         pSoldier->sSectorX, pSoldier->sSectorY);
+                         GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   return (TRUE);
 }
@@ -479,8 +479,9 @@ BOOLEAN WillMercRenew(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote) {
       } else  // else tolerance is > 0, only gripe if in same sector
       {
         pHated = FindSoldierByProfileID(bMercID, TRUE);
-        if (pHated && pHated->sSectorX == pSoldier->sSectorX &&
-            pHated->sSectorY == pSoldier->sSectorY && pHated->bSectorZ == pSoldier->bSectorZ) {
+        if (pHated && pHated->sSectorX == GetSolSectorX(pSoldier) &&
+            pHated->sSectorY == GetSolSectorY(pSoldier) &&
+            pHated->bSectorZ == GetSolSectorZ(pSoldier)) {
           fUnhappy = TRUE;
         }
       }
@@ -511,8 +512,9 @@ BOOLEAN WillMercRenew(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote) {
         } else if (gMercProfiles[pSoldier->ubProfile].bLearnToHateCount <=
                    gMercProfiles[pSoldier->ubProfile].bLearnToHateTime / 2) {
           pHated = FindSoldierByProfileID(bMercID, TRUE);
-          if (pHated && pHated->sSectorX == pSoldier->sSectorX &&
-              pHated->sSectorY == pSoldier->sSectorY && pHated->bSectorZ == pSoldier->bSectorZ) {
+          if (pHated && pHated->sSectorX == GetSolSectorX(pSoldier) &&
+              pHated->sSectorY == GetSolSectorY(pSoldier) &&
+              pHated->bSectorZ == GetSolSectorZ(pSoldier)) {
             fUnhappy = TRUE;
             usReasonQuote = QUOTE_LEARNED_TO_HATE_MERC_1_ON_TEAM_WONT_RENEW;
           }
@@ -811,7 +813,7 @@ BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier) {
   // ATE: Don't do this if they are already dead!
   if (!(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
     AddHistoryToPlayersLog(ubHistoryCode, pSoldier->ubProfile, GetWorldTotalMin(),
-                           pSoldier->sSectorX, pSoldier->sSectorY);
+                           GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
   }
 
   // if the merc was a POW, remember it becuase the merc cant show up in AIM or MERC anymore
@@ -900,7 +902,7 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
   // use YES/NO Pop up box, settup for particular screen
   SGPRect pCenteringRect = {0, 0, 640, 480};
 
-  GetShortSectorString(pSoldier->sSectorX, pSoldier->sSectorY, zShortTownIDString,
+  GetShortSectorString(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), zShortTownIDString,
                        ARR_SIZE(zShortTownIDString));
 
   // Set string for generic button
@@ -934,8 +936,8 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
 
   // check if drassen controlled
   else if (StrategicMap[(AIRPORT_X + (MAP_WORLD_X * AIRPORT_Y))].fEnemyControlled == FALSE) {
-    if ((pSoldier->sSectorX == AIRPORT_X) && (pSoldier->sSectorY == AIRPORT_Y) &&
-        (pSoldier->bSectorZ == 0)) {
+    if ((GetSolSectorX(pSoldier) == AIRPORT_X) && (GetSolSectorY(pSoldier) == AIRPORT_Y) &&
+        (GetSolSectorZ(pSoldier) == 0)) {
       if (gMercProfiles[pSoldier->ubProfile].bSex == MALE) {
         swprintf(sString, ARR_SIZE(sString), L"%s %s", pSoldier->name, pMercHeLeaveString[3]);
       } else {
@@ -955,8 +957,9 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
       }
     }
   } else {
-    if ((pSoldier->sSectorX == OMERTA_LEAVE_EQUIP_SECTOR_X) &&
-        (pSoldier->sSectorY == OMERTA_LEAVE_EQUIP_SECTOR_Y) && (pSoldier->bSectorZ == 0)) {
+    if ((GetSolSectorX(pSoldier) == OMERTA_LEAVE_EQUIP_SECTOR_X) &&
+        (GetSolSectorY(pSoldier) == OMERTA_LEAVE_EQUIP_SECTOR_Y) &&
+        (GetSolSectorZ(pSoldier) == 0)) {
       if (gMercProfiles[pSoldier->ubProfile].bSex == MALE) {
         swprintf(sString, ARR_SIZE(sString), L"%s %s", pSoldier->name, pMercHeLeaveString[2]);
       } else {
@@ -1061,9 +1064,9 @@ BOOLEAN HandleFiredDeadMerc(struct SOLDIERTYPE *pSoldier) {
 
 #if 0
 	//if the dead merc is in the current sector
-	if( pSoldier->sSectorX == gWorldSectorX &&
-			pSoldier->sSectorY == gWorldSectorY &&
-			pSoldier->bSectorZ == gbWorldSectorZ )
+	if( GetSolSectorX(pSoldier) == gWorldSectorX &&
+			GetSolSectorY(pSoldier) == gWorldSectorY &&
+			GetSolSectorZ(pSoldier) == gbWorldSectorZ )
 	{
 		TurnSoldierIntoCorpse( pSoldier, FALSE, FALSE );
 	}
@@ -1092,7 +1095,7 @@ BOOLEAN HandleFiredDeadMerc(struct SOLDIERTYPE *pSoldier) {
 		Corpse.ubType	= (UINT8)gubAnimSurfaceCorpseID[ pSoldier->ubBodyType][ pSoldier->usAnimState ];
 
 		//Add the rotting corpse info to the sectors unloaded rotting corpse file
-		AddRottingCorpseToUnloadedSectorsRottingCorpseFile( pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ, &Corpse);
+		AddRottingCorpseToUnloadedSectorsRottingCorpseFile( GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier), &Corpse);
 	}
 #endif
 

@@ -2009,10 +2009,10 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
       mprintf(sFontX, sFontY, L"%s", pSoldier->name);
 
       // What sector are we in, ( and is it the same as ours? )
-      if (pSoldier->sSectorX != gWorldSectorX || pSoldier->sSectorY != gWorldSectorY ||
-          pSoldier->bSectorZ != gbWorldSectorZ || pSoldier->fBetweenSectors) {
-        GetSectorIDString(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ, zTownIDString,
-                          ARR_SIZE(zTownIDString), FALSE);
+      if (GetSolSectorX(pSoldier) != gWorldSectorX || GetSolSectorY(pSoldier) != gWorldSectorY ||
+          GetSolSectorZ(pSoldier) != gbWorldSectorZ || pSoldier->fBetweenSectors) {
+        GetSectorIDString(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier),
+                          zTownIDString, ARR_SIZE(zTownIDString), FALSE);
 
         ReduceStringLength(zTownIDString, ARR_SIZE(zTownIDString), 64, BLOCKFONT2);
 

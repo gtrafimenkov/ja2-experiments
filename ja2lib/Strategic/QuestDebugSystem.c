@@ -3572,7 +3572,7 @@ void GetDebugLocationString(UINT16 usProfileID, STR16 pzText, size_t bufSize) {
 
   // the soldier is in this sector
   else if (pSoldier != NULL) {
-    GetShortSectorString(pSoldier->sSectorX, pSoldier->sSectorY, pzText, bufSize);
+    GetShortSectorString(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), pzText, bufSize);
   }
 
   // else the soldier is in a different map

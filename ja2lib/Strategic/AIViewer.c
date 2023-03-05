@@ -638,8 +638,8 @@ void RenderInfoInSector() {
     struct SOLDIERTYPE *pSoldier;
 
     pSoldier = MercPtrs[i];
-    if (pSoldier->bActive && pSoldier->sSectorX == ubSectorX && pSoldier->sSectorY == ubSectorY &&
-        pSoldier->bSectorZ == gbViewLevel) {
+    if (pSoldier->bActive && GetSolSectorX(pSoldier) == ubSectorX &&
+        GetSolSectorY(pSoldier) == ubSectorY && GetSolSectorZ(pSoldier) == gbViewLevel) {
       if (pSoldier->bLife) {
         ubMercs++;
         if (pSoldier->bLife >= OKLIFE) {

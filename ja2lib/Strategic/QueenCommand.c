@@ -660,8 +660,8 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
           !gubFact[FACT_IGGY_AVAILABLE_TO_ARMY]) {  // Iggy is on our team!
         break;
       }
-      if (!pSoldier->bSectorZ) {
-        pSector = &SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)];
+      if (!GetSolSectorZ(pSoldier)) {
+        pSector = &SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))];
         if (pSector->ubNumElites) {
           pSector->ubNumElites--;
         }
@@ -670,8 +670,9 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
         }
       } else {
         UNDERGROUND_SECTORINFO *pUnderground;
-        pUnderground = FindUnderGroundSector((UINT8)pSoldier->sSectorX, (UINT8)pSoldier->sSectorY,
-                                             (UINT8)pSoldier->bSectorZ);
+        pUnderground =
+            FindUnderGroundSector((UINT8)GetSolSectorX(pSoldier), (UINT8)GetSolSectorY(pSoldier),
+                                  (UINT8)GetSolSectorZ(pSoldier));
         Assert(pUnderground);
         if (pUnderground->ubNumElites) {
           pUnderground->ubNumElites--;
@@ -818,7 +819,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
 #endif
 
       if (!IsAutoResolveActive()) {
-        pSector = &SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)];
+        pSector = &SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))];
       } else {
         pSector = &SectorInfo[GetAutoResolveSectorID()];
       }
@@ -917,7 +918,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
 
           break;
       }
-      RecalculateSectorWeight((UINT8)SECTOR(pSoldier->sSectorX, pSoldier->sSectorY));
+      RecalculateSectorWeight((UINT8)SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)));
     } else {  // basement level (UNDERGROUND_SECTORINFO)
       UNDERGROUND_SECTORINFO *pSector =
           FindUnderGroundSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ);
@@ -1027,9 +1028,9 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
       }
     }
   }
-  if (!pSoldier->bSectorZ) {
-    pSector = &SectorInfo[SECTOR(pSoldier->sSectorX, pSoldier->sSectorY)];
-    iNumEnemiesInSector = NumEnemiesInSector(pSoldier->sSectorX, pSoldier->sSectorY);
+  if (!GetSolSectorZ(pSoldier)) {
+    pSector = &SectorInfo[SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))];
+    iNumEnemiesInSector = NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     if (iNumEnemiesInSector) {
       if (pSector->bLastKnownEnemies >= 0) {
         pSector->bLastKnownEnemies = (INT8)iNumEnemiesInSector;
@@ -1489,8 +1490,8 @@ void EnemyCapturesPlayerSoldier(struct SOLDIERTYPE *pSoldier) {
     InternalEndQuest(QUEST_HELD_IN_ALMA, gWorldSectorX, gWorldSectorY, FALSE);
   }
 
-  HandleMoraleEvent(pSoldier, MORALE_MERC_CAPTURED, pSoldier->sSectorX, pSoldier->sSectorY,
-                    pSoldier->bSectorZ);
+  HandleMoraleEvent(pSoldier, MORALE_MERC_CAPTURED, GetSolSectorX(pSoldier),
+                    GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
 
   // Change to POW....
   //-add him to a POW assignment/group

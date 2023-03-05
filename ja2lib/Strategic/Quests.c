@@ -6,6 +6,7 @@
 #include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/GameClock.h"
@@ -423,8 +424,8 @@ BOOLEAN CheckNPCSector(UINT8 ubProfileID, INT16 sSectorX, INT16 sSectorY, INT8 b
   pSoldier = FindSoldierByProfileID(ubProfileID, TRUE);
 
   if (pSoldier) {
-    if (pSoldier->sSectorX == sSectorX && pSoldier->sSectorY == sSectorY &&
-        pSoldier->bSectorZ == bSectorZ) {
+    if (GetSolSectorX(pSoldier) == sSectorX && GetSolSectorY(pSoldier) == sSectorY &&
+        GetSolSectorZ(pSoldier) == bSectorZ) {
       return (TRUE);
     }
   } else if (gMercProfiles[ubProfileID].sSectorX == sSectorX &&

@@ -915,7 +915,7 @@ UINT16 RunAway( struct SOLDIERTYPE * pSoldier )
         INT32	iRunX, iRunY, iRunGridNo;
         struct SOLDIERTYPE * pOpponent;
 
-        iSector = pSoldier->sSectorX + pSoldier->sSectorY * MAP_WORLD_X;
+        iSector = GetSolSectorX(pSoldier) + pSoldier->sSectorY * MAP_WORLD_X;
 
         // first start by scanning through opposing mercs and find out what directions are blocked.
         for (ubLoop = 0,pOpponent = Menptr; ubLoop < MAXMERCS; ubLoop++,pOpponent++)
@@ -942,8 +942,8 @@ FALSE;
                 if (bOkayDir[ubLoop])
                 {
                         // figure out sector # in that direction
-                        iNewSectorX = pSoldier->sSectorX + DirXIncrementer[ubLoop];
-                        iNewSectorY = pSoldier->sSectorY + DirYIncrementer[ubLoop];
+                        iNewSectorX = GetSolSectorX(pSoldier) + DirXIncrementer[ubLoop];
+                        iNewSectorY = GetSolSectorY(pSoldier) + DirYIncrementer[ubLoop];
                         iNewSector = iSectorX + iSectorY * MAP_WORLD_X;
                         // check movement
                         if (TravelBetweenSectorsIsBlockedFromFoot( (UINT16) iSector, (UINT16)

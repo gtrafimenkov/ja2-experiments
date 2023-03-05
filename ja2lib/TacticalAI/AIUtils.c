@@ -1391,9 +1391,9 @@ INT16 DistanceToClosestFriend(struct SOLDIERTYPE *pSoldier) {
       }
     } else {
       // compare sector #s
-      if ((pSoldier->sSectorX != pTargetSoldier->sSectorX) ||
-          (pSoldier->sSectorY != pTargetSoldier->sSectorY) ||
-          (pSoldier->bSectorZ != pTargetSoldier->bSectorZ)) {
+      if ((GetSolSectorX(pSoldier) != pTargetSoldier->sSectorX) ||
+          (GetSolSectorY(pSoldier) != pTargetSoldier->sSectorY) ||
+          (GetSolSectorZ(pSoldier) != pTargetSoldier->bSectorZ)) {
         continue;
       } else if (pTargetSoldier->bLife < OKLIFE) {
         continue;

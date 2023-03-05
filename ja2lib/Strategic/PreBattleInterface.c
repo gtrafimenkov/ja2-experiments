@@ -1685,7 +1685,8 @@ BOOLEAN PlayerMercInvolvedInThisCombat(struct SOLDIERTYPE *pSoldier) {
       // Robot is involved if it has a valid controller with it, uninvolved otherwise
       (!AM_A_ROBOT(pSoldier) || (pSoldier->ubRobotRemoteHolderID != NOBODY)) &&
       !SoldierAboardAirborneHeli(pSoldier)) {
-    if (CurrentBattleSectorIs(pSoldier->sSectorX, pSoldier->sSectorY, pSoldier->bSectorZ)) {
+    if (CurrentBattleSectorIs(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
+                              GetSolSectorZ(pSoldier))) {
       // involved
       return (TRUE);
     }

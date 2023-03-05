@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "SGP/Debug.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
@@ -31,9 +32,9 @@
 #define PHOBIC_LIMIT -20
 
 // macros
-#define SOLDIER_IN_SECTOR(pSoldier, sX, sY, bZ)                                              \
-  (!pSoldier->fBetweenSectors && (pSoldier->sSectorX == sX) && (pSoldier->sSectorY == sY) && \
-   (pSoldier->bSectorZ == bZ))
+#define SOLDIER_IN_SECTOR(pSoldier, sX, sY, bZ)                     \
+  (!pSoldier->fBetweenSectors && (GetSolSectorX(pSoldier) == sX) && \
+   (GetSolSectorY(pSoldier) == sY) && (GetSolSectorZ(pSoldier) == bZ))
 
 MoraleEvent gbMoraleEvent[NUM_MORALE_EVENTS] = {
     // TACTICAL = Short Term Effect, STRATEGIC = Long Term Effect
@@ -153,8 +154,8 @@ void DecayTacticalMoraleModifiers(void) {
           if (pSoldier->bSectorZ > 0) {
             // underground, no recovery... in fact, if tact morale is high, decay
             if (pSoldier->bTacticalMoraleMod > PHOBIC_LIMIT) {
-              HandleMoraleEvent(pSoldier, MORALE_CLAUSTROPHOBE_UNDERGROUND, pSoldier->sSectorX,
-                                pSoldier->sSectorY, pSoldier->bSectorZ);
+              HandleMoraleEvent(pSoldier, MORALE_CLAUSTROPHOBE_UNDERGROUND, GetSolSectorX(pSoldier),
+                                GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
             }
             continue;
           }
@@ -179,9 +180,9 @@ void DecayTacticalMoraleModifiers(void) {
               for (ubLoop2 = gTacticalStatus.Team[gbPlayerNum].bFirstID;
                    ubLoop2 <= gTacticalStatus.Team[gbPlayerNum].bLastID; ubLoop2++) {
                 if (MercPtrs[ubLoop2] != pSoldier && MercPtrs[ubLoop2]->bActive &&
-                    MercPtrs[ubLoop2]->sSectorX == pSoldier->sSectorX &&
-                    MercPtrs[ubLoop2]->sSectorY == pSoldier->sSectorY &&
-                    MercPtrs[ubLoop2]->bSectorZ == pSoldier->bSectorZ) {
+                    MercPtrs[ubLoop2]->sSectorX == GetSolSectorX(pSoldier) &&
+                    MercPtrs[ubLoop2]->sSectorY == GetSolSectorY(pSoldier) &&
+                    MercPtrs[ubLoop2]->bSectorZ == GetSolSectorZ(pSoldier)) {
                   // found someone!
                   fHandleNervous = FALSE;
                   break;
@@ -200,8 +201,8 @@ void DecayTacticalMoraleModifiers(void) {
                 TacticalCharacterDialogue(pSoldier, QUOTE_PERSONALITY_TRAIT);
                 pSoldier->usQuoteSaidFlags |= SOLDIER_QUOTE_SAID_PERSONALITY;
               }
-              HandleMoraleEvent(pSoldier, MORALE_NERVOUS_ALONE, pSoldier->sSectorX,
-                                pSoldier->sSectorY, pSoldier->bSectorZ);
+              HandleMoraleEvent(pSoldier, MORALE_NERVOUS_ALONE, GetSolSectorX(pSoldier),
+                                GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
               continue;
             }
           }
@@ -702,9 +703,9 @@ void HourlyMoraleUpdate(void) {
             }
           } else {
             // check to see if the location is the same
-            if (pOtherSoldier->sSectorX != pSoldier->sSectorX ||
-                pOtherSoldier->sSectorY != pSoldier->sSectorY ||
-                pOtherSoldier->bSectorZ != pSoldier->bSectorZ) {
+            if (pOtherSoldier->sSectorX != GetSolSectorX(pSoldier) ||
+                pOtherSoldier->sSectorY != GetSolSectorY(pSoldier) ||
+                pOtherSoldier->bSectorZ != GetSolSectorZ(pSoldier)) {
               continue;
             }
 
@@ -822,18 +823,18 @@ void DailyMoraleUpdate(struct SOLDIERTYPE *pSoldier) {
   // check death rate vs. merc's tolerance once/day (ignores buddies!)
   if (MercThinksDeathRateTooHigh(pSoldier->ubProfile)) {
     // too high, morale takes a hit
-    HandleMoraleEvent(pSoldier, MORALE_HIGH_DEATHRATE, pSoldier->sSectorX, pSoldier->sSectorY,
-                      pSoldier->bSectorZ);
+    HandleMoraleEvent(pSoldier, MORALE_HIGH_DEATHRATE, GetSolSectorX(pSoldier),
+                      GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
   }
 
   // check his morale vs. his morale tolerance once/day (ignores buddies!)
   if (MercThinksHisMoraleIsTooLow(pSoldier)) {
     // too low, morale sinks further (merc's in a funk and things aren't getting better)
-    HandleMoraleEvent(pSoldier, MORALE_POOR_MORALE, pSoldier->sSectorX, pSoldier->sSectorY,
-                      pSoldier->bSectorZ);
+    HandleMoraleEvent(pSoldier, MORALE_POOR_MORALE, GetSolSectorX(pSoldier),
+                      GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
   } else if (pSoldier->bMorale >= 75) {
     // very high morale, merc is cheerleading others
-    HandleMoraleEvent(pSoldier, MORALE_GREAT_MORALE, pSoldier->sSectorX, pSoldier->sSectorY,
-                      pSoldier->bSectorZ);
+    HandleMoraleEvent(pSoldier, MORALE_GREAT_MORALE, GetSolSectorX(pSoldier),
+                      GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier));
   }
 }

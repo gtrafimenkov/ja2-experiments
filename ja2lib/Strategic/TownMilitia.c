@@ -457,8 +457,8 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
   CHAR16 sStringB[128];
   INT8 bTownId;
 
-  sSectorX = pSoldier->sSectorX;
-  sSectorY = pSoldier->sSectorY;
+  sSectorX = GetSolSectorX(pSoldier);
+  sSectorY = GetSolSectorY(pSoldier);
 
   Assert(GetSectorInfoByIndex(SECTOR(sSectorX, sSectorY))->fMilitiaTrainingPaid == FALSE);
 
@@ -571,8 +571,8 @@ void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue) {
 void MilitiaTrainingRejected(void) {
   if (gfYesNoPromptIsForContinue) {
     // take all mercs in that sector off militia training
-    ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(pMilitiaTrainerSoldier->sSectorX,
-                                                              pMilitiaTrainerSoldier->sSectorY);
+    ResetAssignmentOfMercsThatWereTrainingMilitiaInThisSector(
+        GetSolSectorX(pMilitiaTrainerSoldier), GetSolSectorY(pMilitiaTrainerSoldier));
   } else {
     // take all mercs in unpaid sectors EVERYWHERE off militia training
     ResetAssignmentsForMercsTrainingUnpaidSectorsInSelectedList();
@@ -697,9 +697,9 @@ void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrain
   INT32 iCounter = 0;
 
   // get the sector values
-  sSectorX = pTrainer->sSectorX;
-  sSectorY = pTrainer->sSectorY;
-  bSectorZ = pTrainer->bSectorZ;
+  sSectorX = GetSolSectorX(pTrainer);
+  sSectorY = GetSolSectorY(pTrainer);
+  bSectorZ = GetSolSectorZ(pTrainer);
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     // valid character?
@@ -715,8 +715,8 @@ void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrain
       continue;
     }
 
-    if ((pSoldier->bAssignment == TRAIN_TOWN) && (pSoldier->sSectorX == sSectorX) &&
-        (pSoldier->sSectorY == sSectorY) && (pSoldier->bSectorZ == bSectorZ)) {
+    if ((pSoldier->bAssignment == TRAIN_TOWN) && (GetSolSectorX(pSoldier) == sSectorX) &&
+        (GetSolSectorY(pSoldier) == sSectorY) && (GetSolSectorZ(pSoldier) == bSectorZ)) {
       // done assignment
       AssignmentDone(pSoldier, FALSE, FALSE);
     }
@@ -731,14 +731,14 @@ void AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(struct SOLDI
   struct SOLDIERTYPE *pCurrentSoldier = NULL;
 
   // get the sector value
-  sSector = pSoldier->sSectorX + pSoldier->sSectorY * MAP_WORLD_X;
+  sSector = GetSolSectorX(pSoldier) + GetSolSectorY(pSoldier) * MAP_WORLD_X;
 
   while (giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] != -1) {
     // get the current soldier
     pCurrentSoldier = GetSoldierByID(giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]);
 
     // get the current sector value
-    sCurrentSector = pCurrentSoldier->sSectorX + pCurrentSoldier->sSectorY * MAP_WORLD_X;
+    sCurrentSector = GetSolSectorX(pCurrentSoldier) + GetSolSectorY(pCurrentSoldier) * MAP_WORLD_X;
 
     // is the merc's sector already in the list?
     if (sCurrentSector == sSector) {
@@ -818,11 +818,11 @@ void BuildListOfUnpaidTrainableSectors(void) {
           pSoldier = GetMercFromCharacterList(iCounter);
 
           if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-            if (GetSectorInfoByIndex(SECTOR(pSoldier->sSectorX, pSoldier->sSectorY))
+            if (GetSectorInfoByIndex(SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
                     ->fMilitiaTrainingPaid == FALSE) {
               // check to see if this sector is a town and needs equipment
               gsUnpaidStrategicSector[iCounter] =
-                  CALCULATE_STRATEGIC_INDEX(pSoldier->sSectorX, pSoldier->sSectorY);
+                  CALCULATE_STRATEGIC_INDEX(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
             }
           }
         }
@@ -834,11 +834,11 @@ void BuildListOfUnpaidTrainableSectors(void) {
     iCounter = 0;
 
     if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-      if (GetSectorInfoByIndex(SECTOR(pSoldier->sSectorX, pSoldier->sSectorY))
+      if (GetSectorInfoByIndex(SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
               ->fMilitiaTrainingPaid == FALSE) {
         // check to see if this sector is a town and needs equipment
         gsUnpaidStrategicSector[iCounter] =
-            CALCULATE_STRATEGIC_INDEX(pSoldier->sSectorX, pSoldier->sSectorY);
+            CALCULATE_STRATEGIC_INDEX(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
       }
     }
   }
@@ -923,8 +923,8 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(UINT8 ubSector) {
 
     if (pSoldier->bActive) {
       if (pSoldier->bAssignment == TRAIN_TOWN) {
-        if ((SECTOR(pSoldier->sSectorX, pSoldier->sSectorY) == ubSector) &&
-            (pSoldier->bSectorZ == 0)) {
+        if ((SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)) == ubSector) &&
+            (GetSolSectorZ(pSoldier) == 0)) {
           pSoldier->fDoneAssignmentAndNothingToDoFlag = FALSE;
           pSoldier->usQuoteSaidExtFlags &= ~SOLDIER_QUOTE_SAID_DONE_ASSIGNMENT;
         }

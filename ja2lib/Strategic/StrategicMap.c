@@ -23,6 +23,7 @@
 #include "SGP/Video.h"
 #include "SaveLoadGame.h"
 #include "ScreenIDs.h"
+#include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Strategic/AutoResolve.h"
 #include "Strategic/CampaignTypes.h"
@@ -1431,8 +1432,8 @@ void UpdateMercsInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
           }
         }
 
-        if (pSoldier->sSectorX == sSectorX && pSoldier->sSectorY == sSectorY &&
-            pSoldier->bSectorZ == bSectorZ && !pSoldier->fBetweenSectors) {
+        if (GetSolSectorX(pSoldier) == sSectorX && GetSolSectorY(pSoldier) == sSectorY &&
+            GetSolSectorZ(pSoldier) == bSectorZ && !pSoldier->fBetweenSectors) {
           gbMercIsNewInThisSector[pSoldier->ubID] = 1;
 
           UpdateMercInSector(pSoldier, sSectorX, sSectorY, bSectorZ);
@@ -2245,8 +2246,8 @@ void HandleSoldierLeavingSectorByThemSelf(struct SOLDIERTYPE *pSoldier) {
 
   if (pSoldier->ubGroupID == 0) {
     // create independant group
-    ubGroupId = CreateNewPlayerGroupDepartingFromSector((UINT8)pSoldier->sSectorX,
-                                                        (UINT8)pSoldier->sSectorY);
+    ubGroupId = CreateNewPlayerGroupDepartingFromSector((UINT8)GetSolSectorX(pSoldier),
+                                                        (UINT8)GetSolSectorY(pSoldier));
     AddPlayerToGroup(ubGroupId, pSoldier);
   }
 
@@ -2937,8 +2938,8 @@ BOOLEAN CanGoToTacticalInSector(INT16 sX, INT16 sY, UINT8 ubZ) {
     if ((pSoldier->bActive && pSoldier->bLife) && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
         (pSoldier->bAssignment != IN_TRANSIT) && (pSoldier->bAssignment != ASSIGNMENT_POW) &&
         (pSoldier->bAssignment != ASSIGNMENT_DEAD) && !SoldierAboardAirborneHeli(pSoldier)) {
-      if (!pSoldier->fBetweenSectors && pSoldier->sSectorX == sX && pSoldier->sSectorY == sY &&
-          pSoldier->bSectorZ == ubZ) {
+      if (!pSoldier->fBetweenSectors && GetSolSectorX(pSoldier) == sX &&
+          GetSolSectorY(pSoldier) == sY && GetSolSectorZ(pSoldier) == ubZ) {
         return (TRUE);
       }
     }
