@@ -4397,8 +4397,7 @@ void EvolveQueenPriorityPhase(BOOLEAN fForceChange) {
   // controls.
   for (i = 0; i < giGarrisonArraySize; i++) {
     index = gGarrisonGroup[i].ubComposition;
-    if (StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(gGarrisonGroup[i].ubSectorID)]
-            .fEnemyControlled) {
+    if (StrategicMap[SectorID8To16(gGarrisonGroup[i].ubSectorID)].fEnemyControlled) {
       ubOwned[index]++;
     }
     ubTotal[index]++;
@@ -4582,7 +4581,7 @@ void ExecuteStrategicAIAction(UINT16 usActionCode, INT16 sSectorX, INT16 sSector
 
       // Send 4, 8, or 12 troops (based on difficulty) to the location of the first battle.  If
       // nobody is there when they arrive, those troops will get reassigned.
-      ubSectorID = (UINT8)STRATEGIC_INDEX_TO_SECTOR_INFO(sWorldSectorLocationOfFirstBattle);
+      ubSectorID = (UINT8)SectorID16To8(sWorldSectorLocationOfFirstBattle);
       pSector = &SectorInfo[ubSectorID];
       ubNumSoldiers = (UINT8)(gGameOptions.ubDifficultyLevel * 4);
       pGroup = CreateNewEnemyGroupDepartingFromSector(SEC_P3, 0, ubNumSoldiers, 0);

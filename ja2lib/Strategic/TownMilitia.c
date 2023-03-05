@@ -850,7 +850,7 @@ void StartTrainingInAllUnpaidTrainableSectors() {
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     if (gsUnpaidStrategicSector[iCounter] > 0) {
       // convert strategic sector to 0-255 system
-      ubSector = STRATEGIC_INDEX_TO_SECTOR_INFO(gsUnpaidStrategicSector[iCounter]);
+      ubSector = SectorID16To8(gsUnpaidStrategicSector[iCounter]);
       PayForTrainingInSector(ubSector);
     }
   }

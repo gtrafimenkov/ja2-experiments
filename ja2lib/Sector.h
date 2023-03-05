@@ -32,9 +32,8 @@ u8 SectorID16_X(SectorID16 sectorID);
 // Get Y [1-16] from SectorID16
 u8 SectorID16_Y(SectorID16 sectorID);
 
-// macros to convert between the 2 different sector numbering systems
-#define SECTOR_INFO_TO_STRATEGIC_INDEX(i) (GetSectorID16(SectorID8_X(i), SectorID8_Y(i)))
-#define STRATEGIC_INDEX_TO_SECTOR_INFO(i) (GetSectorID8(SectorID16_X(i), SectorID16_Y(i)))
+SectorID16 SectorID8To16(SectorID8 sectorID);
+SectorID8 SectorID16To8(SectorID16 sectorID);
 
 struct SectorInfo;
 

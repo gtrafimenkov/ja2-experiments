@@ -780,7 +780,7 @@ void BtnBobbyRAcceptOrderCallback(GUI_BUTTON *btn, INT32 reason) {
 
         // if the city is Drassen, and the airport sector is player controlled
         if (gbSelectedCity == BR_DRASSEN &&
-            !StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_B13)].fEnemyControlled) {
+            !StrategicMap[SectorID8To16(SEC_B13)].fEnemyControlled) {
           // Quick hack to bypass the confirmation box
           ConfirmBobbyRPurchaseMessageBoxCallBack(MSG_BOX_RETURN_YES);
         } else {

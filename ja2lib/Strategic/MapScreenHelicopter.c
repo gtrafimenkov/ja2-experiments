@@ -1562,7 +1562,7 @@ TRUE )
 
         // get the condition of that SAM site (NOTE: SAM #s are 1-4, but indexes are 0-3!!!)
         Assert( ubSamNumber <= NUMBER_OF_SAMS );
-        bSAMCondition = StrategicMap[ SECTOR_INFO_TO_STRATEGIC_INDEX( pSamList[ ubSamNumber - 1 ] )
+        bSAMCondition = StrategicMap[ SectorID8To16( pSamList[ ubSamNumber - 1 ] )
 ].bSAMCondition;
 
         // if it's too busted to work, then it can't stop an air raid
@@ -1617,8 +1617,7 @@ BOOLEAN HandleSAMSiteAttackOfHelicopterInSector(INT16 sSectorX, INT16 sSectorY) 
 
   // get the condition of that SAM site (NOTE: SAM #s are 1-4, but indexes are 0-3!!!)
   Assert(ubSamNumber <= NUMBER_OF_SAMS);
-  bSAMCondition =
-      StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(pSamList[ubSamNumber - 1])].bSAMCondition;
+  bSAMCondition = StrategicMap[SectorID8To16(pSamList[ubSamNumber - 1])].bSAMCondition;
 
   // if the SAM site is too damaged to be a threat
   if (bSAMCondition < MIN_CONDITION_FOR_SAM_SITE_TO_WORK) {

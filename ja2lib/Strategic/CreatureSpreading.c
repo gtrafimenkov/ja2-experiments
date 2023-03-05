@@ -300,26 +300,26 @@ void InitCreatureQuest() {
 
   if (gMineStatus[DRASSEN_MINE].fAttackedHeadMiner ||
       gMineStatus[DRASSEN_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_D13)]
+      StrategicMap[SectorID8To16(SEC_D13)]
           .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
                                 // controlled
     fMineInfectible[0] = FALSE;
   }
   if (gMineStatus[CAMBRIA_MINE].fAttackedHeadMiner ||
       gMineStatus[CAMBRIA_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_H8)]
+      StrategicMap[SectorID8To16(SEC_H8)]
           .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
                                 // controlled
     fMineInfectible[1] = FALSE;
   }
   if (gMineStatus[ALMA_MINE].fAttackedHeadMiner || gMineStatus[ALMA_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_I14)]
+      StrategicMap[SectorID8To16(SEC_I14)]
           .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
                                 // controlled
     fMineInfectible[2] = FALSE;
   }
   if (gMineStatus[GRUMM_MINE].fAttackedHeadMiner || gMineStatus[GRUMM_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_H3)]
+      StrategicMap[SectorID8To16(SEC_H3)]
           .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
                                 // controlled
     fMineInfectible[3] = FALSE;
@@ -1273,16 +1273,16 @@ void CheckConditionsForTriggeringCreatureQuest(INT16 sSectorX, INT16 sSectorY, I
   if (giLairID) return;              // Creature quest already begun
 
   // Count the number of "infectible mines" the player occupies
-  if (!StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_D13)].fEnemyControlled) {
+  if (!StrategicMap[SectorID8To16(SEC_D13)].fEnemyControlled) {
     ubValidMines++;
   }
-  if (!StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_H8)].fEnemyControlled) {
+  if (!StrategicMap[SectorID8To16(SEC_H8)].fEnemyControlled) {
     ubValidMines++;
   }
-  if (!StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_I14)].fEnemyControlled) {
+  if (!StrategicMap[SectorID8To16(SEC_I14)].fEnemyControlled) {
     ubValidMines++;
   }
-  if (!StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(SEC_H3)].fEnemyControlled) {
+  if (!StrategicMap[SectorID8To16(SEC_H3)].fEnemyControlled) {
     ubValidMines++;
   }
 

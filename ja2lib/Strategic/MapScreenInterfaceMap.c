@@ -4660,8 +4660,8 @@ void RenderIconsPerSectorForSelectedTown(void) {
                                      ((iCounter / MILITIA_BOX_ROWS) * MILITIA_BOX_BOX_HEIGHT)),
                              MILITIA_BOX_BOX_WIDTH, 0, sString, FONT10ARIAL, &sX, &sY);
 
-    if (StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(sCurrentSectorValue)].bNameId != BLANK_SECTOR &&
-        !StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(sCurrentSectorValue)].fEnemyControlled) {
+    if (StrategicMap[SectorID8To16(sCurrentSectorValue)].bNameId != BLANK_SECTOR &&
+        !StrategicMap[SectorID8To16(sCurrentSectorValue)].fEnemyControlled) {
       if (sSectorMilitiaMapSector != iCounter) {
         mprintf(sX, (INT16)(sY + MILITIA_BOX_BOX_HEIGHT - 5), sString);
       } else {
@@ -5059,21 +5059,18 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
                                 (INT16)((*townSectors)[iCounter].sectorID / MAP_WORLD_X), 0)) {
         iCount = 0;
         iNumberThatCanFitInSector = MAX_ALLOWABLE_MILITIA_PER_SECTOR;
-        iNumberThatCanFitInSector -=
-            SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
-                .ubNumberOfCivsAtLevel[GREEN_MILITIA];
-        iNumberThatCanFitInSector -=
-            SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
-                .ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-        iNumberThatCanFitInSector -=
-            SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
-                .ubNumberOfCivsAtLevel[ELITE_MILITIA];
+        iNumberThatCanFitInSector -= SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
+                                         .ubNumberOfCivsAtLevel[GREEN_MILITIA];
+        iNumberThatCanFitInSector -= SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
+                                         .ubNumberOfCivsAtLevel[REGULAR_MILITIA];
+        iNumberThatCanFitInSector -= SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
+                                         .ubNumberOfCivsAtLevel[ELITE_MILITIA];
 
         while ((iCount < iNumberThatCanFitInSector) &&
                ((sGreensOnCursor) || (sRegularsOnCursor) || (sElitesOnCursor))) {
           // green
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sGreensOnCursor)) {
-            SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
+            SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
                 .ubNumberOfCivsAtLevel[GREEN_MILITIA]++;
             iCount++;
             sGreensOnCursor--;
@@ -5081,7 +5078,7 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
 
           // regular
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sRegularsOnCursor)) {
-            SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
+            SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
                 .ubNumberOfCivsAtLevel[REGULAR_MILITIA]++;
             iCount++;
             sRegularsOnCursor--;
@@ -5089,14 +5086,14 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
 
           // elite
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sElitesOnCursor)) {
-            SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
+            SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
                 .ubNumberOfCivsAtLevel[ELITE_MILITIA]++;
             iCount++;
             sElitesOnCursor--;
           }
         }
 
-        if (STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID) ==
+        if (SectorID16To8((*townSectors)[iCounter].sectorID) ==
             GetSectorID8(gWorldSectorX, gWorldSectorY)) {
           gfStrategicMilitiaChangesMade = TRUE;
         }
@@ -5116,12 +5113,12 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
       }
 
       if (fLastOne) {
-        SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
+        SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
             .ubNumberOfCivsAtLevel[GREEN_MILITIA] += (UINT8)(sGreensOnCursor % iNumberUnderControl);
-        SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
+        SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
             .ubNumberOfCivsAtLevel[REGULAR_MILITIA] +=
             (UINT8)(sRegularsOnCursor % iNumberUnderControl);
-        SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
+        SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
             .ubNumberOfCivsAtLevel[ELITE_MILITIA] += (UINT8)(sElitesOnCursor % iNumberUnderControl);
       }
     }
@@ -5356,9 +5353,8 @@ void RenderShadingForUnControlledSectors(void) {
     sCurrentSectorValue =
         sBaseSectorValue + ((iCounter % MILITIA_BOX_ROWS) + (iCounter / MILITIA_BOX_ROWS) * (16));
 
-    if ((StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(sCurrentSectorValue)].bNameId !=
-         BLANK_SECTOR) &&
-        ((StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(sCurrentSectorValue)].fEnemyControlled) ||
+    if ((StrategicMap[SectorID8To16(sCurrentSectorValue)].bNameId != BLANK_SECTOR) &&
+        ((StrategicMap[SectorID8To16(sCurrentSectorValue)].fEnemyControlled) ||
          (NumHostilesInSector((INT16)SectorID8_X(sCurrentSectorValue),
                               (INT16)SectorID8_Y(sCurrentSectorValue), 0)))) {
       // shade this sector, not under our control
@@ -5395,15 +5391,12 @@ void DrawTownMilitiaForcesOnMap(void) {
       sSectorY = SectorID16_Y((*townSectors)[iCounter].sectorID);
 
       // get number of each
-      iNumberOfGreens =
-          SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
-              .ubNumberOfCivsAtLevel[GREEN_MILITIA];
-      iNumberOfRegulars =
-          SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
-              .ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-      iNumberOfElites =
-          SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
-              .ubNumberOfCivsAtLevel[ELITE_MILITIA];
+      iNumberOfGreens = SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
+                            .ubNumberOfCivsAtLevel[GREEN_MILITIA];
+      iNumberOfRegulars = SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
+                              .ubNumberOfCivsAtLevel[REGULAR_MILITIA];
+      iNumberOfElites = SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
+                            .ubNumberOfCivsAtLevel[ELITE_MILITIA];
 
       // set the total for loop upper bound
       iTotalNumberOfTroops = iNumberOfGreens + iNumberOfRegulars + iNumberOfElites;

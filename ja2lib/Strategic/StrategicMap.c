@@ -562,7 +562,7 @@ UINT8 GetMilitiaCountAtLevelAnywhereInTown(UINT8 ubTownValue, UINT8 ubLevelValue
   while ((*townSectors)[iCounter].townID != 0) {
     if (StrategicMap[(*townSectors)[iCounter].sectorID].bNameId == ubTownValue) {
       // match.  Add the number of civs at this level
-      ubCount += SectorInfo[STRATEGIC_INDEX_TO_SECTOR_INFO((*townSectors)[iCounter].sectorID)]
+      ubCount += SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
                      .ubNumberOfCivsAtLevel[ubLevelValue];
     }
 
@@ -2956,8 +2956,7 @@ INT32 GetNumberOfSAMSitesUnderPlayerControl(void) {
 
   // if the sam site is under player control, up the number
   for (iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++) {
-    if (StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(pSamList[iCounter])].fEnemyControlled ==
-        FALSE) {
+    if (StrategicMap[SectorID8To16(pSamList[iCounter])].fEnemyControlled == FALSE) {
       iNumber++;
     }
   }
@@ -2992,8 +2991,7 @@ void UpdateAirspaceControl(void) {
       ubControllingSAM = ubSAMControlledSectors[iCounterB][iCounterA];
 
       if ((ubControllingSAM >= 1) && (ubControllingSAM <= NUMBER_OF_SAMS)) {
-        pSAMStrategicMap =
-            &(StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(pSamList[ubControllingSAM - 1])]);
+        pSAMStrategicMap = &(StrategicMap[SectorID8To16(pSamList[ubControllingSAM - 1])]);
 
         // if the enemies own the controlling SAM site, and it's in working condition
         if ((pSAMStrategicMap->fEnemyControlled) &&

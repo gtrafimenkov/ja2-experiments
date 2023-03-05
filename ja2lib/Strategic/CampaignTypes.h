@@ -7,7 +7,7 @@
 // Sector enumerations
 //
 // NOTE: These use the 0-255 SectorInfo[] numbering system, and CAN'T be used as indexes into the
-// StrategicMap[] array Use SECTOR_INFO_TO_STRATEGIC_INDEX() macro to convert...
+// StrategicMap[] array Use SectorID8To16() macro to convert...
 enum {
   SEC_A1,
   SEC_A2,

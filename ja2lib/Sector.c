@@ -17,6 +17,13 @@ u8 SectorID8_Y(SectorID8 sectorID) { return (sectorID / 16) + 1; }
 u8 SectorID16_X(SectorID16 sectorID) { return sectorID % MAP_WORLD_X; };
 u8 SectorID16_Y(SectorID16 sectorID) { return sectorID / MAP_WORLD_X; };
 
+SectorID16 SectorID8To16(SectorID8 sectorID) {
+  return GetSectorID16(SectorID8_X(sectorID), SectorID8_Y(sectorID));
+}
+SectorID8 SectorID16To8(SectorID16 sectorID) {
+  return GetSectorID8(SectorID16_X(sectorID), SectorID16_Y(sectorID));
+}
+
 struct SectorInfo* GetSectorInfoByIndex(SectorID8 sectorIndex) { return &SectorInfo[sectorIndex]; }
 
 BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
