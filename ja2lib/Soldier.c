@@ -23,6 +23,9 @@ bool IsSolActive(const struct SOLDIERTYPE *s) { return s->bActive; }
 bool IsSolAlive(const struct SOLDIERTYPE *s) { return s->bLife > 0; }
 bool IsSolInSector(const struct SOLDIERTYPE *s) { return s->bInSector; }
 
+u8 GetSolMilitiaKills(const struct SOLDIERTYPE *s) { return s->ubMilitiaKills; }
+void SetSolMilitiaKills(struct SOLDIERTYPE *s, u8 kills) { s->ubMilitiaKills = kills; };
+
 void SetSolAssignmentDone(struct SOLDIERTYPE *s) {
   s->fDoneAssignmentAndNothingToDoFlag = FALSE;
   s->usQuoteSaidExtFlags &= ~SOLDIER_QUOTE_SAID_DONE_ASSIGNMENT;

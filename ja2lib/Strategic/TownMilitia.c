@@ -1025,9 +1025,10 @@ void HandleMilitiaPromotions(INT16 sMapX, INT16 sMapY) {
 
   for (int i = 0; i < mil.num; i++) {
     struct SOLDIERTYPE *sol = mil.soldiers[i];
-    if (IsSolInSector(sol) && IsSolAlive(sol) && sol->ubMilitiaKills > 0) {
-      HandleSingleMilitiaPromotion(sMapX, sMapY, sol->ubSoldierClass, sol->ubMilitiaKills);
-      sol->ubMilitiaKills = 0;
+    u8 kills = GetSolMilitiaKills(sol);
+    if (IsSolInSector(sol) && IsSolAlive(sol) && kills > 0) {
+      HandleSingleMilitiaPromotion(sMapX, sMapY, sol->ubSoldierClass, kills);
+      SetSolMilitiaKills(sol, 0);
     }
   }
 }

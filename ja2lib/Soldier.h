@@ -24,6 +24,9 @@ bool IsSolActive(const struct SOLDIERTYPE *s);
 bool IsSolAlive(const struct SOLDIERTYPE *s);
 bool IsSolInSector(const struct SOLDIERTYPE *s);
 
+u8 GetSolMilitiaKills(const struct SOLDIERTYPE *s);
+void SetSolMilitiaKills(struct SOLDIERTYPE *s, u8 kills);
+
 void SetSolAssignmentDone(struct SOLDIERTYPE *s);
 
 // feed this a SOLDIER_CLASS_, it will return you a _MITILIA rank, or -1 if the guy's not militia
