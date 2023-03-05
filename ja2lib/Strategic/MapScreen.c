@@ -6,6 +6,7 @@
 #include <time.h>
 #include <wchar.h>
 
+#include "CharList.h"
 #include "Cheats.h"
 #include "FadeScreen.h"
 #include "GameLoop.h"

@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "CharList.h"
 #include "Laptop/Finances.h"
 #include "Militia.h"
 #include "Money.h"

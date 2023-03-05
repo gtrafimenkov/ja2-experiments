@@ -1,5 +1,6 @@
 #include "Tactical/MilitiaControl.h"
 
+#include "Soldier.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/PreBattleInterface.h"
 #include "Strategic/StrategicMap.h"

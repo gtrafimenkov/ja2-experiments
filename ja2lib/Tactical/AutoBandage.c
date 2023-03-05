@@ -1,5 +1,6 @@
 #include "Tactical/AutoBandage.h"
 
+#include "CharList.h"
 #include "MessageBoxScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"

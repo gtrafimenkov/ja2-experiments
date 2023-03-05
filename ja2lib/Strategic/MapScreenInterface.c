@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "CharList.h"
 #include "GameLoop.h"
 #include "GameSettings.h"
 #include "JAScreens.h"

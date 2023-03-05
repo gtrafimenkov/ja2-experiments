@@ -1,6 +1,7 @@
 #include "Tactical/ShopKeeperInterface.h"
 
 #include "BuildDefines.h"
+#include "CharList.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "Laptop/Finances.h"

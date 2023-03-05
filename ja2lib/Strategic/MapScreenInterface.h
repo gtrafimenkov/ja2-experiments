@@ -34,9 +34,6 @@ typedef struct FASTHELPREGION {
 #define CHAR_ICON_HEIGHT 10
 #define CHAR_ICON_SPACING 13
 
-// max number of characters and vehicles
-// Character List Length
-#define MAX_CHARACTER_COUNT 20
 #define MAX_VEHICLE_COUNT 20
 
 // map screen font
