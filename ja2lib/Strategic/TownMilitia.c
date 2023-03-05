@@ -50,7 +50,7 @@ extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
 
 static void addMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
 static void promoteMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank, UINT8 ubHowMany);
-static void HandleMilitiaPromotions();
+static void handlePromotions();
 
 // handle completion of assignment byt his soldier too and inform the player
 static void handleTrainingComplete(struct SOLDIERTYPE *pTrainer);
@@ -625,7 +625,7 @@ void HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap(void) {
   } else if (!IsGoingToAutoresolve()) {
     // Don't promote militia if we are going directly
     // to autoresolve to finish the current battle.
-    HandleMilitiaPromotions();
+    handlePromotions();
   }
 }
 
@@ -1005,13 +1005,8 @@ BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId) {
   }
 }
 
-#include "Soldier.h"
-#include "Strategic/CampaignTypes.h"
-#include "Strategic/PreBattleInterface.h"
 #include "Strategic/StrategicMap.h"
-#include "Strategic/TownMilitia.h"
 #include "Tactical/Overhead.h"
-#include "Tactical/SoldierControl.h"
 #include "Tactical/SoldierInitList.h"
 
 static void RemoveMilitiaFromTactical();
@@ -1043,22 +1038,20 @@ static void RemoveMilitiaFromTactical() {
 }
 
 void PrepareMilitiaForTactical() {
-  SECTORINFO *pSector;
-  //	INT32 i;
   UINT8 ubGreen, ubRegs, ubElites;
   if (gbWorldSectorZ > 0) return;
 
   // Do we have a loaded sector?
   if (gWorldSectorX == 0 && gWorldSectorY == 0) return;
 
-  pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
+  const SECTORINFO *pSector = GetSectorInfoByXY(gWorldSectorX, gWorldSectorY);
   ubGreen = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA];
   ubRegs = pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA];
   ubElites = pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA];
   AddSoldierInitListMilitia(ubGreen, ubRegs, ubElites);
 }
 
-void HandleMilitiaPromotions(void) {
+static void handlePromotions(void) {
   UINT8 cnt;
   UINT8 ubMilitiaRank;
   struct SOLDIERTYPE *pTeamSoldier;
