@@ -15,6 +15,7 @@
 #include "Strategic/StrategicTownLoyalty.h"
 #include "Tactical/DialogueControl.h"
 #include "Tactical/MilitiaControl.h"
+#include "Team.h"
 #include "Town.h"
 #include "UI.h"
 #include "Utils/Text.h"
@@ -165,44 +166,6 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
 
   // handle completion of town by training group
   HandleCompletionOfTownTrainingByGroupWithTrainer(pTrainer);
-}
-
-// feed this a SOLDIER_CLASS_, it will return you a _MITILIA rank, or -1 if the guy's not militia
-INT8 SoldierClassToMilitiaRank(UINT8 ubSoldierClass) {
-  INT8 bRank = -1;
-
-  switch (ubSoldierClass) {
-    case SOLDIER_CLASS_GREEN_MILITIA:
-      bRank = GREEN_MILITIA;
-      break;
-    case SOLDIER_CLASS_REG_MILITIA:
-      bRank = REGULAR_MILITIA;
-      break;
-    case SOLDIER_CLASS_ELITE_MILITIA:
-      bRank = ELITE_MILITIA;
-      break;
-  }
-
-  return (bRank);
-}
-
-// feed this a _MITILIA rank, it will return you a SOLDIER_CLASS_, or -1 if the guy's not militia
-INT8 MilitiaRankToSoldierClass(UINT8 ubRank) {
-  INT8 bSoldierClass = -1;
-
-  switch (ubRank) {
-    case GREEN_MILITIA:
-      bSoldierClass = SOLDIER_CLASS_GREEN_MILITIA;
-      break;
-    case REGULAR_MILITIA:
-      bSoldierClass = SOLDIER_CLASS_REG_MILITIA;
-      break;
-    case ELITE_MILITIA:
-      bSoldierClass = SOLDIER_CLASS_ELITE_MILITIA;
-      break;
-  }
-
-  return (bSoldierClass);
 }
 
 void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {

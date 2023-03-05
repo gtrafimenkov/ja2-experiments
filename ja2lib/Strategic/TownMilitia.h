@@ -22,11 +22,6 @@ struct SOLDIERTYPE;
 // this handles what happens when a new militia unit is finishes getting trained
 void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT16 sMapY);
 
-// feed this a SOLDIER_CLASS_, it will return you a _MITILIA rank, or -1 if the guy's not militia
-INT8 SoldierClassToMilitiaRank(UINT8 ubSoldierClass);
-// feed this a _MITILIA rank, it will return you a SOLDIER_CLASS_, or -1 if the guy's not militia
-INT8 MilitiaRankToSoldierClass(UINT8 ubRank);
-
 // these add, promote, and remove militias of a certain rank
 void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
 void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
