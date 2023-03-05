@@ -23,13 +23,15 @@
 
 #define SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST 50
 
-// temporary local global variables
-UINT8 gubTownSectorServerTownId = BLANK_SECTOR;
-INT16 gsTownSectorServerSkipX = -1;
-INT16 gsTownSectorServerSkipY = -1;
-UINT8 gubTownSectorServerIndex = 0;
-BOOLEAN gfYesNoPromptIsForContinue =
-    FALSE;  // this flag remembers whether we're starting new training, or continuing
+struct sectorSearch {
+  UINT8 townID;
+  INT16 skipX;
+  INT16 skipY;
+  UINT8 townListIndex;
+};
+static struct sectorSearch sectorSearch;
+
+BOOLEAN gfYesNoPromptIsForContinue = FALSE;  // whether we're starting new training, or continuing
 INT32 giTotalCostOfTraining = 0;
 
 // the completed list of sector soldiers for training militia
@@ -47,8 +49,8 @@ void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue);
 void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue);
 void MilitiaTrainingRejected(void);
 
-void InitFriendlyTownSectorServer(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY);
-BOOLEAN ServeNextFriendlySectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY);
+static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY);
+static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY);
 
 void BuildListOfUnpaidTrainableSectors(void);
 INT32 GetNumberOfUnpaidTrainableSectors(void);
@@ -94,10 +96,10 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
       fFoundOne = FALSE;
 
       if (ubTownId != BLANK_SECTOR) {
-        InitFriendlyTownSectorServer(ubTownId, sMapX, sMapY);
+        initNextSectorSearch(ubTownId, sMapX, sMapY);
 
         // check other eligible sectors in this town for room for another militia
-        while (ServeNextFriendlySectorInTown(&sNeighbourX, &sNeighbourY)) {
+        while (getNextSectorInTown(&sNeighbourX, &sNeighbourY)) {
           // is there room for another militia in this neighbouring sector ?
           if (CountAllMilitiaInSector(sNeighbourX, sNeighbourY) <
               MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
@@ -122,10 +124,10 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
           if (ubTownId != BLANK_SECTOR) {
             // dammit! Last chance - try to find other eligible sectors in the same town with a
             // Green guy to be promoted
-            InitFriendlyTownSectorServer(ubTownId, sMapX, sMapY);
+            initNextSectorSearch(ubTownId, sMapX, sMapY);
 
             // check other eligible sectors in this town for room for another militia
-            while (ServeNextFriendlySectorInTown(&sNeighbourX, &sNeighbourY)) {
+            while (getNextSectorInTown(&sNeighbourX, &sNeighbourY)) {
               // are there any GREEN militia men in the neighbouring sector ?
               if (MilitiaInSectorOfRank(sNeighbourX, sNeighbourY, GREEN_MILITIA) > 0) {
                 // great! Promote a GREEN militia guy in the neighbouring sector to a REGULAR
@@ -308,40 +310,38 @@ UINT8 MilitiaInSectorOfRank(INT16 sMapX, INT16 sMapY, UINT8 ubRank) {
   return GetSectorInfoByIndex(SECTOR(sMapX, sMapY))->ubNumberOfCivsAtLevel[ubRank];
 }
 
-void InitFriendlyTownSectorServer(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
-  // reset globals
-  gubTownSectorServerTownId = ubTownId;
-  gsTownSectorServerSkipX = sSkipSectorX;
-  gsTownSectorServerSkipY = sSkipSectorY;
-
-  gubTownSectorServerIndex = 0;
+static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
+  sectorSearch.townID = ubTownId;
+  sectorSearch.skipX = sSkipSectorX;
+  sectorSearch.skipY = sSkipSectorY;
+  sectorSearch.townListIndex = 0;
 }
 
 // this feeds the X,Y of the next town sector on the town list for the town specified at
 // initialization it will skip an entry that matches the skip X/Y value if one was specified at
-// initialization MUST CALL InitFriendlyTownSectorServer() before using!!!
-BOOLEAN ServeNextFriendlySectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
+// initialization MUST CALL initNextSectorSearch() before using!!!
+static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
   INT32 iTownSector;
   INT16 sMapX, sMapY;
   BOOLEAN fStopLooking = FALSE;
 
   do {
     // have we reached the end of the town list?
-    if (pTownNamesList[gubTownSectorServerIndex] == BLANK_SECTOR) {
+    if (pTownNamesList[sectorSearch.townListIndex] == BLANK_SECTOR) {
       // end of list reached
       return (FALSE);
     }
 
-    iTownSector = pTownLocationsList[gubTownSectorServerIndex];
+    iTownSector = pTownLocationsList[sectorSearch.townListIndex];
 
     // if this sector is in the town we're looking for
-    if (GetTownIdForStrategicMapIndex(iTownSector) == gubTownSectorServerTownId) {
+    if (GetTownIdForStrategicMapIndex(iTownSector) == sectorSearch.townID) {
       // A sector in the specified town.  Calculate its X & Y sector compotents
       sMapX = iTownSector % MAP_WORLD_X;
       sMapY = iTownSector / MAP_WORLD_X;
 
       // Make sure we're not supposed to skip it
-      if ((sMapX != gsTownSectorServerSkipX) || (sMapY != gsTownSectorServerSkipY)) {
+      if ((sMapX != sectorSearch.skipX) || (sMapY != sectorSearch.skipY)) {
         // check if it's "friendly" - not enemy controlled, no enemies in it, no combat in progress
         if (SectorOursAndPeaceful(sMapX, sMapY, 0)) {
           // then that's it!
@@ -354,7 +354,7 @@ BOOLEAN ServeNextFriendlySectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
     }
 
     // advance to next entry in town list
-    gubTownSectorServerIndex++;
+    sectorSearch.townListIndex++;
 
   } while (!fStopLooking);
 
