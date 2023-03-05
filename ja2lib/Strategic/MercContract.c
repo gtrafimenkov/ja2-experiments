@@ -1046,7 +1046,7 @@ void MercDepartEquipmentBoxCallBack(UINT8 bExitValue) {
     }
   } else {
     // no
-    if (StrategicMap[BOBBYR_SHIPPING_DEST_SECTOR_X + (BOBBYR_SHIPPING_DEST_SECTOR_Y * MAP_WORLD_X)]
+    if (StrategicMap[GetSectorID16(BOBBYR_SHIPPING_DEST_SECTOR_X, (BOBBYR_SHIPPING_DEST_SECTOR_Y))]
             .fEnemyControlled == FALSE) {
       HandleMercLeavingEquipmentInDrassen(pLeaveSoldier->ubID);
     } else {

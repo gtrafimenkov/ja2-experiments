@@ -1668,7 +1668,7 @@ void UpdateAssignments() {
     for (sY = 0; sY < MAP_WORLD_X; sY++) {
       for (bZ = 0; bZ < 4; bZ++) {
         // is there anyone in this sector?
-        if (fSectorsWithSoldiers[sX + sY * MAP_WORLD_X][bZ] == TRUE) {
+        if (fSectorsWithSoldiers[GetSectorID16(sX, sY)][bZ] == TRUE) {
           // handle any doctors
           HandleDoctorsInSector(sX, sY, bZ);
 
@@ -2404,7 +2404,7 @@ void CheckForAndHandleHospitalPatients(void) {
   struct SOLDIERTYPE *pSoldier, *pTeamSoldier;
   INT32 cnt = 0;
 
-  if (fSectorsWithSoldiers[HOSPITAL_SECTOR_X + HOSPITAL_SECTOR_Y * MAP_WORLD_X][0] == FALSE) {
+  if (fSectorsWithSoldiers[GetSectorID16(HOSPITAL_SECTOR_X, HOSPITAL_SECTOR_Y)][0] == FALSE) {
     // nobody in the hospital sector... leave
     return;
   }
@@ -3122,7 +3122,7 @@ void HandleTrainingInSector(INT16 sMapX, INT16 sMapY, INT8 bZ) {
   }
 
   // check if we're doing a sector where militia can be trained
-  if (((StrategicMap[sMapX + (sMapY * MAP_WORLD_X)].bNameId != BLANK_SECTOR) ||
+  if (((StrategicMap[GetSectorID16(sMapX, (sMapY))].bNameId != BLANK_SECTOR) ||
        (fSamSiteInSector == TRUE)) &&
       (bZ == 0)) {
     // init town trainer list
@@ -8936,7 +8936,7 @@ BOOLEAN PutMercInAwakeState(struct SOLDIERTYPE *pSoldier) {
 }
 
 BOOLEAN IsThereASoldierInThisSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
-  if (fSectorsWithSoldiers[sSectorX + sSectorY * MAP_WORLD_X][bSectorZ] == TRUE) {
+  if (fSectorsWithSoldiers[GetSectorID16(sSectorX, sSectorY)][bSectorZ] == TRUE) {
     return (TRUE);
   }
 

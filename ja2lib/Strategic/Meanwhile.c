@@ -1122,7 +1122,7 @@ void HandleFirstBattleEndingWhileInTown(INT16 sSectorX, INT16 sSectorY, INT16 bS
   // post the first meanwhile OR, on call to trash world, that means player is leaving sector
 
   // grab sector value
-  sSector = sSectorX + sSectorY * MAP_WORLD_X;
+  sSector = GetSectorID16(sSectorX, sSectorY);
 
   // get town name id
   bTownId = StrategicMap[sSector].bNameId;

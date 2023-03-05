@@ -783,7 +783,7 @@ struct path* ClearStrategicPathListAfterThisSector(struct path* pHeadOfPath, INT
   }
 
   // get sector value
-  sSector = sX + (sY * MAP_WORLD_X);
+  sSector = GetSectorID16(sX, (sY));
 
   // go to end of list
   pNode = MoveToEndOfPathList(pNode);
@@ -953,7 +953,7 @@ struct path* RemoveSectorFromStrategicPathList(struct path* pList, INT16 sX, INT
   struct path* pPastNode = pList;
 
   // get sector value
-  sSector = sX + (sY * MAP_WORLD_X);
+  sSector = GetSectorID16(sX, (sY));
 
   // check if there is a valid list
   if (pNode == NULL) {

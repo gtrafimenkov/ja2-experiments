@@ -97,7 +97,7 @@ BOOLEAN SetThisSectorAsPlayerControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BO
   }
 
   if (bMapZ == 0) {
-    usMapSector = sMapX + (sMapY * MAP_WORLD_X);
+    usMapSector = GetSectorID16(sMapX, (sMapY));
 
     /*
                     // if enemies formerly controlled this sector
@@ -253,7 +253,7 @@ BOOLEAN SetThisSectorAsEnemyControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BOO
   }
 
   if (bMapZ == 0) {
-    usMapSector = sMapX + (sMapY * MAP_WORLD_X);
+    usMapSector = GetSectorID16(sMapX, (sMapY));
 
     fWasPlayerControlled = !StrategicMap[usMapSector].fEnemyControlled;
 
@@ -353,7 +353,7 @@ void ClearMapControlledFlags(void) {
 
   for (iCounterA = 1; iCounterA < MAP_WORLD_X - 1; iCounterA++) {
     for (iCounterB = 1; iCounterB < MAP_WORLD_Y - 1; iCounterB++) {
-      usMapSector = iCounterA + (iCounterB * MAP_WORLD_X);
+      usMapSector = GetSectorID16(iCounterA, (iCounterB));
       StrategicMap[usMapSector].fEnemyControlled = FALSE;
       SectorInfo[GetSectorID8(iCounterA, iCounterB)].fPlayer[0] = TRUE;
     }

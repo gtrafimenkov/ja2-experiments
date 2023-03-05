@@ -946,7 +946,7 @@ FALSE;
                         // figure out sector # in that direction
                         iNewSectorX = GetSolSectorX(pSoldier) + DirXIncrementer[ubLoop];
                         iNewSectorY = GetSolSectorY(pSoldier) + DirYIncrementer[ubLoop];
-                        iNewSector = iSectorX + iSectorY * MAP_WORLD_X;
+                        iNewSector = GetSectorID16(iSectorX, iSectorY);
                         // check movement
                         if (TravelBetweenSectorsIsBlockedFromFoot( (UINT16) iSector, (UINT16)
 iNewSector ) || StrategicMap[iSector].fEnemyControlled)

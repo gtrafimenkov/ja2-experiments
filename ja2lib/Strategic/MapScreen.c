@@ -3943,7 +3943,7 @@ UINT32 HandleMapUI() {
 
         // check if last sector in character's path is same as where mouse is
         if (GetLastSectorIdInCharactersPath(GetSoldierByID(
-                gCharactersList[bSelectedDestChar].usSolID)) != (sMapX + (sMapY * MAP_WORLD_X))) {
+                gCharactersList[bSelectedDestChar].usSolID)) != GetSectorID16(sMapX, sMapY)) {
           sX = (GetLastSectorIdInCharactersPath(
                     GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID)) %
                 MAP_WORLD_X);
@@ -7798,7 +7798,7 @@ BOOLEAN CheckIfClickOnLastSectorInPath(INT16 sX, INT16 sY) {
 
   // check if helicopter
   if (fPlotForHelicopter == TRUE) {
-    if (sX + (sY * MAP_WORLD_X) == GetLastSectorOfHelicoptersPath()) {
+    if (GetSectorID16(sX, sY) == GetLastSectorOfHelicoptersPath()) {
       // helicopter route confirmed - take off
       TakeOffHelicopter();
 
@@ -7824,8 +7824,8 @@ BOOLEAN CheckIfClickOnLastSectorInPath(INT16 sX, INT16 sY) {
       return (FALSE);
     }
 
-    if (sX + (sY * MAP_WORLD_X) == GetLastSectorIdInCharactersPath((GetSoldierByID(
-                                       gCharactersList[bSelectedDestChar].usSolID)))) {
+    if (GetSectorID16(sX, sY) == GetLastSectorIdInCharactersPath((
+                                     GetSoldierByID(gCharactersList[bSelectedDestChar].usSolID)))) {
       // clicked on last sector, reset plotting mode
 
       // if he's IN a vehicle or IS a vehicle
@@ -7947,8 +7947,8 @@ void UpdateCursorIfInLastSector(void) {
     if (fShowAircraftFlag == FALSE) {
       if (bSelectedDestChar != -1) {
         // c heck if we are in the last sector of the characters path?
-        if (sMapX + (sMapY * MAP_WORLD_X) == GetLastSectorIdInCharactersPath((GetSoldierByID(
-                                                 gCharactersList[bSelectedDestChar].usSolID)))) {
+        if (GetSectorID16(sMapX, sMapY) == GetLastSectorIdInCharactersPath((GetSoldierByID(
+                                               gCharactersList[bSelectedDestChar].usSolID)))) {
           // set cursor to checkmark
           ChangeMapScreenMaskCursor(CURSOR_CHECKMARK);
         } else if (fCheckCursorWasSet) {
@@ -7959,7 +7959,7 @@ void UpdateCursorIfInLastSector(void) {
     } else {
       // check for helicopter
       if (fPlotForHelicopter) {
-        if (sMapX + (sMapY * MAP_WORLD_X) == GetLastSectorOfHelicoptersPath()) {
+        if (GetSectorID16(sMapX, sMapY) == GetLastSectorOfHelicoptersPath()) {
           // set cursor to checkmark
           ChangeMapScreenMaskCursor(CURSOR_CHECKMARK);
         } else if (fCheckCursorWasSet) {

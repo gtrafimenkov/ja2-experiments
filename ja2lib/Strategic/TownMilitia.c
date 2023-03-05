@@ -697,14 +697,14 @@ void AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(struct SOLDI
   struct SOLDIERTYPE *pCurrentSoldier = NULL;
 
   // get the sector value
-  sSector = GetSolSectorX(pSoldier) + GetSolSectorY(pSoldier) * MAP_WORLD_X;
+  sSector = GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   while (giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] != -1) {
     // get the current soldier
     pCurrentSoldier = GetSoldierByID(giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]);
 
     // get the current sector value
-    sCurrentSector = GetSolSectorX(pCurrentSoldier) + GetSolSectorY(pCurrentSoldier) * MAP_WORLD_X;
+    sCurrentSector = GetSectorID16(GetSolSectorX(pCurrentSoldier), GetSolSectorY(pCurrentSoldier));
 
     // is the merc's sector already in the list?
     if (sCurrentSector == sSector) {

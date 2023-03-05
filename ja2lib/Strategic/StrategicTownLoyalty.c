@@ -516,7 +516,7 @@ void UpdateTownLoyaltyBasedOnBadGuysInTown( TownID bTownId )
                 {
                         // check if sector belongs to this town and is controlled by bad guys
                         if ( ( SectorIsPartOfTown( bTownId, sSectorX, sSectorY ) == TRUE ) && (
-StrategicMap[ sSectorX + sSectorY * MAP_WORLD_X ].fEnemyControlled == TRUE ) )
+StrategicMap[ GetSectorID16(sSectorX, sSectorY) ].fEnemyControlled == TRUE ) )
                         {
                                 // controlled by bad guys..adjust numbers for type
                                 GetNumberOfEnemiesInSector( sSectorX, sSectorY, &ubAdmins, &ubRegs,

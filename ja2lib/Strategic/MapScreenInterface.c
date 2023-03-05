@@ -4550,7 +4550,7 @@ BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(INT16 sSectorX, INT16
   }
 
   // get the strategic sector value
-  sSector = sSectorX + MAP_WORLD_X * sSectorY;
+  sSector = GetSectorID16(sSectorX, sSectorY);
 
   if (StrategicMap[sSector].bNameId == BLANK_SECTOR) {
     return (FALSE);
@@ -4580,7 +4580,7 @@ void NotifyPlayerOfInvasionByEnemyForces(INT16 sSectorX, INT16 sSectorY, INT8 bS
   }
 
   // grab sector value
-  sSector = sSectorX + MAP_WORLD_X * sSectorY;
+  sSector = GetSectorID16(sSectorX, sSectorY);
 
   if (StrategicMap[sSector].fEnemyControlled == TRUE) {
     // enemy controlled any ways, leave

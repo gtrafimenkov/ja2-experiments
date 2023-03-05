@@ -4867,7 +4867,7 @@ void StrategicHandleQueenLosingControlOfSector(INT16 sSectorX, INT16 sSectorY, I
     return;
   }
 
-  if (StrategicMap[sSectorX + sSectorY * MAP_WORLD_X]
+  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)]
           .fEnemyControlled) {  // If the sector doesn't belong to the player, then we shouldn't be
                                 // calling this function!
     SAIReportError(

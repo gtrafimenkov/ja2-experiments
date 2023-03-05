@@ -839,7 +839,7 @@ void CreatureAttackTown(
     }
   } else if (CountAllMilitiaInSector(ubSectorX, ubSectorY)) {  // we have militia in the sector
     gubCreatureBattleCode = CREATURE_BATTLE_CODE_AUTORESOLVE;
-  } else if (!StrategicMap[ubSectorX + MAP_WORLD_X * ubSectorY]
+  } else if (!StrategicMap[GetSectorID16(ubSectorX, ubSectorY)]
                   .fEnemyControlled) {  // player controlled sector -- eat some civilians
     AdjustLoyaltyForCivsEatenByMonsters(ubSectorX, ubSectorY, gubNumCreaturesAttackingTown);
     SectorInfo[ubSectorID].ubDayOfLastCreatureAttack = (UINT8)GetWorldDay();

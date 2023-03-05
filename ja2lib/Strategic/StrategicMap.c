@@ -1691,30 +1691,30 @@ void UpdateMercInSector(struct SOLDIERTYPE *pSoldier, INT16 sSectorX, INT16 sSec
 }
 
 void InitializeStrategicMapSectorTownNames(void) {
-  StrategicMap[2 + 2 * MAP_WORLD_X].bNameId = StrategicMap[2 + 1 * MAP_WORLD_X].bNameId = CHITZENA;
-  StrategicMap[5 + 3 * MAP_WORLD_X].bNameId = StrategicMap[6 + 3 * MAP_WORLD_X].bNameId =
-      StrategicMap[5 + 4 * MAP_WORLD_X].bNameId = StrategicMap[4 + 4 * MAP_WORLD_X].bNameId =
+  StrategicMap[GetSectorID16(2, 2)].bNameId = StrategicMap[GetSectorID16(2, 1)].bNameId = CHITZENA;
+  StrategicMap[GetSectorID16(5, 3)].bNameId = StrategicMap[GetSectorID16(6, 3)].bNameId =
+      StrategicMap[GetSectorID16(5, 4)].bNameId = StrategicMap[GetSectorID16(4, 4)].bNameId =
           SAN_MONA;
-  StrategicMap[9 + 1 * MAP_WORLD_X].bNameId = StrategicMap[10 + 1 * MAP_WORLD_X].bNameId = OMERTA;
-  StrategicMap[13 + 2 * MAP_WORLD_X].bNameId = StrategicMap[13 + 3 * MAP_WORLD_X].bNameId =
-      StrategicMap[13 + 4 * MAP_WORLD_X].bNameId = DRASSEN;
-  StrategicMap[1 + 7 * MAP_WORLD_X].bNameId = StrategicMap[1 + 8 * MAP_WORLD_X].bNameId =
-      StrategicMap[2 + 7 * MAP_WORLD_X].bNameId = StrategicMap[2 + 8 * MAP_WORLD_X].bNameId =
-          StrategicMap[3 + 8 * MAP_WORLD_X].bNameId = GRUMM;
-  StrategicMap[6 + 9 * MAP_WORLD_X].bNameId = ESTONI;
-  StrategicMap[9 + 10 * MAP_WORLD_X].bNameId = TIXA;
-  StrategicMap[8 + 6 * MAP_WORLD_X].bNameId = StrategicMap[9 + 6 * MAP_WORLD_X].bNameId =
-      StrategicMap[8 + 7 * MAP_WORLD_X].bNameId = StrategicMap[9 + 7 * MAP_WORLD_X].bNameId =
-          StrategicMap[8 + 8 * MAP_WORLD_X].bNameId = CAMBRIA;
-  StrategicMap[13 + 9 * MAP_WORLD_X].bNameId = StrategicMap[14 + 9 * MAP_WORLD_X].bNameId =
-      StrategicMap[13 + 8 * MAP_WORLD_X].bNameId = StrategicMap[14 + 8 * MAP_WORLD_X].bNameId =
+  StrategicMap[GetSectorID16(9, 1)].bNameId = StrategicMap[GetSectorID16(10, 1)].bNameId = OMERTA;
+  StrategicMap[GetSectorID16(13, 2)].bNameId = StrategicMap[GetSectorID16(13, 3)].bNameId =
+      StrategicMap[GetSectorID16(13, 4)].bNameId = DRASSEN;
+  StrategicMap[GetSectorID16(1, 7)].bNameId = StrategicMap[GetSectorID16(1, 8)].bNameId =
+      StrategicMap[GetSectorID16(2, 7)].bNameId = StrategicMap[GetSectorID16(2, 8)].bNameId =
+          StrategicMap[GetSectorID16(3, 8)].bNameId = GRUMM;
+  StrategicMap[GetSectorID16(6, 9)].bNameId = ESTONI;
+  StrategicMap[GetSectorID16(9, 10)].bNameId = TIXA;
+  StrategicMap[GetSectorID16(8, 6)].bNameId = StrategicMap[GetSectorID16(9, 6)].bNameId =
+      StrategicMap[GetSectorID16(8, 7)].bNameId = StrategicMap[GetSectorID16(9, 7)].bNameId =
+          StrategicMap[GetSectorID16(8, 8)].bNameId = CAMBRIA;
+  StrategicMap[GetSectorID16(13, 9)].bNameId = StrategicMap[GetSectorID16(14, 9)].bNameId =
+      StrategicMap[GetSectorID16(13, 8)].bNameId = StrategicMap[GetSectorID16(14, 8)].bNameId =
           ALMA;
-  StrategicMap[4 + 11 * MAP_WORLD_X].bNameId = ORTA;
-  StrategicMap[11 + 12 * MAP_WORLD_X].bNameId = StrategicMap[12 + 12 * MAP_WORLD_X].bNameId =
+  StrategicMap[GetSectorID16(4, 11)].bNameId = ORTA;
+  StrategicMap[GetSectorID16(11, 12)].bNameId = StrategicMap[GetSectorID16(12, 12)].bNameId =
       BALIME;
-  StrategicMap[3 + 14 * MAP_WORLD_X].bNameId = StrategicMap[4 + 14 * MAP_WORLD_X].bNameId =
-      StrategicMap[5 + 14 * MAP_WORLD_X].bNameId = StrategicMap[3 + 15 * MAP_WORLD_X].bNameId =
-          StrategicMap[4 + 15 * MAP_WORLD_X].bNameId = StrategicMap[3 + 16 * MAP_WORLD_X].bNameId =
+  StrategicMap[GetSectorID16(3, 14)].bNameId = StrategicMap[GetSectorID16(4, 14)].bNameId =
+      StrategicMap[GetSectorID16(5, 14)].bNameId = StrategicMap[GetSectorID16(3, 15)].bNameId =
+          StrategicMap[GetSectorID16(4, 15)].bNameId = StrategicMap[GetSectorID16(3, 16)].bNameId =
               MEDUNA;
   // StrategicMap[3+16*MAP_WORLD_X].bNameId=PALACE;
   return;
