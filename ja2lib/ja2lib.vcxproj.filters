@@ -1031,6 +1031,9 @@
     <ClCompile Include="Team.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CharList.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGP\Bitmap.h">

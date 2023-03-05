@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AniViewScreen.c" />
+    <ClCompile Include="CharList.c" />
     <ClCompile Include="Credits.c" />
     <ClCompile Include="Editor\CursorModes.c" />
     <ClCompile Include="Editor\EditorBuildings.c" />
