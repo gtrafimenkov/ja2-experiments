@@ -10,6 +10,8 @@
 
 BOOLEAN gfStrategicMilitiaChangesMade = FALSE;
 
+static void RemoveMilitiaFromTactical();
+
 void ResetMilitia() {
   if (gfStrategicMilitiaChangesMade || gTacticalStatus.uiFlags & LOADING_SAVED_GAME) {
     gfStrategicMilitiaChangesMade = FALSE;
@@ -18,7 +20,7 @@ void ResetMilitia() {
   }
 }
 
-void RemoveMilitiaFromTactical() {
+static void RemoveMilitiaFromTactical() {
   SOLDIERINITNODE *curr;
   INT32 i;
   for (i = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
@@ -50,16 +52,6 @@ void PrepareMilitiaForTactical() {
   ubRegs = pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA];
   ubElites = pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA];
   AddSoldierInitListMilitia(ubGreen, ubRegs, ubElites);
-  /*
-  for( i = gTacticalStatus.Team[ MILITIA_TEAM ].bFirstID; i <= gTacticalStatus.Team[ MILITIA_TEAM
-  ].bLastID; i++ )
-  {
-          if( MercPtrs[ i ]->bInSector )
-          {
-                  MercPtrs[ i ]->bAttitude = AGGRESSIVE;
-          }
-  }
-  */
 }
 
 void HandleMilitiaPromotions(void) {

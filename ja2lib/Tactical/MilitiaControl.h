@@ -4,7 +4,6 @@
 #include "SGP/Types.h"
 
 void PrepareMilitiaForTactical();
-void RemoveMilitiaFromTactical();
 void ResetMilitia();
 void HandleMilitiaPromotions();
 

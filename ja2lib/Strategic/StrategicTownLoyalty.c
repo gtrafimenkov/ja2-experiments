@@ -67,45 +67,6 @@
 // divisor for dmg to a building by allied rebel
 #define DIVISOR_FOR_REBEL_BUILDING_DMG 2
 
-/*
-// max number of soldiers counted towards town loyalty gain
-#define MAX_SOLDIER_COUNT_FOR_IN_TOWN_LOYALTY_GAIN 6
-// max levels of town militia civs counted towards town loyalty gain
-#define MAX_MILITIA_VALUE_FOR_IN_TOWN_LOYALTY_GAIN	18
-// max # occupying enemy ranks that count for loyalty penalty
-#define MAX_ENEMY_SOLDIER_RANKS_FOR_IN_TOWN_LOYALTY_DROP 15
-// number of ranks counted per regular
-#define NUMBER_OF_RANKS_PER_REGULAR 2
-// number of ranks counted per elite
-#define NUMBER_OF_RANKS_PER_ELITE 4
-
-// THESE VALUES ARE ALL AFFECTED BY CHANGES to "GAIN_PTS_PER_LOYALTY_PT", SO BEWARE IF THAT SHOULD
-CHANGE
-//
-// max. rate of loyalty gain for local RPC being stationed in his home town
-#define HOURLY_GAIN_FOR_LOCAL_NPC_IN_TOWN 20	// roughly 1.00% / day max.
-// number of gain pts per merc in town
-#define HOURLY_GAIN_PER_MERC_IN_TOWN 5				// roughly 0.25% / day
-// number of gain pts per friendly in town
-#define HOURLY_GAIN_PER_MILITIA_IN_TOWN 1			// roughly 0.05% / day
-// loyalty loss for enemies in town
-#define HOURLY_DROP_PER_ENEMY_RANK_IN_TOWN 2	// roughly 0.10% / day
-*/
-//
-// THESE VALUES ARE ALL AFFECTED BY CHANGES to "GAIN_PTS_PER_LOYALTY_PT", SO BEWARE IF THAT SHOULD
-// CHANGE
-
-/* Delayed loyalty effects elimininated.  Sep.12/98.  ARM
-
-// macros for delayed town loyalty events
-// get increment
-#define GET_TOWN_INCREMENT( iValue ) ( ( uiValue << 31 ) >> 31 )
-// town id
-#define GET_TOWN_ID_FOR_LOYALTY( iValue ) ( uiValue >> 24 )
-// the amount
-#define GET_TOWN_LOYALTY_CHANGE( iValue ) ( ( uiValue << 8 ) >> 9 )
-*/
-
 // town loyalty table
 TOWN_LOYALTY gTownLoyalty[NUM_TOWNS];
 
@@ -1029,66 +990,7 @@ void RemoveRandomItemsInSector(INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ, U
       }
     }
   }
-
-  return;
 }
-
-/* ARM: Civilian theft of items was removed
-void HandleTheftByCiviliansInSector( INT16 sX, INT16 sY, INT32 iLoyalty )
-{
-        UINT8 ubChance = 0;
-
-        // any loyalty under the theft threshhold is chance that thefts will occur
-        if( iLoyalty < THRESHOLD_FOR_TOWN_THEFT )
-        {
-                // sectors with mercs are immune
-                if( fSectorsWithSoldiers[ sX + ( MAP_WORLD_X * sY ) ][ 0 ] == FALSE )
-                {
-                        // sectors not yet visited by player are also immune (other sectors in town
-could have been visited) if ( GetSectorFlagStatus( sX, sY, 0, SF_ALREADY_VISITED ) == TRUE )
-                        {
-                                ubChance = 5 + ( THRESHOLD_FOR_TOWN_THEFT - iLoyalty ) / 2;
-
-                                // remove items from sector
-                                RemoveRandomItemsInSector( sX, sY, 0, ubChance);
-                        }
-                }
-        }
-
-        return;
-}
-
-void HandleTownTheft( void )
-{
-        INT32 iCounter = 0;
-        UINT8 ubTown;
-
-        // init sectors with soldiers list
-        InitSectorsWithSoldiersList( );
-
-        // build list
-        BuildSectorsWithSoldiersList(  );
-
-        while( pTownNamesList[ iCounter ] != 0 )
-        {
-                ubTown = StrategicMap[ pTownLocationsList[ iCounter ] ].bNameId;
-
-                // if this town tracks loyalty, and tracking has started
-                if ( ( ubTown != BLANK_SECTOR ) && gfTownUsesLoyalty[ ubTown ] && gTownLoyalty[
-ubTown ].fStarted )
-                {
-                        // handle theft in this town sector
-                        HandleTheftByCiviliansInSector( ( INT16 )( pTownLocationsList[ iCounter ] %
-MAP_WORLD_X ), ( INT16 )( pTownLocationsList[ iCounter ] / MAP_WORLD_X ), gTownLoyalty[ ubTown
-].ubRating );
-                }
-
-                iCounter++;
-        }
-
-        return;
-}
-*/
 
 void BuildListOfTownSectors(void) {
   INT32 iCounterX = 0, iCounterY = 0, iCounter = 0;
