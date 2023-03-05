@@ -2241,7 +2241,7 @@ void RenderInventoryForCharacter(INT32 iId, INT32 iSlot) {
     PosY = 200 + 8 + (ubItemCount * (29));
 
     // if the character is a robot, only display the inv for the hand pos
-    if (pSoldier->ubProfile == ROBOT && ubCounter != HANDPOS) {
+    if (GetSolProfile(pSoldier) == ROBOT && ubCounter != HANDPOS) {
       continue;
     }
 
@@ -2585,16 +2585,16 @@ INT32 GetTotalDailyCostOfCurrentTeam(void) {
         // daily rate
         if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_2_WEEK) {
           // 2 week contract
-          iCostOfTeam += gMercProfiles[pSoldier->ubProfile].uiBiWeeklySalary / 14;
+          iCostOfTeam += gMercProfiles[GetSolProfile(pSoldier)].uiBiWeeklySalary / 14;
         } else if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_1_WEEK) {
           // 1 week contract
-          iCostOfTeam += gMercProfiles[pSoldier->ubProfile].uiWeeklySalary / 7;
+          iCostOfTeam += gMercProfiles[GetSolProfile(pSoldier)].uiWeeklySalary / 7;
         } else {
-          iCostOfTeam += gMercProfiles[pSoldier->ubProfile].sSalary;
+          iCostOfTeam += gMercProfiles[GetSolProfile(pSoldier)].sSalary;
         }
       } else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__MERC) {
         // MERC Merc
-        iCostOfTeam += gMercProfiles[pSoldier->ubProfile].sSalary;
+        iCostOfTeam += gMercProfiles[GetSolProfile(pSoldier)].sSalary;
       } else {
         // no cost
         iCostOfTeam += 0;
@@ -2628,16 +2628,16 @@ INT32 GetLowestDailyCostOfCurrentTeam(void) {
         // daily rate
         if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_2_WEEK) {
           // 2 week contract
-          iCost = gMercProfiles[pSoldier->ubProfile].uiBiWeeklySalary / 14;
+          iCost = gMercProfiles[GetSolProfile(pSoldier)].uiBiWeeklySalary / 14;
         } else if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_1_WEEK) {
           // 1 week contract
-          iCost = gMercProfiles[pSoldier->ubProfile].uiWeeklySalary / 7;
+          iCost = gMercProfiles[GetSolProfile(pSoldier)].uiWeeklySalary / 7;
         } else {
-          iCost = gMercProfiles[pSoldier->ubProfile].sSalary;
+          iCost = gMercProfiles[GetSolProfile(pSoldier)].sSalary;
         }
       } else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__MERC) {
         // MERC Merc
-        iCost = gMercProfiles[pSoldier->ubProfile].sSalary;
+        iCost = gMercProfiles[GetSolProfile(pSoldier)].sSalary;
       } else {
         // no cost
         iCost = 0;
@@ -2681,16 +2681,16 @@ INT32 GetHighestDailyCostOfCurrentTeam(void) {
         // daily rate
         if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_2_WEEK) {
           // 2 week contract
-          iCost = gMercProfiles[pSoldier->ubProfile].uiBiWeeklySalary / 14;
+          iCost = gMercProfiles[GetSolProfile(pSoldier)].uiBiWeeklySalary / 14;
         } else if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_1_WEEK) {
           // 1 week contract
-          iCost = gMercProfiles[pSoldier->ubProfile].uiWeeklySalary / 7;
+          iCost = gMercProfiles[GetSolProfile(pSoldier)].uiWeeklySalary / 7;
         } else {
-          iCost = gMercProfiles[pSoldier->ubProfile].sSalary;
+          iCost = gMercProfiles[GetSolProfile(pSoldier)].sSalary;
         }
       } else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__MERC) {
         // MERC Merc
-        iCost = gMercProfiles[pSoldier->ubProfile].sSalary;
+        iCost = gMercProfiles[GetSolProfile(pSoldier)].sSalary;
       } else {
         // no cost
         iCost = 0;
@@ -4793,14 +4793,14 @@ void AddCharacterToDeadList(struct SOLDIERTYPE *pSoldier) {
   for (iCounter = 0; iCounter < 256; iCounter++) {
     if (LaptopSaveInfo.ubDeadCharactersList[iCounter] == -1) {
       // valid slot, merc not found yet, inset here
-      LaptopSaveInfo.ubDeadCharactersList[iCounter] = pSoldier->ubProfile;
+      LaptopSaveInfo.ubDeadCharactersList[iCounter] = GetSolProfile(pSoldier);
 
       // leave
       return;
     }
 
     // are they already in the list?
-    if (LaptopSaveInfo.ubDeadCharactersList[iCounter] == pSoldier->ubProfile) {
+    if (LaptopSaveInfo.ubDeadCharactersList[iCounter] == GetSolProfile(pSoldier)) {
       return;
     }
   }
@@ -4812,14 +4812,14 @@ void AddCharacterToFiredList(struct SOLDIERTYPE *pSoldier) {
   for (iCounter = 0; iCounter < 256; iCounter++) {
     if (LaptopSaveInfo.ubLeftCharactersList[iCounter] == -1) {
       // valid slot, merc not found yet, inset here
-      LaptopSaveInfo.ubLeftCharactersList[iCounter] = pSoldier->ubProfile;
+      LaptopSaveInfo.ubLeftCharactersList[iCounter] = GetSolProfile(pSoldier);
 
       // leave
       return;
     }
 
     // are they already in the list?
-    if (LaptopSaveInfo.ubLeftCharactersList[iCounter] == pSoldier->ubProfile) {
+    if (LaptopSaveInfo.ubLeftCharactersList[iCounter] == GetSolProfile(pSoldier)) {
       return;
     }
   }
@@ -4831,14 +4831,14 @@ void AddCharacterToOtherList(struct SOLDIERTYPE *pSoldier) {
   for (iCounter = 0; iCounter < 256; iCounter++) {
     if (LaptopSaveInfo.ubOtherCharactersList[iCounter] == -1) {
       // valid slot, merc not found yet, inset here
-      LaptopSaveInfo.ubOtherCharactersList[iCounter] = pSoldier->ubProfile;
+      LaptopSaveInfo.ubOtherCharactersList[iCounter] = GetSolProfile(pSoldier);
 
       // leave
       return;
     }
 
     // are they already in the list?
-    if (LaptopSaveInfo.ubOtherCharactersList[iCounter] == pSoldier->ubProfile) {
+    if (LaptopSaveInfo.ubOtherCharactersList[iCounter] == GetSolProfile(pSoldier)) {
       return;
     }
   }
@@ -5515,12 +5515,13 @@ BOOLEAN TransferFundsFromMercToBank(struct SOLDIERTYPE *pSoldier, INT32 iCurrent
 
   if (iAmountLeftToTake != 0) {
     // something wrong
-    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, pSoldier->ubProfile,
+    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, GetSolProfile(pSoldier),
                                 (iCurrentBalance - iAmountLeftToTake));
     return (FALSE);
   } else {
     // everything ok
-    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, pSoldier->ubProfile, (iCurrentBalance));
+    AddTransactionToPlayersBook(TRANSFER_FUNDS_FROM_MERC, GetSolProfile(pSoldier),
+                                (iCurrentBalance));
     return (TRUE);
   }
 }
@@ -5557,7 +5558,8 @@ BOOLEAN TransferFundsFromBankToMerc(struct SOLDIERTYPE *pSoldier, INT32 iCurrent
   // now auto place money object
   if (AutoPlaceObject(pSoldier, &(pMoneyObject), TRUE) == TRUE) {
     // now place transaction
-    AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile, -(iCurrentBalance));
+    AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, GetSolProfile(pSoldier),
+                                -(iCurrentBalance));
   } else {
     // error, notify player that merc doesn't have the spce for this much cash
   }
@@ -6136,7 +6138,7 @@ INT32 CalcTimeLeftOnMercContract(struct SOLDIERTYPE *pSoldier) {
 
     if (iTimeLeftOnContract < 0) iTimeLeftOnContract = 0;
   } else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__MERC) {
-    iTimeLeftOnContract = gMercProfiles[pSoldier->ubProfile].iMercMercContractLength;
+    iTimeLeftOnContract = gMercProfiles[GetSolProfile(pSoldier)].iMercMercContractLength;
   }
 
   else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__PLAYER_CHARACTER) {

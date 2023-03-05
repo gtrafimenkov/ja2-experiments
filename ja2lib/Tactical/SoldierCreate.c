@@ -2190,7 +2190,7 @@ void CopyProfileItems(struct SOLDIERTYPE *pSoldier, SOLDIERCREATE_STRUCT *pCreat
                         &(pSoldier->inv[cnt]));
           }
           if (pProfile->inv[cnt] == ROCKET_RIFLE || pProfile->inv[cnt] == AUTO_ROCKET_RIFLE) {
-            pSoldier->inv[cnt].ubImprintID = pSoldier->ubProfile;
+            pSoldier->inv[cnt].ubImprintID = GetSolProfile(pSoldier);
           }
           if (gubItemDroppableFlag[cnt]) {
             if (pProfile->ubInvUndroppable & gubItemDroppableFlag[cnt]) {

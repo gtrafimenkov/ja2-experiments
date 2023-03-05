@@ -4558,13 +4558,13 @@ BOOLEAN IsValidTalkableNPC(UINT8 ubSoldierID, BOOLEAN fGive, BOOLEAN fAllowMercs
     }
   }
 
-  if (pSoldier->ubProfile != NO_PROFILE && pSoldier->ubProfile >= FIRST_RPC &&
+  if (GetSolProfile(pSoldier) != NO_PROFILE && GetSolProfile(pSoldier) >= FIRST_RPC &&
       !RPC_RECRUITED(pSoldier) && !AM_AN_EPC(pSoldier)) {
     fValidGuy = TRUE;
   }
 
   // Check for EPC...
-  if (pSoldier->ubProfile != NO_PROFILE && (gCurrentUIMode == TALKCURSOR_MODE || fGive) &&
+  if (GetSolProfile(pSoldier) != NO_PROFILE && (gCurrentUIMode == TALKCURSOR_MODE || fGive) &&
       AM_AN_EPC(pSoldier)) {
     fValidGuy = TRUE;
   }

@@ -1129,12 +1129,12 @@ BOOLEAN AddDeadCharacterToSquadDeadGuys(struct SOLDIERTYPE *pSoldier, INT32 iSqu
       // valid soldier?
       if (pTempSoldier == NULL) {
         // nope
-        sDeadMercs[iSquadValue][iCounter] = pSoldier->ubProfile;
+        sDeadMercs[iSquadValue][iCounter] = GetSolProfile(pSoldier);
         return (TRUE);
       }
     } else {
       // nope
-      sDeadMercs[iSquadValue][iCounter] = pSoldier->ubProfile;
+      sDeadMercs[iSquadValue][iCounter] = GetSolProfile(pSoldier);
       return (TRUE);
     }
   }
@@ -1150,7 +1150,7 @@ BOOLEAN IsDeadGuyOnAnySquad(struct SOLDIERTYPE *pSoldier) {
   for (iCounterA = 0; iCounterA < NUMBER_OF_SQUADS; iCounterA++) {
     // slot?
     for (iCounter = 0; iCounter < NUMBER_OF_SOLDIERS_PER_SQUAD; iCounter++) {
-      if (sDeadMercs[iCounterA][iCounter] == pSoldier->ubProfile) {
+      if (sDeadMercs[iCounterA][iCounter] == GetSolProfile(pSoldier)) {
         return (TRUE);
       }
     }
@@ -1194,7 +1194,7 @@ BOOLEAN SoldierIsDeadAndWasOnSquad(struct SOLDIERTYPE *pSoldier, INT8 bSquadValu
 
   // check if guy is on squad
   for (iCounter = 0; iCounter < NUMBER_OF_SOLDIERS_PER_SQUAD; iCounter++) {
-    if (pSoldier->ubProfile == sDeadMercs[bSquadValue][iCounter]) {
+    if (GetSolProfile(pSoldier) == sDeadMercs[bSquadValue][iCounter]) {
       return (TRUE);
     }
   }

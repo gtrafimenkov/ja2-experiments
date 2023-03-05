@@ -10,6 +10,7 @@ struct SOLDIERTYPE;
 struct SOLDIERTYPE *GetSoldierByID(int index);
 
 u8 GetSolID(const struct SOLDIERTYPE *s);
+u8 GetSolProfile(const struct SOLDIERTYPE *s);
 
 i16 GetSolSectorX(const struct SOLDIERTYPE *s);
 i16 GetSolSectorY(const struct SOLDIERTYPE *s);

@@ -431,13 +431,14 @@ GetSolAssignment(pSoldier) == VEHICLE ) )
                                 }
 
                                 // local influence: if the town is the character's home town
-                                if( bTownId == gMercProfiles[ pSoldier->ubProfile ].bTown )
+                                if( bTownId == gMercProfiles[ GetSolProfile(pSoldier) ].bTown )
                                 {
                                         // he needn't be soldiering to have an impact...  presence
 is enough if( pSoldier->bAssignment < ASSIGNMENT_DEAD )
                                         {
                                                 iLocalNPCBonus = HOURLY_GAIN_FOR_LOCAL_NPC_IN_TOWN;
-                                                iLocalNPCBonus *= gMercProfiles[ pSoldier->ubProfile
+                                                iLocalNPCBonus *= gMercProfiles[
+GetSolProfile(pSoldier)
 ].bTownAttachment; iLocalNPCBonus /= 100;
 
                                                 // adjust for % town control
@@ -580,10 +581,10 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
   }
 
   // if this is a profiled civilian NPC
-  if (pSoldier->ubProfile != NO_PROFILE) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
     // ignore murder of NPCs if they're not loyal to the rebel cause - they're really just enemies
     // in civilian clothing
-    if (gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 &
+    if (gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 &
         PROFILE_MISC_FLAG3_TOWN_DOESNT_CARE_ABOUT_DEATH) {
       return;
     }
@@ -828,10 +829,10 @@ void HandleTownLoyaltyForNPCRecruitment(struct SOLDIERTYPE *pSoldier) {
   bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   // is the merc currently in their home town?
-  if (bTownId == gMercProfiles[pSoldier->ubProfile].bTown) {
+  if (bTownId == gMercProfiles[GetSolProfile(pSoldier)].bTown) {
     // yep, value of loyalty bonus depends on his importance to this to town
     uiLoyaltyValue =
-        MULTIPLIER_LOCAL_RPC_HIRED * gMercProfiles[pSoldier->ubProfile].bTownAttachment;
+        MULTIPLIER_LOCAL_RPC_HIRED * gMercProfiles[GetSolProfile(pSoldier)].bTownAttachment;
 
     // increment town loyalty gain
     IncrementTownLoyalty(bTownId, uiLoyaltyValue);

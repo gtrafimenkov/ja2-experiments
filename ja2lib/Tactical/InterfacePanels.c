@@ -1950,7 +1950,7 @@ BOOLEAN HandleNailsVestFetish(struct SOLDIERTYPE *pSoldier, UINT32 uiHandPos,
   BOOLEAN fRefuse = FALSE;
 
   // OK are we nails?
-  if (pSoldier->ubProfile == 34) {
+  if (GetSolProfile(pSoldier) == 34) {
     // if this the VEST POS?
     if (uiHandPos == VESTPOS) {
       // Are we trying to pick it up?

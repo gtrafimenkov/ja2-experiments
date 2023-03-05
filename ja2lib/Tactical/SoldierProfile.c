@@ -647,7 +647,7 @@ struct SOLDIERTYPE *FindSoldierByProfileID(UINT8 ubProfileID, BOOLEAN fPlayerMer
   }
 
   for (ubLoop = 0, pSoldier = MercPtrs[0]; ubLoop < ubLoopLimit; ubLoop++, pSoldier++) {
-    if (IsSolActive(pSoldier) && pSoldier->ubProfile == ubProfileID) {
+    if (IsSolActive(pSoldier) && GetSolProfile(pSoldier) == ubProfileID) {
       return (pSoldier);
     }
   }
@@ -679,7 +679,7 @@ struct SOLDIERTYPE *ChangeSoldierTeam(struct SOLDIERTYPE *pSoldier, UINT8 ubTeam
   // Create a new one!
   memset(&MercCreateStruct, 0, sizeof(MercCreateStruct));
   MercCreateStruct.bTeam = ubTeam;
-  MercCreateStruct.ubProfile = pSoldier->ubProfile;
+  MercCreateStruct.ubProfile = GetSolProfile(pSoldier);
   MercCreateStruct.bBodyType = pSoldier->ubBodyType;
   MercCreateStruct.sSectorX = GetSolSectorX(pSoldier);
   MercCreateStruct.sSectorY = GetSolSectorY(pSoldier);
@@ -849,7 +849,7 @@ BOOLEAN RecruitRPC(UINT8 ubCharNum) {
 
   // remove the merc from the Personnel screens departed list ( if they have never been hired
   // before, its ok to call it )
-  RemoveNewlyHiredMercFromPersonnelDepartedList(pSoldier->ubProfile);
+  RemoveNewlyHiredMercFromPersonnelDepartedList(GetSolProfile(pSoldier));
 
   return (TRUE);
 }
@@ -1009,23 +1009,23 @@ void UpdateSoldierPointerDataIntoProfile(BOOLEAN fPlayerMercs) {
     pSoldier = MercSlots[uiCount];
 
     if (pSoldier != NULL) {
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         fDoCopy = FALSE;
 
         // If we are above player mercs
         if (fPlayerMercs) {
-          if (pSoldier->ubProfile < FIRST_RPC) {
+          if (GetSolProfile(pSoldier) < FIRST_RPC) {
             fDoCopy = TRUE;
           }
         } else {
-          if (pSoldier->ubProfile >= FIRST_RPC) {
+          if (GetSolProfile(pSoldier) >= FIRST_RPC) {
             fDoCopy = TRUE;
           }
         }
 
         if (fDoCopy) {
           // get profile...
-          pProfile = &(gMercProfiles[pSoldier->ubProfile]);
+          pProfile = &(gMercProfiles[GetSolProfile(pSoldier)]);
 
           // Copy....
           pProfile->bLife = pSoldier->bLife;
@@ -1070,8 +1070,8 @@ BOOLEAN DoesMercHaveABuddyOnTheTeam(UINT8 ubMercID) {
 }
 
 BOOLEAN MercIsHot(struct SOLDIERTYPE *pSoldier) {
-  if (pSoldier->ubProfile != NO_PROFILE &&
-      gMercProfiles[pSoldier->ubProfile].bPersonalityTrait == HEAT_INTOLERANT) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE &&
+      gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait == HEAT_INTOLERANT) {
     if (SectorTemperature(GetWorldMinutesInDay(), GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
                           GetSolSectorZ(pSoldier)) > 0) {
       return (TRUE);
@@ -1085,7 +1085,7 @@ struct SOLDIERTYPE *SwapLarrysProfiles(struct SOLDIERTYPE *pSoldier) {
   UINT8 ubDestProfile;
   MERCPROFILESTRUCT *pNewProfile;
 
-  ubSrcProfile = pSoldier->ubProfile;
+  ubSrcProfile = GetSolProfile(pSoldier);
   if (ubSrcProfile == LARRY_NORMAL) {
     ubDestProfile = LARRY_DRUNK;
   } else if (ubSrcProfile == LARRY_DRUNK) {
@@ -1182,7 +1182,7 @@ struct SOLDIERTYPE *SwapLarrysProfiles(struct SOLDIERTYPE *pSoldier) {
   pSoldier->bMedical = pNewProfile->bMedical + pNewProfile->bMedicalDelta;
   pSoldier->bExplosive = pNewProfile->bExplosive + pNewProfile->bExplosivesDelta;
 
-  if (pSoldier->ubProfile == LARRY_DRUNK) {
+  if (GetSolProfile(pSoldier) == LARRY_DRUNK) {
     SetFactTrue(FACT_LARRY_CHANGED);
   } else {
     SetFactFalse(FACT_LARRY_CHANGED);
@@ -1209,13 +1209,13 @@ BOOLEAN DoesNPCOwnBuilding(struct SOLDIERTYPE *pSoldier, INT16 sGridNo) {
   }
 
   // OK, check both ranges
-  if (ubRoomInfo >= gMercProfiles[pSoldier->ubProfile].ubRoomRangeStart[0] &&
-      ubRoomInfo <= gMercProfiles[pSoldier->ubProfile].ubRoomRangeEnd[0]) {
+  if (ubRoomInfo >= gMercProfiles[GetSolProfile(pSoldier)].ubRoomRangeStart[0] &&
+      ubRoomInfo <= gMercProfiles[GetSolProfile(pSoldier)].ubRoomRangeEnd[0]) {
     return (TRUE);
   }
 
-  if (ubRoomInfo >= gMercProfiles[pSoldier->ubProfile].ubRoomRangeStart[1] &&
-      ubRoomInfo <= gMercProfiles[pSoldier->ubProfile].ubRoomRangeEnd[1]) {
+  if (ubRoomInfo >= gMercProfiles[GetSolProfile(pSoldier)].ubRoomRangeStart[1] &&
+      ubRoomInfo <= gMercProfiles[GetSolProfile(pSoldier)].ubRoomRangeEnd[1]) {
     return (TRUE);
   }
 

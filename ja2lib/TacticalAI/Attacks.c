@@ -270,7 +270,7 @@ void CalcBestShot(struct SOLDIERTYPE *pSoldier, ATTACKTYPE *pBestShot) {
     // NumMessage("SHOT AttackValue = ",iAttackValue / 1000);
 
     // special stuff for assassins to ignore militia more
-    if (pSoldier->ubProfile >= JIM && pSoldier->ubProfile <= TYRONE &&
+    if (GetSolProfile(pSoldier) >= JIM && GetSolProfile(pSoldier) <= TYRONE &&
         pOpponent->bTeam == MILITIA_TEAM) {
       iAttackValue /= 2;
     }

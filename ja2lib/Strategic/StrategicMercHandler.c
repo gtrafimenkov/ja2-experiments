@@ -58,7 +58,7 @@ void StrategicHandlePlayerTeamMercDeath(struct SOLDIERTYPE *pSoldier) {
   INT16 sSectorX, sSectorY;
 
   // if the soldier HAS a profile
-  if (pSoldier->ubProfile != NO_PROFILE) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
     // add to the history log the fact that the merc died and the circumstances
     if (pSoldier->ubAttackerID != NOBODY) {
       pKiller = MercPtrs[pSoldier->ubAttackerID];
@@ -75,11 +75,11 @@ void StrategicHandlePlayerTeamMercDeath(struct SOLDIERTYPE *pSoldier) {
     }
 
     if (pKiller && pKiller->bTeam == OUR_TEAM) {
-      AddHistoryToPlayersLog(HISTORY_MERC_KILLED_CHARACTER, pSoldier->ubProfile, GetWorldTotalMin(),
-                             sSectorX, sSectorY);
+      AddHistoryToPlayersLog(HISTORY_MERC_KILLED_CHARACTER, GetSolProfile(pSoldier),
+                             GetWorldTotalMin(), sSectorX, sSectorY);
     } else {
-      AddHistoryToPlayersLog(HISTORY_MERC_KILLED, pSoldier->ubProfile, GetWorldTotalMin(), sSectorX,
-                             sSectorY);
+      AddHistoryToPlayersLog(HISTORY_MERC_KILLED, GetSolProfile(pSoldier), GetWorldTotalMin(),
+                             sSectorX, sSectorY);
     }
   }
 
@@ -111,13 +111,13 @@ void StrategicHandlePlayerTeamMercDeath(struct SOLDIERTYPE *pSoldier) {
       // if killed within an hour of being insured
       if (pSoldier->uiStartTimeOfInsuranceContract <= GetWorldTotalMin() &&
           GetWorldTotalMin() - pSoldier->uiStartTimeOfInsuranceContract < 60) {
-        gMercProfiles[pSoldier->ubProfile].ubSuspiciousDeath = VERY_SUSPICIOUS_DEATH;
+        gMercProfiles[GetSolProfile(pSoldier)].ubSuspiciousDeath = VERY_SUSPICIOUS_DEATH;
       }
       // if killed by someone on our team, or while there weren't any opponents around
       else if (Menptr[pSoldier->ubAttackerID].bTeam == OUR_TEAM ||
                !gTacticalStatus.fEnemyInSector) {
         // cause insurance company to suspect fraud and investigate this claim
-        gMercProfiles[pSoldier->ubProfile].ubSuspiciousDeath = SUSPICIOUS_DEATH;
+        gMercProfiles[GetSolProfile(pSoldier)].ubSuspiciousDeath = SUSPICIOUS_DEATH;
       }
     }
 
@@ -141,7 +141,7 @@ void StrategicHandlePlayerTeamMercDeath(struct SOLDIERTYPE *pSoldier) {
   }
 
   // Set the fact that the merc is DEAD!!
-  gMercProfiles[pSoldier->ubProfile].bMercStatus = MERC_IS_DEAD;
+  gMercProfiles[GetSolProfile(pSoldier)].bMercStatus = MERC_IS_DEAD;
 
   if (pSoldier->bAssignment != ASSIGNMENT_DEAD) {
     SetTimeOfAssignmentChangeForMerc(pSoldier);
@@ -209,8 +209,8 @@ void MercDailyUpdate() {
       }
 
       // CJC: For some personalities, reset personality quote said flag
-      if (pSoldier->ubProfile != NO_PROFILE) {
-        switch (gMercProfiles[pSoldier->ubProfile].bPersonalityTrait) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
+        switch (gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait) {
           case HEAT_INTOLERANT:
           case CLAUSTROPHOBIC:
           case NONSWIMMER:
@@ -227,28 +227,28 @@ void MercDailyUpdate() {
       if (SoldierHasWorseEquipmentThanUsedTo(pSoldier)) {
         // Randomly anytime between 6:00, and 10:00
         AddSameDayStrategicEvent(EVENT_MERC_COMPLAIN_EQUIPMENT, 360 + Random(1080),
-                                 pSoldier->ubProfile);
+                                 GetSolProfile(pSoldier));
       }
 
       // increment days served by this grunt
-      gMercProfiles[pSoldier->ubProfile].usTotalDaysServed++;
+      gMercProfiles[GetSolProfile(pSoldier)].usTotalDaysServed++;
 
       // player has hired him, so he'll eligible to get killed off on another job
-      gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 |=
+      gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 |=
           PROFILE_MISC_FLAG3_PLAYER_HAD_CHANCE_TO_HIRE;
 
       // if the character is an RPC
-      if (pSoldier->ubProfile >= FIRST_RPC && pSoldier->ubProfile < FIRST_NPC) {
-        INT16 sSalary = gMercProfiles[pSoldier->ubProfile].sSalary;
+      if (GetSolProfile(pSoldier) >= FIRST_RPC && GetSolProfile(pSoldier) < FIRST_NPC) {
+        INT16 sSalary = gMercProfiles[GetSolProfile(pSoldier)].sSalary;
         INT32 iMoneyOwedToMerc = 0;
 
         // increment the number of days the mercs has been on the team
         pSoldier->iTotalContractLength++;
 
         // if the player owes the npc money, the balance field will be negative
-        if (gMercProfiles[pSoldier->ubProfile].iBalance < 0) {
+        if (gMercProfiles[GetSolProfile(pSoldier)].iBalance < 0) {
           // the player owes the npc the salary and whatever money the player owes the npc
-          iMoneyOwedToMerc = sSalary + (-gMercProfiles[pSoldier->ubProfile].iBalance);
+          iMoneyOwedToMerc = sSalary + (-gMercProfiles[GetSolProfile(pSoldier)].iBalance);
         } else {
           // else the player only owes the salary
           iMoneyOwedToMerc = sSalary;
@@ -259,12 +259,12 @@ void MercDailyUpdate() {
           // if the player can afford to pay them
           if (MoneyGetBalance() >= iMoneyOwedToMerc) {
             // add the transaction to the player
-            AddTransactionToPlayersBook(PAYMENT_TO_NPC, pSoldier->ubProfile, -iMoneyOwedToMerc);
+            AddTransactionToPlayersBook(PAYMENT_TO_NPC, GetSolProfile(pSoldier), -iMoneyOwedToMerc);
 
             // if the player owed money to the npc
-            if (gMercProfiles[pSoldier->ubProfile].iBalance < 0) {
+            if (gMercProfiles[GetSolProfile(pSoldier)].iBalance < 0) {
               // reset the amount
-              gMercProfiles[pSoldier->ubProfile].iBalance = 0;
+              gMercProfiles[GetSolProfile(pSoldier)].iBalance = 0;
             }
           } else {
             CHAR16 zMoney[128];
@@ -277,11 +277,11 @@ void MercDailyUpdate() {
             // Display a screen msg indicating that the npc was NOT paid
             ScreenMsg(FONT_MCOLOR_WHITE, MSG_INTERFACE,
                       pMessageStrings[MSG_CANT_AFFORD_TO_PAY_NPC_DAILY_SALARY_MSG],
-                      gMercProfiles[pSoldier->ubProfile].zNickname, zMoney);
+                      gMercProfiles[GetSolProfile(pSoldier)].zNickname, zMoney);
 
             // if the merc hasnt been paid for NUM_DAYS_TILL_UNPAID_RPC_QUITS days, the merc will
             // quit
-            if ((gMercProfiles[pSoldier->ubProfile].iBalance - sSalary) <=
+            if ((gMercProfiles[GetSolProfile(pSoldier)].iBalance - sSalary) <=
                 -(sSalary * NUM_DAYS_TILL_UNPAID_RPC_QUITS)) {
               //
               // Set it up so the merc quits
@@ -289,7 +289,7 @@ void MercDailyUpdate() {
               MercsContractIsFinished(pSoldier->ubID);
             } else {
               // set how much money the player owes the merc
-              gMercProfiles[pSoldier->ubProfile].iBalance -= sSalary;
+              gMercProfiles[GetSolProfile(pSoldier)].iBalance -= sSalary;
 
               // Add even for displaying a dialogue telling the player this....
               AddSameDayStrategicEvent(EVENT_RPC_WHINE_ABOUT_PAY, MERC_ARRIVE_TIME_SLOT_1,
@@ -544,9 +544,9 @@ BOOLEAN SoldierHasWorseEquipmentThanUsedTo(struct SOLDIERTYPE *pSoldier) {
 
   // OK, check values!
   if ((bBestGun != -1 &&
-       bBestGun < (gMercProfiles[pSoldier->ubProfile].bMainGunAttractiveness / 2)) ||
+       bBestGun < (gMercProfiles[GetSolProfile(pSoldier)].bMainGunAttractiveness / 2)) ||
       (bBestArmour != -1 &&
-       bBestArmour < (gMercProfiles[pSoldier->ubProfile].bArmourAttractiveness / 2))) {
+       bBestArmour < (gMercProfiles[GetSolProfile(pSoldier)].bArmourAttractiveness / 2))) {
     // Pipe up!
     return (TRUE);
   }
@@ -603,7 +603,7 @@ void UpdateBuddyAndHatedCounters(void) {
 
     // if the merc is active and on a combat assignment
     if (IsSolActive(pSoldier) && pSoldier->bAssignment < ON_DUTY) {
-      pProfile = &(gMercProfiles[pSoldier->ubProfile]);
+      pProfile = &(gMercProfiles[GetSolProfile(pSoldier)]);
 
       // if we're moving, we only check vs other people in our squad
       if (pSoldier->ubGroupID != 0 && PlayerIDGroupInMotion(pSoldier->ubGroupID)) {
@@ -736,8 +736,9 @@ void UpdateBuddyAndHatedCounters(void) {
 
                       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__MERC ||
                           (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__NPC &&
-                           (pSoldier->ubProfile == DEVIN || pSoldier->ubProfile == SLAY ||
-                            pSoldier->ubProfile == IGGY || pSoldier->ubProfile == CONRAD))) {
+                           (GetSolProfile(pSoldier) == DEVIN || GetSolProfile(pSoldier) == SLAY ||
+                            GetSolProfile(pSoldier) == IGGY ||
+                            GetSolProfile(pSoldier) == CONRAD))) {
                         // Leave now! ( handle equipment too )....
                         TacticalCharacterDialogue(pSoldier, QUOTE_MERC_QUIT_LEARN_TO_HATE);
                         TacticalCharacterDialogueWithSpecialEvent(

@@ -1597,7 +1597,7 @@ void IndicateSelectedMerc(INT16 sID) {
     ClickEditorButton(MERCS_HASKEYS_CHECKBOX);
   else
     UnclickEditorButton(MERCS_HASKEYS_CHECKBOX);
-  if (gpSelected->pSoldier->ubProfile == NO_PROFILE) {
+  if (GetSolProfile(gpSelected->pSoldier) == NO_PROFILE) {
     SetMercRelativeEquipment(gpSelected->pBasicPlacement->bRelativeEquipmentLevel);
     SetMercRelativeAttributes(gpSelected->pBasicPlacement->bRelativeAttributeLevel);
     SetEnemyColorCode(gpSelected->pBasicPlacement->ubSoldierClass);
@@ -2992,7 +2992,7 @@ void RenderMercStrings() {
       SetFont(TINYFONT1);
       SetFontBackground(FONT_BLACK);
       SetFontForeground(FONT_WHITE);
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         FindFontCenterCoordinates(sXPos, sYPos, (INT16)(80), 1, pSoldier->name, TINYFONT1, &sX,
                                   &sY);
         if (sY < 352) {

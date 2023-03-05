@@ -12,6 +12,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/GameEventHook.h"
 #include "Strategic/Quests.h"
@@ -697,14 +698,14 @@ void DailyUpdateOfMercSite(UINT16 usDate) {
       pSoldier = MercPtrs[sSoldierID];
 
       // if the merc is dead, dont advance the contract length
-      if (!IsMercDead(pSoldier->ubProfile)) {
-        gMercProfiles[pSoldier->ubProfile].iMercMercContractLength += 1;
+      if (!IsMercDead(GetSolProfile(pSoldier))) {
+        gMercProfiles[GetSolProfile(pSoldier)].iMercMercContractLength += 1;
         //				pSoldier->iTotalContractLength++;
       }
 
       // Get the longest time
-      if (gMercProfiles[pSoldier->ubProfile].iMercMercContractLength > iNumDays)
-        iNumDays = gMercProfiles[pSoldier->ubProfile].iMercMercContractLength;
+      if (gMercProfiles[GetSolProfile(pSoldier)].iMercMercContractLength > iNumDays)
+        iNumDays = gMercProfiles[GetSolProfile(pSoldier)].iMercMercContractLength;
     }
   }
 

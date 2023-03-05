@@ -362,7 +362,8 @@ INT8 NumMalesPresent(UINT8 ubProfileID) {
     pSoldier = MercSlots[uiLoop];
 
     if (pSoldier && pSoldier->bTeam == gbPlayerNum && pSoldier->bLife >= OKLIFE) {
-      if (pSoldier->ubProfile != NO_PROFILE && gMercProfiles[pSoldier->ubProfile].bSex == MALE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE &&
+          gMercProfiles[GetSolProfile(pSoldier)].bSex == MALE) {
         if (PythSpacesAway(sGridNo, pSoldier->sGridNo) <= 8) {
           bNumber++;
         }
@@ -389,7 +390,8 @@ BOOLEAN FemalePresent(UINT8 ubProfileID) {
     pSoldier = MercSlots[uiLoop];
 
     if (pSoldier && pSoldier->bTeam == gbPlayerNum && pSoldier->bLife >= OKLIFE) {
-      if (pSoldier->ubProfile != NO_PROFILE && gMercProfiles[pSoldier->ubProfile].bSex == FEMALE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE &&
+          gMercProfiles[GetSolProfile(pSoldier)].bSex == FEMALE) {
         if (PythSpacesAway(sGridNo, pSoldier->sGridNo) <= 10) {
           return (TRUE);
         }

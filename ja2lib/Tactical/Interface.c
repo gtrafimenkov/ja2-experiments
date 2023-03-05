@@ -1233,7 +1233,7 @@ void GetSoldierAboveGuyPositions(struct SOLDIERTYPE *pSoldier, INT16 *psX, INT16
     // sStanceOffset += ROOF_LEVEL_HEIGHT;
   }
 
-  if (pSoldier->ubProfile != NO_PROFILE) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
     if (fRadio) {
       *psX = sMercScreenX - (80 / 2) - pSoldier->sLocatorOffX;
       *psY = sMercScreenY - sTextBodyTypeYOffset + sStanceOffset;
@@ -1391,7 +1391,7 @@ void DrawSelectedUIAboveGuy(UINT16 usSoldierID) {
   SetFontBackground(FONT_MCOLOR_BLACK);
   SetFontForeground(FONT_MCOLOR_WHITE);
 
-  if (pSoldier->ubProfile != NO_PROFILE || (pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE || (pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
     if (gfUIMouseOnValidCatcher == 1 && GetSolID(pSoldier) == gubUIValidCatcherID) {
       swprintf(NameStr, ARR_SIZE(NameStr), TacticalStr[CATCH_STR]);
       FindFontCenterCoordinates(sXPos, (INT16)(sYPos), (INT16)(80), 1, NameStr, TINYFONT1, &sX,
@@ -1458,7 +1458,7 @@ void DrawSelectedUIAboveGuy(UINT16 usSoldierID) {
       }
     }
 
-    if (pSoldier->ubProfile < FIRST_RPC || RPC_RECRUITED(pSoldier) || AM_AN_EPC(pSoldier) ||
+    if (GetSolProfile(pSoldier) < FIRST_RPC || RPC_RECRUITED(pSoldier) || AM_AN_EPC(pSoldier) ||
         (pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
       // Adjust for bars!
 

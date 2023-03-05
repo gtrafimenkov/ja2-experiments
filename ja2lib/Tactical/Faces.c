@@ -160,7 +160,7 @@ INT32 InitSoldierFace(struct SOLDIERTYPE *pSoldier) {
     return (iFaceIndex);
   }
 
-  return (InitFace(pSoldier->ubProfile, GetSolID(pSoldier), 0));
+  return (InitFace(GetSolProfile(pSoldier), GetSolID(pSoldier), 0));
 }
 
 INT32 InitFace(UINT8 usMercProfileID, UINT8 ubSoldierID, UINT32 uiInitFlags) {

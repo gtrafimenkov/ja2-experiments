@@ -604,17 +604,17 @@ UINT8 SelectSpeakerFromHostileOrSayQuoteList(void) {
 
   for (ubLoop = 0; ubLoop < gubNumShouldBecomeHostileOrSayQuote; ubLoop++) {
     pSoldier = MercPtrs[gubShouldBecomeHostileOrSayQuote[ubLoop]];
-    if (pSoldier->ubProfile != NO_PROFILE) {
+    if (GetSolProfile(pSoldier) != NO_PROFILE) {
       // make sure person can say quote!!!!
-      gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 |=
+      gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 |=
           PROFILE_MISC_FLAG2_NEEDS_TO_SAY_HOSTILE_QUOTE;
 
-      if (NPCHasUnusedHostileRecord(pSoldier->ubProfile, APPROACH_DECLARATION_OF_HOSTILITY)) {
+      if (NPCHasUnusedHostileRecord(GetSolProfile(pSoldier), APPROACH_DECLARATION_OF_HOSTILITY)) {
         ubProfileList[ubNumProfiles] = gubShouldBecomeHostileOrSayQuote[ubLoop];
         ubNumProfiles++;
       } else {
         // turn flag off again
-        gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 &=
+        gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 &=
             ~PROFILE_MISC_FLAG2_NEEDS_TO_SAY_HOSTILE_QUOTE;
       }
     }
@@ -1744,7 +1744,7 @@ PopMessage(tempstr);
   // if we're seeing a guy we didn't see on our last chance to look for him
   if (pSoldier->bOppList[pOpponent->ubID] != SEEN_CURRENTLY) {
     if (pOpponent->bTeam == gbPlayerNum) {
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         if (pSoldier->bTeam == CIV_TEAM) {
           // if this person doing the sighting is a member of a civ group that hates us but
           // this fact hasn't been revealed, change the side of these people now. This will
@@ -1757,7 +1757,7 @@ PopMessage(tempstr);
               AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
               fNotAddedToList = FALSE;
             }
-          } else if (NPCHasUnusedRecordWithGivenApproach(pSoldier->ubProfile,
+          } else if (NPCHasUnusedRecordWithGivenApproach(GetSolProfile(pSoldier),
                                                          APPROACH_DECLARATION_OF_HOSTILITY)) {
             // only add if have something to say
             AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
@@ -1765,7 +1765,7 @@ PopMessage(tempstr);
           }
 
           if (fNotAddedToList) {
-            switch (pSoldier->ubProfile) {
+            switch (GetSolProfile(pSoldier)) {
               case CARMEN:
                 if (pOpponent->ubProfile == SLAY)  // 64
                 {
@@ -1773,7 +1773,7 @@ PopMessage(tempstr);
                   if (pSoldier->bNeutral) {
                     // SetSoldierNonNeutral( pSoldier );
                     pSoldier->bAttitude = ATTACKSLAYONLY;
-                    TriggerNPCRecord(pSoldier->ubProfile, 28);
+                    TriggerNPCRecord(GetSolProfile(pSoldier), 28);
                   }
                   /*
                   if ( ! gTacticalStatus.uiFlags & INCOMBAT )
@@ -1833,11 +1833,11 @@ PopMessage(tempstr);
               // case QUEEN:
               case JOE:
               case ELLIOT:
-                if (!(gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 &
+                if (!(gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 &
                       PROFILE_MISC_FLAG2_SAID_FIRSTSEEN_QUOTE)) {
                   if (!AreInMeanwhile()) {
-                    TriggerNPCRecord(pSoldier->ubProfile, 4);
-                    gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 |=
+                    TriggerNPCRecord(GetSolProfile(pSoldier), 4);
+                    gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 |=
                         PROFILE_MISC_FLAG2_SAID_FIRSTSEEN_QUOTE;
                   }
                 }
@@ -1847,12 +1847,12 @@ PopMessage(tempstr);
             }
           }
         } else {
-          switch (pSoldier->ubProfile) {
+          switch (GetSolProfile(pSoldier)) {
             case IGGY:
-              if (!(gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 &
+              if (!(gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 &
                     PROFILE_MISC_FLAG2_SAID_FIRSTSEEN_QUOTE)) {
-                TriggerNPCRecord(pSoldier->ubProfile, 9);
-                gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 |=
+                TriggerNPCRecord(GetSolProfile(pSoldier), 9);
+                gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 |=
                     PROFILE_MISC_FLAG2_SAID_FIRSTSEEN_QUOTE;
                 gbPublicOpplist[gbPlayerNum][pSoldier->ubID] = HEARD_THIS_TURN;
               }
@@ -2662,7 +2662,7 @@ void SaySeenQuote(struct SOLDIERTYPE *pSoldier, BOOLEAN fSeenCreature, BOOLEAN f
 
   if (fSeenCreature == 1) {
     // Is this our first time seeing them?
-    if (gMercProfiles[pSoldier->ubProfile].ubMiscFlags & PROFILE_MISC_FLAG_HAVESEENCREATURE) {
+    if (gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags & PROFILE_MISC_FLAG_HAVESEENCREATURE) {
       // Are there multiplaes and we have not said this quote during this battle?
       if (!(pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_MULTIPLE_CREATURES)) {
         // Check for multiples!
@@ -2697,7 +2697,7 @@ void SaySeenQuote(struct SOLDIERTYPE *pSoldier, BOOLEAN fSeenCreature, BOOLEAN f
       }
     } else {
       // Yes, set flag
-      gMercProfiles[pSoldier->ubProfile].ubMiscFlags |= PROFILE_MISC_FLAG_HAVESEENCREATURE;
+      gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags |= PROFILE_MISC_FLAG_HAVESEENCREATURE;
 
       TacticalCharacterDialogue(pSoldier, QUOTE_FIRSTTIME_GAME_SEE_CREATURE);
     }
@@ -2952,7 +2952,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, UINT8 ubAbout, UINT8 ubTeamToR
           }
 
           if (pOpponent->uiStatusFlags & SOLDIER_MONSTER) {
-            if (!(gMercProfiles[pSoldier->ubProfile].ubMiscFlags &
+            if (!(gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags &
                   PROFILE_MISC_FLAG_HAVESEENCREATURE)) {
               fSawCreatureForFirstTime = TRUE;
             }
@@ -3005,7 +3005,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, UINT8 ubAbout, UINT8 ubTeamToR
 
         OurTeamSeesSomeone(pSoldier, revealedEnemies, unknownEnemies);
       } else if (fSawCreatureForFirstTime) {
-        gMercProfiles[pSoldier->ubProfile].ubMiscFlags |= PROFILE_MISC_FLAG_HAVESEENCREATURE;
+        gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags |= PROFILE_MISC_FLAG_HAVESEENCREATURE;
         TacticalCharacterDialogue(pSoldier, QUOTE_FIRSTTIME_GAME_SEE_CREATURE);
       }
     }
@@ -3642,13 +3642,13 @@ void DebugSoldierPage3() {
 
     // OPIONION OF SELECTED MERC
     if (gusSelectedSoldier != NOBODY && (MercPtrs[gusSelectedSoldier]->ubProfile < FIRST_NPC) &&
-        pSoldier->ubProfile != NO_PROFILE) {
+        GetSolProfile(pSoldier) != NO_PROFILE) {
       SetFontShade(LARGEFONT1, FONT_SHADE_GREEN);
       gprintf(0, LINE_HEIGHT * ubLine, L"NPC Opinion:");
       SetFontShade(LARGEFONT1, FONT_SHADE_NEUTRAL);
-      gprintf(
-          150, LINE_HEIGHT * ubLine, L"%d",
-          gMercProfiles[pSoldier->ubProfile].bMercOpinion[MercPtrs[gusSelectedSoldier]->ubProfile]);
+      gprintf(150, LINE_HEIGHT * ubLine, L"%d",
+              gMercProfiles[GetSolProfile(pSoldier)]
+                  .bMercOpinion[MercPtrs[gusSelectedSoldier]->ubProfile]);
       ubLine++;
     }
 
@@ -4653,7 +4653,7 @@ void ProcessNoise(UINT8 ubNoiseMaker, INT16 sGridNo, INT8 bLevel, UINT8 ubTerrTy
             }
             break;
           case ENEMY_TEAM:
-            switch (pSoldier->ubProfile) {
+            switch (GetSolProfile(pSoldier)) {
               case WARDEN:
               case GENERAL:
               case SERGEANT:
@@ -4849,7 +4849,7 @@ UINT8 CalcEffVolume(struct SOLDIERTYPE *pSoldier, INT16 sGridNo, INT8 bLevel, UI
   /*
   if (pSoldier->bTeam == CIV_TEAM && pSoldier->ubBodyType != CROW )
   {
-          if (pSoldier->ubCivilianGroup == 0 && pSoldier->ubProfile == NO_PROFILE)
+          if (pSoldier->ubCivilianGroup == 0 && GetSolProfile(pSoldier) == NO_PROFILE)
           {
                   // nameless civs reduce effective volume by 2 for gunshots etc
                   // (double the reduction due to distance)

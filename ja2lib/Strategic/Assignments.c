@@ -6074,7 +6074,7 @@ void BeginRemoveMercFromContract(struct SOLDIERTYPE *pSoldier) {
     if ((GetWorldTotalMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 3) {
       // this will cause him give us lame excuses for a while until he gets over it
       // 3-6 days (but the first 1-2 days of that are spent "returning" home)
-      gMercProfiles[pSoldier->ubProfile].ubDaysOfMoraleHangover = (UINT8)(3 + Random(4));
+      gMercProfiles[GetSolProfile(pSoldier)].ubDaysOfMoraleHangover = (UINT8)(3 + Random(4));
 
       // if it's an AIM merc, word of this gets back to AIM...  Bad rep.
       if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
@@ -9635,21 +9635,21 @@ void UnEscortEPC(struct SOLDIERTYPE *pSoldier) {
 
     SetupProfileInsertionDataForSoldier(pSoldier);
 
-    fGotInfo = GetInfoForAbandoningEPC(pSoldier->ubProfile, &usQuoteNum, &usFactToSetToTrue);
+    fGotInfo = GetInfoForAbandoningEPC(GetSolProfile(pSoldier), &usQuoteNum, &usFactToSetToTrue);
     if (fGotInfo) {
       // say quote usQuoteNum
-      gMercProfiles[pSoldier->ubProfile].ubMiscFlags |= PROFILE_MISC_FLAG_FORCENPCQUOTE;
+      gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags |= PROFILE_MISC_FLAG_FORCENPCQUOTE;
       TacticalCharacterDialogue(pSoldier, usQuoteNum);
       // the flag will be turned off in the remove-epc event
-      // gMercProfiles[ pSoldier->ubProfile ].ubMiscFlags &= ~PROFILE_MISC_FLAG_FORCENPCQUOTE;
+      // gMercProfiles[ GetSolProfile(pSoldier) ].ubMiscFlags &= ~PROFILE_MISC_FLAG_FORCENPCQUOTE;
       SetFactTrue(usFactToSetToTrue);
     }
-    SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_REMOVE_EPC, pSoldier->ubProfile, 0, 0, 0,
-                                  0);
+    SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_REMOVE_EPC, GetSolProfile(pSoldier), 0, 0,
+                                  0, 0);
 
-    HandleFactForNPCUnescorted(pSoldier->ubProfile);
+    HandleFactForNPCUnescorted(GetSolProfile(pSoldier));
 
-    if (pSoldier->ubProfile == JOHN) {
+    if (GetSolProfile(pSoldier) == JOHN) {
       struct SOLDIERTYPE *pSoldier2;
 
       // unrecruit Mary as well
@@ -9668,7 +9668,7 @@ void UnEscortEPC(struct SOLDIERTYPE *pSoldier) {
 
         SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_REMOVE_EPC, MARY, 0, 0, 0, 0);
       }
-    } else if (pSoldier->ubProfile == MARY) {
+    } else if (GetSolProfile(pSoldier) == MARY) {
       struct SOLDIERTYPE *pSoldier2;
 
       // unrecruit John as well
@@ -9696,7 +9696,7 @@ void UnEscortEPC(struct SOLDIERTYPE *pSoldier) {
     fCharacterInfoPanelDirty = TRUE;
   } else {
     // how do we handle this if it's the right sector?
-    TriggerNPCWithGivenApproach(pSoldier->ubProfile, APPROACH_EPC_IN_WRONG_SECTOR, TRUE);
+    TriggerNPCWithGivenApproach(GetSolProfile(pSoldier), APPROACH_EPC_IN_WRONG_SECTOR, TRUE);
   }
 }
 
@@ -9735,7 +9735,7 @@ UINT8 CalcSoldierNeedForSleep(struct SOLDIERTYPE *pSoldier) {
   UINT8 ubPercentHealth;
 
   // base comes from profile
-  ubNeedForSleep = gMercProfiles[pSoldier->ubProfile].ubNeedForSleep;
+  ubNeedForSleep = gMercProfiles[GetSolProfile(pSoldier)].ubNeedForSleep;
 
   ubPercentHealth = pSoldier->bLife / pSoldier->bLifeMax;
 

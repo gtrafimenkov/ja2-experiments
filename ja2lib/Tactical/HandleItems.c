@@ -237,9 +237,9 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
   if (fFromUI && pSoldier->bTeam == gbPlayerNum && pTargetSoldier &&
       (pTargetSoldier->bTeam == gbPlayerNum || pTargetSoldier->bNeutral) &&
       pTargetSoldier->ubBodyType != CROW && Item[usHandItem].usItemClass != IC_MEDKIT) {
-    if (pSoldier->ubProfile != NO_PROFILE) {
+    if (GetSolProfile(pSoldier) != NO_PROFILE) {
       // nice mercs won't shoot other nice guys or neutral civilians
-      if ((gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 & PROFILE_MISC_FLAG3_GOODGUY) &&
+      if ((gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 & PROFILE_MISC_FLAG3_GOODGUY) &&
           ((pTargetSoldier->ubProfile == NO_PROFILE && pTargetSoldier->bNeutral) ||
            gMercProfiles[pTargetSoldier->ubProfile].ubMiscFlags3 & PROFILE_MISC_FLAG3_GOODGUY)) {
         TacticalCharacterDialogue(pSoldier, QUOTE_REFUSING_ORDER);
@@ -247,7 +247,7 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       }
       if (pTargetSoldier->ubProfile != NO_PROFILE) {
         // buddies won't shoot each other
-        if (WhichBuddy(pSoldier->ubProfile, pTargetSoldier->ubProfile) != -1) {
+        if (WhichBuddy(GetSolProfile(pSoldier), pTargetSoldier->ubProfile) != -1) {
           TacticalCharacterDialogue(pSoldier, QUOTE_REFUSING_ORDER);
           return (ITEM_HANDLE_REFUSAL);
         }
@@ -272,11 +272,11 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
       // check imprint ID
       // NB not-imprinted value is NO_PROFILE
       // imprinted value is profile for mercs & NPCs and NO_PROFILE + 1 for generic dudes
-      if (pSoldier->ubProfile != NO_PROFILE) {
-        if (pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID != pSoldier->ubProfile) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
+        if (pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID != GetSolProfile(pSoldier)) {
           if (pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID == NO_PROFILE) {
             // first shot using "virgin" gun... set imprint ID
-            pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID = pSoldier->ubProfile;
+            pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID = GetSolProfile(pSoldier);
 
             // this could be an NPC (Krott)
             if (pSoldier->bTeam == gbPlayerNum) {
@@ -374,8 +374,8 @@ INT32 HandleItem(struct SOLDIERTYPE *pSoldier, UINT16 usGridNo, INT8 bLevel, UIN
 
     // If this is a player guy, show message about no APS
     if (EnoughPoints(pSoldier, sAPCost, 0, fFromUI)) {
-      if ((pSoldier->ubProfile != NO_PROFILE) &&
-          (gMercProfiles[pSoldier->ubProfile].bPersonalityTrait == PSYCHO)) {
+      if ((GetSolProfile(pSoldier) != NO_PROFILE) &&
+          (gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait == PSYCHO)) {
         // psychos might possibly switch to burst if they can
         if (!pSoldier->bDoBurst && IsGunBurstCapable(pSoldier, HANDPOS, FALSE)) {
           // chance of firing burst if we have points... chance decreasing when ordered to do aimed
@@ -1517,7 +1517,7 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, INT32 iItemIndex, INT
   // OK, check if potentially a good candidate for cool quote
   if (fShouldSayCoolQuote && pSoldier->bTeam == gbPlayerNum) {
     // Do we have this quote..?
-    if (QuoteExp_GotGunOrUsedGun[pSoldier->ubProfile] == QUOTE_FOUND_SOMETHING_SPECIAL) {
+    if (QuoteExp_GotGunOrUsedGun[GetSolProfile(pSoldier)] == QUOTE_FOUND_SOMETHING_SPECIAL) {
       // Have we not said it today?
       if (!(pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_FOUND_SOMETHING_NICE)) {
         // set flag
@@ -3175,12 +3175,14 @@ void SoldierGiveItemFromAnimation(struct SOLDIERTYPE *pSoldier) {
       }
       // now also check for buy/sell lines (Oct 13)
       /*
-      else if ( NPCWillingToAcceptItem( pTSoldier->ubProfile, pSoldier->ubProfile, &TempObject ) )
+      else if ( NPCWillingToAcceptItem( pTSoldier->ubProfile, GetSolProfile(pSoldier), &TempObject )
+      )
       {
               TriggerNPCWithGivenApproach( pTSoldier->ubProfile, APPROACH_GIVINGITEM, TRUE );
               return;
       }*/
-      else if (!NPCWillingToAcceptItem(pTSoldier->ubProfile, pSoldier->ubProfile, &TempObject)) {
+      else if (!NPCWillingToAcceptItem(pTSoldier->ubProfile, GetSolProfile(pSoldier),
+                                       &TempObject)) {
         // Enter the shopkeeper interface
         EnterShopKeeperInterfaceScreen(pTSoldier->ubProfile);
 
@@ -3992,7 +3994,7 @@ void MakeNPCGrumpyForMinorOffense(struct SOLDIERTYPE *pSoldier,
                                   struct SOLDIERTYPE *pOffendingSoldier) {
   CancelAIAction(pSoldier, TRUE);
 
-  switch (pSoldier->ubProfile) {
+  switch (GetSolProfile(pSoldier)) {
     case FREDO:
     case FRANZ:
     case HERVE:
@@ -4008,8 +4010,8 @@ void MakeNPCGrumpyForMinorOffense(struct SOLDIERTYPE *pSoldier,
     case TINA:
     case ARMAND:
     case WALTER:
-      gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 |= PROFILE_MISC_FLAG3_NPC_PISSED_OFF;
-      TriggerNPCWithIHateYouQuote(pSoldier->ubProfile);
+      gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 |= PROFILE_MISC_FLAG3_NPC_PISSED_OFF;
+      TriggerNPCWithIHateYouQuote(GetSolProfile(pSoldier));
       break;
     default:
       // trigger NPCs with quote if available
@@ -4267,8 +4269,8 @@ BOOLEAN CanPlayerUseRocketRifle(struct SOLDIERTYPE *pSoldier, BOOLEAN fDisplay) 
     // check imprint ID
     // NB not-imprinted value is NO_PROFILE
     // imprinted value is profile for mercs & NPCs and NO_PROFILE + 1 for generic dudes
-    if (pSoldier->ubProfile != NO_PROFILE) {
-      if (pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID != pSoldier->ubProfile) {
+    if (GetSolProfile(pSoldier) != NO_PROFILE) {
+      if (pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID != GetSolProfile(pSoldier)) {
         // NOT a virgin gun...
         if (pSoldier->inv[pSoldier->ubAttackingHand].ubImprintID != NO_PROFILE) {
           // access denied!

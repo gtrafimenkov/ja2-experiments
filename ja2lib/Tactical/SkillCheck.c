@@ -118,8 +118,8 @@ INT8 EffectiveExpLevel(struct SOLDIERTYPE *pSoldier) {
 
   iEffExpLevel = iEffExpLevel + iExpModifier[bDrunkLevel];
 
-  if (pSoldier->ubProfile != NO_PROFILE) {
-    if ((gMercProfiles[pSoldier->ubProfile].bPersonalityTrait == CLAUSTROPHOBIC) &&
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
+    if ((gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait == CLAUSTROPHOBIC) &&
         IsSolActive(pSoldier) && pSoldier->bInSector && gbWorldSectorZ > 0) {
       // claustrophobic!
       iEffExpLevel--;
@@ -412,7 +412,7 @@ INT32 SkillCheck(struct SOLDIERTYPE *pSoldier, INT8 bReason, INT8 bChanceMod) {
       for (pTeamSoldier = MercPtrs[iLoop]; iLoop <= gTacticalStatus.Team[gbPlayerNum].bLastID;
            iLoop++, pTeamSoldier++) {
         if (OK_INSECTOR_MERC(pTeamSoldier)) {
-          bBuddyIndex = WhichBuddy(pTeamSoldier->ubProfile, pSoldier->ubProfile);
+          bBuddyIndex = WhichBuddy(pTeamSoldier->ubProfile, GetSolProfile(pSoldier));
           if (bBuddyIndex >= 0 && SpacesAway(pSoldier->sGridNo, pTeamSoldier->sGridNo) < 15) {
             switch (bBuddyIndex) {
               case 0:

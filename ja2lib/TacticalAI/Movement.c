@@ -391,7 +391,7 @@ INT16 InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, INT16 sDesG
   usMaxDist = RoamingRange(pSoldier, &sOrigin);
 
   if (pSoldier->bOrders <= CLOSEPATROL &&
-      (pSoldier->bTeam == CIV_TEAM || pSoldier->ubProfile != NO_PROFILE)) {
+      (pSoldier->bTeam == CIV_TEAM || GetSolProfile(pSoldier) != NO_PROFILE)) {
     if (InARoom(pSoldier->usPatrolGrid[0], &ubRoomRequired)) {
       // make sure this doesn't interfere with pathing for scripts
       if (pSoldier->sAbsoluteFinalDestination != NOWHERE) {

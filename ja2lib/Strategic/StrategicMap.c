@@ -1507,8 +1507,9 @@ void UpdateMercInSector(struct SOLDIERTYPE *pSoldier, INT16 sSectorX, INT16 sSec
 
     MAPEDGEPOINT_SEARCH_FAILED:
 
-      if (pSoldier->ubProfile != NO_PROFILE && gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 &
-                                                   PROFILE_MISC_FLAG3_PERMANENT_INSERTION_CODE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE &&
+          gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 &
+              PROFILE_MISC_FLAG3_PERMANENT_INSERTION_CODE) {
         // override orders
         pSoldier->bOrders = STATIONARY;
       }
@@ -4018,12 +4019,13 @@ BOOLEAN CheckAndHandleUnloadingOfCurrentWorld() {
 // isn't yet loaded.)  When loading that sector, the RPC would be added.
 //@@@Evaluate
 void SetupProfileInsertionDataForSoldier(struct SOLDIERTYPE *pSoldier) {
-  if (!pSoldier || pSoldier->ubProfile == NO_PROFILE) {  // Doesn't have profile information.
+  if (!pSoldier || GetSolProfile(pSoldier) == NO_PROFILE) {  // Doesn't have profile information.
     return;
   }
 
-  if (gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 & PROFILE_MISC_FLAG3_PERMANENT_INSERTION_CODE)
-  // if ( gMercProfiles[ pSoldier->ubProfile ].ubStrategicInsertionCode ==
+  if (gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 &
+      PROFILE_MISC_FLAG3_PERMANENT_INSERTION_CODE)
+  // if ( gMercProfiles[ GetSolProfile(pSoldier) ].ubStrategicInsertionCode ==
   // INSERTION_CODE_PERMANENT_GRIDNO )
   {
     // can't be changed!
@@ -4044,42 +4046,43 @@ void SetupProfileInsertionDataForSoldier(struct SOLDIERTYPE *pSoldier) {
         // Handle traversal.  This NPC's sector will NOT already be set correctly, so we have to
         // call for that too
         HandleNPCChangesForTacticalTraversal(pSoldier);
-        gMercProfiles[pSoldier->ubProfile].fUseProfileInsertionInfo = FALSE;
-        if (pSoldier->ubProfile != NO_PROFILE &&
-            NPCHasUnusedRecordWithGivenApproach(pSoldier->ubProfile, APPROACH_DONE_TRAVERSAL)) {
-          gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 |=
+        gMercProfiles[GetSolProfile(pSoldier)].fUseProfileInsertionInfo = FALSE;
+        if (GetSolProfile(pSoldier) != NO_PROFILE &&
+            NPCHasUnusedRecordWithGivenApproach(GetSolProfile(pSoldier), APPROACH_DONE_TRAVERSAL)) {
+          gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 |=
               PROFILE_MISC_FLAG3_HANDLE_DONE_TRAVERSAL;
         }
 
       } else {
         if (pSoldier->sFinalDestination == pSoldier->sGridNo) {
-          gMercProfiles[pSoldier->ubProfile].usStrategicInsertionData = pSoldier->sGridNo;
+          gMercProfiles[GetSolProfile(pSoldier)].usStrategicInsertionData = pSoldier->sGridNo;
         } else if (pSoldier->sAbsoluteFinalDestination != NOWHERE) {
-          gMercProfiles[pSoldier->ubProfile].usStrategicInsertionData =
+          gMercProfiles[GetSolProfile(pSoldier)].usStrategicInsertionData =
               pSoldier->sAbsoluteFinalDestination;
         } else {
-          gMercProfiles[pSoldier->ubProfile].usStrategicInsertionData = pSoldier->sFinalDestination;
+          gMercProfiles[GetSolProfile(pSoldier)].usStrategicInsertionData =
+              pSoldier->sFinalDestination;
         }
 
-        gMercProfiles[pSoldier->ubProfile].fUseProfileInsertionInfo = TRUE;
-        gMercProfiles[pSoldier->ubProfile].ubStrategicInsertionCode = INSERTION_CODE_GRIDNO;
-        gMercProfiles[pSoldier->ubProfile].ubQuoteActionID = pSoldier->ubQuoteActionID;
-        gMercProfiles[pSoldier->ubProfile].ubQuoteRecord = pSoldier->ubQuoteActionID;
+        gMercProfiles[GetSolProfile(pSoldier)].fUseProfileInsertionInfo = TRUE;
+        gMercProfiles[GetSolProfile(pSoldier)].ubStrategicInsertionCode = INSERTION_CODE_GRIDNO;
+        gMercProfiles[GetSolProfile(pSoldier)].ubQuoteActionID = pSoldier->ubQuoteActionID;
+        gMercProfiles[GetSolProfile(pSoldier)].ubQuoteRecord = pSoldier->ubQuoteActionID;
       }
     } else {
-      gMercProfiles[pSoldier->ubProfile].fUseProfileInsertionInfo = FALSE;
+      gMercProfiles[GetSolProfile(pSoldier)].fUseProfileInsertionInfo = FALSE;
     }
 
   } else {  // use strategic information
 
     // It appears to set the soldier's strategic insertion code everytime a group arrives in a new
     // sector.  The insertion data isn't needed for these cases as the code is a direction only.
-    gMercProfiles[pSoldier->ubProfile].ubStrategicInsertionCode =
+    gMercProfiles[GetSolProfile(pSoldier)].ubStrategicInsertionCode =
         pSoldier->ubStrategicInsertionCode;
-    gMercProfiles[pSoldier->ubProfile].usStrategicInsertionData = 0;
+    gMercProfiles[GetSolProfile(pSoldier)].usStrategicInsertionData = 0;
 
     // Strategic system should now work.
-    gMercProfiles[pSoldier->ubProfile].fUseProfileInsertionInfo = TRUE;
+    gMercProfiles[GetSolProfile(pSoldier)].fUseProfileInsertionInfo = TRUE;
   }
 }
 

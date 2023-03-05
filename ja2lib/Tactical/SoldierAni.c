@@ -995,7 +995,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
               pSoldier->uiStatusFlags &= (~SOLDIER_NPC_DOING_PUNCH);
 
               // Trigger approach...
-              TriggerNPCWithGivenApproach(pSoldier->ubProfile,
+              TriggerNPCWithGivenApproach(GetSolProfile(pSoldier),
                                           (UINT8)pSoldier->uiPendingActionData4, FALSE);
             }
 
@@ -1003,9 +1003,9 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
             {
               BOOLEAN fMartialArtist = FALSE;
 
-              if (pSoldier->ubProfile != NO_PROFILE) {
-                if (gMercProfiles[pSoldier->ubProfile].bSkillTrait == MARTIALARTS ||
-                    gMercProfiles[pSoldier->ubProfile].bSkillTrait2 == MARTIALARTS) {
+              if (GetSolProfile(pSoldier) != NO_PROFILE) {
+                if (gMercProfiles[GetSolProfile(pSoldier)].bSkillTrait == MARTIALARTS ||
+                    gMercProfiles[GetSolProfile(pSoldier)].bSkillTrait2 == MARTIALARTS) {
                   fMartialArtist = TRUE;
                 }
               }
@@ -1294,8 +1294,8 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
 
           // CODE: GIVE ITEM
           SoldierGiveItemFromAnimation(pSoldier);
-          if (pSoldier->ubProfile != NO_PROFILE && pSoldier->ubProfile >= FIRST_NPC) {
-            TriggerNPCWithGivenApproach(pSoldier->ubProfile, APPROACH_DONE_GIVING_ITEM, FALSE);
+          if (GetSolProfile(pSoldier) != NO_PROFILE && GetSolProfile(pSoldier) >= FIRST_NPC) {
+            TriggerNPCWithGivenApproach(GetSolProfile(pSoldier), APPROACH_DONE_GIVING_ITEM, FALSE);
           }
           break;
 
@@ -2660,7 +2660,7 @@ BOOLEAN AdjustToNextAnimationFrame(struct SOLDIERTYPE *pSoldier) {
 BOOLEAN ShouldMercSayHappyWithGunQuote(struct SOLDIERTYPE *pSoldier) {
   // How do we do this....
 
-  if (QuoteExp_GotGunOrUsedGun[pSoldier->ubProfile] == QUOTE_SATISFACTION_WITH_GUN_AFTER_KILL) {
+  if (QuoteExp_GotGunOrUsedGun[GetSolProfile(pSoldier)] == QUOTE_SATISFACTION_WITH_GUN_AFTER_KILL) {
     // For one, only once a day...
     if (pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_LIKESGUN) {
       return (FALSE);
@@ -3213,7 +3213,7 @@ void CheckForAndHandleSoldierIncompacitated(struct SOLDIERTYPE *pSoldier) {
       if (0)
 #else
       if (Random(100) > 40 && IS_MERC_BODY_TYPE(pSoldier) &&
-          !IsProfileATerrorist(pSoldier->ubProfile))
+          !IsProfileATerrorist(GetSolProfile(pSoldier)))
 #endif
       {
         // CHECK IF WE HAVE AN ATTACKER, TAKE OPPOSITE DIRECTION!
@@ -3713,14 +3713,14 @@ void KickOutWheelchair(struct SOLDIERTYPE *pSoldier) {
 
   EVENT_StopMerc(pSoldier, sNewGridNo, pSoldier->bDirection);
   pSoldier->ubBodyType = REGMALE;
-  if (pSoldier->ubProfile == SLAY && pSoldier->bTeam == CIV_TEAM && !pSoldier->bNeutral) {
-    HandleNPCDoAction(pSoldier->ubProfile, NPC_ACTION_THREATENINGLY_RAISE_GUN, 0);
+  if (GetSolProfile(pSoldier) == SLAY && pSoldier->bTeam == CIV_TEAM && !pSoldier->bNeutral) {
+    HandleNPCDoAction(GetSolProfile(pSoldier), NPC_ACTION_THREATENINGLY_RAISE_GUN, 0);
   } else {
     EVENT_InitNewSoldierAnim(pSoldier, STANDING, 0, TRUE);
   }
 
   // If this person has a profile ID, set body type to regmale
-  if (pSoldier->ubProfile != NO_PROFILE) {
-    gMercProfiles[pSoldier->ubProfile].ubBodyType = REGMALE;
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
+    gMercProfiles[GetSolProfile(pSoldier)].ubBodyType = REGMALE;
   }
 }

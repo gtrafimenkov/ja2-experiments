@@ -628,7 +628,7 @@ INT16 RandDestWithinRange(struct SOLDIERTYPE *pSoldier) {
   usMaxDist = RoamingRange(pSoldier, &usOrigin);
 
   if (pSoldier->bOrders <= CLOSEPATROL &&
-      (pSoldier->bTeam == CIV_TEAM || pSoldier->ubProfile != NO_PROFILE)) {
+      (pSoldier->bTeam == CIV_TEAM || GetSolProfile(pSoldier) != NO_PROFILE)) {
     // any other combo uses the default of ubRoom == 0, set above
     if (!InARoom(pSoldier->usPatrolGrid[0], &ubRoom)) {
       ubRoom = 0;
@@ -1905,7 +1905,7 @@ INT16 RoamingRange(struct SOLDIERTYPE *pSoldier, UINT16 *pusFromGridNo) {
   switch (pSoldier->bOrders) {
     // JA2 GOLD: give non-NPCs a 5 tile roam range for cover in combat when being shot at
     case STATIONARY:
-      if (pSoldier->ubProfile != NO_PROFILE ||
+      if (GetSolProfile(pSoldier) != NO_PROFILE ||
           (pSoldier->bAlertStatus < STATUS_BLACK && !(pSoldier->bUnderFire))) {
         return (0);
       } else {

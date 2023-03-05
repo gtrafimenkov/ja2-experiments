@@ -835,13 +835,13 @@ BOOLEAN EnterShopKeeperInterface() {
        ubCnt <= gTacticalStatus.Team[OUR_TEAM].bLastID; ubCnt++) {
     pSoldier = MercPtrs[ubCnt];
 
-    if (IsSolActive(pSoldier) && (pSoldier->ubProfile != NO_PROFILE) &&
+    if (IsSolActive(pSoldier) && (GetSolProfile(pSoldier) != NO_PROFILE) &&
         !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && !AM_A_ROBOT(pSoldier)) {
       // remember whose face is in this slot
-      gubArrayOfEmployedMercs[gubNumberMercsInArray] = pSoldier->ubProfile;
+      gubArrayOfEmployedMercs[gubNumberMercsInArray] = GetSolProfile(pSoldier);
 
       // Create the string for the face file name
-      sprintf(zTemp, "FACES\\33FACE\\%02d.sti", gMercProfiles[pSoldier->ubProfile].ubFaceIndex);
+      sprintf(zTemp, "FACES\\33FACE\\%02d.sti", gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
 
       // While we are at it, add their small face
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;

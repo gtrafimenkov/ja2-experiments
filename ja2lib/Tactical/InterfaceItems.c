@@ -1125,7 +1125,7 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, INT16 sPocket, UINT8 fD
 
   // if we are in the shop keeper interface
   if (guiTacticalInterfaceFlags & INTERFACE_SHOPKEEP_INTERFACE) {
-    if (ShouldSoldierDisplayHatchOnItem(pSoldier->ubProfile, sPocket) &&
+    if (ShouldSoldierDisplayHatchOnItem(GetSolProfile(pSoldier), sPocket) &&
         !gbInvalidPlacementSlot[sPocket]) {
       fHatchItOut = TRUE;
     }

@@ -204,29 +204,29 @@ INT8 HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
     pSoldier->ubWhatKindOfMercAmI = MERC_TYPE__AIM_MERC;
     // determine how much the contract is, and remember what type of contract he got
     if (pHireMerc->iTotalContractLength == 1) {
-      // pSoldier->iTotalContractCharge = gMercProfiles[ pSoldier->ubProfile ].sSalary;
+      // pSoldier->iTotalContractCharge = gMercProfiles[ GetSolProfile(pSoldier) ].sSalary;
       pSoldier->bTypeOfLastContract = CONTRACT_EXTEND_1_DAY;
       pSoldier->iTimeCanSignElsewhere = GetWorldTotalMin();
     } else if (pHireMerc->iTotalContractLength == 7) {
-      // pSoldier->iTotalContractCharge = gMercProfiles[ pSoldier->ubProfile ].uiWeeklySalary;
+      // pSoldier->iTotalContractCharge = gMercProfiles[ GetSolProfile(pSoldier) ].uiWeeklySalary;
       pSoldier->bTypeOfLastContract = CONTRACT_EXTEND_1_WEEK;
       pSoldier->iTimeCanSignElsewhere = GetWorldTotalMin();
     } else if (pHireMerc->iTotalContractLength == 14) {
-      // pSoldier->iTotalContractCharge = gMercProfiles[ pSoldier->ubProfile ].uiBiWeeklySalary;
+      // pSoldier->iTotalContractCharge = gMercProfiles[ GetSolProfile(pSoldier) ].uiBiWeeklySalary;
       pSoldier->bTypeOfLastContract = CONTRACT_EXTEND_2_WEEK;
       // These luck fellows need to stay the whole duration!
       pSoldier->iTimeCanSignElsewhere = pSoldier->iEndofContractTime;
     }
 
     // remember the medical deposit we PAID.  The one in his profile can increase when he levels!
-    pSoldier->usMedicalDeposit = gMercProfiles[pSoldier->ubProfile].sMedicalDepositAmount;
+    pSoldier->usMedicalDeposit = gMercProfiles[GetSolProfile(pSoldier)].sMedicalDepositAmount;
   }
   // if the merc is from M.E.R.C.
   else if ((ubCurrentSoldier >= 40) && (ubCurrentSoldier <= 50)) {
     pSoldier->ubWhatKindOfMercAmI = MERC_TYPE__MERC;
     // pSoldier->iTotalContractCharge = -1;
 
-    gMercProfiles[pSoldier->ubProfile].iMercMercContractLength = 1;
+    gMercProfiles[GetSolProfile(pSoldier)].iMercMercContractLength = 1;
 
     // Set starting conditions for the merc
     pSoldier->iStartContractTime = GetWorldDay();
@@ -247,7 +247,7 @@ INT8 HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
 
   // remove the merc from the Personnel screens departed list ( if they have never been hired
   // before, its ok to call it )
-  RemoveNewlyHiredMercFromPersonnelDepartedList(pSoldier->ubProfile);
+  RemoveNewlyHiredMercFromPersonnelDepartedList(GetSolProfile(pSoldier));
 
   gfAtLeastOneMercWasHired = TRUE;
   return (MERC_HIRE_OK);
@@ -276,7 +276,7 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
 
   pSoldier = GetSoldierByID(ubSoldierID);
 
-  pMerc = &gMercProfiles[pSoldier->ubProfile];
+  pMerc = &gMercProfiles[GetSolProfile(pSoldier)];
 
   // add the guy to a squad
   AddCharacterToAnySquad(pSoldier);
@@ -355,7 +355,8 @@ void MercArrivesCallback(UINT8 ubSoldierID) {
       uiTimeOfPost = 540 + Random(660);
 
       if (GetWorldMinutesInDay() < uiTimeOfPost) {
-        AddSameDayStrategicEvent(EVENT_MERC_COMPLAIN_EQUIPMENT, uiTimeOfPost, pSoldier->ubProfile);
+        AddSameDayStrategicEvent(EVENT_MERC_COMPLAIN_EQUIPMENT, uiTimeOfPost,
+                                 GetSolProfile(pSoldier));
       }
     }
   }
@@ -442,7 +443,7 @@ void HandleMercArrivesQuotes(struct SOLDIERTYPE *pSoldier) {
     for (pTeamSoldier = MercPtrs[cnt]; cnt <= bLastTeamID; cnt++, pTeamSoldier++) {
       if (pTeamSoldier->bActive) {
         if (pTeamSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
-          bHated = WhichHated(pTeamSoldier->ubProfile, pSoldier->ubProfile);
+          bHated = WhichHated(pTeamSoldier->ubProfile, GetSolProfile(pSoldier));
           if (bHated != -1) {
             // hates the merc who has arrived and is going to gripe about it!
             switch (bHated) {

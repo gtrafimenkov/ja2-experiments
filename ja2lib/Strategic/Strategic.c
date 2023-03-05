@@ -92,7 +92,7 @@ void HandleSoldierDeadComments(struct SOLDIERTYPE *pSoldier) {
   for (pTeamSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[pSoldier->bTeam].bLastID;
        cnt++, pTeamSoldier++) {
     if (pTeamSoldier->bLife >= OKLIFE && pTeamSoldier->bActive) {
-      bBuddyIndex = WhichBuddy(pTeamSoldier->ubProfile, pSoldier->ubProfile);
+      bBuddyIndex = WhichBuddy(pTeamSoldier->ubProfile, GetSolProfile(pSoldier));
       switch (bBuddyIndex) {
         case 0:
           // buddy #1 died!

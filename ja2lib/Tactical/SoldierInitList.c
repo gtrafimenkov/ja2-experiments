@@ -1743,7 +1743,7 @@ void AddProfilesUsingProfileInsertionData() {
       }
 
       // make sure this person's pointer is set properly in the init list
-      curr = FindSoldierInitListNodeByProfile(pSoldier->ubProfile);
+      curr = FindSoldierInitListNodeByProfile(GetSolProfile(pSoldier));
       if (curr) {
         curr->pSoldier = pSoldier;
         curr->ubSoldierID = GetSolID(pSoldier);

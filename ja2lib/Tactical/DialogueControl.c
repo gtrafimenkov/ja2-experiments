@@ -380,7 +380,7 @@ void HandleDialogueUIAdjustments() {
             }
 
             // Setup UI again!
-            CreateTalkingUI(gbUIHandlerID, pSoldier->iFaceIndex, pSoldier->ubProfile, pSoldier,
+            CreateTalkingUI(gbUIHandlerID, pSoldier->iFaceIndex, GetSolProfile(pSoldier), pSoldier,
                             gzQuoteStr);
           }
         }
@@ -1025,7 +1025,7 @@ BOOLEAN GetDialogue(UINT8 ubCharacterNum, UINT16 usQuoteNum, UINT32 iDataSize,
                     CHAR8 *zSoundString);
 
 BOOLEAN DelayedTacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNum) {
-  if (pSoldier->ubProfile == NO_PROFILE) {
+  if (GetSolProfile(pSoldier) == NO_PROFILE) {
     return (FALSE);
   }
 
@@ -1043,14 +1043,14 @@ BOOLEAN DelayedTacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 us
     return (FALSE);
   }
 
-  return (CharacterDialogue(pSoldier->ubProfile, usQuoteNum, pSoldier->iFaceIndex,
+  return (CharacterDialogue(GetSolProfile(pSoldier), usQuoteNum, pSoldier->iFaceIndex,
                             DIALOGUE_TACTICAL_UI, TRUE, TRUE));
 }
 
 BOOLEAN TacticalCharacterDialogueWithSpecialEvent(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNum,
                                                   UINT32 uiFlag, uintptr_t uiData1,
                                                   UINT32 uiData2) {
-  if (pSoldier->ubProfile == NO_PROFILE) {
+  if (GetSolProfile(pSoldier) == NO_PROFILE) {
     return (FALSE);
   }
 
@@ -1060,15 +1060,15 @@ BOOLEAN TacticalCharacterDialogueWithSpecialEvent(struct SOLDIERTYPE *pSoldier, 
     if (pSoldier->uiStatusFlags & SOLDIER_GASSED) return (FALSE);
   }
 
-  return (CharacterDialogueWithSpecialEvent(pSoldier->ubProfile, usQuoteNum, pSoldier->iFaceIndex,
-                                            DIALOGUE_TACTICAL_UI, TRUE, FALSE, uiFlag, uiData1,
-                                            uiData2));
+  return (CharacterDialogueWithSpecialEvent(GetSolProfile(pSoldier), usQuoteNum,
+                                            pSoldier->iFaceIndex, DIALOGUE_TACTICAL_UI, TRUE, FALSE,
+                                            uiFlag, uiData1, uiData2));
 }
 
 BOOLEAN TacticalCharacterDialogueWithSpecialEventEx(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNum,
                                                     UINT32 uiFlag, UINT32 uiData1, UINT32 uiData2,
                                                     UINT32 uiData3) {
-  if (pSoldier->ubProfile == NO_PROFILE) {
+  if (GetSolProfile(pSoldier) == NO_PROFILE) {
     return (FALSE);
   }
 
@@ -1088,13 +1088,13 @@ BOOLEAN TacticalCharacterDialogueWithSpecialEventEx(struct SOLDIERTYPE *pSoldier
     }
   }
 
-  return (CharacterDialogueWithSpecialEventEx(pSoldier->ubProfile, usQuoteNum, pSoldier->iFaceIndex,
-                                              DIALOGUE_TACTICAL_UI, TRUE, FALSE, uiFlag, uiData1,
-                                              uiData2, uiData3));
+  return (CharacterDialogueWithSpecialEventEx(GetSolProfile(pSoldier), usQuoteNum,
+                                              pSoldier->iFaceIndex, DIALOGUE_TACTICAL_UI, TRUE,
+                                              FALSE, uiFlag, uiData1, uiData2, uiData3));
 }
 
 BOOLEAN TacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNum) {
-  if (pSoldier->ubProfile == NO_PROFILE) {
+  if (GetSolProfile(pSoldier) == NO_PROFILE) {
     return (FALSE);
   }
 
@@ -1117,7 +1117,7 @@ BOOLEAN TacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNu
   }
 
   // OK, let's check if this is the exact one we just played, if so, skip.
-  if (pSoldier->ubProfile == gTacticalStatus.ubLastQuoteProfileNUm &&
+  if (GetSolProfile(pSoldier) == gTacticalStatus.ubLastQuoteProfileNUm &&
       usQuoteNum == gTacticalStatus.ubLastQuoteSaid) {
     return (FALSE);
   }
@@ -1132,7 +1132,7 @@ BOOLEAN TacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNu
   }
 
   if (AM_AN_EPC(pSoldier) &&
-      !(gMercProfiles[pSoldier->ubProfile].ubMiscFlags & PROFILE_MISC_FLAG_FORCENPCQUOTE))
+      !(gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags & PROFILE_MISC_FLAG_FORCENPCQUOTE))
     return (FALSE);
 
   // Check for logging of me too bleeds...
@@ -1147,7 +1147,7 @@ BOOLEAN TacticalCharacterDialogue(struct SOLDIERTYPE *pSoldier, UINT16 usQuoteNu
     }
   }
 
-  return (CharacterDialogue(pSoldier->ubProfile, usQuoteNum, pSoldier->iFaceIndex,
+  return (CharacterDialogue(GetSolProfile(pSoldier), usQuoteNum, pSoldier->iFaceIndex,
                             DIALOGUE_TACTICAL_UI, TRUE, FALSE));
 }
 
@@ -1684,7 +1684,7 @@ void HandleTacticalTextUI(INT32 iFaceIndex, struct SOLDIERTYPE *pSoldier, CHAR16
   ExecuteTacticalTextBox(sLeft, zText);
 
 #ifndef TAIWANESE
-  swprintf(zText, ARR_SIZE(zText), L"%s: \"%s\"", gMercProfiles[pSoldier->ubProfile].zNickname,
+  swprintf(zText, ARR_SIZE(zText), L"%s: \"%s\"", gMercProfiles[GetSolProfile(pSoldier)].zNickname,
            zQuoteStr);
   MapScreenMessage(FONT_MCOLOR_WHITE, MSG_DIALOG, L"%s", zText);
 #endif

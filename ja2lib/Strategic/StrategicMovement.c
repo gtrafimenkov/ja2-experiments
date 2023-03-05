@@ -211,7 +211,7 @@ BOOLEAN AddPlayerToGroup(UINT8 ubGroupID, struct SOLDIERTYPE *pSoldier) {
   Assert(pPlayer);
   AssertMsg(pGroup->fPlayer, "Attempting AddPlayerToGroup() on an ENEMY group!");
   pPlayer->pSoldier = pSoldier;
-  pPlayer->ubProfileID = pSoldier->ubProfile;
+  pPlayer->ubProfileID = GetSolProfile(pSoldier);
   pPlayer->ubID = GetSolID(pSoldier);
   pPlayer->bFlags = 0;
   pPlayer->next = NULL;
@@ -234,9 +234,9 @@ BOOLEAN AddPlayerToGroup(UINT8 ubGroupID, struct SOLDIERTYPE *pSoldier) {
     pSoldier->ubNumTraversalsAllowedToMerge = curr->pSoldier->ubNumTraversalsAllowedToMerge;
     pSoldier->ubDesiredSquadAssignment = curr->pSoldier->ubDesiredSquadAssignment;
     while (curr->next) {
-      if (curr->ubProfileID == pSoldier->ubProfile)
+      if (curr->ubProfileID == GetSolProfile(pSoldier))
         AssertMsg(0, String("Attempting to add an already existing merc to group (ubProfile=%d).",
-                            pSoldier->ubProfile));
+                            GetSolProfile(pSoldier)));
       curr = curr->next;
     }
     curr->next = pPlayer;
@@ -362,7 +362,7 @@ BOOLEAN RemovePlayerFromGroup(UINT8 ubGroupID, struct SOLDIERTYPE *pSoldier) {
   // end
 
   AssertMsg(pGroup, String("Attempting to RemovePlayerFromGroup( %d, %d ) from non-existant group",
-                           ubGroupID, pSoldier->ubProfile));
+                           ubGroupID, GetSolProfile(pSoldier)));
 
   return RemovePlayerFromPGroup(pGroup, pSoldier);
 }

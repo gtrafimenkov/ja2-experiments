@@ -2909,8 +2909,8 @@ void AddNPCsInSectorToArray() {
   for (pSoldier = Menptr, cnt = 0; cnt < TOTAL_SOLDIERS; pSoldier++, cnt++) {
     if ((pSoldier != NULL) && IsSolActive(pSoldier)) {
       // if soldier is a NPC, add him to the local NPC array
-      if ((pSoldier->ubProfile >= FIRST_RPC) && (pSoldier->ubProfile < NUM_PROFILES)) {
-        gubCurrentNpcInSector[i] = pSoldier->ubProfile;
+      if ((GetSolProfile(pSoldier) >= FIRST_RPC) && (GetSolProfile(pSoldier) < NUM_PROFILES)) {
+        gubCurrentNpcInSector[i] = GetSolProfile(pSoldier);
         i++;
       }
     }

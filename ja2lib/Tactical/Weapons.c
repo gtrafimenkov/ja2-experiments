@@ -2336,8 +2336,8 @@ UINT32 CalcChanceToHitGun(struct SOLDIERTYPE *pSoldier, UINT16 sGridNo, UINT8 ub
   // if shooting same target as the last shot
   if (sGridNo == pSoldier->sLastTarget) iChance += AIM_BONUS_SAME_TARGET;  // give a bonus to hit
 
-  if (pSoldier->ubProfile != NO_PROFILE &&
-      gMercProfiles[pSoldier->ubProfile].bPersonalityTrait == PSYCHO) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE &&
+      gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait == PSYCHO) {
     iChance += AIM_BONUS_PSYCHO;
   }
 

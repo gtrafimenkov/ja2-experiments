@@ -412,7 +412,7 @@ BOOLEAN SaveEnemySoldiersToTempFile(INT16 sSectorX, INT16 sSectorY, INT8 bSector
         curr = curr->next;
       }
       if (curr && curr->pSoldier == pSoldier &&
-          pSoldier->ubProfile == NO_PROFILE) {  // found a match.
+          GetSolProfile(pSoldier) == NO_PROFILE) {  // found a match.
 
         if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
           if (!curr->pDetailedPlacement) {  // need to upgrade the placement to detailed placement
@@ -620,7 +620,7 @@ BOOLEAN SaveEnemySoldiersToTempFile(INT16 sSectorX, INT16 sSectorY, INT8 bSector
         curr = curr->next;
       }
       if (curr && curr->pSoldier == pSoldier &&
-          pSoldier->ubProfile == NO_PROFILE) {  // found a match.
+          GetSolProfile(pSoldier) == NO_PROFILE) {  // found a match.
         FileMan_Write(hfile, curr->pDetailedPlacement, sizeof(SOLDIERCREATE_STRUCT),
                       &uiNumBytesWritten);
         if (uiNumBytesWritten != sizeof(SOLDIERCREATE_STRUCT)) {
@@ -1354,14 +1354,15 @@ BOOLEAN NewWayOfSavingEnemyAndCivliansToTempFile(INT16 sSectorX, INT16 sSectorY,
 
     // make sure the person is active, alive, in the sector, and is not a profiled person
     if (IsSolActive(pSoldier) /*&& pSoldier->bInSector*/ && pSoldier->bLife &&
-        pSoldier->ubProfile == NO_PROFILE) {  // soldier is valid, so find the matching soldier init
-                                              // list entry for modification.
+        GetSolProfile(pSoldier) ==
+            NO_PROFILE) {  // soldier is valid, so find the matching soldier init
+                           // list entry for modification.
       curr = gSoldierInitHead;
       while (curr && curr->pSoldier != pSoldier) {
         curr = curr->next;
       }
       if (curr && curr->pSoldier == pSoldier &&
-          pSoldier->ubProfile == NO_PROFILE) {  // found a match.
+          GetSolProfile(pSoldier) == NO_PROFILE) {  // found a match.
 
         if (!fValidateOnly) {
           if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
@@ -1539,7 +1540,7 @@ BOOLEAN NewWayOfSavingEnemyAndCivliansToTempFile(INT16 sSectorX, INT16 sSectorY,
       while (curr && curr->pSoldier != pSoldier) {
         curr = curr->next;
       }
-      if (curr && curr->pSoldier == pSoldier && pSoldier->ubProfile == NO_PROFILE) {
+      if (curr && curr->pSoldier == pSoldier && GetSolProfile(pSoldier) == NO_PROFILE) {
         // found a match.
         FileMan_Write(hfile, curr->pDetailedPlacement, sizeof(SOLDIERCREATE_STRUCT),
                       &uiNumBytesWritten);

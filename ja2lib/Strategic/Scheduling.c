@@ -587,7 +587,7 @@ void AutoProcessSchedule(SCHEDULENODE *pSchedule, INT32 index) {
   pSoldier = MercPtrs[pSchedule->ubSoldierID];
 
 #ifdef JA2EDITOR
-  if (pSoldier->ubProfile != NO_PROFILE) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
     DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
              String("Autoprocessing schedule action %S for %S (%d) at time %02ld:%02ld (set for "
                     "%02d:%02d), data1 = %d",
@@ -635,8 +635,9 @@ void AutoProcessSchedule(SCHEDULENODE *pSchedule, INT32 index) {
       pSoldier->usPatrolGrid[0] = pSchedule->usData1[index];
       break;
     case SCHEDULE_ACTION_ENTERSECTOR:
-      if (pSoldier->ubProfile != NO_PROFILE &&
-          gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 & PROFILE_MISC_FLAG2_DONT_ADD_TO_SECTOR) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE &&
+          gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 &
+              PROFILE_MISC_FLAG2_DONT_ADD_TO_SECTOR) {
         // never process enter if flag is set
         break;
       }
@@ -694,7 +695,8 @@ void PostSchedule(struct SOLDIERTYPE *pSoldier) {
       (gTacticalStatus.fCivGroupHostile[KINGPIN_CIV_GROUP] ||
        ((gubQuest[QUEST_KINGPIN_MONEY] == QUESTINPROGRESS) &&
         (CheckFact(FACT_KINGPIN_CAN_SEND_ASSASSINS, KINGPIN)))) &&
-      (gWorldSectorX == 5 && gWorldSectorY == MAP_ROW_C) && (pSoldier->ubProfile == NO_PROFILE)) {
+      (gWorldSectorX == 5 && gWorldSectorY == MAP_ROW_C) &&
+      (GetSolProfile(pSoldier) == NO_PROFILE)) {
     // no schedules for people guarding Tony's!
     return;
   }
@@ -702,8 +704,8 @@ void PostSchedule(struct SOLDIERTYPE *pSoldier) {
   pSchedule = GetSchedule(pSoldier->ubScheduleID);
   if (!pSchedule) return;
 
-  if (pSoldier->ubProfile != NO_PROFILE && gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 &
-                                               PROFILE_MISC_FLAG3_PERMANENT_INSERTION_CODE) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE && gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 &
+                                                   PROFILE_MISC_FLAG3_PERMANENT_INSERTION_CODE) {
     // don't process schedule
     return;
   }

@@ -1218,7 +1218,7 @@ BOOLEAN ExecuteOverhead() {
                   }
 
                   // RESET MOVE FAST FLAG
-                  if ((pSoldier->ubProfile == NO_PROFILE)) {
+                  if ((GetSolProfile(pSoldier) == NO_PROFILE)) {
                     pSoldier->fUIMovementFast = FALSE;
                   }
 
@@ -1845,8 +1845,8 @@ BOOLEAN HandleGotoNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving,
         } else
           // ATE; First check for profile
           // Forgetful guy might forget his path
-          if ((pSoldier->bTeam == gbPlayerNum) && (pSoldier->ubProfile != NO_PROFILE) &&
-              gMercProfiles[pSoldier->ubProfile].bPersonalityTrait == FORGETFUL) {
+          if ((pSoldier->bTeam == gbPlayerNum) && (GetSolProfile(pSoldier) != NO_PROFILE) &&
+              gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait == FORGETFUL) {
             if (pSoldier->ubNumTilesMovesSinceLastForget < 255) {
               pSoldier->ubNumTilesMovesSinceLastForget++;
             }
@@ -2183,7 +2183,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
       // are we there yet?
       if (GetSolSectorX(pSoldier) == 13 && GetSolSectorY(pSoldier) == MAP_ROW_B &&
           GetSolSectorZ(pSoldier) == 0) {
-        switch (pSoldier->ubProfile) {
+        switch (GetSolProfile(pSoldier)) {
           case SKYRIDER:
             if (PythSpacesAway(pSoldier->sGridNo, 8842) < 11) {
               // Skyrider has arrived!
@@ -2202,7 +2202,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
             HandleJohnArrival(pSoldier);
             break;
         }
-      } else if (pSoldier->ubProfile == MARIA &&
+      } else if (GetSolProfile(pSoldier) == MARIA &&
                  (GetSolSectorX(pSoldier) == 6 && GetSolSectorY(pSoldier) == MAP_ROW_C &&
                   GetSolSectorZ(pSoldier) == 0) &&
                  CheckFact(FACT_MARIA_ESCORTED_AT_LEATHER_SHOP, MARIA) == TRUE) {
@@ -2212,7 +2212,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
           //	UnRecruitEPC( MARIA );
           TriggerNPCRecord(ANGEL, 12);
         }
-      } else if ((pSoldier->ubProfile == JOEY) &&
+      } else if ((GetSolProfile(pSoldier) == JOEY) &&
                  (GetSolSectorX(pSoldier) == 8 && GetSolSectorY(pSoldier) == MAP_ROW_G &&
                   GetSolSectorZ(pSoldier) == 0)) {
         // if Joey walks near Martha then trigger Martha record 7
@@ -2233,9 +2233,9 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
       }
     }
 
-  } else if (pSoldier->bTeam == CIV_TEAM && pSoldier->ubProfile != NO_PROFILE &&
+  } else if (pSoldier->bTeam == CIV_TEAM && GetSolProfile(pSoldier) != NO_PROFILE &&
              pSoldier->bNeutral) {
-    switch (pSoldier->ubProfile) {
+    switch (GetSolProfile(pSoldier)) {
       case JIM:
       case JACK:
       case OLAF:
@@ -2251,7 +2251,7 @@ BOOLEAN HandleAtNewGridNo(struct SOLDIERTYPE *pSoldier, BOOLEAN *pfKeepMoving) {
             // aaaaaaaaaaaaaaaaaaaaatttaaaack!!!!
             AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
             // MakeCivHostile( pSoldier, 2 );
-            // TriggerNPCWithIHateYouQuote( pSoldier->ubProfile );
+            // TriggerNPCWithIHateYouQuote( GetSolProfile(pSoldier) );
           }
         }
       } break;
@@ -2404,10 +2404,10 @@ void InternalSelectSoldier(UINT16 usSoldierID, BOOLEAN fAcknowledge, BOOLEAN fFo
 
   // possibly say personality quote
   if ((pSoldier->bTeam == gbPlayerNum) &&
-      (pSoldier->ubProfile != NO_PROFILE &&
+      (GetSolProfile(pSoldier) != NO_PROFILE &&
        pSoldier->ubWhatKindOfMercAmI != MERC_TYPE__PLAYER_CHARACTER) &&
       !(pSoldier->usQuoteSaidFlags & SOLDIER_QUOTE_SAID_PERSONALITY)) {
-    switch (gMercProfiles[pSoldier->ubProfile].bPersonalityTrait) {
+    switch (gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait) {
       case PSYCHO:
         if (Random(50) == 0) {
           TacticalCharacterDialogue(pSoldier, QUOTE_PERSONALITY_TRAIT);
@@ -2589,7 +2589,7 @@ void HandlePlayerTeamMemberDeath(struct SOLDIERTYPE *pSoldier) {
     for (pTeamSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[pSoldier->bTeam].bLastID;
          cnt++, pTeamSoldier++) {
       if (pTeamSoldier->bActive && pTeamSoldier->bInSector && pTeamSoldier->bLife >= OKLIFE) {
-        bBuddyIndex = WhichBuddy(pTeamSoldier->ubProfile, pSoldier->ubProfile);
+        bBuddyIndex = WhichBuddy(pTeamSoldier->ubProfile, GetSolProfile(pSoldier));
         switch (bBuddyIndex) {
           case 0:
             // buddy #1 died!
@@ -2610,7 +2610,7 @@ void HandlePlayerTeamMemberDeath(struct SOLDIERTYPE *pSoldier) {
     }
 
     // handle stuff for Carmen if Slay is killed
-    switch (pSoldier->ubProfile) {
+    switch (GetSolProfile(pSoldier)) {
       case SLAY:
         pTeamSoldier = FindSoldierByProfileID(CARMEN, FALSE);
         if (pTeamSoldier && pTeamSoldier->bAttitude == ATTACKSLAYONLY &&
@@ -3006,7 +3006,7 @@ void MakeCivHostile(struct SOLDIERTYPE *pSoldier, INT8 bNewSide) {
   // override passed-in value; default is hostile to player, allied to army
   bNewSide = 1;
 
-  switch (pSoldier->ubProfile) {
+  switch (GetSolProfile(pSoldier)) {
     case IRA:
     case DIMITRI:
     case MIGUEL:
@@ -3040,7 +3040,7 @@ void MakeCivHostile(struct SOLDIERTYPE *pSoldier, INT8 bNewSide) {
     return;
   }
 
-  if (pSoldier->ubProfile == CONRAD || pSoldier->ubProfile == GENERAL) {
+  if (GetSolProfile(pSoldier) == CONRAD || GetSolProfile(pSoldier) == GENERAL) {
     // change to enemy team
     SetSoldierNonNeutral(pSoldier);
     pSoldier->bSide = bNewSide;
@@ -3057,7 +3057,7 @@ void MakeCivHostile(struct SOLDIERTYPE *pSoldier, INT8 bNewSide) {
         }
       }
     }
-    if (pSoldier->ubProfile == BILLY) {
+    if (GetSolProfile(pSoldier) == BILLY) {
       // change orders
       pSoldier->bOrders = FARPATROL;
     }
@@ -3101,9 +3101,9 @@ UINT8 CivilianGroupMembersChangeSidesWithinProximity(struct SOLDIERTYPE *pAttack
             AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
           }
 
-          if (pSoldier->ubProfile != NO_PROFILE && pSoldier->bOppCnt > 0 &&
+          if (GetSolProfile(pSoldier) != NO_PROFILE && pSoldier->bOppCnt > 0 &&
               (ubFirstProfile == NO_PROFILE || Random(2))) {
-            ubFirstProfile = pSoldier->ubProfile;
+            ubFirstProfile = GetSolProfile(pSoldier);
           }
         }
       }
@@ -3131,8 +3131,8 @@ struct SOLDIERTYPE *CivilianGroupMemberChangesSides(struct SOLDIERTYPE *pAttacke
     if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife) {
       if (pSoldier->ubCivilianGroup == pAttacked->ubCivilianGroup) {
         // should become hostile
-        if (pSoldier->ubProfile != NO_PROFILE && (ubFirstProfile == NO_PROFILE || Random(2))) {
-          ubFirstProfile = pSoldier->ubProfile;
+        if (GetSolProfile(pSoldier) != NO_PROFILE && (ubFirstProfile == NO_PROFILE || Random(2))) {
+          ubFirstProfile = GetSolProfile(pSoldier);
         }
 
         pNew = ChangeSoldierTeam(pSoldier, CIV_TEAM);
@@ -3192,10 +3192,10 @@ void CivilianGroupChangesSides(UINT8 ubCivilianGroup) {
           AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
         }
         /*
-        if ( (pSoldier->ubProfile != NO_PROFILE) && (pSoldier->bOppCnt > 0) && ( ubFirstProfile ==
-        NO_PROFILE || Random( 2 ) ) )
+        if ( (GetSolProfile(pSoldier) != NO_PROFILE) && (pSoldier->bOppCnt > 0) && ( ubFirstProfile
+        == NO_PROFILE || Random( 2 ) ) )
         {
-                ubFirstProfile = pSoldier->ubProfile;
+                ubFirstProfile = GetSolProfile(pSoldier);
         }
         */
       }
@@ -4551,15 +4551,15 @@ void CommonEnterCombatModeCode() {
         // ATE: Refresh APs
         CalcNewActionPoints(pSoldier);
 
-        if (pSoldier->ubProfile != NO_PROFILE) {
+        if (GetSolProfile(pSoldier) != NO_PROFILE) {
           if (pSoldier->bTeam == CIV_TEAM && pSoldier->bNeutral) {
             // only set precombat gridno if unset
-            if (gMercProfiles[pSoldier->ubProfile].sPreCombatGridNo == 0 ||
-                gMercProfiles[pSoldier->ubProfile].sPreCombatGridNo == NOWHERE) {
-              gMercProfiles[pSoldier->ubProfile].sPreCombatGridNo = pSoldier->sGridNo;
+            if (gMercProfiles[GetSolProfile(pSoldier)].sPreCombatGridNo == 0 ||
+                gMercProfiles[GetSolProfile(pSoldier)].sPreCombatGridNo == NOWHERE) {
+              gMercProfiles[GetSolProfile(pSoldier)].sPreCombatGridNo = pSoldier->sGridNo;
             }
           } else {
-            gMercProfiles[pSoldier->ubProfile].sPreCombatGridNo = NOWHERE;
+            gMercProfiles[GetSolProfile(pSoldier)].sPreCombatGridNo = NOWHERE;
           }
         }
 
@@ -5732,9 +5732,9 @@ INT8 CalcSuppressionTolerance(struct SOLDIERTYPE *pSoldier) {
     bTolerance += (pSoldier->bAIMorale - MORALE_NORMAL) * 2;
   }
 
-  if (pSoldier->ubProfile != NO_PROFILE) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
     // change tolerance based on attitude
-    switch (gMercProfiles[pSoldier->ubProfile].bAttitude) {
+    switch (gMercProfiles[GetSolProfile(pSoldier)].bAttitude) {
       case ATT_AGGRESSIVE:
         bTolerance += 2;
         break;
@@ -5894,7 +5894,7 @@ void HandleSuppressionFire(UINT8 ubTargetedMerc, UINT8 ubCausedAttacker) {
           // say we're under heavy fire!
 
           // ATE: For some reason, we forgot #53!
-          if (pSoldier->ubProfile != 53) {
+          if (GetSolProfile(pSoldier) != 53) {
             TacticalCharacterDialogue(pSoldier, QUOTE_UNDER_HEAVY_FIRE);
           }
         }
@@ -6006,7 +6006,7 @@ BOOLEAN ProcessImplicationsOfPCAttack(struct SOLDIERTYPE *pSoldier, struct SOLDI
     if (pTarget->ubProfile == CARMEN)  // Carmen
     {
       // Special stuff for Carmen the bounty hunter
-      if (pSoldier->ubProfile != SLAY)  // attacked by someone other than Slay
+      if (GetSolProfile(pSoldier) != SLAY)  // attacked by someone other than Slay
       {
         // change attitude
         pTarget->bAttitude = AGGRESSIVE;
@@ -6159,7 +6159,7 @@ struct SOLDIERTYPE *InternalReduceAttackBusyCount(UINT8 ubID, BOOLEAN fCalledByA
   // this is so we DON'T call freeupattacker() which will cancel
   // the AI guy's meanwhile NPC stuff.
   // OK< let's NOT do this if it was the queen attacking....
-  if (AreInMeanwhile() && pSoldier != NULL && pSoldier->ubProfile != QUEEN) {
+  if (AreInMeanwhile() && pSoldier != NULL && GetSolProfile(pSoldier) != QUEEN) {
     return (pTarget);
   }
 

@@ -780,7 +780,7 @@ void HandleContinueOfTownTraining(void) {
     if (IsSolActive(pSoldier)) {
       fContinueEventPosted = TRUE;
       SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_CONTINUE_TRAINING_MILITIA,
-                                    pSoldier->ubProfile, 0, 0, 0, 0);
+                                    GetSolProfile(pSoldier), 0, 0, 0, 0);
     }
 
     // next entry

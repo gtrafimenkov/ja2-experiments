@@ -1181,8 +1181,8 @@ BOOLEAN WeaponInHand(struct SOLDIERTYPE *pSoldier) {
     if (pSoldier->inv[HANDPOS].usItem == ROCKET_RIFLE ||
         pSoldier->inv[HANDPOS].usItem == AUTO_ROCKET_RIFLE) {
       if (pSoldier->inv[HANDPOS].ubImprintID != NO_PROFILE) {
-        if (pSoldier->ubProfile != NO_PROFILE) {
-          if (pSoldier->inv[HANDPOS].ubImprintID != pSoldier->ubProfile) {
+        if (GetSolProfile(pSoldier) != NO_PROFILE) {
+          if (pSoldier->inv[HANDPOS].ubImprintID != GetSolProfile(pSoldier)) {
             return (FALSE);
           }
         } else {
@@ -3136,7 +3136,7 @@ BOOLEAN InternalAutoPlaceObject(struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE 
             // hatched out!  Such slots will disappear in their entirety if sold/moved, causing
             // anything added through here to vanish also!
             if (!((guiTacticalInterfaceFlags & INTERFACE_SHOPKEEP_INTERFACE) &&
-                  ShouldSoldierDisplayHatchOnItem(pSoldier->ubProfile, bSlot))) {
+                  ShouldSoldierDisplayHatchOnItem(GetSolProfile(pSoldier), bSlot))) {
               PlaceObject(pSoldier, bSlot, pObj);
               SetNewItem(pSoldier, bSlot, fNewItem);
               if (pObj->ubNumberOfObjects == 0) {
@@ -4002,7 +4002,7 @@ BOOLEAN PlaceObjectInSoldierProfile(UINT8 ubProfile, struct OBJECTTYPE *pObject)
       if (usItem == MONEY) {
         CreateMoney(gMercProfiles[ubProfile].uiMoney, &(pSoldier->inv[bLoop]));
       } else {
-        if (pSoldier->ubProfile == MADLAB) {
+        if (GetSolProfile(pSoldier) == MADLAB) {
           // remove attachments and drop them
           struct OBJECTTYPE Attachment;
 
@@ -4480,7 +4480,7 @@ BOOLEAN ApplyCanteen(struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObj, BOOL
   }
 
   if (pSoldier->bTeam == gbPlayerNum) {
-    if (gMercProfiles[pSoldier->ubProfile].bSex == MALE) {
+    if (gMercProfiles[GetSolProfile(pSoldier)].bSex == MALE) {
       PlayJA2Sample(DRINK_CANTEEN_MALE, RATE_11025, MIDVOLUME, 1, MIDDLEPAN);
     } else {
       PlayJA2Sample(DRINK_CANTEEN_FEMALE, RATE_11025, MIDVOLUME, 1, MIDDLEPAN);

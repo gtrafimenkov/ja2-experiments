@@ -52,7 +52,7 @@ void MakeClosestEnemyChosenOne() {
     }
 
     if (gWorldSectorX == TIXA_SECTOR_X && gWorldSectorY == TIXA_SECTOR_Y) {
-      if (pSoldier->ubProfile != WARDEN) {
+      if (GetSolProfile(pSoldier) != WARDEN) {
         continue;
       }
     } else {
@@ -381,7 +381,7 @@ INT8 ClosestPanicTrigger(struct SOLDIERTYPE *pSoldier) {
       // in Tixa
       if (gWorldSectorX == TIXA_SECTOR_X && gWorldSectorY == TIXA_SECTOR_Y) {
         // screen out everyone but the warden
-        if (pSoldier->ubProfile != WARDEN) {
+        if (GetSolProfile(pSoldier) != WARDEN) {
           break;
         }
 

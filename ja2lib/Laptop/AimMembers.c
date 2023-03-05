@@ -4089,12 +4089,12 @@ void DisplayPopUpBoxExplainingMercArrivalLocationAndTime() {
   // Germans version has a different argument order
   swprintf(szLocAndTime, ARR_SIZE(szLocAndTime),
            pMessageStrings[MSG_JUST_HIRED_MERC_ARRIVAL_LOCATION_POPUP],
-           gMercProfiles[pSoldier->ubProfile].zNickname,
+           gMercProfiles[GetSolProfile(pSoldier)].zNickname,
            LaptopSaveInfo.sLastHiredMerc.uiArrivalTime / 1440, zTimeString, zSectorIDString);
 #else
   swprintf(szLocAndTime, ARR_SIZE(szLocAndTime),
            pMessageStrings[MSG_JUST_HIRED_MERC_ARRIVAL_LOCATION_POPUP],
-           gMercProfiles[pSoldier->ubProfile].zNickname, zSectorIDString,
+           gMercProfiles[GetSolProfile(pSoldier)].zNickname, zSectorIDString,
            LaptopSaveInfo.sLastHiredMerc.uiArrivalTime / 1440, zTimeString);
 #endif
 

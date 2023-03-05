@@ -653,10 +653,10 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
   SECTORINFO *pSector;
   EvaluateDeathEffectsToSoldierInitList(pSoldier);
 
-  switch (pSoldier->ubProfile) {
+  switch (GetSolProfile(pSoldier)) {
     case MIKE:
     case IGGY:
-      if (pSoldier->ubProfile == IGGY &&
+      if (GetSolProfile(pSoldier) == IGGY &&
           !gubFact[FACT_IGGY_AVAILABLE_TO_ARMY]) {  // Iggy is on our team!
         break;
       }

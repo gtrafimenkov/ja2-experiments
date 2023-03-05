@@ -5,6 +5,7 @@
 struct SOLDIERTYPE *GetSoldierByID(int index) { return &Menptr[index]; }
 
 u8 GetSolID(const struct SOLDIERTYPE *s) { return s->ubID; }
+u8 GetSolProfile(const struct SOLDIERTYPE *s) { return s->ubProfile; }
 
 i16 GetSolSectorX(const struct SOLDIERTYPE *s) { return s->sSectorX; }
 i16 GetSolSectorY(const struct SOLDIERTYPE *s) { return s->sSectorY; }

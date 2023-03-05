@@ -340,9 +340,9 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
 
   // in the unlikely situation (Sgt Krott et al) that we have a quote trigger going on
   // during turnbased, don't do any AI
-  if (pSoldier->ubProfile != NO_PROFILE &&
-      (pSoldier->ubProfile == SERGEANT || pSoldier->ubProfile == MIKE ||
-       pSoldier->ubProfile == JOE) &&
+  if (GetSolProfile(pSoldier) != NO_PROFILE &&
+      (GetSolProfile(pSoldier) == SERGEANT || GetSolProfile(pSoldier) == MIKE ||
+       GetSolProfile(pSoldier) == JOE) &&
       (gTacticalStatus.uiFlags & INCOMBAT) &&
       (gfInTalkPanel || gfWaitingForTriggerTimer || !DialogueQueueIsEmpty())) {
     return;
@@ -474,7 +474,7 @@ void HandleSoldierAI(struct SOLDIERTYPE *pSoldier) {
             if (pSoldier->sAbsoluteFinalDestination != pSoldier->sGridNo) {
               // update NPC records to replace our final dest with this location
               ReplaceLocationInNPCDataFromProfileID(
-                  pSoldier->ubProfile, pSoldier->sAbsoluteFinalDestination, pSoldier->sGridNo);
+                  GetSolProfile(pSoldier), pSoldier->sAbsoluteFinalDestination, pSoldier->sGridNo);
             }
             pSoldier->sAbsoluteFinalDestination = pSoldier->sGridNo;
             // change action data so that we consider this our final destination below
@@ -841,18 +841,19 @@ void FreeUpNPCFromPendingAction(struct SOLDIERTYPE *pSoldier) {
         pSoldier->bAction == AI_ACTION_YELLOW_ALERT || pSoldier->bAction == AI_ACTION_RED_ALERT ||
         pSoldier->bAction == AI_ACTION_UNLOCK_DOOR || pSoldier->bAction == AI_ACTION_PULL_TRIGGER ||
         pSoldier->bAction == AI_ACTION_LOCK_DOOR) {
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         if (pSoldier->ubQuoteRecord == NPC_ACTION_KYLE_GETS_MONEY) {
           // Kyle after getting money
           pSoldier->ubQuoteRecord = 0;
           TriggerNPCRecord(KYLE, 11);
         } else if (pSoldier->usAnimState == END_OPENSTRUCT) {
-          TriggerNPCWithGivenApproach(pSoldier->ubProfile, APPROACH_DONE_OPEN_STRUCTURE, TRUE);
-          // TriggerNPCWithGivenApproach( pSoldier->ubProfile, APPROACH_DONE_OPEN_STRUCTURE, FALSE
+          TriggerNPCWithGivenApproach(GetSolProfile(pSoldier), APPROACH_DONE_OPEN_STRUCTURE, TRUE);
+          // TriggerNPCWithGivenApproach( GetSolProfile(pSoldier), APPROACH_DONE_OPEN_STRUCTURE,
+          // FALSE
           // );
         } else if (pSoldier->usAnimState == PICKUP_ITEM ||
                    pSoldier->usAnimState == ADJACENT_GET_ITEM) {
-          TriggerNPCWithGivenApproach(pSoldier->ubProfile, APPROACH_DONE_GET_ITEM, TRUE);
+          TriggerNPCWithGivenApproach(GetSolProfile(pSoldier), APPROACH_DONE_GET_ITEM, TRUE);
         }
       }
       ActionDone(pSoldier);
@@ -1706,7 +1707,7 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
         // do nothing
       } else {
         RESETTIMECOUNTER(pSoldier->AICounter, pSoldier->usActionData);
-        if (pSoldier->ubProfile != NO_PROFILE) {
+        if (GetSolProfile(pSoldier) != NO_PROFILE) {
           // DebugMsg( TOPIC_JA2, DBG_LEVEL_0, String( "%s waiting %d from %d", pSoldier->name,
           // pSoldier->AICounter, GetJA2Clock() ) );
         }
@@ -1861,8 +1862,8 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
                 SpacesAway(pSoldier->sGridNo, pSoldier->sAbsoluteFinalDestination) < 4) {
               // This is close enough...
               ReplaceLocationInNPCDataFromProfileID(
-                  pSoldier->ubProfile, pSoldier->sAbsoluteFinalDestination, pSoldier->sGridNo);
-              NPCGotoGridNo(pSoldier->ubProfile, pSoldier->sGridNo,
+                  GetSolProfile(pSoldier), pSoldier->sAbsoluteFinalDestination, pSoldier->sGridNo);
+              NPCGotoGridNo(GetSolProfile(pSoldier), pSoldier->sGridNo,
                             (UINT8)(pSoldier->ubQuoteRecord - 1));
             } else {
               // This is important, so try taking a path through people (and bumping them aside)
@@ -1974,7 +1975,7 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
       // randomly decide whether to say civ quote
       if (pSoldier->bVisible != -1 && pSoldier->bTeam != MILITIA_TEAM) {
         // ATE: Make sure it's a person :)
-        if (IS_MERC_BODY_TYPE(pSoldier) && pSoldier->ubProfile == NO_PROFILE) {
+        if (IS_MERC_BODY_TYPE(pSoldier) && GetSolProfile(pSoldier) == NO_PROFILE) {
           // CC, ATE here - I put in some TEMP randomness...
           if (Random(50) == 0) {
             StartCivQuote(pSoldier);
@@ -2210,9 +2211,9 @@ INT8 ExecuteAction(struct SOLDIERTYPE *pSoldier) {
       if (gfTurnBasedAI) {
         EndAIGuysTurn(pSoldier);
       }
-      if (pSoldier->ubProfile != NO_PROFILE) {
-        gMercProfiles[pSoldier->ubProfile].bSectorZ++;
-        gMercProfiles[pSoldier->ubProfile].fUseProfileInsertionInfo = FALSE;
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
+        gMercProfiles[GetSolProfile(pSoldier)].bSectorZ++;
+        gMercProfiles[GetSolProfile(pSoldier)].fUseProfileInsertionInfo = FALSE;
       }
       TacticalRemoveSoldier(pSoldier->ubID);
       CheckForEndOfBattle(TRUE);
@@ -2239,13 +2240,14 @@ void CheckForChangingOrders(struct SOLDIERTYPE *pSoldier) {
   switch (pSoldier->bAlertStatus) {
     case STATUS_GREEN:
       if (!CREATURE_OR_BLOODCAT(pSoldier)) {
-        if (pSoldier->bTeam == CIV_TEAM && pSoldier->ubProfile != NO_PROFILE &&
-            pSoldier->bNeutral && gMercProfiles[pSoldier->ubProfile].sPreCombatGridNo != NOWHERE &&
+        if (pSoldier->bTeam == CIV_TEAM && GetSolProfile(pSoldier) != NO_PROFILE &&
+            pSoldier->bNeutral &&
+            gMercProfiles[GetSolProfile(pSoldier)].sPreCombatGridNo != NOWHERE &&
             pSoldier->ubCivilianGroup != QUEENS_CIV_GROUP) {
           // must make them uncower first, then return to start location
           pSoldier->bNextAction = AI_ACTION_END_COWER_AND_MOVE;
-          pSoldier->usNextActionData = gMercProfiles[pSoldier->ubProfile].sPreCombatGridNo;
-          gMercProfiles[pSoldier->ubProfile].sPreCombatGridNo = NOWHERE;
+          pSoldier->usNextActionData = gMercProfiles[GetSolProfile(pSoldier)].sPreCombatGridNo;
+          gMercProfiles[GetSolProfile(pSoldier)].sPreCombatGridNo = NOWHERE;
         } else if (pSoldier->uiStatusFlags & SOLDIER_COWERING) {
           pSoldier->bNextAction = AI_ACTION_STOP_COWERING;
           pSoldier->usNextActionData = ANIM_STAND;
@@ -2270,7 +2272,7 @@ void CheckForChangingOrders(struct SOLDIERTYPE *pSoldier) {
         }
       }
 
-      if (pSoldier->ubProfile == WARDEN) {
+      if (GetSolProfile(pSoldier) == WARDEN) {
         // Tixa
         MakeClosestEnemyChosenOne();
       }
@@ -2420,9 +2422,9 @@ void SetNewSituation(struct SOLDIERTYPE *pSoldier) {
 void HandleAITacticalTraversal(struct SOLDIERTYPE *pSoldier) {
   HandleNPCChangesForTacticalTraversal(pSoldier);
 
-  if (pSoldier->ubProfile != NO_PROFILE &&
-      NPCHasUnusedRecordWithGivenApproach(pSoldier->ubProfile, APPROACH_DONE_TRAVERSAL)) {
-    gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 |= PROFILE_MISC_FLAG3_HANDLE_DONE_TRAVERSAL;
+  if (GetSolProfile(pSoldier) != NO_PROFILE &&
+      NPCHasUnusedRecordWithGivenApproach(GetSolProfile(pSoldier), APPROACH_DONE_TRAVERSAL)) {
+    gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 |= PROFILE_MISC_FLAG3_HANDLE_DONE_TRAVERSAL;
   } else {
     pSoldier->ubQuoteActionID = 0;
   }

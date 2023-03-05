@@ -1494,11 +1494,11 @@ void SaveNPCInformationToProfileStruct() {
     pSoldier = MercSlots[cnt];
 
     // if it is an active NPC
-    if (pSoldier && pSoldier->ubProfile != NO_PROFILE && pSoldier->bTeam == CIV_TEAM) {
+    if (pSoldier && GetSolProfile(pSoldier) != NO_PROFILE && pSoldier->bTeam == CIV_TEAM) {
       // Save Temp Npc Quote Info array
-      SaveTempNpcQuoteInfoForNPCToTempFile(pSoldier->ubProfile);
+      SaveTempNpcQuoteInfoForNPCToTempFile(GetSolProfile(pSoldier));
 
-      pProfile = &(gMercProfiles[pSoldier->ubProfile]);
+      pProfile = &(gMercProfiles[GetSolProfile(pSoldier)]);
 
       pProfile->ubQuoteActionID = pSoldier->ubQuoteActionID;
       pProfile->ubQuoteRecord = pSoldier->ubQuoteRecord;
@@ -2301,7 +2301,7 @@ UINT32 MercChecksum(struct SOLDIERTYPE *pSoldier) {
 
   // put in some multipliers too!
   uiChecksum *= (pSoldier->bExpLevel + 1);
-  uiChecksum += (pSoldier->ubProfile + 1);
+  uiChecksum += (GetSolProfile(pSoldier) + 1);
 
   for (uiLoop = 0; uiLoop < NUM_INV_SLOTS; uiLoop++) {
     uiChecksum += pSoldier->inv[uiLoop].usItem;

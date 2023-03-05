@@ -365,8 +365,9 @@ INT8 DecideActionSchedule(struct SOLDIERTYPE *pSoldier) {
       break;
 
     case SCHEDULE_ACTION_ENTERSECTOR:
-      if (pSoldier->ubProfile != NO_PROFILE &&
-          gMercProfiles[pSoldier->ubProfile].ubMiscFlags & PROFILE_MISC_FLAG2_DONT_ADD_TO_SECTOR) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE &&
+          gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags &
+              PROFILE_MISC_FLAG2_DONT_ADD_TO_SECTOR) {
         // ignore.
         DoneScheduleAction(pSoldier);
         break;
@@ -488,7 +489,7 @@ INT8 DecideActionNamedNPC(struct SOLDIERTYPE *pSoldier) {
       if (sDesiredMercDist <= NPC_TALK_RADIUS * 2) {
         pSoldier->ubQuoteRecord = 0;
         // see if this triggers a conversation/NPC record
-        PCsNearNPC(pSoldier->ubProfile);
+        PCsNearNPC(GetSolProfile(pSoldier));
         // clear "handle every frame" flag
         pSoldier->fAIFlags &= (~AI_HANDLE_EVERY_FRAME);
         return (AI_ACTION_ABSOLUTELY_NONE);
@@ -527,7 +528,7 @@ INT8 DecideActionNamedNPC(struct SOLDIERTYPE *pSoldier) {
     }
   }
 
-  switch (pSoldier->ubProfile) {
+  switch (GetSolProfile(pSoldier)) {
     case JIM:
     case JACK:
     case OLAF:
@@ -657,7 +658,7 @@ INT8 DecideActionGreen(struct SOLDIERTYPE *pSoldier) {
         }
       }
 
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         pSoldier->bAction = DecideActionNamedNPC(pSoldier);
         if (pSoldier->bAction != AI_ACTION_NONE) {
           return (pSoldier->bAction);
@@ -1016,7 +1017,7 @@ INT8 DecideActionYellow(struct SOLDIERTYPE *pSoldier) {
       // ******************
       // REAL TIME NPC CODE
       // ******************
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         pSoldier->bAction = DecideActionNamedNPC(pSoldier);
         if (pSoldier->bAction != AI_ACTION_NONE) {
           return (pSoldier->bAction);
@@ -1175,8 +1176,8 @@ INT8 DecideActionYellow(struct SOLDIERTYPE *pSoldier) {
     return (AI_ACTION_NONE);
   }
 
-  if (!(pSoldier->bTeam == CIV_TEAM && pSoldier->ubProfile != NO_PROFILE &&
-        pSoldier->ubProfile != ELDIN)) {
+  if (!(pSoldier->bTeam == CIV_TEAM && GetSolProfile(pSoldier) != NO_PROFILE &&
+        GetSolProfile(pSoldier) != ELDIN)) {
     // IF WE ARE MILITIA/CIV IN REALTIME, CLOSE TO NOISE, AND CAN SEE THE SPOT WHERE THE NOISE CAME
     // FROM, FORGET IT
     if (fReachable && !fClimb && !gfTurnBasedAI &&
@@ -1535,11 +1536,12 @@ INT8 DecideActionRed(struct SOLDIERTYPE *pSoldier, UINT8 ubUnconsciousOK) {
   ubCanMove = (pSoldier->bActionPoints >= MinPtsToMove(pSoldier));
 
   // if we're an alerted enemy, and there are panic bombs or a trigger around
-  if ((!PTR_CIVILIAN || pSoldier->ubProfile == WARDEN) &&
+  if ((!PTR_CIVILIAN || GetSolProfile(pSoldier) == WARDEN) &&
       ((gTacticalStatus.Team[pSoldier->bTeam].bAwareOfOpposition ||
-        (pSoldier->ubID == gTacticalStatus.ubTheChosenOne) || (pSoldier->ubProfile == WARDEN)) &&
+        (pSoldier->ubID == gTacticalStatus.ubTheChosenOne) ||
+        (GetSolProfile(pSoldier) == WARDEN)) &&
        (gTacticalStatus.fPanicFlags & (PANIC_BOMBS_HERE | PANIC_TRIGGERS_HERE)))) {
-    if (pSoldier->ubProfile == WARDEN && gTacticalStatus.ubTheChosenOne == NOBODY) {
+    if (GetSolProfile(pSoldier) == WARDEN && gTacticalStatus.ubTheChosenOne == NOBODY) {
       PossiblyMakeThisEnemyChosenOne(pSoldier);
     }
 
@@ -1550,8 +1552,8 @@ INT8 DecideActionRed(struct SOLDIERTYPE *pSoldier, UINT8 ubUnconsciousOK) {
     if (bActionReturned != -1) return (bActionReturned);
   }
 
-  if (pSoldier->ubProfile != NO_PROFILE) {
-    if ((pSoldier->ubProfile == QUEEN || pSoldier->ubProfile == JOE) && ubCanMove) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
+    if ((GetSolProfile(pSoldier) == QUEEN || GetSolProfile(pSoldier) == JOE) && ubCanMove) {
       if (gWorldSectorX == 3 && gWorldSectorY == MAP_ROW_P && gbWorldSectorZ == 0 &&
           !gfUseAlternateQueenPosition) {
         bActionReturned = HeadForTheStairCase(pSoldier);
@@ -2639,7 +2641,7 @@ INT8 DecideActionBlack(struct SOLDIERTYPE *pSoldier) {
   // can this guy move to any of the neighbouring squares ? (sets TRUE/FALSE)
   ubCanMove = (pSoldier->bActionPoints >= MinPtsToMove(pSoldier));
 
-  if ((pSoldier->bTeam == ENEMY_TEAM || pSoldier->ubProfile == WARDEN) &&
+  if ((pSoldier->bTeam == ENEMY_TEAM || GetSolProfile(pSoldier) == WARDEN) &&
       (gTacticalStatus.fPanicFlags & PANIC_TRIGGERS_HERE) &&
       (gTacticalStatus.ubTheChosenOne == NOBODY)) {
     INT8 bPanicTrigger;
@@ -2663,9 +2665,9 @@ INT8 DecideActionBlack(struct SOLDIERTYPE *pSoldier) {
     if (bActionReturned != -1) return (bActionReturned);
   }
 
-  if (pSoldier->ubProfile != NO_PROFILE) {
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
     // if they see enemies, the Queen will keep going to the staircase, but Joe will fight
-    if ((pSoldier->ubProfile == QUEEN) && ubCanMove) {
+    if ((GetSolProfile(pSoldier) == QUEEN) && ubCanMove) {
       if (gWorldSectorX == 3 && gWorldSectorY == MAP_ROW_P && gbWorldSectorZ == 0 &&
           !gfUseAlternateQueenPosition) {
         bActionReturned = HeadForTheStairCase(pSoldier);

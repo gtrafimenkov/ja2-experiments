@@ -1719,13 +1719,13 @@ void CreateAutoResolveInterface() {
     // Load the face
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
-            gMercProfiles[gpMercs[i].pSoldier->ubProfile].ubFaceIndex);
+            gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex);
     if (!AddVideoObject(&VObjectDesc, &gpMercs[i].uiVObjectID)) {
       sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\speck.sti");
       if (!AddVideoObject(&VObjectDesc, &gpMercs[i].uiVObjectID)) {
         AssertMsg(0,
                   String("Failed to load %Faces\\65Face\\%02d.sti or it's placeholder, speck.sti",
-                         gMercProfiles[gpMercs[i].pSoldier->ubProfile].ubFaceIndex));
+                         gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex));
       }
     }
     if (GetVideoObject(&hVObject, gpMercs[i].uiVObjectID)) {
@@ -1993,7 +1993,7 @@ void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
                    BATTLE_VICTORY) {  // merc is alive, so group them at the center gridno.
           gpMercs[i].pSoldier->ubStrategicInsertionCode = INSERTION_CODE_CENTER;
         }
-        gMercProfiles[gpMercs[i].pSoldier->ubProfile].usBattlesFought++;
+        gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].usBattlesFought++;
       }
     }
     for (i = 0; i < gpAR->iNumMercFaces; i++) {
@@ -3250,7 +3250,7 @@ BOOLEAN FireAShot(SOLDIERCELL *pAttacker) {
       if (pItem->ubGunShotsLeft) {
         PlayAutoResolveSample(Weapon[pItem->usItem].sSound, RATE_11025, 50, 1, MIDDLEPAN);
         if (pAttacker->uiFlags & CELL_MERC) {
-          gMercProfiles[pAttacker->pSoldier->ubProfile].usShotsFired++;
+          gMercProfiles[GetSolProfile(pAttacker->pSoldier)].usShotsFired++;
           // MARKSMANSHIP GAIN: Attacker fires a shot
 
           StatChange(pAttacker->pSoldier, MARKAMT, 3, FALSE);
@@ -3435,13 +3435,13 @@ void AttackTarget(SOLDIERCELL *pAttacker, SOLDIERCELL *pTarget) {
 
     if (pAttacker->uiFlags &
         CELL_MERC) {  // Attacker is a player, so increment the number of shots that hit.
-      gMercProfiles[pAttacker->pSoldier->ubProfile].usShotsHit++;
+      gMercProfiles[GetSolProfile(pAttacker->pSoldier)].usShotsHit++;
       // MARKSMANSHIP GAIN: Attacker's shot hits
       StatChange(pAttacker->pSoldier, MARKAMT, 6, FALSE);  // in addition to 3 for taking a shot
     }
     if (pTarget->uiFlags &
         CELL_MERC) {  // Target is a player, so increment the times he has been wounded.
-      gMercProfiles[pTarget->pSoldier->ubProfile].usTimesWounded++;
+      gMercProfiles[GetSolProfile(pTarget->pSoldier)].usTimesWounded++;
       // EXPERIENCE GAIN: Took some damage
       StatChange(pTarget->pSoldier, EXPERAMT, (UINT16)(5 * (iImpact / 10)), FALSE);
     }
@@ -3458,7 +3458,7 @@ void AttackTarget(SOLDIERCELL *pAttacker, SOLDIERCELL *pTarget) {
     if (iNewLife <= 0) {                     // soldier has been killed
       if (pAttacker->uiFlags & CELL_MERC) {  // Player killed the enemy soldier -- update his stats
                                              // as well as any assisters.
-        gMercProfiles[pAttacker->pSoldier->ubProfile].usKills++;
+        gMercProfiles[GetSolProfile(pAttacker->pSoldier)].usKills++;
         gStrategicStatus.usPlayerKills++;
       } else if (pAttacker->uiFlags & CELL_MILITIA) {
         pAttacker->pSoldier->ubMilitiaKills += 2;
@@ -3549,14 +3549,14 @@ void TargetHitCallback(SOLDIERCELL *pTarget, INT32 index) {
 
   if (pAttacker->uiFlags &
       CELL_MERC) {  // Attacker is a player, so increment the number of shots that hit.
-    gMercProfiles[pAttacker->pSoldier->ubProfile].usShotsHit++;
+    gMercProfiles[GetSolProfile(pAttacker->pSoldier)].usShotsHit++;
     // MARKSMANSHIP GAIN: Attacker's shot hits
     StatChange(pAttacker->pSoldier, MARKAMT, 6, FALSE);  // in addition to 3 for taking a shot
   }
   if (pTarget->uiFlags & CELL_MERC &&
       pTarget->usHitDamage[index]) {  // Target is a player, so increment the times he has been
                                       // wounded.
-    gMercProfiles[pTarget->pSoldier->ubProfile].usTimesWounded++;
+    gMercProfiles[GetSolProfile(pTarget->pSoldier)].usTimesWounded++;
     // EXPERIENCE GAIN: Took some damage
     StatChange(pTarget->pSoldier, EXPERAMT, (UINT16)(5 * (pTarget->usHitDamage[index] / 10)),
                FALSE);
@@ -3589,7 +3589,7 @@ void TargetHitCallback(SOLDIERCELL *pTarget, INT32 index) {
       if (pAssister1 == pAssister2) pAssister2 = NULL;
       if (pKiller) {
         if (pKiller->uiFlags & CELL_MERC) {
-          gMercProfiles[pKiller->pSoldier->ubProfile].usKills++;
+          gMercProfiles[GetSolProfile(pKiller->pSoldier)].usKills++;
           gStrategicStatus.usPlayerKills++;
           // EXPERIENCE CLASS GAIN:  Earned a kill
           StatChange(pKiller->pSoldier, EXPERAMT, (UINT16)(10 * pTarget->pSoldier->bLevel), FALSE);
@@ -3600,7 +3600,7 @@ void TargetHitCallback(SOLDIERCELL *pTarget, INT32 index) {
       }
       if (pAssister1) {
         if (pAssister1->uiFlags & CELL_MERC) {
-          gMercProfiles[pAssister1->pSoldier->ubProfile].usAssists++;
+          gMercProfiles[GetSolProfile(pAssister1->pSoldier)].usAssists++;
           // EXPERIENCE CLASS GAIN:  Earned an assist
           StatChange(pAssister1->pSoldier, EXPERAMT, (UINT16)(5 * pTarget->pSoldier->bLevel),
                      FALSE);
@@ -3608,7 +3608,7 @@ void TargetHitCallback(SOLDIERCELL *pTarget, INT32 index) {
           pAssister1->pSoldier->ubMilitiaKills++;
       } else if (pAssister2) {
         if (pAssister2->uiFlags & CELL_MERC) {
-          gMercProfiles[pAssister2->pSoldier->ubProfile].usAssists++;
+          gMercProfiles[GetSolProfile(pAssister2->pSoldier)].usAssists++;
           // EXPERIENCE CLASS GAIN:  Earned an assist
           StatChange(pAssister2->pSoldier, EXPERAMT, (UINT16)(5 * pTarget->pSoldier->bLevel),
                      FALSE);

@@ -85,7 +85,7 @@ void CallAvailableKingpinMenTo(INT16 sGridNo) {
     for (pSoldier = MercPtrs[iLoop2]; iLoop2 <= gTacticalStatus.Team[CIV_TEAM].bLastID;
          iLoop2++, pSoldier++) {
       if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife >= OKLIFE &&
-          pSoldier->ubCivilianGroup == KINGPIN_CIV_GROUP && pSoldier->ubProfile == NO_PROFILE) {
+          pSoldier->ubCivilianGroup == KINGPIN_CIV_GROUP && GetSolProfile(pSoldier) == NO_PROFILE) {
         SetNewSituation(pSoldier);
       }
     }
@@ -246,7 +246,7 @@ INT16 MostImportantNoiseHeard(struct SOLDIERTYPE *pSoldier, INT32 *piRetValue,
 
     // make civs not walk to noises outside their room if on close patrol/onguard
     if (pSoldier->bOrders <= CLOSEPATROL &&
-        (pSoldier->bTeam == CIV_TEAM || pSoldier->ubProfile != NO_PROFILE)) {
+        (pSoldier->bTeam == CIV_TEAM || GetSolProfile(pSoldier) != NO_PROFILE)) {
       UINT8 ubRoom, ubNewRoom;
 
       // any other combo uses the default of ubRoom == 0, set above

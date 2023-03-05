@@ -64,9 +64,9 @@ BOOLEAN ApplyDrugs(struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObject) {
   }
 
   // do switch for Larry!!
-  if (pSoldier->ubProfile == LARRY_NORMAL) {
+  if (GetSolProfile(pSoldier) == LARRY_NORMAL) {
     pSoldier = SwapLarrysProfiles(pSoldier);
-  } else if (pSoldier->ubProfile == LARRY_DRUNK) {
+  } else if (GetSolProfile(pSoldier) == LARRY_DRUNK) {
     gMercProfiles[LARRY_DRUNK].bNPCData = 0;
   }
 
@@ -80,8 +80,8 @@ BOOLEAN ApplyDrugs(struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObject) {
     // Increment times used during lifetime...
     // CAP!
     if (ubDrugType == DRUG_TYPE_ADRENALINE) {
-      if (gMercProfiles[pSoldier->ubProfile].ubNumTimesDrugUseInLifetime != 255) {
-        gMercProfiles[pSoldier->ubProfile].ubNumTimesDrugUseInLifetime++;
+      if (gMercProfiles[GetSolProfile(pSoldier)].ubNumTimesDrugUseInLifetime != 255) {
+        gMercProfiles[GetSolProfile(pSoldier)].ubNumTimesDrugUseInLifetime++;
       }
     }
 
@@ -125,9 +125,9 @@ BOOLEAN ApplyDrugs(struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObject) {
         if (pSoldier->bStrength < 1) pSoldier->bStrength = 1;
 
         // export stat changes to profile
-        gMercProfiles[pSoldier->ubProfile].bWisdom = pSoldier->bWisdom;
-        gMercProfiles[pSoldier->ubProfile].bDexterity = pSoldier->bDexterity;
-        gMercProfiles[pSoldier->ubProfile].bStrength = pSoldier->bStrength;
+        gMercProfiles[GetSolProfile(pSoldier)].bWisdom = pSoldier->bWisdom;
+        gMercProfiles[GetSolProfile(pSoldier)].bDexterity = pSoldier->bDexterity;
+        gMercProfiles[GetSolProfile(pSoldier)].bStrength = pSoldier->bStrength;
 
         // make those stats RED for a while...
         pSoldier->uiChangeWisdomTime = GetJA2Clock();

@@ -709,7 +709,7 @@ BOOLEAN TurnSoldierIntoCorpse(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemoveMerc,
   Corpse.dXPos = pSoldier->dXPos;
   Corpse.dYPos = pSoldier->dYPos;
   Corpse.bLevel = pSoldier->bLevel;
-  Corpse.ubProfile = pSoldier->ubProfile;
+  Corpse.ubProfile = GetSolProfile(pSoldier);
 
   if (Corpse.bLevel > 0) {
     Corpse.sHeightAdjustment = (INT16)(pSoldier->sHeightAdjustment - WALL_HEIGHT);
@@ -760,7 +760,7 @@ BOOLEAN TurnSoldierIntoCorpse(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemoveMerc,
 
   // ATE: If the queen is killed, she should
   // make items visible because it ruins end sequence....
-  if (pSoldier->ubProfile == QUEEN || pSoldier->bTeam == gbPlayerNum) {
+  if (GetSolProfile(pSoldier) == QUEEN || pSoldier->bTeam == gbPlayerNum) {
     bVisible = 1;
   }
 
@@ -1087,7 +1087,7 @@ void MercLooksForCorpses(struct SOLDIERTYPE *pSoldier) {
     return;
   }
 
-  if (pSoldier->ubProfile == NO_PROFILE) {
+  if (GetSolProfile(pSoldier) == NO_PROFILE) {
     return;
   }
 
@@ -1095,7 +1095,7 @@ void MercLooksForCorpses(struct SOLDIERTYPE *pSoldier) {
     return;
   }
 
-  if (QuoteExp_HeadShotOnly[pSoldier->ubProfile] == 1) {
+  if (QuoteExp_HeadShotOnly[GetSolProfile(pSoldier)] == 1) {
     return;
   }
 
@@ -1604,7 +1604,7 @@ void LookForAndMayCommentOnSeeingCorpse(struct SOLDIERTYPE *pSoldier, INT16 sGri
   INT32 cnt;
   struct SOLDIERTYPE *pTeamSoldier;
 
-  if (QuoteExp_HeadShotOnly[pSoldier->ubProfile] == 1) {
+  if (QuoteExp_HeadShotOnly[GetSolProfile(pSoldier)] == 1) {
     return;
   }
 

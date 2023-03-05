@@ -544,7 +544,7 @@ void DoNinjaAttack(struct SOLDIERTYPE *pSoldier) {
     }
   }
 
-  if (pSoldier->ubProfile == 33) {
+  if (GetSolProfile(pSoldier) == 33) {
     UINT32 uiSoundID;
     SOUNDPARMS spParms;
     INT32 iFaceIndex;
@@ -576,7 +576,7 @@ void DoNinjaAttack(struct SOLDIERTYPE *pSoldier) {
     if (uiSoundID != SOUND_ERROR) {
       pSoldier->uiBattleSoundID = uiSoundID;
 
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         // Get soldier's face ID
         iFaceIndex = pSoldier->iFaceIndex;
 
@@ -4083,8 +4083,8 @@ savedPts = MAX_AP_CARRIED;
         }
       }
 
-      if ((pSoldier->bTeam == gbPlayerNum) && (pSoldier->ubProfile != NO_PROFILE)) {
-        switch (gMercProfiles[pSoldier->ubProfile].bPersonalityTrait) {
+      if ((pSoldier->bTeam == gbPlayerNum) && (GetSolProfile(pSoldier) != NO_PROFILE)) {
+        switch (gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait) {
           case FEAR_OF_INSECTS:
             if (MercSeesCreature(pSoldier)) {
               HandleMoraleEvent(pSoldier, MORALE_INSECT_PHOBIC_SEES_CREATURE,
@@ -5451,7 +5451,8 @@ UINT8 SoldierTakeDamage(struct SOLDIERTYPE *pSoldier, INT8 bHeight, INT16 sLifeD
 
   // ATE: Put some logic in here to allow enemies to die quicker.....
   // Are we an enemy?
-  if (pSoldier->bSide != gbPlayerNum && !pSoldier->bNeutral && pSoldier->ubProfile == NO_PROFILE) {
+  if (pSoldier->bSide != gbPlayerNum && !pSoldier->bNeutral &&
+      GetSolProfile(pSoldier) == NO_PROFILE) {
     // ATE: Give them a chance to fall down...
     if (pSoldier->bLife > 0 && pSoldier->bLife < (OKLIFE - 1)) {
       // Are we taking damage from bleeding?
@@ -5650,9 +5651,9 @@ UINT8 SoldierTakeDamage(struct SOLDIERTYPE *pSoldier, INT8 bHeight, INT16 sLifeD
   }
 
   if ((ubAttacker != NOBODY) && (Menptr[ubAttacker].bTeam == OUR_TEAM) &&
-      (pSoldier->ubProfile != NO_PROFILE) && (pSoldier->ubProfile >= FIRST_RPC)) {
-    gMercProfiles[pSoldier->ubProfile].ubMiscFlags |= PROFILE_MISC_FLAG_WOUNDEDBYPLAYER;
-    if (pSoldier->ubProfile == 114) {
+      (GetSolProfile(pSoldier) != NO_PROFILE) && (GetSolProfile(pSoldier) >= FIRST_RPC)) {
+    gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags |= PROFILE_MISC_FLAG_WOUNDEDBYPLAYER;
+    if (GetSolProfile(pSoldier) == 114) {
       SetFactTrue(FACT_PACOS_KILLED);
     }
   }
@@ -5858,7 +5859,7 @@ BOOLEAN InternalDoMercBattleSound(struct SOLDIERTYPE *pSoldier, UINT8 ubBattleSo
   }
 
   // If we are talking now....
-  if (IsMercSayingDialogue(pSoldier->ubProfile)) {
+  if (IsMercSayingDialogue(GetSolProfile(pSoldier))) {
     // We can do a couple of things now...
     if (gBattleSndsData[ubBattleSoundID].fStopDialogue == 1) {
       // Stop dialigue...
@@ -5896,8 +5897,8 @@ BOOLEAN InternalDoMercBattleSound(struct SOLDIERTYPE *pSoldier, UINT8 ubBattleSo
   }
 
   // OK, build file and play!
-  if (pSoldier->ubProfile != NO_PROFILE) {
-    sprintf(zFilename, "BATTLESNDS\\%03d_%s.wav", pSoldier->ubProfile,
+  if (GetSolProfile(pSoldier) != NO_PROFILE) {
+    sprintf(zFilename, "BATTLESNDS\\%03d_%s.wav", GetSolProfile(pSoldier),
             gBattleSndsData[ubSoundID].zName);
 
     if (!FileMan_Exists(zFilename)) {
@@ -5959,7 +5960,7 @@ BOOLEAN InternalDoMercBattleSound(struct SOLDIERTYPE *pSoldier, UINT8 ubBattleSo
   } else {
     pSoldier->uiBattleSoundID = uiSoundID;
 
-    if (pSoldier->ubProfile != NO_PROFILE) {
+    if (GetSolProfile(pSoldier) != NO_PROFILE) {
       // Get soldier's face ID
       iFaceIndex = pSoldier->iFaceIndex;
 
@@ -5975,13 +5976,13 @@ BOOLEAN InternalDoMercBattleSound(struct SOLDIERTYPE *pSoldier, UINT8 ubBattleSo
 
 BOOLEAN DoMercBattleSound(struct SOLDIERTYPE *pSoldier, UINT8 ubBattleSoundID) {
   // We WANT to play some RIGHT AWAY.....
-  if (gBattleSndsData[ubBattleSoundID].fStopDialogue == 1 || (pSoldier->ubProfile == NO_PROFILE) ||
-      InOverheadMap()) {
+  if (gBattleSndsData[ubBattleSoundID].fStopDialogue == 1 ||
+      (GetSolProfile(pSoldier) == NO_PROFILE) || InOverheadMap()) {
     return (InternalDoMercBattleSound(pSoldier, ubBattleSoundID, 0));
   }
 
   // So here, only if we were currently saying dialogue.....
-  if (!IsMercSayingDialogue(pSoldier->ubProfile)) {
+  if (!IsMercSayingDialogue(GetSolProfile(pSoldier))) {
     return (InternalDoMercBattleSound(pSoldier, ubBattleSoundID, 0));
   }
 
@@ -5999,7 +6000,7 @@ BOOLEAN PreloadSoldierBattleSounds(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemove
 
   for (cnt = 0; cnt < NUM_MERC_BATTLE_SOUNDS; cnt++) {
     // OK, build file and play!
-    if (pSoldier->ubProfile != NO_PROFILE) {
+    if (GetSolProfile(pSoldier) != NO_PROFILE) {
       if (gBattleSndsData[cnt].fPreload) {
         if (fRemove) {
           SoundUnlockSample(gBattleSndsData[cnt].zName);

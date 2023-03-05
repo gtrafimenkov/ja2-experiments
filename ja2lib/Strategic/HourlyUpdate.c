@@ -201,13 +201,13 @@ void HourlyLarryUpdate(void) {
     }
 
     if (usTemptation > 0) {
-      if (pSoldier->ubProfile == LARRY_NORMAL) {
+      if (GetSolProfile(pSoldier) == LARRY_NORMAL) {
         gMercProfiles[LARRY_NORMAL].bNPCData += (INT8)Random(usTemptation);
         if (gMercProfiles[LARRY_NORMAL].bNPCData >= LARRY_FALLS_OFF_WAGON) {
           if (fBar) {
             // take $ from player's account
             usCashAmount = Item[ALCOHOL].usPrice;
-            AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile,
+            AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, GetSolProfile(pSoldier),
                                         -(usCashAmount));
             // give Larry some booze and set slot etc values appropriately
             bBoozeSlot = FindEmptySlotWithin(pSoldier, HANDPOS, SMALLPOCK8POS);
@@ -236,7 +236,8 @@ void HourlyLarryUpdate(void) {
         if (fBar) {
           // take $ from player's account
           usCashAmount = Item[ALCOHOL].usPrice;
-          AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, pSoldier->ubProfile, -(usCashAmount));
+          AddTransactionToPlayersBook(TRANSFER_FUNDS_TO_MERC, GetSolProfile(pSoldier),
+                                      -(usCashAmount));
           // give Larry some booze and set slot etc values appropriately
           bBoozeSlot = FindEmptySlotWithin(pSoldier, HANDPOS, SMALLPOCK8POS);
           if (bBoozeSlot != NO_SLOT) {
@@ -251,7 +252,7 @@ void HourlyLarryUpdate(void) {
           UseKitPoints(&(pSoldier->inv[bSlot]), LarryItems[bLarryItemLoop][2], pSoldier);
         }
       }
-    } else if (pSoldier->ubProfile == LARRY_DRUNK) {
+    } else if (GetSolProfile(pSoldier) == LARRY_DRUNK) {
       gMercProfiles[LARRY_NORMAL].bNPCData -= (INT8)Random(2);
       if (gMercProfiles[LARRY_NORMAL].bNPCData <= 0) {
         // goes sober!

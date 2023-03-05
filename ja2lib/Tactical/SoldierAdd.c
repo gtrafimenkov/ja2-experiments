@@ -974,7 +974,7 @@ BOOLEAN InternalAddSoldierToSector(UINT8 ubID, BOOLEAN fCalculateDirection, BOOL
 
   if (IsSolActive(pSoldier)) {
     // ATE: Make sure life of elliot is OK if from a meanwhile
-    if (AreInMeanwhile() && pSoldier->ubProfile == ELLIOT) {
+    if (AreInMeanwhile() && GetSolProfile(pSoldier) == ELLIOT) {
       if (pSoldier->bLife < OKLIFE) {
         pSoldier->bLife = 25;
       }

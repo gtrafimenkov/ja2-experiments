@@ -3780,14 +3780,14 @@ void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
       // add to box
       pUpdateSoldierBox[iCounter] = pSoldier;
 
-      if (gMercProfiles[pSoldier->ubProfile].ubFaceIndex < 100) {
+      if (gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex < 100) {
         // grab filename of face
         sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
-                gMercProfiles[pSoldier->ubProfile].ubFaceIndex);
+                gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
       } else {
         // grab filename of face
         sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%03d.sti",
-                gMercProfiles[pSoldier->ubProfile].ubFaceIndex);
+                gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
       }
 
       // load the face
@@ -4770,7 +4770,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
         ((pSoldier->bAssignment < ON_DUTY) &&
          (NumberOfNonEPCsInSquad(pSoldier->bAssignment) == 0))) {
       // are they male or female
-      if (gMercProfiles[pSoldier->ubProfile].bSex == MALE) {
+      if (gMercProfiles[GetSolProfile(pSoldier)].bSex == MALE) {
         swprintf(gsCustomErrorString, ARR_SIZE(gsCustomErrorString), L"%s %s", pSoldier->name,
                  pMapErrorString[6]);
       } else {
@@ -4787,7 +4787,7 @@ BOOLEAN CanCharacterMoveInStrategic(struct SOLDIERTYPE *pSoldier, INT8 *pbErrorN
   fProblemExists = FALSE;
 
   // find out if this particular character can't move for some reason
-  switch (pSoldier->ubProfile) {
+  switch (GetSolProfile(pSoldier)) {
     case (MARIA):
       // Maria can't move if she's in sector C5
       sSector = SECTOR(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));

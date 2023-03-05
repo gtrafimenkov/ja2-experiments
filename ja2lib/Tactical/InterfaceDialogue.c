@@ -1804,9 +1804,9 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
         } else {
           // MakeCivHostile( pSoldier, 2 );
         }
-        if (pSoldier->ubProfile != NO_PROFILE && pSoldier->bLife >= OKLIFE) {
+        if (GetSolProfile(pSoldier) != NO_PROFILE && pSoldier->bLife >= OKLIFE) {
           // trigger quote!
-          // TriggerNPCWithIHateYouQuote( pSoldier->ubProfile );
+          // TriggerNPCWithIHateYouQuote( GetSolProfile(pSoldier) );
           AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
         }
         break;
@@ -2337,13 +2337,13 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
         }
 
         // set the fact that the merc is being married ( used in the personnel screen )
-        gMercProfiles[pSoldier->ubProfile].ubMiscFlags2 |= PROFILE_MISC_FLAG2_MARRIED_TO_HICKS;
+        gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 |= PROFILE_MISC_FLAG2_MARRIED_TO_HICKS;
 
-        AddHistoryToPlayersLog(HISTORY_MERC_MARRIED_OFF, pSoldier->ubProfile, GetWorldTotalMin(),
-                               gWorldSectorX, gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_MERC_MARRIED_OFF, GetSolProfile(pSoldier),
+                               GetWorldTotalMin(), gWorldSectorX, gWorldSectorY);
 
         // if Flo is going off with Daryl, then set that fact true
-        if (pSoldier->ubProfile == 44) {
+        if (GetSolProfile(pSoldier) == 44) {
           SetFactTrue(FACT_PC_MARRYING_DARYL_IS_FLO);
         }
 
@@ -2803,7 +2803,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
           pSoldier->fInNonintAnim = FALSE;
           pSoldier->fRTInNonintAnim = FALSE;
 
-          if (pSoldier->ubProfile == ARMAND) {
+          if (GetSolProfile(pSoldier) == ARMAND) {
             sGridNo = 6968;
           } else {
             sGridNo = FindNearestOpenableNonDoor(pSoldier->sGridNo);
@@ -2887,8 +2887,8 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
 
             pSoldier->uiStatusFlags |= SOLDIER_NPC_DOING_PUNCH;
           } else {
-            TriggerNPCWithGivenApproach(pSoldier->ubProfile, (UINT8)pSoldier->uiPendingActionData4,
-                                        FALSE);
+            TriggerNPCWithGivenApproach(GetSolProfile(pSoldier),
+                                        (UINT8)pSoldier->uiPendingActionData4, FALSE);
           }
         }
         break;
@@ -2956,7 +2956,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
             pSoldier->uiPendingActionData4 = APPROACH_DONE_PUNCH_1;
 
             // If we are elliot, we can't do unconocious guys....
-            if (pSoldier->ubProfile == ELLIOT) {
+            if (GetSolProfile(pSoldier) == ELLIOT) {
               if (pTarget->bActive && pTarget->bInSector && pTarget->bLife >= OKLIFE) {
                 fGoodTarget = TRUE;
               }
@@ -2984,8 +2984,8 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
 
           if (cnt == 3) {
             // If here, nobody was found...
-            TriggerNPCWithGivenApproach(pSoldier->ubProfile, (UINT8)pSoldier->uiPendingActionData4,
-                                        FALSE);
+            TriggerNPCWithGivenApproach(GetSolProfile(pSoldier),
+                                        (UINT8)pSoldier->uiPendingActionData4, FALSE);
           }
         }
         break;
@@ -3153,7 +3153,7 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
                 pSoldier->bAssignment != ASSIGNMENT_HOSPITAL &&
                 PythSpacesAway(pSoldier->sGridNo, pSoldier2->sGridNo) < HOSPITAL_PATIENT_DISTANCE) {
               SetSoldierAssignment(pSoldier, ASSIGNMENT_HOSPITAL, 0, 0, 0);
-              TriggerNPCRecord(pSoldier->ubProfile, 2);
+              TriggerNPCRecord(GetSolProfile(pSoldier), 2);
               pSoldier->bHospitalPriceModifier = gbHospitalPriceModifier;
               // make sure this person doesn't have an absolute dest any more
               pSoldier->sAbsoluteFinalDestination = NOWHERE;
@@ -3541,8 +3541,8 @@ void HandleNPCDoAction(UINT8 ubTargetNPC, UINT16 usActionCode, UINT8 ubQuoteNum)
           pSoldier = ChangeSoldierTeam(pSoldier, CIV_TEAM);
         }
         // remove profile from map
-        gMercProfiles[pSoldier->ubProfile].sSectorX = 0;
-        gMercProfiles[pSoldier->ubProfile].sSectorY = 0;
+        gMercProfiles[GetSolProfile(pSoldier)].sSectorX = 0;
+        gMercProfiles[GetSolProfile(pSoldier)].sSectorY = 0;
         pSoldier->ubProfile = NO_PROFILE;
         // set to 0 civ group
         pSoldier->ubCivilianGroup = 0;
@@ -4234,7 +4234,7 @@ BOOLEAN NPCOpenThing(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor) {
     pStructure = FindStructure(sStructGridNo, STRUCTURE_ANYDOOR);
   } else {
     // for Armand, hard code to tile 6968
-    if (pSoldier->ubProfile == ARMAND) {
+    if (GetSolProfile(pSoldier) == ARMAND) {
       sStructGridNo = 6968;
     } else {
       sStructGridNo = FindNearestOpenableNonDoor(pSoldier->sGridNo);
@@ -4253,7 +4253,7 @@ BOOLEAN NPCOpenThing(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor) {
 
   if (pStructure->fFlags & STRUCTURE_OPEN) {
     // it's already open!
-    TriggerNPCWithGivenApproach(pSoldier->ubProfile, APPROACH_DONE_OPEN_STRUCTURE, FALSE);
+    TriggerNPCWithGivenApproach(GetSolProfile(pSoldier), APPROACH_DONE_OPEN_STRUCTURE, FALSE);
     return (FALSE);
   }
 

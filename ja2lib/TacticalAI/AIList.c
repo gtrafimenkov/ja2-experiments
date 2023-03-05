@@ -201,7 +201,7 @@ BOOLEAN SatisfiesAIListConditions(struct SOLDIERTYPE* pSoldier, UINT8* pubDoneCo
         if (pSoldier->uiStatusFlags & SOLDIER_COWERING) {
           if (pSoldier->bVisible) {
             // if have profile, don't handle, don't want them running around
-            if (pSoldier->ubProfile != NO_PROFILE) {
+            if (GetSolProfile(pSoldier) != NO_PROFILE) {
               return (FALSE);
             }
             // else don't handle much

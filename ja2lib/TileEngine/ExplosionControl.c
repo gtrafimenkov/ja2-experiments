@@ -2951,10 +2951,10 @@ void HandleBuldingDestruction(INT16 sGridNo, UINT8 ubOwner) {
   cnt = gTacticalStatus.Team[CIV_TEAM].bFirstID;
   for (pSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[CIV_TEAM].bLastID; cnt++, pSoldier++) {
     if (IsSolActive(pSoldier) && pSoldier->bInSector && pSoldier->bLife && pSoldier->bNeutral) {
-      if (pSoldier->ubProfile != NO_PROFILE) {
+      if (GetSolProfile(pSoldier) != NO_PROFILE) {
         // ignore if the player is fighting the enemy here and this is a good guy
         if (gTacticalStatus.Team[ENEMY_TEAM].bMenInSector > 0 &&
-            (gMercProfiles[pSoldier->ubProfile].ubMiscFlags3 & PROFILE_MISC_FLAG3_GOODGUY)) {
+            (gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags3 & PROFILE_MISC_FLAG3_GOODGUY)) {
           continue;
         }
 

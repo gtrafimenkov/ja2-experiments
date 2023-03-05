@@ -1740,14 +1740,14 @@ void DrawCharacterInfo(INT16 sCharNumber) {
 
   pSoldier = MercPtrs[gCharactersList[sCharNumber].usSolID];
 
-  if (pSoldier->ubProfile == NO_PROFILE) {
+  if (GetSolProfile(pSoldier) == NO_PROFILE) {
     return;
   }
 
   // draw particular info about a character that are neither attributes nor skills
 
   // get profile information
-  usMercProfileID = pSoldier->ubProfile;
+  usMercProfileID = GetSolProfile(pSoldier);
 
   // set font stuff
   SetFont(CHAR_FONT);
@@ -1869,7 +1869,8 @@ void DrawCharacterInfo(INT16 sCharNumber) {
              gpStrategicString[STR_PB_NOTAPPLICABLE_ABBREVIATION]);
   }
   // what kind of merc
-  else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC || pSoldier->ubProfile == SLAY) {
+  else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC ||
+           GetSolProfile(pSoldier) == SLAY) {
     FLOAT dTimeLeft = 0.0;
 
     // amount of time left on contract
@@ -1922,7 +1923,7 @@ void DrawCharacterInfo(INT16 sCharNumber) {
     INT32 iBeenHiredFor = (GetWorldTotalMin() / NUM_MIN_IN_DAY) - pSoldier->iStartContractTime;
 
     swprintf(sString, ARR_SIZE(sString), L"%d%s/%d%s",
-             gMercProfiles[pSoldier->ubProfile].iMercMercContractLength,
+             gMercProfiles[GetSolProfile(pSoldier)].iMercMercContractLength,
              gpStrategicString[STR_PB_DAYS_ABBREVIATION], iBeenHiredFor,
              gpStrategicString[STR_PB_DAYS_ABBREVIATION]);
   } else {
@@ -1943,15 +1944,15 @@ void DrawCharacterInfo(INT16 sCharNumber) {
   if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
     // daily rate
     if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_2_WEEK) {
-      iDailyCost = (gMercProfiles[pSoldier->ubProfile].uiBiWeeklySalary / 14);
+      iDailyCost = (gMercProfiles[GetSolProfile(pSoldier)].uiBiWeeklySalary / 14);
     }
     if (pSoldier->bTypeOfLastContract == CONTRACT_EXTEND_1_WEEK) {
-      iDailyCost = (gMercProfiles[pSoldier->ubProfile].uiWeeklySalary / 7);
+      iDailyCost = (gMercProfiles[GetSolProfile(pSoldier)].uiWeeklySalary / 7);
     } else {
-      iDailyCost = gMercProfiles[pSoldier->ubProfile].sSalary;
+      iDailyCost = gMercProfiles[GetSolProfile(pSoldier)].sSalary;
     }
   } else {
-    iDailyCost = gMercProfiles[pSoldier->ubProfile].sSalary;
+    iDailyCost = gMercProfiles[GetSolProfile(pSoldier)].sSalary;
   }
 
   swprintf(sString, ARR_SIZE(sString), L"%d", iDailyCost);
@@ -7493,7 +7494,7 @@ void HandleShadingOfLinesForContractMenu(void) {
 
   // is guy in AIM? and well enough to talk and make such decisions?
   if ((pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) && (pSoldier->bLife >= OKLIFE)) {
-    pProfile = &(gMercProfiles[pSoldier->ubProfile]);
+    pProfile = &(gMercProfiles[GetSolProfile(pSoldier)]);
 
     // one day
     if (pProfile->sSalary > MoneyGetBalance()) {
@@ -9682,7 +9683,7 @@ BOOLEAN HandleCtrlOrShiftInTeamPanel(INT8 bCharNumber) {
 }
 
 INT32 GetContractExpiryTime(struct SOLDIERTYPE *pSoldier) {
-  if ((pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) || (pSoldier->ubProfile == SLAY)) {
+  if ((pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) || (GetSolProfile(pSoldier) == SLAY)) {
     return (pSoldier->iEndofContractTime);
   } else {
     // never - really high number
@@ -10402,7 +10403,7 @@ void GetMapscreenMercDepartureString(struct SOLDIERTYPE *pSoldier, wchar_t sStri
   INT32 iDaysRemaining = 0;
   INT32 iHoursRemaining = 0;
 
-  if ((pSoldier->ubWhatKindOfMercAmI != MERC_TYPE__AIM_MERC && pSoldier->ubProfile != SLAY) ||
+  if ((pSoldier->ubWhatKindOfMercAmI != MERC_TYPE__AIM_MERC && GetSolProfile(pSoldier) != SLAY) ||
       pSoldier->bLife == 0) {
     swprintf(sString, sStringSize, L"%s", gpStrategicString[STR_PB_NOTAPPLICABLE_ABBREVIATION]);
   } else {

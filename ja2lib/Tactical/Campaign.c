@@ -60,7 +60,7 @@ void StatChange(struct SOLDIERTYPE *pSoldier, UINT8 ubStat, UINT16 usNumChances,
   if (!PTR_OURTEAM) return;
 
   // ignore anything without a profile
-  if (pSoldier->ubProfile == NO_PROFILE) return;
+  if (GetSolProfile(pSoldier) == NO_PROFILE) return;
 
   // ignore vehicles and robots
   if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->uiStatusFlags & SOLDIER_ROBOT))
@@ -82,7 +82,7 @@ void StatChange(struct SOLDIERTYPE *pSoldier, UINT8 ubStat, UINT16 usNumChances,
   }
 #endif
 
-  ProcessStatChange(&(gMercProfiles[pSoldier->ubProfile]), ubStat, usNumChances, ubReason);
+  ProcessStatChange(&(gMercProfiles[GetSolProfile(pSoldier)]), ubStat, usNumChances, ubReason);
 
   // Update stats....right away... ATE
   UpdateStats(pSoldier);
@@ -360,7 +360,7 @@ void ProcessStatChange(MERCPROFILESTRUCT *pProfile, UINT8 ubStat, UINT16 usNumCh
 
 // convert hired mercs' stats subpoint changes into actual point changes where warranted
 void UpdateStats(struct SOLDIERTYPE *pSoldier) {
-  ProcessUpdateStats(&(gMercProfiles[pSoldier->ubProfile]), pSoldier);
+  ProcessUpdateStats(&(gMercProfiles[GetSolProfile(pSoldier)]), pSoldier);
 }
 
 // UpdateStats version for mercs not currently on player's team
@@ -625,7 +625,7 @@ void ChangeStat(MERCPROFILESTRUCT *pProfile, struct SOLDIERTYPE *pSoldier, UINT8
 
           case MERC_TYPE__MERC:
             // M.E.R.C.
-            ubMercMercIdValue = pSoldier->ubProfile;
+            ubMercMercIdValue = GetSolProfile(pSoldier);
 
             // Biff's profile id ( 40 ) is the base
             ubMercMercIdValue -= BIFF;
@@ -712,7 +712,7 @@ void ProcessUpdateStats(MERCPROFILESTRUCT *pProfile, struct SOLDIERTYPE *pSoldie
     if (!PTR_OURTEAM) return;
 
     // ignore anything without a profile
-    if (pSoldier->ubProfile == NO_PROFILE) return;
+    if (GetSolProfile(pSoldier) == NO_PROFILE) return;
 
     // ignore vehicles and robots
     if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE) || (pSoldier->uiStatusFlags & SOLDIER_ROBOT))
@@ -845,7 +845,7 @@ void HandleAnyStatChangesAfterAttack(void) {
   for (cnt = 0, pSoldier = MercPtrs[0]; cnt <= gTacticalStatus.Team[MercPtrs[0]->bTeam].bLastID;
        cnt++, pSoldier++) {
     if (IsSolActive(pSoldier)) {
-      ProcessUpdateStats(&(gMercProfiles[pSoldier->ubProfile]), pSoldier);
+      ProcessUpdateStats(&(gMercProfiles[GetSolProfile(pSoldier)]), pSoldier);
     }
   }
 }
