@@ -600,8 +600,8 @@ BOOLEAN AddWaypointIDToGroup(UINT8 ubGroupID, UINT8 ubSectorID) {
 // NOTE: This does NOT expect a strategic sector ID
 BOOLEAN AddWaypointIDToPGroup(struct GROUP *pGroup, UINT8 ubSectorID) {
   UINT8 ubSectorX, ubSectorY;
-  ubSectorX = SECTORX(ubSectorID);
-  ubSectorY = SECTORY(ubSectorID);
+  ubSectorX = SectorID8_X(ubSectorID);
+  ubSectorY = SectorID8_Y(ubSectorID);
   return AddWaypointToPGroup(pGroup, ubSectorX, ubSectorY);
 }
 
@@ -632,8 +632,8 @@ struct GROUP *CreateNewEnemyGroupDepartingFromSector(UINT32 uiSector, UINT8 ubNu
   AssertMsg(pNew->pEnemyGroup, "MemAlloc failure during enemy group creation.");
   memset(pNew->pEnemyGroup, 0, sizeof(ENEMYGROUP));
   pNew->pWaypoints = NULL;
-  pNew->ubSectorX = (UINT8)SECTORX(uiSector);
-  pNew->ubSectorY = (UINT8)SECTORY(uiSector);
+  pNew->ubSectorX = SectorID8_X(uiSector);
+  pNew->ubSectorY = SectorID8_Y(uiSector);
   pNew->ubOriginalSector = (UINT8)uiSector;
   pNew->fPlayer = FALSE;
   pNew->ubMoveType = CIRCULAR;
@@ -2244,8 +2244,8 @@ void SetEnemyGroupSector(struct GROUP *pGroup, UINT8 ubSectorID) {
   }
 
   // set sector x and y to passed values
-  pGroup->ubSectorX = pGroup->ubNextX = (UINT8)SECTORX(ubSectorID);
-  pGroup->ubSectorY = pGroup->ubNextY = (UINT8)SECTORY(ubSectorID);
+  pGroup->ubSectorX = pGroup->ubNextX = SectorID8_X(ubSectorID);
+  pGroup->ubSectorY = pGroup->ubNextY = SectorID8_Y(ubSectorID);
   pGroup->ubSectorZ = 0;
   pGroup->fBetweenSectors = FALSE;
   // pGroup->fWaypointsCancelled = FALSE;
@@ -4384,16 +4384,18 @@ void ValidateGroups(struct GROUP *pGroup) {
                L"Enemy group found with 0 troops in it.  This is illegal and group will be deleted."
                L"  Group %d in sector %c%d originated from sector %c%d.",
                pGroup->ubGroupID, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX,
-               SECTORY(pGroup->ubCreatedSectorID) + 'A' - 1, SECTORX(pGroup->ubCreatedSectorID));
+               SectorID8_Y(pGroup->ubCreatedSectorID) + 'A' - 1,
+               SectorID8_X(pGroup->ubCreatedSectorID));
     } else {
       swprintf(str, ARR_SIZE(str),
                L"Enemy group found with 0 troops in it.  This is illegal and group will be deleted."
                L"  Group %d in sector %c%d originated from sector %c%d and last reassignment "
                L"location was %c%d.",
                pGroup->ubGroupID, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX,
-               SECTORY(pGroup->ubCreatedSectorID) + 'A' - 1, SECTORX(pGroup->ubCreatedSectorID),
-               SECTORY(pGroup->ubSectorIDOfLastReassignment) + 'A' - 1,
-               SECTORX(pGroup->ubSectorIDOfLastReassignment));
+               SectorID8_Y(pGroup->ubCreatedSectorID) + 'A' - 1,
+               SectorID8_X(pGroup->ubCreatedSectorID),
+               SectorID8_Y(pGroup->ubSectorIDOfLastReassignment) + 'A' - 1,
+               SectorID8_X(pGroup->ubSectorIDOfLastReassignment));
     }
     // correct error
 

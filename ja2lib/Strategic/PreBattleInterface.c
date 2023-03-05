@@ -338,8 +338,8 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
           NumEnemiesInSector(gubPBSectorX, gubPBSectorY);
       MarkForRedrawalStrategicMap();
     } else {
-      gubPBSectorX = (UINT8)SECTORX(gubSectorIDOfCreatureAttack);
-      gubPBSectorY = (UINT8)SECTORY(gubSectorIDOfCreatureAttack);
+      gubPBSectorX = SectorID8_X(gubSectorIDOfCreatureAttack);
+      gubPBSectorY = SectorID8_Y(gubSectorIDOfCreatureAttack);
       gubPBSectorZ = 0;
     }
   } else {  // calculate the non-persistant situation

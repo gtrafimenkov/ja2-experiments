@@ -1706,7 +1706,7 @@ void PrintDetailedEnemiesInSectorInfo(INT32 iScreenX, INT32 iScreenY, UINT8 ubSe
             if (iGarrisonIndex != -1) {
               ubSectorID = gGarrisonGroup[iGarrisonIndex].ubSectorID;
               swprintf(wSubString, ARR_SIZE(wSubString), L", target sector %c%d",
-                       SECTORY(ubSectorID) + 'A' - 1, SECTORX(ubSectorID));
+                       SectorID8_Y(ubSectorID) + 'A' - 1, SectorID8_X(ubSectorID));
             } else {
               pFinalWaypoint = GetFinalWaypoint(pGroup);
               if (pFinalWaypoint) {
@@ -1729,7 +1729,7 @@ void PrintDetailedEnemiesInSectorInfo(INT32 iScreenX, INT32 iScreenY, UINT8 ubSe
             if (iGarrisonIndex != -1) {
               ubSectorID = gGarrisonGroup[iGarrisonIndex].ubSectorID;
               swprintf(wSubString, ARR_SIZE(wSubString), L", dest sector %c%d",
-                       SECTORY(ubSectorID) + 'A' - 1, SECTORX(ubSectorID));
+                       SectorID8_Y(ubSectorID) + 'A' - 1, SectorID8_X(ubSectorID));
               wcscat(wString, wSubString);
             } else  // must be reinforcing a patrol
             {

@@ -1363,8 +1363,8 @@ void ProcessTransactionString(STR16 pString, size_t bufSize, FinanceUnitPtr pFin
       CHAR16 str[128];
       UINT8 ubSectorX;
       UINT8 ubSectorY;
-      ubSectorX = (UINT8)SECTORX(pFinance->ubSecondCode);
-      ubSectorY = (UINT8)SECTORY(pFinance->ubSecondCode);
+      ubSectorX = SectorID8_X(pFinance->ubSecondCode);
+      ubSectorY = SectorID8_Y(pFinance->ubSecondCode);
       GetSectorIDString(ubSectorX, ubSectorY, 0, str, ARR_SIZE(str), TRUE);
       swprintf(pString, bufSize, pTransactionText[TRAIN_TOWN_MILITIA], str);
     } break;

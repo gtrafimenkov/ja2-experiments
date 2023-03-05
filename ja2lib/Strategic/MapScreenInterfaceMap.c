@@ -4635,8 +4635,8 @@ void RenderIconsPerSectorForSelectedTown(void) {
     sCurrentSectorValue =
         sBaseSectorValue + ((iCounter % MILITIA_BOX_ROWS) + (iCounter / MILITIA_BOX_ROWS) * (16));
 
-    sSectorX = SECTORX(sCurrentSectorValue);
-    sSectorY = SECTORY(sCurrentSectorValue);
+    sSectorX = SectorID8_X(sCurrentSectorValue);
+    sSectorY = SectorID8_Y(sCurrentSectorValue);
 
     // skip sectors not in the selected town (nearby other towns or wilderness SAM Sites)
     if (GetTownIdForSector(sSectorX, sSectorY) != sSelectedMilitiaTown) {
@@ -4999,8 +4999,8 @@ BOOLEAN IsThisMilitiaTownSectorAllowable(INT16 sSectorIndexValue) {
   sGlobalMapSector = sBaseSectorValue + ((sSectorIndexValue % MILITIA_BOX_ROWS) +
                                          (sSectorIndexValue / MILITIA_BOX_ROWS) * 16);
 
-  sSectorX = SECTORX(sGlobalMapSector);
-  sSectorY = SECTORY(sGlobalMapSector);
+  sSectorX = SectorID8_X(sGlobalMapSector);
+  sSectorY = SectorID8_Y(sGlobalMapSector);
 
   // is this in fact part of a town?
   if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId == BLANK_SECTOR) {
@@ -5163,8 +5163,8 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
     sCurrentSectorValue =
         sBaseSectorValue + ((iCounter % MILITIA_BOX_ROWS) + (iCounter / MILITIA_BOX_ROWS) * (16));
 
-    sSectorX = SECTORX(sCurrentSectorValue);
-    sSectorY = SECTORY(sCurrentSectorValue);
+    sSectorX = SectorID8_X(sCurrentSectorValue);
+    sSectorY = SectorID8_Y(sCurrentSectorValue);
 
     // skip sectors not in the selected town (nearby other towns or wilderness SAM Sites)
     if (GetTownIdForSector(sSectorX, sSectorY) != sSelectedMilitiaTown) {
@@ -5359,8 +5359,8 @@ void RenderShadingForUnControlledSectors(void) {
     if ((StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(sCurrentSectorValue)].bNameId !=
          BLANK_SECTOR) &&
         ((StrategicMap[SECTOR_INFO_TO_STRATEGIC_INDEX(sCurrentSectorValue)].fEnemyControlled) ||
-         (NumHostilesInSector((INT16)SECTORX(sCurrentSectorValue),
-                              (INT16)SECTORY(sCurrentSectorValue), 0)))) {
+         (NumHostilesInSector((INT16)SectorID8_X(sCurrentSectorValue),
+                              (INT16)SectorID8_Y(sCurrentSectorValue), 0)))) {
       // shade this sector, not under our control
       sX = MAP_MILITIA_BOX_POS_X + MAP_MILITIA_MAP_X +
            ((iCounter % MILITIA_BOX_ROWS) * MILITIA_BOX_BOX_WIDTH);
@@ -5435,8 +5435,8 @@ void DrawTownMilitiaForcesOnMap(void) {
 
   // now handle militia for sam sectors
   for (iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++) {
-    sSectorX = SECTORX(pSamList[iCounter]);
-    sSectorY = SECTORY(pSamList[iCounter]);
+    sSectorX = SectorID8_X(pSamList[iCounter]);
+    sSectorY = SectorID8_Y(pSamList[iCounter]);
 
     if (!StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled) {
       // get number of each
@@ -5947,8 +5947,8 @@ BOOLEAN CanMilitiaAutoDistribute(void) {
     sCurrentSectorValue =
         sBaseSectorValue + ((iCounter % MILITIA_BOX_ROWS) + (iCounter / MILITIA_BOX_ROWS) * (16));
 
-    sSectorX = SECTORX(sCurrentSectorValue);
-    sSectorY = SECTORY(sCurrentSectorValue);
+    sSectorX = SectorID8_X(sCurrentSectorValue);
+    sSectorY = SectorID8_Y(sCurrentSectorValue);
 
     // skip sectors not in the selected town (nearby other towns or wilderness SAM Sites)
     if (GetTownIdForSector(sSectorX, sSectorY) != sSelectedMilitiaTown) {
@@ -6193,8 +6193,8 @@ BOOLEAN CanRedistributeMilitiaInSector(INT16 sClickedSectorX, INT16 sClickedSect
     sCurrentSectorValue =
         sBaseSectorValue + ((iCounter % MILITIA_BOX_ROWS) + (iCounter / MILITIA_BOX_ROWS) * (16));
 
-    sSectorX = SECTORX(sCurrentSectorValue);
-    sSectorY = SECTORY(sCurrentSectorValue);
+    sSectorX = SectorID8_X(sCurrentSectorValue);
+    sSectorY = SectorID8_Y(sCurrentSectorValue);
 
     // not in the same town?
     if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId != bClickedTownId) {

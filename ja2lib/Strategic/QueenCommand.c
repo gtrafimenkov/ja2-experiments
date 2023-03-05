@@ -1683,7 +1683,7 @@ BOOLEAN PlayerSectorDefended(UINT8 ubSectorID) {
       pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA]) {  // militia in sector
     return TRUE;
   }
-  if (FindMovementGroupInSector((UINT8)SECTORX(ubSectorID), (UINT8)SECTORY(ubSectorID),
+  if (FindMovementGroupInSector(SectorID8_X(ubSectorID), SectorID8_Y(ubSectorID),
                                 TRUE)) {  // player in sector
     return TRUE;
   }

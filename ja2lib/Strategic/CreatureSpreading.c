@@ -946,8 +946,8 @@ void EndCreatureQuest() {
 UINT8 CreaturesInUndergroundSector(UINT8 ubSectorID, UINT8 ubSectorZ) {
   UNDERGROUND_SECTORINFO *pSector;
   UINT8 ubSectorX, ubSectorY;
-  ubSectorX = (UINT8)SECTORX(ubSectorID);
-  ubSectorY = (UINT8)SECTORY(ubSectorID);
+  ubSectorX = SectorID8_X(ubSectorID);
+  ubSectorY = SectorID8_Y(ubSectorID);
   pSector = FindUnderGroundSector(ubSectorX, ubSectorY, ubSectorZ);
   if (pSector) return pSector->ubNumCreatures;
   return 0;

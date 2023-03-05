@@ -1548,8 +1548,8 @@ BOOLEAN PlayerForceTooStrong(UINT8 ubSectorID, UINT16 usOffensePoints, UINT16 *p
   SECTORINFO *pSector;
   UINT8 ubSectorX, ubSectorY;
 
-  ubSectorX = (UINT8)SECTORX(ubSectorID);
-  ubSectorY = (UINT8)SECTORY(ubSectorID);
+  ubSectorX = SectorID8_X(ubSectorID);
+  ubSectorY = SectorID8_Y(ubSectorID);
   pSector = &SectorInfo[ubSectorID];
 
   *pusDefencePoints = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA] * 1 +
@@ -1568,7 +1568,7 @@ void RequestAttackOnSector(UINT8 ubSectorID, UINT16 usDefencePoints) {
     if (gGarrisonGroup[i].ubSectorID == ubSectorID && !gGarrisonGroup[i].ubPendingGroupID) {
 #ifdef JA2BETAVERSION
       LogStrategicEvent("An attack has been requested in sector %c%d.",
-                        SECTORY(ubSectorID) + 'A' - 1, SECTORX(ubSectorID));
+                        SectorID8_Y(ubSectorID) + 'A' - 1, SectorID8_X(ubSectorID));
 #endif
       SendReinforcementsForGarrison(i, usDefencePoints, NULL);
       return;
@@ -2663,8 +2663,8 @@ BOOLEAN ReinforcementsApproved(INT32 iGarrisonID, UINT16 *pusDefencePoints) {
   UINT8 ubSectorX, ubSectorY;
 
   pSector = &SectorInfo[gGarrisonGroup[iGarrisonID].ubSectorID];
-  ubSectorX = (UINT8)SECTORX(gGarrisonGroup[iGarrisonID].ubSectorID);
-  ubSectorY = (UINT8)SECTORY(gGarrisonGroup[iGarrisonID].ubSectorID);
+  ubSectorX = SectorID8_X(gGarrisonGroup[iGarrisonID].ubSectorID);
+  ubSectorY = SectorID8_Y(gGarrisonGroup[iGarrisonID].ubSectorID);
 
   *pusDefencePoints = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA] * 1 +
                       pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA] * 2 +
@@ -2821,8 +2821,8 @@ BOOLEAN EvaluateGroupSituation(struct GROUP *pGroup) {
                      L"Please send Strategic Decisions.txt and PRIOR save.",
                      pPatrolGroup->ubGroupID, pPatrolGroup->ubSectorY + 'A' - 1,
                      pPatrolGroup->ubSectorX, pGroup->ubGroupID,
-                     SECTORY(pGroup->ubCreatedSectorID) + 'A' - 1,
-                     SECTORX(pGroup->ubCreatedSectorID), pPatrolGroup->ubGroupSize,
+                     SectorID8_Y(pGroup->ubCreatedSectorID) + 'A' - 1,
+                     SectorID8_X(pGroup->ubCreatedSectorID), pPatrolGroup->ubGroupSize,
                      MAX_STRATEGIC_TEAM_SIZE);
             SAIReportError(str);
 #endif
@@ -3118,8 +3118,8 @@ void CheckEnemyControlledSector(UINT8 ubSectorID) {
   }
   if (pSector->ubNumAdmins + pSector->ubNumTroops + pSector->ubNumElites) {
     // The sector is still controlled, so look around to see if there are any players nearby.
-    ubSectorX = (UINT8)SECTORX(ubSectorID);
-    ubSectorY = (UINT8)SECTORY(ubSectorID);
+    ubSectorX = SectorID8_X(ubSectorID);
+    ubSectorY = SectorID8_Y(ubSectorID);
     if (ubSectorY > 1 && EnemyPermittedToAttackSector(NULL, (UINT8)(ubSectorID - 16))) {
       /*
       pPlayerGroup = FindMovementGroupInSector( ubSectorX, (UINT8)(ubSectorY-1), TRUE );
@@ -3452,8 +3452,8 @@ void SendReinforcementsForGarrison(INT32 iDstGarrisonID, UINT16 usDefencePoints,
     return;
   }
 
-  ubDstSectorX = (UINT8)SECTORX(gGarrisonGroup[iDstGarrisonID].ubSectorID);
-  ubDstSectorY = (UINT8)SECTORY(gGarrisonGroup[iDstGarrisonID].ubSectorID);
+  ubDstSectorX = SectorID8_X(gGarrisonGroup[iDstGarrisonID].ubSectorID);
+  ubDstSectorY = SectorID8_Y(gGarrisonGroup[iDstGarrisonID].ubSectorID);
 
   if (pOptionalGroup && *pOptionalGroup) {  // This group will provide the reinforcements
     pGroup = *pOptionalGroup;
@@ -3672,8 +3672,8 @@ void SendReinforcementsForPatrol(INT32 iPatrolID, struct GROUP **pOptionalGroup)
       iWeight = -gGarrisonGroup[iSrcGarrisonID].bWeight;
       if (iWeight > 0) {          // if group is able to provide reinforcements.
         if (iRandom < iWeight) {  // This is the group that gets the reinforcements!
-          ubSrcSectorX = (UINT8)SECTORX(gGarrisonGroup[iSrcGarrisonID].ubSectorID);
-          ubSrcSectorY = (UINT8)SECTORY(gGarrisonGroup[iSrcGarrisonID].ubSectorID);
+          ubSrcSectorX = SectorID8_X(gGarrisonGroup[iSrcGarrisonID].ubSectorID);
+          ubSrcSectorY = SectorID8_Y(gGarrisonGroup[iSrcGarrisonID].ubSectorID);
           if (ubSrcSectorX != gWorldSectorX || ubSrcSectorY != gWorldSectorY ||
               gbWorldSectorZ >
                   0) {  // The reinforcements aren't coming from the currently loaded sector!
@@ -3793,8 +3793,8 @@ void EvaluateQueenSituation() {
 #ifdef JA2BETAVERSION
           LogStrategicEvent(
               "Reinforcements were denied to go to %c%d because player forces too strong.",
-              SECTORY(gGarrisonGroup[i].ubSectorID) + 'A' - 1,
-              SECTORX(gGarrisonGroup[i].ubSectorID));
+              SectorID8_Y(gGarrisonGroup[i].ubSectorID) + 'A' - 1,
+              SectorID8_X(gGarrisonGroup[i].ubSectorID));
 #endif
         }
         return;
@@ -4486,10 +4486,10 @@ void EvolveQueenPriorityPhase(BOOLEAN fForceChange) {
       }
       if (iFactor >= 15) {  // Make the actual elites in sector match the new garrison percentage
         if (!gfWorldLoaded || gbWorldSectorZ ||
-            gWorldSectorX != SECTORX(gGarrisonGroup[i].ubSectorID) ||
+            gWorldSectorX != SectorID8_X(gGarrisonGroup[i].ubSectorID) ||
             gWorldSectorY !=
-                SECTORY(gGarrisonGroup[i]
-                            .ubSectorID)) {  // Also make sure the sector isn't currently loaded!
+                SectorID8_Y(gGarrisonGroup[i].ubSectorID)) {  // Also make sure the sector isn't
+                                                              // currently loaded!
           iNumSoldiers = pSector->ubNumAdmins + pSector->ubNumTroops + pSector->ubNumElites;
           iNumPromotions =
               gArmyComp[index].bElitePercentage * iNumSoldiers / 100 - pSector->ubNumElites;
@@ -4593,8 +4593,8 @@ void ExecuteStrategicAIAction(UINT16 usActionCode, INT16 sSectorX, INT16 sSector
       // following checks succeed, the enemies will be sent to attack and reinforce that sector.
       // Otherwise, the enemies will simply check it out, then leave.
       if (pSector->ubGarrisonID != NO_GARRISON) {  // sector has a garrison
-        if (!NumEnemiesInSector((INT16)SECTORX(ubSectorID),
-                                (INT16)SECTORY(ubSectorID))) {  // no enemies are here
+        if (!NumEnemiesInSector((INT16)SectorID8_X(ubSectorID),
+                                (INT16)SectorID8_Y(ubSectorID))) {  // no enemies are here
           if (gArmyComp[!gGarrisonGroup[pSector->ubGarrisonID].ubComposition]
                   .bPriority) {  // the garrison is important
             if (!gGarrisonGroup[pSector->ubGarrisonID]
@@ -4755,8 +4755,8 @@ void InvestigateSector(UINT8 ubSectorID) {
           //@@@ Disabled!  Also commented out the posting of the event
           return;
 
-          sSectorX = (INT16)SECTORX( ubSectorID );
-          sSectorY = (INT16)SECTORY( ubSectorID );
+          sSectorX = (INT16)SectorID8_X( ubSectorID );
+          sSectorY = (INT16)SectorID8_Y( ubSectorID );
 
           if( guiCurrentScreen != GAME_SCREEN )
           { //If we aren't in tactical, then don't do this.  It is strictly added flavour and would
@@ -5016,10 +5016,10 @@ void RequestHighPriorityStagingGroupReinforcements(struct GROUP *pGroup) {
 UINT8 SectorDistance(UINT8 ubSectorID1, UINT8 ubSectorID2) {
   UINT8 ubSectorX1, ubSectorX2, ubSectorY1, ubSectorY2;
   UINT8 ubDist;
-  ubSectorX1 = (UINT8)SECTORX(ubSectorID1);
-  ubSectorX2 = (UINT8)SECTORX(ubSectorID2);
-  ubSectorY1 = (UINT8)SECTORY(ubSectorID1);
-  ubSectorY2 = (UINT8)SECTORY(ubSectorID2);
+  ubSectorX1 = SectorID8_X(ubSectorID1);
+  ubSectorX2 = SectorID8_X(ubSectorID2);
+  ubSectorY1 = SectorID8_Y(ubSectorID1);
+  ubSectorY2 = SectorID8_Y(ubSectorID2);
 
   ubDist = (UINT8)(abs(ubSectorX1 - ubSectorX2) + abs(ubSectorY1 - ubSectorY2));
 
@@ -5048,8 +5048,8 @@ void RequestHighPriorityGarrisonReinforcements(INT32 iGarrisonID, UINT8 ubSoldie
       }
     }
   }
-  ubDstSectorX = (UINT8)SECTORX(gGarrisonGroup[iGarrisonID].ubSectorID);
-  ubDstSectorY = (UINT8)SECTORY(gGarrisonGroup[iGarrisonID].ubSectorID);
+  ubDstSectorX = SectorID8_X(gGarrisonGroup[iGarrisonID].ubSectorID);
+  ubDstSectorY = SectorID8_Y(gGarrisonGroup[iGarrisonID].ubSectorID);
   if (iBestIndex != -1) {  // Send the group to the garrison
     pGroup = GetGroup(gPatrolGroup[iBestIndex].ubGroupID);
     if (pGroup->ubGroupSize > ubSoldiersRequested &&
@@ -5237,8 +5237,8 @@ BOOLEAN GarrisonCanProvideMinimumReinforcements(INT32 iGarrisonID) {
   if (iAvailable - iDesired >= gubMinEnemyGroupSize) {
     // Do a more expensive check first to determine if there is a player presence here (combat in
     // progress) If so, do not provide reinforcements from here.
-    ubSectorX = (UINT8)SECTORX(gGarrisonGroup[iGarrisonID].ubSectorID);
-    ubSectorY = (UINT8)SECTORY(gGarrisonGroup[iGarrisonID].ubSectorID);
+    ubSectorX = SectorID8_X(gGarrisonGroup[iGarrisonID].ubSectorID);
+    ubSectorY = SectorID8_Y(gGarrisonGroup[iGarrisonID].ubSectorID);
     if (PlayerMercsInSector(ubSectorX, ubSectorY, 0) ||
         CountAllMilitiaInSector(ubSectorX, ubSectorY)) {
       return FALSE;
@@ -5782,8 +5782,8 @@ void MoveSAIGroupToSector(struct GROUP **pGroup, UINT8 ubSectorID, UINT32 uiMove
                           UINT8 ubIntention) {
   UINT8 ubDstSectorX, ubDstSectorY;
 
-  ubDstSectorX = (UINT8)SECTORX(ubSectorID);
-  ubDstSectorY = (UINT8)SECTORY(ubSectorID);
+  ubDstSectorX = SectorID8_X(ubSectorID);
+  ubDstSectorY = SectorID8_Y(ubSectorID);
 
   if ((*pGroup)->fBetweenSectors) {
     SetEnemyGroupSector(*pGroup, (UINT8)GetSectorID8((*pGroup)->ubSectorX, (*pGroup)->ubSectorY));
