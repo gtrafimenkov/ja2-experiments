@@ -72,7 +72,6 @@
 #include "Tactical/MapInformation.h"
 #include "Tactical/Menptr.h"
 #include "Tactical/MercHiring.h"
-#include "Tactical/MilitiaControl.h"
 #include "Tactical/OppList.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierProfile.h"

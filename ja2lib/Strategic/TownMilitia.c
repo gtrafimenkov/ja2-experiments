@@ -13,7 +13,6 @@
 #include "Strategic/Assignments.h"
 #include "Strategic/GameClock.h"
 #include "Tactical/DialogueControl.h"
-#include "Tactical/MilitiaControl.h"
 #include "Team.h"
 #include "Town.h"
 #include "UI.h"
@@ -35,6 +34,7 @@ struct sectorSearch {
 };
 static struct sectorSearch sectorSearch;
 
+BOOLEAN gfStrategicMilitiaChangesMade = FALSE;
 BOOLEAN gfYesNoPromptIsForContinue = FALSE;  // whether we're starting new training, or continuing
 INT32 giTotalCostOfTraining = 0;
 
@@ -50,6 +50,7 @@ extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
 
 static void addMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
 static void promoteMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank, UINT8 ubHowMany);
+static void HandleMilitiaPromotions();
 
 // handle completion of assignment byt his soldier too and inform the player
 static void handleTrainingComplete(struct SOLDIERTYPE *pTrainer);
@@ -87,7 +88,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
   }
 
   // force tactical to update militia status
-  gfStrategicMilitiaChangesMade = TRUE;
+  Event_UIMilitiaChanges();
 
   // ok, so what do we do with all this training?  Well, in order of decreasing priority:
   // 1) If there's room in training sector, create new GREEN militia guys there
@@ -1003,3 +1004,97 @@ BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId) {
       return (FALSE);
   }
 }
+
+#include "Soldier.h"
+#include "Strategic/CampaignTypes.h"
+#include "Strategic/PreBattleInterface.h"
+#include "Strategic/StrategicMap.h"
+#include "Strategic/TownMilitia.h"
+#include "Tactical/Overhead.h"
+#include "Tactical/SoldierControl.h"
+#include "Tactical/SoldierInitList.h"
+
+static void RemoveMilitiaFromTactical();
+
+void ResetMilitia() {
+  if (gfStrategicMilitiaChangesMade || gTacticalStatus.uiFlags & LOADING_SAVED_GAME) {
+    gfStrategicMilitiaChangesMade = FALSE;
+    RemoveMilitiaFromTactical();
+    PrepareMilitiaForTactical();
+  }
+}
+
+static void RemoveMilitiaFromTactical() {
+  SOLDIERINITNODE *curr;
+  INT32 i;
+  for (i = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
+       i <= gTacticalStatus.Team[MILITIA_TEAM].bLastID; i++) {
+    if (MercPtrs[i]->bActive) {
+      TacticalRemoveSoldier(MercPtrs[i]->ubID);
+    }
+  }
+  curr = gSoldierInitHead;
+  while (curr) {
+    if (curr->pBasicPlacement->bTeam == MILITIA_TEAM) {
+      curr->pSoldier = NULL;
+    }
+    curr = curr->next;
+  }
+}
+
+void PrepareMilitiaForTactical() {
+  SECTORINFO *pSector;
+  //	INT32 i;
+  UINT8 ubGreen, ubRegs, ubElites;
+  if (gbWorldSectorZ > 0) return;
+
+  // Do we have a loaded sector?
+  if (gWorldSectorX == 0 && gWorldSectorY == 0) return;
+
+  pSector = &SectorInfo[GetSectorID8(gWorldSectorX, gWorldSectorY)];
+  ubGreen = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA];
+  ubRegs = pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA];
+  ubElites = pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA];
+  AddSoldierInitListMilitia(ubGreen, ubRegs, ubElites);
+}
+
+void HandleMilitiaPromotions(void) {
+  UINT8 cnt;
+  UINT8 ubMilitiaRank;
+  struct SOLDIERTYPE *pTeamSoldier;
+  UINT8 ubPromotions;
+
+  gbGreenToElitePromotions = 0;
+  gbGreenToRegPromotions = 0;
+  gbRegToElitePromotions = 0;
+  gbMilitiaPromotions = 0;
+
+  cnt = gTacticalStatus.Team[MILITIA_TEAM].bFirstID;
+
+  for (pTeamSoldier = MercPtrs[cnt]; cnt <= gTacticalStatus.Team[MILITIA_TEAM].bLastID;
+       cnt++, pTeamSoldier++) {
+    if (pTeamSoldier->bActive && pTeamSoldier->bInSector && pTeamSoldier->bLife > 0) {
+      if (pTeamSoldier->ubMilitiaKills > 0) {
+        ubMilitiaRank = SoldierClassToMilitiaRank(pTeamSoldier->ubSoldierClass);
+        ubPromotions = CheckOneMilitiaForPromotion(gWorldSectorX, gWorldSectorY, ubMilitiaRank,
+                                                   pTeamSoldier->ubMilitiaKills);
+        if (ubPromotions) {
+          if (ubPromotions == 2) {
+            gbGreenToElitePromotions++;
+            gbMilitiaPromotions++;
+          } else if (pTeamSoldier->ubSoldierClass == SOLDIER_CLASS_GREEN_MILITIA) {
+            gbGreenToRegPromotions++;
+            gbMilitiaPromotions++;
+          } else if (pTeamSoldier->ubSoldierClass == SOLDIER_CLASS_REG_MILITIA) {
+            gbRegToElitePromotions++;
+            gbMilitiaPromotions++;
+          }
+        }
+
+        pTeamSoldier->ubMilitiaKills = 0;
+      }
+    }
+  }
+}
+
+void Event_UIMilitiaChanges() { gfStrategicMilitiaChangesMade = FALSE; }

@@ -31,7 +31,6 @@
 #include "Strategic/TownMilitia.h"
 #include "Tactical/AirRaid.h"
 #include "Tactical/MapInformation.h"
-#include "Tactical/MilitiaControl.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/Squads.h"
@@ -4367,7 +4366,7 @@ void DisplayLevelString(void) {
 }
 
 // function to manipulate the number of towns people on the cursor
-BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
+static BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
   // see if there are any militia of this type in this sector
   if (!SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ubType]) {
     // failed, no one here
@@ -4384,7 +4383,7 @@ BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   if (GetSectorID8(sX, sY) == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
-    gfStrategicMilitiaChangesMade = TRUE;
+    Event_UIMilitiaChanges();
   }
 
   // otherwise pick this guy up
@@ -4426,7 +4425,7 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   if (GetSectorID8(sX, sY) == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
-    gfStrategicMilitiaChangesMade = TRUE;
+    Event_UIMilitiaChanges();
   }
 
   // drop the guy into this sector
@@ -5095,7 +5094,7 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
 
         if (SectorID16To8((*townSectors)[iCounter].sectorID) ==
             GetSectorID8(gWorldSectorX, gWorldSectorY)) {
-          gfStrategicMilitiaChangesMade = TRUE;
+          Event_UIMilitiaChanges();
         }
       }
 
@@ -5236,7 +5235,7 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
 
         // if this sector is currently loaded
         if (sSector == GetSectorID8(gWorldSectorX, gWorldSectorY) && gWorldSectorY != 0) {
-          gfStrategicMilitiaChangesMade = TRUE;
+          Event_UIMilitiaChanges();
         }
       }
     }

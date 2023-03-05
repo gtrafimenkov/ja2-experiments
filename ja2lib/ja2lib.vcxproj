@@ -239,7 +239,6 @@
     <ClCompile Include="Tactical\MapInformation.c" />
     <ClCompile Include="Tactical\MercEntering.c" />
     <ClCompile Include="Tactical\MercHiring.c" />
-    <ClCompile Include="Tactical\MilitiaControl.c" />
     <ClCompile Include="Tactical\Morale.c" />
     <ClCompile Include="Tactical\OppList.c" />
     <ClCompile Include="Tactical\Overhead.c" />
@@ -580,7 +579,6 @@
     <ClInclude Include="Tactical\MapInformation.h" />
     <ClInclude Include="Tactical\MercEntering.h" />
     <ClInclude Include="Tactical\MercHiring.h" />
-    <ClInclude Include="Tactical\MilitiaControl.h" />
     <ClInclude Include="Tactical\Morale.h" />
     <ClInclude Include="Tactical\OppList.h" />
     <ClInclude Include="Tactical\Overhead.h" />

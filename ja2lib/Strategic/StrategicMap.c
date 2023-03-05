@@ -59,7 +59,6 @@
 #include "Tactical/Keys.h"
 #include "Tactical/MapInformation.h"
 #include "Tactical/MercEntering.h"
-#include "Tactical/MilitiaControl.h"
 #include "Tactical/OppList.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/PathAI.h"
