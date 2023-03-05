@@ -19,6 +19,12 @@
 #include "UI.h"
 #include "Utils/Text.h"
 
+// how many new green militia civilians are trained at a time
+#define MILITIA_TRAINING_SQUAD_SIZE 10  // was 6
+
+// cost of starting a new militia training assignment
+#define MILITIA_TRAINING_COST 750
+
 #define SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST 50
 
 struct sectorSearch {
@@ -41,6 +47,12 @@ INT16 gsUnpaidStrategicSector[MAX_CHARACTER_COUNT];
 
 // the selected list of mercs
 extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
+
+static void addMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
+static void promoteMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank, UINT8 ubHowMany);
+
+// handle completion of assignment byt his soldier too and inform the player
+static void handleTrainingComplete(struct SOLDIERTYPE *pTrainer);
 
 // private prototypes
 void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue);
@@ -89,7 +101,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
     // is there room for another militia in the training sector itself?
     if (CountAllMilitiaInSector(sMapX, sMapY) < MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
       // great! Create a new GREEN militia guy in the training sector
-      StrategicAddMilitiaToSector(sMapX, sMapY, GREEN_MILITIA, 1);
+      addMilitia(sMapX, sMapY, GREEN_MILITIA, 1);
     } else {
       fFoundOne = FALSE;
 
@@ -102,7 +114,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
           if (CountAllMilitiaInSector(sNeighbourX, sNeighbourY) <
               MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
             // great! Create a new GREEN militia guy in the neighbouring sector
-            StrategicAddMilitiaToSector(sNeighbourX, sNeighbourY, GREEN_MILITIA, 1);
+            addMilitia(sNeighbourX, sNeighbourY, GREEN_MILITIA, 1);
 
             fFoundOne = TRUE;
             break;
@@ -117,7 +129,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
         // are there any GREEN militia men in the training sector itself?
         if (MilitiaInSectorOfRank(sMapX, sMapY, GREEN_MILITIA) > 0) {
           // great! Promote a GREEN militia guy in the training sector to a REGULAR
-          StrategicPromoteMilitiaInSector(sMapX, sMapY, GREEN_MILITIA, 1);
+          promoteMilitia(sMapX, sMapY, GREEN_MILITIA, 1);
         } else {
           if (ubTownId != BLANK_SECTOR) {
             // dammit! Last chance - try to find other eligible sectors in the same town with a
@@ -129,7 +141,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
               // are there any GREEN militia men in the neighbouring sector ?
               if (MilitiaInSectorOfRank(sNeighbourX, sNeighbourY, GREEN_MILITIA) > 0) {
                 // great! Promote a GREEN militia guy in the neighbouring sector to a REGULAR
-                StrategicPromoteMilitiaInSector(sNeighbourX, sNeighbourY, GREEN_MILITIA, 1);
+                promoteMilitia(sNeighbourX, sNeighbourY, GREEN_MILITIA, 1);
 
                 fFoundOne = TRUE;
                 break;
@@ -166,10 +178,10 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT
   AssignmentDone(pTrainer, TRUE, FALSE);
 
   // handle completion of town by training group
-  HandleCompletionOfTownTrainingByGroupWithTrainer(pTrainer);
+  handleTrainingComplete(pTrainer);
 }
 
-void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {
+static void addMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany) {
   SECTORINFO *pSectorInfo = GetSectorInfoByXY(sMapX, sMapY);
 
   pSectorInfo->ubNumberOfCivsAtLevel[ubRank] += ubHowMany;
@@ -178,8 +190,7 @@ void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 u
   MarkForRedrawalStrategicMap();
 }
 
-void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
-                                     UINT8 ubHowMany) {
+static void promoteMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank, UINT8 ubHowMany) {
   SECTORINFO *pSectorInfo = GetSectorInfoByXY(sMapX, sMapY);
 
   // damn well better have that many around to promote!
@@ -240,7 +251,7 @@ UINT8 CheckOneMilitiaForPromotion(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
   }
   // roll the bones, and see if he makes it
   if (Random(100) < uiChanceToLevel) {
-    StrategicPromoteMilitiaInSector(sMapX, sMapY, ubCurrentRank, 1);
+    promoteMilitia(sMapX, sMapY, ubCurrentRank, 1);
     if (ubCurrentRank == GREEN_MILITIA) {  // Attempt yet another level up if sufficient points
       if (ubRecentKillPts > 2) {
         if (CheckOneMilitiaForPromotion(
@@ -709,7 +720,7 @@ BOOLEAN IsSAMSiteFullOfMilitia(INT16 sSectorX, INT16 sSectorY) {
   return (TRUE);
 }
 
-void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrainer) {
+static void handleTrainingComplete(struct SOLDIERTYPE *pTrainer) {
   INT16 sSectorX = 0, sSectorY = 0;
   INT8 bSectorZ = 0;
   struct SOLDIERTYPE *pSoldier = NULL;

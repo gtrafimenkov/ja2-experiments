@@ -11,22 +11,12 @@ struct SOLDIERTYPE;
 // how many militia of all ranks can be in any one sector at once
 #define MAX_ALLOWABLE_MILITIA_PER_SECTOR 20
 
-// how many new green militia civilians are trained at a time
-#define MILITIA_TRAINING_SQUAD_SIZE 10  // was 6
-
-// cost of starting a new militia training assignment
-#define MILITIA_TRAINING_COST 750
-
 // minimum loyalty rating before training is allowed in a town
 #define MIN_RATING_TO_TRAIN_TOWN 20
 
 // this handles what happens when a new militia unit is finishes getting trained
 void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT16 sMapY);
 
-// these add, promote, and remove militias of a certain rank
-void StrategicAddMilitiaToSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
-void StrategicPromoteMilitiaInSector(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
-                                     UINT8 ubHowMany);
 void StrategicRemoveMilitiaFromSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
 
 // this will check for promotions and handle them for you
@@ -57,9 +47,6 @@ BOOLEAN IsSAMSiteFullOfMilitia(INT16 sSectorX, INT16 sSectorY);
 
 // now that town training is complete, handle the continue boxes
 void HandleContinueOfTownTraining(void);
-
-// handle completion of assignment byt his soldier too and inform the player
-void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrainer);
 
 // clear the list of training completed sectors
 void ClearSectorListForCompletedTrainingOfMilitia(void);
