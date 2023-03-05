@@ -62,21 +62,7 @@ int LegalNPCDestination(struct SOLDIERTYPE *pSoldier, INT16 sGridno, UINT8 ubPat
   // Nov 28 98: skip people in destination tile if in turnbased
   if ((NewOKDestination(pSoldier, sGridno, fSkipTilesWithMercs, pSoldier->bLevel)) &&
       (!InGas(pSoldier, sGridno)) && (sGridno != pSoldier->sGridNo) &&
-      (sGridno != pSoldier->sBlackList))
-  /*
-  if ( ( NewOKDestination(pSoldier, sGridno, FALSE, pSoldier->bLevel ) ) &&
-                                 ( !(gpWorldLevelData[ sGridno ].ubExtFlags[0] &
-  (MAPELEMENT_EXT_SMOKE | MAPELEMENT_EXT_TEARGAS | MAPELEMENT_EXT_MUSTARDGAS)) || ( pSoldier->inv[
-  HEAD1POS ].usItem == GASMASK || pSoldier->inv[ HEAD2POS ].usItem == GASMASK ) ) && ( sGridno !=
-  pSoldier->sGridNo ) && ( sGridno != pSoldier->sBlackList ) )*/
-  /*
-  if ( ( NewOKDestination(pSoldier,sGridno,ALLPEOPLE, pSoldier->bLevel ) ) &&
-                                 ( !(gpWorldLevelData[ sGridno ].ubExtFlags[0] &
-  (MAPELEMENT_EXT_SMOKE | MAPELEMENT_EXT_TEARGAS | MAPELEMENT_EXT_MUSTARDGAS)) || ( pSoldier->inv[
-  HEAD1POS ].usItem == GASMASK || pSoldier->inv[ HEAD2POS ].usItem == GASMASK ) ) && ( sGridno !=
-  pSoldier->sGridNo ) && ( sGridno != pSoldier->sBlackList ) )
-                                 */
-  {
+      (sGridno != pSoldier->sBlackList)) {
     // if water's a problem, and gridno is in a water tile (bridges are OK)
     if (!ubWaterOK && Water(sGridno)) return (FALSE);
 
@@ -422,29 +408,8 @@ INT16 InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, INT16 sDesG
   }
 
   fPathFlags = 0;
-  if (CREATURE_OR_BLOODCAT(
-          pSoldier)) { /*
-                       if ( PythSpacesAway( pSoldier->sGridNo, sDesGrid ) <= PATH_CLOSE_RADIUS )
-                       {
-                               // then do a limited range path search and see if we can get there
-                               gubNPCDistLimit = 10;
-                               if ( !LegalNPCDestination( pSoldier, sDesGrid, ENSURE_PATH, NOWATER,
-                       fPathFlags) )
-                               {
-                                       gubNPCDistLimit = 0;
-                                       return( NOWHERE );
-                               }
-                               else
-                               {
-                                       // allow attempt to path without 'good enough' flag on
-                                       gubNPCDistLimit = 0;
-                               }
-                       }
-                       else
-                       {
-                       */
+  if (CREATURE_OR_BLOODCAT(pSoldier)) {
     fPathFlags = PATH_CLOSE_GOOD_ENOUGH;
-    //}
   }
 
   // first step: try to find an OK destination at or near the desired gridno
@@ -576,31 +541,6 @@ INT16 InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, INT16 sDesG
     if (gfTurnBasedAI) {
       // if we're just starting the "costing" process (first gridno)
       if (sLoop == 0) {
-        /*
-         // first, add any additional costs - such as intermediate animations, etc.
-         switch(pSoldier->anitype[pSoldier->anim])
-                {
-                 // in theory, no NPC should ever be in one of these animations as
-                 // things stand (they don't medic anyone), but leave it for robustness
-                 case START_AID   :
-                 case GIVING_AID  : sAnimCost = AP_STOP_FIRST_AID;
-                        break;
-
-                 case TWISTOMACH  :
-                 case COLLAPSED   : sAnimCost = AP_GET_UP;
-                        break;
-
-                 case TWISTBACK   :
-                 case UNCONSCIOUS : sAnimCost = (AP_ROLL_OVER + AP_GET_UP);
-                        break;
-
-                 default          : sAnimCost = 0;
-                }
-
-         // this is our first cost
-         sAPCost += sAnimCost;
-         */
-
         if (pSoldier->usUIMovementMode == RUNNING) {
           sAPCost += AP_START_RUN_COST;
         }
@@ -896,146 +836,3 @@ INT16 TrackScent(struct SOLDIERTYPE *pSoldier) {
   }
   return (0);
 }
-
-/*
-UINT16 RunAway( struct SOLDIERTYPE * pSoldier )
-{
-        // "Run away! Run away!!!"
-        // This code should figure out which directions are safe for the enemy
-        // to run in.  They shouldn't try to run off in directions which will
-        // take them into enemy territory.  We must presume that they inform each
-        // other by radio when sectors are taken by the player! :-)
-        // The second wrinkle would be to look at the directions to known player
-        // mercs and use that to influence the direction in which we run.
-
-        // we can only flee in the cardinal directions (NESW) so start with an
-        // alternating pattern of true/false
-        INT8 bOkayDir[8] = {TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE};
-        UINT8 ubLoop, ubBestDir, ubDistToEdge, ubBestDistToEdge = WORLD_COLS;
-        INT32	iSector, iSectorX, iSectorY;
-        INT32 iNewSectorX, iNewSectorY, iNewSector;
-        INT32	iRunX, iRunY, iRunGridNo;
-        struct SOLDIERTYPE * pOpponent;
-
-        iSector = GetSolSectorX(pSoldier) + pSoldier->sSectorY * MAP_WORLD_X;
-
-        // first start by scanning through opposing mercs and find out what directions are blocked.
-        for (ubLoop = 0,pOpponent = Menptr; ubLoop < MAXMERCS; ubLoop++,pOpponent++)
-        {
-                // if this merc is inactive, at base, on assignment, or dead
-                if (!pOpponent->bActive || !pOpponent->bInSector || !pOpponent->bLife)
-                {
-                        continue;          // next merc
-                }
-
-                // if this man is neutral / on the same side, he's not an opponent
-                if (pOpponent->bNeutral || (pSoldier->bSide == pOpponent->bSide))
-                {
-                        continue;          // next merc
-                }
-
-                // we don't want to run in that direction!
-                bOkayDir[ atan8( pSoldier->sX, pSoldier->sY, pOpponent->sX, pOpponent->sY ) ] =
-FALSE;
-        }
-
-        for (ubLoop = 0; ubLoop < 8; ubLoop += 2)
-        {
-                if (bOkayDir[ubLoop])
-                {
-                        // figure out sector # in that direction
-                        iNewSectorX = GetSolSectorX(pSoldier) + DirXIncrementer[ubLoop];
-                        iNewSectorY = GetSolSectorY(pSoldier) + DirYIncrementer[ubLoop];
-                        iNewSector = GetSectorID16(iSectorX, iSectorY);
-                        // check movement
-                        if (TravelBetweenSectorsIsBlockedFromFoot( (UINT16) iSector, (UINT16)
-iNewSector ) || StrategicMap[iSector].fEnemyControlled)
-                        {
-                                // sector inaccessible or controlled by the player; skip it!
-                                continue;
-                        }
-                        switch( ubLoop )
-                        {
-                                case 0:
-                                        ubDistToEdge = pSoldier->sGridNo / WORLD_COLS;
-                                        break;
-                                case 2:
-                                        ubDistToEdge = WORLD_COLS - pSoldier->sGridNo % WORLD_COLS;
-                                        break;
-                                case 4:
-                                        ubDistToEdge = WORLD_ROWS - pSoldier->sGridNo / WORLD_COLS;
-                                        break;
-                                case 6:
-                                        ubDistToEdge = pSoldier->sGridNo % WORLD_COLS;
-                                        break;
-                        }
-                        if (ubDistToEdge < ubBestDistToEdge)
-                        {
-                                ubBestDir = ubLoop;
-                                ubBestDistToEdge = ubDistToEdge;
-                        }
-                }
-        }
-        if (ubBestDistToEdge < WORLD_COLS)
-        {
-                switch( ubBestDir )
-                {
-                        case 0:
-                                iRunX = pSoldier->sX + Random( 9 ) - 4;
-                                iRunY = 0;
-                                if (iRunX < 0)
-                                {
-                                        iRunX = 0;
-                                }
-                                else if (iRunX >= WORLD_COLS)
-                                {
-                                        iRunX = WORLD_COLS - 1;
-                                }
-                                break;
-                        case 2:
-                                iRunX = WORLD_COLS;
-                                iRunY = pSoldier->sY + Random( 9 ) - 4;
-                                if (iRunY < 0)
-                                {
-                                        iRunY = 0;
-                                }
-                                else if (iRunY >= WORLD_COLS)
-                                {
-                                        iRunY = WORLD_ROWS - 1;
-                                }
-                                break;
-                        case 4:
-                                iRunX = pSoldier->sX + Random( 9 ) - 4;
-                                iRunY = WORLD_ROWS;
-                                if (iRunX < 0)
-                                {
-                                        iRunX = 0;
-                                }
-                                else if (iRunX >= WORLD_COLS)
-                                {
-                                        iRunX = WORLD_COLS - 1;
-                                }
-                                break;
-                        case 6:
-                                iRunX = 0;
-                                iRunY = pSoldier->sY + Random( 9 ) - 4;
-                                if (iRunY < 0)
-                                {
-                                        iRunY = 0;
-                                }
-                                else if (iRunY >= WORLD_COLS)
-                                {
-                                        iRunY = WORLD_ROWS - 1;
-                                }
-                                break;
-                }
-                iRunGridNo = iRunX + iRunY * WORLD_COLS;
-                if (LegalNPCDestination( pSoldier, (UINT16) iRunGridNo, ENSURE_PATH, TRUE,0))
-                {
-                        return( (UINT16) iRunGridNo );
-                }
-                // otherwise we'll try again another time
-        }
-        return( NOWHERE );
-}
-*/
