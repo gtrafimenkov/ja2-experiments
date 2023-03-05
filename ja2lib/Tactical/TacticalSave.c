@@ -1348,7 +1348,7 @@ BOOLEAN LoadRottingCorpsesFromTempCorpseFile(INT16 sMapX, INT16 sMapY, INT8 bMap
   UINT32 cnt;
   ROTTING_CORPSE_DEFINITION def;
   BOOLEAN fDontAddCorpse = FALSE;
-  INT8 bTownId;
+  TownID bTownId;
 
   // Delete the existing rotting corpse array
   RemoveCorpses();

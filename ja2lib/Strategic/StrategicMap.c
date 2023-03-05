@@ -539,7 +539,7 @@ INT8 GetTownIdForSector(INT16 sMapX, INT16 sMapY) {
 i8 GetTownIdForStrategicMapIndex(i32 index) { return StrategicMap[index].bNameId; }
 
 // return number of sectors this town takes up
-UINT8 GetTownSectorSize(INT8 bTownId) {
+UINT8 GetTownSectorSize(TownID bTownId) {
   UINT8 ubSectorSize = 0;
   INT32 iCounterA = 0, iCounterB = 0;
 
@@ -571,7 +571,7 @@ UINT8 GetMilitiaCountAtLevelAnywhereInTown(UINT8 ubTownValue, UINT8 ubLevelValue
 }
 
 // return number of sectors under player control for this town
-UINT8 GetTownSectorsUnderControl(INT8 bTownId) {
+UINT8 GetTownSectorsUnderControl(TownID bTownId) {
   INT8 ubSectorsControlled = 0;
   INT32 iCounterA = 0, iCounterB = 0;
   UINT16 usSector = 0;
@@ -3063,7 +3063,7 @@ BOOLEAN IsThereAFunctionalSAMSiteInSector(INT16 sSectorX, INT16 sSectorY, INT8 b
 }
 
 // is this sector part of the town?
-BOOLEAN SectorIsPartOfTown(INT8 bTownId, INT16 sSectorX, INT16 sSectorY) {
+BOOLEAN SectorIsPartOfTown(TownID bTownId, INT16 sSectorX, INT16 sSectorY) {
   if (StrategicMap[CALCULATE_STRATEGIC_INDEX(sSectorX, sSectorY)].bNameId == bTownId) {
     // is in the town
     return (TRUE);

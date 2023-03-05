@@ -1150,7 +1150,7 @@ void DisplayCharName(INT32 iId, INT32 iSlot) {
   struct SOLDIERTYPE *pSoldier;
   CHAR16 sString[64];
   CHAR16 sTownName[256];
-  INT8 bTownId = -1;
+  TownID bTownId = -1;
   INT32 iHeightOfText;
 
   sTownName[0] = L'\0';

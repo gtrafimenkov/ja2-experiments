@@ -1006,7 +1006,7 @@ BOOLEAN CanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
   }
 }
 
-BOOLEAN DoesTownHaveRatingToTrainMilitia(INT8 bTownId) {
+BOOLEAN DoesTownHaveRatingToTrainMilitia(TownID bTownId) {
   // min loyalty rating?
   if ((gTownLoyalty[bTownId].ubRating < MIN_RATING_TO_TRAIN_TOWN)) {
     // nope
@@ -1017,7 +1017,7 @@ BOOLEAN DoesTownHaveRatingToTrainMilitia(INT8 bTownId) {
 }
 
 BOOLEAN DoesSectorMercIsInHaveSufficientLoyaltyToTrainMilitia(struct SOLDIERTYPE *pSoldier) {
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
   BOOLEAN fSamSitePresent = FALSE;
 
   // underground training is not allowed (code doesn't support and it's a reasonable enough
@@ -1070,7 +1070,7 @@ INT8 CountMilitiaTrainersInSoldiersSector(struct SOLDIERTYPE *pSoldier) {
 }
 
 BOOLEAN IsMilitiaTrainableFromSoldiersSectorMaxed(struct SOLDIERTYPE *pSoldier) {
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
   BOOLEAN fSamSitePresent = FALSE;
 
   if (GetSolSectorZ(pSoldier) != 0) {
@@ -6391,7 +6391,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   // btn callback handler for assignment region
   INT32 iValue = -1;
   struct SOLDIERTYPE *pSoldier = NULL;
-  INT8 bTownId;
+  TownID bTownId;
   CHAR16 sString[128];
   CHAR16 sStringA[128];
 

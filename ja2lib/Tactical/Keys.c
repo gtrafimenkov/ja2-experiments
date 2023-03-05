@@ -1689,7 +1689,7 @@ void ExamineDoorsOnEnteringSector() {
   DOOR_STATUS *pDoorStatus;
   struct SOLDIERTYPE *pSoldier;
   BOOLEAN fOK = FALSE;
-  INT8 bTownId;
+  TownID bTownId;
 
   // OK, only do this if conditions are met....
   // If this is any omerta tow, don't do it...
@@ -1738,7 +1738,7 @@ void HandleDoorsChangeWhenEnteringSectorCurrentlyLoaded() {
   struct SOLDIERTYPE *pSoldier;
   BOOLEAN fOK = FALSE;
   INT32 iNumNewMercs = 0;
-  INT8 bTownId;
+  TownID bTownId;
 
   // OK, only do this if conditions are met....
 

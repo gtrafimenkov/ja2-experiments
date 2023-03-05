@@ -89,7 +89,7 @@ BOOLEAN SetThisSectorAsPlayerControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BO
   // 256 although we use only 16x16
   UINT16 usMapSector = 0;
   BOOLEAN fWasEnemyControlled = FALSE;
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
   UINT8 ubSectorID;
 
   if (AreInMeanwhile()) {
@@ -240,7 +240,7 @@ BOOLEAN SetThisSectorAsPlayerControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BO
 BOOLEAN SetThisSectorAsEnemyControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BOOLEAN fContested) {
   UINT16 usMapSector = 0;
   BOOLEAN fWasPlayerControlled = FALSE;
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
   UINT8 ubTheftChance;
   UINT8 ubSectorID;
 

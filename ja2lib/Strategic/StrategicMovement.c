@@ -1420,7 +1420,7 @@ void GroupArrivedAtSector(UINT8 ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fNev
     // if on surface
     if (pGroup->ubSectorZ == 0) {
       // check for discovering secret locations
-      INT8 bTownId = GetTownIdForSector(pGroup->ubSectorX, pGroup->ubSectorY);
+      TownID bTownId = GetTownIdForSector(pGroup->ubSectorX, pGroup->ubSectorY);
 
       if (bTownId == TIXA)
         SetTixaAsFound();

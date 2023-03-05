@@ -419,7 +419,7 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
   CHAR16 sString[128];
   INT16 sSectorX = 0, sSectorY = 0;
   CHAR16 sStringB[128];
-  INT8 bTownId;
+  TownID bTownId;
 
   sSectorX = GetSolSectorX(pSoldier);
   sSectorY = GetSolSectorY(pSoldier);
@@ -595,7 +595,7 @@ BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY) {
   return (FALSE);
 }
 
-BOOLEAN IsTownFullMilitia(INT8 bTownId) {
+BOOLEAN IsTownFullMilitia(TownID bTownId) {
   INT32 iCounter = 0;
   INT16 sSectorX = 0, sSectorY = 0;
   INT32 iNumberOfMilitia = 0;
@@ -893,7 +893,7 @@ void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector) {
 }
 
 BOOLEAN MilitiaTrainingAllowedInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
-  INT8 bTownId;
+  TownID bTownId;
   BOOLEAN fSamSitePresent = FALSE;
 
   if (bSectorZ != 0) {
@@ -912,7 +912,7 @@ BOOLEAN MilitiaTrainingAllowedInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSec
   return (MilitiaTrainingAllowedInTown(bTownId));
 }
 
-BOOLEAN MilitiaTrainingAllowedInTown(INT8 bTownId) {
+BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId) {
   switch (bTownId) {
     case DRASSEN:
     case ALMA:

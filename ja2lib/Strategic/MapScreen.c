@@ -10137,7 +10137,7 @@ void DestinationPlottingCompleted(void) {
 }
 
 void HandleMilitiaRedistributionClick(void) {
-  INT8 bTownId;
+  TownID bTownId;
   BOOLEAN fTownStillHidden;
   CHAR16 sString[128];
 

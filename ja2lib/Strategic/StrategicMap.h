@@ -2,6 +2,7 @@
 #define __STRATMAP_H
 
 #include "SGP/Types.h"
+#include "Town.h"
 
 struct SOLDIERTYPE;
 
@@ -86,13 +87,13 @@ void UpdateAirspaceControl(void);
 void InitializeSAMSites(void);
 
 // get town sector size
-UINT8 GetTownSectorSize(INT8 bTownId);
+UINT8 GetTownSectorSize(TownID bTownId);
 
 // get town sector size, that is under play control
-UINT8 GetTownSectorsUnderControl(INT8 bTownId);
+UINT8 GetTownSectorsUnderControl(TownID bTownId);
 
 // is this sector part of this town
-BOOLEAN SectorIsPartOfTown(INT8 bTownId, INT16 sSectorX, INT16 sSectorY);
+BOOLEAN SectorIsPartOfTown(TownID bTownId, INT16 sSectorX, INT16 sSectorY);
 
 // BOOLEAN IsThereAnyOneInThisTown( UINT8 ubTownId );
 

@@ -97,19 +97,19 @@ extern INT32 pTownLocationsList[];
 extern BOOLEAN gfTownUsesLoyalty[NUM_TOWNS];
 
 // initialize a specific town's loyalty if it hasn't already been
-void StartTownLoyaltyIfFirstTime(INT8 bTownId);
+void StartTownLoyaltyIfFirstTime(TownID bTownId);
 
 // set a speciafied town's loyalty rating
-void SetTownLoyalty(INT8 bTownId, UINT8 ubLoyaltyValue);
+void SetTownLoyalty(TownID bTownId, UINT8 ubLoyaltyValue);
 
 // increment the town loyalty rating (hundredths!)
-void IncrementTownLoyalty(INT8 bTownId, UINT32 uiLoyaltyIncrease);
+void IncrementTownLoyalty(TownID bTownId, UINT32 uiLoyaltyIncrease);
 
 // decrement the town loyalty rating (hundredths!)
-void DecrementTownLoyalty(INT8 bTownId, UINT32 uiLoyaltyDecrease);
+void DecrementTownLoyalty(TownID bTownId, UINT32 uiLoyaltyDecrease);
 
 // update the loyalty based on current % control of the town
-void UpdateLoyaltyBasedOnControl(INT8 bTownId);
+void UpdateLoyaltyBasedOnControl(TownID bTownId);
 
 // strategic handler, goes through and handles all strategic events for town loyalty
 // updates...player controlled, monsters
@@ -159,7 +159,7 @@ void ReadInDistancesBetweenTowns(void);
 // delayed town loyalty event
 void HandleDelayedTownLoyaltyEvent( UINT32 uiValue );
 // build loyalty event value
-UINT32 BuildLoyaltyEventValue( INT8 bTownValue, UINT32 uiValue, BOOLEAN fIncrement );
+UINT32 BuildLoyaltyEventValue( TownID bTownId, UINT32 uiValue, BOOLEAN fIncrement );
 */
 
 BOOLEAN LoadStrategicTownLoyaltyFromSavedGameFile(HWFILE hFile);
@@ -171,7 +171,7 @@ void ReduceLoyaltyForRebelsBetrayed(void);
 INT32 GetNumberOfWholeTownsUnderControl(void);
 
 // is all the sectors of this town under control by the player
-INT32 IsTownUnderCompleteControlByPlayer(INT8 bTownId);
+INT32 IsTownUnderCompleteControlByPlayer(TownID bTownId);
 
 // used when monsters attack a town sector without going through tactical and they win
 void AdjustLoyaltyForCivsEatenByMonsters(INT16 sSectorX, INT16 sSectorY, UINT8 ubHowMany);
@@ -184,12 +184,12 @@ void AffectAllTownsLoyaltyByDistanceFrom(INT32 iLoyaltyChange, INT16 sSectorX, I
                                          INT8 bSectorZ);
 
 // handle a town being liberated for the first time
-void CheckIfEntireTownHasBeenLiberated(INT8 bTownId, INT16 sSectorX, INT16 sSectorY);
-void CheckIfEntireTownHasBeenLost(INT8 bTownId, INT16 sSectorX, INT16 sSectorY);
+void CheckIfEntireTownHasBeenLiberated(TownID bTownId, INT16 sSectorX, INT16 sSectorY);
+void CheckIfEntireTownHasBeenLost(TownID bTownId, INT16 sSectorX, INT16 sSectorY);
 
 void HandleLoyaltyChangeForNPCAction(UINT8 ubNPCProfileId);
 
-BOOLEAN DidFirstBattleTakePlaceInThisTown(INT8 bTownId);
+BOOLEAN DidFirstBattleTakePlaceInThisTown(TownID bTownId);
 void SetTheFirstBattleSector(INT16 sSectorValue);
 
 // gte number of whole towns but exclude this one

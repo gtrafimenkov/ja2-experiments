@@ -4,6 +4,7 @@
 // header for town militia strategic control module
 
 #include "SGP/Types.h"
+#include "Town.h"
 
 struct SOLDIERTYPE;
 
@@ -50,7 +51,7 @@ void HandleMilitiaStatusInCurrentMapBeforeLoadingNewMap(void);
 BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY);
 
 // is the town militia full?
-BOOLEAN IsTownFullMilitia(INT8 bTownId);
+BOOLEAN IsTownFullMilitia(TownID bTownId);
 // is the SAM site full of militia?
 BOOLEAN IsSAMSiteFullOfMilitia(INT16 sSectorX, INT16 sSectorY);
 
@@ -64,6 +65,6 @@ void HandleCompletionOfTownTrainingByGroupWithTrainer(struct SOLDIERTYPE *pTrain
 void ClearSectorListForCompletedTrainingOfMilitia(void);
 
 BOOLEAN MilitiaTrainingAllowedInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ);
-BOOLEAN MilitiaTrainingAllowedInTown(INT8 bTownId);
+BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId);
 
 #endif

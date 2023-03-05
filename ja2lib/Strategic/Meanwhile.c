@@ -1110,7 +1110,7 @@ void HandleDelayedFirstBattleVictory(void) {
 
 void HandleFirstBattleEndingWhileInTown(INT16 sSectorX, INT16 sSectorY, INT16 bSectorZ,
                                         BOOLEAN fFromAutoResolve) {
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
   INT16 sSector = 0;
 
   if (GetMeanWhileFlag(END_OF_PLAYERS_FIRST_BATTLE)) {

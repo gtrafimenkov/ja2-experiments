@@ -2269,7 +2269,7 @@ UINT8 GetLocationModifier(UINT8 ubSoldierClass) {
   UINT8 ubLocationModifier;
   UINT8 ubPalaceDistance;
   INT16 sSectorX, sSectorY, sSectorZ;
-  INT8 bTownId;
+  TownID bTownId;
   BOOLEAN fSuccess;
 
   // where is all this taking place?

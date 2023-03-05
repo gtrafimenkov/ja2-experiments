@@ -108,7 +108,7 @@ void CreateDestroyTownInfoBox(void) {
   static BOOLEAN fCreated = FALSE;
   SGPRect pDimensions;
   SGPPoint pPosition;
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
 
   if ((fCreated == FALSE) && (fShowTownInfo == TRUE)) {
     // create pop up box

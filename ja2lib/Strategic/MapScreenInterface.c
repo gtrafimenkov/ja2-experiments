@@ -4490,7 +4490,7 @@ BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(INT16 sSectorX, INT16
                                                            INT8 bSectorZ, BOOLEAN fContested) {
   CHAR16 sString[128], sStringA[64], sStringB[256], sStringC[64];
   INT32 iValue = 0;
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
   INT16 sSector = 0;
   INT8 bMineIndex;
 
@@ -4571,7 +4571,7 @@ BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(INT16 sSectorX, INT16
 void NotifyPlayerOfInvasionByEnemyForces(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ,
                                          MSGBOX_CALLBACK ReturnCallback) {
   INT16 sSector = 0;
-  INT8 bTownId = 0;
+  TownID bTownId = 0;
   CHAR16 sString[128], sStringA[128];
 
   // check if below ground

@@ -355,7 +355,7 @@ void BeginCivQuote(struct SOLDIERTYPE *pCiv, UINT8 ubCivQuoteID, UINT8 ubEntryID
 UINT8 DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, UINT8 *pubCivHintToUse,
                              BOOLEAN fCanUseHints) {
   UINT8 ubCivType;
-  INT8 bTownId;
+  TownID bTownId;
   BOOLEAN bCivLowLoyalty = FALSE;
   BOOLEAN bCivHighLoyalty = FALSE;
   INT8 bCivHint;

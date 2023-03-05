@@ -4,6 +4,7 @@
 // header for assignment manipulation/updating for characters
 
 #include "SGP/Types.h"
+#include "Town.h"
 
 struct GROUP;
 struct MOUSE_REGION;
@@ -137,7 +138,7 @@ INT8 CanCharacterSquad(struct SOLDIERTYPE *pCharacter, INT8 bSquadValue);
 
 // if merc could train militia here, do they have sufficient loyalty?
 BOOLEAN DoesSectorMercIsInHaveSufficientLoyaltyToTrainMilitia(struct SOLDIERTYPE *pSoldier);
-BOOLEAN DoesTownHaveRatingToTrainMilitia(INT8 bTownId);
+BOOLEAN DoesTownHaveRatingToTrainMilitia(TownID bTownId);
 
 // is the character in transit?
 BOOLEAN IsCharacterInTransit(struct SOLDIERTYPE *pCharacter);
