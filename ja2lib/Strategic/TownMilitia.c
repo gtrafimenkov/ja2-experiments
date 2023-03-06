@@ -335,6 +335,13 @@ struct MilitiaCount GetMilitiaInSectorID8(SectorID8 sectorID) {
   return res;
 }
 
+void SetMilitiaInSector(u8 mapX, u8 mapY, struct MilitiaCount newCount) {
+  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
+  pSectorInfo->ubNumberOfCivsAtLevel[GREEN_MILITIA] = newCount.green;
+  pSectorInfo->ubNumberOfCivsAtLevel[REGULAR_MILITIA] = newCount.regular;
+  pSectorInfo->ubNumberOfCivsAtLevel[ELITE_MILITIA] = newCount.elite;
+}
+
 void SetMilitiaOfRankInSector(u8 mapX, u8 mapY, UINT8 ubRank, u8 count) {
   SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
   pSectorInfo->ubNumberOfCivsAtLevel[ubRank] = count;

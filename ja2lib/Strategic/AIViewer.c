@@ -867,17 +867,13 @@ void HandleViewerInput() {
           if (Event.usKeyState & ALT_DOWN) {
             pSector = NULL;
             if (gsSelSectorX && gsSelSectorY) {
-              pSector = &SectorInfo[GetSectorID8(gsSelSectorX, gsSelSectorY)];
-              pSector->ubNumberOfCivsAtLevel[0] = 15;
-              pSector->ubNumberOfCivsAtLevel[1] = 4;
-              pSector->ubNumberOfCivsAtLevel[2] = 1;
+              struct MilitiaCount newCount = {15, 4, 1};
+              SetMilitiaInSector(gsSelSectorX, gsSelSectorY, newCount);
               gfRenderMap = TRUE;
               EliminateAllEnemies((UINT8)gsSelSectorX, (UINT8)gsSelSectorY);
             } else if (gsHiSectorX && gsHiSectorY) {
-              pSector = &SectorInfo[GetSectorID8(gsHiSectorX, gsHiSectorY)];
-              pSector->ubNumberOfCivsAtLevel[0] = 15;
-              pSector->ubNumberOfCivsAtLevel[1] = 4;
-              pSector->ubNumberOfCivsAtLevel[2] = 1;
+              struct MilitiaCount newCount = {15, 4, 1};
+              SetMilitiaInSector(gsHiSectorX, gsHiSectorY, newCount);
               gfRenderMap = TRUE;
               EliminateAllEnemies((UINT8)gsHiSectorX, (UINT8)gsHiSectorY);
             }
