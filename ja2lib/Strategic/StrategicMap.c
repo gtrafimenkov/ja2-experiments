@@ -3063,12 +3063,21 @@ BOOLEAN SaveStrategicInfoToSavedFile(HWFILE hFile) {
     return (FALSE);
   }
 
-  // TODO: savegame compatibility after SECTORINFO change
   // Save the Sector Info
-  uiSize = sizeof(SECTORINFO) * 256;
-  FileMan_Write(hFile, SectorInfo, uiSize, &uiNumBytesWritten);
-  if (uiNumBytesWritten != uiSize) {
-    return (FALSE);
+  {
+    // copying actual data about militia count
+    for (uint16_t sectorID = 0; sectorID < 256; sectorID++) {
+      struct MilitiaCount milCount = GetMilitiaInSectorID8(sectorID);
+      SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[0] = milCount.green;
+      SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[1] = milCount.regular;
+      SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[2] = milCount.elite;
+    }
+
+    uiSize = sizeof(SECTORINFO) * 256;
+    FileMan_Write(hFile, SectorInfo, uiSize, &uiNumBytesWritten);
+    if (uiNumBytesWritten != uiSize) {
+      return (FALSE);
+    }
   }
 
   // Save the SAM Controlled Sector Information
@@ -3094,12 +3103,23 @@ BOOLEAN LoadStrategicInfoFromSavedFile(HWFILE hFile) {
     return (FALSE);
   }
 
-  // TODO: savegame compatibility after SECTORINFO change
   // Load the Sector Info
-  uiSize = sizeof(SECTORINFO) * 256;
-  FileMan_Read(hFile, SectorInfo, uiSize, &uiNumBytesRead);
-  if (uiNumBytesRead != uiSize) {
-    return (FALSE);
+  {
+    uiSize = sizeof(SECTORINFO) * 256;
+    FileMan_Read(hFile, SectorInfo, uiSize, &uiNumBytesRead);
+    if (uiNumBytesRead != uiSize) {
+      return (FALSE);
+    }
+
+    // copying actual data about militia count
+    for (uint16_t sectorID = 0; sectorID < 256; sectorID++) {
+      struct MilitiaCount milCount = {
+          SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[0],
+          SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[1],
+          SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[2],
+      };
+      SetMilitiaInSectorID8(sectorID, milCount);
+    }
   }
 
   // Load the SAM Controlled Sector Information

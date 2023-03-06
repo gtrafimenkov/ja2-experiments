@@ -52,7 +52,7 @@ struct SectorInfo {
 
   // militia count storage (only for save games)
   // town militia per experience class, 0/1/2 is GREEN/REGULAR/ELITE
-  UINT8 _only_storage_ubNumberOfCivsAtLevel[3 /*MAX_MILITIA_LEVELS*/];
+  UINT8 _only_savedgame_ubNumberOfCivsAtLevel[3 /*MAX_MILITIA_LEVELS*/];
 
   UINT16 usUNUSEDMilitiaLevels;             // unused (ARM)
   UINT8 ubUNUSEDNumberOfJoeBlowCivilians;   // unused (ARM)

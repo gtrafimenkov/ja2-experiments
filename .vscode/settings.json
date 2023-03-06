@@ -21,6 +21,7 @@
         "mapscreeninterfacebottom.h": "c",
         "town.h": "c",
         "townmilitia.h": "c",
-        "soldier.h": "c"
+        "soldier.h": "c",
+        "screenids.h": "c"
     }
 }

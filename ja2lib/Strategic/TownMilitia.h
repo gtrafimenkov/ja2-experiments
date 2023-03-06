@@ -39,6 +39,7 @@ u8 GetMilitiaOfRankInSector(u8 mapX, u8 mapY, u8 ubRank);
 void SetMilitiaOfRankInSector(u8 mapX, u8 mapY, u8 ubRank, u8 count);
 void IncMilitiaOfRankInSector(u8 mapX, u8 mapY, u8 ubRank, u8 increase);
 void SetMilitiaInSector(u8 mapX, u8 mapY, struct MilitiaCount newCount);
+void SetMilitiaInSectorID8(SectorID8 sectorID, struct MilitiaCount newCount);
 
 // tell player how much it will cost
 void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier);

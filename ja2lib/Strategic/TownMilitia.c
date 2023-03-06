@@ -54,6 +54,8 @@ struct militiaState {
 
   struct sectorSearch sectorSearch;
 
+  struct MilitiaCount sectorForce[256];
+
   // TODO:
   // - store for every sector:
   //     ubNumberOfCivsAtLevel
@@ -318,38 +320,54 @@ INT32 GetNumberOfMilitiaInSector(u8 sSectorX, u8 sSectorY, INT8 bSectorZ) {
 }
 
 struct MilitiaCount GetMilitiaInSector(u8 mapX, u8 mapY) {
-  struct MilitiaCount res = {
-      GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[GREEN_MILITIA],
-      GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[REGULAR_MILITIA],
-      GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[ELITE_MILITIA],
-  };
-  return res;
+  return GetMilitiaInSectorID8(GetSectorID8(mapX, mapY));
 }
 
 struct MilitiaCount GetMilitiaInSectorID8(SectorID8 sectorID) {
   struct MilitiaCount res = {
-      GetSectorInfoByID8(sectorID)->ubNumberOfCivsAtLevel[GREEN_MILITIA],
-      GetSectorInfoByID8(sectorID)->ubNumberOfCivsAtLevel[REGULAR_MILITIA],
-      GetSectorInfoByID8(sectorID)->ubNumberOfCivsAtLevel[ELITE_MILITIA],
+      _st.sectorForce[sectorID].green,
+      _st.sectorForce[sectorID].regular,
+      _st.sectorForce[sectorID].elite,
   };
   return res;
 }
 
+void SetMilitiaInSectorID8(SectorID8 sectorID, struct MilitiaCount newCount) {
+  _st.sectorForce[sectorID] = newCount;
+}
+
 void SetMilitiaInSector(u8 mapX, u8 mapY, struct MilitiaCount newCount) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
-  pSectorInfo->ubNumberOfCivsAtLevel[GREEN_MILITIA] = newCount.green;
-  pSectorInfo->ubNumberOfCivsAtLevel[REGULAR_MILITIA] = newCount.regular;
-  pSectorInfo->ubNumberOfCivsAtLevel[ELITE_MILITIA] = newCount.elite;
+  SetMilitiaInSectorID8(GetSectorID8(mapX, mapY), newCount);
 }
 
 void SetMilitiaOfRankInSector(u8 mapX, u8 mapY, UINT8 ubRank, u8 count) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
-  pSectorInfo->ubNumberOfCivsAtLevel[ubRank] = count;
+  SectorID8 sectorID = GetSectorID8(mapX, mapY);
+  switch (ubRank) {
+    case GREEN_MILITIA:
+      _st.sectorForce[sectorID].green = count;
+      break;
+    case REGULAR_MILITIA:
+      _st.sectorForce[sectorID].regular = count;
+      break;
+    case ELITE_MILITIA:
+      _st.sectorForce[sectorID].elite = count;
+      break;
+  }
 }
 
 void IncMilitiaOfRankInSector(u8 mapX, u8 mapY, u8 ubRank, u8 increase) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
-  pSectorInfo->ubNumberOfCivsAtLevel[ubRank] += increase;
+  SectorID8 sectorID = GetSectorID8(mapX, mapY);
+  switch (ubRank) {
+    case GREEN_MILITIA:
+      _st.sectorForce[sectorID].green += increase;
+      break;
+    case REGULAR_MILITIA:
+      _st.sectorForce[sectorID].regular += increase;
+      break;
+    case ELITE_MILITIA:
+      _st.sectorForce[sectorID].elite += increase;
+      break;
+  }
 }
 
 UINT8 GetMilitiaOfRankInSector(u8 mapX, u8 mapY, UINT8 ubRank) {
