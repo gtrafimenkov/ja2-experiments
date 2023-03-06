@@ -4414,10 +4414,7 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
     return (FALSE);
   }
 
-  if (SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-          SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-          SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ELITE_MILITIA] >=
-      MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
+  if (CountAllMilitiaInSector(sX, sY) >= MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
     return (FALSE);
   }
 
@@ -4432,11 +4429,9 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
   // drop the guy into this sector
   switch (ubType) {
     case (GREEN_MILITIA):
-
       if (!sGreensOnCursor) {
         return (FALSE);
       }
-
       sGreensOnCursor--;
       break;
     case (REGULAR_MILITIA):
@@ -4449,7 +4444,6 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
       if (!sElitesOnCursor) {
         return (FALSE);
       }
-
       sElitesOnCursor--;
       break;
   }
@@ -5055,46 +5049,37 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
   const TownSectors *townSectors = GetAllTownSectors();
   while ((*townSectors)[iCounter].townID != 0) {
     if ((*townSectors)[iCounter].townID == sTownValue) {
-      if (SectorOursAndPeaceful((INT16)(SectorID16_X((*townSectors)[iCounter].sectorID)),
-                                (INT16)(SectorID16_Y((*townSectors)[iCounter].sectorID)), 0)) {
+      SectorID16 sectorID = (*townSectors)[iCounter].sectorID;
+      if (SectorOursAndPeaceful(SectorID16_X(sectorID), SectorID16_Y(sectorID), 0)) {
         iCount = 0;
         iNumberThatCanFitInSector = MAX_ALLOWABLE_MILITIA_PER_SECTOR;
-        iNumberThatCanFitInSector -= SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                                         .ubNumberOfCivsAtLevel[GREEN_MILITIA];
-        iNumberThatCanFitInSector -= SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                                         .ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-        iNumberThatCanFitInSector -= SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                                         .ubNumberOfCivsAtLevel[ELITE_MILITIA];
+        iNumberThatCanFitInSector -= CountAllMilitiaInSectorID8(SectorID16To8(sectorID));
 
         while ((iCount < iNumberThatCanFitInSector) &&
                ((sGreensOnCursor) || (sRegularsOnCursor) || (sElitesOnCursor))) {
           // green
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sGreensOnCursor)) {
-            SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                .ubNumberOfCivsAtLevel[GREEN_MILITIA]++;
+            SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[GREEN_MILITIA]++;
             iCount++;
             sGreensOnCursor--;
           }
 
           // regular
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sRegularsOnCursor)) {
-            SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                .ubNumberOfCivsAtLevel[REGULAR_MILITIA]++;
+            SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[REGULAR_MILITIA]++;
             iCount++;
             sRegularsOnCursor--;
           }
 
           // elite
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sElitesOnCursor)) {
-            SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                .ubNumberOfCivsAtLevel[ELITE_MILITIA]++;
+            SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[ELITE_MILITIA]++;
             iCount++;
             sElitesOnCursor--;
           }
         }
 
-        if (SectorID16To8((*townSectors)[iCounter].sectorID) ==
-            GetSectorID8(gWorldSectorX, gWorldSectorY)) {
+        if (SectorID16To8(sectorID) == GetSectorID8(gWorldSectorX, gWorldSectorY)) {
           TacticalMilitiaRefreshRequired();
         }
       }
@@ -5113,13 +5098,12 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
       }
 
       if (fLastOne) {
-        SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-            .ubNumberOfCivsAtLevel[GREEN_MILITIA] += (UINT8)(sGreensOnCursor % iNumberUnderControl);
-        SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-            .ubNumberOfCivsAtLevel[REGULAR_MILITIA] +=
+        SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +=
+            (UINT8)(sGreensOnCursor % iNumberUnderControl);
+        SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +=
             (UINT8)(sRegularsOnCursor % iNumberUnderControl);
-        SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-            .ubNumberOfCivsAtLevel[ELITE_MILITIA] += (UINT8)(sElitesOnCursor % iNumberUnderControl);
+        SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[ELITE_MILITIA] +=
+            (UINT8)(sElitesOnCursor % iNumberUnderControl);
       }
     }
 
@@ -5169,10 +5153,10 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
     }
 
     if (!StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled) {
-      // get number of each
-      iNumberOfGreens += SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[GREEN_MILITIA];
-      iNumberOfRegulars += SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-      iNumberOfElites += SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[ELITE_MILITIA];
+      struct MilitiaCount milCount = GetMilitiaInSector(sSectorX, sSectorY);
+      iNumberOfGreens += milCount.green;
+      iNumberOfRegulars += milCount.regular;
+      iNumberOfElites += milCount.elite;
     }
   }
 
@@ -5373,7 +5357,6 @@ void RenderShadingForUnControlledSectors(void) {
 
 void DrawTownMilitiaForcesOnMap(void) {
   INT32 iCounter = 0, iCounterB = 0, iTotalNumberOfTroops = 0, iIconValue = 0;
-  INT32 iNumberOfGreens = 0, iNumberOfRegulars = 0, iNumberOfElites = 0;
   struct VObject *hVObject;
   INT16 sSectorX = 0, sSectorY = 0;
 
@@ -5390,16 +5373,10 @@ void DrawTownMilitiaForcesOnMap(void) {
       sSectorX = SectorID16_X((*townSectors)[iCounter].sectorID);
       sSectorY = SectorID16_Y((*townSectors)[iCounter].sectorID);
 
-      // get number of each
-      iNumberOfGreens = SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                            .ubNumberOfCivsAtLevel[GREEN_MILITIA];
-      iNumberOfRegulars = SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                              .ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-      iNumberOfElites = SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                            .ubNumberOfCivsAtLevel[ELITE_MILITIA];
+      struct MilitiaCount milCount = GetMilitiaInSector(sSectorX, sSectorY);
 
       // set the total for loop upper bound
-      iTotalNumberOfTroops = iNumberOfGreens + iNumberOfRegulars + iNumberOfElites;
+      iTotalNumberOfTroops = milCount.green + milCount.regular + milCount.elite;
 
       for (iCounterB = 0; iCounterB < iTotalNumberOfTroops; iCounterB++) {
         if (fZoomFlag) {
@@ -5411,9 +5388,9 @@ void DrawTownMilitiaForcesOnMap(void) {
         }
 
         // get the offset further into the .sti
-        if (iCounterB < iNumberOfGreens) {
+        if (iCounterB < milCount.green) {
           iIconValue += 0;
-        } else if (iCounterB < iNumberOfGreens + iNumberOfRegulars) {
+        } else if (iCounterB < milCount.green + milCount.regular) {
           iIconValue += 1;
         } else {
           iIconValue += 2;
@@ -5430,15 +5407,11 @@ void DrawTownMilitiaForcesOnMap(void) {
   for (iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++) {
     sSectorX = SectorID8_X(pSamList[iCounter]);
     sSectorY = SectorID8_Y(pSamList[iCounter]);
+    struct MilitiaCount milCount = GetMilitiaInSector(sSectorX, sSectorY);
 
     if (!StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled) {
-      // get number of each
-      iNumberOfGreens = SectorInfo[pSamList[iCounter]].ubNumberOfCivsAtLevel[GREEN_MILITIA];
-      iNumberOfRegulars = SectorInfo[pSamList[iCounter]].ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-      iNumberOfElites = SectorInfo[pSamList[iCounter]].ubNumberOfCivsAtLevel[ELITE_MILITIA];
-
       // ste the total for loop upper bound
-      iTotalNumberOfTroops = iNumberOfGreens + iNumberOfRegulars + iNumberOfElites;
+      iTotalNumberOfTroops = milCount.green + milCount.regular + milCount.elite;
 
       for (iCounterB = 0; iCounterB < iTotalNumberOfTroops; iCounterB++) {
         if (fZoomFlag) {
@@ -5450,9 +5423,9 @@ void DrawTownMilitiaForcesOnMap(void) {
         }
 
         // get the offset further into the .sti
-        if (iCounterB < iNumberOfGreens) {
+        if (iCounterB < milCount.green) {
           iIconValue += 0;
-        } else if (iCounterB < iNumberOfGreens + iNumberOfRegulars) {
+        } else if (iCounterB < milCount.green + milCount.regular) {
           iIconValue += 1;
         } else {
           iIconValue += 2;

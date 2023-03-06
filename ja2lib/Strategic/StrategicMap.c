@@ -554,23 +554,6 @@ UINT8 GetTownSectorSize(TownID bTownId) {
   return (ubSectorSize);
 }
 
-UINT8 GetMilitiaCountAtLevelAnywhereInTown(UINT8 ubTownValue, UINT8 ubLevelValue) {
-  INT32 iCounter = 0;
-  UINT8 ubCount = 0;
-
-  const TownSectors *townSectors = GetAllTownSectors();
-  while ((*townSectors)[iCounter].townID != 0) {
-    if (StrategicMap[(*townSectors)[iCounter].sectorID].townID == ubTownValue) {
-      // match.  Add the number of civs at this level
-      ubCount += SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
-                     .ubNumberOfCivsAtLevel[ubLevelValue];
-    }
-
-    iCounter++;
-  }
-  return (ubCount);
-}
-
 // return number of sectors under player control for this town
 UINT8 GetTownSectorsUnderControl(TownID bTownId) {
   INT8 ubSectorsControlled = 0;

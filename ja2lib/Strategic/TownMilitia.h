@@ -65,4 +65,6 @@ void PrepMilitiaPromotion();
 void HandleSingleMilitiaPromotion(u8 mapX, u8 mapY, u8 soldierClass, u8 kills);
 bool HasNewMilitiaPromotions();
 
+BOOLEAN DoesPlayerHaveAnyMilitia();
+
 #endif

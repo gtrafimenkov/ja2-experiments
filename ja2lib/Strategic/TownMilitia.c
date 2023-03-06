@@ -1102,3 +1102,20 @@ void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize) {
 }
 
 bool HasNewMilitiaPromotions() { return _st.gbMilitiaPromotions > 0; }
+
+BOOLEAN DoesPlayerHaveAnyMilitia() {
+  INT16 sX, sY;
+
+  // run through list of towns that might have militia..if any return TRUE..else return FALSE
+  for (sX = 1; sX < MAP_WORLD_X - 1; sX++) {
+    for (sY = 1; sY < MAP_WORLD_Y - 1; sY++) {
+      if (CountAllMilitiaInSector(sX, sY) > 0) {
+        // found at least one
+        return (TRUE);
+      }
+    }
+  }
+
+  // no one found
+  return (FALSE);
+}

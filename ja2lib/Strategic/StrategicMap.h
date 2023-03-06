@@ -112,7 +112,6 @@ void AdjustSoldierPathToGoOffEdge(struct SOLDIERTYPE *pSoldier, INT16 sEndGridNo
                                   UINT8 ubTacticalDirection);
 
 void AllMercsWalkedToExitGrid();
-UINT8 GetMilitiaCountAtLevelAnywhereInTown(UINT8 ubTownValue, UINT8 ubLevelValue);
 
 void PrepareLoadedSector();
 

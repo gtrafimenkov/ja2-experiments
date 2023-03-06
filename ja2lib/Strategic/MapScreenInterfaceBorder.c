@@ -18,6 +18,7 @@
 #include "Strategic/MapScreenInterfaceMapInventory.h"
 #include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicTownLoyalty.h"
+#include "Strategic/TownMilitia.h"
 #include "TileEngine/SysUtil.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
@@ -1316,25 +1317,6 @@ void InitializeMapBorderButtonStates(void) {
   } else {
     MapBorderButtonOff(MAP_BORDER_MILITIA_BTN);
   }
-}
-
-BOOLEAN DoesPlayerHaveAnyMilitia(void) {
-  INT16 sX, sY;
-
-  // run through list of towns that might have militia..if any return TRUE..else return FALSE
-  for (sX = 1; sX < MAP_WORLD_X - 1; sX++) {
-    for (sY = 1; sY < MAP_WORLD_Y - 1; sY++) {
-      if ((SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-           SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-           SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ELITE_MILITIA]) > 0) {
-        // found at least one
-        return (TRUE);
-      }
-    }
-  }
-
-  // no one found
-  return (FALSE);
 }
 
 void CommonBtnCallbackBtnDownChecks(void) {
