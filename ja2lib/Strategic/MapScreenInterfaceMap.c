@@ -4401,7 +4401,7 @@ static BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   // reduce number in this sector
-  SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ubType]--;
+  SetMilitiaOfRankInSector(sX, sY, ubType, GetMilitiaOfRankInSector(sX, sY, ubType) - 1);
 
   MarkForRedrawalStrategicMap();
 

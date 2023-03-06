@@ -64,7 +64,6 @@ struct militiaState {
 
 static struct militiaState _st;
 
-static void addMilitia(u8 mapX, u8 mapY, UINT8 ubRank, UINT8 ubHowMany);
 static void promoteMilitia(u8 mapX, u8 mapY, UINT8 ubCurrentRank, UINT8 ubHowMany);
 
 // handle completion of assignment byt his soldier too and inform the player
@@ -109,7 +108,8 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, u8 mapX, u8 mapY
     // is there room for another militia in the training sector itself?
     if (CountAllMilitiaInSector(mapX, mapY) < MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
       // great! Create a new GREEN militia guy in the training sector
-      addMilitia(mapX, mapY, GREEN_MILITIA, 1);
+      IncMilitiaOfRankInSector(mapX, mapY, GREEN_MILITIA, 1);
+      MarkForRedrawalStrategicMap();
     } else {
       fFoundOne = FALSE;
 
@@ -122,8 +122,8 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, u8 mapX, u8 mapY
           if (CountAllMilitiaInSector(sNeighbourX, sNeighbourY) <
               MAX_ALLOWABLE_MILITIA_PER_SECTOR) {
             // great! Create a new GREEN militia guy in the neighbouring sector
-            addMilitia(sNeighbourX, sNeighbourY, GREEN_MILITIA, 1);
-
+            IncMilitiaOfRankInSector(sNeighbourX, sNeighbourY, GREEN_MILITIA, 1);
+            MarkForRedrawalStrategicMap();
             fFoundOne = TRUE;
             break;
           }
@@ -189,28 +189,19 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, u8 mapX, u8 mapY
   handleTrainingComplete(pTrainer);
 }
 
-static void addMilitia(u8 mapX, u8 mapY, UINT8 ubRank, UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
-
-  pSectorInfo->ubNumberOfCivsAtLevel[ubRank] += ubHowMany;
-
-  // update the screen display
-  MarkForRedrawalStrategicMap();
-}
-
 static void promoteMilitia(u8 mapX, u8 mapY, UINT8 ubCurrentRank, UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
+  u8 currentCount = GetMilitiaOfRankInSector(mapX, mapY, ubCurrentRank);
 
   // damn well better have that many around to promote!
-  Assert(pSectorInfo->ubNumberOfCivsAtLevel[ubCurrentRank] >= ubHowMany);
+  Assert(currentCount >= ubHowMany);
 
   // KM : July 21, 1999 patch fix
-  if (pSectorInfo->ubNumberOfCivsAtLevel[ubCurrentRank] < ubHowMany) {
+  if (currentCount < ubHowMany) {
     return;
   }
 
-  pSectorInfo->ubNumberOfCivsAtLevel[ubCurrentRank] -= ubHowMany;
-  pSectorInfo->ubNumberOfCivsAtLevel[ubCurrentRank + 1] += ubHowMany;
+  SetMilitiaOfRankInSector(mapX, mapY, ubCurrentRank, currentCount - ubHowMany);
+  IncMilitiaOfRankInSector(mapX, mapY, ubCurrentRank + 1, ubHowMany);
 
   // update the screen display
   MarkForRedrawalStrategicMap();
