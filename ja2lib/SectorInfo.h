@@ -49,10 +49,13 @@ struct SectorInfo {
                          // are never people around.  This value is used for determining how often
                          // items would "vanish" from a sector (nice theory, except it isn't being
                          // used that way.  Stealing is only in towns.  ARM)
-  UINT8 ubNumberOfCivsAtLevel[3 /*MAX_MILITIA_LEVELS*/];  // town militia per experience class,
-                                                          // 0/1/2 is GREEN/REGULAR/ELITE
-  UINT16 usUNUSEDMilitiaLevels;                           // unused (ARM)
-  UINT8 ubUNUSEDNumberOfJoeBlowCivilians;                 // unused (ARM)
+
+  // militia count storage (only for save games)
+  // town militia per experience class, 0/1/2 is GREEN/REGULAR/ELITE
+  UINT8 _only_storage_ubNumberOfCivsAtLevel[3 /*MAX_MILITIA_LEVELS*/];
+
+  UINT16 usUNUSEDMilitiaLevels;             // unused (ARM)
+  UINT8 ubUNUSEDNumberOfJoeBlowCivilians;   // unused (ARM)
   UINT32 uiTimeCurrentSectorWasLastLoaded;  // Specifies the last time the player was in the sector
   UINT8 ubUNUSEDNumberOfEnemiesThoughtToBeHere;  // using bLastKnownEnemies instead
   UINT32 uiTimeLastPlayerLiberated;  // in game seconds (used to prevent the queen from attacking
