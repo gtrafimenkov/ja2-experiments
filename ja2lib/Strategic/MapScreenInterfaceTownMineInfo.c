@@ -526,7 +526,6 @@ void AddCommonInfoToBox(void) {
   CHAR16 wString[64];
   UINT32 hStringHandle = 0;
   BOOLEAN fUnknownSAMSite = FALSE;
-  UINT8 ubMilitiaTotal = 0;
   UINT8 ubNumEnemies;
 
   switch (GetSectorID8(bCurrentTownMineSectorX, bCurrentTownMineSectorY)) {
@@ -566,14 +565,14 @@ void AddCommonInfoToBox(void) {
     swprintf(wString, ARR_SIZE(wString), L"%s:", pwTownInfoStrings[11]);
     AddMonoString(&hStringHandle, wString);
 
-    ubMilitiaTotal = CountAllMilitiaInSector(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
+    UINT8 ubMilitiaTotal =
+        CountAllMilitiaInSector(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
     if (ubMilitiaTotal > 0) {
       // some militia, show total & their breakdown by level
-      swprintf(
-          wString, ARR_SIZE(wString), L"%d  (%d/%d/%d)", ubMilitiaTotal,
-          MilitiaInSectorOfRank(bCurrentTownMineSectorX, bCurrentTownMineSectorY, GREEN_MILITIA),
-          MilitiaInSectorOfRank(bCurrentTownMineSectorX, bCurrentTownMineSectorY, REGULAR_MILITIA),
-          MilitiaInSectorOfRank(bCurrentTownMineSectorX, bCurrentTownMineSectorY, ELITE_MILITIA));
+      struct MilitiaCount milCount =
+          GetMilitiaInSector(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
+      swprintf(wString, ARR_SIZE(wString), L"%d  (%d/%d/%d)", ubMilitiaTotal, milCount.green,
+               milCount.regular, milCount.elite);
       AddSecondColumnMonoString(&hStringHandle, wString);
     } else {
       // no militia: don't bother displaying level breakdown

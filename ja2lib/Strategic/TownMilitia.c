@@ -27,6 +27,8 @@
 
 #define SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST 50
 
+// s
+
 struct sectorSearch {
   UINT8 townID;
   INT16 skipX;
@@ -133,7 +135,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, u8 mapX, u8 mapY
         // alrighty, then.  We'll have to *promote* guys instead.
 
         // are there any GREEN militia men in the training sector itself?
-        if (MilitiaInSectorOfRank(mapX, mapY, GREEN_MILITIA) > 0) {
+        if (GetMilitiaInSector(mapX, mapY).green > 0) {
           // great! Promote a GREEN militia guy in the training sector to a REGULAR
           promoteMilitia(mapX, mapY, GREEN_MILITIA, 1);
         } else {
@@ -145,7 +147,7 @@ void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, u8 mapX, u8 mapY
             // check other eligible sectors in this town for room for another militia
             while (getNextSectorInTown(&sNeighbourX, &sNeighbourY)) {
               // are there any GREEN militia men in the neighbouring sector ?
-              if (MilitiaInSectorOfRank(sNeighbourX, sNeighbourY, GREEN_MILITIA) > 0) {
+              if (GetMilitiaInSector(sNeighbourX, sNeighbourY).green > 0) {
                 // great! Promote a GREEN militia guy in the neighbouring sector to a REGULAR
                 promoteMilitia(sNeighbourX, sNeighbourY, GREEN_MILITIA, 1);
 
@@ -271,6 +273,23 @@ UINT8 CheckOneMilitiaForPromotion(u8 mapX, u8 mapY, UINT8 ubCurrentRank, UINT8 u
   return 0;
 }
 
+static UINT8 MilitiaInSectorOfRank(u8 mapX, u8 mapY, UINT8 ubRank) {
+  struct MilitiaCount count = GetMilitiaInSector(mapX, mapY);
+  switch (ubRank) {
+    case GREEN_MILITIA:
+      return count.green;
+      break;
+    case REGULAR_MILITIA:
+      return count.regular;
+      break;
+    case ELITE_MILITIA:
+      return count.elite;
+      break;
+    default:
+      return 0;
+  }
+}
+
 // call this if the player attacks his own militia
 void HandleMilitiaDefections(u8 mapX, u8 mapY) {
   UINT8 ubRank;
@@ -308,20 +327,31 @@ void HandleMilitiaDefections(u8 mapX, u8 mapY) {
 }
 
 UINT8 CountAllMilitiaInSector(u8 mapX, u8 mapY) {
-  UINT8 ubMilitiaTotal = 0;
-  UINT8 ubRank;
-
-  // find out if there are any town militia in this GetSectorID8 (don't care about other sectors in
-  // same town)
-  for (ubRank = 0; ubRank < MAX_MILITIA_LEVELS; ubRank++) {
-    ubMilitiaTotal += MilitiaInSectorOfRank(mapX, mapY, ubRank);
-  }
-
-  return (ubMilitiaTotal);
+  struct MilitiaCount milCount = GetMilitiaInSector(mapX, mapY);
+  return milCount.green + milCount.regular + milCount.elite;
 }
 
-UINT8 MilitiaInSectorOfRank(u8 mapX, u8 mapY, UINT8 ubRank) {
-  return GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[ubRank];
+UINT8 CountAllMilitiaInSectorID8(SectorID8 sectorID) {
+  struct MilitiaCount milCount = GetMilitiaInSectorID8(sectorID);
+  return milCount.green + milCount.regular + milCount.elite;
+}
+
+struct MilitiaCount GetMilitiaInSector(u8 mapX, u8 mapY) {
+  struct MilitiaCount res = {
+      GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[GREEN_MILITIA],
+      GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[REGULAR_MILITIA],
+      GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[ELITE_MILITIA],
+  };
+  return res;
+}
+
+struct MilitiaCount GetMilitiaInSectorID8(SectorID8 sectorID) {
+  struct MilitiaCount res = {
+      GetSectorInfoByID8(sectorID)->ubNumberOfCivsAtLevel[GREEN_MILITIA],
+      GetSectorInfoByID8(sectorID)->ubNumberOfCivsAtLevel[REGULAR_MILITIA],
+      GetSectorInfoByID8(sectorID)->ubNumberOfCivsAtLevel[ELITE_MILITIA],
+  };
+  return res;
 }
 
 static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
@@ -661,8 +691,9 @@ BOOLEAN IsTownFullMilitia(TownID bTownId) {
       // if sector is ours get number of militia here
       if (SectorOursAndPeaceful(mapX, mapY, 0)) {
         // don't count GREEN militia, they can be trained into regulars first
-        iNumberOfMilitia += MilitiaInSectorOfRank(mapX, mapY, REGULAR_MILITIA);
-        iNumberOfMilitia += MilitiaInSectorOfRank(mapX, mapY, ELITE_MILITIA);
+        struct MilitiaCount milCount = GetMilitiaInSector(mapX, mapY);
+        iNumberOfMilitia += milCount.regular;
+        iNumberOfMilitia += milCount.elite;
         iMaxNumber += MAX_ALLOWABLE_MILITIA_PER_SECTOR;
       }
     }
@@ -691,9 +722,10 @@ BOOLEAN IsSAMSiteFullOfMilitia(u8 mapX, u8 mapY) {
   }
 
   if (SectorOursAndPeaceful(mapX, mapY, 0)) {
+    struct MilitiaCount milCount = GetMilitiaInSector(mapX, mapY);
     // don't count GREEN militia, they can be trained into regulars first
-    iNumberOfMilitia += MilitiaInSectorOfRank(mapX, mapY, REGULAR_MILITIA);
-    iNumberOfMilitia += MilitiaInSectorOfRank(mapX, mapY, ELITE_MILITIA);
+    iNumberOfMilitia += milCount.regular;
+    iNumberOfMilitia += milCount.elite;
     iMaxNumber += MAX_ALLOWABLE_MILITIA_PER_SECTOR;
   }
 

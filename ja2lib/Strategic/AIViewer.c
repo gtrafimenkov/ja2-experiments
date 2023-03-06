@@ -28,6 +28,7 @@
 #include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicMovement.h"
 #include "Strategic/StrategicStatus.h"
+#include "Strategic/TownMilitia.h"
 #include "StrategicAI.h"
 #include "Tactical/Campaign.h"
 #include "Tactical/MapInformation.h"
@@ -407,7 +408,6 @@ void ClearViewerRegion(INT16 sLeft, INT16 sTop, INT16 sRight, INT16 sBottom) {
 
 void RenderStationaryGroups() {
   struct VObject *hVObject;
-  SECTORINFO *pSector;
   INT32 x, y, xp, yp;
   CHAR16 str[20];
   INT32 iSector = 0;
@@ -425,7 +425,8 @@ void RenderStationaryGroups() {
     for (x = 0; x < 16; x++) {
       SetFontForeground(FONT_YELLOW);
       xp = VIEWER_LEFT + VIEWER_CELLW * x + 1;
-      pSector = &SectorInfo[iSector];
+      SECTORINFO *pSector = &SectorInfo[iSector];
+      u8 allMilCount = CountAllMilitiaInSectorID8(iSector);
 
       if (pSector->uiFlags & SF_MINING_SITE)
         BltVideoObject(FRAME_BUFFER, hVObject, MINING_ICON, xp + 25, yp - 1, VO_BLT_SRCTRANSPARENCY,
@@ -435,12 +436,10 @@ void RenderStationaryGroups() {
         BltVideoObject(FRAME_BUFFER, hVObject, SAM_ICON, xp + 20, yp + 4, VO_BLT_SRCTRANSPARENCY,
                        NULL);
 
-      if (pSector->ubNumberOfCivsAtLevel[0] + pSector->ubNumberOfCivsAtLevel[1] +
-          pSector->ubNumberOfCivsAtLevel[2]) {
+      if (allMilCount > 0) {
         // show militia
         ubIconColor = ICON_COLOR_BLUE;
-        ubGroupSize = pSector->ubNumberOfCivsAtLevel[0] + pSector->ubNumberOfCivsAtLevel[1] +
-                      pSector->ubNumberOfCivsAtLevel[2];
+        ubGroupSize = allMilCount;
       } else if (pSector->ubNumAdmins + pSector->ubNumTroops + pSector->ubNumElites) {
         // show enemies
         ubIconColor =
@@ -655,12 +654,11 @@ void RenderInfoInSector() {
 
   yp = 375;
   if (!gbViewLevel) {
-    SECTORINFO *pSector;
     struct GROUP *pGroup;
     UINT8 ubNumAdmins = 0, ubNumTroops = 0, ubNumElites = 0, ubAdminsInBattle = 0,
           ubTroopsInBattle = 0, ubElitesInBattle = 0, ubNumGroups = 0;
 
-    pSector = &SectorInfo[GetSectorID8(ubSectorX, ubSectorY)];
+    SECTORINFO *pSector = &SectorInfo[GetSectorID8(ubSectorX, ubSectorY)];
 
     // Now count the number of mobile groups in the sector.
     pGroup = gpGroupList;
@@ -686,9 +684,9 @@ void RenderInfoInSector() {
             ubActive, ubUnconcious, ubCollapsed);
     yp += 10;
     SetFontForeground(FONT_LTBLUE);
-    mprintf(280, yp, L"Militia:  (%d Green, %d Regular, %d Elite)",
-            pSector->ubNumberOfCivsAtLevel[0], pSector->ubNumberOfCivsAtLevel[1],
-            pSector->ubNumberOfCivsAtLevel[2]);
+    struct MilitiaCount milCount = GetMilitiaInSector(ubSectorX, ubSectorY);
+    mprintf(280, yp, L"Militia:  (%d Green, %d Regular, %d Elite)", milCount.green,
+            milCount.regular, milCount.elite);
     yp += 10;
     SetFontForeground(FONT_ORANGE);
     mprintf(280, yp, L"Garrison:  (%d:%d Admins, %d:%d Troops, %d:%d Elites)",

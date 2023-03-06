@@ -1635,7 +1635,6 @@ void CreateAutoResolveInterface() {
   VOBJECT_DESC VObjectDesc;
   INT32 i, index;
   struct VObject *hVObject;
-  UINT8 ubGreenMilitia, ubRegMilitia, ubEliteMilitia;
   // Setup new autoresolve blanket interface.
   MSYS_DefineRegion(&gpAR->AutoResolveRegion, 0, 0, 640, 480, MSYS_PRIORITY_HIGH - 1, 0,
                     MSYS_NO_CALLBACK, MSYS_NO_CALLBACK);
@@ -1649,29 +1648,6 @@ void CreateAutoResolveInterface() {
     AssertMsg(0, "Failed to load Interface\\AutoResolve.sti");
   }
 
-  // Load the button images file, and assign it to the first button.
-  /* OLD BEFORE THE MEDICAL BUTTON WAS ADDED
-  gpAR->iButtonImage[ PAUSE_BUTTON ] = LoadButtonImage( "Interface\\AutoBtns.sti", -1, 0, -1, 6, -1
-  ); if( gpAR->iButtonImage[ PAUSE_BUTTON ] == -1 )
-  {
-          AssertMsg( 0, "Failed to load Interface\\AutoBtns.sti" );
-  }
-
-  //Have the other buttons hook into the first button containing the images.
-  gpAR->iButtonImage[ PLAY_BUTTON ]			= UseLoadedButtonImage( gpAR->iButtonImage[
-  PAUSE_BUTTON ], -1, 1, -1, 7, -1 );
-  gpAR->iButtonImage[ FAST_BUTTON ]			= UseLoadedButtonImage( gpAR->iButtonImage[
-  PAUSE_BUTTON ], -1, 2, -1, 8, -1 );
-  gpAR->iButtonImage[ FINISH_BUTTON ]		= UseLoadedButtonImage( gpAR->iButtonImage[
-  PAUSE_BUTTON ], -1, 3, -1, 9, -1 );
-  gpAR->iButtonImage[ YES_BUTTON ]			= UseLoadedButtonImage( gpAR->iButtonImage[
-  PAUSE_BUTTON ], -1, 4, -1, 10, -1 );
-  gpAR->iButtonImage[ NO_BUTTON ]				= UseLoadedButtonImage(
-  gpAR->iButtonImage[ PAUSE_BUTTON ], -1, 5, -1, 11, -1 ); gpAR->iButtonImage[ RETREAT_BUTTON ] =
-  UseLoadedButtonImage( gpAR->iButtonImage[ PAUSE_BUTTON ], -1, 12, -1, 13, -1 );
-  gpAR->iButtonImage[ DONE_BUTTON ]			= UseLoadedButtonImage( gpAR->iButtonImage[
-  PAUSE_BUTTON ], -1, 14, -1, 15, -1 );
-  */
   gpAR->iButtonImage[PAUSE_BUTTON] = LoadButtonImage("Interface\\AutoBtns.sti", -1, 0, -1, 7, -1);
   if (gpAR->iButtonImage[PAUSE_BUTTON] == -1) {
     AssertMsg(0, "Failed to load Interface\\AutoBtns.sti");
@@ -1735,19 +1711,17 @@ void CreateAutoResolveInterface() {
     }
   }
 
-  ubEliteMilitia = MilitiaInSectorOfRank(gpAR->ubSectorX, gpAR->ubSectorY, ELITE_MILITIA);
-  ubRegMilitia = MilitiaInSectorOfRank(gpAR->ubSectorX, gpAR->ubSectorY, REGULAR_MILITIA);
-  ubGreenMilitia = MilitiaInSectorOfRank(gpAR->ubSectorX, gpAR->ubSectorY, GREEN_MILITIA);
-  while (ubEliteMilitia + ubRegMilitia + ubGreenMilitia < gpAR->ubCivs) {
+  struct MilitiaCount milCount = GetMilitiaInSector(gpAR->ubSectorX, gpAR->ubSectorY);
+  while (milCount.elite + milCount.regular + milCount.green < gpAR->ubCivs) {
     switch (PreRandom(3)) {
       case 0:
-        ubEliteMilitia++;
+        milCount.elite++;
         break;
       case 1:
-        ubRegMilitia++;
+        milCount.regular++;
         break;
       case 2:
-        ubGreenMilitia++;
+        milCount.green++;
         break;
     }
   }
@@ -1755,21 +1729,21 @@ void CreateAutoResolveInterface() {
     // reset counter of how many mortars this team has rolled
     ResetMortarsOnTeamCount();
 
-    if (i < ubEliteMilitia) {
+    if (i < milCount.elite) {
       gpCivs[i].pSoldier = TacticalCreateMilitia(SOLDIER_CLASS_ELITE_MILITIA);
       if (gpCivs[i].pSoldier->ubBodyType == REGFEMALE) {
         gpCivs[i].usIndex = MILITIA3F_FACE;
       } else {
         gpCivs[i].usIndex = MILITIA3_FACE;
       }
-    } else if (i < ubRegMilitia + ubEliteMilitia) {
+    } else if (i < milCount.regular + milCount.elite) {
       gpCivs[i].pSoldier = TacticalCreateMilitia(SOLDIER_CLASS_REG_MILITIA);
       if (gpCivs[i].pSoldier->ubBodyType == REGFEMALE) {
         gpCivs[i].usIndex = MILITIA2F_FACE;
       } else {
         gpCivs[i].usIndex = MILITIA2_FACE;
       }
-    } else if (i < ubGreenMilitia + ubRegMilitia + ubEliteMilitia) {
+    } else if (i < milCount.green + milCount.regular + milCount.elite) {
       gpCivs[i].pSoldier = TacticalCreateMilitia(SOLDIER_CLASS_GREEN_MILITIA);
       if (gpCivs[i].pSoldier->ubBodyType == REGFEMALE) {
         gpCivs[i].usIndex = MILITIA1F_FACE;

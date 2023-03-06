@@ -38,6 +38,7 @@
 #include "Tactical/TacticalSave.h"
 #include "TileEngine/MapEdgepoints.h"
 #include "TileEngine/RenderWorld.h"
+#include "TownMilitia.h"
 #include "UI.h"
 #include "Utils/Message.h"
 
@@ -1675,15 +1676,12 @@ void HandleEnemyStatusInCurrentMapBeforeLoadingNewMap() {
 }
 
 BOOLEAN PlayerSectorDefended(UINT8 ubSectorID) {
-  SECTORINFO *pSector;
-  pSector = &SectorInfo[ubSectorID];
-  if (pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-      pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-      pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA]) {  // militia in sector
+  if (CountAllMilitiaInSectorID8(ubSectorID) > 0) {
+    // militia in sector
     return TRUE;
   }
-  if (FindMovementGroupInSector(SectorID8_X(ubSectorID), SectorID8_Y(ubSectorID),
-                                TRUE)) {  // player in sector
+  if (FindMovementGroupInSector(SectorID8_X(ubSectorID), SectorID8_Y(ubSectorID), TRUE)) {
+    // player in sector
     return TRUE;
   }
   return FALSE;

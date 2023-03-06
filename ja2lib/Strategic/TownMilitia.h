@@ -14,6 +14,12 @@ struct SOLDIERTYPE;
 // minimum loyalty rating before training is allowed in a town
 #define MIN_RATING_TO_TRAIN_TOWN 20
 
+struct MilitiaCount {
+  u8 green;
+  u8 regular;
+  u8 elite;
+};
+
 // this handles what happens when a new militia unit is finishes getting trained
 void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, u8 mapX, u8 mapY);
 
@@ -25,7 +31,9 @@ UINT8 CheckOneMilitiaForPromotion(u8 mapX, u8 mapY, UINT8 ubCurrentRank, UINT8 u
 void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize);
 
 UINT8 CountAllMilitiaInSector(u8 mapX, u8 mapY);
-UINT8 MilitiaInSectorOfRank(u8 mapX, u8 mapY, UINT8 ubRank);
+UINT8 CountAllMilitiaInSectorID8(SectorID8 sectorID);
+struct MilitiaCount GetMilitiaInSector(u8 mapX, u8 mapY);
+struct MilitiaCount GetMilitiaInSectorID8(SectorID8 sectorID);
 
 // tell player how much it will cost
 void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier);

@@ -1545,16 +1545,13 @@ INT32 ReinforcementsAvailable(INT32 iGarrisonID) {
 
 //
 BOOLEAN PlayerForceTooStrong(UINT8 ubSectorID, UINT16 usOffensePoints, UINT16 *pusDefencePoints) {
-  SECTORINFO *pSector;
   UINT8 ubSectorX, ubSectorY;
 
   ubSectorX = SectorID8_X(ubSectorID);
   ubSectorY = SectorID8_Y(ubSectorID);
-  pSector = &SectorInfo[ubSectorID];
 
-  *pusDefencePoints = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA] * 1 +
-                      pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA] * 2 +
-                      pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA] * 3 +
+  struct MilitiaCount milCount = GetMilitiaInSectorID8(ubSectorID);
+  *pusDefencePoints = milCount.green * 1 + milCount.regular * 2 + milCount.elite * 3 +
                       PlayerMercsInSector(ubSectorX, ubSectorY, 0) * 5;
   if (*pusDefencePoints > usOffensePoints) {
     return TRUE;
@@ -2658,17 +2655,14 @@ void HandleEmptySectorNoticedByGarrison(UINT8 ubGarrisonSectorID, UINT8 ubEmptyS
 }
 
 BOOLEAN ReinforcementsApproved(INT32 iGarrisonID, UINT16 *pusDefencePoints) {
-  SECTORINFO *pSector;
   UINT16 usOffensePoints;
   UINT8 ubSectorX, ubSectorY;
 
-  pSector = &SectorInfo[gGarrisonGroup[iGarrisonID].ubSectorID];
   ubSectorX = SectorID8_X(gGarrisonGroup[iGarrisonID].ubSectorID);
   ubSectorY = SectorID8_Y(gGarrisonGroup[iGarrisonID].ubSectorID);
 
-  *pusDefencePoints = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA] * 1 +
-                      pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA] * 2 +
-                      pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA] * 3 +
+  struct MilitiaCount milCount = GetMilitiaInSector(ubSectorX, ubSectorY);
+  *pusDefencePoints = milCount.green * 1 + milCount.regular * 2 + milCount.elite * 3 +
                       PlayerMercsInSector(ubSectorX, ubSectorY, 0) * 4;
   usOffensePoints = gArmyComp[gGarrisonGroup[iGarrisonID].ubComposition].bAdminPercentage * 2 +
                     gArmyComp[gGarrisonGroup[iGarrisonID].ubComposition].bTroopPercentage * 3 +

@@ -3,6 +3,7 @@
 #include "SGP/Types.h"
 #include "SectorInfo.h"
 #include "Strategic/StrategicMap.h"
+#include "Strategic/TownMilitia.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierInitList.h"
 #include "Team.h"
@@ -44,15 +45,11 @@ void RemoveMilitiaFromTactical() {
 }
 
 void PrepareMilitiaForTactical() {
-  UINT8 ubGreen, ubRegs, ubElites;
   if (gbWorldSectorZ > 0) return;
 
   // Do we have a loaded sector?
   if (gWorldSectorX == 0 && gWorldSectorY == 0) return;
 
-  const SECTORINFO *pSector = GetSectorInfoByXY(gWorldSectorX, gWorldSectorY);
-  ubGreen = pSector->ubNumberOfCivsAtLevel[GREEN_MILITIA];
-  ubRegs = pSector->ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-  ubElites = pSector->ubNumberOfCivsAtLevel[ELITE_MILITIA];
-  AddSoldierInitListMilitia(ubGreen, ubRegs, ubElites);
+  struct MilitiaCount milCount = GetMilitiaInSector(gWorldSectorX, gWorldSectorY);
+  AddSoldierInitListMilitia(milCount.green, milCount.regular, milCount.elite);
 }
