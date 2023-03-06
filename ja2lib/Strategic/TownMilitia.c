@@ -26,8 +26,6 @@
 
 #define SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST 50
 
-// s
-
 struct sectorSearch {
   UINT8 townID;
   INT16 skipX;
@@ -55,13 +53,6 @@ struct militiaState {
 
   struct MilitiaCount sectorForce[256];
   bool trainingPaid[256];
-
-  // TODO:
-  // - store for every sector:
-  //     ubNumberOfCivsAtLevel
-  //     fMilitiaTrainingPaid
-  // - stop importing SectorInfo.h
-  // - this way to module will be more self-contained
 };
 
 static struct militiaState _st;
