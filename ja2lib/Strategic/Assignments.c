@@ -1700,7 +1700,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     if (IsSolActive(pSoldier) && (GetSolAssignment(pSoldier) == TRAIN_TOWN)) {
       // make sure that sector is paid up!
-      if (SectorInfo[GetSolSectorID8(pSoldier)].fMilitiaTrainingPaid == FALSE) {
+      if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
         // NOPE!  We've got a bug somewhere
         StopTimeCompression();
 
@@ -3633,7 +3633,7 @@ BOOLEAN TrainTownInSector(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT16 sMapY
     pSectorInfo->ubMilitiaTrainingHundredths = 0;
 
     // make the player pay again next time he wants to train here
-    pSectorInfo->fMilitiaTrainingPaid = FALSE;
+    SetMilitiaTrainingPayedForSectorID8(GetSectorID8(sMapX, sMapY), false);
 
     TownMilitiaTrainingCompleted(pTrainer, sMapX, sMapY);
 
@@ -6476,7 +6476,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
           // assign to a movement group
           AssignMercToAMovementGroup(pSoldier);
-          if (SectorInfo[GetSolSectorID8(pSoldier)].fMilitiaTrainingPaid == FALSE) {
+          if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
           } else {
@@ -8302,7 +8302,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment, INT32 
 
         // probably this condition is not needed
         // if (pMilitiaTrainerSoldier == NULL) {
-        if (SectorInfo[GetSolSectorID8(pSoldier)].fMilitiaTrainingPaid == FALSE) {
+        if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
           // show a message to confirm player wants to charge cost
           HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
         }

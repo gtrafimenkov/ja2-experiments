@@ -9,7 +9,6 @@
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
 #include "Sector.h"
-#include "SectorInfo.h"
 #include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Tactical.h"
@@ -55,6 +54,7 @@ struct militiaState {
   struct sectorSearch sectorSearch;
 
   struct MilitiaCount sectorForce[256];
+  bool trainingPaid[256];
 
   // TODO:
   // - store for every sector:
@@ -387,6 +387,16 @@ UINT8 GetMilitiaOfRankInSector(u8 mapX, u8 mapY, UINT8 ubRank) {
   }
 }
 
+bool IsMilitiaTrainingPayedForSector(u8 mapX, u8 mapY) {
+  return IsMilitiaTrainingPayedForSectorID8(GetSectorID8(mapX, mapY));
+}
+
+bool IsMilitiaTrainingPayedForSectorID8(SectorID8 sectorID) { return _st.trainingPaid[sectorID]; }
+
+void SetMilitiaTrainingPayedForSectorID8(SectorID8 sectorID, bool value) {
+  _st.trainingPaid[sectorID] = value;
+}
+
 static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
   _st.sectorSearch.townID = ubTownId;
   _st.sectorSearch.skipX = sSkipSectorX;
@@ -502,7 +512,7 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
   mapX = GetSolSectorX(pSoldier);
   mapY = GetSolSectorY(pSoldier);
 
-  Assert(GetSectorInfoByXY(mapX, mapY)->fMilitiaTrainingPaid == FALSE);
+  Assert(!IsMilitiaTrainingPayedForSector(mapX, mapY));
 
   _st.trainer = pSoldier;
 
@@ -651,7 +661,7 @@ static void resetAssignmentsForUnpaidSectors() {
     }
 
     if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
-      if (GetSectorInfoByID8(GetSolSectorID8(pSoldier))->fMilitiaTrainingPaid == FALSE) {
+      if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
         ResumeOldAssignment(pSoldier);
       }
     }
@@ -888,7 +898,7 @@ static void BuildListOfUnpaidTrainableSectors(void) {
         if (IsCharSelected(iCounter) || iCounter == GetCharForAssignmentIndex()) {
           struct SOLDIERTYPE *sol = GetMercFromCharacterList(iCounter);
           if (CanCharacterTrainMilitia(sol) == TRUE) {
-            if (GetSectorInfoByID8(GetSolSectorID8(sol))->fMilitiaTrainingPaid == FALSE) {
+            if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(sol))) {
               // check to see if this sector is a town and needs equipment
               _st.unpaidSectors[iCounter] = GetSolSectorID16(sol);
             }
@@ -902,7 +912,7 @@ static void BuildListOfUnpaidTrainableSectors(void) {
     iCounter = 0;
 
     if (CanCharacterTrainMilitia(sol) == TRUE) {
-      if (GetSectorInfoByID8(GetSolSectorID8(sol))->fMilitiaTrainingPaid == FALSE) {
+      if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(sol))) {
         // check to see if this sector is a town and needs equipment
         _st.unpaidSectors[iCounter] = GetSolSectorID16(sol);
       }
@@ -963,13 +973,13 @@ static void ContinueTrainingInThisSector() {
 }
 
 static void PayForTrainingInSector(SectorID8 ubSector) {
-  Assert(GetSectorInfoByID8(ubSector)->fMilitiaTrainingPaid == FALSE);
+  Assert(!IsMilitiaTrainingPayedForSectorID8(ubSector));
 
   // spend the money
   AddTransactionToPlayersBook(TRAIN_TOWN_MILITIA, ubSector, -(MILITIA_TRAINING_COST));
 
   // mark this sector sectors as being paid up
-  GetSectorInfoByID8(ubSector)->fMilitiaTrainingPaid = TRUE;
+  SetMilitiaTrainingPayedForSectorID8(ubSector, true);
 
   // reset done flags
   ResetDoneFlagForAllMilitiaTrainersInSector(ubSector);

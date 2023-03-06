@@ -3071,6 +3071,8 @@ BOOLEAN SaveStrategicInfoToSavedFile(HWFILE hFile) {
       SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[0] = milCount.green;
       SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[1] = milCount.regular;
       SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[2] = milCount.elite;
+      SectorInfo[sectorID]._only_savedgame_fMilitiaTrainingPaid =
+          IsMilitiaTrainingPayedForSectorID8(sectorID);
     }
 
     uiSize = sizeof(SECTORINFO) * 256;
@@ -3111,7 +3113,7 @@ BOOLEAN LoadStrategicInfoFromSavedFile(HWFILE hFile) {
       return (FALSE);
     }
 
-    // copying actual data about militia count
+    // copying actual data about militia
     for (uint16_t sectorID = 0; sectorID < 256; sectorID++) {
       struct MilitiaCount milCount = {
           SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[0],
@@ -3119,6 +3121,8 @@ BOOLEAN LoadStrategicInfoFromSavedFile(HWFILE hFile) {
           SectorInfo[sectorID]._only_savedgame_ubNumberOfCivsAtLevel[2],
       };
       SetMilitiaInSectorID8(sectorID, milCount);
+      SetMilitiaTrainingPayedForSectorID8(
+          sectorID, SectorInfo[sectorID]._only_savedgame_fMilitiaTrainingPaid != 0);
     }
   }
 

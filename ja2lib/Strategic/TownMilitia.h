@@ -41,6 +41,10 @@ void IncMilitiaOfRankInSector(u8 mapX, u8 mapY, u8 ubRank, u8 increase);
 void SetMilitiaInSector(u8 mapX, u8 mapY, struct MilitiaCount newCount);
 void SetMilitiaInSectorID8(SectorID8 sectorID, struct MilitiaCount newCount);
 
+bool IsMilitiaTrainingPayedForSector(u8 mapX, u8 mapY);
+bool IsMilitiaTrainingPayedForSectorID8(SectorID8 sectorID);
+void SetMilitiaTrainingPayedForSectorID8(SectorID8 sectorID, bool value);
+
 // tell player how much it will cost
 void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier);
 

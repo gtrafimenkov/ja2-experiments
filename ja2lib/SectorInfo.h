@@ -15,7 +15,7 @@ struct SectorInfo {
                        // sector and it indexes the garrison group.
   INT8 ubPendingReinforcements;  // when the enemy owns this sector, this value will keep track of
                                  // HIGH priority reinforcements -- not regular.
-  BOOLEAN fMilitiaTrainingPaid;
+  BOOLEAN _only_savedgame_fMilitiaTrainingPaid;
   UINT8 ubMilitiaTrainingPercentDone;
   UINT8 ubMilitiaTrainingHundredths;
   // enemy military presence
