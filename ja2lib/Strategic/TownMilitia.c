@@ -336,6 +336,13 @@ UINT8 CountAllMilitiaInSectorID8(SectorID8 sectorID) {
   return milCount.green + milCount.regular + milCount.elite;
 }
 
+INT32 GetNumberOfMilitiaInSector(u8 sSectorX, u8 sSectorY, INT8 bSectorZ) {
+  if (!bSectorZ) {
+    return CountAllMilitiaInSector(sSectorX, sSectorY);
+  }
+  return 0;
+}
+
 struct MilitiaCount GetMilitiaInSector(u8 mapX, u8 mapY) {
   struct MilitiaCount res = {
       GetSectorInfoByXY(mapX, mapY)->ubNumberOfCivsAtLevel[GREEN_MILITIA],

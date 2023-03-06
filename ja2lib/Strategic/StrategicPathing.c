@@ -23,6 +23,7 @@
 #include "Strategic/StrategicAI.h"
 #include "Strategic/StrategicMap.h"
 #include "Strategic/StrategicMovement.h"
+#include "Strategic/TownMilitia.h"
 #include "Tactical/InterfacePanels.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/Vehicles.h"

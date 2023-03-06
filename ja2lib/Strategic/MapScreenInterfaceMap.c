@@ -5561,19 +5561,6 @@ void MilitiaBoxMaskBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
   return;
 }
 
-INT32 GetNumberOfMilitiaInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
-  INT32 iNumberInSector = 0;
-
-  if (!bSectorZ) {
-    iNumberInSector =
-        SectorInfo[GetSectorID8(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-        SectorInfo[GetSectorID8(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-        SectorInfo[GetSectorID8(sSectorX, sSectorY)].ubNumberOfCivsAtLevel[ELITE_MILITIA];
-  }
-
-  return (iNumberInSector);
-}
-
 // There is a special case flag used when players encounter enemies in a sector, then retreat.  The
 // number of enemies will display on mapscreen until time is compressed.  When time is compressed,
 // the flag is cleared, and a question mark is displayed to reflect that the player no longer knows.

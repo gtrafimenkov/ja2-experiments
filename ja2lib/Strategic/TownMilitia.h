@@ -32,6 +32,7 @@ void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize);
 
 UINT8 CountAllMilitiaInSector(u8 mapX, u8 mapY);
 UINT8 CountAllMilitiaInSectorID8(SectorID8 sectorID);
+INT32 GetNumberOfMilitiaInSector(u8 sSectorX, u8 sSectorY, INT8 bSectorZ);
 struct MilitiaCount GetMilitiaInSector(u8 mapX, u8 mapY);
 struct MilitiaCount GetMilitiaInSectorID8(SectorID8 sectorID);
 

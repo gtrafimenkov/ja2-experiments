@@ -21,6 +21,7 @@
 #include "Strategic/Quests.h"
 #include "Strategic/Strategic.h"
 #include "Strategic/StrategicMap.h"
+#include "Strategic/TownMilitia.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
 #include "Tactical/SoldierMacros.h"
@@ -268,10 +269,9 @@ BOOLEAN InternalInitSectorExitMenu(UINT8 ubDirection, INT16 sAdditionalData) {
                                                 // means that we can't load the adjacent sector.
       gExitDialog.fGotoSectorDisabled = TRUE;
       gExitDialog.fGotoSector = FALSE;
-    } else if (GetNumberOfMilitiaInSector(
-                   gWorldSectorX, gWorldSectorY,
-                   gbWorldSectorZ)) {  // Leaving this sector will result in militia being forced to
-                                       // fight the battle, can't load adjacent sector.
+    } else if (GetNumberOfMilitiaInSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ)) {
+      // Leaving this sector will result in militia being forced to
+      // fight the battle, can't load adjacent sector.
       gExitDialog.fGotoSectorDisabled = TRUE;
       gExitDialog.fGotoSector = FALSE;
     }
