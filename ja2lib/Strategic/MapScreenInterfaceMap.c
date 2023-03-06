@@ -4369,7 +4369,7 @@ void DisplayLevelString(void) {
 // function to manipulate the number of towns people on the cursor
 static BOOLEAN PickUpATownPersonFromSector(UINT8 ubType, INT16 sX, INT16 sY) {
   // see if there are any militia of this type in this sector
-  if (!SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ubType]) {
+  if (GetMilitiaOfRankInSector(sX, sY, ubType) == 0) {
     // failed, no one here
     return (FALSE);
   }
@@ -4638,9 +4638,10 @@ void RenderIconsPerSectorForSelectedTown(void) {
     }
 
     // get number of each
-    iNumberOfGreens = SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[GREEN_MILITIA];
-    iNumberOfRegulars = SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-    iNumberOfElites = SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[ELITE_MILITIA];
+    struct MilitiaCount milCount = GetMilitiaInSector(sSectorX, sSectorY);
+    iNumberOfGreens = milCount.green;
+    iNumberOfRegulars = milCount.regular;
+    iNumberOfElites = milCount.elite;
 
     // get total
     iTotalNumberOfTroops = iNumberOfGreens + iNumberOfRegulars + iNumberOfElites;
@@ -4890,9 +4891,10 @@ void SetMilitiaMapButtonsText(void) {
   sGlobalMapSector = sBaseSectorValue + ((sSectorMilitiaMapSector % MILITIA_BOX_ROWS) +
                                          (sSectorMilitiaMapSector / MILITIA_BOX_ROWS) * (16));
 
-  iNumberOfGreens = SectorInfo[sGlobalMapSector].ubNumberOfCivsAtLevel[GREEN_MILITIA];
-  iNumberOfRegulars = SectorInfo[sGlobalMapSector].ubNumberOfCivsAtLevel[REGULAR_MILITIA];
-  iNumberOfElites = SectorInfo[sGlobalMapSector].ubNumberOfCivsAtLevel[ELITE_MILITIA];
+  struct MilitiaCount milCount = GetMilitiaInSectorID8(sGlobalMapSector);
+  iNumberOfGreens = milCount.green;
+  iNumberOfRegulars = milCount.regular;
+  iNumberOfElites = milCount.elite;
 
   // the greens in this sector
   swprintf(sString, ARR_SIZE(sString), L"%d", iNumberOfGreens);
@@ -5124,7 +5126,7 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
         iNumberOfElites = 0, iTotalNumberOfTroops = 0;
   INT32 iNumberLeftOverGreen = 0, iNumberLeftOverRegular = 0, iNumberLeftOverElite = 0;
   INT16 sBaseSectorValue = 0, sCurrentSectorValue = 0;
-  INT16 sSectorX = 0, sSectorY = 0, sSector = 0;
+  INT16 sSector = 0;
   INT16 sTotalSoFar = 0;
 
   // how many sectors in the selected town do we control?
@@ -5144,8 +5146,8 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
     sCurrentSectorValue =
         sBaseSectorValue + ((iCounter % MILITIA_BOX_ROWS) + (iCounter / MILITIA_BOX_ROWS) * (16));
 
-    sSectorX = SectorID8_X(sCurrentSectorValue);
-    sSectorY = SectorID8_Y(sCurrentSectorValue);
+    u8 sSectorX = SectorID8_X(sCurrentSectorValue);
+    u8 sSectorY = SectorID8_Y(sCurrentSectorValue);
 
     // skip sectors not in the selected town (nearby other towns or wilderness SAM Sites)
     if (GetTownIdForSector(sSectorX, sSectorY) != sSelectedMilitiaTown) {
@@ -5181,23 +5183,18 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
   const TownSectors *townSectors = GetAllTownSectors();
   while ((*townSectors)[iCounter].townID != 0) {
     if ((*townSectors)[iCounter].townID == sSelectedMilitiaTown) {
-      sSectorX = SectorID16_X((*townSectors)[iCounter].sectorID);
-      sSectorY = SectorID16_Y((*townSectors)[iCounter].sectorID);
+      u8 sX = SectorID16_X((*townSectors)[iCounter].sectorID);
+      u8 sY = SectorID16_Y((*townSectors)[iCounter].sectorID);
 
       if (!StrategicMap[(*townSectors)[iCounter].sectorID].fEnemyControlled &&
-          !NumHostilesInSector(sSectorX, sSectorY, 0)) {
-        sSector = GetSectorID8(sSectorX, sSectorY);
+          !NumHostilesInSector(sX, sY, 0)) {
+        sSector = GetSectorID8(sX, sY);
 
         // distribute here
-        SectorInfo[sSector].ubNumberOfCivsAtLevel[GREEN_MILITIA] =
-            (UINT8)(iNumberOfGreens / iNumberUnderControl);
-        SectorInfo[sSector].ubNumberOfCivsAtLevel[REGULAR_MILITIA] =
-            (UINT8)(iNumberOfRegulars / iNumberUnderControl);
-        SectorInfo[sSector].ubNumberOfCivsAtLevel[ELITE_MILITIA] =
-            (UINT8)(iNumberOfElites / iNumberUnderControl);
-        sTotalSoFar = (INT8)((iNumberOfGreens / iNumberUnderControl) +
-                             (iNumberOfRegulars / iNumberUnderControl) +
-                             (iNumberOfElites / iNumberUnderControl));
+        SetMilitiaOfRankInSector(sX, sY, GREEN_MILITIA, iNumberOfGreens / iNumberUnderControl);
+        SetMilitiaOfRankInSector(sX, sY, REGULAR_MILITIA, iNumberOfRegulars / iNumberUnderControl);
+        SetMilitiaOfRankInSector(sX, sY, ELITE_MILITIA, iNumberOfElites / iNumberUnderControl);
+        sTotalSoFar = CountAllMilitiaInSector(sX, sY);
 
         // add leftovers that weren't included in the div operation
         if ((iNumberLeftOverGreen) && (sTotalSoFar < MAX_ALLOWABLE_MILITIA_PER_SECTOR)) {
@@ -5456,12 +5453,10 @@ void CheckAndUpdateStatesOfSelectedMilitiaSectorButtons(void) {
   sGlobalMapSector = sBaseSectorValue + ((sSectorMilitiaMapSector % MILITIA_BOX_ROWS) +
                                          (sSectorMilitiaMapSector / MILITIA_BOX_ROWS) * (16));
 
-  iNumberOfGreens =
-      SectorInfo[sGlobalMapSector].ubNumberOfCivsAtLevel[GREEN_MILITIA] + sGreensOnCursor;
-  iNumberOfRegulars =
-      SectorInfo[sGlobalMapSector].ubNumberOfCivsAtLevel[REGULAR_MILITIA] + sRegularsOnCursor;
-  iNumberOfElites =
-      SectorInfo[sGlobalMapSector].ubNumberOfCivsAtLevel[ELITE_MILITIA] + sElitesOnCursor;
+  struct MilitiaCount milCount = GetMilitiaInSectorID8(sGlobalMapSector);
+  iNumberOfGreens = milCount.green + sGreensOnCursor;
+  iNumberOfRegulars = milCount.regular + sRegularsOnCursor;
+  iNumberOfElites = milCount.elite + sElitesOnCursor;
 
   if ((sGreensOnCursor > 0) || (sRegularsOnCursor > 0) || (sElitesOnCursor > 0)) {
     DisableButton(giMapMilitiaButton[4]);  // DONE
@@ -5910,9 +5905,7 @@ BOOLEAN CanMilitiaAutoDistribute(void) {
 
     if (!StrategicMap[GetSectorID16(sSectorX, sSectorY)].fEnemyControlled) {
       // get number of each
-      iTotalTroopsInTown += SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[GREEN_MILITIA] +
-                            SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +
-                            SectorInfo[sCurrentSectorValue].ubNumberOfCivsAtLevel[ELITE_MILITIA];
+      iTotalTroopsInTown += CountAllMilitiaInSectorID8(sCurrentSectorValue);
     }
   }
 

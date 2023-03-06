@@ -217,17 +217,17 @@ static void promoteMilitia(u8 mapX, u8 mapY, UINT8 ubCurrentRank, UINT8 ubHowMan
 }
 
 void StrategicRemoveMilitiaFromSector(u8 mapX, u8 mapY, UINT8 ubRank, UINT8 ubHowMany) {
-  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
+  u8 currentCount = GetMilitiaOfRankInSector(mapX, mapY, ubRank);
 
   // damn well better have that many around to remove!
-  Assert(pSectorInfo->ubNumberOfCivsAtLevel[ubRank] >= ubHowMany);
+  Assert(currentCount >= ubHowMany);
 
   // KM : July 21, 1999 patch fix
-  if (pSectorInfo->ubNumberOfCivsAtLevel[ubRank] < ubHowMany) {
+  if (currentCount < ubHowMany) {
     return;
   }
 
-  pSectorInfo->ubNumberOfCivsAtLevel[ubRank] -= ubHowMany;
+  SetMilitiaOfRankInSector(mapX, mapY, ubRank, currentCount - ubHowMany);
 
   // update the screen display
   MarkForRedrawalStrategicMap();
@@ -273,23 +273,6 @@ UINT8 CheckOneMilitiaForPromotion(u8 mapX, u8 mapY, UINT8 ubCurrentRank, UINT8 u
   return 0;
 }
 
-static UINT8 MilitiaInSectorOfRank(u8 mapX, u8 mapY, UINT8 ubRank) {
-  struct MilitiaCount count = GetMilitiaInSector(mapX, mapY);
-  switch (ubRank) {
-    case GREEN_MILITIA:
-      return count.green;
-      break;
-    case REGULAR_MILITIA:
-      return count.regular;
-      break;
-    case ELITE_MILITIA:
-      return count.elite;
-      break;
-    default:
-      return 0;
-  }
-}
-
 // call this if the player attacks his own militia
 void HandleMilitiaDefections(u8 mapX, u8 mapY) {
   UINT8 ubRank;
@@ -298,7 +281,7 @@ void HandleMilitiaDefections(u8 mapX, u8 mapY) {
   UINT32 uiChanceToDefect;
 
   for (ubRank = 0; ubRank < MAX_MILITIA_LEVELS; ubRank++) {
-    ubMilitiaCnt = MilitiaInSectorOfRank(mapX, mapY, ubRank);
+    ubMilitiaCnt = GetMilitiaOfRankInSector(mapX, mapY, ubRank);
 
     // check each guy at each rank to see if he defects
     for (ubCount = 0; ubCount < ubMilitiaCnt; ubCount++) {
@@ -359,6 +342,28 @@ struct MilitiaCount GetMilitiaInSectorID8(SectorID8 sectorID) {
       GetSectorInfoByID8(sectorID)->ubNumberOfCivsAtLevel[ELITE_MILITIA],
   };
   return res;
+}
+
+void SetMilitiaOfRankInSector(u8 mapX, u8 mapY, UINT8 ubRank, u8 count) {
+  SECTORINFO *pSectorInfo = GetSectorInfoByXY(mapX, mapY);
+  pSectorInfo->ubNumberOfCivsAtLevel[ubRank] -= count;
+}
+
+UINT8 GetMilitiaOfRankInSector(u8 mapX, u8 mapY, UINT8 ubRank) {
+  struct MilitiaCount count = GetMilitiaInSector(mapX, mapY);
+  switch (ubRank) {
+    case GREEN_MILITIA:
+      return count.green;
+      break;
+    case REGULAR_MILITIA:
+      return count.regular;
+      break;
+    case ELITE_MILITIA:
+      return count.elite;
+      break;
+    default:
+      return 0;
+  }
 }
 
 static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
@@ -665,14 +670,7 @@ BOOLEAN CanNearbyMilitiaScoutThisSector(u8 mapX, u8 mapY) {
         continue;
       }
 
-      SectorID8 sSectorValue = GetSectorID8(sCounterA, sCounterB);
-
-      // check if any sort of militia here
-      if (GetSectorInfoByID8(sSectorValue)->ubNumberOfCivsAtLevel[GREEN_MILITIA]) {
-        return (TRUE);
-      } else if (GetSectorInfoByID8(sSectorValue)->ubNumberOfCivsAtLevel[REGULAR_MILITIA]) {
-        return (TRUE);
-      } else if (GetSectorInfoByID8(sSectorValue)->ubNumberOfCivsAtLevel[ELITE_MILITIA]) {
+      if (CountAllMilitiaInSector(sCounterA, sCounterB) > 0) {
         return (TRUE);
       }
     }
