@@ -4449,7 +4449,7 @@ BOOLEAN DropAPersonInASector(UINT8 ubType, INT16 sX, INT16 sY) {
   }
 
   // up the number in this sector of this type of militia
-  SectorInfo[GetSectorID8(sX, sY)].ubNumberOfCivsAtLevel[ubType]++;
+  IncMilitiaOfRankInSector(sX, sY, ubType, 1);
 
   MarkForRedrawalStrategicMap();
 
@@ -5057,25 +5057,28 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
         iNumberThatCanFitInSector = MAX_ALLOWABLE_MILITIA_PER_SECTOR;
         iNumberThatCanFitInSector -= CountAllMilitiaInSectorID8(SectorID16To8(sectorID));
 
+        u8 sX = SectorID16_X(sectorID);
+        u8 sY = SectorID16_Y(sectorID);
+
         while ((iCount < iNumberThatCanFitInSector) &&
                ((sGreensOnCursor) || (sRegularsOnCursor) || (sElitesOnCursor))) {
           // green
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sGreensOnCursor)) {
-            SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[GREEN_MILITIA]++;
+            IncMilitiaOfRankInSector(sX, sY, GREEN_MILITIA, 1);
             iCount++;
             sGreensOnCursor--;
           }
 
           // regular
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sRegularsOnCursor)) {
-            SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[REGULAR_MILITIA]++;
+            IncMilitiaOfRankInSector(sX, sY, REGULAR_MILITIA, 1);
             iCount++;
             sRegularsOnCursor--;
           }
 
           // elite
           if ((iCount + 1 <= iNumberThatCanFitInSector) && (sElitesOnCursor)) {
-            SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[ELITE_MILITIA]++;
+            IncMilitiaOfRankInSector(sX, sY, ELITE_MILITIA, 1);
             iCount++;
             sElitesOnCursor--;
           }
@@ -5100,12 +5103,11 @@ void HandleShutDownOfMilitiaPanelIfPeopleOnTheCursor(INT16 sTownValue) {
       }
 
       if (fLastOne) {
-        SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[GREEN_MILITIA] +=
-            (UINT8)(sGreensOnCursor % iNumberUnderControl);
-        SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[REGULAR_MILITIA] +=
-            (UINT8)(sRegularsOnCursor % iNumberUnderControl);
-        SectorInfo[SectorID16To8(sectorID)].ubNumberOfCivsAtLevel[ELITE_MILITIA] +=
-            (UINT8)(sElitesOnCursor % iNumberUnderControl);
+        u8 sX = SectorID16_X(sectorID);
+        u8 sY = SectorID16_Y(sectorID);
+        IncMilitiaOfRankInSector(sX, sY, GREEN_MILITIA, sGreensOnCursor % iNumberUnderControl);
+        IncMilitiaOfRankInSector(sX, sY, REGULAR_MILITIA, sRegularsOnCursor % iNumberUnderControl);
+        IncMilitiaOfRankInSector(sX, sY, ELITE_MILITIA, sElitesOnCursor % iNumberUnderControl);
       }
     }
 
@@ -5126,7 +5128,6 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
         iNumberOfElites = 0, iTotalNumberOfTroops = 0;
   INT32 iNumberLeftOverGreen = 0, iNumberLeftOverRegular = 0, iNumberLeftOverElite = 0;
   INT16 sBaseSectorValue = 0, sCurrentSectorValue = 0;
-  INT16 sSector = 0;
   INT16 sTotalSoFar = 0;
 
   // how many sectors in the selected town do we control?
@@ -5188,8 +5189,6 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
 
       if (!StrategicMap[(*townSectors)[iCounter].sectorID].fEnemyControlled &&
           !NumHostilesInSector(sX, sY, 0)) {
-        sSector = GetSectorID8(sX, sY);
-
         // distribute here
         SetMilitiaOfRankInSector(sX, sY, GREEN_MILITIA, iNumberOfGreens / iNumberUnderControl);
         SetMilitiaOfRankInSector(sX, sY, REGULAR_MILITIA, iNumberOfRegulars / iNumberUnderControl);
@@ -5198,25 +5197,26 @@ void HandleEveningOutOfTroopsAmongstSectors(void) {
 
         // add leftovers that weren't included in the div operation
         if ((iNumberLeftOverGreen) && (sTotalSoFar < MAX_ALLOWABLE_MILITIA_PER_SECTOR)) {
-          SectorInfo[sSector].ubNumberOfCivsAtLevel[GREEN_MILITIA]++;
+          IncMilitiaOfRankInSector(sX, sY, GREEN_MILITIA, 1);
           sTotalSoFar++;
           iNumberLeftOverGreen--;
         }
 
         if ((iNumberLeftOverRegular) && (sTotalSoFar < MAX_ALLOWABLE_MILITIA_PER_SECTOR)) {
-          SectorInfo[sSector].ubNumberOfCivsAtLevel[REGULAR_MILITIA]++;
+          IncMilitiaOfRankInSector(sX, sY, REGULAR_MILITIA, 1);
           sTotalSoFar++;
           iNumberLeftOverRegular--;
         }
 
         if ((iNumberLeftOverElite) && (sTotalSoFar < MAX_ALLOWABLE_MILITIA_PER_SECTOR)) {
-          SectorInfo[sSector].ubNumberOfCivsAtLevel[ELITE_MILITIA]++;
+          IncMilitiaOfRankInSector(sX, sY, ELITE_MILITIA, 1);
           sTotalSoFar++;
           iNumberLeftOverElite--;
         }
 
         // if this sector is currently loaded
-        if (sSector == GetSectorID8(gWorldSectorX, gWorldSectorY) && gWorldSectorY != 0) {
+        if (GetSectorID8(sX, sY) == GetSectorID8(gWorldSectorX, gWorldSectorY) &&
+            gWorldSectorY != 0) {
           TacticalMilitiaRefreshRequired();
         }
       }
