@@ -613,7 +613,7 @@ static void MilitiaTrainingRejected(void) {
 }
 
 BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY) {
-  INT16 sCounterA = 0, sCounterB = 0;
+  i8 sCounterA = 0, sCounterB = 0;
   UINT8 ubScoutingRange = 1;
 
   // get the sector value

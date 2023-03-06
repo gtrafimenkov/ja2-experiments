@@ -68,7 +68,7 @@ BOOLEAN IsThisSectorASAMSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ) {
 i16 GetLoadedSectorX() { return gWorldSectorX; }
 i16 GetLoadedSectorY() { return gWorldSectorY; }
 
-bool IsSectorEnemyControlled(i16 sMapX, i16 sMapY) {
+bool IsSectorEnemyControlled(i8 sMapX, i8 sMapY) {
   return StrategicMap[GetSectorID16(sMapX, sMapY)].fEnemyControlled;
 }
 

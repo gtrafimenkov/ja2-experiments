@@ -119,6 +119,6 @@ void GetSectorIDString(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ, CHAR16* zS
 i16 GetLoadedSectorX();
 i16 GetLoadedSectorY();
 
-bool IsSectorEnemyControlled(i16 sMapX, i16 sMapY);
+bool IsSectorEnemyControlled(i8 sMapX, i8 sMapY);
 
 #endif

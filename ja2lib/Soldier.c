@@ -10,14 +10,14 @@ struct SOLDIERTYPE *GetSoldierByID(int index) { return &Menptr[index]; }
 u8 GetSolID(const struct SOLDIERTYPE *s) { return s->ubID; }
 u8 GetSolProfile(const struct SOLDIERTYPE *s) { return s->ubProfile; }
 
-i16 GetSolSectorX(const struct SOLDIERTYPE *s) { return s->sSectorX; }
-i16 GetSolSectorY(const struct SOLDIERTYPE *s) { return s->sSectorY; }
+u8 GetSolSectorX(const struct SOLDIERTYPE *s) { return (u8)s->sSectorX; }
+u8 GetSolSectorY(const struct SOLDIERTYPE *s) { return (u8)s->sSectorY; }
 i8 GetSolSectorZ(const struct SOLDIERTYPE *s) { return s->bSectorZ; }
 SectorID8 GetSolSectorID8(const struct SOLDIERTYPE *s) {
-  return GetSectorID8(s->sSectorX, s->sSectorY);
+  return GetSectorID8((u8)s->sSectorX, (u8)s->sSectorY);
 }
 SectorID16 GetSolSectorID16(const struct SOLDIERTYPE *s) {
-  return GetSectorID16(s->sSectorX, s->sSectorY);
+  return GetSectorID16((u8)s->sSectorX, (u8)s->sSectorY);
 }
 
 i8 GetSolAssignment(const struct SOLDIERTYPE *s) { return s->bAssignment; }
