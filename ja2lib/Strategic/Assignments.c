@@ -166,7 +166,6 @@ BOOLEAN fFirstClickInAssignmentScreenMask = FALSE;
 // render pre battle interface?
 extern BOOLEAN gfRenderPBInterface;
 extern BOOLEAN fMapScreenBottomDirty;
-extern struct SOLDIERTYPE *pMilitiaTrainerSoldier;
 
 // in the mapscreen?
 extern BOOLEAN fInMapMode;
@@ -463,21 +462,6 @@ void RepairItemsOnOthers(struct SOLDIERTYPE *pSoldier, UINT8 *pubRepairPtsLeft);
 BOOLEAN UnjamGunsOnSoldier(struct SOLDIERTYPE *pOwnerSoldier, struct SOLDIERTYPE *pRepairSoldier,
                            UINT8 *pubRepairPtsLeft);
 
-/* No point in allowing SAM site repair any more.  Jan/13/99.  ARM
-BOOLEAN IsTheSAMSiteInSectorRepairable( INT16 sSectorX, INT16 sSectorY, INT16 sSectorZ );
-BOOLEAN SoldierInSameSectorAsSAM( struct SOLDIERTYPE *pSoldier );
-BOOLEAN CanSoldierRepairSAM( struct SOLDIERTYPE *pSoldier, INT8 bRepairPoints );
-BOOLEAN IsSoldierCloseEnoughToSAMControlPanel( struct SOLDIERTYPE *pSoldier );
-*/
-
-/* Assignment distance limits removed.  Sep/11/98.  ARM
-BOOLEAN IsSoldierCloseEnoughToADoctor( struct SOLDIERTYPE *pPatient );
-*/
-
-#ifdef JA2BETAVERSION
-void VerifyTownTrainingIsPaidFor(void);
-#endif
-
 void InitSectorsWithSoldiersList(void) {
   // init list of sectors
   memset(&fSectorsWithSoldiers, 0, sizeof(fSectorsWithSoldiers));
@@ -528,7 +512,7 @@ void ChangeSoldiersAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment) {
 
 BOOLEAN BasicCanCharacterAssignment(struct SOLDIERTYPE *pSoldier, BOOLEAN fNotInCombat) {
   // global conditions restricting all assignment changes
-  if (SectorIsImpassable((INT16)GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))) {
+  if (SectorIsImpassable((INT16)GetSolSectorID8(pSoldier))) {
     return (FALSE);
   }
 
@@ -1718,8 +1702,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     if (IsSolActive(pSoldier) && (GetSolAssignment(pSoldier) == TRAIN_TOWN)) {
       // make sure that sector is paid up!
-      if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
-              .fMilitiaTrainingPaid == FALSE) {
+      if (SectorInfo[GetSolSectorID8(pSoldier)].fMilitiaTrainingPaid == FALSE) {
         // NOPE!  We've got a bug somewhere
         StopTimeCompression();
 
@@ -6495,8 +6478,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, INT32 iReason) {
 
           // assign to a movement group
           AssignMercToAMovementGroup(pSoldier);
-          if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
-                  .fMilitiaTrainingPaid == FALSE) {
+          if (SectorInfo[GetSolSectorID8(pSoldier)].fMilitiaTrainingPaid == FALSE) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
           } else {
@@ -8246,13 +8228,6 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment, INT32 
       if (CanCharacterPatient(pSoldier)) {
         // set as doctor
 
-        /* Assignment distance limits removed.  Sep/11/98.  ARM
-                                        if( IsSoldierCloseEnoughToADoctor( pSoldier ) == FALSE )
-                                        {
-                                                return;
-                                        }
-        */
-
         pSoldier->bOldAssignment = pSoldier->bAssignment;
 
         // set dirty flag
@@ -8327,13 +8302,13 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, INT8 bAssignment, INT32 
 
         ChangeSoldiersAssignment(pSoldier, TRAIN_TOWN);
 
-        if (pMilitiaTrainerSoldier == NULL) {
-          if (SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))]
-                  .fMilitiaTrainingPaid == FALSE) {
-            // show a message to confirm player wants to charge cost
-            HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
-          }
+        // probably this condition is not needed
+        // if (pMilitiaTrainerSoldier == NULL) {
+        if (SectorInfo[GetSolSectorID8(pSoldier)].fMilitiaTrainingPaid == FALSE) {
+          // show a message to confirm player wants to charge cost
+          HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
         }
+        // }
 
         AssignMercToAMovementGroup(pSoldier);
         // set dirty flag

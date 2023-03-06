@@ -315,4 +315,8 @@ void UnEscortEPC(struct SOLDIERTYPE *pSoldier);
 
 struct SOLDIERTYPE *AnyDoctorWhoCanHealThisPatient(struct SOLDIERTYPE *pPatient, BOOLEAN fThisHour);
 
+#ifdef JA2BETAVERSION
+void VerifyTownTrainingIsPaidFor(void);
+#endif
+
 #endif

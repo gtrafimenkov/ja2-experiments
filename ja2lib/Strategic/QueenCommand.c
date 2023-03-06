@@ -661,7 +661,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
         break;
       }
       if (!GetSolSectorZ(pSoldier)) {
-        pSector = &SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))];
+        pSector = &SectorInfo[GetSolSectorID8(pSoldier)];
         if (pSector->ubNumElites) {
           pSector->ubNumElites--;
         }
@@ -819,7 +819,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
 #endif
 
       if (!IsAutoResolveActive()) {
-        pSector = &SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))];
+        pSector = &SectorInfo[GetSolSectorID8(pSoldier)];
       } else {
         pSector = &SectorInfo[GetAutoResolveSectorID()];
       }
@@ -918,8 +918,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
 
           break;
       }
-      RecalculateSectorWeight(
-          (UINT8)GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)));
+      RecalculateSectorWeight((UINT8)GetSolSectorID8(pSoldier));
     } else {  // basement level (UNDERGROUND_SECTORINFO)
       UNDERGROUND_SECTORINFO *pSector =
           FindUnderGroundSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ);
@@ -1030,7 +1029,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
     }
   }
   if (!GetSolSectorZ(pSoldier)) {
-    pSector = &SectorInfo[GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))];
+    pSector = &SectorInfo[GetSolSectorID8(pSoldier)];
     iNumEnemiesInSector = NumEnemiesInSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
     if (iNumEnemiesInSector) {
       if (pSector->bLastKnownEnemies >= 0) {

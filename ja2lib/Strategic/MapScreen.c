@@ -9856,7 +9856,7 @@ INT16 CalcLocationValueForChar(INT32 iCounter) {
 
   // don't reveal location of POWs!
   if (pSoldier->bAssignment != ASSIGNMENT_POW) {
-    sLocValue = GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+    sLocValue = GetSolSectorID8(pSoldier);
     // underground: add 1000 per sublevel
     sLocValue += 1000 * (GetSolSectorZ(pSoldier));
   }

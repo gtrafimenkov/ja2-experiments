@@ -2847,8 +2847,7 @@ BOOLEAN PlaceObject(struct SOLDIERTYPE *pSoldier, INT8 bPos, struct OBJECTTYPE *
   if (Item[pObj->usItem].usItemClass == IC_KEY && pSoldier->uiStatusFlags & SOLDIER_PC) {
     if (KeyTable[pObj->ubKeyID].usDateFound == 0) {
       KeyTable[pObj->ubKeyID].usDateFound = (UINT16)GetWorldDay();
-      KeyTable[pObj->ubKeyID].usSectorFound =
-          GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+      KeyTable[pObj->ubKeyID].usSectorFound = GetSolSectorID8(pSoldier);
     }
   }
 
@@ -3260,8 +3259,7 @@ UINT8 AddKeysToSlot(struct SOLDIERTYPE *pSoldier, INT8 bKeyRingPosition, struct 
   {
     if (KeyTable[pObj->ubKeyID].usDateFound == 0) {
       KeyTable[pObj->ubKeyID].usDateFound = (UINT16)GetWorldDay();
-      KeyTable[pObj->ubKeyID].usSectorFound =
-          GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+      KeyTable[pObj->ubKeyID].usSectorFound = GetSolSectorID8(pSoldier);
     }
   }
 

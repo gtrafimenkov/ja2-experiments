@@ -32,17 +32,27 @@ struct sectorSearch {
   INT16 skipY;
   UINT8 townSectorsIndex;
 };
-static struct sectorSearch sectorSearch;
 
-BOOLEAN gfYesNoPromptIsForContinue = FALSE;  // whether we're starting new training, or continuing
-INT32 giTotalCostOfTraining = 0;
+struct militiaState {
+  BOOLEAN promptForContinue;  // whether we're starting new training, or continuing
+  INT32 totalCostOfTraining;
 
-// the completed list of sector soldiers for training militia
-INT32 giListOfMercsInSectorsCompletedMilitiaTraining[SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST];
-struct SOLDIERTYPE *pMilitiaTrainerSoldier = NULL;
+  // the completed list of sector soldiers for training militia
+  INT32 soldiersCompletedMilitiaTraining[SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST];
+  struct SOLDIERTYPE *trainer;
 
-// note that these sector values are STRATEGIC INDEXES, not 0-255!
-INT16 gsUnpaidStrategicSector[MAX_CHARACTER_COUNT];
+  // note that these sector values are STRATEGIC INDEXES, not 0-255!
+  SectorID16 unpaidSectors[MAX_CHARACTER_COUNT];
+
+  i8 gbGreenToElitePromotions;
+  i8 gbGreenToRegPromotions;
+  i8 gbRegToElitePromotions;
+  i8 gbMilitiaPromotions;
+
+  struct sectorSearch sectorSearch;
+};
+
+static struct militiaState _st;
 
 // the selected list of mercs
 extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
@@ -53,24 +63,16 @@ static void promoteMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank, UINT8 
 // handle completion of assignment byt his soldier too and inform the player
 static void handleTrainingComplete(struct SOLDIERTYPE *pTrainer);
 
-// private prototypes
-void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue);
-void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue);
-void MilitiaTrainingRejected(void);
-
+static void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue);
+static void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue);
+static void MilitiaTrainingRejected(void);
 static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY);
 static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY);
-
-void BuildListOfUnpaidTrainableSectors(void);
-INT32 GetNumberOfUnpaidTrainableSectors(void);
+static INT32 GetNumberOfUnpaidTrainableSectors(void);
 static void ContinueTrainingInThisSector();
-void StartTrainingInAllUnpaidTrainableSectors();
-void PayForTrainingInSector(SectorID8 ubSector);
-void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector);
-
-#ifdef JA2BETAVERSION
-void VerifyTownTrainingIsPaidFor(void);
-#endif
+static void StartTrainingInAllUnpaidTrainableSectors();
+static void PayForTrainingInSector(SectorID8 ubSector);
+static void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector);
 
 void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT16 sMapY) {
   UINT8 ubMilitiaTrained = 0;
@@ -319,10 +321,10 @@ UINT8 MilitiaInSectorOfRank(INT16 sMapX, INT16 sMapY, UINT8 ubRank) {
 }
 
 static void initNextSectorSearch(UINT8 ubTownId, INT16 sSkipSectorX, INT16 sSkipSectorY) {
-  sectorSearch.townID = ubTownId;
-  sectorSearch.skipX = sSkipSectorX;
-  sectorSearch.skipY = sSkipSectorY;
-  sectorSearch.townSectorsIndex = 0;
+  _st.sectorSearch.townID = ubTownId;
+  _st.sectorSearch.skipX = sSkipSectorX;
+  _st.sectorSearch.skipY = sSkipSectorY;
+  _st.sectorSearch.townSectorsIndex = 0;
 }
 
 // this feeds the X,Y of the next town sector on the town list for the town specified at
@@ -336,21 +338,21 @@ static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
 
   do {
     // have we reached the end of the town list?
-    if ((*townSectors)[sectorSearch.townSectorsIndex].townID == BLANK_SECTOR) {
+    if ((*townSectors)[_st.sectorSearch.townSectorsIndex].townID == BLANK_SECTOR) {
       // end of list reached
       return (FALSE);
     }
 
-    INT32 iTownSector = (*townSectors)[sectorSearch.townSectorsIndex].sectorID;
+    INT32 iTownSector = (*townSectors)[_st.sectorSearch.townSectorsIndex].sectorID;
 
     // if this sector is in the town we're looking for
-    if (GetTownIdForStrategicMapIndex(iTownSector) == sectorSearch.townID) {
+    if (GetTownIdForStrategicMapIndex(iTownSector) == _st.sectorSearch.townID) {
       // A sector in the specified town.  Calculate its X & Y sector compotents
       sMapX = SectorID16_X(iTownSector);
       sMapY = SectorID16_Y(iTownSector);
 
       // Make sure we're not supposed to skip it
-      if ((sMapX != sectorSearch.skipX) || (sMapY != sectorSearch.skipY)) {
+      if ((sMapX != _st.sectorSearch.skipX) || (sMapY != _st.sectorSearch.skipY)) {
         // check if it's "friendly" - not enemy controlled, no enemies in it, no combat in progress
         if (SectorOursAndPeaceful(sMapX, sMapY, 0)) {
           // then that's it!
@@ -363,7 +365,7 @@ static BOOLEAN getNextSectorInTown(INT16 *sNeighbourX, INT16 *sNeighbourY) {
     }
 
     // advance to next entry in town list
-    sectorSearch.townSectorsIndex++;
+    _st.sectorSearch.townSectorsIndex++;
 
   } while (!fStopLooking);
 
@@ -375,20 +377,20 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
   CHAR16 sString[128];
   INT32 iNumberOfSectors = 0;
 
-  pMilitiaTrainerSoldier = pSoldier;
+  _st.trainer = pSoldier;
 
   // grab total number of sectors
   iNumberOfSectors = GetNumberOfUnpaidTrainableSectors();
   Assert(iNumberOfSectors > 0);
 
   // get total cost
-  giTotalCostOfTraining = MILITIA_TRAINING_COST * iNumberOfSectors;
-  Assert(giTotalCostOfTraining > 0);
+  _st.totalCostOfTraining = MILITIA_TRAINING_COST * iNumberOfSectors;
+  Assert(_st.totalCostOfTraining > 0);
 
-  gfYesNoPromptIsForContinue = FALSE;
+  _st.promptForContinue = FALSE;
 
-  if (MoneyGetBalance() < giTotalCostOfTraining) {
-    swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[8], giTotalCostOfTraining);
+  if (MoneyGetBalance() < _st.totalCostOfTraining) {
+    swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[8], _st.totalCostOfTraining);
     DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_OK, CantTrainMilitiaOkBoxCallback);
     return;
   }
@@ -397,10 +399,10 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
 
   if (iNumberOfSectors > 1) {
     swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[7], iNumberOfSectors,
-             giTotalCostOfTraining, pMilitiaConfirmStrings[1]);
+             _st.totalCostOfTraining, pMilitiaConfirmStrings[1]);
   } else {
     swprintf(sString, ARR_SIZE(sString), L"%s%d. %s", pMilitiaConfirmStrings[0],
-             giTotalCostOfTraining, pMilitiaConfirmStrings[1]);
+             _st.totalCostOfTraining, pMilitiaConfirmStrings[1]);
   }
 
   // if we are in mapscreen, make a pop up
@@ -435,9 +437,9 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
 
   Assert(GetSectorInfoByXY(sSectorX, sSectorY)->fMilitiaTrainingPaid == FALSE);
 
-  pMilitiaTrainerSoldier = pSoldier;
+  _st.trainer = pSoldier;
 
-  gfYesNoPromptIsForContinue = TRUE;
+  _st.promptForContinue = TRUE;
 
   // is there enough loyalty to continue training
   if (DoesSectorMercIsInHaveSufficientLoyaltyToTrainMilitia(pSoldier) == FALSE) {
@@ -468,12 +470,12 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
   }
 
   // continue training always handles just one sector at a time
-  giTotalCostOfTraining = MILITIA_TRAINING_COST;
+  _st.totalCostOfTraining = MILITIA_TRAINING_COST;
 
   // can player afford to continue training?
-  if (MoneyGetBalance() < giTotalCostOfTraining) {
+  if (MoneyGetBalance() < _st.totalCostOfTraining) {
     // can't afford to continue training
-    swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[8], giTotalCostOfTraining);
+    swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[8], _st.totalCostOfTraining);
     DoContinueMilitiaTrainingMessageBox(sSectorX, sSectorY, sString, MSG_BOX_FLAG_OK,
                                         CantTrainMilitiaOkBoxCallback);
     return;
@@ -483,7 +485,7 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
 
   GetSectorIDString(sSectorX, sSectorY, 0, sStringB, ARR_SIZE(sStringB), TRUE);
   swprintf(sString, ARR_SIZE(sString), pMilitiaConfirmStrings[3], sStringB,
-           pMilitiaConfirmStrings[4], giTotalCostOfTraining);
+           pMilitiaConfirmStrings[4], _st.totalCostOfTraining);
 
   // ask player whether he'd like to continue training
   // DoContinueMilitiaTrainingMessageBox( sSectorX, sSectorY, sString, MSG_BOX_FLAG_YESNO,
@@ -493,17 +495,17 @@ void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSol
 }
 
 // IMPORTANT: This same callback is used both for initial training and for continue training prompt
-// use 'gfYesNoPromptIsForContinue' flag to tell them apart
-void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue) {
+// use '_st.promptForContinue' flag to tell them apart
+static void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue) {
   CHAR16 sString[128];
 
-  Assert(giTotalCostOfTraining > 0);
+  Assert(_st.totalCostOfTraining > 0);
 
   // yes
   if (bExitValue == MSG_BOX_RETURN_YES) {
     // does the player have enough
-    if (MoneyGetBalance() >= giTotalCostOfTraining) {
-      if (gfYesNoPromptIsForContinue) {
+    if (MoneyGetBalance() >= _st.totalCostOfTraining) {
+      if (_st.promptForContinue) {
         ContinueTrainingInThisSector();
       } else {
         StartTrainingInAllUnpaidTrainableSectors();
@@ -516,7 +518,7 @@ void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue) {
 #endif
 
       // this completes the training prompt sequence
-      pMilitiaTrainerSoldier = NULL;
+      _st.trainer = NULL;
     } else  // can't afford it
     {
       StopTimeCompression();
@@ -534,10 +536,7 @@ void PayMilitiaTrainingYesNoBoxCallback(UINT8 bExitValue) {
   return;
 }
 
-void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue) {
-  MilitiaTrainingRejected();
-  return;
-}
+static void CantTrainMilitiaOkBoxCallback(UINT8 bExitValue) { MilitiaTrainingRejected(); }
 
 // reset assignment for mercs trainign militia in this sector
 static void resetTrainersAssignment(INT16 sSectorX, INT16 sSectorY) {
@@ -585,8 +584,7 @@ static void resetAssignmentsForUnpaidSectors() {
     }
 
     if (GetSolAssignment(pSoldier) == TRAIN_TOWN) {
-      if (GetSectorInfoByID8(GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
-              ->fMilitiaTrainingPaid == FALSE) {
+      if (GetSectorInfoByID8(GetSolSectorID8(pSoldier))->fMilitiaTrainingPaid == FALSE) {
         ResumeOldAssignment(pSoldier);
       }
     }
@@ -594,12 +592,11 @@ static void resetAssignmentsForUnpaidSectors() {
 }
 
 // IMPORTANT: This same callback is used both for initial training and for continue training prompt
-// use 'gfYesNoPromptIsForContinue' flag to tell them apart
-void MilitiaTrainingRejected(void) {
-  if (gfYesNoPromptIsForContinue) {
+// use '_st.promptForContinue' flag to tell them apart
+static void MilitiaTrainingRejected(void) {
+  if (_st.promptForContinue) {
     // take all mercs in that sector off militia training
-    resetTrainersAssignment(GetSolSectorX(pMilitiaTrainerSoldier),
-                            GetSolSectorY(pMilitiaTrainerSoldier));
+    resetTrainersAssignment(GetSolSectorX(_st.trainer), GetSolSectorY(_st.trainer));
   } else {
     // take all mercs in unpaid sectors EVERYWHERE off militia training
     resetAssignmentsForUnpaidSectors();
@@ -612,11 +609,10 @@ void MilitiaTrainingRejected(void) {
 #endif
 
   // this completes the training prompt sequence
-  pMilitiaTrainerSoldier = NULL;
+  _st.trainer = NULL;
 }
 
 BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY) {
-  INT16 sSectorValue = 0;
   INT16 sCounterA = 0, sCounterB = 0;
   UINT8 ubScoutingRange = 1;
 
@@ -630,7 +626,7 @@ BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY) {
         continue;
       }
 
-      sSectorValue = GetSectorID8(sCounterA, sCounterB);
+      SectorID8 sSectorValue = GetSectorID8(sCounterA, sCounterB);
 
       // check if any sort of militia here
       if (GetSectorInfoByID8(sSectorValue)->ubNumberOfCivsAtLevel[GREEN_MILITIA]) {
@@ -750,9 +746,9 @@ void AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(struct SOLDI
   // get the sector value
   sSector = GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
-  while (giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] != -1) {
+  while (_st.soldiersCompletedMilitiaTraining[iCounter] != -1) {
     // get the current soldier
-    pCurrentSoldier = GetSoldierByID(giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]);
+    pCurrentSoldier = GetSoldierByID(_st.soldiersCompletedMilitiaTraining[iCounter]);
 
     // get the current sector value
     sCurrentSector = GetSectorID16(GetSolSectorX(pCurrentSoldier), GetSolSectorY(pCurrentSoldier));
@@ -769,7 +765,7 @@ void AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(struct SOLDI
   }
 
   // add merc to the list
-  giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] = GetSolID(pSoldier);
+  _st.soldiersCompletedMilitiaTraining[iCounter] = GetSolID(pSoldier);
 
   return;
 }
@@ -779,7 +775,7 @@ void ClearSectorListForCompletedTrainingOfMilitia(void) {
   INT32 iCounter = 0;
 
   for (iCounter = 0; iCounter < SIZE_OF_MILITIA_COMPLETED_TRAINING_LIST; iCounter++) {
-    giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] = -1;
+    _st.soldiersCompletedMilitiaTraining[iCounter] = -1;
   }
 
   return;
@@ -790,9 +786,9 @@ void HandleContinueOfTownTraining(void) {
   INT32 iCounter = 0;
   BOOLEAN fContinueEventPosted = FALSE;
 
-  while (giListOfMercsInSectorsCompletedMilitiaTraining[iCounter] != -1) {
+  while (_st.soldiersCompletedMilitiaTraining[iCounter] != -1) {
     // get the soldier
-    pSoldier = GetSoldierByID(giListOfMercsInSectorsCompletedMilitiaTraining[iCounter]);
+    pSoldier = GetSoldierByID(_st.soldiersCompletedMilitiaTraining[iCounter]);
 
     if (IsSolActive(pSoldier)) {
       fContinueEventPosted = TRUE;
@@ -819,11 +815,10 @@ void HandleContinueOfTownTraining(void) {
   }
 }
 
-void BuildListOfUnpaidTrainableSectors(void) {
+static void BuildListOfUnpaidTrainableSectors(void) {
   INT32 iCounter = 0, iCounterB = 0;
-  struct SOLDIERTYPE *pSoldier = NULL;
 
-  memset(gsUnpaidStrategicSector, 0, sizeof(INT16) * MAX_CHARACTER_COUNT);
+  memset(_st.unpaidSectors, 0, sizeof(INT16) * MAX_CHARACTER_COUNT);
 
   if (IsMapScreen()) {
     for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
@@ -832,14 +827,11 @@ void BuildListOfUnpaidTrainableSectors(void) {
         // selected?
         if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE) ||
             (iCounter == GetCharForAssignmentIndex())) {
-          pSoldier = GetMercFromCharacterList(iCounter);
-
-          if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-            if (GetSectorInfoByID8(GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
-                    ->fMilitiaTrainingPaid == FALSE) {
+          struct SOLDIERTYPE *sol = GetMercFromCharacterList(iCounter);
+          if (CanCharacterTrainMilitia(sol) == TRUE) {
+            if (GetSectorInfoByID8(GetSolSectorID8(sol))->fMilitiaTrainingPaid == FALSE) {
               // check to see if this sector is a town and needs equipment
-              gsUnpaidStrategicSector[iCounter] =
-                  GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+              _st.unpaidSectors[iCounter] = GetSolSectorID16(sol);
             }
           }
         }
@@ -847,32 +839,30 @@ void BuildListOfUnpaidTrainableSectors(void) {
     }
   } else {
     // handle for tactical
-    pSoldier = GetTacticalContextMenuMerc();
+    struct SOLDIERTYPE *sol = GetTacticalContextMenuMerc();
     iCounter = 0;
 
-    if (CanCharacterTrainMilitia(pSoldier) == TRUE) {
-      if (GetSectorInfoByID8(GetSectorID8(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier)))
-              ->fMilitiaTrainingPaid == FALSE) {
+    if (CanCharacterTrainMilitia(sol) == TRUE) {
+      if (GetSectorInfoByID8(GetSolSectorID8(sol))->fMilitiaTrainingPaid == FALSE) {
         // check to see if this sector is a town and needs equipment
-        gsUnpaidStrategicSector[iCounter] =
-            GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+        _st.unpaidSectors[iCounter] = GetSolSectorID16(sol);
       }
     }
   }
 
   // now clean out repeated sectors
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT - 1; iCounter++) {
-    if (gsUnpaidStrategicSector[iCounter] > 0) {
+    if (_st.unpaidSectors[iCounter] > 0) {
       for (iCounterB = iCounter + 1; iCounterB < MAX_CHARACTER_COUNT; iCounterB++) {
-        if (gsUnpaidStrategicSector[iCounterB] == gsUnpaidStrategicSector[iCounter]) {
-          gsUnpaidStrategicSector[iCounterB] = 0;
+        if (_st.unpaidSectors[iCounterB] == _st.unpaidSectors[iCounter]) {
+          _st.unpaidSectors[iCounterB] = 0;
         }
       }
     }
   }
 }
 
-INT32 GetNumberOfUnpaidTrainableSectors(void) {
+static INT32 GetNumberOfUnpaidTrainableSectors(void) {
   INT32 iCounter = 0;
   INT32 iNumberOfSectors = 0;
 
@@ -880,7 +870,7 @@ INT32 GetNumberOfUnpaidTrainableSectors(void) {
 
   // now count up the results
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gsUnpaidStrategicSector[iCounter] > 0) {
+    if (_st.unpaidSectors[iCounter] > 0) {
       iNumberOfSectors++;
     }
   }
@@ -889,7 +879,7 @@ INT32 GetNumberOfUnpaidTrainableSectors(void) {
   return (iNumberOfSectors);
 }
 
-void StartTrainingInAllUnpaidTrainableSectors() {
+static void StartTrainingInAllUnpaidTrainableSectors() {
   INT32 iCounter = 0;
   SectorID8 ubSector;
 
@@ -899,21 +889,21 @@ void StartTrainingInAllUnpaidTrainableSectors() {
 
   // pay up in each sector
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (gsUnpaidStrategicSector[iCounter] > 0) {
+    if (_st.unpaidSectors[iCounter] > 0) {
       // convert strategic sector to 0-255 system
-      ubSector = SectorID16To8(gsUnpaidStrategicSector[iCounter]);
+      ubSector = SectorID16To8(_st.unpaidSectors[iCounter]);
       PayForTrainingInSector(ubSector);
     }
   }
 }
 
 static void ContinueTrainingInThisSector() {
-  Assert(pMilitiaTrainerSoldier);
-  // pay up in the sector where pMilitiaTrainerSoldier is
-  PayForTrainingInSector(GetSolSectorID8(pMilitiaTrainerSoldier));
+  Assert(_st.trainer);
+  // pay up in the sector where trainer is
+  PayForTrainingInSector(GetSolSectorID8(_st.trainer));
 }
 
-void PayForTrainingInSector(SectorID8 ubSector) {
+static void PayForTrainingInSector(SectorID8 ubSector) {
   Assert(GetSectorInfoByID8(ubSector)->fMilitiaTrainingPaid == FALSE);
 
   // spend the money
@@ -926,7 +916,7 @@ void PayForTrainingInSector(SectorID8 ubSector) {
   ResetDoneFlagForAllMilitiaTrainersInSector(ubSector);
 }
 
-void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector) {
+static void ResetDoneFlagForAllMilitiaTrainersInSector(SectorID8 ubSector) {
   struct SoldierList sols;
   GetTeamSoldiers_Active(OUR_TEAM, &sols);
   for (int i = 0; i < sols.num; i++) {
@@ -985,16 +975,11 @@ BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId) {
   }
 }
 
-i8 gbGreenToElitePromotions = 0;
-i8 gbGreenToRegPromotions = 0;
-i8 gbRegToElitePromotions = 0;
-i8 gbMilitiaPromotions = 0;
-
 void PrepMilitiaPromotion() {
-  gbGreenToElitePromotions = 0;
-  gbGreenToRegPromotions = 0;
-  gbRegToElitePromotions = 0;
-  gbMilitiaPromotions = 0;
+  _st.gbGreenToElitePromotions = 0;
+  _st.gbGreenToRegPromotions = 0;
+  _st.gbRegToElitePromotions = 0;
+  _st.gbMilitiaPromotions = 0;
 }
 
 void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kills) {
@@ -1002,14 +987,14 @@ void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kill
   u8 ubPromotions = CheckOneMilitiaForPromotion(sMapX, sMapY, rank, kills);
   if (ubPromotions) {
     if (ubPromotions == 2) {
-      gbGreenToElitePromotions++;
-      gbMilitiaPromotions++;
+      _st.gbGreenToElitePromotions++;
+      _st.gbMilitiaPromotions++;
     } else if (soldierClass == SOLDIER_CLASS_GREEN_MILITIA) {
-      gbGreenToRegPromotions++;
-      gbMilitiaPromotions++;
+      _st.gbGreenToRegPromotions++;
+      _st.gbMilitiaPromotions++;
     } else if (soldierClass == SOLDIER_CLASS_REG_MILITIA) {
-      gbRegToElitePromotions++;
-      gbMilitiaPromotions++;
+      _st.gbRegToElitePromotions++;
+      _st.gbMilitiaPromotions++;
     }
   }
 }
@@ -1035,26 +1020,26 @@ void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize) {
   BOOLEAN fAddSpace = FALSE;
   swprintf(str, bufSize, L"");
 
-  if (!gbMilitiaPromotions) {
+  if (!_st.gbMilitiaPromotions) {
     return;
   }
-  if (gbGreenToElitePromotions > 1) {
-    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[22], gbGreenToElitePromotions);
+  if (_st.gbGreenToElitePromotions > 1) {
+    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[22], _st.gbGreenToElitePromotions);
     wcsncat(str, pStr, bufSize);
     fAddSpace = TRUE;
-  } else if (gbGreenToElitePromotions == 1) {
+  } else if (_st.gbGreenToElitePromotions == 1) {
     wcsncat(str, gzLateLocalizedString[29], bufSize);
     fAddSpace = TRUE;
   }
 
-  if (gbGreenToRegPromotions > 1) {
+  if (_st.gbGreenToRegPromotions > 1) {
     if (fAddSpace) {
       wcsncat(str, L" ", bufSize);
     }
-    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[23], gbGreenToRegPromotions);
+    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[23], _st.gbGreenToRegPromotions);
     wcsncat(str, pStr, bufSize);
     fAddSpace = TRUE;
-  } else if (gbGreenToRegPromotions == 1) {
+  } else if (_st.gbGreenToRegPromotions == 1) {
     if (fAddSpace) {
       wcsncat(str, L" ", bufSize);
     }
@@ -1062,13 +1047,13 @@ void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize) {
     fAddSpace = TRUE;
   }
 
-  if (gbRegToElitePromotions > 1) {
+  if (_st.gbRegToElitePromotions > 1) {
     if (fAddSpace) {
       wcsncat(str, L" ", bufSize);
     }
-    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[24], gbRegToElitePromotions);
+    swprintf(pStr, ARR_SIZE(pStr), gzLateLocalizedString[24], _st.gbRegToElitePromotions);
     wcsncat(str, pStr, bufSize);
-  } else if (gbRegToElitePromotions == 1) {
+  } else if (_st.gbRegToElitePromotions == 1) {
     if (fAddSpace) {
       wcsncat(str, L" ", bufSize);
     }
@@ -1077,10 +1062,10 @@ void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize) {
   }
 
   // Clear the fields
-  gbGreenToElitePromotions = 0;
-  gbGreenToRegPromotions = 0;
-  gbRegToElitePromotions = 0;
-  gbMilitiaPromotions = 0;
+  _st.gbGreenToElitePromotions = 0;
+  _st.gbGreenToRegPromotions = 0;
+  _st.gbRegToElitePromotions = 0;
+  _st.gbMilitiaPromotions = 0;
 }
 
-bool HasNewMilitiaPromotions() { return gbMilitiaPromotions > 0; }
+bool HasNewMilitiaPromotions() { return _st.gbMilitiaPromotions > 0; }
