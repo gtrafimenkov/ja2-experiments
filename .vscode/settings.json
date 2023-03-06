@@ -20,6 +20,7 @@
         "text.h": "c",
         "mapscreeninterfacebottom.h": "c",
         "town.h": "c",
-        "townmilitia.h": "c"
+        "townmilitia.h": "c",
+        "soldier.h": "c"
     }
 }

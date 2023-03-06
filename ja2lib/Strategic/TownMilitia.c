@@ -11,7 +11,6 @@
 #include "Sector.h"
 #include "Soldier.h"
 #include "Strategic/Assignments.h"
-#include "Strategic/GameClock.h"
 #include "Tactical.h"
 #include "Tactical/DialogueControl.h"
 #include "Team.h"
