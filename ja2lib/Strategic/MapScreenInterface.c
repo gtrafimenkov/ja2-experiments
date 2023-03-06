@@ -4479,7 +4479,7 @@ BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(INT16 sSectorX, INT16
   // get the strategic sector value
   sSector = GetSectorID16(sSectorX, sSectorY);
 
-  if (StrategicMap[sSector].bNameId == BLANK_SECTOR) {
+  if (StrategicMap[sSector].townID == BLANK_SECTOR) {
     return (FALSE);
   }
 
@@ -4515,7 +4515,7 @@ void NotifyPlayerOfInvasionByEnemyForces(INT16 sSectorX, INT16 sSectorY, INT8 bS
   }
 
   // get the town id
-  bTownId = StrategicMap[sSector].bNameId;
+  bTownId = StrategicMap[sSector].townID;
 
   // check if SAM site here
   if (IsThisSectorASAMSector(sSectorX, sSectorY, bSectorZ)) {

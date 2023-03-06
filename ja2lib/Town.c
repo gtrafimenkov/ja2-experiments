@@ -16,9 +16,9 @@ void BuildListOfTownSectors(void) {
     for (INT32 iCounterY = 0; iCounterY < MAP_WORLD_Y; iCounterY++) {
       UINT16 usSector = GetSectorID16(iCounterX, iCounterY);
 
-      if ((StrategicMap[usSector].bNameId >= FIRST_TOWN) &&
-          (StrategicMap[usSector].bNameId < NUM_TOWNS)) {
-        allTownSectors[iCounter].townID = StrategicMap[usSector].bNameId;
+      if ((StrategicMap[usSector].townID >= FIRST_TOWN) &&
+          (StrategicMap[usSector].townID < NUM_TOWNS)) {
+        allTownSectors[iCounter].townID = StrategicMap[usSector].townID;
         allTownSectors[iCounter].sectorID = usSector;
         iCounter++;
       }

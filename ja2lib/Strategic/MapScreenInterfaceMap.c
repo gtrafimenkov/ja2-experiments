@@ -4213,22 +4213,22 @@ void BlitTownGridMarkers(void) {
         sScreenX += 2;
       }
 
-      if (StrategicMap[sectorID - MAP_WORLD_X].bNameId == BLANK_SECTOR) {
+      if (StrategicMap[sectorID - MAP_WORLD_X].townID == BLANK_SECTOR) {
         LineDraw(TRUE, sScreenX - 1, sScreenY - 1, sScreenX + sWidth - 1, sScreenY - 1, usColor,
                  pDestBuf);
       }
 
-      if ((StrategicMap[sectorID + MAP_WORLD_X].bNameId == BLANK_SECTOR)) {
+      if ((StrategicMap[sectorID + MAP_WORLD_X].townID == BLANK_SECTOR)) {
         LineDraw(TRUE, sScreenX - 1, sScreenY + sHeight - 1, sScreenX + sWidth - 1,
                  sScreenY + sHeight - 1, usColor, pDestBuf);
       }
 
-      if (StrategicMap[sectorID - 1].bNameId == BLANK_SECTOR) {
+      if (StrategicMap[sectorID - 1].townID == BLANK_SECTOR) {
         LineDraw(TRUE, sScreenX - 2, sScreenY - 1, sScreenX - 2, sScreenY + sHeight - 1, usColor,
                  pDestBuf);
       }
 
-      if (StrategicMap[sectorID + 1].bNameId == BLANK_SECTOR) {
+      if (StrategicMap[sectorID + 1].townID == BLANK_SECTOR) {
         LineDraw(TRUE, sScreenX + sWidth - 1, sScreenY - 1, sScreenX + sWidth - 1,
                  sScreenY + sHeight - 1, usColor, pDestBuf);
       }
@@ -4660,7 +4660,7 @@ void RenderIconsPerSectorForSelectedTown(void) {
                                      ((iCounter / MILITIA_BOX_ROWS) * MILITIA_BOX_BOX_HEIGHT)),
                              MILITIA_BOX_BOX_WIDTH, 0, sString, FONT10ARIAL, &sX, &sY);
 
-    if (StrategicMap[SectorID8To16(sCurrentSectorValue)].bNameId != BLANK_SECTOR &&
+    if (StrategicMap[SectorID8To16(sCurrentSectorValue)].townID != BLANK_SECTOR &&
         !StrategicMap[SectorID8To16(sCurrentSectorValue)].fEnemyControlled) {
       if (sSectorMilitiaMapSector != iCounter) {
         mprintf(sX, (INT16)(sY + MILITIA_BOX_BOX_HEIGHT - 5), sString);
@@ -5003,7 +5003,7 @@ BOOLEAN IsThisMilitiaTownSectorAllowable(INT16 sSectorIndexValue) {
   sSectorY = SectorID8_Y(sGlobalMapSector);
 
   // is this in fact part of a town?
-  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId == BLANK_SECTOR) {
+  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].townID == BLANK_SECTOR) {
     return (FALSE);
   }
 
@@ -5353,7 +5353,7 @@ void RenderShadingForUnControlledSectors(void) {
     sCurrentSectorValue =
         sBaseSectorValue + ((iCounter % MILITIA_BOX_ROWS) + (iCounter / MILITIA_BOX_ROWS) * (16));
 
-    if ((StrategicMap[SectorID8To16(sCurrentSectorValue)].bNameId != BLANK_SECTOR) &&
+    if ((StrategicMap[SectorID8To16(sCurrentSectorValue)].townID != BLANK_SECTOR) &&
         ((StrategicMap[SectorID8To16(sCurrentSectorValue)].fEnemyControlled) ||
          (NumHostilesInSector((INT16)SectorID8_X(sCurrentSectorValue),
                               (INT16)SectorID8_Y(sCurrentSectorValue), 0)))) {
@@ -6190,7 +6190,7 @@ BOOLEAN CanRedistributeMilitiaInSector(INT16 sClickedSectorX, INT16 sClickedSect
     sSectorY = SectorID8_Y(sCurrentSectorValue);
 
     // not in the same town?
-    if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId != bClickedTownId) {
+    if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].townID != bClickedTownId) {
       continue;
     }
 

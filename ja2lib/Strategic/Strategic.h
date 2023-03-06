@@ -12,7 +12,7 @@ struct strategicmapelement {
   UINT8 UNUSEDuiVehicleEta[4];  // eta/mvt costs for vehicles
   UINT8 uiBadFootSector[4];     // blocking mvt for foot
   UINT8 uiBadVehicleSector[4];  // blocking mvt from vehicles
-  INT8 bNameId;
+  INT8 townID;
   BOOLEAN fEnemyControlled;  // enemy controlled or not
   BOOLEAN fEnemyAirControlled;
   BOOLEAN UNUSEDfLostControlAtSomeTime;

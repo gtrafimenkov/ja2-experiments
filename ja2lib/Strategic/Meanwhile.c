@@ -1125,7 +1125,7 @@ void HandleFirstBattleEndingWhileInTown(INT16 sSectorX, INT16 sSectorY, INT16 bS
   sSector = GetSectorID16(sSectorX, sSectorY);
 
   // get town name id
-  bTownId = StrategicMap[sSector].bNameId;
+  bTownId = StrategicMap[sSector].townID;
 
   if (bTownId == BLANK_SECTOR) {
     // invalid town

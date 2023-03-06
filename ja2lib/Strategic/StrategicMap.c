@@ -536,7 +536,7 @@ INT8 GetTownIdForSector(INT16 sMapX, INT16 sMapY) {
   return GetTownIdForStrategicMapIndex(GetSectorID16(sMapX, sMapY));
 }
 
-i8 GetTownIdForStrategicMapIndex(i32 index) { return StrategicMap[index].bNameId; }
+i8 GetTownIdForStrategicMapIndex(i32 index) { return StrategicMap[index].townID; }
 
 // return number of sectors this town takes up
 UINT8 GetTownSectorSize(TownID bTownId) {
@@ -545,7 +545,7 @@ UINT8 GetTownSectorSize(TownID bTownId) {
 
   for (iCounterA = 0; iCounterA < (INT32)(MAP_WORLD_X - 1); iCounterA++) {
     for (iCounterB = 0; iCounterB < (INT32)(MAP_WORLD_Y - 1); iCounterB++) {
-      if (StrategicMap[GetSectorID16(iCounterA, iCounterB)].bNameId == bTownId) {
+      if (StrategicMap[GetSectorID16(iCounterA, iCounterB)].townID == bTownId) {
         ubSectorSize++;
       }
     }
@@ -560,7 +560,7 @@ UINT8 GetMilitiaCountAtLevelAnywhereInTown(UINT8 ubTownValue, UINT8 ubLevelValue
 
   const TownSectors *townSectors = GetAllTownSectors();
   while ((*townSectors)[iCounter].townID != 0) {
-    if (StrategicMap[(*townSectors)[iCounter].sectorID].bNameId == ubTownValue) {
+    if (StrategicMap[(*townSectors)[iCounter].sectorID].townID == ubTownValue) {
       // match.  Add the number of civs at this level
       ubCount += SectorInfo[SectorID16To8((*townSectors)[iCounter].sectorID)]
                      .ubNumberOfCivsAtLevel[ubLevelValue];
@@ -581,7 +581,7 @@ UINT8 GetTownSectorsUnderControl(TownID bTownId) {
     for (iCounterB = 0; iCounterB < (INT32)(MAP_WORLD_Y - 1); iCounterB++) {
       usSector = (UINT16)GetSectorID16(iCounterA, iCounterB);
 
-      if ((StrategicMap[usSector].bNameId == bTownId) &&
+      if ((StrategicMap[usSector].townID == bTownId) &&
           (StrategicMap[usSector].fEnemyControlled == FALSE) &&
           (NumEnemiesInSector((INT16)iCounterA, (INT16)iCounterB) == 0)) {
         ubSectorsControlled++;
@@ -1692,32 +1692,30 @@ void UpdateMercInSector(struct SOLDIERTYPE *pSoldier, INT16 sSectorX, INT16 sSec
 }
 
 void InitializeStrategicMapSectorTownNames(void) {
-  StrategicMap[GetSectorID16(2, 2)].bNameId = StrategicMap[GetSectorID16(2, 1)].bNameId = CHITZENA;
-  StrategicMap[GetSectorID16(5, 3)].bNameId = StrategicMap[GetSectorID16(6, 3)].bNameId =
-      StrategicMap[GetSectorID16(5, 4)].bNameId = StrategicMap[GetSectorID16(4, 4)].bNameId =
+  StrategicMap[GetSectorID16(2, 2)].townID = StrategicMap[GetSectorID16(2, 1)].townID = CHITZENA;
+  StrategicMap[GetSectorID16(5, 3)].townID = StrategicMap[GetSectorID16(6, 3)].townID =
+      StrategicMap[GetSectorID16(5, 4)].townID = StrategicMap[GetSectorID16(4, 4)].townID =
           SAN_MONA;
-  StrategicMap[GetSectorID16(9, 1)].bNameId = StrategicMap[GetSectorID16(10, 1)].bNameId = OMERTA;
-  StrategicMap[GetSectorID16(13, 2)].bNameId = StrategicMap[GetSectorID16(13, 3)].bNameId =
-      StrategicMap[GetSectorID16(13, 4)].bNameId = DRASSEN;
-  StrategicMap[GetSectorID16(1, 7)].bNameId = StrategicMap[GetSectorID16(1, 8)].bNameId =
-      StrategicMap[GetSectorID16(2, 7)].bNameId = StrategicMap[GetSectorID16(2, 8)].bNameId =
-          StrategicMap[GetSectorID16(3, 8)].bNameId = GRUMM;
-  StrategicMap[GetSectorID16(6, 9)].bNameId = ESTONI;
-  StrategicMap[GetSectorID16(9, 10)].bNameId = TIXA;
-  StrategicMap[GetSectorID16(8, 6)].bNameId = StrategicMap[GetSectorID16(9, 6)].bNameId =
-      StrategicMap[GetSectorID16(8, 7)].bNameId = StrategicMap[GetSectorID16(9, 7)].bNameId =
-          StrategicMap[GetSectorID16(8, 8)].bNameId = CAMBRIA;
-  StrategicMap[GetSectorID16(13, 9)].bNameId = StrategicMap[GetSectorID16(14, 9)].bNameId =
-      StrategicMap[GetSectorID16(13, 8)].bNameId = StrategicMap[GetSectorID16(14, 8)].bNameId =
-          ALMA;
-  StrategicMap[GetSectorID16(4, 11)].bNameId = ORTA;
-  StrategicMap[GetSectorID16(11, 12)].bNameId = StrategicMap[GetSectorID16(12, 12)].bNameId =
-      BALIME;
-  StrategicMap[GetSectorID16(3, 14)].bNameId = StrategicMap[GetSectorID16(4, 14)].bNameId =
-      StrategicMap[GetSectorID16(5, 14)].bNameId = StrategicMap[GetSectorID16(3, 15)].bNameId =
-          StrategicMap[GetSectorID16(4, 15)].bNameId = StrategicMap[GetSectorID16(3, 16)].bNameId =
+  StrategicMap[GetSectorID16(9, 1)].townID = StrategicMap[GetSectorID16(10, 1)].townID = OMERTA;
+  StrategicMap[GetSectorID16(13, 2)].townID = StrategicMap[GetSectorID16(13, 3)].townID =
+      StrategicMap[GetSectorID16(13, 4)].townID = DRASSEN;
+  StrategicMap[GetSectorID16(1, 7)].townID = StrategicMap[GetSectorID16(1, 8)].townID =
+      StrategicMap[GetSectorID16(2, 7)].townID = StrategicMap[GetSectorID16(2, 8)].townID =
+          StrategicMap[GetSectorID16(3, 8)].townID = GRUMM;
+  StrategicMap[GetSectorID16(6, 9)].townID = ESTONI;
+  StrategicMap[GetSectorID16(9, 10)].townID = TIXA;
+  StrategicMap[GetSectorID16(8, 6)].townID = StrategicMap[GetSectorID16(9, 6)].townID =
+      StrategicMap[GetSectorID16(8, 7)].townID = StrategicMap[GetSectorID16(9, 7)].townID =
+          StrategicMap[GetSectorID16(8, 8)].townID = CAMBRIA;
+  StrategicMap[GetSectorID16(13, 9)].townID = StrategicMap[GetSectorID16(14, 9)].townID =
+      StrategicMap[GetSectorID16(13, 8)].townID = StrategicMap[GetSectorID16(14, 8)].townID = ALMA;
+  StrategicMap[GetSectorID16(4, 11)].townID = ORTA;
+  StrategicMap[GetSectorID16(11, 12)].townID = StrategicMap[GetSectorID16(12, 12)].townID = BALIME;
+  StrategicMap[GetSectorID16(3, 14)].townID = StrategicMap[GetSectorID16(4, 14)].townID =
+      StrategicMap[GetSectorID16(5, 14)].townID = StrategicMap[GetSectorID16(3, 15)].townID =
+          StrategicMap[GetSectorID16(4, 15)].townID = StrategicMap[GetSectorID16(3, 16)].townID =
               MEDUNA;
-  // StrategicMap[3+16*MAP_WORLD_X].bNameId=PALACE;
+  // StrategicMap[3+16*MAP_WORLD_X].townID=PALACE;
   return;
 }
 
@@ -1766,7 +1764,7 @@ void GetSectorIDString(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ, CHAR16 *zS
       wcscpy(zString, L"");
     }
   } else {
-    bTownNameID = StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId;
+    bTownNameID = StrategicMap[GetSectorID16(sSectorX, sSectorY)].townID;
     ubSectorID = (UINT8)GetSectorID8(sSectorX, sSectorY);
     pSector = &SectorInfo[ubSectorID];
     ubLandType = pSector->ubTraversability[4];
@@ -3063,7 +3061,7 @@ BOOLEAN IsThereAFunctionalSAMSiteInSector(INT16 sSectorX, INT16 sSectorY, INT8 b
 
 // is this sector part of the town?
 BOOLEAN SectorIsPartOfTown(TownID bTownId, INT16 sSectorX, INT16 sSectorY) {
-  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].bNameId == bTownId) {
+  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)].townID == bTownId) {
     // is in the town
     return (TRUE);
   }

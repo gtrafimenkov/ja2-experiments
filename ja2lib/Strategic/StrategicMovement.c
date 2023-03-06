@@ -4207,7 +4207,7 @@ BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup
   sStrategicSector = GetSectorID16(sSectorX, sSectorY);
 
   // skip towns/pseudo-towns (anything that shows up on the map as being special)
-  if (StrategicMap[sStrategicSector].bNameId != BLANK_SECTOR) {
+  if (StrategicMap[sStrategicSector].townID != BLANK_SECTOR) {
     return (FALSE);
   }
 

@@ -132,7 +132,7 @@ BOOLEAN SetThisSectorAsPlayerControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BO
     StrategicMap[usMapSector].fEnemyControlled = FALSE;
     SectorInfo[GetSectorID8(sMapX, sMapY)].fPlayer[bMapZ] = TRUE;
 
-    bTownId = StrategicMap[usMapSector].bNameId;
+    bTownId = StrategicMap[usMapSector].townID;
 
     // check if there's a town in the sector
     if ((bTownId >= FIRST_TOWN) && (bTownId < NUM_TOWNS)) {
@@ -267,7 +267,7 @@ BOOLEAN SetThisSectorAsEnemyControlled(INT16 sMapX, INT16 sMapY, INT8 bMapZ, BOO
       }
 
       // check if there's a town in the sector
-      bTownId = StrategicMap[usMapSector].bNameId;
+      bTownId = StrategicMap[usMapSector].townID;
 
       SectorInfo[GetSectorID8(sMapX, sMapY)].fPlayer[bMapZ] = FALSE;
 
