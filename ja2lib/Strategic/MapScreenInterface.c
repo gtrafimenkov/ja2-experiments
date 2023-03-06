@@ -455,7 +455,7 @@ BOOLEAN MultipleCharacterListEntriesSelected(void) {
 
   // check if more than one person is selected in the selected list
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+    if (IsCharSelected(iCounter)) {
       ubSelectedCnt++;
     }
   }
@@ -475,7 +475,7 @@ void DeselectSelectedListMercsWhoCantMoveWithThisGuy(struct SOLDIERTYPE *pSoldie
   // deselect any other selected mercs that can't travel together with pSoldier
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     if (IsCharListEntryValid(iCounter)) {
-      if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+      if (IsCharSelected(iCounter)) {
         pSoldier2 = &(Menptr[gCharactersList[iCounter].usSolID]);
 
         // skip the guy we are
@@ -573,7 +573,7 @@ BOOLEAN AnyMercInSameSquadOrVehicleIsSelected(struct SOLDIERTYPE *pSoldier) {
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     if (IsCharListEntryValid(iCounter)) {
       // if selected
-      if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+      if (IsCharSelected(iCounter)) {
         pSoldier2 = &(Menptr[gCharactersList[iCounter].usSolID]);
 
         // if they have the same assignment
@@ -4795,7 +4795,7 @@ BOOLEAN CanEntireMovementGroupMercIsInMove(struct SOLDIERTYPE *pSoldier, INT8 *p
 
       // if he is in the same movement group (i.e. squad), or he is still selected to go with us
       // (legal?)
-      if ((ubCurrentGroup == ubGroup) || (fSelectedListOfMercsForMapScreen[iCounter] == TRUE)) {
+      if ((ubCurrentGroup == ubGroup) || IsCharSelected(iCounter)) {
         // can this character also move strategically?
         if (CanCharacterMoveInStrategic(pCurrentSoldier, pbErrorNumber) == FALSE) {
           // cannot move, fail, and don't bother checking anyone else, either

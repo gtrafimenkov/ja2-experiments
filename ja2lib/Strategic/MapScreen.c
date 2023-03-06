@@ -593,9 +593,6 @@ extern BOOLEAN gfUsePersistantPBI;
 
 extern BOOLEAN gfOneFramePauseOnExit;
 
-// the selected list of mercs
-extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
-
 extern INT32 iDialogueBox;
 extern INT32 giMapInvDescButton;
 
@@ -7894,7 +7891,7 @@ void RebuildWayPointsForAllSelectedCharsGroups(void) {
   memset(fGroupIDRebuilt, FALSE, sizeof(fGroupIDRebuilt));
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE)) {
+    if (IsCharSelected(iCounter)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       // if he's IN a vehicle or IS a vehicle
@@ -9044,7 +9041,7 @@ void SortListOfMercsInTeamPanel(BOOLEAN fRetainSelectedMercs) {
       }
 
       // are they selected?...
-      if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+      if (IsCharSelected(iCounter)) {
         // yes, store pointer to them
         pSelectedSoldier[iCounter] = pCurrentSoldier;
       }
@@ -9752,7 +9749,7 @@ void CopyPathToAllSelectedCharacters(struct path *pPath) {
 
   // run through list and copy paths for each selected character
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+    if (IsCharSelected(iCounter)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       // skip itself!
@@ -10093,7 +10090,7 @@ void RandomAwakeSelectedMercConfirmsStrategicMove(void) {
   UINT8 ubChosenMerc;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE)) {
+    if (IsCharSelected(iCounter)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       if (pSoldier->bLife >= OKLIFE && !(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) &&
@@ -10266,7 +10263,7 @@ void WakeUpAnySleepingSelectedMercsOnFootOrDriving(void) {
   BOOLEAN fSuccess = FALSE;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE)) {
+    if (IsCharSelected(iCounter)) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
       // if asleep
@@ -10461,7 +10458,7 @@ void InitPreviousPaths(void) {
 void RememberPreviousPathForAllSelectedChars(void) {
   INT32 iCounter = 0;
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+    if (IsCharSelected(iCounter)) {
       // remember his previous path by copying it to his slot in the array kept for that purpose
       gpCharacterPreviousMercPath[iCounter] =
           CopyPaths(GetSoldierMercPathPtr(MercPtrs[gCharactersList[iCounter].usSolID]),
@@ -10517,7 +10514,7 @@ void RestorePreviousPaths(void) {
   {
     for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
       // if selected
-      if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+      if (IsCharSelected(iCounter)) {
         pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
 
         if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {
@@ -10573,7 +10570,7 @@ void ClearPreviousPaths(void) {
   INT32 iCounter = 0;
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
-    if (fSelectedListOfMercsForMapScreen[iCounter] == TRUE) {
+    if (IsCharSelected(iCounter)) {
       gpCharacterPreviousMercPath[iCounter] =
           ClearStrategicPathList(gpCharacterPreviousMercPath[iCounter], 0);
     }

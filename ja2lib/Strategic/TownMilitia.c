@@ -54,9 +54,6 @@ struct militiaState {
 
 static struct militiaState _st;
 
-// the selected list of mercs
-extern BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
-
 static void addMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
 static void promoteMilitia(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank, UINT8 ubHowMany);
 
@@ -825,8 +822,7 @@ static void BuildListOfUnpaidTrainableSectors(void) {
       // valid character?
       if (IsCharListEntryValid(iCounter)) {
         // selected?
-        if ((fSelectedListOfMercsForMapScreen[iCounter] == TRUE) ||
-            (iCounter == GetCharForAssignmentIndex())) {
+        if (IsCharSelected(iCounter) || iCounter == GetCharForAssignmentIndex()) {
           struct SOLDIERTYPE *sol = GetMercFromCharacterList(iCounter);
           if (CanCharacterTrainMilitia(sol) == TRUE) {
             if (GetSectorInfoByID8(GetSolSectorID8(sol))->fMilitiaTrainingPaid == FALSE) {
