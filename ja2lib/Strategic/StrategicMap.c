@@ -3080,6 +3080,7 @@ BOOLEAN SaveStrategicInfoToSavedFile(HWFILE hFile) {
     return (FALSE);
   }
 
+  // TODO: savegame compatibility after SECTORINFO change
   // Save the Sector Info
   uiSize = sizeof(SECTORINFO) * 256;
   FileMan_Write(hFile, SectorInfo, uiSize, &uiNumBytesWritten);
@@ -3089,13 +3090,6 @@ BOOLEAN SaveStrategicInfoToSavedFile(HWFILE hFile) {
 
   // Save the SAM Controlled Sector Information
   uiSize = MAP_WORLD_X * MAP_WORLD_Y;
-  /*
-          FileMan_Write( hFile, ubSAMControlledSectors, uiSize, &uiNumBytesWritten );
-          if( uiNumBytesWritten != uiSize)
-          {
-                  return(FALSE);
-          }
-  */
   FileMan_Seek(hFile, uiSize, FILE_SEEK_FROM_CURRENT);
 
   // Save the fFoundOrta
@@ -3117,6 +3111,7 @@ BOOLEAN LoadStrategicInfoFromSavedFile(HWFILE hFile) {
     return (FALSE);
   }
 
+  // TODO: savegame compatibility after SECTORINFO change
   // Load the Sector Info
   uiSize = sizeof(SECTORINFO) * 256;
   FileMan_Read(hFile, SectorInfo, uiSize, &uiNumBytesRead);
@@ -3126,13 +3121,6 @@ BOOLEAN LoadStrategicInfoFromSavedFile(HWFILE hFile) {
 
   // Load the SAM Controlled Sector Information
   uiSize = MAP_WORLD_X * MAP_WORLD_Y;
-  /*
-          FileMan_Read( hFile, ubSAMControlledSectors, uiSize, &uiNumBytesRead );
-          if( uiNumBytesRead != uiSize)
-          {
-                  return(FALSE);
-          }
-  */
   FileMan_Seek(hFile, uiSize, FILE_SEEK_FROM_CURRENT);
 
   // Load the fFoundOrta

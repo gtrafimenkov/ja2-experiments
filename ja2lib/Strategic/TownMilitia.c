@@ -51,6 +51,13 @@ struct militiaState {
   i8 gbMilitiaPromotions;
 
   struct sectorSearch sectorSearch;
+
+  // TODO:
+  // - store for every sector:
+  //     ubNumberOfCivsAtLevel
+  //     fMilitiaTrainingPaid
+  // - stop importing SectorInfo.h
+  // - this way to module will be more self-contained
 };
 
 static struct militiaState _st;
