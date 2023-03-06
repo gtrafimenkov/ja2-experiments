@@ -9,6 +9,7 @@
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
 #include "Sector.h"
+#include "SectorInfo.h"
 #include "Soldier.h"
 #include "Strategic/Assignments.h"
 #include "Tactical.h"

@@ -3,6 +3,7 @@
 
 #include "SGP/Types.h"
 #include "Sector.h"
+#include "SectorInfo.h"
 
 // Sector enumerations
 //

@@ -1,6 +1,7 @@
 #include "Tactical.h"
 
 #include "SGP/Types.h"
+#include "SectorInfo.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierInitList.h"
