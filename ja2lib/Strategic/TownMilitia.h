@@ -15,18 +15,17 @@ struct SOLDIERTYPE;
 #define MIN_RATING_TO_TRAIN_TOWN 20
 
 // this handles what happens when a new militia unit is finishes getting trained
-void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, INT16 sMapX, INT16 sMapY);
+void TownMilitiaTrainingCompleted(struct SOLDIERTYPE *pTrainer, u8 mapX, u8 mapY);
 
-void StrategicRemoveMilitiaFromSector(INT16 sMapX, INT16 sMapY, UINT8 ubRank, UINT8 ubHowMany);
+void StrategicRemoveMilitiaFromSector(u8 mapX, u8 mapY, UINT8 ubRank, UINT8 ubHowMany);
 
 // this will check for promotions and handle them for you
-UINT8 CheckOneMilitiaForPromotion(INT16 sMapX, INT16 sMapY, UINT8 ubCurrentRank,
-                                  UINT8 ubRecentKillPts);
+UINT8 CheckOneMilitiaForPromotion(u8 mapX, u8 mapY, UINT8 ubCurrentRank, UINT8 ubRecentKillPts);
 
 void BuildMilitiaPromotionsString(CHAR16 *str, size_t bufSize);
 
-UINT8 CountAllMilitiaInSector(INT16 sMapX, INT16 sMapY);
-UINT8 MilitiaInSectorOfRank(INT16 sMapX, INT16 sMapY, UINT8 ubRank);
+UINT8 CountAllMilitiaInSector(u8 mapX, u8 mapY);
+UINT8 MilitiaInSectorOfRank(u8 mapX, u8 mapY, UINT8 ubRank);
 
 // tell player how much it will cost
 void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier);
@@ -35,12 +34,12 @@ void HandleInterfaceMessageForCostOfTrainingMilitia(struct SOLDIERTYPE *pSoldier
 void HandleInterfaceMessageForContinuingTrainingMilitia(struct SOLDIERTYPE *pSoldier);
 
 // is there a town with militia here or nearby?
-BOOLEAN CanNearbyMilitiaScoutThisSector(INT16 sSectorX, INT16 sSectorY);
+BOOLEAN CanNearbyMilitiaScoutThisSector(u8 mapX, u8 mapY);
 
 // is the town militia full?
 BOOLEAN IsTownFullMilitia(TownID bTownId);
 // is the SAM site full of militia?
-BOOLEAN IsSAMSiteFullOfMilitia(INT16 sSectorX, INT16 sSectorY);
+BOOLEAN IsSAMSiteFullOfMilitia(u8 mapX, u8 mapY);
 
 // now that town training is complete, handle the continue boxes
 void HandleContinueOfTownTraining(void);
@@ -48,14 +47,14 @@ void HandleContinueOfTownTraining(void);
 // clear the list of training completed sectors
 void ClearSectorListForCompletedTrainingOfMilitia(void);
 
-BOOLEAN MilitiaTrainingAllowedInSector(INT16 sSectorX, INT16 sSectorY, INT8 bSectorZ);
+BOOLEAN MilitiaTrainingAllowedInSector(u8 mapX, u8 mapY, INT8 bSectorZ);
 BOOLEAN MilitiaTrainingAllowedInTown(TownID bTownId);
 
-void HandleMilitiaPromotions(INT16 sMapX, INT16 sMapY);
-void HandleMilitiaDefections(INT16 sMapX, INT16 sMapY);
+void HandleMilitiaPromotions(u8 mapX, u8 mapY);
+void HandleMilitiaDefections(u8 mapX, u8 mapY);
 
 void PrepMilitiaPromotion();
-void HandleSingleMilitiaPromotion(i16 sMapX, i16 sMapY, u8 soldierClass, u8 kills);
+void HandleSingleMilitiaPromotion(u8 mapX, u8 mapY, u8 soldierClass, u8 kills);
 bool HasNewMilitiaPromotions();
 
 #endif
