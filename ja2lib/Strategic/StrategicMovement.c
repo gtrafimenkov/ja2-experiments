@@ -117,7 +117,7 @@ BOOLEAN SaveWayPointList(HWFILE hFile, struct GROUP *pGroup);
 
 extern void RandomMercInGroupSaysQuote(struct GROUP *pGroup, UINT16 usQuoteNum);
 
-void SetLocationOfAllPlayerSoldiersInGroup(struct GROUP *pGroup, INT16 sSectorX, INT16 sSectorZ,
+void SetLocationOfAllPlayerSoldiersInGroup(struct GROUP *pGroup, u8 sSectorX, u8 sSectorZ,
                                            INT8 bSectorZ);
 
 // If there are bloodcats in this sector, then it internally
