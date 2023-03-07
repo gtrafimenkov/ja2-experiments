@@ -1,0 +1,47 @@
+name: Rust build
+
+# Using https://actions-rs.github.io/
+
+on:
+  push:
+    branches:
+      - 'example-rustlib'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install latest rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+
+      - name: Build
+        run: |
+          cd misc/example-rust-lib/rustlib
+          cargo build --all --release
+
+  build-win:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install latest rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+
+      - name: Build
+        run: |
+          cd misc/example-rust-lib/rustlib
+          cargo build --all --release
