@@ -476,7 +476,7 @@ void ShowTeamAndVehicles(INT32 fShowFlags);
 BOOLEAN ShadeMapElem(INT16 sMapX, INT16 sMapY, INT32 iColor);
 BOOLEAN ShadeMapElemZoomIn(INT16 sMapX, INT16 sMapY, INT32 iColor);
 void AdjustXForLeftMapEdge(STR16 wString, INT16 *psX);
-void BlitTownGridMarkers(void);
+static void BlitTownGridMarkers(void);
 void BlitMineGridMarkers(void);
 void BlitSAMGridMarkers(void);
 void BlitMineIcon(INT16 sMapX, INT16 sMapY);
@@ -4191,7 +4191,7 @@ void BlitTownGridMarkers(void) {
   // go through list of towns and place on screen
   while ((*townSectors)[iCounter].townID != 0) {
     TownID townID = (*townSectors)[iCounter].townID;
-    SectorID8 sectorID = (*townSectors)[iCounter].sectorID;
+    SectorID16 sectorID = (*townSectors)[iCounter].sectorID;
     // skip Orta/Tixa until found
     if (((fFoundOrta != FALSE) || (townID != ORTA)) &&
         ((townID != TIXA) || (fFoundTixa != FALSE))) {
