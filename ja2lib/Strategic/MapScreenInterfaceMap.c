@@ -4196,8 +4196,8 @@ void BlitTownGridMarkers(void) {
     if (((fFoundOrta != FALSE) || (townID != ORTA)) &&
         ((townID != TIXA) || (fFoundTixa != FALSE))) {
       if (fZoomFlag) {
-        GetScreenXYFromMapXYStationary((INT16)(SectorID16_X(sectorID)),
-                                       (INT16)(SectorID16_Y(sectorID)), &sScreenX, &sScreenY);
+        GetScreenXYFromMapXYStationary(SectorID16_X(sectorID), SectorID16_Y(sectorID), &sScreenX,
+                                       &sScreenY);
         sScreenX -= MAP_GRID_X - 1;
         sScreenY -= MAP_GRID_Y;
 
@@ -4205,8 +4205,7 @@ void BlitTownGridMarkers(void) {
         sHeight = 2 * MAP_GRID_Y;
       } else {
         // get location on screen
-        GetScreenXYFromMapXY((INT16)(SectorID16_X(sectorID)), (INT16)(SectorID16_Y(sectorID)),
-                             &sScreenX, &sScreenY);
+        GetScreenXYFromMapXY(SectorID16_X(sectorID), SectorID16_Y(sectorID), &sScreenX, &sScreenY);
         sWidth = MAP_GRID_X - 1;
         sHeight = MAP_GRID_Y;
 
