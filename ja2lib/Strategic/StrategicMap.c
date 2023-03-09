@@ -2966,6 +2966,29 @@ void UpdateAirspaceControl(void) {
   StrategicMapElement *pSAMStrategicMap = NULL;
   BOOLEAN fEnemyControlsAir;
 
+  // debug air control map
+  {
+    DbgWriteToDebugFile("UpdateAirspaceControl: before update");
+    char *airControlMap[] = {
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................",
+    };
+    for (int y = 1; y < 17; y++) {
+      for (int x = 1; x < 17; x++) {
+        SectorID16 sector = GetSectorID16(x, y);
+        if (StrategicMap[sector].fEnemyAirControlled) {
+          airControlMap[y][x] = 'X';
+        }
+      }
+    }
+    for (int y = 0; y < 18; y++) {
+      DbgWriteToDebugFile(airControlMap[y]);
+    }
+  }
+
   for (iCounterA = 1; iCounterA < (INT32)(MAP_WORLD_X - 1); iCounterA++) {
     for (iCounterB = 1; iCounterB < (INT32)(MAP_WORLD_Y - 1); iCounterB++) {
       // IMPORTANT: B and A are reverse here, since the table is stored transposed
@@ -2987,6 +3010,29 @@ void UpdateAirspaceControl(void) {
       }
 
       StrategicMap[GetSectorID16(iCounterA, iCounterB)].fEnemyAirControlled = fEnemyControlsAir;
+    }
+  }
+
+  // debug air control map
+  {
+    DbgWriteToDebugFile("UpdateAirspaceControl: after update");
+    char *airControlMap[] = {
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................",
+    };
+    for (int y = 1; y < 17; y++) {
+      for (int x = 1; x < 17; x++) {
+        SectorID16 sector = GetSectorID16(x, y);
+        if (StrategicMap[sector].fEnemyAirControlled) {
+          airControlMap[y][x] = 'X';
+        }
+      }
+    }
+    for (int y = 0; y < 18; y++) {
+      DbgWriteToDebugFile(airControlMap[y]);
     }
   }
 

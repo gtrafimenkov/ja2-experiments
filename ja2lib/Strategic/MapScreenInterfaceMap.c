@@ -712,6 +712,29 @@ UINT32 DrawMap(void) {
     UnLockVideoSurface(guiBIGMAP);
     UnLockVideoSurface(guiSAVEBUFFER);
 
+    // debug air control map
+    {
+      DbgWriteToDebugFile("before map draw");
+      char *airControlMap[] = {
+          "..................", "..................", "..................", "..................",
+          "..................", "..................", "..................", "..................",
+          "..................", "..................", "..................", "..................",
+          "..................", "..................", "..................", "..................",
+          "..................", "..................",
+      };
+      for (int y = 1; y < 17; y++) {
+        for (int x = 1; x < 17; x++) {
+          SectorID16 sector = GetSectorID16(x, y);
+          if (StrategicMap[sector].fEnemyAirControlled) {
+            airControlMap[y][x] = 'X';
+          }
+        }
+      }
+      for (int y = 0; y < 18; y++) {
+        DbgWriteToDebugFile(airControlMap[y]);
+      }
+    }
+
     // shade map sectors (must be done after Tixa/Orta/Mine icons have been blitted, but before
     // icons!)
     for (cnt = 1; cnt < MAP_WORLD_X - 1; cnt++) {
