@@ -3104,6 +3104,28 @@ BOOLEAN LoadStrategicInfoFromSavedFile(HWFILE hFile) {
     return (FALSE);
   }
 
+  // debug air control map
+  {
+    char *airControlMap[] = {
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................", "..................", "..................",
+        "..................", "..................",
+    };
+    for (int y = 1; y < 17; y++) {
+      for (int x = 1; x < 17; x++) {
+        SectorID16 sector = GetSectorID16(x, y);
+        if (StrategicMap[sector].fEnemyAirControlled) {
+          airControlMap[y][x] = 'X';
+        }
+      }
+    }
+    for (int y = 0; y < 18; y++) {
+      DbgWriteToDebugFile(airControlMap[y]);
+    }
+  }
+
   // Load the Sector Info
   {
     uiSize = sizeof(SECTORINFO) * 256;
