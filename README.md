@@ -1,8 +1,18 @@
-# JA2 reimplementation in Rust
+# Jagged Alliance 2 in Rust
 
-Just for practice.
+Project goals:
+- get experience using Rust programming language
+- understand strong and week points of the language
 
-Based on https://github.com/gtrafimenkov/ja2-experiments
+Non-goals:
+- support various game mods
+- full rewrite in Rust
+
+Optional goals:
+- add Linux support by using [SDL](https://www.libsdl.org) library
+
+This project is based on [ja2-experiments](https://github.com/gtrafimenkov/ja2-experiments),
+which in turn based on [ja2-vanilla](https://github.com/gtrafimenkov/ja2-vanilla).
 
 ## Project structure
 
