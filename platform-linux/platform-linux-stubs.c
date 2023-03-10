@@ -36,11 +36,7 @@ uint32_t GetClock(void) { return 0; }
 
 BOOLEAN gfProgramIsRunning;
 
-BOOLEAN Plat_GetCurrentDirectory(STRING512 pcDirectory) { return FALSE; }
-
 uint32_t Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom() { return 0; }
-
-BOOLEAN Plat_CreateDirectory(const char *pcDirectory) { return FALSE; }
 
 BOOLEAN Plat_GetFileIsReadonly(const struct GetFile *gfs) { return FALSE; }
 
@@ -73,19 +69,11 @@ int32_t FileMan_GetPos(HWFILE hFile) { return 0; }
 
 uint32_t FileMan_GetSize(HWFILE hFile) { return 0; }
 
-BOOLEAN Plat_DirectoryExists(const char *pcDirectory) { return FALSE; }
-
-BOOLEAN Plat_RemoveDirectory(const char *pcDirectory, BOOLEAN fRecursive) { return FALSE; }
-
-BOOLEAN Plat_EraseDirectory(const char *pcDirectory) { return FALSE; }
-
 BOOLEAN Plat_GetFileFirst(char *pSpec, struct GetFile *pGFStruct) { return FALSE; }
 
 BOOLEAN Plat_GetFileNext(struct GetFile *pGFStruct) { return FALSE; }
 
 void Plat_GetFileClose(struct GetFile *pGFStruct) {}
-
-BOOLEAN Plat_ClearFileAttributes(char *strFilename) { return FALSE; }
 
 BOOLEAN FileMan_CheckEndOfFile(HWFILE hFile) { return FALSE; }
 
