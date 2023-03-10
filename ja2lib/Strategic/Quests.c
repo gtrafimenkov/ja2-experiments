@@ -1016,44 +1016,49 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
       break;
     case FACT_PLAYER_IN_CONTROLLED_DRASSEN_MINE:
       gubFact[usFact] =
-          (GetIdOfMineForSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ) == MINE_DRASSEN &&
-           !(StrategicMap[GetSectorID16(gWorldSectorX, gWorldSectorY)].fEnemyControlled));
+          (GetIdOfMineForSector((u8)gWorldSectorX, (u8)gWorldSectorY, gbWorldSectorZ) ==
+               MINE_DRASSEN &&
+           !(StrategicMap[GetSectorID16((u8)gWorldSectorX, (u8)gWorldSectorY)].fEnemyControlled));
       break;
     case FACT_PLAYER_SPOKE_TO_CAMBRIA_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_CAMBRIA);
       break;
     case FACT_PLAYER_IN_CONTROLLED_CAMBRIA_MINE:
       gubFact[usFact] =
-          (GetIdOfMineForSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ) == MINE_CAMBRIA &&
-           !(StrategicMap[GetSectorID16(gWorldSectorX, gWorldSectorY)].fEnemyControlled));
+          (GetIdOfMineForSector((u8)gWorldSectorX, (u8)gWorldSectorY, gbWorldSectorZ) ==
+               MINE_CAMBRIA &&
+           !(StrategicMap[GetSectorID16((u8)gWorldSectorX, (u8)gWorldSectorY)].fEnemyControlled));
       break;
     case FACT_PLAYER_SPOKE_TO_CHITZENA_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_CHITZENA);
       break;
     case FACT_PLAYER_IN_CONTROLLED_CHITZENA_MINE:
       gubFact[usFact] =
-          (GetIdOfMineForSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ) == MINE_CHITZENA &&
-           !(StrategicMap[GetSectorID16(gWorldSectorX, gWorldSectorY)].fEnemyControlled));
+          (GetIdOfMineForSector((u8)gWorldSectorX, (u8)gWorldSectorY, gbWorldSectorZ) ==
+               MINE_CHITZENA &&
+           !(StrategicMap[GetSectorID16((u8)gWorldSectorX, (u8)gWorldSectorY)].fEnemyControlled));
       break;
     case FACT_PLAYER_SPOKE_TO_ALMA_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_ALMA);
       break;
     case FACT_PLAYER_IN_CONTROLLED_ALMA_MINE:
       gubFact[usFact] =
-          (GetIdOfMineForSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ) == MINE_ALMA &&
-           !(StrategicMap[GetSectorID16(gWorldSectorX, gWorldSectorY)].fEnemyControlled));
+          (GetIdOfMineForSector((u8)gWorldSectorX, (u8)gWorldSectorY, gbWorldSectorZ) ==
+               MINE_ALMA &&
+           !(StrategicMap[GetSectorID16((u8)gWorldSectorX, (u8)gWorldSectorY)].fEnemyControlled));
       break;
     case FACT_PLAYER_SPOKE_TO_GRUMM_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_GRUMM);
       break;
     case FACT_PLAYER_IN_CONTROLLED_GRUMM_MINE:
       gubFact[usFact] =
-          (GetIdOfMineForSector(gWorldSectorX, gWorldSectorY, gbWorldSectorZ) == MINE_GRUMM &&
-           !(StrategicMap[GetSectorID16(gWorldSectorX, gWorldSectorY)].fEnemyControlled));
+          (GetIdOfMineForSector((u8)gWorldSectorX, (u8)gWorldSectorY, gbWorldSectorZ) ==
+               MINE_GRUMM &&
+           !(StrategicMap[GetSectorID16((u8)gWorldSectorX, (u8)gWorldSectorY)].fEnemyControlled));
       break;
 
     case FACT_ENOUGH_LOYALTY_TO_TRAIN_MILITIA:
-      gubFact[usFact] = InTownSectorWithTrainingLoyalty(gWorldSectorX, gWorldSectorY);
+      gubFact[usFact] = InTownSectorWithTrainingLoyalty((u8)gWorldSectorX, (u8)gWorldSectorY);
       break;
 
     case FACT_WALKER_AT_BAR:
