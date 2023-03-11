@@ -8,7 +8,7 @@ add_executable(ja2v
 
 target_include_directories(ja2v PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(ja2v PRIVATE "../ja2lib")
-target_include_directories(ja2v PRIVATE ../rustlib)
+target_include_directories(ja2v PRIVATE ../rustlib/include)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_link_options(ja2v PUBLIC "/SUBSYSTEM:WINDOWS")
