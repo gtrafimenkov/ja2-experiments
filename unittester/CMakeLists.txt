@@ -27,4 +27,4 @@ endif()
 target_link_libraries(unittester PRIVATE rustlib)
 
 target_include_directories(unittester PRIVATE ../ja2lib)
-target_include_directories(unittester PRIVATE ../rustlib)
+target_include_directories(unittester PRIVATE ../rustlib/include)

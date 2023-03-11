@@ -8,3 +8,6 @@ edition = "2021"
 [lib]
 name = "rustlib"
 crate-type = ["staticlib"]
+
+[build-dependencies]
+cbindgen = "0.24.3"
