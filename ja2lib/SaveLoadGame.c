@@ -102,6 +102,7 @@
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
 #include "platform.h"
+#include "rust_civ_groups.h"
 #include "rust_sam_sites.h"
 
 BOOLEAN fFirstTimeInMapScreen = TRUE;
@@ -2815,6 +2816,12 @@ BOOLEAN LoadEmailFromSavedGame(HWFILE hFile) {
 BOOLEAN SaveTacticalStatusToSavedGame(HWFILE hFile) {
   uint32_t uiNumBytesWritten;
 
+  // copy data
+  for (int i = FIRST_CIV_GROUP; i < ARR_SIZE(gTacticalStatus.__only_storage_fCivGroupHostile);
+       i++) {
+    gTacticalStatus.__only_storage_fCivGroupHostile[i] = GetCivGroupHostility(i);
+  }
+
   // write the gTacticalStatus to the saved game file
   FileMan_Write(hFile, &gTacticalStatus, sizeof(TacticalStatusType), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(TacticalStatusType)) {
@@ -2853,6 +2860,12 @@ BOOLEAN LoadTacticalStatusFromSavedGame(HWFILE hFile) {
   FileMan_Read(hFile, &gTacticalStatus, sizeof(TacticalStatusType), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(TacticalStatusType)) {
     return (FALSE);
+  }
+
+  // copy data
+  for (int i = FIRST_CIV_GROUP; i < ARR_SIZE(gTacticalStatus.__only_storage_fCivGroupHostile);
+       i++) {
+    SetCivGroupHostility(i, gTacticalStatus.__only_storage_fCivGroupHostile[i]);
   }
 
   //
