@@ -24,7 +24,7 @@ SectorID8 SectorID16To8(SectorID16 sectorID) {
 struct SectorInfo* GetSectorInfoByID8(SectorID8 sectorID) { return &SectorInfo[sectorID]; }
 struct SectorInfo* GetSectorInfoByXY(u8 x, u8 y) { return &SectorInfo[GetSectorID8(x, y)]; }
 
-BOOLEAN SectorOursAndPeaceful(INT16 sMapX, INT16 sMapY, INT8 bMapZ) {
+BOOLEAN SectorOursAndPeaceful(u8 sMapX, u8 sMapY, INT8 bMapZ) {
   // if this sector is currently loaded
   if ((sMapX == gWorldSectorX) && (sMapY == gWorldSectorY) && (bMapZ == gbWorldSectorZ)) {
     // and either there are enemies prowling this sector, or combat is in progress
@@ -65,8 +65,8 @@ BOOLEAN IsThisSectorASAMSector(u8 sSectorX, u8 sSectorY, INT8 bSectorZ) {
   return (FALSE);
 }
 
-i16 GetLoadedSectorX() { return gWorldSectorX; }
-i16 GetLoadedSectorY() { return gWorldSectorY; }
+u8 GetLoadedSectorX() { return (u8)gWorldSectorX; }
+u8 GetLoadedSectorY() { return (u8)gWorldSectorY; }
 
 bool IsSectorEnemyControlled(i8 sMapX, i8 sMapY) {
   return StrategicMap[GetSectorID16(sMapX, sMapY)].fEnemyControlled;

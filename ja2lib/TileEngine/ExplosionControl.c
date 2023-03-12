@@ -2879,7 +2879,7 @@ void UpdateAndDamageSAMIfFound(u8 sSectorX, u8 sSectorY, INT16 sSectorZ, INT16 s
   // ATE: GRAPHICS UPDATE WILL GET DONE VIA NORMAL EXPLOSION CODE.....
 }
 
-void UpdateSAMDoneRepair(u8 sSectorX, u8 sSectorY, INT16 sSectorZ) {
+void UpdateSAMDoneRepair(u8 sSectorX, u8 sSectorY, i8 sSectorZ) {
   INT32 cnt;
   INT16 sSectorNo;
   BOOLEAN fInSector = FALSE;
