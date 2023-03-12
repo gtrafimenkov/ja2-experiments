@@ -44,7 +44,6 @@ extern BOOLEAN fMapScreenBottomDirty;
 extern BOOLEAN fCharacterInfoPanelDirty;
 extern BOOLEAN fTeamPanelDirty;
 extern BOOLEAN fMapScreenBottomDirty;
-extern BOOLEAN fMapPanelDirty;
 extern BOOLEAN gfGamePaused;
 extern BOOLEAN fShowMapInventoryPool;
 
@@ -1078,7 +1077,7 @@ void HelpScreenSpecialExitCode() {
       fCharacterInfoPanelDirty = TRUE;
       fTeamPanelDirty = TRUE;
       fMapScreenBottomDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       break;
 
     case HELP_SCREEN_TACTICAL:

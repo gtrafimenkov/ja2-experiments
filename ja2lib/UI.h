@@ -6,8 +6,7 @@
 #define __UI_H
 
 #include "SGP/Types.h"
-
-void MarkForRedrawalStrategicMap();
+#include "rust_ui.h"
 
 bool IsTacticalMode();
 

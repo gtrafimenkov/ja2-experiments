@@ -37,5 +37,3 @@ bool IsGoingToAutoresolve() { return gfAutomaticallyStartAutoResolve; }
 
 // Return index of the character selected for assignment
 int8_t GetCharForAssignmentIndex() { return bSelectedAssignChar; }
-
-void MarkForRedrawalStrategicMap() { fMapPanelDirty = TRUE; }

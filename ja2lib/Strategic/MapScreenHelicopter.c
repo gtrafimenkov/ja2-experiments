@@ -1076,7 +1076,7 @@ void HandleAnimationOfSectors(void) {
     fSkipSpeakersLocator = TRUE;
   } else if (fOldShowDrassenSAMHighLight) {
     fOldShowDrassenSAMHighLight = FALSE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
   }
 
   // Cambria hospital
@@ -1086,7 +1086,7 @@ void HandleAnimationOfSectors(void) {
     fSkipSpeakersLocator = TRUE;
   } else if (fOldShowCambriaHospitalHighLight) {
     fOldShowCambriaHospitalHighLight = FALSE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
   }
 
   // show other SAM sites
@@ -1100,7 +1100,7 @@ void HandleAnimationOfSectors(void) {
     fSkipSpeakersLocator = TRUE;
   } else if (fOldShowOtherSAMHighLight) {
     fOldShowOtherSAMHighLight = FALSE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
   }
 
   // show Estoni site
@@ -1111,7 +1111,7 @@ void HandleAnimationOfSectors(void) {
     fSkipSpeakersLocator = TRUE;
   } else if (fOldShowEstoniRefuelHighLight) {
     fOldShowEstoniRefuelHighLight = FALSE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
   }
 
   // don't show sector locator over the speaker's sector if he is talking about another sector -
