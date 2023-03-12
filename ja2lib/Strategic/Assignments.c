@@ -511,7 +511,7 @@ void ChangeSoldiersAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment) 
   fTeamPanelDirty = TRUE;
 
   // merc may have come on/off duty, make sure map icons are updated
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 BOOLEAN BasicCanCharacterAssignment(struct SOLDIERTYPE *pSoldier, BOOLEAN fNotInCombat) {
@@ -1706,7 +1706,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     if (IsSolActive(pSoldier) && (GetSolAssignment(pSoldier) == TRAIN_TOWN)) {
       // make sure that sector is paid up!
-      if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
+      if (!IsMilitiaTrainingPayedForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
         // NOPE!  We've got a bug somewhere
         StopTimeCompression();
 
@@ -3576,7 +3576,7 @@ static BOOLEAN TrainTownInSector(struct SOLDIERTYPE *pTrainer, uint8_t sMapX, ui
     pSectorInfo->ubMilitiaTrainingHundredths = 0;
 
     // make the player pay again next time he wants to train here
-    SetMilitiaTrainingPayedForSectorID8(GetSectorID8(sMapX, sMapY), false);
+    SetMilitiaTrainingPayedForSector(sMapX, sMapY, false);
 
     TownMilitiaTrainingCompleted(pTrainer, sMapX, sMapY);
 
@@ -5030,7 +5030,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghTrainingBox)) {
       HideBox(ghTrainingBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5045,7 +5045,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghRepairBox)) {
       HideBox(ghRepairBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5059,7 +5059,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghAttributeBox)) {
       HideBox(ghAttributeBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5072,7 +5072,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghVehicleBox)) {
       HideBox(ghVehicleBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5230,7 +5230,7 @@ void CreateDestroyMouseRegions(void) {
     // pause game
     PauseGame();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
     fMapScreenBottomDirty = TRUE;
@@ -5361,7 +5361,7 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
     //	}
     //}
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
     fMapScreenBottomDirty = TRUE;
@@ -5450,7 +5450,7 @@ void CreateDestroyMouseRegionsForTrainingMenu(void) {
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
     fMapScreenBottomDirty = TRUE;
@@ -5545,7 +5545,7 @@ void CreateDestroyMouseRegionsForAttributeMenu(void) {
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
     fMapScreenBottomDirty = TRUE;
@@ -5643,13 +5643,13 @@ void CreateDestroyMouseRegionsForRemoveMenu(void) {
     // stop showing  menu
     if (fShowRemoveMenu == FALSE) {
       fShowAttributeMenu = FALSE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
     }
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
     fMapScreenBottomDirty = TRUE;
@@ -5749,7 +5749,7 @@ void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox) {
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
     fMapScreenBottomDirty = TRUE;
@@ -5757,7 +5757,7 @@ void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox) {
 
     // not created
     fCreated = FALSE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
 
     if (fShowAssignmentMenu) {
       // remove highlight on the parent menu
@@ -6412,7 +6412,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           // assign to a movement group
           AssignMercToAMovementGroup(pSoldier);
-          if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
+          if (!IsMilitiaTrainingPayedForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
           } else {
@@ -8241,7 +8241,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // probably this condition is not needed
         // if (pMilitiaTrainerSoldier == NULL) {
-        if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
+        if (!IsMilitiaTrainingPayedForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
           // show a message to confirm player wants to charge cost
           HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
         }
@@ -8471,7 +8471,7 @@ BOOLEAN HandleShowingOfUpBox( void )
                 if( IsBoxShown( ghUpdateBox ) )
                 {
                         HideBox( ghUpdateBox );
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                         gfRenderPBInterface = TRUE;
                         fTeamPanelDirty = TRUE;
                         fMapScreenBottomDirty = TRUE;
@@ -8492,7 +8492,7 @@ BOOLEAN HandleShowingOfMovementBox(void) {
   } else {
     if (IsBoxShown(ghMoveBox)) {
       HideBox(ghMoveBox);
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       fTeamPanelDirty = TRUE;
       fMapScreenBottomDirty = TRUE;
@@ -9131,7 +9131,7 @@ void ReEvaluateEveryonesNothingToDo() {
 
   // redraw the map, in case we're showing teams, and someone just came on duty or off duty, their
   // icon needs updating
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void SetAssignmentForList(int8_t bAssignment, int8_t bParam) {
@@ -9683,7 +9683,7 @@ void ResumeOldAssignment(struct SOLDIERTYPE *pSoldier) {
   // assignment has changed, redraw left side as well as the map (to update on/off duty icons)
   fTeamPanelDirty = TRUE;
   fCharacterInfoPanelDirty = TRUE;
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void RepairItemsOnOthers(struct SOLDIERTYPE *pSoldier, uint8_t *pubRepairPtsLeft) {

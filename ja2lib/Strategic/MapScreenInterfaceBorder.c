@@ -413,7 +413,7 @@ void BtnLowerLevelBtnCallback(GUI_BUTTON *btn,int32_t reason)
                 // are help messages being displayed?..redraw
                 if( ScrollButtonsDisplayingHelpMessage( ) )
                 {
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                 }
 
                 MarkButtonsDirty( );
@@ -440,7 +440,7 @@ void BtnRaiseLevelBtnCallback(GUI_BUTTON *btn,int32_t reason)
                 // are help messages being displayed?..redraw
                 if( ScrollButtonsDisplayingHelpMessage( ) )
                 {
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                 }
 
 
@@ -516,55 +516,6 @@ void BtnItemCallback(GUI_BUTTON *btn, int32_t reason) {
   }
 }
 
-/*
-void BtnZoomCallback(GUI_BUTTON *btn,int32_t reason)
-{
-        uint16_t sTempXOff=0;
-        uint16_t sTempYOff=0;
-
-
-        if(reason & MSYS_CALLBACK_REASON_LBUTTON_DWN )
-        {
-                CommonBtnCallbackBtnDownChecks();
-
-                if (btn->uiFlags & BUTTON_CLICKED_ON)
-                {
-      btn->uiFlags&=~(BUTTON_CLICKED_ON);
-      fZoomFlag=FALSE;
-                }
-                else
-                {
-                 btn->uiFlags|=(BUTTON_CLICKED_ON);
-                 fZoomFlag=TRUE;
-                 if( sSelMapX > 14 )
-                 {
-                         iZoomX = ( ( sSelMapX + 2 ) / 2 ) * ( MAP_GRID_X * 2 );
-                 }
-                 else
-                 {
-                         iZoomX=sSelMapX/2*MAP_GRID_X*2;
-                 }
-
-                 if( sOldSelMapY > 14 )
-                 {
-                         iZoomY = ( ( sSelMapY + 2 ) / 2 ) * ( MAP_GRID_Y * 2 );
-                 }
-                 else
-                 {
-                         iZoomY=sSelMapY/2*MAP_GRID_Y*2;
-                 }
-
-                }
-
-                fMapPanelDirty=TRUE;
-        }
-        else if(reason & MSYS_CALLBACK_REASON_RBUTTON_DWN )
-        {
-                CommonBtnCallbackBtnDownChecks();
-        }
-}
-*/
-
 void ToggleShowTownsMode(void) {
   if (fShowTownFlag == TRUE) {
     fShowTownFlag = FALSE;
@@ -589,7 +540,7 @@ void ToggleShowTownsMode(void) {
     }
   }
 
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void ToggleShowMinesMode(void) {
@@ -616,7 +567,7 @@ void ToggleShowMinesMode(void) {
     }
   }
 
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void ToggleShowMilitiaMode(void) {
@@ -658,7 +609,7 @@ void ToggleShowMilitiaMode(void) {
     }
   }
 
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void ToggleShowTeamsMode(void) {
@@ -668,7 +619,7 @@ void ToggleShowTeamsMode(void) {
     MapBorderButtonOff(MAP_BORDER_TEAMS_BTN);
 
     // dirty regions
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
   } else {  // turn show teams ON
@@ -687,7 +638,7 @@ void ToggleAirspaceMode(void) {
     }
 
     // dirty regions
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
   } else {  // turn airspace ON
@@ -702,7 +653,7 @@ void ToggleItemsFilter(void) {
     MapBorderButtonOff(MAP_BORDER_ITEM_BTN);
 
     // dirty regions
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
   } else {
@@ -745,7 +696,7 @@ void BtnScrollNorthMapScreenCallback( GUI_BUTTON *btn,int32_t reason )
                 // are help messages being displayed?..redraw
                 if( ScrollButtonsDisplayingHelpMessage( ) )
                 {
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                 }
 
           btn->uiFlags|=(BUTTON_CLICKED_ON);
@@ -781,7 +732,7 @@ void BtnScrollSouthMapScreenCallback( GUI_BUTTON *btn,int32_t reason )
                 // are help messages being displayed?..redraw
                  if( ScrollButtonsDisplayingHelpMessage( ) )
                  {
-                         MarkForRedrawalStrategicMap();
+                         SetMapPanelDirty(true);
                  }
 
           btn->uiFlags|=(BUTTON_CLICKED_ON);
@@ -817,7 +768,7 @@ void BtnScrollEastMapScreenCallback( GUI_BUTTON *btn,int32_t reason )
                 // are help messages being displayed?..redraw
                 if( ScrollButtonsDisplayingHelpMessage( ) )
                 {
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                 }
 
           btn->uiFlags|=(BUTTON_CLICKED_ON);
@@ -854,7 +805,7 @@ void BtnScrollWestMapScreenCallback( GUI_BUTTON *btn,int32_t reason )
                 // are help messages being displayed?..redraw
                 if( ScrollButtonsDisplayingHelpMessage( ) )
                 {
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                 }
 
           btn->uiFlags|=(BUTTON_CLICKED_ON);
@@ -920,7 +871,7 @@ void HandleMapScrollButtonStates( void )
                 if( fZoomFlag == TRUE )
                 {
                         fZoomFlag = FALSE;
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                 }
 
                 MapBorderButtonOff( MAP_BORDER_ZOOM_BTN );
@@ -967,7 +918,7 @@ void BtnGenericMouseMoveButtonCallbackForMapBorder(GUI_BUTTON *btn, int32_t reas
     if (reason & MSYS_CALLBACK_REASON_LOST_MOUSE) {
       if (btn->Area.uiFlags & MSYS_FASTHELP) {
         // redraw area
-        MarkForRedrawalStrategicMap();
+        SetMapPanelDirty(true);
       }
     }
     return;
@@ -1121,7 +1072,7 @@ void TurnOnShowTeamsMode(void) {
     }
 
     // dirty regions
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
   }
@@ -1177,7 +1128,7 @@ void TurnOnAirSpaceMode(void) {
     }
 
     // dirty regions
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
   }
@@ -1221,7 +1172,7 @@ void TurnOnItemFilterMode(void) {
     }
 
     // dirty regions
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
   }
