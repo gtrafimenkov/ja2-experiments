@@ -53,6 +53,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
+#include "rust_civ_groups.h"
 
 extern void PauseAITemporarily(void);
 extern void UpdateEnemyUIBar(void);
