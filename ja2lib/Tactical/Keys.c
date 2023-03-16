@@ -43,6 +43,7 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
+#include "platform.h"
 
 DOOR_STATUS *gpDoorStatus = NULL;
 uint8_t gubNumDoorStatus = 0;
@@ -830,7 +831,7 @@ BOOLEAN SaveDoorTableToDoorTableTempFile(uint8_t sSectorX, uint8_t sSectorY, int
   // if the file already exists, delete it
   if (FileMan_Exists(zMapName)) {
     // We are going to be overwriting the file
-    if (!FileMan_Delete(zMapName)) {
+    if (!Plat_DeleteFile(zMapName)) {
       return (FALSE);
     }
   }
