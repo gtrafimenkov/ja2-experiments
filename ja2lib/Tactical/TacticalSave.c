@@ -362,7 +362,7 @@ BOOLEAN LoadMapTempFilesFromSavedGameFile(HWFILE hFile) {
 
           // KILL IT!!! KILL KIT!!!! IT IS CORRUPTED!!!
           GetMapTempFileName(SF_CIV_PRESERVED_TEMP_FILE_EXISTS, pMapName, sMapX, sMapY, 0);
-          FileMan_Delete(pMapName);
+          Plat_DeleteFile(pMapName);
 
           // turn off the flag
           SectorInfo[GetSectorID8(sMapX, sMapY)].uiFlags &= (~SF_CIV_PRESERVED_TEMP_FILE_EXISTS);
@@ -440,7 +440,7 @@ BOOLEAN LoadMapTempFilesFromSavedGameFile(HWFILE hFile) {
         // KILL IT!!! KILL KIT!!!! IT IS CORRUPTED!!!
         GetMapTempFileName(SF_CIV_PRESERVED_TEMP_FILE_EXISTS, pMapName, TempNode->ubSectorX,
                            TempNode->ubSectorY, TempNode->ubSectorZ);
-        FileMan_Delete(pMapName);
+        Plat_DeleteFile(pMapName);
 
         // turn off the flag
         TempNode->uiFlags &= (~SF_CIV_PRESERVED_TEMP_FILE_EXISTS);
