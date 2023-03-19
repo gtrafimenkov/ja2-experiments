@@ -7,7 +7,6 @@
 #include "GameSettings.h"
 #include "Laptop/BobbyRMailOrder.h"
 #include "Laptop/History.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Soldier.h"
@@ -35,6 +34,7 @@
 #include "Town.h"
 #include "Utils/Message.h"
 #include "rust_civ_groups.h"
+#include "rust_fileman.h"
 
 #define TESTQUESTS
 
@@ -1212,17 +1212,17 @@ void CheckForQuests(uint32_t uiDay) {
   // Miguel the letter
 }
 
-BOOLEAN SaveQuestInfoToSavedGameFile(HWFILE hFile) {
+BOOLEAN SaveQuestInfoToSavedGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
 
   // Save all the states if the Quests
-  FileMan_Write(hFile, gubQuest, MAX_QUESTS, &uiNumBytesWritten);
+  File_Write(hFile, gubQuest, MAX_QUESTS, &uiNumBytesWritten);
   if (uiNumBytesWritten != MAX_QUESTS) {
     return (FALSE);
   }
 
   // Save all the states for the facts
-  FileMan_Write(hFile, gubFact, NUM_FACTS, &uiNumBytesWritten);
+  File_Write(hFile, gubFact, NUM_FACTS, &uiNumBytesWritten);
   if (uiNumBytesWritten != NUM_FACTS) {
     return (FALSE);
   }
@@ -1230,17 +1230,17 @@ BOOLEAN SaveQuestInfoToSavedGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadQuestInfoFromSavedGameFile(HWFILE hFile) {
+BOOLEAN LoadQuestInfoFromSavedGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
 
   // Save all the states if the Quests
-  FileMan_Read(hFile, gubQuest, MAX_QUESTS, &uiNumBytesRead);
+  File_Read(hFile, gubQuest, MAX_QUESTS, &uiNumBytesRead);
   if (uiNumBytesRead != MAX_QUESTS) {
     return (FALSE);
   }
 
   // Save all the states for the facts
-  FileMan_Read(hFile, gubFact, NUM_FACTS, &uiNumBytesRead);
+  File_Read(hFile, gubFact, NUM_FACTS, &uiNumBytesRead);
   if (uiNumBytesRead != NUM_FACTS) {
     return (FALSE);
   }

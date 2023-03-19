@@ -20,7 +20,6 @@
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/HImage.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Types.h"
@@ -80,6 +79,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_fileman.h"
 
 #define ITEMDESC_FONT BLOCKFONT2
 #define ITEMDESC_FONTSHADOW1 MILITARY_SHADOW
@@ -6504,14 +6504,14 @@ typedef struct {
 
 } ITEM_CURSOR_SAVE_INFO;
 
-BOOLEAN LoadItemCursorFromSavedGame(HWFILE hFile) {
+BOOLEAN LoadItemCursorFromSavedGame(FileID hFile) {
   uint32_t uiLoadSize = 0;
   uint32_t uiNumBytesRead = 0;
   ITEM_CURSOR_SAVE_INFO SaveStruct;
 
   // Load structure
   uiLoadSize = sizeof(ITEM_CURSOR_SAVE_INFO);
-  FileMan_Read(hFile, &SaveStruct, uiLoadSize, &uiNumBytesRead);
+  File_Read(hFile, &SaveStruct, uiLoadSize, &uiNumBytesRead);
   if (uiNumBytesRead != uiLoadSize) {
     return (FALSE);
   }
@@ -6541,7 +6541,7 @@ BOOLEAN LoadItemCursorFromSavedGame(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN SaveItemCursorToSavedGame(HWFILE hFile) {
+BOOLEAN SaveItemCursorToSavedGame(FileID hFile) {
   uint32_t uiSaveSize = 0;
   uint32_t uiNumBytesWritten = 0;
 
@@ -6570,7 +6570,7 @@ BOOLEAN SaveItemCursorToSavedGame(HWFILE hFile) {
 
   // save locations of watched points
   uiSaveSize = sizeof(ITEM_CURSOR_SAVE_INFO);
-  FileMan_Write(hFile, &SaveStruct, uiSaveSize, &uiNumBytesWritten);
+  File_Write(hFile, &SaveStruct, uiSaveSize, &uiNumBytesWritten);
   if (uiNumBytesWritten != uiSaveSize) {
     return (FALSE);
   }

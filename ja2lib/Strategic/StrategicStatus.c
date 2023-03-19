@@ -10,7 +10,6 @@
 #include "Laptop/Email.h"
 #include "Laptop/History.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "Soldier.h"
 #include "Strategic/GameClock.h"
 #include "Strategic/StrategicMines.h"
@@ -18,6 +17,7 @@
 #include "Tactical/Campaign.h"
 #include "Tactical/InventoryChoosing.h"
 #include "Tactical/SoldierProfile.h"
+#include "rust_fileman.h"
 
 STRATEGIC_STATUS gStrategicStatus;
 
@@ -28,11 +28,11 @@ void InitStrategicStatus(void) {
   InitArmyGunTypes();
 }
 
-BOOLEAN SaveStrategicStatusToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveStrategicStatusToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
 
   // Save the Strategic Status structure to the saved game file
-  FileMan_Write(hFile, &gStrategicStatus, sizeof(STRATEGIC_STATUS), &uiNumBytesWritten);
+  File_Write(hFile, &gStrategicStatus, sizeof(STRATEGIC_STATUS), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(STRATEGIC_STATUS)) {
     return (FALSE);
   }
@@ -40,11 +40,11 @@ BOOLEAN SaveStrategicStatusToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadStrategicStatusFromSaveGameFile(HWFILE hFile) {
+BOOLEAN LoadStrategicStatusFromSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
 
   // Load the Strategic Status structure from the saved game file
-  FileMan_Read(hFile, &gStrategicStatus, sizeof(STRATEGIC_STATUS), &uiNumBytesRead);
+  File_Read(hFile, &gStrategicStatus, sizeof(STRATEGIC_STATUS), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(STRATEGIC_STATUS)) {
     return (FALSE);
   }

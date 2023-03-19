@@ -7,7 +7,6 @@
 #include <string.h>
 
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Font.h"
 #include "SGP/MemMan.h"
 #include "SGP/Random.h"
@@ -28,6 +27,7 @@
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
+#include "rust_fileman.h"
 
 // Kris:
 #ifdef JA2EDITOR
@@ -235,7 +235,7 @@ BOOLEAN LoadStructureData(char *szFileName, struct STRUCTURE_FILE_REF *pFileRef,
                           uint32_t *puiStructureDataSize)
 // uint8_t **ppubStructureData, uint32_t * puiDataSize, STRUCTURE_FILE_HEADER * pHeader )
 {  // Loads a structure file's data as a honking chunk o' memory
-  HWFILE hInput;
+  FileID hInput = FILE_ID_ERR;
   STRUCTURE_FILE_HEADER Header;
   uint32_t uiBytesRead;
   uint32_t uiDataSize;
@@ -243,15 +243,15 @@ BOOLEAN LoadStructureData(char *szFileName, struct STRUCTURE_FILE_REF *pFileRef,
 
   CHECKF(szFileName);
   CHECKF(pFileRef);
-  hInput = FileMan_Open(szFileName, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+  hInput = File_OpenForReading(szFileName);
   if (hInput == 0) {
     return (FALSE);
   }
-  fOk = FileMan_Read(hInput, &Header, sizeof(STRUCTURE_FILE_HEADER), &uiBytesRead);
+  fOk = File_Read(hInput, &Header, sizeof(STRUCTURE_FILE_HEADER), &uiBytesRead);
   if (!fOk || uiBytesRead != sizeof(STRUCTURE_FILE_HEADER) ||
       strncmp(Header.szId, STRUCTURE_FILE_ID, STRUCTURE_FILE_ID_LEN) != 0 ||
       Header.usNumberOfStructures == 0) {
-    FileMan_Close(hInput);
+    File_Close(hInput);
     return (FALSE);
   }
   pFileRef->usNumberOfStructures = Header.usNumberOfStructures;
@@ -259,13 +259,13 @@ BOOLEAN LoadStructureData(char *szFileName, struct STRUCTURE_FILE_REF *pFileRef,
     uiDataSize = sizeof(struct AuxObjectData) * Header.usNumberOfImages;
     pFileRef->pAuxData = (struct AuxObjectData *)MemAlloc(uiDataSize);
     if (pFileRef->pAuxData == NULL) {
-      FileMan_Close(hInput);
+      File_Close(hInput);
       return (FALSE);
     }
-    fOk = FileMan_Read(hInput, pFileRef->pAuxData, uiDataSize, &uiBytesRead);
+    fOk = File_Read(hInput, pFileRef->pAuxData, uiDataSize, &uiBytesRead);
     if (!fOk || uiBytesRead != uiDataSize) {
       MemFree(pFileRef->pAuxData);
-      FileMan_Close(hInput);
+      File_Close(hInput);
       return (FALSE);
     }
     if (Header.usNumberOfImageTileLocsStored > 0) {
@@ -273,13 +273,13 @@ BOOLEAN LoadStructureData(char *szFileName, struct STRUCTURE_FILE_REF *pFileRef,
       pFileRef->pTileLocData = (struct RelTileLoc *)MemAlloc(uiDataSize);
       if (pFileRef->pTileLocData == NULL) {
         MemFree(pFileRef->pAuxData);
-        FileMan_Close(hInput);
+        File_Close(hInput);
         return (FALSE);
       }
-      fOk = FileMan_Read(hInput, pFileRef->pTileLocData, uiDataSize, &uiBytesRead);
+      fOk = File_Read(hInput, pFileRef->pTileLocData, uiDataSize, &uiBytesRead);
       if (!fOk || uiBytesRead != uiDataSize) {
         MemFree(pFileRef->pAuxData);
-        FileMan_Close(hInput);
+        File_Close(hInput);
         return (FALSE);
       }
     }
@@ -291,7 +291,7 @@ BOOLEAN LoadStructureData(char *szFileName, struct STRUCTURE_FILE_REF *pFileRef,
     // allocate enough memory and read it in
     pFileRef->pubStructureData = (uint8_t *)MemAlloc(uiDataSize);
     if (pFileRef->pubStructureData == NULL) {
-      FileMan_Close(hInput);
+      File_Close(hInput);
       if (pFileRef->pAuxData != NULL) {
         MemFree(pFileRef->pAuxData);
         if (pFileRef->pTileLocData != NULL) {
@@ -300,7 +300,7 @@ BOOLEAN LoadStructureData(char *szFileName, struct STRUCTURE_FILE_REF *pFileRef,
       }
       return (FALSE);
     }
-    fOk = FileMan_Read(hInput, pFileRef->pubStructureData, uiDataSize, &uiBytesRead);
+    fOk = File_Read(hInput, pFileRef->pubStructureData, uiDataSize, &uiBytesRead);
     if (!fOk || uiBytesRead != uiDataSize) {
       MemFree(pFileRef->pubStructureData);
       if (pFileRef->pAuxData != NULL) {
@@ -309,12 +309,12 @@ BOOLEAN LoadStructureData(char *szFileName, struct STRUCTURE_FILE_REF *pFileRef,
           MemFree(pFileRef->pTileLocData);
         }
       }
-      FileMan_Close(hInput);
+      File_Close(hInput);
       return (FALSE);
     }
     *puiStructureDataSize = uiDataSize;
   }
-  FileMan_Close(hInput);
+  File_Close(hInput);
   return (TRUE);
 }
 

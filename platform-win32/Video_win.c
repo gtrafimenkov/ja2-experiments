@@ -20,6 +20,7 @@
 #include "TileEngine/RenderWorld.h"
 #include "Utils/TimerControl.h"
 #include "platform.h"
+#include "rust_debug.h"
 
 struct VSurface *ghPrimary = NULL;
 struct VSurface *ghBackBuffer = NULL;
@@ -4846,7 +4847,6 @@ BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex, ui
 #include <sys/types.h>
 
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
 #include "SGP/VSurface.h"
@@ -4855,6 +4855,7 @@ BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex, ui
 #include "Utils/Cinematics.h"
 #include "Utils/radmalw.i"
 #include "platform_win.h"
+#include "rust_fileman.h"
 
 #if 1
 // must go after other includes
@@ -4870,7 +4871,7 @@ BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex, ui
 
 struct SmkFlic {
   char *cFilename;
-  HWFILE hFileHandle;
+  FileID file_id;
   struct SmackTag *SmackHandle;
   struct SmackBufTag *SmackBuffer;
   uint32_t uiFlags;
@@ -4990,7 +4991,6 @@ struct SmkFlic *SmkPlayFlic(char *cFilename, uint32_t uiLeft, uint32_t uiTop, BO
 
 struct SmkFlic *SmkOpenFlic(char *cFilename) {
   struct SmkFlic *pSmack;
-  HANDLE hFile;
 
   // Get an available flic slot from the list
   if (!(pSmack = SmkGetFreeFlic())) {
@@ -4999,27 +4999,28 @@ struct SmkFlic *SmkOpenFlic(char *cFilename) {
   }
 
   // Attempt opening the filename
-  if (!(pSmack->hFileHandle =
-            FileMan_Open(cFilename, FILE_OPEN_EXISTING | FILE_ACCESS_READ, FALSE))) {
+  if (!(pSmack->file_id = File_OpenForReading(cFilename))) {
     ErrorMsg("SMK ERROR: Can't open the SMK file");
     return (NULL);
   }
 
-  // Get the real file handle for the file man handle for the smacker file
-  hFile = GetRealFileHandleFromFileManFileHandle(pSmack->hFileHandle);
-
-  // Allocate a Smacker buffer for video decompression
-  if (!(pSmack->SmackBuffer = SmackBufferOpen(hDisplayWindow, SMACKAUTOBLIT, 640, 480, 0, 0))) {
-    ErrorMsg("SMK ERROR: Can't allocate a Smacker decompression buffer");
-    return (NULL);
-  }
-
-  if (!(pSmack->SmackHandle =
-            SmackOpen((char *)hFile, SMACKFILEHANDLE | SMACKTRACKS, SMACKAUTOEXTRA)))
-  //	if(!(pSmack->SmackHandle=SmackOpen(cFilename, SMACKTRACKS, SMACKAUTOEXTRA)))
   {
-    ErrorMsg("SMK ERROR: Smacker won't open the SMK file");
-    return (NULL);
+    // Get the real file handle for the file man handle for the smacker file
+    HANDLE hFile = (void *)File_GetWinHandleToReadFile(pSmack->file_id);
+
+    // Allocate a Smacker buffer for video decompression
+    if (!(pSmack->SmackBuffer = SmackBufferOpen(hDisplayWindow, SMACKAUTOBLIT, 640, 480, 0, 0))) {
+      ErrorMsg("SMK ERROR: Can't allocate a Smacker decompression buffer");
+      return (NULL);
+    }
+
+    if (!(pSmack->SmackHandle =
+              SmackOpen((char *)hFile, SMACKFILEHANDLE | SMACKTRACKS, SMACKAUTOEXTRA)))
+    //	if(!(pSmack->SmackHandle=SmackOpen(cFilename, SMACKTRACKS, SMACKAUTOEXTRA)))
+    {
+      ErrorMsg("SMK ERROR: Smacker won't open the SMK file");
+      return (NULL);
+    }
   }
 
   // Make sure we have a video surface
@@ -5041,16 +5042,9 @@ void SmkSetBlitPosition(struct SmkFlic *pSmack, uint32_t uiLeft, uint32_t uiTop)
 }
 
 void SmkCloseFlic(struct SmkFlic *pSmack) {
-  // Attempt opening the filename
-  FileMan_Close(pSmack->hFileHandle);
-
-  // Deallocate the smack buffers
+  File_Close(pSmack->file_id);
   SmackBufferClose(pSmack->SmackBuffer);
-
-  // Close the smack flic
   SmackClose(pSmack->SmackHandle);
-
-  // Zero the memory, flags, etc.
   memset(pSmack, 0, sizeof(struct SmkFlic));
 }
 

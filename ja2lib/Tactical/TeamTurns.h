@@ -28,9 +28,9 @@ extern void DoneAddingToIntList(struct SOLDIERTYPE* pSoldier, BOOLEAN fChange,
 
 void ClearIntList(void);
 
-BOOLEAN SaveTeamTurnsToTheSaveGameFile(HWFILE hFile);
+BOOLEAN SaveTeamTurnsToTheSaveGameFile(FileID hFile);
 
-BOOLEAN LoadTeamTurnsFromTheSavedGameFile(HWFILE hFile);
+BOOLEAN LoadTeamTurnsFromTheSavedGameFile(FileID hFile);
 
 void EndAllAITurns(void);
 
