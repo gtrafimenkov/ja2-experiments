@@ -10,7 +10,6 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
@@ -45,6 +44,7 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_fileman.h"
 
 /////////////////////////////////
 //
@@ -321,7 +321,7 @@ BOOLEAN EnterOptionsScreen() {
 
   /*
   Uncomment this to enable the check for files to activate the blood and gore option for the german
-  build if( !FileMan_Exists( "Germany.dat" ) && FileMan_Exists( "Lecken.dat" ) )
+  build if( !File_Exists( "Germany.dat" ) && File_Exists( "Lecken.dat" ) )
           {
                   gfHideBloodAndGoreOption = FALSE;
           }

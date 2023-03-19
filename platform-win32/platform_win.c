@@ -4,6 +4,8 @@
 
 // Implementation of the platform layer on Windows.
 
+#include "platform_win.h"
+
 #include <windows.h>
 
 #include "SGP/Debug.h"

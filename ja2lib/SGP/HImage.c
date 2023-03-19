@@ -9,7 +9,6 @@
 #include <string.h>
 
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/ImpTGA.h"
 #include "SGP/PCX.h"
 #include "SGP/STCI.h"
@@ -18,6 +17,7 @@
 #include "SGP/WCheck.h"
 #include "StrUtils.h"
 #include "platform_strings.h"
+#include "rust_fileman.h"
 
 // This is the color substituted to keep a 24bpp -> 16bpp color
 // from going transparent (0x0000) -- DB
@@ -86,7 +86,7 @@ HIMAGE CreateImage(const char *ImageFile, uint16_t fContents) {
   } while (FALSE);
 
   // Determine if resource exists before creating image structure
-  if (!FileMan_Exists(imageFileCopy)) {
+  if (!File_Exists(imageFileCopy)) {
     DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2,
                String("Resource file %s does not exist.", imageFileCopy));
     return (NULL);

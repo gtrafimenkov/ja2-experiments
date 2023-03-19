@@ -6,14 +6,14 @@
 
 #include "MainMenuScreen.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
-#include "SGP/LibraryDataBasePub.h"
 #include "SGP/TopicIDs.h"
 #include "SGP/TopicOps.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "Utils/TimerControl.h"
 #include "platform.h"
+#include "rust_debug.h"
+#include "rust_fileman.h"
 #include "rust_platform.h"
 
 uint32_t guiSplashFrameFade = 10;
@@ -39,8 +39,7 @@ void InitJA2SplashScreen() {
     return;
   }
 
-  // Initialize the file database
-  InitializeFileDatabase();
+  File_RegisterSlfLibraries(".");
 
 #if !defined(ENGLISH) && defined(JA2TESTVERSION)
   uint32_t uiLogoID = 0;

@@ -24,6 +24,7 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_fileman.h"
 
 // local Defines
 enum {
@@ -296,13 +297,6 @@ uint8_t gubCreditScreenTitleColor;   // color of a Title node
 // uint32_t		guiCreditScreenActiveDisplayFlags;	//
 
 uint32_t guiCrdtNodeScrollSpeed = CRDT_NODE_DELAY_AMOUNT;  // speed credits go up at
-// uint32_t		guiCrdtTimeTillReadNextCredit = CRDT_DELAY_BN_SECTIONS;		//the delay
-// before reading the next credit ( normall = guiCrdtDelayBetweenCreditSection or
-// guiCrdtDelayBetweenNodes )
-// uint32_t		guiCrdtDelayBetweenCreditSection = CRDT_DELAY_BN_SECTIONS;
-// //delay between major credits sections ( programming and art ) appearing on the screen uint32_t
-// guiCrdtDelayBetweenNodes = CRDT_DELAY_BN_NODES;		//delay between credits appearing on
-// the screen
 uint32_t guiCrdtLastTimeUpdatingNode = 0;         // the last time a node was read from the file
 uint8_t gubCrdtJustification = CENTER_JUSTIFIED;  // the current justification
 
@@ -313,7 +307,7 @@ uint32_t guiGapTillReadNextCredit = CRDT_SPACE_BN_NODES;
 uint32_t guiCurrentCreditRecord = 0;
 BOOLEAN gfPauseCreditScreen = FALSE;
 
-HWFILE ghFile;
+FileID ghFile = FILE_ID_ERR;
 
 // ggg
 
@@ -442,21 +436,6 @@ BOOLEAN EnterCreditsScreen() {
     MSYS_SetRegionUserData(&gCrdtMouseRegions[uiCnt], 0, uiCnt);
   }
 
-  // Test Node
-  {
-    //		AddCreditNode( CRDT_NODE_DEFAULT, L"This is a test" );
-  }
-
-  /*
-          //open the credit text file
-          ghFile = FileMan_Open( CRDT_NAME_OF_CREDIT_FILE, FILE_ACCESS_READ | FILE_OPEN_EXISTING,
-     FALSE
-     ); if( !ghFile )
-          {
-                  return( FALSE );
-          }
-  */
-
   giCurrentlySelectedFace = -1;
   gfPauseCreditScreen = FALSE;
 
@@ -483,7 +462,7 @@ BOOLEAN ExitCreditScreen() {
 
   /*
           //close the text file
-          FileMan_Close( ghFile );
+          File_Close( ghFile );
           ghFile = 0;
   */
 
