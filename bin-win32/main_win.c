@@ -17,6 +17,7 @@
 #include "Local.h"
 #include "Res/Resource.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/Input.h"
 #include "SGP/Random.h"
@@ -182,11 +183,6 @@ void ShutdownStandardGamingPlatform(void) {
   ShutdownContainers();
 
   ShutdownMemoryManager();  // must go last (except for Debug), for MemDebugCounter to work right...
-
-  //
-  // Make sure we unregister the last remaining debug topic before shutting
-  // down the debugging layer
-  UnRegisterDebugTopic(TOPIC_SGP, "Standard Gaming Platform");
 
 #ifdef SGP_DEBUG
   ShutdownDebugManager();

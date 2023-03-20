@@ -4,6 +4,7 @@
 
 #include "Tactical/SoldierAdd.h"
 
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Soldier.h"

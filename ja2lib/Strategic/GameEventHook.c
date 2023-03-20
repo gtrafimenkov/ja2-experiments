@@ -10,6 +10,7 @@
 #include "Laptop/InsuranceContract.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/Mercs.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"

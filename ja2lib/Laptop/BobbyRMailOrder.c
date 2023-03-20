@@ -12,6 +12,7 @@
 #include "Laptop/Laptop.h"
 #include "Money.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/Input.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"

@@ -12,7 +12,6 @@
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "SGP/Container.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/MemMan.h"
 #include "SGP/Random.h"
@@ -803,7 +802,7 @@ int32_t FindBestPath(struct SOLDIERTYPE *s, int16_t sDestination, int8_t ubLevel
 
     if (trailCostUsed[curLoc] == gubGlobalPathCount && trailCost[curLoc] < curCost) goto NEXTDIR;
 
-    // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String( "PATHAI %d", curLoc ) );
+    // DebugMsg( TOPIC_JA2, DBG_INFO, String( "PATHAI %d", curLoc ) );
 
     if (fContinuousTurnNeeded) {
       if (trailTreeNdx < 2) {
@@ -1619,7 +1618,7 @@ int32_t FindBestPath(struct SOLDIERTYPE *s, int16_t sDestination, int8_t ubLevel
               break;
             }
           }
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_3, zTempString);
+          DebugMsg(TOPIC_JA2, DBG_INFO, zTempString);
 
           zTempString[0] = '\0';
           pCurr = pQueueHead;
@@ -1633,7 +1632,7 @@ int32_t FindBestPath(struct SOLDIERTYPE *s, int16_t sDestination, int8_t ubLevel
               break;
             }
           }
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_3, zTempString);
+          DebugMsg(TOPIC_JA2, DBG_INFO, zTempString);
 
           zTempString[0] = '\0';
           bTemp = pQueueHead->bLevel;
@@ -1652,8 +1651,8 @@ int32_t FindBestPath(struct SOLDIERTYPE *s, int16_t sDestination, int8_t ubLevel
               break;
             }
           }
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_3, zTempString);
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "------");
+          DebugMsg(TOPIC_JA2, DBG_INFO, zTempString);
+          DebugMsg(TOPIC_JA2, DBG_INFO, "------");
         }
 #endif
       }

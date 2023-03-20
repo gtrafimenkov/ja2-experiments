@@ -108,7 +108,7 @@ void QuestDebugFileMsg(uint8_t ubQuoteType, uint8_t ubPriority, char* pStringA, 
     if (File_Exists(QUEST_DEBUG_FILE)) {
       // delete the file
       if (!Plat_DeleteFile(QUEST_DEBUG_FILE)) {
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to delete %s file", QUEST_DEBUG_FILE));
+        DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to delete %s file", QUEST_DEBUG_FILE));
         return;
       }
     }
@@ -119,8 +119,7 @@ void QuestDebugFileMsg(uint8_t ubQuoteType, uint8_t ubPriority, char* pStringA, 
   hFile = File_OpenForWriting(QUEST_DEBUG_FILE);
   if (!hFile) {
     File_Close(hFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-             String("FAILED to open Quest Debug File %s", QUEST_DEBUG_FILE));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to open Quest Debug File %s", QUEST_DEBUG_FILE));
     return;
   }
 
@@ -129,7 +128,7 @@ void QuestDebugFileMsg(uint8_t ubQuoteType, uint8_t ubPriority, char* pStringA, 
   // open the file and append to it
   if (!File_Write(hFile, DestString, strlen(DestString), &uiByteWritten)) {
     File_Close(hFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to write to %s", QUEST_DEBUG_FILE));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to write to %s", QUEST_DEBUG_FILE));
     return;
   }
 

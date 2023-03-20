@@ -15,7 +15,6 @@
 #include "Laptop/Laptop.h"
 #include "Money.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/Debug.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"

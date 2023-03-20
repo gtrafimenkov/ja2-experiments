@@ -20,7 +20,6 @@
 #include "MessageBoxScreen.h"
 #include "OptionsScreen.h"
 #include "SGP/CursorControl.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"

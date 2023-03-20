@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 
-#include "SGP/Debug.h"
 #include "SGP/WCheck.h"
 #include "Strategic/StrategicMap.h"
 #include "Tactical/Overhead.h"

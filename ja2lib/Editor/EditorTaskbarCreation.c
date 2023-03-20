@@ -8,7 +8,6 @@
 #include "Editor/EditorMapInfo.h"
 #include "Editor/EditorMercs.h"
 #include "Editor/EditorTaskbarUtils.h"
-#include "SGP/Debug.h"
 #include "Soldier.h"
 #include "Tactical/OverheadTypes.h"
 #include "Tactical/SoldierCreate.h"
