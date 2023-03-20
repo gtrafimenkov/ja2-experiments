@@ -7,6 +7,7 @@
 #include <memory.h>
 
 #include "GameSettings.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "Soldier.h"
 #include "Strategic/AutoResolve.h"

@@ -745,7 +745,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // Save the Items to the the file
   if (!SaveWorldItemsToTempItemFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ,
                                     guiNumWorldItems, gWorldItems)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "SaveWorldItemsToTempItemFile()"));
     return (FALSE);
@@ -754,7 +754,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // Save the rotting corpse array to the temp rotting corpse file
   if (!SaveRottingCorpsesToTempCorpseFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                           gbWorldSectorZ)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "SaveRottingCorpsesToTempCorpseFile()"));
     return (FALSE);
@@ -763,7 +763,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // save the Doortable array to the temp door map file
   if (!SaveDoorTableToDoorTableTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                         gbWorldSectorZ)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "SaveDoorTableToDoorTableTempFile()"));
     return (FALSE);
@@ -772,7 +772,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // save the 'revealed'status of the tiles
   if (!SaveRevealedStatusArrayToRevealedTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                                  gbWorldSectorZ)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "SaveRevealedStatusArrayToRevealedTempFile()"));
     return (FALSE);
@@ -781,7 +781,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // save the door open status to the saved game file
   if (!SaveDoorStatusArrayToDoorStatusTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                                gbWorldSectorZ)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "SaveDoorStatusArrayToDoorStatusTempFile()"));
     return (FALSE);
@@ -790,7 +790,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // Save the enemies to the temp file
   if (!NewWayOfSavingEnemyAndCivliansToTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                                 gbWorldSectorZ, TRUE, FALSE)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "NewWayOfSavingEnemyAndCivliansToTempFile( Enemy, Creature Team )"));
     return (FALSE);
@@ -799,7 +799,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // Save the civilian info to the temp file
   if (!NewWayOfSavingEnemyAndCivliansToTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                                 gbWorldSectorZ, FALSE, FALSE)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "NewWayOfSavingEnemyAndCivliansToTempFile( Civ Team )"));
     return (FALSE);
@@ -808,7 +808,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // Save the smoke effects info to the temp file
   if (!SaveSmokeEffectsToMapTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                      gbWorldSectorZ)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "SaveSmokeEffectsToMapTempFile"));
     return (FALSE);
@@ -817,7 +817,7 @@ BOOLEAN SaveCurrentSectorsInformationToTempItemFile() {
   // Save the smoke effects info to the temp file
   if (!SaveLightEffectsToMapTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
                                      gbWorldSectorZ)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("SaveCurrentSectorsInformationToTempItemFile:  failed in "
                     "SaveLightEffectsToMapTempFile"));
     return (FALSE);
@@ -1457,8 +1457,7 @@ BOOLEAN LoadRottingCorpsesFromTempCorpseFile(uint8_t sMapX, uint8_t sMapY, int8_
     if (!fDontAddCorpse) {
       // add the rotting corpse info
       if (AddRottingCorpse(&def) == -1) {
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-                 String("Failed to add a corpse to GridNo # %d", def.sGridNo));
+        DebugMsg(TOPIC_JA2, DBG_INFO, String("Failed to add a corpse to GridNo # %d", def.sGridNo));
 
         /*
                                 Assert( 0 );

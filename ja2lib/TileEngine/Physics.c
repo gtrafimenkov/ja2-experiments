@@ -4,6 +4,7 @@
 
 #include "TileEngine/Physics.h"
 
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/VObject.h"
@@ -404,7 +405,7 @@ BOOLEAN PhysicsUpdateLife(REAL_OBJECT *pObject, real DeltaTime) {
       }
 
       DebugMsg(
-          TOPIC_JA2, DBG_LEVEL_3,
+          TOPIC_JA2, DBG_INFO,
           String("@@@@@@@ Reducing attacker busy count..., PHYSICS OBJECT DONE effect gone off"));
       ReduceAttackBusyCount(pObject->ubOwner, FALSE);
 

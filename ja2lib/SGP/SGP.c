@@ -10,6 +10,7 @@
 #include "JA2Splash.h"
 #include "Laptop/Laptop.h"
 #include "Local.h"
+#include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/Input.h"
 #include "SGP/Random.h"
@@ -34,9 +35,6 @@ BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params) {
 #ifdef SGP_DEBUG
   InitializeDebugManager();
 #endif
-
-  // Now start up everything else.
-  RegisterDebugTopic(TOPIC_SGP, "Standard Gaming Platform");
 
   // this one needs to go ahead of all others (except Debug), for MemDebugCounter to work right...
   FastDebugMsg("Initializing Memory Manager");

@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "GameSettings.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
@@ -907,7 +908,7 @@ BOOLEAN FireWeapon(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo) {
   // if target gridno is the same as ours, do not fire!
   if (sTargetGridNo == pSoldier->sGridNo) {
     // FREE UP NPC!
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - attack on own gridno!"));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - attack on own gridno!"));
     FreeUpAttacker((uint8_t)pSoldier->ubID);
     return (FALSE);
   }
@@ -1325,7 +1326,7 @@ BOOLEAN UseGun(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo) {
       // Reduce again for attack end 'cause it has been incremented for a normal attack
       //
       DebugMsg(
-          TOPIC_JA2, DBG_LEVEL_3,
+          TOPIC_JA2, DBG_INFO,
           String("@@@@@@@ Freeing up attacker - ATTACK ANIMATION %s ENDED BY BAD EXPLOSIVE CHECK, "
                  "Now %d",
                  gAnimControl[pSoldier->usAnimState].zAnimStr, gTacticalStatus.ubAttackBusyCount));
@@ -1359,7 +1360,7 @@ BOOLEAN UseGun(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo) {
       if (gAnimControl[MercPtrs[ubMerc]->usAnimState].ubHeight != ANIM_PRONE) {
         // Increment attack counter...
         gTacticalStatus.ubAttackBusyCount++;
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("Incrementing Attack: Exaust from LAW", gTacticalStatus.ubAttackBusyCount));
 
         EVENT_SoldierGotHit(MercPtrs[ubMerc], MINI_GRENADE, 10, 200, pSoldier->bDirection, 0,
@@ -1505,8 +1506,7 @@ BOOLEAN UseBlade(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo) {
           StatChange(MercPtrs[pTargetSoldier->ubID], AGILAMT, 10, FALSE);
         }
       }
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-               String("@@@@@@@ Freeing up attacker - missed in knife attack"));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - missed in knife attack"));
       FreeUpAttacker((uint8_t)pSoldier->ubID);
     }
 
@@ -1542,8 +1542,7 @@ BOOLEAN UseBlade(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo) {
       StatChange(pSoldier, DEXTAMT, usExpGain, (uint8_t)(fGonnaHit ? FALSE : FROM_FAILURE));
     }
   } else {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-             String("@@@@@@@ Freeing up attacker - missed in knife attack"));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - missed in knife attack"));
     FreeUpAttacker((uint8_t)pSoldier->ubID);
   }
 
@@ -1687,7 +1686,7 @@ BOOLEAN UseHandToHand(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo, BOOLE
       }
 
 #ifdef JA2BETAVERSION
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - steal"));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - steal"));
 #endif
       FreeUpAttacker((uint8_t)pSoldier->ubID);
 
@@ -1751,8 +1750,7 @@ BOOLEAN UseHandToHand(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo, BOOLE
         SWeaponHit.ubSpecial = FIRE_WEAPON_NO_SPECIAL;
         AddGameEvent(S_WEAPONHIT, (uint16_t)20, &SWeaponHit);
       } else {
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-                 String("@@@@@@@ Freeing up attacker - missed in HTH attack"));
+        DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - missed in HTH attack"));
         FreeUpAttacker((uint8_t)pSoldier->ubID);
       }
     }
@@ -1887,7 +1885,7 @@ BOOLEAN UseLauncher(struct SOLDIERTYPE *pSoldier, int16_t sTargetGridNo) {
     // Reduce again for attack end 'cause it has been incremented for a normal attack
     //
     DebugMsg(
-        TOPIC_JA2, DBG_LEVEL_3,
+        TOPIC_JA2, DBG_INFO,
         String("@@@@@@@ Freeing up attacker - ATTACK ANIMATION %s ENDED BY BAD EXPLOSIVE CHECK, "
                "Now %d",
                gAnimControl[pSoldier->usAnimState].zAnimStr, gTacticalStatus.ubAttackBusyCount));
@@ -1973,7 +1971,7 @@ BOOLEAN DoSpecialEffectAmmoMiss(uint8_t ubAttackerID, int16_t sGridNo, int16_t s
 
       if (fFreeupAttacker) {
         RemoveBullet(iBullet);
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("@@@@@@@ Freeing up attacker - bullet hit structure - explosive ammo"));
         FreeUpAttacker((uint8_t)ubAttackerID);
       }
@@ -1991,7 +1989,7 @@ BOOLEAN DoSpecialEffectAmmoMiss(uint8_t ubAttackerID, int16_t sGridNo, int16_t s
              usItem == CREATURE_INFANT_SPIT || usItem == CREATURE_YOUNG_MALE_SPIT) {
     // Increment attack busy...
     // gTacticalStatus.ubAttackBusyCount++;
-    // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("Incrementing Attack: Explosion gone off, COunt now
+    // DebugMsg( TOPIC_JA2, DBG_INFO, String("Incrementing Attack: Explosion gone off, COunt now
     // %d", gTacticalStatus.ubAttackBusyCount ) );
 
     PlayJA2Sample(CREATURE_GAS_NOISE, RATE_11025, SoundVolume(HIGHVOLUME, sGridNo), 1,
@@ -2043,7 +2041,7 @@ void WeaponHit(uint16_t usSoldierID, uint16_t usWeaponIndex, int16_t sDamage, in
                       pTargetSoldier->bLevel);
     }
 
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - end of LAW fire"));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - end of LAW fire"));
     FreeUpAttacker(ubAttackerID);
     return;
   }
@@ -2060,7 +2058,7 @@ void WeaponHit(uint16_t usSoldierID, uint16_t usWeaponIndex, int16_t sDamage, in
   } else {
     // Buddy had died from additional dammage - free up attacker here...
     ReduceAttackBusyCount(pTargetSoldier->ubAttackerID, FALSE);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("Special effect killed before bullet impact, attack count now %d",
                     gTacticalStatus.ubAttackBusyCount));
   }
@@ -2120,7 +2118,7 @@ void StructureHit(int32_t iBullet, uint16_t usWeaponIndex, int8_t bWeaponStatus,
       RemoveBullet(iBullet);
 
       // Reduce attacker count!
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - end of LAW fire"));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - end of LAW fire"));
       FreeUpAttacker(ubAttackerID);
 
       IgniteExplosion(ubAttackerID, (int16_t)CenterX(sGridNo), (int16_t)CenterY(sGridNo), 0,
@@ -2134,7 +2132,7 @@ void StructureHit(int32_t iBullet, uint16_t usWeaponIndex, int8_t bWeaponStatus,
       RemoveBullet(iBullet);
 
       // Reduce attacker count!
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - end of TANK fire"));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - end of TANK fire"));
       FreeUpAttacker(ubAttackerID);
 
       IgniteExplosion(ubAttackerID, (int16_t)CenterX(sGridNo), (int16_t)CenterY(sGridNo), 0,
@@ -2178,7 +2176,7 @@ void StructureHit(int32_t iBullet, uint16_t usWeaponIndex, int8_t bWeaponStatus,
       DoSpecialEffectAmmoMiss(ubAttackerID, sGridNo, sXPos, sYPos, sZPos, FALSE, TRUE, iBullet);
 
       RemoveBullet(iBullet);
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("@@@@@@@ Freeing up attacker - monster attack hit structure"));
       FreeUpAttacker((uint8_t)ubAttackerID);
 
@@ -2207,7 +2205,7 @@ void StructureHit(int32_t iBullet, uint16_t usWeaponIndex, int8_t bWeaponStatus,
         }
 
         RemoveBullet(iBullet);
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("@@@@@@@ Freeing up attacker - knife attack hit structure"));
         FreeUpAttacker((uint8_t)ubAttackerID);
       }
@@ -2220,7 +2218,7 @@ void StructureHit(int32_t iBullet, uint16_t usWeaponIndex, int8_t bWeaponStatus,
     }
 
     // Free guy!
-    // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - bullet hit
+    // DebugMsg( TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - bullet hit
     // structure") ); FreeUpAttacker( (uint8_t) ubAttackerID );
 
     // PLAY SOUND AND FLING DEBRIS
@@ -2231,7 +2229,7 @@ void StructureHit(int32_t iBullet, uint16_t usWeaponIndex, int8_t bWeaponStatus,
     if (fHitSameStructureAsBefore) {
       if (fStopped) {
         RemoveBullet(iBullet);
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("@@@@@@@ Freeing up attacker - bullet hit same structure twice"));
         FreeUpAttacker((uint8_t)ubAttackerID);
       }
@@ -3575,7 +3573,7 @@ void ShotMiss(uint8_t ubAttackerID, int32_t iBullet) {
     }
   }
 
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("@@@@@@@ Freeing up attacker - bullet missed"));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("@@@@@@@ Freeing up attacker - bullet missed"));
   FreeUpAttacker(ubAttackerID);
 }
 

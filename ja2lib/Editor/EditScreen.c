@@ -30,6 +30,7 @@
 #include "GameSettings.h"
 #include "Globals.h"
 #include "JAScreens.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"
@@ -270,7 +271,7 @@ BOOLEAN EditModeInit(void) {
   int32_t i;
   struct SGPPaletteEntry LColors[2];
 
-  DebugPrint("Entering editor mode...\n");
+  PrintToDebuggerConsole("Entering editor mode...\n");
 
   gfRealGunNut = gGameOptions.fGunNut;
   gGameOptions.fGunNut = TRUE;
@@ -396,7 +397,7 @@ BOOLEAN EditModeInit(void) {
     ShowLightPositionHandles();
     LightSpriteRenderAll();
   } else {
-    DebugPrint("Creating summary window...\n");
+    PrintToDebuggerConsole("Creating summary window...\n");
     CreateSummaryWindow();
     gfNeedToInitGame = TRUE;
   }
@@ -411,7 +412,7 @@ BOOLEAN EditModeInit(void) {
 
   gfIntendOnEnteringEditor = FALSE;
 
-  DebugPrint("Finished entering editor mode...\n");
+  PrintToDebuggerConsole("Finished entering editor mode...\n");
 
   return (TRUE);
 }
@@ -2500,21 +2501,21 @@ BOOLEAN PlaceLight(int16_t sRadius, int16_t iMapX, int16_t iMapY, int16_t sType)
     ubIntensity = (uint8_t)((float)sRadius / LIGHT_DECAY);
     if ((iLightHandle = LightCreateOmni(ubIntensity, sRadius)) == (-1)) {
       // Can't create light template
-      DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+      DebugMsg(TOPIC_GAME, DBG_ERROR,
                String("PlaceLight: Can't create light template for radius %d", sRadius));
       return (FALSE);
     }
 
     if (!LightSave(iLightHandle, Filename)) {
       // Can't save light template
-      DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+      DebugMsg(TOPIC_GAME, DBG_ERROR,
                String("PlaceLight: Can't save light template for radius %d", sRadius));
       return (FALSE);
     }
 
     if ((iLightHandle = LightSpriteCreate(Filename, sType)) == (-1)) {
       // Can't create sprite
-      DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+      DebugMsg(TOPIC_GAME, DBG_ERROR,
                String("PlaceLight: Can't create light sprite of radius %d", sRadius));
       return (FALSE);
     }
@@ -2522,13 +2523,13 @@ BOOLEAN PlaceLight(int16_t sRadius, int16_t iMapX, int16_t iMapY, int16_t sType)
 
   if (!LightSpritePower(iLightHandle, TRUE)) {
     // Can't turn this light on
-    DebugMsg(TOPIC_GAME, DBG_LEVEL_1, String("PlaceLight: Can't turn on light %d", iLightHandle));
+    DebugMsg(TOPIC_GAME, DBG_ERROR, String("PlaceLight: Can't turn on light %d", iLightHandle));
     return (FALSE);
   }
 
   if (!LightSpritePosition(iLightHandle, iMapX, iMapY)) {
     // Can't set light's position
-    DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+    DebugMsg(TOPIC_GAME, DBG_ERROR,
              String("PlaceLight: Can't set light position for light %d", iLightHandle));
     return (FALSE);
   }

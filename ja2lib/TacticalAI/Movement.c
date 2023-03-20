@@ -2,6 +2,7 @@
 // This file contains code derived from the code released under the terms
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
+#include "SGP/Debug.h"
 #include "Soldier.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/Strategic.h"
@@ -643,7 +644,7 @@ void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier) {
   } else {
     CancelAIAction(pSoldier, DONTFORCE);
 #ifdef TESTAI
-    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2AI, DBG_INFO,
              String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", GetSolID(pSoldier)));
 #endif
   }
@@ -662,13 +663,13 @@ void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier) {
     // maybe we didn't actually start the action last turn...
     pSoldier->bActionInProgress = TRUE;
 #ifdef TESTAI
-    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2AI, DBG_INFO,
              String("Soldier (%d) continues along path", GetSolID(pSoldier)));
 #endif
   } else {
     CancelAIAction(pSoldier, DONTFORCE);
 #ifdef TESTAI
-    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2AI, DBG_INFO,
              String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", GetSolID(pSoldier)));
 #endif
   }

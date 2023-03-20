@@ -14,6 +14,7 @@
 #include "Laptop/Mercs.h"
 #include "Laptop/Personnel.h"
 #include "Money.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"

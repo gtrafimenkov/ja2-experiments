@@ -9,7 +9,6 @@
 #include <string.h>
 
 #include "JAScreens.h"
-#include "SGP/Debug.h"
 #include "SGP/HImage.h"
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"

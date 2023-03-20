@@ -7,6 +7,7 @@
 #include "Editor/EditorMercs.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
+#include "SGP/Debug.h"
 #include "SGP/MemMan.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"

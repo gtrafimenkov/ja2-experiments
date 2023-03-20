@@ -12,6 +12,7 @@
 #include "Laptop/AIMMembers.h"
 #include "MessageBoxScreen.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"
@@ -3020,7 +3021,7 @@ void NpcRecordLoggingInit(uint8_t ubNpcID, uint8_t ubMercID, uint8_t ubQuoteNum,
     if (File_Exists(QUEST_DEBUG_FILE)) {
       // delete the file
       if (!Plat_DeleteFile(QUEST_DEBUG_FILE)) {
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to delete %s file", QUEST_DEBUG_FILE));
+        DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to delete %s file", QUEST_DEBUG_FILE));
         return;
       }
     }
@@ -3031,8 +3032,7 @@ void NpcRecordLoggingInit(uint8_t ubNpcID, uint8_t ubMercID, uint8_t ubQuoteNum,
   hFile = File_OpenForAppending(QUEST_DEBUG_FILE);
   if (!hFile) {
     File_Close(hFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-             String("FAILED to open Quest Debug File %s", QUEST_DEBUG_FILE));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to open Quest Debug File %s", QUEST_DEBUG_FILE));
     return;
   }
 
@@ -3049,7 +3049,7 @@ void NpcRecordLoggingInit(uint8_t ubNpcID, uint8_t ubMercID, uint8_t ubQuoteNum,
 
   if (!File_Write(hFile, DestString, strlen(DestString), &uiByteWritten)) {
     File_Close(hFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to write to %s", QUEST_DEBUG_FILE));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to write to %s", QUEST_DEBUG_FILE));
     return;
   }
 
@@ -3059,7 +3059,7 @@ void NpcRecordLoggingInit(uint8_t ubNpcID, uint8_t ubMercID, uint8_t ubQuoteNum,
   // append to file
   if (!File_Write(hFile, DestString, strlen(DestString), &uiByteWritten)) {
     File_Close(hFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to write to %s", QUEST_DEBUG_FILE));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to write to %s", QUEST_DEBUG_FILE));
     return;
   }
 
@@ -3090,8 +3090,7 @@ void NpcRecordLogging(uint8_t ubApproach, char *pStringA, ...) {
   hFile = File_OpenForAppending(QUEST_DEBUG_FILE);
   if (!hFile) {
     File_Close(hFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-             String("FAILED to open Quest Debug File %s", QUEST_DEBUG_FILE));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to open Quest Debug File %s", QUEST_DEBUG_FILE));
     return;
   }
 
@@ -3106,7 +3105,7 @@ void NpcRecordLogging(uint8_t ubApproach, char *pStringA, ...) {
   // append to file
   if (!File_Write(hFile, DestString, strlen(DestString), &uiByteWritten)) {
     File_Close(hFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to write to %s", QUEST_DEBUG_FILE));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to write to %s", QUEST_DEBUG_FILE));
     return;
   }
 

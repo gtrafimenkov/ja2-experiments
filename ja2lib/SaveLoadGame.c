@@ -102,6 +102,7 @@
 #include "Utils/Text.h"
 #include "platform.h"
 #include "rust_civ_groups.h"
+#include "rust_debug.h"
 #include "rust_fileman.h"
 #include "rust_sam_sites.h"
 
@@ -1728,7 +1729,7 @@ BOOLEAN LoadSavedGame(uint8_t ubSavedGameID) {
   gTacticalStatus.uiFlags &= ~SHOW_ALL_ITEMS;
 
   if ((gTacticalStatus.uiFlags & INCOMBAT)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Setting attack busy count to 0 from load"));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("Setting attack busy count to 0 from load"));
     gTacticalStatus.ubAttackBusyCount = 0;
   }
 
@@ -2086,7 +2087,7 @@ BOOLEAN SavePtrInfo( void* *pData, uint32_t uiSizeOfObject, FileID hFile )
                 File_Write( hFile, &ubOne, 1, &uiNumBytesWritten );
                 if( uiNumBytesWritten != 1 )
                 {
-                        DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("FAILED to Write Soldier Structure
+                        DebugMsg( TOPIC_JA2, DBG_INFO, String("FAILED to Write Soldier Structure
 to File" ) ); return(FALSE);
                 }
 
@@ -2094,7 +2095,7 @@ to File" ) ); return(FALSE);
                 File_Write( hFile, pData, uiSizeOfObject, &uiNumBytesWritten );
                 if( uiNumBytesWritten != uiSizeOfObject )
                 {
-                        DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("FAILED to Write Soldier Structure
+                        DebugMsg( TOPIC_JA2, DBG_INFO, String("FAILED to Write Soldier Structure
 to File" ) ); return(FALSE);
                 }
         }
@@ -2104,7 +2105,7 @@ to File" ) ); return(FALSE);
                 File_Write( hFile, &ubZero, 1, &uiNumBytesWritten );
                 if( uiNumBytesWritten != 1 )
                 {
-                        DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("FAILED to Write Soldier Structure
+                        DebugMsg( TOPIC_JA2, DBG_INFO, String("FAILED to Write Soldier Structure
 to File" ) ); return(FALSE);
                 }
         }
@@ -2124,7 +2125,7 @@ BOOLEAN LoadPtrInfo( void* *pData, uint32_t uiSizeOfObject, FileID hFile )
         File_Read( hFile, &ubOne, 1, &uiNumBytesRead );
         if( uiNumBytesRead != 1 )
         {
-                DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("FAILED to Read Soldier Structure from
+                DebugMsg( TOPIC_JA2, DBG_INFO, String("FAILED to Read Soldier Structure from
 File" ) ); return(FALSE);
         }
 
@@ -2142,7 +2143,7 @@ File" ) ); return(FALSE);
                 File_Read( hFile, pData, uiSizeOfObject, &uiNumBytesRead );
                 if( uiNumBytesRead != uiSizeOfObject )
                 {
-                        DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("FAILED to Write Soldier Structure
+                        DebugMsg( TOPIC_JA2, DBG_INFO, String("FAILED to Write Soldier Structure
 to File" ) ); return(FALSE);
                 }
         }
@@ -2282,7 +2283,7 @@ BOOLEAN LoadFilesFromSavedGame(char *pSrcFileName, FileID hFile) {
   File_Write(hSrcFile, pData, uiFileSize, &uiNumBytesWritten);
   if (uiNumBytesWritten != uiFileSize) {
     File_Close(hSrcFile);
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to Write to the %s File", pSrcFileName));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to Write to the %s File", pSrcFileName));
     // Free the buffer
     MemFree(pData);
 

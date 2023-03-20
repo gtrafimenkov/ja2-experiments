@@ -7,6 +7,7 @@
 #include "GameSettings.h"
 #include "Laptop/History.h"
 #include "MessageBoxScreen.h"
+#include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/Random.h"
 #include "Soldier.h"
