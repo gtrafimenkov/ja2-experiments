@@ -837,7 +837,7 @@ BOOLEAN SaveDoorTableToDoorTableTempFile(uint8_t sSectorX, uint8_t sSectorY, int
   }
 
   // Open the file for writing, Create it if it doesnt exist
-  hFile = File_OpenForAppending(zMapName);
+  hFile = File_OpenForWriting(zMapName);
   if (hFile == 0) {
     // Error opening map modification file
     return (FALSE);
@@ -1484,7 +1484,9 @@ BOOLEAN UpdateDoorStatusPerceivedValue(int16_t sGridNo) {
   DOOR_STATUS *pDoorStatus = NULL;
 
   pDoorStatus = GetDoorStatus(sGridNo);
-  CHECKF(pDoorStatus != NULL);
+  if (!(pDoorStatus != NULL)) {
+    return FALSE;
+  }
 
   InternalUpdateDoorsPerceivedValue(pDoorStatus);
 
@@ -1527,7 +1529,9 @@ BOOLEAN SetDoorPerceivedOpenStatus(int16_t sGridNo, BOOLEAN fPerceivedOpen) {
 
   pDoorStatus = GetDoorStatus(sGridNo);
 
-  CHECKF(pDoorStatus != NULL);
+  if (!(pDoorStatus != NULL)) {
+    return FALSE;
+  }
 
   return (InternalSetDoorPerceivedOpenStatus(pDoorStatus, fPerceivedOpen));
 }

@@ -11,6 +11,7 @@
 #include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/HImage.h"
+#include "SGP/PaletteEntry.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
@@ -20,7 +21,7 @@
 #include "Utils/FontControl.h"
 #include "rust_fileman.h"
 
-void FilenameForBPP(char *pFilename, char *pDestination) { strcpy(pDestination, pFilename); }
+void CopyFilename(char *pFilename, char *pDestination) { strcpy(pDestination, pFilename); }
 
 BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry *pPalette, SGPFILENAME ColFile) {
   FileID hFileHandle = FILE_ID_ERR;
@@ -66,7 +67,9 @@ BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
   uint8_t ubPaletteRep;
 
   // Create 16BPP Palette
-  CHECKF(GetPaletteRepIndexFromID(aPalRep, &ubPaletteRep));
+  if (!(GetPaletteRepIndexFromID(aPalRep, &ubPaletteRep))) {
+    return FALSE;
+  }
 
   SetFont(LARGEFONT1);
 
@@ -82,7 +85,7 @@ BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
         Get16BPPColor(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
                               gpPalRep[ubPaletteRep].b[cnt1]));
 
-    ColorFillVideoSurfaceArea(uiDestSurface, sTLX, sTLY, sBRX, sBRY, us16BPPColor);
+    VSurfaceColorFill(GetVSByID(uiDestSurface), sTLX, sTLY, sBRX, sBRY, us16BPPColor);
   }
 
   gprintf(ubXPos + (16 * 20), ubYPos, L"%S", gpPalRep[ubPaletteRep].ID);

@@ -11,6 +11,7 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/English.h"
+#include "SGP/Input.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -20,7 +21,6 @@
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/SoldierProfileType.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/JA25EnglishText.h"
@@ -276,7 +276,6 @@ uint32_t GameInitOptionsScreenHandle(void) {
 uint32_t GameInitOptionsScreenShutdown(void) { return (1); }
 
 BOOLEAN EnterGIOScreen() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t cnt;
   uint16_t usPosY;
 
@@ -285,9 +284,9 @@ BOOLEAN EnterGIOScreen() {
   SetCurrentCursorFromDatabase(CURSOR_NORMAL);
 
   // load the Main trade screen backgroiund image
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("InterFace\\OptionsScreenBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiGIOMainBackGroundImage));
+  if (!AddVObjectFromFile("InterFace\\OptionsScreenBackGround.sti", &guiGIOMainBackGroundImage)) {
+    return FALSE;
+  }
 
   // Ok button
   giGIODoneBtnImage = LoadButtonImage("INTERFACE\\PreferencesButtons.sti", -1, 0, -1, 2, -1);
@@ -411,7 +410,7 @@ BOOLEAN EnterGIOScreen() {
   // REnder the screen once so we can blt ot to ths save buffer
   RenderGIOScreen();
 
-  BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, 0, 0, 639, 439);
+  VSurfaceBlitBufToBuf(vsFB, vsSaveBuffer, 0, 0, 639, 439);
 
   gfGIOButtonsAllocated = TRUE;
 
@@ -504,10 +503,10 @@ BOOLEAN RenderGIOScreen() {
 
   // Get the main background screen graphic and blt it
   GetVideoObject(&hPixHandle, guiGIOMainBackGroundImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject2(vsFB, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
 
   // Shade the background
-  ShadowVideoSurfaceRect(FRAME_BUFFER, 48, 55, 592, 378);  // 358
+  ShadowVideoSurfaceRect(vsFB, 48, 55, 592, 378);  // 358
 
   // Display the title
   DrawTextToScreen(gzGIOScreenText[GIO_INITIAL_GAME_SETTINGS], GIO_MAIN_TITLE_X, GIO_MAIN_TITLE_Y,

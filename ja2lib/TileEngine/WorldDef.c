@@ -16,6 +16,7 @@
 #include "JAScreens.h"
 #include "SGP/Debug.h"
 #include "SGP/MouseSystem.h"
+#include "SGP/PaletteEntry.h"
 #include "SGP/Shading.h"
 #include "SGP/VObject.h"
 #include "SGP/Video.h"
@@ -247,7 +248,9 @@ BOOLEAN InitializeWorld() {
   // Initialize world data
 
   gpWorldLevelData = (MAP_ELEMENT *)MemAlloc(WORLD_MAX * sizeof(MAP_ELEMENT));
-  CHECKF(gpWorldLevelData);
+  if (!(gpWorldLevelData)) {
+    return FALSE;
+  }
 
   // Zero world
   memset(gpWorldLevelData, 0, WORLD_MAX * sizeof(MAP_ELEMENT));
@@ -353,7 +356,7 @@ BOOLEAN AddTileSurface(char *cFilename, uint32_t ubType, uint8_t ubTilesetID,
   gbSameAsDefaultSurfaceUsed[ubType] = FALSE;
 
   // Adjust for BPP
-  FilenameForBPP(cFilename, cFileBPP);
+  CopyFilename(cFilename, cFileBPP);
 
   if (!fGetFromRoot) {
     // Adjust for tileset position
@@ -2338,7 +2341,9 @@ BOOLEAN LoadWorld(char *puiFilename) {
 #ifdef JA2TESTVERSION
   uiStartTime = GetJA2Clock();
 #endif
-  CHECKF(LoadMapTileset(iTilesetID) != FALSE);
+  if (!(LoadMapTileset(iTilesetID) != FALSE)) {
+    return FALSE;
+  }
 #ifdef JA2TESTVERSION
   uiLoadMapTilesetTime = GetJA2Clock() - uiStartTime;
 #endif
@@ -2616,7 +2621,7 @@ BOOLEAN LoadWorld(char *puiFilename) {
   } else {  // We are above ground.
     gfBasement = FALSE;
     gfCaves = FALSE;
-    if (!gfEditMode && guiCurrentScreen != MAPUTILITY_SCREEN) {
+    if (!gfEditMode) {
       ubAmbientLightLevel = GetTimeOfDayAmbientLightLevel();
     } else {
       ubAmbientLightLevel = 4;
@@ -2731,15 +2736,6 @@ BOOLEAN LoadWorld(char *puiFilename) {
 
 #ifdef JA2TESTVERSION
   uiLoadWorldTime = GetJA2Clock() - uiLoadWorldStartTime;
-#endif
-
-#ifdef JA2TESTVERSION
-
-  // ATE: Not while updating maps!
-  if (guiCurrentScreen != MAPUTILITY_SCREEN) {
-    GenerateBuildings();
-  }
-
 #endif
 
   RenderProgressBar(0, 100);
@@ -3530,7 +3526,7 @@ void LoadMapLights(int8_t **hBuffer) {
     iLSprite = LightSpriteCreate(str, TmpLight.uiLightType);
     // if this fails, then we will ignore the light.
     // ATE: Don't add ANY lights of mapscreen util is on
-    if (iLSprite != -1 && guiCurrentScreen != MAPUTILITY_SCREEN) {
+    if (iLSprite != -1) {
       if (!gfCaves || gfEditMode) {
         if (gfEditMode || (TmpLight.uiFlags & LIGHT_PRIMETIME && fPrimeTime) ||
             (TmpLight.uiFlags & LIGHT_NIGHTTIME && fNightTime) ||

@@ -10,8 +10,10 @@
 
 #include "GameSettings.h"
 #include "SGP/Debug.h"
+#include "SGP/PaletteEntry.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/WCheck.h"
 #include "Soldier.h"
 #include "Strategic/GameClock.h"
@@ -637,7 +639,9 @@ BOOLEAN CreateCorpsePalette(ROTTING_CORPSE *pCorpse) {
 
   pCorpse->p8BPPPalette = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
 
-  CHECKF(pCorpse->p8BPPPalette != NULL);
+  if (!(pCorpse->p8BPPPalette != NULL)) {
+    return FALSE;
+  }
 
   bBodyTypePalette =
       GetBodyTypePaletteSubstitutionCode(NULL, pCorpse->def.ubBodyType, zColFilename);

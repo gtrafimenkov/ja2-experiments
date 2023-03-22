@@ -40,12 +40,11 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/ShadeTableUtil.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileCache.h"
+#include "TileEngine/WorldDef.h"
 #include "Utils/Cursors.h"
 #include "Utils/EventPump.h"
 #include "Utils/FontControl.h"
-#include "Utils/MapUtility.h"
 #include "Utils/MercTextBox.h"
 #include "Utils/MusicControl.h"
 #include "Utils/SoundControl.h"
@@ -136,13 +135,6 @@ uint32_t InitializeJA2(void) {
 #endif
 
 #ifdef JA2BETAVERSION
-  // CHECK COMMANDLINE FOR SPECIAL UTILITY
-  if (strcmp(gzCommandLine, "-DOMAPS") == 0) {
-    return (MAPUTILITY_SCREEN);
-  }
-#endif
-
-#ifdef JA2BETAVERSION
   // This allows the QuickSave Slots to be autoincremented, ie everytime the user saves, there will
   // be a new quick save file
   if (strcasecmp(gzCommandLine, "-quicksave") == 0) {
@@ -187,12 +179,12 @@ void ShutdownJA2(void) {
   uint32_t uiIndex;
 
   // Clear screen....
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  VSurfaceColorFill(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   // Remove cursor....
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
 
-  RefreshScreen(NULL);
+  RefreshScreen();
 
   ShutdownStrategicLayer();
 

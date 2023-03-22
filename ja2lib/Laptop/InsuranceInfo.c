@@ -93,15 +93,14 @@ void EnterInitInsuranceInfo() {
 }
 
 BOOLEAN EnterInsuranceInfo() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX;
 
   InitInsuranceDefaults();
 
   // load the Insurance bullet graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBulletImage));
+  if (!AddVObjectFromFile("LAPTOP\\bullet.sti", &guiBulletImage)) {
+    return FALSE;
+  }
 
   // left arrow
   guiInsPrevButtonImage = LoadButtonImage("LAPTOP\\InsLeftButton.sti", 2, 0, -1, 1, -1);
@@ -368,8 +367,8 @@ void DisplayPremiumPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
+                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   GetInsuranceText(INS_MLTI_LENGTH_OF_EMPLOYMENT_CONTRACT, sText);
   usNewLineOffset +=
@@ -380,8 +379,8 @@ void DisplayPremiumPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
+                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   GetInsuranceText(INS_MLTI_EMPLOYEES_AGE_AND_HEALTH, sText);
   usNewLineOffset +=
@@ -392,8 +391,8 @@ void DisplayPremiumPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
+                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   GetInsuranceText(INS_MLTI_EMPLOOYEES_TRAINING_AND_EXP, sText);
   usNewLineOffset +=
@@ -437,7 +436,7 @@ void DisplayRenewingPremiumPage() {
   /*
           //Get and display the insurance bullet
           GetVideoObject(&hPixHandle, guiBulletImage );
-          BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
+          BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
      VO_BLT_SRCTRANSPARENCY,NULL);
 
           GetInsuranceText( INS_MLTI_IF_U_EXTEND_THE_CONTRACT, sText );
@@ -549,8 +548,8 @@ void DisplayInfoTocPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
+                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   GetInsuranceText(INS_MLTI_REASONABLE_AND_FLEXIBLE, sText);
   usNewLineOffset +=
@@ -565,8 +564,8 @@ void DisplayInfoTocPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
+                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   GetInsuranceText(INS_MLTI_QUICKLY_AND_EFFICIENT, sText);
   usNewLineOffset +=
