@@ -8,31 +8,37 @@
 #include "SGP/HImage.h"
 #include "SGP/ImgFmt.h"
 #include "SGP/MemMan.h"
+#include "SGP/PaletteEntry.h"
 #include "SGP/Types.h"
 #include "SGP/WCheck.h"
 #include "rust_debug.h"
 #include "rust_fileman.h"
 
-BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, FileID hFile, STCIHeader *pHeader);
-BOOLEAN STCILoadIndexed(HIMAGE hImage, uint16_t fContents, FileID hFile, STCIHeader *pHeader);
-BOOLEAN STCISetPalette(void *pSTCIPalette, HIMAGE hImage);
+BOOLEAN STCILoadRGB(struct Image *hImage, uint16_t fContents, FileID hFile, STCIHeader *pHeader);
+BOOLEAN STCILoadIndexed(struct Image *hImage, uint16_t fContents, FileID hFile,
+                        STCIHeader *pHeader);
+BOOLEAN STCISetPalette(void *pSTCIPalette, struct Image *hImage);
 
-BOOLEAN LoadSTCIFileToImage(HIMAGE hImage, uint16_t fContents) {
+BOOLEAN LoadSTCIFileToImage(struct Image *hImage, uint16_t fContents) {
   FileID hFile = FILE_ID_ERR;
   STCIHeader Header;
   uint32_t uiBytesRead;
-  image_type TempImage;
+  struct Image TempImage;
 
   // Check that hImage is valid, and that the file in question exists
   Assert(hImage != NULL);
 
   TempImage = *hImage;
 
-  CHECKF(File_Exists(TempImage.ImageFile));
+  if (!(File_Exists(TempImage.ImageFile))) {
+    return FALSE;
+  }
 
   // Open the file and read the header
   hFile = File_OpenForReading(TempImage.ImageFile);
-  CHECKF(hFile);
+  if (!(hFile)) {
+    return FALSE;
+  }
 
   if (!File_Read(hFile, &Header, STCI_HEADER_SIZE, &uiBytesRead) ||
       uiBytesRead != STCI_HEADER_SIZE || memcmp(Header.cID, STCI_ID_STRING, STCI_ID_LEN) != 0) {
@@ -76,7 +82,7 @@ BOOLEAN LoadSTCIFileToImage(HIMAGE hImage, uint16_t fContents) {
   return (TRUE);
 }
 
-BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, FileID hFile, STCIHeader *pHeader) {
+BOOLEAN STCILoadRGB(struct Image *hImage, uint16_t fContents, FileID hFile, STCIHeader *pHeader) {
   uint32_t uiBytesRead;
 
   if (fContents & IMAGE_PALETTE &&
@@ -138,7 +144,8 @@ BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, FileID hFile, STCIHeader 
   return (TRUE);
 }
 
-BOOLEAN STCILoadIndexed(HIMAGE hImage, uint16_t fContents, FileID hFile, STCIHeader *pHeader) {
+BOOLEAN STCILoadIndexed(struct Image *hImage, uint16_t fContents, FileID hFile,
+                        STCIHeader *pHeader) {
   uint32_t uiFileSectionSize;
   uint32_t uiBytesRead;
   void *pSTCIPalette;
@@ -290,7 +297,7 @@ BOOLEAN STCILoadIndexed(HIMAGE hImage, uint16_t fContents, FileID hFile, STCIHea
   return (TRUE);
 }
 
-BOOLEAN STCISetPalette(void *pSTCIPalette, HIMAGE hImage) {
+BOOLEAN STCISetPalette(void *pSTCIPalette, struct Image *hImage) {
   uint16_t usIndex;
   STCIPaletteElement *pubPalette;
 
@@ -320,11 +327,15 @@ BOOLEAN IsSTCIETRLEFile(char *ImageFile) {
   STCIHeader Header;
   uint32_t uiBytesRead;
 
-  CHECKF(File_Exists(ImageFile));
+  if (!(File_Exists(ImageFile))) {
+    return FALSE;
+  }
 
   // Open the file and read the header
   hFile = File_OpenForReading(ImageFile);
-  CHECKF(hFile);
+  if (!(hFile)) {
+    return FALSE;
+  }
 
   if (!File_Read(hFile, &Header, STCI_HEADER_SIZE, &uiBytesRead) ||
       uiBytesRead != STCI_HEADER_SIZE || memcmp(Header.cID, STCI_ID_STRING, STCI_ID_LEN) != 0) {

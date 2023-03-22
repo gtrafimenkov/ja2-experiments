@@ -63,7 +63,6 @@
 #include "TileEngine/RadarScreen.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TacticalPlacementGUI.h"
 #include "UI.h"
 #include "Utils/Cursors.h"
@@ -647,7 +646,7 @@ uint32_t MainGameScreenHandle(void) {
 
   if (gfScrollPending) {
     AllocateVideoOverlaysArea();
-    SaveVideoOverlaysArea(FRAME_BUFFER);
+    SaveVideoOverlaysArea(vsFB);
     ExecuteVideoOverlays();
   } else {
     ExecuteVideoOverlays();

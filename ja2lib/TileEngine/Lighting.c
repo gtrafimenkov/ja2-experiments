@@ -32,8 +32,10 @@
 #include "SGP/Debug.h"
 #include "SGP/Input.h"
 #include "SGP/Line.h"
+#include "SGP/PaletteEntry.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -50,7 +52,6 @@
 #include "TileEngine/ShadeTableUtil.h"
 #include "TileEngine/Structure.h"
 #include "TileEngine/StructureInternals.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
@@ -962,7 +963,9 @@ BOOLEAN LightSetNaturalTile(int16_t iX, int16_t iY, uint8_t ubShade) {
   struct LEVELNODE *pLand, *pStruct, *pObject, *pRoof, *pOnRoof, *pTopmost, *pMerc;
   uint32_t uiIndex;
 
-  CHECKF(gpWorldLevelData != NULL);
+  if (!(gpWorldLevelData != NULL)) {
+    return FALSE;
+  }
 
   uiIndex = MAPROWCOLTOPOS(iY, iX);
 
@@ -1042,11 +1045,15 @@ BOOLEAN LightResetTile(int16_t iX, int16_t iY) {
   struct LEVELNODE *pLand, *pStruct, *pObject, *pRoof, *pOnRoof, *pTopmost, *pMerc;
   uint32_t uiTile;
 
-  CHECKF(gpWorldLevelData != NULL);
+  if (!(gpWorldLevelData != NULL)) {
+    return FALSE;
+  }
 
   uiTile = MAPROWCOLTOPOS(iY, iX);
 
-  CHECKF(uiTile != 0xffff);
+  if (!(uiTile != 0xffff)) {
+    return FALSE;
+  }
 
   pLand = gpWorldLevelData[uiTile].pLandHead;
 

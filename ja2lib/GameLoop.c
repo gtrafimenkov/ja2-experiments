@@ -270,7 +270,7 @@ void GameLoop(void) {
     guiCurrentScreen = uiOldScreen;
   }
 
-  RefreshScreen(NULL);
+  RefreshScreen();
 
   guiGameCycleCounter++;
 

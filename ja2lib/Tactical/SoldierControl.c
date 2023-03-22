@@ -17,10 +17,12 @@
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/MemMan.h"
+#include "SGP/PaletteEntry.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
@@ -1026,7 +1028,9 @@ BOOLEAN EVENT_InitNewSoldierAnim(struct SOLDIERTYPE *pSoldier, uint16_t usNewSta
   uint16_t usItem;
   BOOLEAN fTryingToRestart = FALSE;
 
-  CHECKF(usNewState < NUMANIMATIONSTATES);
+  if (!(usNewState < NUMANIMATIONSTATES)) {
+    return FALSE;
+  }
 
   ///////////////////////////////////////////////////////////////////////
   //			DO SOME CHECKS ON OUR NEW ANIMATION!
@@ -4163,7 +4167,9 @@ BOOLEAN ConvertAniCodeToAniFrame(struct SOLDIERTYPE *pSoldier, uint16_t usAniFra
   // get anim surface and determine # of frames
   usAnimSurface = GetSoldierAnimationSurface(pSoldier, pSoldier->usAnimState);
 
-  CHECKF(usAnimSurface != INVALID_ANIMATION_SURFACE);
+  if (!(usAnimSurface != INVALID_ANIMATION_SURFACE)) {
+    return FALSE;
+  }
 
   // COnvert world direction into sprite direction
   ubTempDir = gOneCDirection[pSoldier->bDirection];
@@ -4577,12 +4583,16 @@ BOOLEAN CreateSoldierPalettes(struct SOLDIERTYPE *pSoldier) {
   pSoldier->p8BPPPalette = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
   memset(pSoldier->p8BPPPalette, 0, sizeof(struct SGPPaletteEntry) * 256);
 
-  CHECKF(pSoldier->p8BPPPalette != NULL);
+  if (!(pSoldier->p8BPPPalette != NULL)) {
+    return FALSE;
+  }
 
   // --- TAKE FROM CURRENT ANIMATION struct VObject*!
   usAnimSurface = GetSoldierAnimationSurface(pSoldier, pSoldier->usAnimState);
 
-  CHECKF(usAnimSurface != INVALID_ANIMATION_SURFACE);
+  if (!(usAnimSurface != INVALID_ANIMATION_SURFACE)) {
+    return FALSE;
+  }
 
   if ((bBodyTypePalette = GetBodyTypePaletteSubstitutionCode(pSoldier, pSoldier->ubBodyType,
                                                              zColFilename)) == -1) {
@@ -4932,11 +4942,17 @@ BOOLEAN LoadPaletteData() {
 
     // Malloc
     gpPalRep[cnt].r = (uint8_t *)MemAlloc(gpPalRep[cnt].ubPaletteSize);
-    CHECKF(gpPalRep[cnt].r != NULL);
+    if (!(gpPalRep[cnt].r != NULL)) {
+      return FALSE;
+    }
     gpPalRep[cnt].g = (uint8_t *)MemAlloc(gpPalRep[cnt].ubPaletteSize);
-    CHECKF(gpPalRep[cnt].g != NULL);
+    if (!(gpPalRep[cnt].g != NULL)) {
+      return FALSE;
+    }
     gpPalRep[cnt].b = (uint8_t *)MemAlloc(gpPalRep[cnt].ubPaletteSize);
-    CHECKF(gpPalRep[cnt].b != NULL);
+    if (!(gpPalRep[cnt].b != NULL)) {
+      return FALSE;
+    }
 
     for (cnt2 = 0; cnt2 < gpPalRep[cnt].ubPaletteSize; cnt2++) {
       if (!File_Read(hFile, &gpPalRep[cnt].r[cnt2], sizeof(uint8_t), NULL)) {
@@ -4961,7 +4977,9 @@ BOOLEAN SetPaletteReplacement(struct SGPPaletteEntry *p8BPPPalette, PaletteRepID
   uint8_t ubType;
   uint8_t ubPalIndex;
 
-  CHECKF(GetPaletteRepIndexFromID(aPalRep, &ubPalIndex));
+  if (!(GetPaletteRepIndexFromID(aPalRep, &ubPalIndex))) {
+    return FALSE;
+  }
 
   // Get range type
   ubType = gpPalRep[ubPalIndex].ubType;
@@ -5691,7 +5709,9 @@ BOOLEAN InternalDoMercBattleSound(struct SOLDIERTYPE *pSoldier, uint8_t ubBattle
   int32_t uiSubSoundID = 0;
 
   // DOUBLECHECK RANGE
-  CHECKF(ubBattleSoundID < NUM_MERC_BATTLE_SOUNDS);
+  if (!(ubBattleSoundID < NUM_MERC_BATTLE_SOUNDS)) {
+    return FALSE;
+  }
 
   if ((pSoldier->uiStatusFlags & SOLDIER_VEHICLE)) {
     // Pick a passenger from vehicle....
@@ -6002,7 +6022,9 @@ BOOLEAN DoMercBattleSound(struct SOLDIERTYPE *pSoldier, uint8_t ubBattleSoundID)
 BOOLEAN PreloadSoldierBattleSounds(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemove) {
   uint32_t cnt;
 
-  CHECKF(IsSolActive(pSoldier) != FALSE);
+  if (!(IsSolActive(pSoldier) != FALSE)) {
+    return FALSE;
+  }
 
   for (cnt = 0; cnt < NUM_MERC_BATTLE_SOUNDS; cnt++) {
     // OK, build file and play!
@@ -6792,7 +6814,9 @@ BOOLEAN GetProfileFlagsFromGridno(struct SOLDIERTYPE *pSoldier, uint16_t usAnimS
   // Get Surface Index
   usAnimSurface = DetermineSoldierAnimationSurface(pSoldier, usAnimState);
 
-  CHECKF(usAnimSurface != INVALID_ANIMATION_SURFACE);
+  if (!(usAnimSurface != INVALID_ANIMATION_SURFACE)) {
+    return FALSE;
+  }
 
   bProfileID = gAnimSurfaceDatabase[usAnimSurface].bProfile;
 

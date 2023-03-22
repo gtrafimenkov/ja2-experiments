@@ -26,7 +26,6 @@
 #include "Tactical/Vehicles.h"
 #include "Tactical/Weapons.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "UI.h"
 
 #define LIFE_BAR_SHADOW FROMRGB(108, 12, 12)
@@ -64,7 +63,7 @@ enum {
 };
 
 // the ids for the car portraits
-int32_t giCarPortraits[4] = {-1, -1, -1, -1};
+uint32_t giCarPortraits[4] = {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff};
 
 // the car portrait file names
 char *pbCarPortraitFileNames[] = {
@@ -77,15 +76,14 @@ char *pbCarPortraitFileNames[] = {
 // load int he portraits for the car faces that will be use in mapscreen
 BOOLEAN LoadCarPortraitValues(void) {
   int32_t iCounter = 0;
-  VOBJECT_DESC VObjectDesc;
 
-  if (giCarPortraits[0] != -1) {
+  if (giCarPortraits[0] != 0xffffffff) {
     return FALSE;
   }
   for (iCounter = 0; iCounter < NUMBER_CAR_PORTRAITS; iCounter++) {
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    strcopy(VObjectDesc.ImageFile, sizeof(VObjectDesc.ImageFile), pbCarPortraitFileNames[iCounter]);
-    CHECKF(AddVideoObject(&VObjectDesc, &giCarPortraits[iCounter]));
+    if (!AddVObjectFromFile(pbCarPortraitFileNames[iCounter], &giCarPortraits[iCounter])) {
+      return FALSE;
+    }
   }
   return (TRUE);
 }
@@ -95,12 +93,12 @@ void UnLoadCarPortraits(void) {
   int32_t iCounter = 0;
 
   // car protraits loaded?
-  if (giCarPortraits[0] == -1) {
+  if (giCarPortraits[0] == 0xffffffff) {
     return;
   }
   for (iCounter = 0; iCounter < NUMBER_CAR_PORTRAITS; iCounter++) {
     DeleteVideoObjectFromIndex(giCarPortraits[iCounter]);
-    giCarPortraits[iCounter] = -1;
+    giCarPortraits[iCounter] = 0xffffffff;
   }
   return;
 }
@@ -125,7 +123,7 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
     return;
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(GetVSByID(uiBuffer), &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO MAX LIFE
@@ -187,7 +185,7 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
                   usLineColor, pDestBuf);
   }
 
-  UnLockVideoSurface(uiBuffer);
+  VSurfaceUnlock(GetVSByID(uiBuffer));
 }
 
 void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
@@ -237,7 +235,7 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
                    NULL);
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(GetVSByID(uiBuffer), &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   if (pSoldier->bBreathMax <= 97) {
@@ -292,7 +290,7 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  UnLockVideoSurface(uiBuffer);
+  VSurfaceUnlock(GetVSByID(uiBuffer));
 }
 
 void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
@@ -314,7 +312,7 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
     return;
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(GetVSByID(uiBuffer), &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO BREATH
@@ -334,7 +332,7 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  UnLockVideoSurface(uiBuffer);
+  VSurfaceUnlock(GetVSByID(uiBuffer));
 }
 
 void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos, int16_t sYPos,
@@ -379,7 +377,7 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
     // );
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(GetVSByID(uiBuffer), &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO BREATH
@@ -396,7 +394,7 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
   RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  UnLockVideoSurface(uiBuffer);
+  VSurfaceUnlock(GetVSByID(uiBuffer));
 
   if (uiBuffer == guiSAVEBUFFER) {
     RestoreExternBackgroundRect(sXPos, (int16_t)(sYPos - sHeight), sWidth, (int16_t)(sHeight + 1));
@@ -416,7 +414,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       ubVehicleType = pVehicleList[pSoldier->bVehicleID].ubVehicleType;
 
       // just draw the vehicle
-      BltVideoObjectFromIndex(guiSAVEBUFFER, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY,
+      BltVideoObjectFromIndex(vsSaveBuffer, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY,
                               VO_BLT_SRCTRANSPARENCY, NULL);
       RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
 
@@ -446,7 +444,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       }
     }
   } else {
-    BltVideoObjectFromIndex(guiSAVEBUFFER, guiCLOSE, 5, sFaceX, sFaceY, VO_BLT_SRCTRANSPARENCY,
+    BltVideoObjectFromIndex(vsSaveBuffer, guiCLOSE, 5, sFaceX, sFaceY, VO_BLT_SRCTRANSPARENCY,
                             NULL);
     RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
   }

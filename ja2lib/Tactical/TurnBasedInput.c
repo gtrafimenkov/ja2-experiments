@@ -128,7 +128,6 @@ extern BOOLEAN gfReportHitChances;
 BOOLEAN gfFirstCycleMovementStarted = FALSE;
 
 extern uint32_t guiVObjectSize;
-extern uint32_t guiVSurfaceSize;
 
 extern BOOLEAN gfNextShotKills;
 
@@ -2543,12 +2542,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"Video Scroll OFF");
 #endif
           } else if (fCtrl) {
-#ifdef SGP_VIDEO_DEBUGGING
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"VObjects:  %d", guiVObjectSize);
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"VSurfaces:  %d", guiVSurfaceSize);
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"SGPVideoDump.txt updated...");
-            PerformVideoInfoDumpIntoFile("SGPVideoDump.txt", TRUE);
-#endif
           } else
             DisplayGameSettings();
 
