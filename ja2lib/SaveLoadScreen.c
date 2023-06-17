@@ -298,7 +298,7 @@ uint32_t SaveLoadScreenHandle() {
     PauseGame();
 
     // save the new rect
-    VSurfaceBlitBufToBuf(vsFB, vsSaveBuffer, 0, 0, 639, 439);
+    VSurfaceBlitBufToBuf(vsFB, vsSB, 0, 0, 639, 439);
   }
 
   RestoreBackgroundRects();
@@ -690,7 +690,7 @@ void RenderSaveLoadScreen() {
   }
 
   GetVideoObject(&hPixHandle, guiSlgBackGroundImage);
-  BltVideoObject2(vsFB, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, 0, 0);
 
   if (gfSaveGame) {
     // If we are saving a game
@@ -699,15 +699,13 @@ void RenderSaveLoadScreen() {
     //		DrawTextToScreen( zSaveLoadText[SLG_SAVE_GAME], 0, 10, 639, SAVE_LOAD_TITLE_FONT,
     // SAVE_LOAD_TITLE_COLOR, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject2(vsFB, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y, VO_BLT_SRCTRANSPARENCY,
-                    NULL);
+    BltVObject(vsFB, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
   } else {
     // If we are Loading a game
 
     // Display the Title
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject2(vsFB, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y, VO_BLT_SRCTRANSPARENCY,
-                    NULL);
+    BltVObject(vsFB, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
   }
 
   DisplaySaveGameList();
@@ -1038,8 +1036,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
   // background
   GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-  BltVideoObject2(vsFB, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY,
-                  VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY);
 
   //
   // Set the shadow color
@@ -1820,8 +1817,7 @@ void DisplayOnScreenNumber(BOOLEAN fErase) {
       continue;
     }
 
-    VSurfaceBlitBufToBuf(vsSaveBuffer, vsFB, usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 10,
-                         10);
+    VSurfaceBlitBufToBuf(vsSB, vsFB, usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 10, 10);
 
     if (bLoopNum != 10) {
       bNum = bLoopNum;

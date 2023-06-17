@@ -244,7 +244,7 @@ BOOLEAN RestoreBackgroundRects(void) {
   uint8_t *pDestBuf, *pSrcBuf;
 
   pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
-  pSrcBuf = VSurfaceLockOld(vsSaveBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = VSurfaceLockOld(vsSB, &uiSrcPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumBackSaves; uiCount++) {
     if (gBackSaves[uiCount].fFilled && (!gBackSaves[uiCount].fDisabled)) {
@@ -278,7 +278,7 @@ BOOLEAN RestoreBackgroundRects(void) {
   }
 
   VSurfaceUnlock(vsFB);
-  VSurfaceUnlock(vsSaveBuffer);
+  VSurfaceUnlock(vsSB);
 
   EmptyBackgroundRects();
 
@@ -366,7 +366,7 @@ BOOLEAN SaveBackgroundRects(void) {
   }
 
   VSurfaceUnlock(vsFB);
-  VSurfaceUnlock(vsSaveBuffer);
+  VSurfaceUnlock(vsSB);
 
   return (TRUE);
 }
@@ -463,14 +463,14 @@ BOOLEAN UpdateSaveBuffer(void) {
   GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
 
   pSrcBuf = VSurfaceLockOld(vsFB, &uiSrcPitchBYTES);
-  pDestBuf = VSurfaceLockOld(vsSaveBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsSB, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   gsVIEWPORT_WINDOW_START_Y, 0, gsVIEWPORT_WINDOW_START_Y, usWidth,
                   (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y));
 
   VSurfaceUnlock(vsFB);
-  VSurfaceUnlock(vsSaveBuffer);
+  VSurfaceUnlock(vsSB);
 
   return (TRUE);
 }
@@ -482,12 +482,12 @@ BOOLEAN RestoreExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth,
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
   pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
-  pSrcBuf = VSurfaceLockOld(vsSaveBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = VSurfaceLockOld(vsSB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
   VSurfaceUnlock(vsFB);
-  VSurfaceUnlock(vsSaveBuffer);
+  VSurfaceUnlock(vsSB);
 
   // Add rect to frame buffer queue
   InvalidateRegionEx(sLeft, sTop, (sLeft + sWidth), (sTop + sHeight), 0);
@@ -512,12 +512,12 @@ BOOLEAN RestoreExternBackgroundRectGivenID(int32_t iBack) {
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
   pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
-  pSrcBuf = VSurfaceLockOld(vsSaveBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = VSurfaceLockOld(vsSB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
   VSurfaceUnlock(vsFB);
-  VSurfaceUnlock(vsSaveBuffer);
+  VSurfaceUnlock(vsSB);
 
   // Add rect to frame buffer queue
   InvalidateRegionEx(sLeft, sTop, (sLeft + sWidth), (sTop + sHeight), 0);
@@ -531,12 +531,12 @@ BOOLEAN CopyExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth, in
 
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
-  pDestBuf = VSurfaceLockOld(vsSaveBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsSB, &uiDestPitchBYTES);
   pSrcBuf = VSurfaceLockOld(vsFB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
-  VSurfaceUnlock(vsSaveBuffer);
+  VSurfaceUnlock(vsSB);
   VSurfaceUnlock(vsFB);
 
   return (TRUE);
