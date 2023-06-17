@@ -367,8 +367,7 @@ void DisplayPremiumPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                  VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset);
 
   GetInsuranceText(INS_MLTI_LENGTH_OF_EMPLOYMENT_CONTRACT, sText);
   usNewLineOffset +=
@@ -379,8 +378,7 @@ void DisplayPremiumPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                  VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset);
 
   GetInsuranceText(INS_MLTI_EMPLOYEES_AGE_AND_HEALTH, sText);
   usNewLineOffset +=
@@ -391,8 +389,7 @@ void DisplayPremiumPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                  VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset);
 
   GetInsuranceText(INS_MLTI_EMPLOOYEES_TRAINING_AND_EXP, sText);
   usNewLineOffset +=
@@ -432,19 +429,6 @@ void DisplayRenewingPremiumPage() {
                        INS_INFO_FIRST_PARAGRAPH_WIDTH, 2, INS_FONT_BIG, INS_INFO_FRAUD_TEXT_COLOR,
                        sText, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
   usNewLineOffset += INS_INFO_SPACE_BN_PARAGRAPHS + 2;
-
-  /*
-          //Get and display the insurance bullet
-          GetVideoObject(&hPixHandle, guiBulletImage );
-          BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-     VO_BLT_SRCTRANSPARENCY,NULL);
-
-          GetInsuranceText( INS_MLTI_IF_U_EXTEND_THE_CONTRACT, sText );
-          usNewLineOffset += DisplayWrappedString(
-     INS_INFO_FIRST_PARAGRAPH_X+INSURANCE_BULLET_TEXT_OFFSET_X, usNewLineOffset,
-     INS_INFO_FIRST_PARAGRAPH_WIDTH, 2, INS_FONT_MED, INS_FONT_COLOR,  sText, FONT_MCOLOR_BLACK,
-     FALSE, LEFT_JUSTIFIED); usNewLineOffset += INS_INFO_SPACE_BN_PARAGRAPHS;
-  */
 }
 
 void DisplayCancelationPagePage() {
@@ -548,8 +532,7 @@ void DisplayInfoTocPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                  VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset);
 
   GetInsuranceText(INS_MLTI_REASONABLE_AND_FLEXIBLE, sText);
   usNewLineOffset +=
@@ -564,8 +547,7 @@ void DisplayInfoTocPage() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiBulletImage);
-  BltVideoObject2(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset,
-                  VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INS_INFO_FIRST_PARAGRAPH_X, usNewLineOffset);
 
   GetInsuranceText(INS_MLTI_QUICKLY_AND_EFFICIENT, sText);
   usNewLineOffset +=

@@ -3027,8 +3027,7 @@ void RenderTopmostFlashingItems() {
             SetBackgroundRectFilled(iBack);
           }
 
-          BltVideoObjectFromIndex(vsFB, guiRADIO, pLocator->bRadioFrame, sXPos, sYPos,
-                                  VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsFB, guiRADIO, pLocator->bRadioFrame, sXPos, sYPos);
 
           DrawItemPoolList(pItemPool, pItemPool->sGridNo, ITEMLIST_DISPLAY,
                            pItemPool->bRenderZHeightAboveLevel, sXPos, sYPos);

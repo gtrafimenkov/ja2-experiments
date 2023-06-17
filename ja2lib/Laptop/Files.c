@@ -280,7 +280,7 @@ void RenderFiles() {
 
   // display border
   GetVideoObject(&hHandle, guiLaptopBACKGROUND);
-  BltVideoObject2(vsFB, hHandle, 0, 108, 23, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, 108, 23);
 }
 
 void RenderFilesBackGround(void) {
@@ -291,11 +291,11 @@ void RenderFilesBackGround(void) {
   GetVideoObject(&hHandle, guiTITLE);
 
   // blt title bar to screen
-  BltVideoObject2(vsFB, hHandle, 0, TOP_X, TOP_Y - 2, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, TOP_X, TOP_Y - 2);
 
   // get and blt the top part of the screen, video object and blt to screen
   GetVideoObject(&hHandle, guiTOP);
-  BltVideoObject2(vsFB, hHandle, 0, TOP_X, TOP_Y + 22, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, TOP_X, TOP_Y + 22);
 
   return;
 }
@@ -589,9 +589,8 @@ void DisplayFilesList(void) {
     if (iCounter == iHighLightFileLine) {
       // render highlight
       GetVideoObject(&hHandle, guiHIGHLIGHT);
-      BltVideoObject2(vsFB, hHandle, 0, FILES_SENDER_TEXT_X - 5,
-                      ((iCounter + 9) * BLOCK_HEIGHT) + (iCounter * 2) - 4, VO_BLT_SRCTRANSPARENCY,
-                      NULL);
+      BltVObject(vsFB, hHandle, 0, FILES_SENDER_TEXT_X - 5,
+                 ((iCounter + 9) * BLOCK_HEIGHT) + (iCounter * 2) - 4);
     }
     mprintf(FILES_SENDER_TEXT_X, ((iCounter + 9) * BLOCK_HEIGHT) + (iCounter * 2) - 2,
             pFilesSenderList[pFilesList->ubCode]);
@@ -722,7 +721,7 @@ BOOLEAN DisplayFormattedText(void) {
   GetVideoObject(&hHandle, guiFileBack);
 
   // blt background to screen
-  BltVideoObject2(vsFB, hHandle, 0, FILE_VIEWER_X, FILE_VIEWER_Y - 4, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, FILE_VIEWER_X, FILE_VIEWER_Y - 4);
 
   // get the offset in the file
   while (iCounter < iMessageCode) {
@@ -782,8 +781,8 @@ BOOLEAN DisplayFormattedText(void) {
       GetVideoObject(&hHandle, uiFirstTempPicture);
 
       // blt background to screen
-      BltVideoObject2(vsFB, hHandle, 0, FILE_VIEWER_X + 4 + (FILE_VIEWER_WIDTH - usFirstWidth) / 2,
-                      FILE_VIEWER_Y + 10, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hHandle, 0, FILE_VIEWER_X + 4 + (FILE_VIEWER_WIDTH - usFirstWidth) / 2,
+                 FILE_VIEWER_Y + 10);
 
       iHeight = usFirstHeight + 20;
 
@@ -832,8 +831,7 @@ BOOLEAN DisplayFormattedText(void) {
       GetVideoObject(&hHandle, uiFirstTempPicture);
 
       // blt background to screen
-      BltVideoObject2(vsFB, hHandle, 0, FILE_VIEWER_X + usFreeSpace, FILE_VIEWER_Y + 10,
-                      VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hHandle, 0, FILE_VIEWER_X + usFreeSpace, FILE_VIEWER_Y + 10);
 
       // get file background object
       GetVideoObject(&hHandle, uiSecondTempPicture);
@@ -843,8 +841,7 @@ BOOLEAN DisplayFormattedText(void) {
       usFreeSpace += usFirstWidth;
 
       // blt background to screen
-      BltVideoObject2(vsFB, hHandle, 0, FILE_VIEWER_X + usFreeSpace, FILE_VIEWER_Y + 10,
-                      VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hHandle, 0, FILE_VIEWER_X + usFreeSpace, FILE_VIEWER_Y + 10);
 
       // delete video object
       DeleteVideoObjectFromIndex(uiFirstTempPicture);
@@ -1043,7 +1040,7 @@ BOOLEAN HandleSpecialFiles(uint8_t ubFormat) {
     GetVideoObject(&hHandle, uiPicture);
 
     // blt title bar to screen
-    BltVideoObject2(vsFB, hHandle, 0, 300, 270, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 0, 300, 270);
 
     DeleteVideoObjectFromIndex(uiPicture);
 
@@ -1057,7 +1054,7 @@ BOOLEAN HandleSpecialFiles(uint8_t ubFormat) {
     GetVideoObject(&hHandle, uiPicture);
 
     // blt title bar to screen
-    BltVideoObject2(vsFB, hHandle, 0, 260, 225, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 0, 260, 225);
 
     DeleteVideoObjectFromIndex(uiPicture);
 
@@ -1071,7 +1068,7 @@ BOOLEAN HandleSpecialFiles(uint8_t ubFormat) {
     GetVideoObject(&hHandle, uiPicture);
 
     // blt title bar to screen
-    BltVideoObject2(vsFB, hHandle, 0, 260, 85, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 0, 260, 85);
 
     DeleteVideoObjectFromIndex(uiPicture);
   }
@@ -1519,11 +1516,7 @@ BOOLEAN HandleSpecialTerroristFile(int32_t iFileNumber, char *sPictureName) {
       // Blt face to screen to
       GetVideoObject(&hHandle, uiPicture);
 
-      // def: 3/24/99
-      //				BltVideoObject2(vsFB, hHandle, 0,( int16_t ) (
-      // FILE_VIEWER_X +  30 ), ( int16_t ) ( iYPositionOnPage + 5), VO_BLT_SRCTRANSPARENCY,NULL);
-      BltVideoObject2(vsFB, hHandle, 0, (int16_t)(FILE_VIEWER_X + 30),
-                      (int16_t)(iYPositionOnPage + 21), VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hHandle, 0, (int16_t)(FILE_VIEWER_X + 30), (int16_t)(iYPositionOnPage + 21));
 
       DeleteVideoObjectFromIndex(uiPicture);
 
@@ -1534,8 +1527,7 @@ BOOLEAN HandleSpecialTerroristFile(int32_t iFileNumber, char *sPictureName) {
       // Blt face to screen to
       GetVideoObject(&hHandle, uiPicture);
 
-      BltVideoObject2(vsFB, hHandle, 0, (int16_t)(FILE_VIEWER_X + 25),
-                      (int16_t)(iYPositionOnPage + 16), VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hHandle, 0, (int16_t)(FILE_VIEWER_X + 25), (int16_t)(iYPositionOnPage + 16));
 
       DeleteVideoObjectFromIndex(uiPicture);
     }
