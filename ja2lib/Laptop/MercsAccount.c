@@ -11,7 +11,6 @@
 #include "Laptop/LaptopSave.h"
 #include "Laptop/Mercs.h"
 #include "Laptop/SpeckQuotes.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -27,6 +26,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
 
 #define MERC_ACCOUNT_TEXT_FONT FONT14ARIAL
 #define MERC_ACCOUNT_TEXT_COLOR FONT_MCOLOR_WHITE
@@ -345,7 +345,7 @@ void SettleMercAccounts() {
           gMercProfiles[ubMercID].sSalary * gMercProfiles[ubMercID].iMercMercContractLength;
 
       // if the player can afford to pay this merc
-      if (MoneyGetBalance() >= iPartialPayment + iContractCharge) {
+      if (LaptopMoneyGetBalance() >= iPartialPayment + iContractCharge) {
         // Increment the counter that keeps track of the of the number of days the player has paid
         // for merc services
         LaptopSaveInfo.guiNumberOfMercPaymentsInDays +=

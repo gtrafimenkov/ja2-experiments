@@ -44,7 +44,6 @@
 #include "Laptop/MercsNoAccount.h"
 #include "Laptop/Personnel.h"
 #include "Laptop/SirTech.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
@@ -91,6 +90,7 @@
 #include "Utils/WordWrap.h"
 #include "platform.h"
 #include "rust_fileman.h"
+#include "rust_laptop.h"
 
 // icons text id's
 enum {
@@ -652,6 +652,7 @@ void GetLaptopKeyboardInput() {
 uint32_t LaptopScreenInit() {
   // Memset the whole structure, to make sure of no 'JUNK'
   memset(&LaptopSaveInfo, 0, sizeof(LaptopSaveInfoStruct));
+  LaptopMoneySetBalance(0);
 
   LaptopSaveInfo.gfNewGameLaptop = TRUE;
 
@@ -3486,7 +3487,7 @@ void DisplayPlayersBalanceToDate(void) {
   SetFontShadow(NO_SHADOW);
 
   // parse straigth number
-  swprintf(sString, ARR_SIZE(sString), L"%d", MoneyGetBalance());
+  swprintf(sString, ARR_SIZE(sString), L"%d", LaptopMoneyGetBalance());
 
   // put in commas, then dollar sign
   InsertCommasForDollarFigure(sString);
@@ -4388,7 +4389,7 @@ void PrintBalance(void) {
   SetFontBackground(FONT_BLACK);
   SetFontShadow(NO_SHADOW);
 
-  swprintf(pString, ARR_SIZE(pString), L"%d", MoneyGetBalance());
+  swprintf(pString, ARR_SIZE(pString), L"%d", LaptopMoneyGetBalance());
   InsertCommasForDollarFigure(pString);
   InsertDollarSignInToString(pString);
 
@@ -5181,6 +5182,7 @@ BOOLEAN SaveLaptopInfoToSavedGame(FileID hFile) {
   uint32_t uiSize;
 
   // Save The laptop information
+  LaptopSaveInfo.__moved_to_rust_iCurrentBalance = LaptopMoneyGetBalance();
   File_Write(hFile, &LaptopSaveInfo, sizeof(LaptopSaveInfoStruct), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(LaptopSaveInfoStruct)) {
     return (FALSE);
@@ -5242,6 +5244,8 @@ BOOLEAN LoadLaptopInfoFromSavedGame(FileID hFile) {
   if (uiNumBytesRead != sizeof(LaptopSaveInfoStruct)) {
     return (FALSE);
   }
+  LaptopMoneySetBalance(LaptopSaveInfo.__moved_to_rust_iCurrentBalance);
+  LaptopSaveInfo.__moved_to_rust_iCurrentBalance = 0;
 
   // If there is anything in the Bobby Ray Orders on Delivery
   if (LaptopSaveInfo.usNumberOfBobbyRayOrderUsed) {

@@ -9,7 +9,6 @@
 #include "JAScreens.h"
 #include "Laptop/Finances.h"
 #include "MapScreenInterfaceMapInventory.h"
-#include "Money.h"
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
@@ -53,6 +52,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
 
 #define MAP_BOTTOM_X 0
 #define MAP_BOTTOM_Y 359
@@ -1167,7 +1167,7 @@ void DisplayCurrentBalanceForMapBottom(void) {
   SetFontForeground(183);
   SetFontBackground(FONT_BLACK);
 
-  swprintf(sString, ARR_SIZE(sString), L"%d", MoneyGetBalance());
+  swprintf(sString, ARR_SIZE(sString), L"%d", LaptopMoneyGetBalance());
 
   // insert
 

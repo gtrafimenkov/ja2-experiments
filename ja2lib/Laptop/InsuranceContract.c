@@ -13,7 +13,6 @@
 #include "Laptop/InsuranceText.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
@@ -39,6 +38,7 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
 
 #define INS_CTRCT_ORDER_GRID_WIDTH 132
 #define INS_CTRCT_ORDER_GRID_HEIGHT 216
@@ -1497,7 +1497,7 @@ void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, uint32_t 
       Assert(0);
   } else {
     // if the player doesnt have enough money, tell him
-    if (MoneyGetBalance() < iAmountOfMoneyTransfer) {
+    if (LaptopMoneyGetBalance() < iAmountOfMoneyTransfer) {
       wchar_t sText[800];
 
       GetInsuranceText(INS_MLTI_NOT_ENOUGH_FUNDS, sText);

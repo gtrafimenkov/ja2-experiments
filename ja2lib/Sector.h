@@ -5,7 +5,6 @@
 #ifndef __SECTOR_H
 #define __SECTOR_H
 
-
 #include "SGP/Types.h"
 #include "rust_sector.h"
 
