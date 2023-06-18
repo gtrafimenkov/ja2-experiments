@@ -17,7 +17,6 @@
 #include "Laptop/IMPVoices.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
@@ -33,6 +32,7 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 #include "rust_fileman.h"
+#include "rust_laptop.h"
 
 #define IMP_MERC_FILE "IMP.dat"
 
@@ -219,7 +219,7 @@ void BtnIMPConfirmYes(GUI_BUTTON *btn, int32_t reason) {
         return;
       }
 
-      if (MoneyGetBalance() < COST_OF_PROFILE) {
+      if (LaptopMoneyGetBalance() < COST_OF_PROFILE) {
         // not enough
         return;
       }
@@ -516,7 +516,7 @@ void LoadInCurrentImpCharacter(void) {
   // close file
   File_Close(hFile);
 
-  if (MoneyGetBalance() < COST_OF_PROFILE) {
+  if (LaptopMoneyGetBalance() < COST_OF_PROFILE) {
     // not enough
     return;
   }
