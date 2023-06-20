@@ -360,7 +360,7 @@ BOOLEAN InternalInitSectorExitMenu(uint8_t ubDirection, int16_t sAdditionalData)
 
   InterruptTime();
   PauseGame();
-  LockPauseState(21);
+  LockPause();
 
   return (TRUE);
 }
@@ -684,7 +684,7 @@ void RemoveSectorExitMenu(BOOLEAN fOk) {
 
     gfInSectorExitMenu = FALSE;
 
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
     EndModalTactical();
     gfIgnoreScrolling = FALSE;

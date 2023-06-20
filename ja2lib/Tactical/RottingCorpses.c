@@ -468,7 +468,7 @@ int32_t AddRottingCorpse(ROTTING_CORPSE_DEFINITION *pCorpseDef) {
 
   if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
     // OK, AS WE ADD, CHECK FOR TOD AND DECAY APPROPRIATELY
-    if (((GetWorldTotalMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_ROTTING) &&
+    if (((GetGameTimeInMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_ROTTING) &&
         (pCorpse->def.ubType < ROTTING_STAGE2)) {
       if (pCorpse->def.ubType <= FMERC_FALLF) {
         // Rott!
@@ -477,7 +477,7 @@ int32_t AddRottingCorpse(ROTTING_CORPSE_DEFINITION *pCorpseDef) {
     }
 
     // If time of death is a few days, now, don't add at all!
-    if (((GetWorldTotalMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_DONE_ROTTING)) {
+    if (((GetGameTimeInMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_DONE_ROTTING)) {
       return (-1);
     }
   }
@@ -759,7 +759,7 @@ BOOLEAN TurnSoldierIntoCorpse(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemoveMerc,
   //	}
 
   // Set time of death
-  Corpse.uiTimeOfDeath = GetWorldTotalMin();
+  Corpse.uiTimeOfDeath = GetGameTimeInMin();
 
   // If corpse is not valid. make items visible
   if (ubType == NO_CORPSE && pSoldier->bTeam != gbPlayerNum) {
@@ -972,7 +972,7 @@ void HandleRottingCorpses() {
   }
 
   // ATE: If it's too late, don't!
-  if (NightTime()) {
+  if (IsNightTime()) {
     return;
   }
 

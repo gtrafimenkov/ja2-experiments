@@ -170,7 +170,6 @@ BOOLEAN fFirstClickInAssignmentScreenMask = FALSE;
 
 // render pre battle interface?
 extern BOOLEAN gfRenderPBInterface;
-extern BOOLEAN fMapScreenBottomDirty;
 
 // in the mapscreen?
 extern BOOLEAN fInMapMode;
@@ -504,7 +503,7 @@ void ChangeSoldiersAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment) 
   pSoldier->bVehicleUnderRepairID = -1;
 
   if ((bAssignment == DOCTOR) || (bAssignment == PATIENT) || (bAssignment == ASSIGNMENT_HOSPITAL)) {
-    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetWorldTotalMin() + 1, 0);
+    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetGameTimeInMin() + 1, 0);
   }
 
   // update character info, and the team panel
@@ -1688,7 +1687,7 @@ void UpdateAssignments() {
   // update mapscreen
   fCharacterInfoPanelDirty = TRUE;
   fTeamPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 }
 
 #ifdef JA2BETAVERSION
@@ -3659,7 +3658,7 @@ void AssignmentAborted(struct SOLDIERTYPE *pSoldier, uint8_t ubReason) {
   // update mapscreen
   fCharacterInfoPanelDirty = TRUE;
   fTeamPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 }
 
 void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMeToo) {
@@ -3723,7 +3722,7 @@ void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMe
   // update mapscreen
   fCharacterInfoPanelDirty = TRUE;
   fTeamPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 }
 
 BOOLEAN CharacterIsBetweenSectors(struct SOLDIERTYPE *pSoldier) {
@@ -3891,7 +3890,7 @@ pSoldier -> name );
                 // update mapscreen
                 fCharacterInfoPanelDirty = TRUE;
                 fTeamPanelDirty = TRUE;
-                fMapScreenBottomDirty = TRUE;
+                SetMapScreenBottomDirty(true);
 
                 return( TRUE );
         }
@@ -4192,7 +4191,7 @@ void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       fShowVehicleMenu = FALSE;
       UnHighLightBox(ghAssignmentBox);
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       return;
     }
@@ -4215,7 +4214,7 @@ void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     // update mapscreen
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     giAssignHighLine = -1;
 
@@ -4685,7 +4684,7 @@ void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     // update mapscreen
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     giAssignHighLine = -1;
   }
@@ -5140,7 +5139,7 @@ void AssignmentScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReas
     // update mapscreen
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     gfRenderPBInterface = TRUE;
     SetRenderFlags(RENDER_FLAG_FULL);
@@ -5234,7 +5233,7 @@ void CreateDestroyMouseRegions(void) {
     SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     // unhighlight all strings in box
     UnHighLightBox(ghAssignmentBox);
@@ -5354,7 +5353,7 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
     fShownContractMenu = FALSE;
     // if( ( fProcessingAMerc ) && ( pProcessingSoldier ) )
     //{
-    //	if( (uint32_t)(pProcessingSoldier->iEndofContractTime) == GetWorldTotalMin() )
+    //	if( (uint32_t)(pProcessingSoldier->iEndofContractTime) == GetGameTimeInMin() )
     //	{
     //		StrategicRemoveMerc( pProcessingSoldier, MERC_FIRED );
     //		pProcessingSoldier = NULL;
@@ -5365,7 +5364,7 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
     SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     RestorePopUpBoxes();
 
@@ -5454,7 +5453,7 @@ void CreateDestroyMouseRegionsForTrainingMenu(void) {
     SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     HideBox(ghTrainingBox);
     SetRenderFlags(RENDER_FLAG_FULL);
 
@@ -5549,7 +5548,7 @@ void CreateDestroyMouseRegionsForAttributeMenu(void) {
     SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     HideBox(ghAttributeBox);
     SetRenderFlags(RENDER_FLAG_FULL);
 
@@ -5653,7 +5652,7 @@ void CreateDestroyMouseRegionsForRemoveMenu(void) {
     SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     // turn off the GLOBAL fShowRemoveMenu flag!!!
     fShowRemoveMenu = FALSE;
@@ -5753,7 +5752,7 @@ void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox) {
     SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     SetRenderFlags(RENDER_FLAG_FULL);
 
     // not created
@@ -5895,7 +5894,7 @@ void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
         // dirty regions
         fCharacterInfoPanelDirty = TRUE;
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
 
         // stop contratc glow if we are
@@ -5909,7 +5908,7 @@ void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
         // dirty region
         fCharacterInfoPanelDirty = TRUE;
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
 
         // stop contratc glow if we are
@@ -5953,7 +5952,7 @@ void BeginRemoveMercFromContract(struct SOLDIERTYPE *pSoldier) {
 
     } else
       // quote is different if he's fired in less than 48 hours
-      if ((GetWorldTotalMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 48) {
+      if ((GetGameTimeInMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 48) {
         SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_LOCK_INTERFACE, 1, MAP_SCREEN, 0, 0,
                                       0);
         if ((pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC)) {
@@ -5990,7 +5989,7 @@ void BeginRemoveMercFromContract(struct SOLDIERTYPE *pSoldier) {
                                                   DIALOGUE_SPECIAL_EVENT_CONTRACT_ENDING, 1, 0);
       }
 
-    if ((GetWorldTotalMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 3) {
+    if ((GetGameTimeInMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 3) {
       // this will cause him give us lame excuses for a while until he gets over it
       // 3-6 days (but the first 1-2 days of that are spent "returning" home)
       gMercProfiles[GetSolProfile(pSoldier)].ubDaysOfMoraleHangover = (uint8_t)(3 + Random(4));
@@ -6047,7 +6046,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       fShowContractMenu = FALSE;
       // dirty region
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       gfRenderPBInterface = TRUE;
 
@@ -6106,7 +6105,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
     // dirty region
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     gfRenderPBInterface = TRUE;
   }
@@ -6183,7 +6182,7 @@ void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
       // dirty region
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       gfRenderPBInterface = TRUE;
 
@@ -6264,7 +6263,7 @@ void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
       // dirty region
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       gfRenderPBInterface = TRUE;
     } else {
@@ -6460,7 +6459,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     }
 
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     if (fShowAttributeMenu) {
       // cancel attribute submenu
@@ -6530,7 +6529,7 @@ void AttributesMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     gfRenderPBInterface = TRUE;
 
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
   }
 };
 
@@ -6562,7 +6561,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowTrainingMenu = FALSE;
             fShowVehicleMenu = FALSE;
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
           }
           break;
         case (EPC_MENU_PATIENT):
@@ -6590,7 +6589,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
             // set dirty flag
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             // remove from squad
 
@@ -6629,7 +6628,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           // set dirty flag
           fTeamPanelDirty = TRUE;
-          fMapScreenBottomDirty = TRUE;
+          SetMapScreenBottomDirty(true);
 
           // reset list of characters
           ResetSelectedListForMapScreen();
@@ -6644,7 +6643,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowTrainingMenu = FALSE;
             fShowVehicleMenu = FALSE;
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
             fShowRepairMenu = FALSE;
           }
           break;
@@ -6678,13 +6677,13 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
             // set dirty flag
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             // set assignment for group
             SetAssignmentForList((int8_t)DOCTOR, 0);
           } else if (CanCharacterDoctorButDoesntHaveMedKit(pSoldier)) {
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
             swprintf(sString, ARR_SIZE(sString), zMarksMapScreenText[19], pSoldier->name);
 
             DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_OK, NULL);
@@ -6717,7 +6716,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
             // set dirty flag
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             // remove from squad
 
@@ -6750,7 +6749,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowTrainingMenu = FALSE;
             fShowVehicleMenu = FALSE;
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             pSoldier->bOldAssignment = pSoldier->bAssignment;
 
@@ -6764,7 +6763,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           } else if (CanCharacterRepairButDoesntHaveARepairkit(pSoldier)) {
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
             swprintf(sString, ARR_SIZE(sString), zMarksMapScreenText[18], pSoldier->name);
 
             DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_OK, NULL);
@@ -6779,7 +6778,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowRepairMenu = FALSE;
 
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
           }
           break;
         case (ASSIGN_MENU_CANCEL):
@@ -6788,7 +6787,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           // set dirty flag
           fTeamPanelDirty = TRUE;
-          fMapScreenBottomDirty = TRUE;
+          SetMapScreenBottomDirty(true);
 
           // reset list of characters
           ResetSelectedListForMapScreen();
@@ -6811,7 +6810,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
       // set dirty flag
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
 
       return;
     }
@@ -8141,7 +8140,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
 
         // remove from squad
 
@@ -8171,7 +8170,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
 
         // remove from squad
         RemoveCharacterFromSquads(pSoldier);
@@ -8197,7 +8196,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
 
         // remove from squad
@@ -8225,7 +8224,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
 
         // remove from squad
         RemoveCharacterFromSquads(pSoldier);
@@ -8252,7 +8251,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
         AssignMercToAMovementGroup(pSoldier);
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8282,7 +8281,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8309,7 +8308,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8339,7 +8338,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8376,7 +8375,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
           // set dirty flag
           fTeamPanelDirty = TRUE;
-          fMapScreenBottomDirty = TRUE;
+          SetMapScreenBottomDirty(true);
           gfRenderPBInterface = TRUE;
 
           if (pSoldier->bOldAssignment == VEHICLE) {
@@ -8476,7 +8475,7 @@ BOOLEAN HandleShowingOfUpBox( void )
                         SetMapPanelDirty(true);
                         gfRenderPBInterface = TRUE;
                         fTeamPanelDirty = TRUE;
-                        fMapScreenBottomDirty = TRUE;
+                        SetMapScreenBottomDirty(true);
                         fCharacterInfoPanelDirty = TRUE;
                 }
         }
@@ -8497,7 +8496,7 @@ BOOLEAN HandleShowingOfMovementBox(void) {
       SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
     }
   }
@@ -8748,7 +8747,7 @@ void SetTimeOfAssignmentChangeForMerc(struct SOLDIERTYPE *pSoldier) {
   }
 
   // set time of last assignment change
-  pSoldier->uiLastAssignmentChangeMin = GetWorldTotalMin();
+  pSoldier->uiLastAssignmentChangeMin = GetGameTimeInMin();
 
   // assigning new PATIENTs gives a DOCTOR something to do, etc., so set flag to recheck them all.
   // CAN'T DO IT RIGHT AWAY IN HERE 'CAUSE WE TYPICALLY GET CALLED *BEFORE* bAssignment GETS SET
@@ -8760,7 +8759,7 @@ void SetTimeOfAssignmentChangeForMerc(struct SOLDIERTYPE *pSoldier) {
 
 // have we spent enough time on assignment for it to count?
 BOOLEAN EnoughTimeOnAssignment(struct SOLDIERTYPE *pSoldier) {
-  if (GetWorldTotalMin() - pSoldier->uiLastAssignmentChangeMin >= MINUTES_FOR_ASSIGNMENT_TO_COUNT) {
+  if (GetGameTimeInMin() - pSoldier->uiLastAssignmentChangeMin >= MINUTES_FOR_ASSIGNMENT_TO_COUNT) {
     return (TRUE);
   }
 
@@ -9054,7 +9053,7 @@ void BandageBleedingDyingPatientsBeingTreated() {
   DeleteAllStrategicEventsOfType(EVENT_BANDAGE_BLEEDING_MERCS);
 
   if (fSomeoneStillBleedingDying) {
-    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetWorldTotalMin() + 1, 0);
+    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetGameTimeInMin() + 1, 0);
   }
 }
 
@@ -9492,7 +9491,7 @@ void UnEscortEPC(struct SOLDIERTYPE *pSoldier) {
 
     // set dirty flag
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     fCharacterInfoPanelDirty = TRUE;
   } else {
     // how do we handle this if it's the right sector?

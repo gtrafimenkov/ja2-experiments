@@ -69,7 +69,7 @@ void HandleHourlyUpdate() {
 
   PayOffSkyriderDebtIfAny();
 
-  if (GetWorldHour() % 6 == 0)  // 4 times a day
+  if (GetGameClockHour() % 6 == 0)  // 4 times a day
   {
     UpdateRegenCounters();
   }
@@ -94,7 +94,7 @@ void HandleQuarterHourUpdate() {
 }
 
 void HourlyQuestUpdate(void) {
-  uint32_t uiHour = GetWorldHour();
+  uint32_t uiHour = GetGameClockHour();
 
   // brothel
   if (uiHour == 4) {

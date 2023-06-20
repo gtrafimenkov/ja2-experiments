@@ -128,7 +128,7 @@ void HandleTacticalEndTurn() {
   // Every few turns......
 
   // Get time elasped
-  uiTime = GetWorldTotalSeconds();
+  uiTime = GetGameTimeInSec();
 
   if ((uiTimeSinceLastStrategicUpdate - uiTime) > 1200) {
     HandleRottingCorpses();

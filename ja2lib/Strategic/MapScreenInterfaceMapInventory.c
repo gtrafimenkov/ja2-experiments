@@ -140,7 +140,6 @@ BOOLEAN gfCheckForCursorOverMapSectorInventoryItem = FALSE;
 
 extern uint32_t guiNumWorldItems;
 extern BOOLEAN fShowInventoryFlag;
-extern BOOLEAN fMapScreenBottomDirty;
 
 // outside vidieo objects for cursor
 extern uint32_t guiExternVo;
@@ -449,7 +448,7 @@ void CreateDestroyMapInventoryPoolButtons(BOOLEAN fExitFromMapScreen) {
     CreateMapInventoryPoolDoneButton();
 
     SetMapPanelDirty(true);
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
   } else if ((fShowMapInventoryPool == FALSE) && (fCreated == TRUE)) {
     // check fi we are in fact leaving mapscreen
     if (fExitFromMapScreen == FALSE) {
