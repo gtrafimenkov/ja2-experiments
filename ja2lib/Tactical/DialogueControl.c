@@ -167,7 +167,6 @@ extern void DrawFace(int16_t sCharNumber);
 // the next said quote will pause time
 BOOLEAN fPausedTimeDuringQuote = FALSE;
 BOOLEAN fWasPausedDuringDialogue = FALSE;
-extern BOOLEAN gfLockPauseState;
 
 int8_t gubLogForMeTooBleeds = FALSE;
 
@@ -426,13 +425,13 @@ void HandleDialogue() {
 
     // pause game..
     PauseGame();
-    LockPauseState(14);
+    LockPause();
   } else if (fOldEngagedInConvFlagOn == TRUE && !(gTacticalStatus.uiFlags & ENGAGED_IN_CONV)) {
     // OK, we left...
     fOldEngagedInConvFlagOn = FALSE;
 
     // Unpause game..
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
 
     // if we're exiting boxing with the UI lock set then DON'T OVERRIDE THIS!
@@ -537,7 +536,7 @@ void HandleDialogue() {
       }
 
       if (gpCurrentTalkingFace->uiFlags & FACE_TRIGGER_PREBATTLE_INT) {
-        UnLockPauseState();
+        UnlockPause();
         InitPreBattleInterface((struct GROUP *)gpCurrentTalkingFace->uiUserData1, TRUE);
         // Reset flag!
         gpCurrentTalkingFace->uiFlags &= (~FACE_TRIGGER_PREBATTLE_INT);
@@ -554,7 +553,7 @@ void HandleDialogue() {
     fWasPausedDuringDialogue = FALSE;
 
     // unlock pause state
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
   }
 
@@ -593,7 +592,7 @@ void HandleDialogue() {
   // If we are in auto bandage, ignore any quotes!
   if (gTacticalStatus.fAutoBandageMode) {
     if (QItem->fPauseTime) {
-      UnLockPauseState();
+      UnlockPause();
       UnPauseGame();
     }
 
@@ -649,9 +648,9 @@ void HandleDialogue() {
   }
 
   if (QItem->fPauseTime) {
-    if (GamePaused() == FALSE) {
+    if (IsGamePaused() == FALSE) {
       PauseGame();
-      LockPauseState(15);
+      LockPause();
       fWasPausedDuringDialogue = TRUE;
     }
   }
@@ -778,7 +777,7 @@ void HandleDialogue() {
     }
 
     if (QItem->uiSpecialEventFlag & DIALOGUE_SPECIAL_EVENT_TRIGGERPREBATTLEINTERFACE) {
-      UnLockPauseState();
+      UnlockPause();
       InitPreBattleInterface((struct GROUP *)QItem->uiSpecialEventData, TRUE);
     }
     if (QItem->uiSpecialEventFlag & DIALOGUE_ADD_EVENT_FOR_SOLDIER_UPDATE_BOX) {
@@ -1265,7 +1264,7 @@ BOOLEAN CharacterDialogue(uint8_t ubCharacterNum, uint16_t usQuoteNum, int32_t i
   QItem->fDelayed = fDelayed;
 
   // check if pause already locked, if so, then don't mess with it
-  if (gfLockPauseState == FALSE) {
+  if (!IsPauseLocked()) {
     QItem->fPauseTime = fPausedTimeDuringQuote;
   }
 
@@ -1295,7 +1294,7 @@ BOOLEAN SpecialCharacterDialogueEvent(uintptr_t uiSpecialEventFlag, uintptr_t ui
   QItem->iTimeStamp = GetJA2Clock();
 
   // if paused state not already locked
-  if (gfLockPauseState == FALSE) {
+  if (!IsPauseLocked()) {
     QItem->fPauseTime = fPausedTimeDuringQuote;
   }
 
@@ -1329,7 +1328,7 @@ BOOLEAN SpecialCharacterDialogueEventWithExtraParam(uint32_t uiSpecialEventFlag,
   QItem->iTimeStamp = GetJA2Clock();
 
   // if paused state not already locked
-  if (gfLockPauseState == FALSE) {
+  if (!IsPauseLocked()) {
     QItem->fPauseTime = fPausedTimeDuringQuote;
   }
 

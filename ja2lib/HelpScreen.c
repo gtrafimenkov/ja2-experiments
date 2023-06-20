@@ -41,11 +41,8 @@ extern int16_t gsVIEWPORT_END_Y;
 extern void PrintDate(void);
 extern void PrintNumberOnTeam(void);
 extern void PrintBalance(void);
-extern BOOLEAN fMapScreenBottomDirty;
 extern BOOLEAN fCharacterInfoPanelDirty;
 extern BOOLEAN fTeamPanelDirty;
-extern BOOLEAN fMapScreenBottomDirty;
-extern BOOLEAN gfGamePaused;
 extern BOOLEAN fShowMapInventoryPool;
 
 #define HELP_SCREEN_ACTIVE 0x00000001
@@ -571,7 +568,7 @@ BOOLEAN EnterHelpScreen() {
   UnmarkButtonsDirty();
 
   // remeber if the game was paused or not ( so when we exit we know what to do )
-  gHelpScreen.fWasTheGamePausedPriorToEnteringHelpScreen = gfGamePaused;
+  gHelpScreen.fWasTheGamePausedPriorToEnteringHelpScreen = IsGamePaused();
 
   // pause the game
   PauseGame();
@@ -1067,7 +1064,7 @@ void HelpScreenSpecialExitCode() {
     case HELP_SCREEN_MAPSCREEN:
       fCharacterInfoPanelDirty = TRUE;
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       SetMapPanelDirty(true);
       break;
 
