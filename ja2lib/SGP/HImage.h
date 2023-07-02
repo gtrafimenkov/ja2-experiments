@@ -8,6 +8,8 @@
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
 
+struct ETRLEObject;
+
 // The struct Image* module provides a common interface for managing image data. This module
 // includes:
 // - A set of data structures representing image data. Data can be 8 or 16 bpp and/or
@@ -63,20 +65,10 @@ struct RelTileLoc {
   int8_t bTileOffsetY;
 };
 
-// TRLE subimage structure, mirroring that of ST(C)I
-typedef struct tagETRLEObject {
-  uint32_t uiDataOffset;
-  uint32_t uiDataLength;
-  int16_t sOffsetX;
-  int16_t sOffsetY;
-  uint16_t usHeight;
-  uint16_t usWidth;
-} ETRLEObject;
-
 typedef struct tagETRLEData {
   void *pPixData;
   uint32_t uiSizePixData;
-  ETRLEObject *pETRLEObject;
+  struct ETRLEObject *pETRLEObject;
   uint16_t usNumberOfObjects;
 } ETRLEData;
 
@@ -108,10 +100,12 @@ struct Image {
     struct {
       uint8_t *pPixData8;
       uint32_t uiSizePixData;
-      ETRLEObject *pETRLEObject;
+      struct ETRLEObject *pETRLEObject;
       uint16_t usNumberOfObjects;
     };
   };
+  bool imageDataAllocatedInRust;
+  bool paletteAllocatedInRust;
 };
 //  struct Image, *struct Image*;
 
@@ -164,5 +158,10 @@ extern uint16_t gusAlphaMask;
 
 // used to convert 565 RGB data into different bit-formats
 void ConvertRGBDistribution565To555(uint16_t *p16BPPData, uint32_t uiNumberOfPixels);
+
+void FreeImageData(struct Image *image);
+void FreeImagePalette(struct Image *image);
+void FreeImageSubimages(struct Image *image);
+void FreeImageAppData(struct Image *image);
 
 #endif

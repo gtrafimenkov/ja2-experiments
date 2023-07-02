@@ -27,7 +27,6 @@
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/PaletteEntry.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
@@ -51,8 +50,11 @@
 #include "platform.h"
 #include "platform_strings.h"
 #include "rust_fileman.h"
+#include "rust_images.h"
 
 struct FileDialogList;
+
+extern struct SGPPaletteEntry gEditorLightColor;
 
 //===========================================================================
 

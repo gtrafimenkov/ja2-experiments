@@ -33,7 +33,6 @@
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Line.h"
-#include "SGP/PaletteEntry.h"
 #include "SGP/Random.h"
 #include "SGP/Shading.h"
 #include "SGP/Types.h"
@@ -77,6 +76,9 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/TextInput.h"
+#include "rust_images.h"
+
+extern struct SGPPaletteEntry gEditorLightColor;
 
 extern void CopyMercPlacement(int32_t iMapIndex);
 extern void PasteMercPlacement(int32_t iMapIndex);
@@ -728,7 +730,7 @@ void ShowCurrentDrawingMode(void) {
   int32_t iPicHeight, iPicWidth;
   int16_t sTempOffsetX;
   int16_t sTempOffsetY;
-  ETRLEObject *pETRLEObject;
+  struct ETRLEObject *pETRLEObject;
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
   uint16_t usFillColor;
@@ -2444,7 +2446,7 @@ void ShowCurrentSlotImage(struct VObject *hVObj, int32_t iWindow) {
   int32_t iPicHeight, iPicWidth;
   int16_t sTempOffsetX;
   int16_t sTempOffsetY;
-  ETRLEObject *pETRLEObject;
+  struct ETRLEObject *pETRLEObject;
   int32_t iWinWidth, iWinHeight;
 
   NewRect.iLeft = (iWindow == 0) ? (336) : (488);

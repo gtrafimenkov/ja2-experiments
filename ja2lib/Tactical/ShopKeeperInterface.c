@@ -66,6 +66,7 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 #include "platform.h"
+#include "rust_images.h"
 #include "rust_laptop.h"
 
 // temp
@@ -2343,7 +2344,7 @@ uint32_t DisplayInvSlot(uint8_t ubSlotNum, uint16_t usItemIndex, uint16_t usPosX
   struct VObject *hVObject;
   struct VObject *hPixHandle;
   INVTYPE *pItem;
-  ETRLEObject *pTrav;
+  struct ETRLEObject *pTrav;
   uint32_t usHeight, usWidth;
   int16_t sCenX, sCenY;
   BOOLEAN fHighlighted = IsGunOrAmmoOfSameTypeSelected(pItemObject);
