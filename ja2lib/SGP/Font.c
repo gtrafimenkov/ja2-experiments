@@ -112,9 +112,9 @@ void SetFontForeground(uint8_t ubForeground) {
 
   FontForeground8 = ubForeground;
 
-  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].peRed;
-  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].peGreen;
-  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].peBlue;
+  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].red;
+  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].green;
+  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].blue;
 
   FontForeground16 = Get16BPPColor(FROMRGB(uiRed, uiGreen, uiBlue));
 }
@@ -126,9 +126,9 @@ void SetFontShadow(uint8_t ubShadow) {
 
   // FontForeground8=ubForeground;
 
-  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].peRed;
-  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].peGreen;
-  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].peBlue;
+  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].red;
+  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].green;
+  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].blue;
 
   FontShadow16 = Get16BPPColor(FROMRGB(uiRed, uiGreen, uiBlue));
 
@@ -158,9 +158,9 @@ void SetFontBackground(uint8_t ubBackground) {
 
   FontBackground8 = ubBackground;
 
-  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].peRed;
-  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].peGreen;
-  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].peBlue;
+  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].red;
+  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].green;
+  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].blue;
 
   FontBackground16 = Get16BPPColor(FROMRGB(uiRed, uiGreen, uiBlue));
 }
@@ -335,14 +335,14 @@ void UnloadFont(uint32_t FontIndex) {
 //
 //*****************************************************************************
 uint32_t GetWidth(struct VObject *hSrcVObject, int16_t ssIndex) {
-  struct ETRLEObject *pTrav;
+  struct Subimage *pTrav;
 
   // Assertions
   Assert(hSrcVObject != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[ssIndex]);
-  return ((uint32_t)(pTrav->usWidth + pTrav->sOffsetX));
+  pTrav = &(hSrcVObject->subimages[ssIndex]);
+  return ((uint32_t)(pTrav->width + pTrav->x_offset));
 }
 
 //*****************************************************************************
@@ -531,14 +531,14 @@ void RestoreFontSettings(void) {
 //
 //*****************************************************************************
 uint32_t GetHeight(struct VObject *hSrcVObject, int16_t ssIndex) {
-  struct ETRLEObject *pTrav;
+  struct Subimage *pTrav;
 
   // Assertions
   Assert(hSrcVObject != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[ssIndex]);
-  return ((uint32_t)(pTrav->usHeight + pTrav->sOffsetY));
+  pTrav = &(hSrcVObject->subimages[ssIndex]);
+  return ((uint32_t)(pTrav->height + pTrav->y_offset));
 }
 
 //*****************************************************************************
