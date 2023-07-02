@@ -9,7 +9,6 @@
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/HImage.h"
-#include "SGP/PaletteEntry.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
@@ -37,6 +36,7 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "rust_fileman.h"
+#include "rust_images.h"
 
 #ifdef JA2BETAVERSION
 BOOLEAN gfClearCreatureQuest = FALSE;

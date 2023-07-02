@@ -47,6 +47,7 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
+#include "rust_images.h"
 
 #ifdef __GCC
 // since some of the code is not complied on Linux
@@ -374,7 +375,7 @@ void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, int16_t sXP
   int16_t sScreenX, sScreenY;
   int16_t sOffsetX, sOffsetY;
   int16_t sTempX_S, sTempY_S;
-  ETRLEObject *pTrav;
+  struct ETRLEObject *pTrav;
   uint32_t usHeight, usWidth;
   TILE_ELEMENT *TileElem;
 
@@ -544,9 +545,7 @@ struct LEVELNODE *InternalGetCurInteractiveTile(BOOLEAN fRejectItemsOnTop) {
   return (NULL);
 }
 
-struct LEVELNODE *GetCurInteractiveTile() {
-  return (InternalGetCurInteractiveTile(TRUE));
-}
+struct LEVELNODE *GetCurInteractiveTile() { return (InternalGetCurInteractiveTile(TRUE)); }
 
 struct LEVELNODE *GetCurInteractiveTileGridNo(int16_t *psGridNo) {
   struct LEVELNODE *pNode;
@@ -782,7 +781,7 @@ BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObject, uint
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct ETRLEObject *pTrav;
   BOOLEAN fDataFound = FALSE;
   int32_t iTestPos, iStartPos;
 

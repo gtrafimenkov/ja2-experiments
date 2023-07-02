@@ -13,6 +13,7 @@
 #include "SGP/VideoInternal.h"
 #include "SGP/WCheck.h"
 #include "platform.h"
+#include "rust_images.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -43,7 +44,7 @@ BOOLEAN BltToMouseCursorFromVObjectWithOutline(struct VObject *hVObject,
                                                uint16_t usVideoObjectSubIndex, uint16_t usXPos,
                                                uint16_t usYPos) {
   BOOLEAN ReturnValue;
-  ETRLEObject *pTrav;
+  struct ETRLEObject *pTrav;
   int16_t sXPos, sYPos;
 
   // Adjust for offsets
@@ -90,7 +91,7 @@ BOOLEAN LoadCursorData(uint32_t uiCursorIndex) {
   uint32_t cnt;
   int16_t sMaxHeight = -1;
   int16_t sMaxWidth = -1;
-  ETRLEObject *pTrav;
+  struct ETRLEObject *pTrav;
 
   pCurData = &(gpCursorDatabase[uiCursorIndex]);
 
@@ -263,7 +264,7 @@ void CursorDatabaseClear(void) {
 
 BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uint16_t usOffsetY) {
   BOOLEAN ReturnValue;
-  ETRLEObject pETRLEPointer;
+  struct ETRLEObject pETRLEPointer;
 
   //
   // Make sure we have a cursor store
@@ -309,7 +310,7 @@ BOOLEAN SetCurrentCursorFromDatabase(uint32_t uiCursorIndex) {
   uint32_t cnt;
   int16_t sCenterValX, sCenterValY;
   struct VObject *hVObject;
-  ETRLEObject *pTrav;
+  struct ETRLEObject *pTrav;
   uint16_t usEffHeight, usEffWidth;
 
   if (gfCursorDatabaseInit) {
@@ -330,7 +331,7 @@ BOOLEAN SetCurrentCursorFromDatabase(uint32_t uiCursorIndex) {
       if (uiCursorIndex == EXTERN_CURSOR || uiCursorIndex == EXTERN2_CURSOR) {
         int16_t sSubX, sSubY;
         struct VObject *hVObjectTemp;
-        ETRLEObject *pTravTemp;
+        struct ETRLEObject *pTravTemp;
 
         // Erase old cursor
         EraseMouseCursor();

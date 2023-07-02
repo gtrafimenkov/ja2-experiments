@@ -52,6 +52,7 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 #include "rust_fileman.h"
+#include "rust_images.h"
 #include "rust_laptop.h"
 
 //
@@ -1235,7 +1236,7 @@ BOOLEAN DisplayMercsInventory(uint8_t ubMercID) {
   INVTYPE *pItem;
   struct VObject *hVObject;
   uint32_t usHeight, usWidth;
-  ETRLEObject *pTrav;
+  struct ETRLEObject *pTrav;
   wchar_t gzItemName[SIZE_ITEM_NAME];
   uint8_t ubItemCount = 0;
   //	wchar_t			gzTempItemName[ SIZE_ITEM_INFO ];
