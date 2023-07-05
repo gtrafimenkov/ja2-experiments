@@ -2513,7 +2513,7 @@ updating a light.
 
 ***************************************************************************************/
 BOOLEAN LightCalcRect(int32_t iLight) {
-  SGPRect MaxRect;
+  struct GRect MaxRect;
   int16_t sXValue, sYValue, sDummy;
   uint32_t uiCount;
   LIGHT_NODE *pLight;

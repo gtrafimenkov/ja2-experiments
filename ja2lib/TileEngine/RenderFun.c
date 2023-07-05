@@ -41,7 +41,7 @@ void SetTileRoomNum(int16_t sGridNo, uint8_t ubRoomNum) {
   gubWorldRoomInfo[sGridNo] = ubRoomNum;
 }
 
-void SetTileRangeRoomNum(SGPRect *pSelectRegion, uint8_t ubRoomNum) {
+void SetTileRangeRoomNum(struct GRect *pSelectRegion, uint8_t ubRoomNum) {
   int32_t cnt1, cnt2;
 
   for (cnt1 = pSelectRegion->iTop; cnt1 <= pSelectRegion->iBottom; cnt1++) {
@@ -259,7 +259,7 @@ void RemoveRoomRoof(uint16_t sGridNo, uint8_t bRoomNum, struct SOLDIERTYPE *pSol
   CalculateWorldWireFrameTiles(FALSE);
 }
 
-BOOLEAN AddSpecialTileRange(SGPRect *pSelectRegion) {
+BOOLEAN AddSpecialTileRange(struct GRect *pSelectRegion) {
   int32_t cnt1, cnt2;
 
   for (cnt1 = pSelectRegion->iTop; cnt1 <= pSelectRegion->iBottom; cnt1++) {
@@ -271,7 +271,7 @@ BOOLEAN AddSpecialTileRange(SGPRect *pSelectRegion) {
   return (TRUE);
 }
 
-BOOLEAN RemoveSpecialTileRange(SGPRect *pSelectRegion) {
+BOOLEAN RemoveSpecialTileRange(struct GRect *pSelectRegion) {
   int32_t cnt1, cnt2;
 
   for (cnt1 = pSelectRegion->iTop; cnt1 <= pSelectRegion->iBottom; cnt1++) {

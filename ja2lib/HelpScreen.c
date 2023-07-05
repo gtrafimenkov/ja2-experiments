@@ -9,7 +9,6 @@
 #include "HelpScreen.h"
 #include "HelpScreenText.h"
 #include "Laptop/Laptop.h"
-#include "Rect.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
@@ -36,6 +35,7 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 #include "platform.h"
+#include "rust_geometry.h"
 
 extern int16_t gsVIEWPORT_END_Y;
 extern void PrintDate(void);

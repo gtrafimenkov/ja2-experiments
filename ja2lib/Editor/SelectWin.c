@@ -1321,7 +1321,7 @@ void DwnClkCallback(GUI_BUTTON *button, int32_t reason) {
 //	Displays the objects in the display list to the selection window.
 //
 void DrawSelections(void) {
-  SGPRect ClipRect, NewRect;
+  struct GRect ClipRect, NewRect;
 
   NewRect.iLeft = SelWinStartPoint.iX;
   NewRect.iTop = SelWinStartPoint.iY;

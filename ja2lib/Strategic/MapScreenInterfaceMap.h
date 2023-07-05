@@ -18,7 +18,6 @@ void DrawMapIndexBigMap(BOOLEAN fSelectedCursorIsYellow);
 uint32_t DrawMap(void);
 
 void GetScreenXYFromMapXY(uint8_t sMapX, uint8_t sMapY, int16_t *psX, int16_t *psY);
-void GetScreenXYFromMapXYStationary(uint8_t sMapX, uint8_t sMapY, int16_t *psX, int16_t *psY);
 
 BOOLEAN InitializePalettesForMap(void);
 void ShutDownPalettesForMap(void);
@@ -195,9 +194,6 @@ extern int16_t sElitesOnCursor;
 extern uint8_t gsHighlightSectorX;
 extern uint8_t gsHighlightSectorY;
 
-// the big map
-extern uint32_t guiBIGMAP;
-
 // the orta icon
 extern uint32_t guiORTAICON;
 
@@ -214,7 +210,7 @@ extern uint32_t guiCHARBETWEENSECTORICONS;
 extern uint32_t guiCHARBETWEENSECTORICONSCLOSE;
 
 // the viewable map bound region
-extern SGPRect MapScreenRect;
+extern struct GRect MapScreenRect;
 
 // draw temp path
 extern BOOLEAN fDrawTempHeliPath;
@@ -238,7 +234,7 @@ extern uint32_t guiMAPCURSORS;
 extern BOOLEAN fTempPathAlreadyDrawn;
 
 // map view region clipping rect
-extern SGPRect MapScreenRect;
+extern struct GRect MapScreenRect;
 
 // the map border eta pop up
 extern uint32_t guiMapBorderEtaPopUp;
