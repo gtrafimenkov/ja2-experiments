@@ -58,6 +58,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
+#include "rust_geometry.h"
 
 #ifdef __GCC
 #pragma GCC diagnostic push
