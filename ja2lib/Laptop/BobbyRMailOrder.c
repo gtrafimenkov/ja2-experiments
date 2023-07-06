@@ -342,7 +342,6 @@ void GameInitBobbyRMailOrder() {
 }
 
 BOOLEAN EnterBobbyRMailOrder() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t i;
 
   gfReDrawBobbyOrder = FALSE;
@@ -367,8 +366,9 @@ BOOLEAN EnterBobbyRMailOrder() {
   }
 
   // load the delivery speed graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_CONFIRMORDER);
-  if (!AddVideoObject(&VObjectDesc, &guiConfirmGraphic)) {
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_CONFIRMORDER);
+  if (!AddVObjectFromFile(ImageFile, &guiConfirmGraphic)) {
     return FALSE;
   }
 
