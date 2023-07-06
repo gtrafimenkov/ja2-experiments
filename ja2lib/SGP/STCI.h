@@ -3,6 +3,3 @@
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
 #include "SGP/Types.h"
-
-struct Image;
-struct Image *LoadSTCIFileToImage(const char *filePath, bool loadAppData);
