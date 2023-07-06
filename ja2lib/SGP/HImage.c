@@ -10,7 +10,6 @@
 
 #include "SGP/Debug.h"
 #include "SGP/PCX.h"
-#include "SGP/STCI.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"
@@ -96,19 +95,19 @@ BOOLEAN CopyImageToBuffer(struct Image *hImage, uint8_t bufferBitDepth, BYTE *pD
                           struct GRect *srcRect) {
   Assert(hImage != NULL);
 
-  if (hImage->ubBitDepth == 8 && bufferBitDepth == 8) {
+  if (hImage->bit_depth == 8 && bufferBitDepth == 8) {
     DebugMsg(TOPIC_HIMAGE, DBG_NORMAL, "Copying 8 BPP Imagery.");
     return (
         Copy8BPPImageTo8BPPBuffer(hImage, pDestBuf, usDestWidth, usDestHeight, usX, usY, srcRect));
   }
 
-  if (hImage->ubBitDepth == 8 && bufferBitDepth == 16) {
+  if (hImage->bit_depth == 8 && bufferBitDepth == 16) {
     DebugMsg(TOPIC_HIMAGE, DBG_INFO, "Copying 8 BPP Imagery to 16BPP Buffer.");
     return (
         Copy8BPPImageTo16BPPBuffer(hImage, pDestBuf, usDestWidth, usDestHeight, usX, usY, srcRect));
   }
 
-  if (hImage->ubBitDepth == 16 && bufferBitDepth == 16) {
+  if (hImage->bit_depth == 16 && bufferBitDepth == 16) {
     DebugMsg(TOPIC_HIMAGE, DBG_INFO, "Automatically Copying 16 BPP Imagery.");
     return (Copy16BPPImageTo16BPPBuffer(hImage, pDestBuf, usDestWidth, usDestHeight, usX, usY,
                                         srcRect));
@@ -149,7 +148,7 @@ BOOLEAN Copy8BPPImageTo8BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_t
   }
 
   // Determine memcopy coordinates
-  uiSrcStart = srcRect->iTop * hImage->usWidth + srcRect->iLeft;
+  uiSrcStart = srcRect->iTop * hImage->width + srcRect->iLeft;
   uiDestStart = usY * usDestWidth + usX;
   uiNumLines = (srcRect->iBottom - srcRect->iTop) + 1;
   uiLineSize = (srcRect->iRight - srcRect->iLeft) + 1;
@@ -164,7 +163,7 @@ BOOLEAN Copy8BPPImageTo8BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_t
   for (cnt = 0; cnt < uiNumLines - 1; cnt++) {
     memcpy(pDest, pSrc, uiLineSize);
     pDest += usDestWidth;
-    pSrc += hImage->usWidth;
+    pSrc += hImage->width;
   }
   // Do last line
   memcpy(pDest, pSrc, uiLineSize);
@@ -186,13 +185,13 @@ BOOLEAN Copy16BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16
   if (!(usX >= 0)) {
     return FALSE;
   }
-  if (!(usX < hImage->usWidth)) {
+  if (!(usX < hImage->width)) {
     return FALSE;
   }
   if (!(usY >= 0)) {
     return FALSE;
   }
-  if (!(usY < hImage->usHeight)) {
+  if (!(usY < hImage->height)) {
     return FALSE;
   }
   if (!(srcRect->iRight > srcRect->iLeft)) {
@@ -203,7 +202,7 @@ BOOLEAN Copy16BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16
   }
 
   // Determine memcopy coordinates
-  uiSrcStart = srcRect->iTop * hImage->usWidth + srcRect->iLeft;
+  uiSrcStart = srcRect->iTop * hImage->width + srcRect->iLeft;
   uiDestStart = usY * usDestWidth + usX;
   uiNumLines = (srcRect->iBottom - srcRect->iTop) + 1;
   uiLineSize = (srcRect->iRight - srcRect->iLeft) + 1;
@@ -222,7 +221,7 @@ BOOLEAN Copy16BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16
   for (cnt = 0; cnt < uiNumLines - 1; cnt++) {
     memcpy(pDest, pSrc, uiLineSize * 2);
     pDest += usDestWidth;
-    pSrc += hImage->usWidth;
+    pSrc += hImage->width;
   }
   // Do last line
   memcpy(pDest, pSrc, uiLineSize * 2);
@@ -265,7 +264,7 @@ BOOLEAN Copy8BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_
   }
 
   // Determine memcopy coordinates
-  uiSrcStart = srcRect->iTop * hImage->usWidth + srcRect->iLeft;
+  uiSrcStart = srcRect->iTop * hImage->width + srcRect->iLeft;
   uiDestStart = usY * usDestWidth + usX;
   uiNumLines = (srcRect->iBottom - srcRect->iTop);
   uiLineSize = (srcRect->iRight - srcRect->iLeft);
@@ -294,7 +293,7 @@ BOOLEAN Copy8BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_
     }
 
     pDest += usDestWidth;
-    pSrc += hImage->usWidth;
+    pSrc += hImage->width;
   }
   // Do last line
   DebugMsg(TOPIC_HIMAGE, DBG_INFO, String("End Copying at %p", pDest));
@@ -541,7 +540,7 @@ void ConvertRGBDistribution565To555(uint16_t *p16BPPData, uint32_t uiNumberOfPix
 struct Image *ScaleImageDown2x(struct Image *image) {
   // not all image types are supported
   bool supported =
-      image->ubBitDepth == 8 && image->app_data_size == 0 && image->number_of_subimages == 0;
+      image->bit_depth == 8 && image->app_data_size == 0 && image->number_of_subimages == 0;
   if (!supported) {
     return NULL;
   }
@@ -550,9 +549,9 @@ struct Image *ScaleImageDown2x(struct Image *image) {
     return NULL;
   }
 
-  res->usWidth = image->usWidth / 2;
-  res->usHeight = image->usHeight / 2;
-  res->ubBitDepth = image->ubBitDepth;
+  res->width = image->width / 2;
+  res->height = image->height / 2;
+  res->bit_depth = image->bit_depth;
 
   uint32_t palette_size = sizeof(struct SGPPaletteEntry) * 256;
   res->palette = zmalloc(palette_size);
@@ -562,7 +561,7 @@ struct Image *ScaleImageDown2x(struct Image *image) {
   }
   memcpy(res->palette, image->palette, palette_size);
 
-  res->image_data_size = res->usWidth * res->usHeight;
+  res->image_data_size = res->width * res->height;
   res->image_data = zmalloc(res->image_data_size);
   if (!res->image_data) {
     MemFree(res->palette);
@@ -571,9 +570,9 @@ struct Image *ScaleImageDown2x(struct Image *image) {
   }
 
   uint8_t *data = res->image_data;
-  for (uint16_t y = 0; y < image->usHeight; y += 2) {
-    for (uint16_t x = 0; x < image->usWidth; x += 2) {
-      *data++ = ((uint8_t *)image->image_data)[y * image->usWidth + x];
+  for (uint16_t y = 0; y < image->height; y += 2) {
+    for (uint16_t x = 0; x < image->width; x += 2) {
+      *data++ = ((uint8_t *)image->image_data)[y * image->width + x];
     }
   }
 

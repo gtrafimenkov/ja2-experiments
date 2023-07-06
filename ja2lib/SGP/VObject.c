@@ -295,7 +295,7 @@ struct VObject *CreateVObjectFromImage(struct Image *hImage) {
   }
 
   // Set values from himage
-  hVObject->ubBitDepth = hImage->ubBitDepth;
+  hVObject->ubBitDepth = hImage->bit_depth;
 
   // Get TRLE data
   struct ImageData TempETRLEData;
@@ -310,7 +310,7 @@ struct VObject *CreateVObjectFromImage(struct Image *hImage) {
   hVObject->image_data_size = TempETRLEData.image_data_size;
 
   // Set palette from himage
-  if (hImage->ubBitDepth == 8) {
+  if (hImage->bit_depth == 8) {
     SetVideoObjectPalette(hVObject, hImage->palette);
   }
 
