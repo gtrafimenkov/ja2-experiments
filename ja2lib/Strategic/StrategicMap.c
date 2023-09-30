@@ -101,6 +101,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "rust_clock.h"
+#include "rust_colors.h"
 #include "rust_fileman.h"
 #include "rust_militia.h"
 #include "rust_sam_sites.h"
@@ -304,7 +305,7 @@ void BeginLoadScreen() {
       RefreshScreen();
     }
   }
-  VSurfaceColorFill(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  VSurfaceColorFill(vsFB, 0, 0, 640, 480, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   RefreshScreen();
 

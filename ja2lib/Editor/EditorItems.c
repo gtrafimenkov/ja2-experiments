@@ -39,6 +39,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
 #include "rust_images.h"
 
 #define NUMBER_TRIGGERS 27
@@ -532,7 +533,7 @@ void RenderEditorItemsInfo() {
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
         BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
-                                       Get16BPPColor(FROMRGB(250, 250, 0)), TRUE);
+                                       rgb32_to_rgb565(FROMRGB(250, 250, 0)), TRUE);
       }
     }
   }
@@ -549,7 +550,7 @@ void RenderEditorItemsInfo() {
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
         BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
-                                       Get16BPPColor(FROMRGB(250, 0, 0)), TRUE);
+                                       rgb32_to_rgb565(FROMRGB(250, 0, 0)), TRUE);
       }
     }
   }

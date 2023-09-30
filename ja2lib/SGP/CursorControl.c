@@ -13,6 +13,7 @@
 #include "SGP/VideoInternal.h"
 #include "SGP/WCheck.h"
 #include "platform.h"
+#include "rust_colors.h"
 #include "rust_images.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ BOOLEAN BltToMouseCursorFromVObjectWithOutline(struct VObject *hVObject,
   sYPos += ((gsCurMouseHeight - pTrav->height) / 2);
 
   ReturnValue = BltVideoObjectOutline(vsMouseBuffer, hVObject, usVideoObjectSubIndex, sXPos, sYPos,
-                                      Get16BPPColor(FROMRGB(0, 255, 0)), TRUE);
+                                      rgb32_to_rgb565(FROMRGB(0, 255, 0)), TRUE);
 
   return ReturnValue;
 }
