@@ -19,6 +19,7 @@
 #include "TileEngine/WorldDat.h"
 #include "TileEngine/WorldDef.h"
 #include "Utils/FontControl.h"
+#include "rust_colors.h"
 #include "rust_images.h"
 
 extern BOOLEAN gfOverheadMapDirty;
@@ -857,7 +858,7 @@ void RenderSelectionWindow(void) {
       iEY = min(359, iEY);
       iEY = max(SelWinStartPoint.iY, iEY);
 
-      usFillColor = Get16BPPColor(FROMRGB(255, usFillGreen, 0));
+      usFillColor = rgb32_to_rgb565(FROMRGB(255, usFillGreen, 0));
       usFillGreen += usDir;
       if (usFillGreen > 250)
         usDir = 251;
