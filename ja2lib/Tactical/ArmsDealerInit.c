@@ -433,7 +433,8 @@ void DailyCheckOnItemQuantities() {
                 }
 
                 // Determine when the inventory should arrive
-                uiArrivalDay = GetGameTimeInDays() + ubReorderDays;  // consider changing this to minutes
+                uiArrivalDay =
+                    GetGameTimeInDays() + ubReorderDays;  // consider changing this to minutes
 
                 // post new order
                 gArmsDealersInventory[ubArmsDealer][usItemIndex].ubQtyOnOrder = ubNumItems;
