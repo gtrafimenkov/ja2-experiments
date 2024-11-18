@@ -90,7 +90,7 @@ void DestroyImage(struct Image *image) {
   MemFree(image);
 }
 
-BOOLEAN CopyImageToBuffer(struct Image *hImage, uint8_t bufferBitDepth, BYTE *pDestBuf,
+BOOLEAN CopyImageToBuffer(struct Image *hImage, uint8_t bufferBitDepth, uint8_t *pDestBuf,
                           uint16_t usDestWidth, uint16_t usDestHeight, uint16_t usX, uint16_t usY,
                           struct GRect *srcRect) {
   Assert(hImage != NULL);
@@ -116,7 +116,7 @@ BOOLEAN CopyImageToBuffer(struct Image *hImage, uint8_t bufferBitDepth, BYTE *pD
   return (FALSE);
 }
 
-BOOLEAN Copy8BPPImageTo8BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_t usDestWidth,
+BOOLEAN Copy8BPPImageTo8BPPBuffer(struct Image *hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
                                   uint16_t usDestHeight, uint16_t usX, uint16_t usY,
                                   struct GRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
@@ -171,7 +171,7 @@ BOOLEAN Copy8BPPImageTo8BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_t
   return (TRUE);
 }
 
-BOOLEAN Copy16BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_t usDestWidth,
+BOOLEAN Copy16BPPImageTo16BPPBuffer(struct Image *hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
                                     uint16_t usDestHeight, uint16_t usX, uint16_t usY,
                                     struct GRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
@@ -229,7 +229,7 @@ BOOLEAN Copy16BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16
   return (TRUE);
 }
 
-BOOLEAN Copy8BPPImageTo16BPPBuffer(struct Image *hImage, BYTE *pDestBuf, uint16_t usDestWidth,
+BOOLEAN Copy8BPPImageTo16BPPBuffer(struct Image *hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
                                    uint16_t usDestHeight, uint16_t usX, uint16_t usY,
                                    struct GRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
