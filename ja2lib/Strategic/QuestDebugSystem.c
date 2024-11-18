@@ -50,7 +50,6 @@
 #include "Utils/WordWrap.h"
 #include "platform.h"
 #include "rust_colors.h"
-#include "rust_fileman.h"
 
 // #ifdef JA2BETAVERSION
 

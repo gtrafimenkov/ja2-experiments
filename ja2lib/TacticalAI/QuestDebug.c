@@ -11,7 +11,6 @@
 #include "SGP/Debug.h"
 #include "Utils/Message.h"
 #include "platform.h"
-#include "rust_fileman.h"
 
 #define QUEST_DEBUG_FILE "QuestDebug.txt"
 

@@ -23,7 +23,6 @@
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/Vehicles.h"
 #include "UI.h"
-#include "rust_fileman.h"
 
 typedef struct {
   int16_t uiID;  // The soldiers ID

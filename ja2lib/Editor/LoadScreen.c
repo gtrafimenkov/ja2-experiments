@@ -50,7 +50,6 @@
 #include "platform.h"
 #include "platform_strings.h"
 #include "rust_colors.h"
-#include "rust_fileman.h"
 #include "rust_images.h"
 
 struct FileDialogList;

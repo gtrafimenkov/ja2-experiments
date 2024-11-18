@@ -44,7 +44,6 @@
 #include "TownMilitia.h"
 #include "UI.h"
 #include "Utils/Message.h"
-#include "rust_fileman.h"
 #include "rust_geometry.h"
 
 #ifdef JA2BETAVERSION

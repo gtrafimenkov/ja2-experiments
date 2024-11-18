@@ -40,7 +40,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
-#include "rust_fileman.h"
 
 BOOLEAN gfOriginalList = TRUE;
 

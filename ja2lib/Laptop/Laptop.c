@@ -89,7 +89,6 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 #include "platform.h"
-#include "rust_fileman.h"
 #include "rust_laptop.h"
 
 // icons text id's

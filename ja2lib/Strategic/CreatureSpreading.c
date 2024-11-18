@@ -35,7 +35,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
-#include "rust_fileman.h"
 #include "rust_images.h"
 
 #ifdef JA2BETAVERSION

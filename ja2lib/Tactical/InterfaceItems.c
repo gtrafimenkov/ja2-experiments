@@ -79,7 +79,6 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 #include "rust_colors.h"
-#include "rust_fileman.h"
 #include "rust_images.h"
 #include "rust_laptop.h"
 

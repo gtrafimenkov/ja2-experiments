@@ -21,7 +21,6 @@
 #include "TileEngine/RenderFun.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
-#include "rust_fileman.h"
 
 // dynamic arrays that contain the valid gridno's for each edge
 int16_t *gps1stNorthEdgepointArray = NULL;

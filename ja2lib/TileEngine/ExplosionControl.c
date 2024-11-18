@@ -65,7 +65,6 @@
 #include "Utils/Utilities.h"
 #include "platform_strings.h"
 #include "rust_civ_groups.h"
-#include "rust_fileman.h"
 #include "rust_sam_sites.h"
 
 // MODULE FOR EXPLOSIONS

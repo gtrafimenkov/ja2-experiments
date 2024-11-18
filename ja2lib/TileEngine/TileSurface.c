@@ -24,7 +24,6 @@
 #include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "platform_strings.h"
-#include "rust_fileman.h"
 
 struct TILE_IMAGERY *gTileSurfaceArray[NUMBEROFTILETYPES];
 uint8_t gbDefaultSurfaceUsed[NUMBEROFTILETYPES];

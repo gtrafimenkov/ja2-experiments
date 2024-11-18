@@ -21,7 +21,6 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "platform.h"
-#include "rust_fileman.h"
 
 void SGPExit(void);
 

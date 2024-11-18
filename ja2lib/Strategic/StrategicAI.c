@@ -38,7 +38,6 @@
 #include "TileEngine/ExplosionControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
-#include "rust_fileman.h"
 #include "rust_sam_sites.h"
 
 #define SAI_VERSION 29

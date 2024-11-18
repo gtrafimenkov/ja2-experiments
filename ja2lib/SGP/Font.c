@@ -21,7 +21,6 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "rust_colors.h"
-#include "rust_fileman.h"
 #include "rust_images.h"
 
 //*******************************************************

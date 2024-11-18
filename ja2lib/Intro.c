@@ -35,7 +35,6 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-#include "rust_fileman.h"
 
 extern wchar_t *gzIntroScreen[];
 

@@ -12,7 +12,6 @@
 #include "Utils/TimerControl.h"
 #include "platform.h"
 #include "rust_debug.h"
-#include "rust_fileman.h"
 #include "rust_platform.h"
 
 uint32_t guiSplashFrameFade = 10;

@@ -68,7 +68,6 @@
 #include "Utils/Text.h"
 #include "Utils/WordWrap.h"
 #include "rust_colors.h"
-#include "rust_fileman.h"
 
 // inventory pool position on screen
 #define MAP_INVEN_POOL_X 300

@@ -31,7 +31,6 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/Message.h"
 #include "rust_civ_groups.h"
-#include "rust_fileman.h"
 
 #ifdef JA2EDITOR
 extern wchar_t gszScheduleActions[NUM_SCHEDULE_ACTIONS][20];

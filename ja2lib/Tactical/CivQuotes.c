@@ -34,7 +34,6 @@
 #include "Utils/Message.h"
 #include "Utils/Text.h"
 #include "rust_civ_groups.h"
-#include "rust_fileman.h"
 
 #define DIALOGUE_DEFAULT_WIDTH 200
 #define EXTREAMLY_LOW_TOWN_LOYALTY 20

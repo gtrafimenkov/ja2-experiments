@@ -17,7 +17,6 @@
 #include "Tactical/Campaign.h"
 #include "Tactical/InventoryChoosing.h"
 #include "Tactical/SoldierProfile.h"
-#include "rust_fileman.h"
 
 STRATEGIC_STATUS gStrategicStatus;
 

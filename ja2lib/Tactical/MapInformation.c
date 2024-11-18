@@ -27,7 +27,6 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Message.h"
-#include "rust_fileman.h"
 
 // Don't mess with this value, unless you want to force update all maps in the game!
 #ifdef RUSSIAN

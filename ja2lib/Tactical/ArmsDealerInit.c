@@ -18,7 +18,6 @@
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/Weapons.h"
 #include "Utils/Message.h"
-#include "rust_fileman.h"
 
 #ifdef __GCC
 #pragma GCC diagnostic push

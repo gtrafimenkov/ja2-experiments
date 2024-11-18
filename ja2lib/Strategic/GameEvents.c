@@ -16,7 +16,6 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
-#include "rust_fileman.h"
 
 #ifdef JA2TESTVERSION
 

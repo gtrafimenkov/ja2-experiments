@@ -27,7 +27,6 @@
 #include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Utilities.h"
-#include "rust_fileman.h"
 
 // Defines
 #define NUM_BULLET_SLOTS 50

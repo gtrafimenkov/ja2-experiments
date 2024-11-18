@@ -54,7 +54,6 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
-#include "rust_fileman.h"
 #include "rust_sam_sites.h"
 
 // the delay for a group about to arrive

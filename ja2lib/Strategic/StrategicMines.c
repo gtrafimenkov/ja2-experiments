@@ -26,7 +26,6 @@
 #include "Town.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
-#include "rust_fileman.h"
 
 // this .c file will handle the strategic level of mines and income from them
 
