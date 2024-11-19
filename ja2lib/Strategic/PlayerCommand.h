@@ -4,13 +4,13 @@
 #include "SGP/Types.h"
 
 // build main facilities strings for sector
-void GetSectorFacilitiesFlags(u8 sMapX, u8 sMapY, STR16 sFacilitiesString, size_t bufSize);
+void GetSectorFacilitiesFlags(uint8_t sMapX, uint8_t sMapY, wchar_t* sFacilitiesString, size_t bufSize);
 
 // set sector as enemy controlled
-BOOLEAN SetThisSectorAsEnemyControlled(u8 sMapX, u8 sMapY, INT8 bMapZ, BOOLEAN fContested);
+BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ, BOOLEAN fContested);
 
 // set sector as player controlled
-BOOLEAN SetThisSectorAsPlayerControlled(u8 sMapX, u8 sMapY, INT8 bMapZ, BOOLEAN fContested);
+BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ, BOOLEAN fContested);
 
 #ifdef JA2TESTVERSION
 void ClearMapControlledFlags(void);
@@ -18,12 +18,12 @@ void ClearMapControlledFlags(void);
 
 /*
 // is this sector under player control
-BOOLEAN IsTheSectorPerceivedToBeUnderEnemyControl( INT16 sMapX, INT16 sMapY, INT8 bMapZ );
+BOOLEAN IsTheSectorPerceivedToBeUnderEnemyControl( int16_t sMapX, int16_t sMapY, int8_t bMapZ );
 
 // make player's perceived control over the sector reflect reality
-void MakePlayerPerceptionOfSectorControlCorrect( INT16 sMapX, INT16 sMapY, INT8 bMapZ );
+void MakePlayerPerceptionOfSectorControlCorrect( int16_t sMapX, int16_t sMapY, int8_t bMapZ );
 */
 
-void ReplaceSoldierProfileInPlayerGroup(UINT8 ubGroupID, UINT8 ubOldProfile, UINT8 ubNewProfile);
+void ReplaceSoldierProfileInPlayerGroup(uint8_t ubGroupID, uint8_t ubOldProfile, uint8_t ubNewProfile);
 
 #endif

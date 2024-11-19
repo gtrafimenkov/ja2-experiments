@@ -15,7 +15,7 @@ BOOLEAN FileMan_Initialize() {
 
 void FileMan_Shutdown(void) { UnRegisterDebugTopic(TOPIC_FILE_MANAGER, "File Manager"); }
 
-BOOLEAN FileMan_ExistsNoDB(STR strFilename) {
+BOOLEAN FileMan_ExistsNoDB(char* strFilename) {
   BOOLEAN fExists = FALSE;
   FILE *file;
 
@@ -29,9 +29,9 @@ BOOLEAN FileMan_ExistsNoDB(STR strFilename) {
   return (fExists);
 }
 
-BOOLEAN FileMan_Delete(STR strFilename) { return (Plat_DeleteFile(strFilename)); }
+BOOLEAN FileMan_Delete(char* strFilename) { return (Plat_DeleteFile(strFilename)); }
 
-BOOLEAN FileMan_Exists(STR strFilename) {
+BOOLEAN FileMan_Exists(char* strFilename) {
   BOOLEAN fExists = FALSE;
   FILE *file;
 

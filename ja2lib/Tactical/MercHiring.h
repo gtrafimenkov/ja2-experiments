@@ -22,32 +22,32 @@ struct SOLDIERTYPE;
 //// 7:30 am
 
 typedef struct {
-  UINT8 ubProfileID;
-  INT16 sSectorX;
-  INT16 sSectorY;
-  INT8 bSectorZ;
-  INT16 iTotalContractLength;
+  uint8_t ubProfileID;
+  int16_t sSectorX;
+  int16_t sSectorY;
+  int8_t bSectorZ;
+  int16_t iTotalContractLength;
   BOOLEAN fCopyProfileItemsOver;
-  UINT32 uiTimeTillMercArrives;
-  UINT8 ubInsertionCode;
-  UINT16 usInsertionData;
+  uint32_t uiTimeTillMercArrives;
+  uint8_t ubInsertionCode;
+  uint16_t usInsertionData;
   BOOLEAN fUseLandingZoneForArrival;
 
 } MERC_HIRE_STRUCT;
 
 // ATE: Globals that dictate where the mercs will land once being hired
-extern u8 gsMercArriveSectorX;
-extern u8 gsMercArriveSectorY;
+extern uint8_t gsMercArriveSectorX;
+extern uint8_t gsMercArriveSectorY;
 
-INT8 HireMerc(MERC_HIRE_STRUCT *pHireMerc);
-void MercArrivesCallback(UINT8 ubSoldierID);
-BOOLEAN IsMercHireable(UINT8 ubMercID);
-BOOLEAN IsMercDead(UINT8 ubMercID);
-UINT8 NumberOfMercsOnPlayerTeam();
+int8_t HireMerc(MERC_HIRE_STRUCT *pHireMerc);
+void MercArrivesCallback(uint8_t ubSoldierID);
+BOOLEAN IsMercHireable(uint8_t ubMercID);
+BOOLEAN IsMercDead(uint8_t ubMercID);
+uint8_t NumberOfMercsOnPlayerTeam();
 BOOLEAN IsTheSoldierAliveAndConcious(struct SOLDIERTYPE *pSoldier);
 void HandleMercArrivesQuotes(struct SOLDIERTYPE *pSoldier);
 void UpdateAnyInTransitMercsWithGlobalArrivalSector();
 
-UINT32 GetMercArrivalTimeOfDay();
+uint32_t GetMercArrivalTimeOfDay();
 
 #endif

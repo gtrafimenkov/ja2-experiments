@@ -57,16 +57,16 @@
 #include "Utils/SoundControl.h"
 
 // Temp function
-void QuickSetupOfMercProfileItems(UINT32 uiCount, UINT8 ubProfileIndex);
-BOOLEAN QuickGameMemberHireMerc(UINT8 ubCurrentSoldier);
-extern UINT32 guiExitScreen;
-extern UINT32 uiMeanWhileFlags;
+void QuickSetupOfMercProfileItems(uint32_t uiCount, uint8_t ubProfileIndex);
+BOOLEAN QuickGameMemberHireMerc(uint8_t ubCurrentSoldier);
+extern uint32_t guiExitScreen;
+extern uint32_t uiMeanWhileFlags;
 extern BOOLEAN gfGamePaused;
 
-extern UNDERGROUND_SECTORINFO *FindUnderGroundSector(u8 sMapX, u8 sMapY, UINT8 bMapZ);
+extern UNDERGROUND_SECTORINFO *FindUnderGroundSector(uint8_t sMapX, uint8_t sMapY, uint8_t bMapZ);
 extern void InitVehicles();
 
-UINT8 gubScreenCount = 0;
+uint8_t gubScreenCount = 0;
 
 void InitNPCs(void) {
   MERCPROFILESTRUCT *pProfile;
@@ -101,7 +101,7 @@ void InitNPCs(void) {
             pProfile->sSectorX);
 #endif
   // use alternate map, with Skyrider's shack, in this sector
-  SectorInfo[GetSectorID8((u8)pProfile->sSectorX, (u8)pProfile->sSectorY)].uiFlags |=
+  SectorInfo[GetSectorID8((uint8_t)pProfile->sSectorX, (uint8_t)pProfile->sSectorY)].uiFlags |=
       SF_USE_ALTERNATE_MAP;
 
   // set up Madlab's secret lab (he'll be added when the meanwhile scene occurs)
@@ -192,7 +192,7 @@ void InitNPCs(void) {
 #endif
 
     // use alternate map in this sector
-    SectorInfo[GetSectorID8((u8)pProfile->sSectorX, (u8)pProfile->sSectorY)].uiFlags |=
+    SectorInfo[GetSectorID8((uint8_t)pProfile->sSectorX, (uint8_t)pProfile->sSectorY)].uiFlags |=
         SF_USE_ALTERNATE_MAP;
   } else {  // not scifi, so use alternate map in Tixa's b1 level that doesn't have the stairs going
             // down to the caves.
@@ -213,7 +213,7 @@ void InitNPCs(void) {
 }
 
 void InitBloodCatSectors() {
-  INT32 i;
+  int32_t i;
   // Hard coded table of bloodcat populations.  We don't have
   // access to the real population (if different) until we physically
   // load the map.  If the real population is different, then an error
@@ -327,7 +327,7 @@ void ShutdownStrategicLayer() {
 }
 
 BOOLEAN InitNewGame(BOOLEAN fReset) {
-  INT32 iStartingCash;
+  int32_t iStartingCash;
 
   //	static fScreenCount = 0;
 
@@ -406,7 +406,7 @@ BOOLEAN InitNewGame(BOOLEAN fReset) {
     AddTransactionToPlayersBook(ANONYMOUS_DEPOSIT, 0, iStartingCash);
 
     {
-      UINT32 uiDaysTimeMercSiteAvailable = Random(2) + 1;
+      uint32_t uiDaysTimeMercSiteAvailable = Random(2) + 1;
 
       // schedule email for message from spec at 7am 3 days in the future
       AddFutureDayStrategicEvent(EVENT_DAY3_ADD_EMAIL_FROM_SPECK, 60 * 7, 0,
@@ -415,7 +415,7 @@ BOOLEAN InitNewGame(BOOLEAN fReset) {
 
 #ifdef CRIPPLED_VERSION
     {
-      UINT32 cnt;
+      uint32_t cnt;
 
       // loop through the first 20 AIM mercs and set them to be away
       for (cnt = 0; cnt < 20; cnt++) {
@@ -448,9 +448,9 @@ BOOLEAN InitNewGame(BOOLEAN fReset) {
 }
 
 BOOLEAN AnyMercsHired() {
-  INT32 cnt;
+  int32_t cnt;
   struct SOLDIERTYPE *pTeamSoldier;
-  INT16 bLastTeamID;
+  int16_t bLastTeamID;
 
   // Find first guy availible in team
   cnt = gTacticalStatus.Team[gbPlayerNum].bFirstID;
@@ -468,36 +468,36 @@ BOOLEAN AnyMercsHired() {
 }
 
 void QuickStartGame() {
-  INT32 cnt;
-  UINT16 usVal;
-  UINT8 ub1 = 0, ub2 = 0;
+  int32_t cnt;
+  uint16_t usVal;
+  uint8_t ub1 = 0, ub2 = 0;
 
   for (cnt = 0; cnt < 3; cnt++) {
     if (cnt == 0) {
-      usVal = (UINT16)Random(40);
+      usVal = (uint16_t)Random(40);
 
-      QuickSetupOfMercProfileItems(cnt, (UINT8)usVal);
-      QuickGameMemberHireMerc((UINT8)usVal);
+      QuickSetupOfMercProfileItems(cnt, (uint8_t)usVal);
+      QuickGameMemberHireMerc((uint8_t)usVal);
     } else if (cnt == 1) {
       do {
-        usVal = (UINT16)Random(40);
+        usVal = (uint16_t)Random(40);
       } while (usVal != ub1);
 
-      QuickSetupOfMercProfileItems(cnt, (UINT8)usVal);
-      QuickGameMemberHireMerc((UINT8)usVal);
+      QuickSetupOfMercProfileItems(cnt, (uint8_t)usVal);
+      QuickGameMemberHireMerc((uint8_t)usVal);
     } else if (cnt == 2) {
       do {
-        usVal = (UINT16)Random(40);
+        usVal = (uint16_t)Random(40);
       } while (usVal != ub1 && usVal != ub2);
 
-      QuickSetupOfMercProfileItems(cnt, (UINT8)usVal);
-      QuickGameMemberHireMerc((UINT8)usVal);
+      QuickSetupOfMercProfileItems(cnt, (uint8_t)usVal);
+      QuickGameMemberHireMerc((uint8_t)usVal);
     }
   }
 }
 
 // TEMP FUNCTION!
-void QuickSetupOfMercProfileItems(UINT32 uiCount, UINT8 ubProfileIndex) {
+void QuickSetupOfMercProfileItems(uint32_t uiCount, uint8_t ubProfileIndex) {
   // Quickly give some guys we hire some items
 
   if (uiCount == 0) {
@@ -574,7 +574,7 @@ void QuickSetupOfMercProfileItems(UINT32 uiCount, UINT8 ubProfileIndex) {
     gMercProfiles[ubProfileIndex].bInvNumber[SMALLPOCK6POS] = 1;
 
   } else {
-    gMercProfiles[ubProfileIndex].inv[HANDPOS] = (UINT8)Random(30);
+    gMercProfiles[ubProfileIndex].inv[HANDPOS] = (uint8_t)Random(30);
     gMercProfiles[ubProfileIndex].bInvNumber[HANDPOS] = 1;
   }
 
@@ -600,7 +600,7 @@ void QuickSetupOfMercProfileItems(UINT32 uiCount, UINT8 ubProfileIndex) {
   // gMercProfiles[ 78 ].bInvNumber[ SMALLPOCK4POS ] = 1;
 }
 
-BOOLEAN QuickGameMemberHireMerc(UINT8 ubCurrentSoldier) {
+BOOLEAN QuickGameMemberHireMerc(uint8_t ubCurrentSoldier) {
   MERC_HIRE_STRUCT HireMercStruct;
 
   memset(&HireMercStruct, 0, sizeof(MERC_HIRE_STRUCT));
@@ -626,7 +626,7 @@ BOOLEAN QuickGameMemberHireMerc(UINT8 ubCurrentSoldier) {
 
   // add an entry in the finacial page for the hiring of the merc
   AddTransactionToPlayersBook(HIRED_MERC, ubCurrentSoldier,
-                              -(INT32)gMercProfiles[ubCurrentSoldier].uiWeeklySalary);
+                              -(int32_t)gMercProfiles[ubCurrentSoldier].uiWeeklySalary);
 
   if (gMercProfiles[ubCurrentSoldier].bMedicalDeposit) {
     // add an entry in the finacial page for the medical deposit
@@ -643,7 +643,7 @@ BOOLEAN QuickGameMemberHireMerc(UINT8 ubCurrentSoldier) {
 // This function is called when the game is REstarted.  Things that need to be reinited are placed
 // in here
 void ReStartingGame() {
-  UINT16 cnt;
+  uint16_t cnt;
 
   // Pause the game
   gfGamePaused = TRUE;
