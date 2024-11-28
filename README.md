@@ -10,6 +10,7 @@ with following changes:
   - make it easier to develop on Linux
 - small C++ parts of the code were converted to C so that the whole codebase is C now.  That should
   make it easier to integrate this code with other programming languages
+- CMake build system is used
 
 Other branches contain different experiments.
 
@@ -27,14 +28,20 @@ unittester         - an application to run unit tests
 
 ## How to build
 
-- open the solution in Visual Studio 2022
-- choose Release configuration
-- choose Build Solution
+```
+python xx.py build test
+```
+
+## How to run
+
+```
+python xx.py build test copy-data run
+```
 
 ## How to play the game
 
 - install the original version of the game (from the original game CDs, Steam, gog.com, etc.)
-- copy the builded exe file (`Release\ja2-win32.exe`) to the game directory alongside the original ja2.exe
+- copy the builded exe file (`build/bin-win32/RelWithDebInfo/ja2v.exe`) to the game directory alongside the original ja2.exe
 - (for Windows 10) copy Windows 10 compatibility files from `tools/dxwrapper` to the game directory
 - launch the builded exe file
 
