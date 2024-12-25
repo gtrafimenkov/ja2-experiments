@@ -352,7 +352,6 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
       GetMercSiteBackOnline();
       break;
     case EVENT_INVESTIGATE_SECTOR:
-      InvestigateSector((uint8_t)pEvent->uiParam);
       break;
     case EVENT_CHECK_IF_MINE_CLEARED:
       // If so, the head miner will say so, and the mine's shutdown will be ended.

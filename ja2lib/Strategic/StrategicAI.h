@@ -39,8 +39,6 @@ BOOLEAN EnemyPermittedToAttackSector(struct GROUP **pGroup, uint8_t ubSectorID);
 
 void StrategicHandleQueenLosingControlOfSector(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ);
 
-void InvestigateSector(uint8_t ubSectorID);
-
 void WakeUpQueen();
 
 void StrategicHandleMineThatRanOut(uint8_t ubSectorID);

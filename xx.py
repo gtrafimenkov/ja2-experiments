@@ -107,20 +107,29 @@ def get_release_build_location():
 def get_release_build_exe():
     if platform.system() == "Windows":
         return "build/bin-win32/RelWithDebInfo/ja2v.exe"
-    return "build/ja2v"
+    return "build-release/ja2v"
 
 
 def get_release_test_exe():
     if platform.system() == "Windows":
         return "build/unittester/RelWithDebInfo/unittester.exe"
-    return "build/unittester/unittester"
+    return "build-release/unittester/unittester"
 
 
 def run_command(command):
     if command in ["build-debug"]:
         if platform.system() == "Windows":
             subprocess.run(
-                ["cmake", "-G", "Visual Studio 17 2022", "-A", "Win32", "-B", "build"],
+                [
+                    "cmake",
+                    "-G",
+                    "Visual Studio 17 2022",
+                    "-A",
+                    "Win32",
+                    "-B",
+                    "build",
+                    "-DBUILD_UNITTESTER=OFF",
+                ],
                 check=True,
             )
             subprocess.run(
@@ -135,7 +144,17 @@ def run_command(command):
 
     elif command in ["build", "build-release"]:
         if platform.system() == "Windows":
-            subprocess.run(["cmake", "-B", "build", "-A", "Win32"], check=True)
+            subprocess.run(
+                [
+                    "cmake",
+                    "-B",
+                    "build",
+                    "-A",
+                    "Win32",
+                    "-DBUILD_UNITTESTER=ON",
+                ],
+                check=True,
+            )
             subprocess.run(
                 [
                     "cmake",
@@ -149,7 +168,13 @@ def run_command(command):
             )
         else:
             subprocess.run(
-                ["cmake", "-B", "build-release", "-DCMAKE_BUILD_TYPE=Release"],
+                [
+                    "cmake",
+                    "-B",
+                    "build-release",
+                    "-DCMAKE_BUILD_TYPE=Release",
+                    "-DBUILD_UNITTESTER=ON",
+                ],
                 check=True,
             )
             subprocess.run(
