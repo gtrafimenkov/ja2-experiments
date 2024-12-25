@@ -33,19 +33,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
 
-    add_compile_options(/wd4018) # signed/unsigned mismatch
-    add_compile_options(/wd4200) # nonstandard extension used: zero-sized array in struct/union
-    add_compile_options(/wd4244) # conversion from 'type1' to 'type2', possible loss of data
     add_compile_options(/wd4267) # conversion from 'size_t' to 'type', possible loss of data
-    add_compile_options(/wd4996) # deprecated stuff in utf8cpp library
+    # warning C4996: 'strupr': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strupr. See online help for details.
+    add_compile_options(/wd4996)
 
     add_compile_options(/D_CRT_SECURE_NO_WARNINGS)
 
     # it's needed for some reason
     add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 endif()
-
-set(CMAKE_SYSTEM_PROCESSOR x86)
 
 add_subdirectory(ja2lib)
 add_subdirectory(platform-dummy)
