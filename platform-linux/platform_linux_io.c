@@ -42,7 +42,8 @@ BOOLEAN Plat_OpenForReading(const char *path, SYS_FILE_HANDLE *handle) {
   return *handle != NULL;
 }
 
-BOOLEAN Plat_ReadFile(SYS_FILE_HANDLE handle, void *buffer, uint32_t bytesToRead, uint32_t *readBytes) {
+BOOLEAN Plat_ReadFile(SYS_FILE_HANDLE handle, void *buffer, uint32_t bytesToRead,
+                      uint32_t *readBytes) {
   *readBytes = fread(buffer, 1, bytesToRead, handle);
   int error = ferror(handle);
   // TODO: log error

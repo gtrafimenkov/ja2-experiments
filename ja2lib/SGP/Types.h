@@ -11,12 +11,19 @@
 
 #include "BuildDefines.h"
 
+// *** SIR-TECH TYPE DEFINITIONS ***
+
+// These two types are defined by VC6 and were causing redefinition
+// problems, but JA2 is compiled with VC5
+
+// HEY WIZARDRY DUDES, JA2 ISN'T THE ONLY PROGRAM WE COMPILE! :-)
+
 // flags (individual bits used)
 typedef uint8_t FLAGS8;
 typedef uint16_t FLAGS16;
 typedef uint32_t FLAGS32;
 // other
-typedef uint8_t BOOLEAN;
+typedef unsigned char BOOLEAN;
 typedef uint16_t HNDL;
 typedef char STRING512[512];
 typedef uint32_t HWFILE;

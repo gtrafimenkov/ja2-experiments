@@ -509,8 +509,7 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
 
     case ENEMY_TEAM:
       // check whose sector this is
-      if (StrategicMap[(GetSolSectorX(pSoldier)) + (MAP_WORLD_X * (GetSolSectorY(pSoldier)))]
-              .fEnemyControlled == TRUE) {
+      if (IsSectorEnemyControlled(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
         // enemy soldiers... in enemy controlled sector.  Gain loyalty
         fIncrement = TRUE;
 
@@ -553,8 +552,7 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
         iLoyaltyChange *= MULTIPLIER_FOR_MURDER_BY_MONSTER;
 
         // check whose sector this is
-        if (StrategicMap[(GetSolSectorX(pSoldier)) + (MAP_WORLD_X * (GetSolSectorY(pSoldier)))]
-                .fEnemyControlled == TRUE) {
+        if (IsSectorEnemyControlled(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
           // enemy controlled sector - gain loyalty
           fIncrement = TRUE;
         } else {
@@ -647,8 +645,7 @@ void HandleLoyaltyForDemolitionOfBuilding(struct SOLDIERTYPE *pSoldier, int16_t 
   }
 
   // penalize the side that should have stopped it
-  if (StrategicMap[GetSolSectorX(pSoldier) + pSoldier->sSectorY * MAP_WORLD_X].fEnemyControlled ==
-      TRUE) {
+  if (IsSectorEnemyControlled(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
     // enemy should have prevented it, let them suffer a little
     IncrementTownLoyalty(bTownId, sPolicingLoyalty);
   } else {
@@ -1100,7 +1097,7 @@ void AffectAllTownsLoyaltyByDistanceFrom(int32_t iLoyaltyChange, uint8_t sSector
     iShortestDistance[bTownId] = 999999;
   }
 
-  sEventSector = sSectorX + (MAP_WORLD_X * sSectorY);
+  sEventSector = GetSectorID16(sSectorX, sSectorY);
 
   // need a temporary group create to use for laying down distance paths
   ubTempGroupId = CreateNewPlayerGroupDepartingFromSector((uint8_t)sSectorX, (uint8_t)sSectorY);

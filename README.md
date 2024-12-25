@@ -1,18 +1,8 @@
-# Experimenting with JA2 sources
+# JA2 reimplementation in Rust
 
-## Overview
+Just for practice.
 
-The main branch is based on [gtrafimenkov/ja2-vanilla](https://github.com/gtrafimenkov/ja2-vanilla)
-with following changes:
-- the code is split into platform-independent (`ja2lib`) and platform-specific parts (`platfrom-*`)
-  for following reasons:
-  - make it easier to port to other platforms
-  - make it easier to develop on Linux
-- small C++ parts of the code were converted to C so that the whole codebase is C now.  That should
-  make it easier to integrate this code with other programming languages
-- CMake build system is used
-
-Other branches contain different experiments.
+Based on https://github.com/gtrafimenkov/ja2-experiments
 
 ## Project structure
 
@@ -23,8 +13,19 @@ platform-linux     - platform code for Linux
 platform-win32     - platform code for win32
 bin-win32          - project to build the game binary for Windows
 bin-linux          - project to build Linux binary of the game (not implemented)
+rustlib            - Rust code compiled to a dynamic shared library
 unittester         - an application to run unit tests
 ```
+
+## Build requirements
+
+On Windows:
+- Visual Studio Community 2022
+- Rust
+
+On Linux:
+- GCC
+- Rust
 
 ## How to build
 

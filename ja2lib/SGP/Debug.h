@@ -102,7 +102,8 @@ extern void DbgMessageReal(uint16_t TopicId, uint8_t uiCommand, uint8_t uiDebugL
 extern BOOLEAN DbgSetDebugLevel(uint16_t TopicId, uint8_t uiDebugLevel);
 extern void DbgFailedAssertion(BOOLEAN fExpression, char *szFile, int nLine);
 // extern	void		_FailMessage(uint8_t *pString, uint32_t uiLineNum, uint8_t
-// *pSourceFile );
+// *pSourceFile
+// );
 extern void DbgTopicRegistration(uint8_t ubCmd, uint16_t *usTopicID, char *zMessage);
 extern void DbgClearAllTopics(void);
 extern void _DebugMessage(char *pString, uint32_t uiLineNum, char *pSourceFile);

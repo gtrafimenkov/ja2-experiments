@@ -197,50 +197,50 @@ char szSoundEffects[NUM_SAMPLES][255] = {
                                                     // 5.7
     "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_TYPE85
                                                     // 7.62
-                                                 // WP
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",  //	S_SKS
-                                                 // 7.62
-                                                 // WP
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",    //	S_DRAGUNOV			7.62
-                                                   // WP
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_M24
-                                                   // 7.62
-                                                   // NATO
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_AUG
-                                                 // 5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_G41
-                                                 // 5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_RUGERMINI			5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_C7
-                                                 // 5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_FAMAS
-                                                 // 5.56mm
-    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",     //	S_AK74
-                                                 // 5.45mm
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",  //	S_AKM
-                                                 // 7.62mm
-                                                 // WP
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_M14
-                                                   // 7.62mm
-                                                   // NATO
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_FNFAL
-                                                   // 7.62mm
-                                                   // NATO
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_G3A3
-                                                   // 7.62mm
-                                                   // NATO
-    "SOUNDS\\WEAPONS\\4,7 SINGLE SHOT.WAV",      //	S_G11
-                                                 // 4.7mm
-    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",  //	S_M870 SHOTGUN
-    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",  //	S_SPAS SHOTGUN
-    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",  //	S_CAWS SHOTGUN
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_FNMINI
-                                                 // 5.56mm
-    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",     //	S_RPK74
-                                                 // 5.45mm
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",  //	S_21E
-                                                 // 7.62mm
-    "SOUNDS\\WEAPONS\\KNIFE THROW SWOOSH.WAV",   //	KNIFE THROW
+                                                    // WP
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_SKS
+                                                    // 7.62
+                                                    // WP
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_DRAGUNOV			7.62
+                                                    // WP
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_M24
+                                                    // 7.62
+                                                    // NATO
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_AUG
+                                                    // 5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_G41
+                                                    // 5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_RUGERMINI			5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_C7
+                                                    // 5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_FAMAS
+                                                    // 5.56mm
+    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",        //	S_AK74
+                                                    // 5.45mm
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_AKM
+                                                    // 7.62mm
+                                                    // WP
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_M14
+                                                    // 7.62mm
+                                                    // NATO
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_FNFAL
+                                                    // 7.62mm
+                                                    // NATO
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_G3A3
+                                                    // 7.62mm
+                                                    // NATO
+    "SOUNDS\\WEAPONS\\4,7 SINGLE SHOT.WAV",         //	S_G11
+                                                    // 4.7mm
+    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",     //	S_M870 SHOTGUN
+    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",     //	S_SPAS SHOTGUN
+    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",     //	S_CAWS SHOTGUN
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_FNMINI
+                                                    // 5.56mm
+    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",        //	S_RPK74
+                                                    // 5.45mm
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_21E
+                                                    // 7.62mm
+    "SOUNDS\\WEAPONS\\KNIFE THROW SWOOSH.WAV",      //	KNIFE THROW
     "SOUNDS\\WEAPONS\\TANK_CANNON.WAV",
     "SOUNDS\\WEAPONS\\BURSTTYPE1.WAV",
     "SOUNDS\\WEAPONS\\AUTOMAG SINGLE.WAV",

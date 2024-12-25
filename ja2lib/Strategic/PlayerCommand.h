@@ -19,18 +19,6 @@ BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMap
 BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ,
                                         BOOLEAN fContested);
 
-#ifdef JA2TESTVERSION
-void ClearMapControlledFlags(void);
-#endif
-
-/*
-// is this sector under player control
-BOOLEAN IsTheSectorPerceivedToBeUnderEnemyControl( int16_t sMapX, int16_t sMapY, int8_t bMapZ );
-
-// make player's perceived control over the sector reflect reality
-void MakePlayerPerceptionOfSectorControlCorrect( int16_t sMapX, int16_t sMapY, int8_t bMapZ );
-*/
-
 void ReplaceSoldierProfileInPlayerGroup(uint8_t ubGroupID, uint8_t ubOldProfile,
                                         uint8_t ubNewProfile);
 

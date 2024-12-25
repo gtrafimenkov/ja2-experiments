@@ -1,18 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 
-enable_testing()
+# Currently it is not possible to build unittester in debug mode
+# because of linking problems when linking both gtest and rust static
+# library.
+option(BUILD_UNITTESTER "Build unit test binary" OFF)
+
+add_subdirectory(libs/corrosion)
+corrosion_import_crate(MANIFEST_PATH rustlib/Cargo.toml)
 
 if(WIN32)
     add_compile_options(/utf-8)
-endif()
-
-# Using the same debug library as google test.
-# Otherwise it will not link.
-if(WIN32)
-  # https://cmake.org/cmake/help/latest/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html
-  # https://stackoverflow.com/questions/10113017/setting-the-msvc-runtime-in-cmake#56776146
-  cmake_policy(SET CMP0091 NEW)
-  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 project(ja2v)
@@ -53,5 +50,7 @@ else()
     add_subdirectory(platform-linux)
 endif()
 
-add_subdirectory(libs/googletest)
-add_subdirectory(unittester)
+if(BUILD_UNITTESTER)
+    add_subdirectory(libs/googletest)
+    add_subdirectory(unittester)
+endif()

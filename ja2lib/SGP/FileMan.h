@@ -7,6 +7,10 @@
 
 #include "SGP/Types.h"
 
+// This is a handle to an open file.
+// The file can be a regular file on a disk, or a file from an slf archive.
+typedef uint32_t HWFILE;
+
 #define FILE_ACCESS_READ 0x01
 #define FILE_ACCESS_WRITE 0x02
 #define FILE_ACCESS_READWRITE 0x03

@@ -44,7 +44,7 @@ typedef struct {
 } RealFileOpenStruct;
 
 typedef struct {
-  char* pFileName;
+  char *pFileName;
   uint32_t uiFileLength;
   uint32_t uiFileOffset;
 } FileHeaderStruct;
@@ -53,11 +53,11 @@ typedef struct {
   uint32_t uiFileID;                   // id of the file ( they start at 1 )
   uint32_t uiFilePosInFile;            // current position in the file
   uint32_t uiActualPositionInLibrary;  // Current File pointer position in actuall library
-  FileHeaderStruct* pFileHeader;
+  FileHeaderStruct *pFileHeader;
 } FileOpenStruct;
 
 typedef struct {
-  char* sLibraryPath;
+  char *sLibraryPath;
   SYS_FILE_HANDLE hLibraryHandle;
   uint16_t usNumberOfEntries;
   BOOLEAN fLibraryOpen;
@@ -72,8 +72,8 @@ typedef struct {
                                             // 2 files can have access to the library at 1 time.
   int32_t iNumFilesOpen;
   int32_t iSizeOfOpenFileArray;
-  FileHeaderStruct* pFileHeader;
-  FileOpenStruct* pOpenFiles;
+  FileHeaderStruct *pFileHeader;
+  FileOpenStruct *pOpenFiles;
 
   //
   //	Temp:	Total memory used for each library ( all memory allocated
@@ -87,13 +87,13 @@ typedef struct {
 typedef struct {
   int32_t iNumFilesOpen;
   int32_t iSizeOfOpenFileArray;
-  RealFileOpenStruct* pRealFilesOpen;
+  RealFileOpenStruct *pRealFilesOpen;
 
 } RealFileHeaderStruct;
 
 typedef struct {
-  char* sManagerName;
-  LibraryHeaderStruct* pLibraries;
+  char *sManagerName;
+  LibraryHeaderStruct *pLibraries;
   uint16_t usNumberOfLibraries;
   BOOLEAN fInitialized;
   RealFileHeaderStruct RealFiles;
@@ -126,19 +126,19 @@ extern DatabaseManagerHeaderStruct gFileDataBase;
 
 // Function Prototypes
 
-BOOLEAN CheckForLibraryExistence(char* pLibraryName);
-BOOLEAN InitializeLibrary(char* pLibraryName, LibraryHeaderStruct* pLibheader,
+BOOLEAN CheckForLibraryExistence(char *pLibraryName);
+BOOLEAN InitializeLibrary(char *pLibraryName, LibraryHeaderStruct *pLibheader,
                           BOOLEAN fCanBeOnCDrom);
 
-BOOLEAN CheckIfFileExistInLibrary(char* pFileName);
-int16_t GetLibraryIDFromFileName(char* pFileName);
-HWFILE OpenFileFromLibrary(char* pName);
+BOOLEAN CheckIfFileExistInLibrary(char *pFileName);
+int16_t GetLibraryIDFromFileName(char *pFileName);
+HWFILE OpenFileFromLibrary(char *pName);
 HWFILE CreateRealFileHandle(SYS_FILE_HANDLE hFile);
 BOOLEAN CloseLibraryFile(int16_t sLibraryID, uint32_t uiFileID);
-BOOLEAN GetLibraryAndFileIDFromLibraryFileHandle(HWFILE hlibFile, int16_t* pLibraryID,
-                                                 uint32_t* pFileNum);
-BOOLEAN LoadDataFromLibrary(int16_t sLibraryID, uint32_t uiFileIndex, void* pData,
-                            uint32_t uiBytesToRead, uint32_t* pBytesRead);
+BOOLEAN GetLibraryAndFileIDFromLibraryFileHandle(HWFILE hlibFile, int16_t *pLibraryID,
+                                                 uint32_t *pFileNum);
+BOOLEAN LoadDataFromLibrary(int16_t sLibraryID, uint32_t uiFileIndex, void *pData,
+                            uint32_t uiBytesToRead, uint32_t *pBytesRead);
 BOOLEAN LibraryFileSeek(int16_t sLibraryID, uint32_t uiFileNum, uint32_t uiDistance,
                         uint8_t uiHowToSeek);
 
