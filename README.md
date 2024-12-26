@@ -1,18 +1,14 @@
-# Jagged Alliance 2 in Rust
+# Jagged Alliance 2 Vanilla in Rust
+
+This is a rewrite of [ja2-vanilla](https://github.com/gtrafimenkov/ja2-vanilla) project
+in Rust.
 
 Project goals:
-- get experience using Rust programming language
-- understand strong and week points of the language
-
-Non-goals:
-- support various game mods
 - full rewrite in Rust
 
-Optional goals:
-- add Linux support by using [SDL](https://www.libsdl.org) library
-
-This project is based on [ja2-experiments](https://github.com/gtrafimenkov/ja2-experiments),
-which in turn based on [ja2-vanilla](https://github.com/gtrafimenkov/ja2-vanilla).
+Non-goals:
+- adding new functionality
+- supporting game mods
 
 ## Project structure
 
@@ -29,21 +25,12 @@ unittester         - an application to run unit tests
 
 ## Build requirements
 
-On Windows:
-- Visual Studio Community 2022
+- CMake
+- GCC or Clang for Linux
+- Visual Studio Community 2022 for Windows
 - Rust v1.67.0 or later
 
-On Linux:
-- GCC
-- Rust v1.67.0 or later
-
-## How to build
-
-```
-python xx.py build test
-```
-
-## How to run
+## How to build test and run
 
 ```
 python xx.py build test copy-data run
@@ -52,9 +39,8 @@ python xx.py build test copy-data run
 ## How to play the game
 
 - install the original version of the game (from the original game CDs, Steam, gog.com, etc.)
-- `python xx.py build`
-- copy content of `build\bin-win32\RelWithDebInfo` folder to the game directory alongside the original ja2.exe
-- run `ja2v.exe`
+- `python xx.py build test copy-data run` or copy content of `build\bin-win32\RelWithDebInfo`
+  folder to the game directory alongside the original ja2.exe and run `ja2v.exe`
 
 The game is tested on Windows 10.
 
