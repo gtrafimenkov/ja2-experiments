@@ -150,7 +150,7 @@ uint32_t guiSectorLocatorGraphicID;  // icon graphic ID
 #define ANIMATED_BATTLEICON_FRAME_TIME 80
 #define MAX_FRAME_COUNT_FOR_ANIMATED_BATTLE_ICON 12
 
-SGPPoint pMapScreenFastHelpLocationList[] = {
+struct SGPPoint pMapScreenFastHelpLocationList[] = {
     {25, 200},  {150, 200}, {450, 430}, {400, 200}, {250, 100}, {100, 100},
     {100, 100}, {100, 100}, {100, 100}, {150, 200}, {100, 100},
 };
@@ -209,7 +209,7 @@ MapScreenCharacterSt gCharactersList[MAX_CHARACTER_COUNT + 1];
 extern struct MOUSE_REGION gCharInfoHandRegion;
 struct MOUSE_REGION gMapStatusBarsRegion;
 
-SGPPoint MovePosition = {450, 100};
+struct SGPPoint MovePosition = {450, 100};
 
 // which lines are selected? .. for assigning groups of mercs to the same thing
 BOOLEAN fSelectedListOfMercsForMapScreen[MAX_CHARACTER_COUNT];
@@ -291,28 +291,28 @@ BOOLEAN fRebuildMoveBox = FALSE;
 
 // positions for all the pop up boxes
 struct GRect ContractDimensions = {0, 0, 140, 60};
-SGPPoint ContractPosition = {120, 50};
+struct SGPPoint ContractPosition = {120, 50};
 struct GRect AttributeDimensions = {0, 0, 100, 95};
-SGPPoint AttributePosition = {220, 150};
+struct SGPPoint AttributePosition = {220, 150};
 struct GRect TrainDimensions = {0, 0, 100, 95};
-SGPPoint TrainPosition = {160, 150};
+struct SGPPoint TrainPosition = {160, 150};
 struct GRect VehicleDimensions = {0, 0, 80, 60};
-SGPPoint VehiclePosition = {160, 150};
+struct SGPPoint VehiclePosition = {160, 150};
 
-SGPPoint RepairPosition = {160, 150};
+struct SGPPoint RepairPosition = {160, 150};
 struct GRect RepairDimensions = {0, 0, 80, 80};
 
 struct GRect AssignmentDimensions = {0, 0, 100, 95};
-SGPPoint AssignmentPosition = {120, 150};
-SGPPoint SquadPosition = {160, 150};
+struct SGPPoint AssignmentPosition = {120, 150};
+struct SGPPoint SquadPosition = {160, 150};
 struct GRect SquadDimensions = {0, 0, 140, 60};
 
-SGPPoint OrigContractPosition = {120, 50};
-SGPPoint OrigAttributePosition = {220, 150};
-SGPPoint OrigSquadPosition = {160, 150};
-SGPPoint OrigAssignmentPosition = {120, 150};
-SGPPoint OrigTrainPosition = {160, 150};
-SGPPoint OrigVehiclePosition = {160, 150};
+struct SGPPoint OrigContractPosition = {120, 50};
+struct SGPPoint OrigAttributePosition = {220, 150};
+struct SGPPoint OrigSquadPosition = {160, 150};
+struct SGPPoint OrigAssignmentPosition = {120, 150};
+struct SGPPoint OrigTrainPosition = {160, 150};
+struct SGPPoint OrigVehiclePosition = {160, 150};
 
 // extern BOOLEAN fMapExitDueToMessageBox;
 
@@ -1667,7 +1667,7 @@ void HandleMAPUILoseCursorFromOtherScreen(void) {
 
 void UpdateMapScreenAssignmentPositions(void) {
   // set the position of the pop up boxes
-  SGPPoint pPoint;
+  struct SGPPoint pPoint;
 
   if (!IsMapScreen_2()) {
     return;
@@ -2730,7 +2730,7 @@ void SetUpMovingListsForSector(uint8_t sSectorX, uint8_t sSectorY, int8_t sSecto
 }
 
 void CreatePopUpBoxForMovementBox(void) {
-  SGPPoint Position;
+  struct SGPPoint Position;
   struct GRect Dimensions;
 
   // create the pop up box and mouse regions for movement list
@@ -2926,7 +2926,7 @@ void AddStringsToMoveBox(void) {
 
 void BuildMouseRegionsForMoveBox(void) {
   int32_t iCounter = 0, iTotalNumberOfLines = 0, iCount = 0, iCountB = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect Dimensions;
   int32_t iFontHeight = 0;

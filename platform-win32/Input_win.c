@@ -778,7 +778,7 @@ void KeyUp(uint32_t usParam, uint32_t uiParam) {  // Are we RELEASING one of SHI
   }
 }
 
-void GetMousePos(SGPPoint *Point) {
+void GetMousePos(struct SGPPoint *Point) {
   struct Point MousePos = GetMousePoint();
 
   Point->iX = (uint32_t)MousePos.x;

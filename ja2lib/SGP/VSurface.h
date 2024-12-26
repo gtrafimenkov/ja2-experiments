@@ -130,7 +130,7 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_
 // These regions are stored via a HLIST
 typedef struct {
   struct GRect RegionCoords;  // Rectangle describing coordinates of region
-  SGPPoint Origin;            // Origin used for hot spots, etc
+  struct SGPPoint Origin;     // Origin used for hot spots, etc
   uint8_t ubHitMask;          // Byte flags for hit detection
 } VSURFACE_REGION;
 

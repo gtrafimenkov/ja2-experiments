@@ -46,7 +46,7 @@
 typedef void (*MSGBOX_CALLBACK)(uint8_t bExitValue);
 
 // old mouse x and y positions
-SGPPoint pOldMousePosition;
+struct SGPPoint pOldMousePosition;
 struct GRect MessageBoxRestrictedCursorRegion;
 
 // if the cursor was locked to a region
@@ -703,7 +703,7 @@ void NumberedMsgBoxCallback(GUI_BUTTON *btn, int32_t reason) {
 uint32_t ExitMsgBox(int8_t ubExitCode) {
   uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
 
   // Delete popup!
   RemoveMercPopupBoxFromIndex(gMsgBox.iBoxId);

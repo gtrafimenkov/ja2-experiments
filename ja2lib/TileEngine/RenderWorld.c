@@ -376,7 +376,7 @@ int16_t gsRenderWorldOffsetX = -1;
 int16_t gsRenderWorldOffsetY = -1;
 struct GRect gSelectRegion;
 uint32_t fSelectMode = NO_SELECT;
-SGPPoint gSelectAnchor;
+struct SGPPoint gSelectAnchor;
 
 typedef struct {
   BOOLEAN fDynamic;

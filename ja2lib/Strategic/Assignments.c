@@ -3918,7 +3918,7 @@ void CreateDestroyMouseRegionsForAssignmentMenu(void) {
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
   static BOOLEAN fShowRemoveMenu = FALSE;
@@ -4037,7 +4037,7 @@ void CreateDestroyMouseRegionForVehicleMenu(void) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition, pPoint;
+  struct SGPPoint pPosition, pPoint;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -4406,7 +4406,7 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -5173,7 +5173,7 @@ void CreateDestroyMouseRegions(void) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
 
@@ -5254,7 +5254,7 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
   static BOOLEAN fShowRemoveMenu = FALSE;
@@ -5376,7 +5376,7 @@ void CreateDestroyMouseRegionsForTrainingMenu(void) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
 
@@ -5470,7 +5470,7 @@ void CreateDestroyMouseRegionsForAttributeMenu(void) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
 
@@ -5565,7 +5565,7 @@ void CreateDestroyMouseRegionsForRemoveMenu(void) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
 
@@ -5667,7 +5667,7 @@ void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox) {
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   int32_t iBoxWidth = 0;
   struct GRect pDimensions;
 
@@ -6827,7 +6827,7 @@ void RestorePopUpBoxes(void) {
 
 void CreateSquadBox(void) {
   // will create a pop up box for squad selection
-  SGPPoint pPoint;
+  struct SGPPoint pPoint;
   struct GRect pDimensions;
   uint32_t hStringHandle;
   uint32_t uiCounter;
@@ -6907,7 +6907,7 @@ void CreateSquadBox(void) {
 
 void CreateEPCBox(void) {
   // will create a pop up box for squad selection
-  SGPPoint pPoint;
+  struct SGPPoint pPoint;
   struct GRect pDimensions;
   uint32_t hStringHandle;
   int32_t iCount;
@@ -7501,8 +7501,8 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
 
 void DetermineBoxPositions(void) {
   // depending on how many boxes there are, reposition as needed
-  SGPPoint pPoint;
-  SGPPoint pNewPoint;
+  struct SGPPoint pPoint;
+  struct SGPPoint pNewPoint;
   struct GRect pDimensions;
   struct SOLDIERTYPE *pSoldier = NULL;
 
@@ -7631,7 +7631,7 @@ void RepositionMouseRegions(void) {
 
 void CheckAndUpdateTacticalAssignmentPopUpPositions(void) {
   struct GRect pDimensions, pDimensions2, pDimensions3;
-  SGPPoint pPoint;
+  struct SGPPoint pPoint;
   int16_t sLongest;
   struct SOLDIERTYPE *pSoldier = NULL;
 
@@ -7779,7 +7779,7 @@ void CheckAndUpdateTacticalAssignmentPopUpPositions(void) {
 
 void PositionCursorForTacticalAssignmentBox(void) {
   // position cursor over y of on duty in tactical assignments
-  SGPPoint pPosition;
+  struct SGPPoint pPosition;
   struct GRect pDimensions;
   int32_t iFontHeight;
 

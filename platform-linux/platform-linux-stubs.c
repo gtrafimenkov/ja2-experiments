@@ -70,7 +70,7 @@ BOOLEAN DequeueSpecificEvent(InputAtom *Event, uint32_t uiMaskFlags) { return FA
 
 BOOLEAN DequeueEvent(InputAtom *Event) { return FALSE; }
 
-void GetMousePos(SGPPoint *Point) {}
+void GetMousePos(struct SGPPoint *Point) {}
 
 void RestrictMouseToXYXY(uint16_t usX1, uint16_t usY1, uint16_t usX2, uint16_t usY2) {}
 

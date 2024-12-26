@@ -9,6 +9,7 @@
 #include "SGP/Types.h"
 #include "Tactical/SoldierControl.h"
 #include "rust_fileman.h"
+#include "rust_geometry.h"
 #include "rust_sam_sites.h"
 
 typedef struct FASTHELPREGION {
@@ -226,27 +227,27 @@ extern uint32_t guiUpdatePanelTactical;
 extern BOOLEAN fShowUpdateBox;
 
 extern struct GRect ContractDimensions;
-extern SGPPoint ContractPosition;
+extern struct SGPPoint ContractPosition;
 extern struct GRect AttributeDimensions;
-extern SGPPoint AttributePosition;
+extern struct SGPPoint AttributePosition;
 extern struct GRect TrainDimensions;
-extern SGPPoint TrainPosition;
+extern struct SGPPoint TrainPosition;
 extern struct GRect VehicleDimensions;
-extern SGPPoint VehiclePosition;
+extern struct SGPPoint VehiclePosition;
 extern struct GRect AssignmentDimensions;
-extern SGPPoint AssignmentPosition;
-extern SGPPoint SquadPosition;
+extern struct SGPPoint AssignmentPosition;
+extern struct SGPPoint SquadPosition;
 extern struct GRect SquadDimensions;
 
-extern SGPPoint RepairPosition;
+extern struct SGPPoint RepairPosition;
 extern struct GRect RepairDimensions;
 
-extern SGPPoint OrigContractPosition;
-extern SGPPoint OrigAttributePosition;
-extern SGPPoint OrigSquadPosition;
-extern SGPPoint OrigAssignmentPosition;
-extern SGPPoint OrigTrainPosition;
-extern SGPPoint OrigVehiclePosition;
+extern struct SGPPoint OrigContractPosition;
+extern struct SGPPoint OrigAttributePosition;
+extern struct SGPPoint OrigSquadPosition;
+extern struct SGPPoint OrigAssignmentPosition;
+extern struct SGPPoint OrigTrainPosition;
+extern struct SGPPoint OrigVehiclePosition;
 
 // disble team info panel due to showing of battle roster
 extern BOOLEAN fDisableDueToBattleRoster;

@@ -39,7 +39,7 @@ typedef POPUPSTRING *POPUPSTRINGPTR;
 
 struct popupbox {
   struct GRect Dimensions;
-  SGPPoint Position;
+  struct SGPPoint Position;
   uint32_t uiLeftMargin;
   uint32_t uiRightMargin;
   uint32_t uiBottomMargin;
@@ -64,7 +64,7 @@ typedef PopUpBo *PopUpBoxPt;
 
 // functions
 void InitPopUpBoxList();
-BOOLEAN CreatePopUpBox(int32_t *hBoxHandle, struct GRect Dimensions, SGPPoint Position,
+BOOLEAN CreatePopUpBox(int32_t *hBoxHandle, struct GRect Dimensions, struct SGPPoint Position,
                        uint32_t uiFlags);
 
 void SetMargins(int32_t hBoxHandle, uint32_t uiLeft, uint32_t uiTop, uint32_t uiBottom,
@@ -73,8 +73,8 @@ uint32_t GetTopMarginSize(int32_t hBoxHandle);
 void SetLineSpace(int32_t hBoxHandle, uint32_t uiLineSpace);
 uint32_t GetLineSpace(int32_t hBoxHandle);
 void SetBoxBuffer(int32_t hBoxHandle, uint32_t uiBuffer);
-void SetBoxPosition(int32_t hBoxHandle, SGPPoint Position);
-void GetBoxPosition(int32_t hBoxHandle, SGPPoint *Position);
+void SetBoxPosition(int32_t hBoxHandle, struct SGPPoint Position);
+void GetBoxPosition(int32_t hBoxHandle, struct SGPPoint *Position);
 uint32_t GetNumberOfLinesOfTextInBox(int32_t hBoxHandle);
 void SetBoxSize(int32_t hBoxHandle, struct GRect Dimensions);
 void GetBoxSize(int32_t hBoxHandle, struct GRect *Dimensions);

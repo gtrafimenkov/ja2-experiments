@@ -44,11 +44,6 @@ typedef char SGPFILENAME[SGPFILENAME_LEN];
 #endif
 
 typedef struct {
-  int32_t iX;
-  int32_t iY;
-} SGPPoint;
-
-typedef struct {
   int32_t Min;
   int32_t Max;
 } SGPRange;

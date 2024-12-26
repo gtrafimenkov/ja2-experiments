@@ -161,10 +161,11 @@ extern int32_t iDrawMode;
 extern DisplayList *TrashList(DisplayList *pNode);
 
 extern BOOLEAN BuildDisplayWindow(DisplaySpec *pDisplaySpecs, uint16_t usNumSpecs,
-                                  DisplayList **pDisplayList, SGPPoint *pUpperLeft,
-                                  SGPPoint *pBottomRight, SGPPoint *pSpacing, uint16_t fFlags);
+                                  DisplayList **pDisplayList, struct SGPPoint *pUpperLeft,
+                                  struct SGPPoint *pBottomRight, struct SGPPoint *pSpacing,
+                                  uint16_t fFlags);
 
 extern BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBottomCutOff,
-                                 SGPPoint *pUpperLeft, uint16_t fFlags);
+                                 struct SGPPoint *pUpperLeft, uint16_t fFlags);
 
 #endif

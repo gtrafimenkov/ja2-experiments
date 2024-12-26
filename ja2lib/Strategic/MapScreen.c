@@ -415,7 +415,7 @@ RGBCOLOR GlowColorsC[]={
 };
 */
 
-SGPPoint gMapSortButtons[MAX_SORT_METHODS] = {
+struct SGPPoint gMapSortButtons[MAX_SORT_METHODS] = {
     {12, 125}, {68, 125}, {124, 125}, {148, 125}, {185, 125}, {223, 125},
 };
 

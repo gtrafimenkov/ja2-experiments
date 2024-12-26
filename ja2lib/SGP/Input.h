@@ -62,7 +62,7 @@ extern void QueueEvent(uint16_t ubInputEvent, uint32_t usParam, uint32_t uiParam
 extern void KeyDown(uint32_t usParam, uint32_t uiParam);
 extern void KeyUp(uint32_t usParam, uint32_t uiParam);
 
-extern void GetMousePos(SGPPoint *Point);
+extern void GetMousePos(struct SGPPoint *Point);
 
 extern BOOLEAN DequeueSpecificEvent(InputAtom *Event, uint32_t uiMaskFlags);
 

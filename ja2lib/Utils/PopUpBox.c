@@ -78,7 +78,7 @@ void SpecifyBoxMinWidth(int32_t hBoxHandle, int32_t iMinWidth) {
   return;
 }
 
-BOOLEAN CreatePopUpBox(int32_t *phBoxHandle, struct GRect Dimensions, SGPPoint Position,
+BOOLEAN CreatePopUpBox(int32_t *phBoxHandle, struct GRect Dimensions, struct SGPPoint Position,
                        uint32_t uiFlags) {
   int32_t iCounter = 0;
   int32_t iCount = 0;
@@ -244,7 +244,7 @@ void SetBoxBuffer(int32_t hBoxHandle, uint32_t uiBuffer) {
   return;
 }
 
-void SetBoxPosition(int32_t hBoxHandle, SGPPoint Position) {
+void SetBoxPosition(int32_t hBoxHandle, struct SGPPoint Position) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
@@ -257,7 +257,7 @@ void SetBoxPosition(int32_t hBoxHandle, SGPPoint Position) {
   return;
 }
 
-void GetBoxPosition(int32_t hBoxHandle, SGPPoint *Position) {
+void GetBoxPosition(int32_t hBoxHandle, struct SGPPoint *Position) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);

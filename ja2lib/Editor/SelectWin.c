@@ -40,7 +40,7 @@ int32_t iSelectWin, iCancelWin, iScrollUp, iScrollDown, iOkWin;
 BOOLEAN fAllDone = FALSE;
 BOOLEAN fButtonsPresent = FALSE;
 
-SGPPoint SelWinSpacing, SelWinStartPoint, SelWinEndPoint;
+struct SGPPoint SelWinSpacing, SelWinStartPoint, SelWinEndPoint;
 
 // These definitions help define the start and end of the various wall indices.
 // This needs to be maintained if the walls change.
@@ -1351,8 +1351,9 @@ void DrawSelections(void) {
 //	properly scrolling the window etc.
 //
 BOOLEAN BuildDisplayWindow(DisplaySpec *pDisplaySpecs, uint16_t usNumSpecs,
-                           DisplayList **pDisplayList, SGPPoint *pUpperLeft, SGPPoint *pBottomRight,
-                           SGPPoint *pSpacing, uint16_t fFlags) {
+                           DisplayList **pDisplayList, struct SGPPoint *pUpperLeft,
+                           struct SGPPoint *pBottomRight, struct SGPPoint *pSpacing,
+                           uint16_t fFlags) {
   int32_t iCurrX = pUpperLeft->iX;
   int32_t iCurrY = pUpperLeft->iY;
   uint16_t usGreatestHeightInRow = 0;
@@ -1432,7 +1433,7 @@ BOOLEAN BuildDisplayWindow(DisplaySpec *pDisplaySpecs, uint16_t usNumSpecs,
 //	left corner of the image.
 //
 BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBottomCutOff,
-                          SGPPoint *pUpperLeft, uint16_t fFlags) {
+                          struct SGPPoint *pUpperLeft, uint16_t fFlags) {
   int16_t iCurrY;
   int16_t sTempOffsetX;
   int16_t sTempOffsetY;

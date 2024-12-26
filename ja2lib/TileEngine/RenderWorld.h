@@ -108,7 +108,7 @@ extern int16_t gsBottomLeftWorldX, gsBottomLeftWorldY;
 extern int16_t gsBottomRightWorldX, gsBottomRightWorldY;
 
 extern struct GRect gSelectRegion;
-extern SGPPoint gSelectAnchor;
+extern struct SGPPoint gSelectAnchor;
 extern uint32_t fSelectMode;
 
 // GLOBAL COORDINATES
