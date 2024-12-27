@@ -1973,7 +1973,7 @@ BOOLEAN InitKeyItemDescriptionBox(struct SOLDIERTYPE *pSoldier, uint8_t ubPositi
 
 BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, int16_t sY,
                                        uint8_t ubStatusIndex, struct SOLDIERTYPE *pSoldier) {
-  char *ubString[48];
+  char ubString[48];
   int32_t cnt;
   wchar_t pStr[10];
   int16_t usX, usY;
@@ -5339,7 +5339,7 @@ void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel) { gItemPickupMenu.fDirtyLevel =
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
                                  struct ITEM_POOL *pItemPool, int16_t sScreenX, int16_t sScreenY,
                                  int8_t bZLevel) {
-  char *ubString[48];
+  char ubString[48];
   struct ITEM_POOL *pTempItemPool;
   int32_t cnt;
   int16_t sCenX, sCenY, sX, sY, sCenterYVal;
