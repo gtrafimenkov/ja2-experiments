@@ -7,8 +7,7 @@
 
 #include "Point.h"
 #include "SGP/Types.h"
-
-struct GRect;
+#include "rust_geometry.h"
 
 #define KEY_DOWN 0x0001
 #define KEY_UP 0x0002

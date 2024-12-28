@@ -8,6 +8,7 @@
 #include "BuildDefines.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Types.h"
+#include "rust_geometry.h"
 
 struct VObject;
 
