@@ -20,6 +20,7 @@
 #include "SGP/Shading.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -46,7 +47,6 @@
 #include "TileEngine/RenderZ.c"
 #include "TileEngine/Structure.h"
 #include "TileEngine/StructureInternals.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileAnimation.h"
 #include "TileEngine/TileCache.h"
 #include "TileEngine/TileDef.h"
@@ -54,6 +54,8 @@
 #include "Utils/FontControl.h"
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
+#include "rust_colors.h"
+#include "rust_images.h"
 
 #ifdef __GCC
 // since some of the code is not complied on Linux
@@ -342,7 +344,7 @@ int16_t gsBLX, gsBLY, gsBRX, gsBRY;
 int16_t gsCX, gsCY;
 double gdScaleX, gdScaleY;
 
-#define FASTMAPROWCOLTOPOS(r, c) ((r)*WORLD_COLS + (c))
+#define FASTMAPROWCOLTOPOS(r, c) ((r) * WORLD_COLS + (c))
 
 BOOLEAN gfScrollInertia = FALSE;
 
@@ -366,13 +368,13 @@ int32_t guiScrollDirection;
 // Rendering flags (full, partial, etc.)
 uint32_t gRenderFlags = 0;
 
-SGPRect gClippingRect = {0, 0, 640, 360};
-SGPRect gOldClipRect;
+struct GRect gClippingRect = {0, 0, 640, 360};
+struct GRect gOldClipRect;
 int16_t gsRenderCenterX;
 int16_t gsRenderCenterY;
 int16_t gsRenderWorldOffsetX = -1;
 int16_t gsRenderWorldOffsetY = -1;
-SGPRect gSelectRegion;
+struct GRect gSelectRegion;
 uint32_t fSelectMode = NO_SELECT;
 SGPPoint gSelectAnchor;
 
@@ -435,15 +437,16 @@ uint8_t RenderFXStartIndex[] = {
 // int16_t gsCoordArrayX;
 // int16_t gsCoordArrayY;
 
-// void SetRenderGlobals( int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S, int16_t
-// sStartPointY_S, int16_t sEndXS, int16_t sEndYS ); void TempRenderTiles(uint32_t uiFlags, int16_t
-// sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS,
-// int16_t sEndYS ); void TempRenderTiles(uint32_t uiFlags, int16_t sStartPointX_M, int16_t sStartPointY_M,
-// int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS, uint8_t ubNumLevels, uint32_t
-// *puiLevels );
+// void SetRenderGlobals( int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
+// int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS ); void TempRenderTiles(uint32_t uiFlags,
+// int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S, int16_t sStartPointY_S,
+// int16_t sEndXS, int16_t sEndYS ); void TempRenderTiles(uint32_t uiFlags, int16_t sStartPointX_M,
+// int16_t sStartPointY_M, int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS, int16_t
+// sEndYS, uint8_t ubNumLevels, uint32_t *puiLevels );
 
-void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
-                                  int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS);
+void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M,
+                                  int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS,
+                                  int16_t sEndYS);
 
 // void ReRenderWorld(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom);
 void ClearMarkedTiles(void);
@@ -461,23 +464,23 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransInvZ(uint16_t *pBuffer, uint32_t uiDestPitc
                                           uint16_t *pZBuffer, uint16_t usZValue,
                                           struct VObject *hSrcVObject, int32_t iX, int32_t iY,
                                           uint16_t usIndex);
-BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncClip(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                                         uint16_t *pZBuffer, uint16_t usZValue,
-                                                         struct VObject *hSrcVObject, int32_t iX,
-                                                         int32_t iY, uint16_t usIndex,
-                                                         SGPRect *clipregion, int16_t sZIndex,
-                                                         uint16_t *p16BPPPalette);
+BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncClip(
+    uint16_t *pBuffer, uint32_t uiDestPitchBYTES, uint16_t *pZBuffer, uint16_t usZValue,
+    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, struct GRect *clipregion,
+    int16_t sZIndex, uint16_t *p16BPPPalette);
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncObscureClip(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
                                                      uint16_t *pZBuffer, uint16_t usZValue,
                                                      struct VObject *hSrcVObject, int32_t iX,
-                                                     int32_t iY, uint16_t usIndex, SGPRect *clipregion);
+                                                     int32_t iY, uint16_t usIndex,
+                                                     struct GRect *clipregion);
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncObscureClip(
     uint16_t *pBuffer, uint32_t uiDestPitchBYTES, uint16_t *pZBuffer, uint16_t usZValue,
-    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, SGPRect *clipregion,
+    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, struct GRect *clipregion,
     int16_t sZIndex, uint16_t *p16BPPPalette);
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClipZSameZBurnsThrough(
     uint16_t *pBuffer, uint32_t uiDestPitchBYTES, uint16_t *pZBuffer, uint16_t usZValue,
-    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, SGPRect *clipregion);
+    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex,
+    struct GRect *clipregion);
 
 void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
                     int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS);
@@ -497,15 +500,17 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
                         int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS);
 void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
                           int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS);
-void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
-                                  int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS);
+void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M,
+                                  int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS,
+                                  int16_t sEndYS);
 
 #endif
 
 void DeleteFromWorld(uint16_t usTileIndex, uint32_t uiRenderTiles, uint16_t usIndex);
 
-void RenderHighlight(int16_t sMouseX_M, int16_t sMouseY_M, int16_t sStartPointX_M, int16_t sStartPointY_M,
-                     int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS);
+void RenderHighlight(int16_t sMouseX_M, int16_t sMouseY_M, int16_t sStartPointX_M,
+                     int16_t sStartPointY_M, int16_t sStartPointX_S, int16_t sStartPointY_S,
+                     int16_t sEndXS, int16_t sEndYS);
 BOOLEAN CheckRenderCenter(int16_t sNewCenterX, int16_t sNewCenterY);
 
 BOOLEAN RevealWalls(int16_t sX, int16_t sY, int16_t sRadius) {
@@ -627,15 +632,15 @@ void RenderSetShadows(BOOLEAN fShadows) {
     gRenderFlags &= (~RENDER_FLAG_SHADOWS);
 }
 
-void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_M, int32_t iStartPointX_S,
-                 int32_t iStartPointY_S, int32_t iEndXS, int32_t iEndYS, uint8_t ubNumLevels,
-                 uint32_t *puiLevels, uint16_t *psLevelIDs) {
+void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_M,
+                 int32_t iStartPointX_S, int32_t iStartPointY_S, int32_t iEndXS, int32_t iEndYS,
+                 uint8_t ubNumLevels, uint32_t *puiLevels, uint16_t *psLevelIDs) {
   // #if 0
 
   struct LEVELNODE *pNode;  //, *pLand, *pStruct; //*pObject, *pTopmost, *pMerc;
   struct SOLDIERTYPE *pSoldier, *pSelSoldier;
   struct VObject *hVObject;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   TILE_ELEMENT *TileElem = NULL;
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf = NULL;
@@ -721,7 +726,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
   iAnchorPosX_S = iStartPointX_S;
   iAnchorPosY_S = iStartPointY_S;
 
-  if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  if (!(uiFlags & TILES_DIRTY)) pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
     if (ShouldCheckForMouseDetections()) {
@@ -1000,8 +1005,6 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
 
                       pShadeTable = pCorpse->pShades[pNode->ubShadeLevel];
 
-                      // pShadeTable = pCorpse->p16BPPPalette;
-
                       dOffsetX = pCorpse->def.dXPos - gsRenderCenterX;
                       dOffsetY = pCorpse->def.dYPos - gsRenderCenterY;
 
@@ -1050,7 +1053,6 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
 
                     if (!(uiFlags & TILES_DIRTY)) {
                       hVObject->pShadeCurrent = hVObject->pShades[pNode->ubShadeLevel];
-                      hVObject->pShade8 = ubColorTables[pNode->ubShadeLevel];
                     }
                   }
 
@@ -1354,8 +1356,8 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                   FloatFromCellToScreenCoordinates(dOffsetX, dOffsetY, &dTempX_S, &dTempY_S);
 
                   sXPos = ((gsVIEWPORT_END_X - gsVIEWPORT_START_X) / 2) + (int16_t)dTempX_S;
-                  sYPos =
-                      ((gsVIEWPORT_END_Y - gsVIEWPORT_START_Y) / 2) + (int16_t)dTempY_S - sTileHeight;
+                  sYPos = ((gsVIEWPORT_END_Y - gsVIEWPORT_START_Y) / 2) + (int16_t)dTempY_S -
+                          sTileHeight;
 
                   // Adjust for offset position on screen
                   sXPos -= gsRenderWorldOffsetX;
@@ -1537,9 +1539,9 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                 // RENDER
                 if (fTileInvisible) {
                 } else if (uiLevelNodeFlags & LEVELNODE_DISPLAY_AP && !(uiFlags & TILES_DIRTY)) {
-                  pTrav = &(hVObject->pETRLEObject[usImageIndex]);
-                  sXPos += pTrav->sOffsetX;
-                  sYPos += pTrav->sOffsetY;
+                  pTrav = &(hVObject->subimages[usImageIndex]);
+                  sXPos += pTrav->x_offset;
+                  sYPos += pTrav->y_offset;
 
                   if (gfUIDisplayActionPointsInvalid) {
                     SetFontBackground(FONT_MCOLOR_BLACK);
@@ -1555,13 +1557,13 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                   }
 
                   SetFont(TINYFONT1);
-                  SetFontDestBuffer(guiSAVEBUFFER, 0, gsVIEWPORT_WINDOW_START_Y, 640,
-                                    gsVIEWPORT_WINDOW_END_Y, FALSE);
+                  SetFontDest(vsSB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
+                              FALSE);
                   VarFindFontCenterCoordinates(sXPos, sYPos, 1, 1, TINYFONT1, &sX, &sY, L"%d",
                                                pNode->uiAPCost);
                   mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                                  pNode->uiAPCost);
-                  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+                  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
                 } else if ((uiLevelNodeFlags & LEVELNODE_ERASEZ) && !(uiFlags & TILES_DIRTY)) {
                   Zero8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                        hVObject, sXPos, sYPos, usImageIndex);
@@ -1663,8 +1665,8 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                   } else {
                     if (bBlitClipVal == FALSE) {
                       Blt8BPPDataTo16BPPBufferOutlineZNB(
-                          (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject, sXPos,
-                          sYPos, usImageIndex, usOutlineColor, bItemOutline);
+                          (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
+                          sXPos, sYPos, usImageIndex, usOutlineColor, bItemOutline);
                     } else if (bBlitClipVal == TRUE) {
                       Blt8BPPDataTo16BPPBufferOutlineClip(
                           (uint16_t *)pDestBuf, uiDestPitchBYTES, hVObject, sXPos, sYPos,
@@ -1673,21 +1675,21 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                   }
                 } else if (uiFlags & TILES_DIRTY) {
                   if (!(uiLevelNodeFlags & LEVELNODE_LASTDYNAMIC)) {
-                    pTrav = &(hVObject->pETRLEObject[usImageIndex]);
-                    uiBrushHeight = (uint32_t)pTrav->usHeight;
-                    uiBrushWidth = (uint32_t)pTrav->usWidth;
-                    sXPos += pTrav->sOffsetX;
-                    sYPos += pTrav->sOffsetY;
+                    pTrav = &(hVObject->subimages[usImageIndex]);
+                    uiBrushHeight = (uint32_t)pTrav->height;
+                    uiBrushWidth = (uint32_t)pTrav->width;
+                    sXPos += pTrav->x_offset;
+                    sYPos += pTrav->y_offset;
 
                     RegisterBackgroundRect(
                         uiDirtyFlags, NULL, sXPos, sYPos, (int16_t)(sXPos + uiBrushWidth),
                         (int16_t)(min((int16_t)(sYPos + uiBrushHeight), gsVIEWPORT_WINDOW_END_Y)));
 
                     if (fSaveZ) {
-                      RegisterBackgroundRect(
-                          uiDirtyFlags | BGND_FLAG_SAVE_Z, NULL, sXPos, sYPos,
-                          (int16_t)(sXPos + uiBrushWidth),
-                          (int16_t)(min((int16_t)(sYPos + uiBrushHeight), gsVIEWPORT_WINDOW_END_Y)));
+                      RegisterBackgroundRect(uiDirtyFlags | BGND_FLAG_SAVE_Z, NULL, sXPos, sYPos,
+                                             (int16_t)(sXPos + uiBrushWidth),
+                                             (int16_t)(min((int16_t)(sYPos + uiBrushHeight),
+                                                           gsVIEWPORT_WINDOW_END_Y)));
                     }
                   }
                 } else {
@@ -1726,9 +1728,9 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                         }
                       }
                     } else {
-                      Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                              hVObject, sXPos, sYPos, usImageIndex,
-                                                              &gClippingRect);
+                      Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf,
+                                                              uiDestPitchBYTES, hVObject, sXPos,
+                                                              sYPos, usImageIndex, &gClippingRect);
                     }
                   } else {
                     bBlitClipVal = BltIsClippedOrOffScreen(hVObject, sXPos, sYPos, usImageIndex,
@@ -1749,8 +1751,8 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                         if (fZBlitter) {
                           if (fZWrite) {
                             Blt8BPPDataTo16BPPBufferTransShadowZClip(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex, &gClippingRect, pShadeTable);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, &gClippingRect, pShadeTable);
                           } else {
                             if (fObscuredBlitter) {
                               Blt8BPPDataTo16BPPBufferTransShadowZNBObscuredClip(
@@ -1766,14 +1768,14 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                           }
 
                           if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                            pSaveBuf = LockVideoSurface(guiSAVEBUFFER, &uiSaveBufferPitchBYTES);
+                            pSaveBuf = VSurfaceLockOld(vsSB, &uiSaveBufferPitchBYTES);
 
                             // BLIT HERE
                             Blt8BPPDataTo16BPPBufferTransShadowClip(
-                                (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, hVObject, sXPos, sYPos,
-                                usImageIndex, &gClippingRect, pShadeTable);
+                                (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, hVObject, sXPos,
+                                sYPos, usImageIndex, &gClippingRect, pShadeTable);
 
-                            UnLockVideoSurface(guiSAVEBUFFER);
+                            VSurfaceUnlock(vsSB);
 
                             // Turn it off!
                             pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);
@@ -1788,12 +1790,12 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                         if (fZBlitter) {
                           if (fZWrite)
                             Blt8BPPDataTo16BPPBufferShadowZClip(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex, &gClippingRect);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
                           else
                             Blt8BPPDataTo16BPPBufferShadowZClip(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex, &gClippingRect);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
                         } else {
                           Blt8BPPDataTo16BPPBufferShadowClip((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                              hVObject, sXPos, sYPos, usImageIndex,
@@ -1803,12 +1805,12 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                         if (fZBlitter) {
                           if (fZWrite)
                             Blt8BPPDataTo16BPPBufferIntensityZClip(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex, &gClippingRect);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
                           else
                             Blt8BPPDataTo16BPPBufferIntensityZClip(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex, &gClippingRect);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
                         } else {
                           Blt8BPPDataTo16BPPBufferIntensityClip(
                               (uint16_t *)pDestBuf, uiDestPitchBYTES, hVObject, sXPos, sYPos,
@@ -1818,28 +1820,28 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                         if (fZWrite) {
                           if (fObscuredBlitter) {
                             Blt8BPPDataTo16BPPBufferTransZClipPixelateObscured(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex, &gClippingRect);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
                           } else {
-                            Blt8BPPDataTo16BPPBufferTransZClip((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                               gpZBuffer, sZLevel, hVObject, sXPos,
-                                                               sYPos, usImageIndex, &gClippingRect);
+                            Blt8BPPDataTo16BPPBufferTransZClip(
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
                           }
                         } else {
-                          Blt8BPPDataTo16BPPBufferTransZNBClip((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                               gpZBuffer, sZLevel, hVObject, sXPos,
-                                                               sYPos, usImageIndex, &gClippingRect);
+                          Blt8BPPDataTo16BPPBufferTransZNBClip(
+                              (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
+                              sXPos, sYPos, usImageIndex, &gClippingRect);
                         }
 
                         if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                          pSaveBuf = LockVideoSurface(guiSAVEBUFFER, &uiSaveBufferPitchBYTES);
+                          pSaveBuf = VSurfaceLockOld(vsSB, &uiSaveBufferPitchBYTES);
 
                           // BLIT HERE
                           Blt8BPPDataTo16BPPBufferTransZClip(
                               (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, gpZBuffer, sZLevel,
                               hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
 
-                          UnLockVideoSurface(guiSAVEBUFFER);
+                          VSurfaceUnlock(vsSB);
 
                           // Turn it off!
                           pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);
@@ -1855,28 +1857,28 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                         if (fTranslucencyType) {
                           if (fZWrite)
                             Blt8BPPDataTo16BPPBufferTransZTranslucent(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex);
                           else
                             Blt8BPPDataTo16BPPBufferTransZNBTranslucent(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex);
                         } else {
                           if (fZWrite)
                             Blt8BPPDataTo16BPPBufferTransZPixelate(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex);
                           else
                             Blt8BPPDataTo16BPPBufferTransZNBPixelate(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex);
                         }
                       } else if (fMerc) {
                         if (fZBlitter) {
                           if (fZWrite) {
                             Blt8BPPDataTo16BPPBufferTransShadowZ(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex, pShadeTable);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex, pShadeTable);
                           } else {
                             if (fObscuredBlitter) {
                               Blt8BPPDataTo16BPPBufferTransShadowZNBObscured(
@@ -1890,23 +1892,23 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                           }
 
                           if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                            pSaveBuf = LockVideoSurface(guiSAVEBUFFER, &uiSaveBufferPitchBYTES);
+                            pSaveBuf = VSurfaceLockOld(vsSB, &uiSaveBufferPitchBYTES);
 
                             // BLIT HERE
                             Blt8BPPDataTo16BPPBufferTransShadow(
-                                (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, hVObject, sXPos, sYPos,
-                                usImageIndex, pShadeTable);
+                                (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, hVObject, sXPos,
+                                sYPos, usImageIndex, pShadeTable);
 
-                            UnLockVideoSurface(guiSAVEBUFFER);
+                            VSurfaceUnlock(vsSB);
 
                             // Turn it off!
                             pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);
                           }
 
                         } else {
-                          Blt8BPPDataTo16BPPBufferTransShadow((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                              hVObject, sXPos, sYPos, usImageIndex,
-                                                              pShadeTable);
+                          Blt8BPPDataTo16BPPBufferTransShadow((uint16_t *)pDestBuf,
+                                                              uiDestPitchBYTES, hVObject, sXPos,
+                                                              sYPos, usImageIndex, pShadeTable);
                         }
                       } else if (fShadowBlitter) {
                         if (fZBlitter) {
@@ -1915,9 +1917,9 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                                             gpZBuffer, sZLevel, hVObject, sXPos,
                                                             sYPos, usImageIndex);
                           else
-                            Blt8BPPDataTo16BPPBufferShadowZNB((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                              gpZBuffer, sZLevel, hVObject, sXPos,
-                                                              sYPos, usImageIndex);
+                            Blt8BPPDataTo16BPPBufferShadowZNB((uint16_t *)pDestBuf,
+                                                              uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                                              hVObject, sXPos, sYPos, usImageIndex);
                         } else {
                           Blt8BPPDataTo16BPPBufferShadow((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                          hVObject, sXPos, sYPos, usImageIndex);
@@ -1925,13 +1927,13 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                       } else if (fIntensityBlitter) {
                         if (fZBlitter) {
                           if (fZWrite)
-                            Blt8BPPDataTo16BPPBufferIntensityZ((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                               gpZBuffer, sZLevel, hVObject, sXPos,
-                                                               sYPos, usImageIndex);
+                            Blt8BPPDataTo16BPPBufferIntensityZ(
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex);
                           else
                             Blt8BPPDataTo16BPPBufferIntensityZNB(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex);
                         } else {
                           Blt8BPPDataTo16BPPBufferIntensity((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                             hVObject, sXPos, sYPos, usImageIndex);
@@ -1945,8 +1947,8 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
 
                           if (fObscuredBlitter) {
                             Blt8BPPDataTo16BPPBufferTransZPixelateObscured(
-                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel, hVObject,
-                                sXPos, sYPos, usImageIndex);
+                                (uint16_t *)pDestBuf, uiDestPitchBYTES, gpZBuffer, sZLevel,
+                                hVObject, sXPos, sYPos, usImageIndex);
                           } else {
                             Blt8BPPDataTo16BPPBufferTransZ((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                            gpZBuffer, sZLevel, hVObject, sXPos,
@@ -1958,14 +1960,14 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                                            sYPos, usImageIndex);
 
                         if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                          pSaveBuf = LockVideoSurface(guiSAVEBUFFER, &uiSaveBufferPitchBYTES);
+                          pSaveBuf = VSurfaceLockOld(vsSB, &uiSaveBufferPitchBYTES);
 
                           // BLIT HERE
-                          Blt8BPPDataTo16BPPBufferTransZ((uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES,
-                                                         gpZBuffer, sZLevel, hVObject, sXPos, sYPos,
-                                                         usImageIndex);
+                          Blt8BPPDataTo16BPPBufferTransZ((uint16_t *)pSaveBuf,
+                                                         uiSaveBufferPitchBYTES, gpZBuffer, sZLevel,
+                                                         hVObject, sXPos, sYPos, usImageIndex);
 
-                          UnLockVideoSurface(guiSAVEBUFFER);
+                          VSurfaceUnlock(vsSB);
 
                           // Turn it off!
                           pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);
@@ -1983,13 +1985,13 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                   if (fMerc) {
                     if (pSoldier != NULL && GetSolID(pSoldier) >= MAX_NUM_SOLDIERS) {
                       SetFont(TINYFONT1);
-                      SetFontDestBuffer(guiSAVEBUFFER, 0, gsVIEWPORT_WINDOW_START_Y, 640,
-                                        gsVIEWPORT_WINDOW_END_Y, FALSE);
+                      SetFontDest(vsSB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
+                                  FALSE);
                       VarFindFontCenterCoordinates(sXPos, sYPos, 1, 1, TINYFONT1, &sX, &sY, L"%d",
                                                    pSoldier->ubPlannedUIAPCost);
                       mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                                      pSoldier->ubPlannedUIAPCost);
-                      SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+                      SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
                     }
                   }
                 }
@@ -2011,7 +2013,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               //  failures,
               //	and eventual crashes, so if it reaches this code, the buffer needs to be
               // unlocked first, as
-              //  it gets locked and unlocked internally within ColorFillVideoSurfaceArea().  I'm
+              //  it gets locked and unlocked internally within VSurfaceColorFill().  I'm
               //  surprised
               //	this problem didn't surface a long time ago.  Anyway, it seems that
               // scrolling to the bottom 	right hand corner of the map, would cause the end of
@@ -2022,12 +2024,11 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               // is easier on the eyes, and prevent the drawing of the 	end of the world if it would
               // be drawn on the editor's taskbar.
               if (iTempPosY_S < 360) {
-                if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(FRAME_BUFFER);
-                ColorFillVideoSurfaceArea(
-                    FRAME_BUFFER, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
-                    (int16_t)(min(iTempPosY_S + 20, 360)), Get16BPPColor(FROMRGB(0, 0, 0)));
-                if (!(uiFlags & TILES_DIRTY))
-                  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+                if (!(uiFlags & TILES_DIRTY)) VSurfaceUnlock(vsFB);
+                VSurfaceColorFill(vsFB, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
+                                  (int16_t)(min(iTempPosY_S + 20, 360)),
+                                  rgb32_to_rgb565(FROMRGB(0, 0, 0)));
+                if (!(uiFlags & TILES_DIRTY)) pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
               }
             }
           }
@@ -2059,7 +2060,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
     }
   } while (!fEndRenderCol);
 
-  if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(FRAME_BUFFER);
+  if (!(uiFlags & TILES_DIRTY)) VSurfaceUnlock(vsFB);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
     EndCurInteractiveTileCheck();
@@ -2139,8 +2140,8 @@ void RenderWorld() {
 
   // If we are testing renderer, set background to pink!
   if (gTacticalStatus.uiFlags & DEBUGCLIFFS) {
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, gsVIEWPORT_WINDOW_START_Y, 640,
-                              gsVIEWPORT_WINDOW_END_Y, Get16BPPColor(FROMRGB(0, 255, 0)));
+    VSurfaceColorFill(vsFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
+                      rgb32_to_rgb565(FROMRGB(0, 255, 0)));
     SetRenderFlags(RENDER_FLAG_FULL);
   }
 
@@ -2269,7 +2270,7 @@ void RenderWorld() {
     uint32_t cnt;
     wchar_t zVal;
 
-    pDestBuf = (uint16_t *)LockVideoSurface(guiRENDERBUFFER, &uiDestPitchBYTES);
+    pDestBuf = (uint16_t *)VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
     for (cnt = 0; cnt < (640 * 480); cnt++) {
       // Get Z value
@@ -2277,7 +2278,7 @@ void RenderWorld() {
       pDestBuf[cnt] = zVal;
     }
 
-    UnLockVideoSurface(guiRENDERBUFFER);
+    VSurfaceUnlock(vsFB);
   }
 }
 
@@ -2688,7 +2689,8 @@ BOOLEAN HandleScrollDirections(uint32_t ScrollFlags, int16_t sScrollXStep, int16
     fLeftOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
 
     if (fLeftOK && fUpOK) {
-      FromScreenToCellCoordinates((int16_t)-sScrollXStep, (int16_t)-sScrollYStep, &sTempX_W, &sTempY_W);
+      FromScreenToCellCoordinates((int16_t)-sScrollXStep, (int16_t)-sScrollYStep, &sTempX_W,
+                                  &sTempY_W);
       sTempRenderCenterX = gsRenderCenterX + sTempX_W;
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
       fAGoodMove = TRUE;
@@ -2735,7 +2737,8 @@ BOOLEAN HandleScrollDirections(uint32_t ScrollFlags, int16_t sScrollXStep, int16
     fRightOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
 
     if (fUpOK && fRightOK) {
-      FromScreenToCellCoordinates((int16_t)sScrollXStep, (int16_t)-sScrollYStep, &sTempX_W, &sTempY_W);
+      FromScreenToCellCoordinates((int16_t)sScrollXStep, (int16_t)-sScrollYStep, &sTempX_W,
+                                  &sTempY_W);
       sTempRenderCenterX = gsRenderCenterX + sTempX_W;
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
       fAGoodMove = TRUE;
@@ -2782,7 +2785,8 @@ BOOLEAN HandleScrollDirections(uint32_t ScrollFlags, int16_t sScrollXStep, int16
 
     if (fLeftOK && fDownOK) {
       fAGoodMove = TRUE;
-      FromScreenToCellCoordinates((int16_t)-sScrollXStep, (int16_t)sScrollYStep, &sTempX_W, &sTempY_W);
+      FromScreenToCellCoordinates((int16_t)-sScrollXStep, (int16_t)sScrollYStep, &sTempX_W,
+                                  &sTempY_W);
       sTempRenderCenterX = gsRenderCenterX + sTempX_W;
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
 
@@ -2825,7 +2829,8 @@ BOOLEAN HandleScrollDirections(uint32_t ScrollFlags, int16_t sScrollXStep, int16
     fDownOK = ApplyScrolling(sTempRenderCenterX, sTempRenderCenterY, FALSE, fCheckOnly);
 
     if (fDownOK && fRightOK) {
-      FromScreenToCellCoordinates((int16_t)sScrollXStep, (int16_t)sScrollYStep, &sTempX_W, &sTempY_W);
+      FromScreenToCellCoordinates((int16_t)sScrollXStep, (int16_t)sScrollYStep, &sTempX_W,
+                                  &sTempY_W);
       sTempRenderCenterX = gsRenderCenterX + sTempX_W;
       sTempRenderCenterY = gsRenderCenterY + sTempY_W;
       fAGoodMove = TRUE;
@@ -3145,7 +3150,7 @@ void InitRenderParams(uint8_t ubRestrictionID) {
   gsTilesX = (gsTRX - gsTLX) / WORLD_TILE_X;
   gsTilesY = (gsBRY - gsTRY) / WORLD_TILE_Y;
 
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_0,
+  DebugMsg(TOPIC_JA2, DBG_ERROR,
            String("World Screen Width %d Height %d", (gsTRX - gsTLX), (gsBRY - gsTRY)));
 
   // Determine scale factors
@@ -3158,22 +3163,22 @@ void InitRenderParams(uint8_t ubRestrictionID) {
 
   for (cnt = 0, cnt2 = 0; cnt2 < NUM_ITEM_CYCLE_COLORS; cnt += 3, cnt2++) {
     us16BPPItemCycleWhiteColors[cnt2] =
-        Get16BPPColor(FROMRGB(ubRGBItemCycleWhiteColors[cnt], ubRGBItemCycleWhiteColors[cnt + 1],
-                              ubRGBItemCycleWhiteColors[cnt + 2]));
+        rgb32_to_rgb565(FROMRGB(ubRGBItemCycleWhiteColors[cnt], ubRGBItemCycleWhiteColors[cnt + 1],
+                                ubRGBItemCycleWhiteColors[cnt + 2]));
     us16BPPItemCycleRedColors[cnt2] =
-        Get16BPPColor(FROMRGB(ubRGBItemCycleRedColors[cnt], ubRGBItemCycleRedColors[cnt + 1],
-                              ubRGBItemCycleRedColors[cnt + 2]));
-    us16BPPItemCycleYellowColors[cnt2] =
-        Get16BPPColor(FROMRGB(ubRGBItemCycleYellowColors[cnt], ubRGBItemCycleYellowColors[cnt + 1],
-                              ubRGBItemCycleYellowColors[cnt + 2]));
+        rgb32_to_rgb565(FROMRGB(ubRGBItemCycleRedColors[cnt], ubRGBItemCycleRedColors[cnt + 1],
+                                ubRGBItemCycleRedColors[cnt + 2]));
+    us16BPPItemCycleYellowColors[cnt2] = rgb32_to_rgb565(
+        FROMRGB(ubRGBItemCycleYellowColors[cnt], ubRGBItemCycleYellowColors[cnt + 1],
+                ubRGBItemCycleYellowColors[cnt + 2]));
   }
 
-  gsLobOutline = Get16BPPColor(FROMRGB(10, 200, 10));
-  gsThrowOutline = Get16BPPColor(FROMRGB(253, 212, 10));
-  gsGiveOutline = Get16BPPColor(FROMRGB(253, 0, 0));
+  gsLobOutline = rgb32_to_rgb565(FROMRGB(10, 200, 10));
+  gsThrowOutline = rgb32_to_rgb565(FROMRGB(253, 212, 10));
+  gsGiveOutline = rgb32_to_rgb565(FROMRGB(253, 0, 0));
 
-  gusNormalItemOutlineColor = Get16BPPColor(FROMRGB(255, 255, 255));
-  gusYellowItemOutlineColor = Get16BPPColor(FROMRGB(255, 255, 0));
+  gusNormalItemOutlineColor = rgb32_to_rgb565(FROMRGB(255, 255, 255));
+  gusYellowItemOutlineColor = rgb32_to_rgb565(FROMRGB(255, 255, 0));
 
   // NOW GET DISTANCE SPANNING WORLD LIMITS IN WORLD COORDS
   // FromScreenToCellCoordinates( ( gTopRightWorldLimitX - gTopLeftWorldLimitX ), (
@@ -3334,7 +3339,8 @@ BOOLEAN ApplyScrolling(int16_t sTempRenderCenterX, int16_t sTempRenderCenterY, B
 
       if (fOutBottom) {
         // OK, Ajust this since we get rounding errors in our two different calculations.
-        CorrectRenderCenter(sScreenCenterX, (int16_t)(gsBLY - sY_S - 50), &sNewScreenX, &sNewScreenY);
+        CorrectRenderCenter(sScreenCenterX, (int16_t)(gsBLY - sY_S - 50), &sNewScreenX,
+                            &sNewScreenY);
         FromScreenToCellCoordinates(sNewScreenX, sNewScreenY, &sTempPosX_W, &sTempPosY_W);
 
         sTempRenderCenterX = sTempPosX_W;
@@ -3474,13 +3480,13 @@ void InvalidateWorldRedundency() {
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClip(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
                                               uint16_t *pZBuffer, uint16_t usZValue,
                                               struct VObject *hSrcVObject, int32_t iX, int32_t iY,
-                                              uint16_t usIndex, SGPRect *clipregion) {
+                                              uint16_t usIndex, struct GRect *clipregion) {
   uint16_t *p16BPPPalette;
   uint32_t uiOffset;
   uint32_t usHeight, usWidth, Unblitted;
   uint8_t *SrcPtr, *DestPtr, *ZPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY, LeftSkip, RightSkip, TopSkip, BottomSkip, BlitLength, BlitHeight, LSCount;
   int32_t ClipX1, ClipY1, ClipX2, ClipY2;
   uint16_t usZLevel, usZStartLevel, usZColsToGo, usZStartIndex, usCount, usZIndex, usZStartCols;
@@ -3492,14 +3498,14 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClip(uint16_t *pBuffer, uint32_t uiDest
   Assert(pBuffer != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   if (clipregion == NULL) {
     ClipX1 = ClippingRect.iLeft;
@@ -3529,24 +3535,26 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClip(uint16_t *pBuffer, uint32_t uiDest
   // check if whole thing is clipped
   if ((TopSkip >= (int32_t)usHeight) || (BottomSkip >= (int32_t)usHeight)) return (TRUE);
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
-  DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
+  DestPtr =
+      (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   ZPtr = (uint8_t *)pZBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   p16BPPPalette = hSrcVObject->pShadeCurrent;
   LineSkip = (uiDestPitchBYTES - (BlitLength * 2));
 
   if (hSrcVObject->ppZStripInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
   // setup for the z-column blitting stuff
   pZInfo = hSrcVObject->ppZStripInfo[usIndex];
   if (pZInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
 
-  usZStartLevel = (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_STRIP_DELTA_Y));
+  usZStartLevel =
+      (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_STRIP_DELTA_Y));
   // set to odd number of pixels for first column
 
   if (LeftSkip > pZInfo->ubFirstZStripWidth) {
@@ -3734,7 +3742,7 @@ BlitNTL2:
 		or		al, al
 		jz		BlitNTL5  // dir = 0 no change
 		js		BlitNTL4               // dir < 0 z-level down
-                     // dir > 0 z-level up (default)
+                    // dir > 0 z-level up (default)
 		add		dx, Z_STRIP_DELTA_Y
 		jmp		BlitNTL5
 
@@ -3786,7 +3794,7 @@ BlitTrans2:
 		or		al, al
 		jz		BlitTrans5  // dir = 0 no change
 		js		BlitTrans4         // dir < 0 z-level down
-                       // dir > 0 z-level up (default)
+                      // dir > 0 z-level up (default)
 		add		dx, Z_STRIP_DELTA_Y
 		jmp		BlitTrans5
 
@@ -3861,13 +3869,14 @@ BlitDone:
 **********************************************************************************************/
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClipZSameZBurnsThrough(
     uint16_t *pBuffer, uint32_t uiDestPitchBYTES, uint16_t *pZBuffer, uint16_t usZValue,
-    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, SGPRect *clipregion) {
+    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex,
+    struct GRect *clipregion) {
   uint16_t *p16BPPPalette;
   uint32_t uiOffset;
   uint32_t usHeight, usWidth, Unblitted;
   uint8_t *SrcPtr, *DestPtr, *ZPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY, LeftSkip, RightSkip, TopSkip, BottomSkip, BlitLength, BlitHeight, LSCount;
   int32_t ClipX1, ClipY1, ClipX2, ClipY2;
   uint16_t usZLevel, usZStartLevel, usZColsToGo, usZStartIndex, usCount, usZIndex, usZStartCols;
@@ -3879,14 +3888,14 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClipZSameZBurnsThrough(
   Assert(pBuffer != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   if (clipregion == NULL) {
     ClipX1 = ClippingRect.iLeft;
@@ -3916,24 +3925,26 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncClipZSameZBurnsThrough(
   // check if whole thing is clipped
   if ((TopSkip >= (int32_t)usHeight) || (BottomSkip >= (int32_t)usHeight)) return (TRUE);
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
-  DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
+  DestPtr =
+      (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   ZPtr = (uint8_t *)pZBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   p16BPPPalette = hSrcVObject->pShadeCurrent;
   LineSkip = (uiDestPitchBYTES - (BlitLength * 2));
 
   if (hSrcVObject->ppZStripInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
   // setup for the z-column blitting stuff
   pZInfo = hSrcVObject->ppZStripInfo[usIndex];
   if (pZInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
 
-  usZStartLevel = (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_STRIP_DELTA_Y));
+  usZStartLevel =
+      (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_STRIP_DELTA_Y));
   // set to odd number of pixels for first column
 
   if (LeftSkip > pZInfo->ubFirstZStripWidth) {
@@ -4121,7 +4132,7 @@ BlitNTL2:
 		or		al, al
 		jz		BlitNTL5  // dir = 0 no change
 		js		BlitNTL4               // dir < 0 z-level down
-                     // dir > 0 z-level up (default)
+                    // dir > 0 z-level up (default)
 		add		dx, Z_STRIP_DELTA_Y
 		jmp		BlitNTL5
 
@@ -4173,7 +4184,7 @@ BlitTrans2:
 		or		al, al
 		jz		BlitTrans5  // dir = 0 no change
 		js		BlitTrans4         // dir < 0 z-level down
-                       // dir > 0 z-level up (default)
+                      // dir > 0 z-level up (default)
 		add		dx, Z_STRIP_DELTA_Y
 		jmp		BlitTrans5
 
@@ -4253,13 +4264,13 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncObscureClip(uint16_t *pBuffer, uint32_t
                                                      uint16_t *pZBuffer, uint16_t usZValue,
                                                      struct VObject *hSrcVObject, int32_t iX,
                                                      int32_t iY, uint16_t usIndex,
-                                                     SGPRect *clipregion) {
+                                                     struct GRect *clipregion) {
   uint16_t *p16BPPPalette;
   uint32_t uiOffset, uiLineFlag;
   uint32_t usHeight, usWidth, Unblitted;
   uint8_t *SrcPtr, *DestPtr, *ZPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY, LeftSkip, RightSkip, TopSkip, BottomSkip, BlitLength, BlitHeight, LSCount;
   int32_t ClipX1, ClipY1, ClipX2, ClipY2;
   uint16_t usZLevel, usZStartLevel, usZColsToGo, usZStartIndex, usCount, usZIndex, usZStartCols;
@@ -4271,14 +4282,14 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncObscureClip(uint16_t *pBuffer, uint32_t
   Assert(pBuffer != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   if (clipregion == NULL) {
     ClipX1 = ClippingRect.iLeft;
@@ -4310,24 +4321,26 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZIncObscureClip(uint16_t *pBuffer, uint32_t
   // check if whole thing is clipped
   if ((TopSkip >= (int32_t)usHeight) || (BottomSkip >= (int32_t)usHeight)) return (TRUE);
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
-  DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
+  DestPtr =
+      (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   ZPtr = (uint8_t *)pZBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   p16BPPPalette = hSrcVObject->pShadeCurrent;
   LineSkip = (uiDestPitchBYTES - (BlitLength * 2));
 
   if (hSrcVObject->ppZStripInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
   // setup for the z-column blitting stuff
   pZInfo = hSrcVObject->ppZStripInfo[usIndex];
   if (pZInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
 
-  usZStartLevel = (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_STRIP_DELTA_Y));
+  usZStartLevel =
+      (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_STRIP_DELTA_Y));
   // set to odd number of pixels for first column
 
   if (LeftSkip > pZInfo->ubFirstZStripWidth) {
@@ -4534,7 +4547,7 @@ BlitNTL2:
 		or		al, al
 		jz		BlitNTL5  // dir = 0 no change
 		js		BlitNTL4               // dir < 0 z-level down
-                     // dir > 0 z-level up (default)
+                    // dir > 0 z-level up (default)
 		add		dx, Z_STRIP_DELTA_Y
 		jmp		BlitNTL5
 
@@ -4586,7 +4599,7 @@ BlitTrans2:
 		or		al, al
 		jz		BlitTrans5  // dir = 0 no change
 		js		BlitTrans4         // dir < 0 z-level down
-                       // dir > 0 z-level up (default)
+                      // dir > 0 z-level up (default)
 		add		dx, Z_STRIP_DELTA_Y
 		jmp		BlitTrans5
 
@@ -4658,13 +4671,13 @@ BlitDone:
 //
 BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncObscureClip(
     uint16_t *pBuffer, uint32_t uiDestPitchBYTES, uint16_t *pZBuffer, uint16_t usZValue,
-    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, SGPRect *clipregion,
+    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, struct GRect *clipregion,
     int16_t sZIndex, uint16_t *p16BPPPalette) {
   uint32_t uiOffset, uiLineFlag;
   uint32_t usHeight, usWidth, Unblitted;
   uint8_t *SrcPtr, *DestPtr, *ZPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY, LeftSkip, RightSkip, TopSkip, BottomSkip, BlitLength, BlitHeight, LSCount;
   int32_t ClipX1, ClipY1, ClipX2, ClipY2;
   uint16_t usZLevel, usZStartLevel, usZColsToGo, usZStartIndex, usCount, usZIndex, usZStartCols;
@@ -4676,14 +4689,14 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncObscureClip(
   Assert(pBuffer != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   if (clipregion == NULL) {
     ClipX1 = ClippingRect.iLeft;
@@ -4715,23 +4728,25 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncObscureClip(
   // check if whole thing is clipped
   if ((TopSkip >= (int32_t)usHeight) || (BottomSkip >= (int32_t)usHeight)) return (TRUE);
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
-  DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
+  DestPtr =
+      (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   ZPtr = (uint8_t *)pZBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   LineSkip = (uiDestPitchBYTES - (BlitLength * 2));
 
   if (hSrcVObject->ppZStripInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
   // setup for the z-column blitting stuff
   pZInfo = hSrcVObject->ppZStripInfo[sZIndex];
   if (pZInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
 
-  usZStartLevel = (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_SUBLAYERS * 10));
+  usZStartLevel =
+      (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_SUBLAYERS * 10));
 
   if (LeftSkip > pZInfo->ubFirstZStripWidth) {
     usZStartCols = (LeftSkip - pZInfo->ubFirstZStripWidth);
@@ -4950,7 +4965,7 @@ BlitNTL2:
 		or		al, al
 		jz		BlitNTL5  // dir = 0 no change
 		js		BlitNTL4               // dir < 0 z-level down
-                     // dir > 0 z-level up (default)
+                    // dir > 0 z-level up (default)
 		add		dx, Z_SUBLAYERS
 		jmp		BlitNTL5
 
@@ -5002,7 +5017,7 @@ BlitTrans2:
 		or		al, al
 		jz		BlitTrans5  // dir = 0 no change
 		js		BlitTrans4         // dir < 0 z-level down
-                       // dir > 0 z-level up (default)
+                      // dir > 0 z-level up (default)
 		add		dx, Z_SUBLAYERS
 		jmp		BlitTrans5
 
@@ -5104,17 +5119,15 @@ void CorrectRenderCenter(int16_t sRenderX, int16_t sRenderY, int16_t *pSNewX, in
 // 3 ) clipped
 // 4 ) trans shadow - if value is 254, makes a shadow
 //
-BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncClip(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                                         uint16_t *pZBuffer, uint16_t usZValue,
-                                                         struct VObject *hSrcVObject, int32_t iX,
-                                                         int32_t iY, uint16_t usIndex,
-                                                         SGPRect *clipregion, int16_t sZIndex,
-                                                         uint16_t *p16BPPPalette) {
+BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncClip(
+    uint16_t *pBuffer, uint32_t uiDestPitchBYTES, uint16_t *pZBuffer, uint16_t usZValue,
+    struct VObject *hSrcVObject, int32_t iX, int32_t iY, uint16_t usIndex, struct GRect *clipregion,
+    int16_t sZIndex, uint16_t *p16BPPPalette) {
   uint32_t uiOffset;
   uint32_t usHeight, usWidth, Unblitted;
   uint8_t *SrcPtr, *DestPtr, *ZPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY, LeftSkip, RightSkip, TopSkip, BottomSkip, BlitLength, BlitHeight, LSCount;
   int32_t ClipX1, ClipY1, ClipX2, ClipY2;
   uint16_t usZLevel, usZStartLevel, usZColsToGo, usZStartIndex, usCount, usZIndex, usZStartCols;
@@ -5126,14 +5139,14 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncClip(uint16_t *pBuffer, uint
   Assert(pBuffer != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   if (clipregion == NULL) {
     ClipX1 = ClippingRect.iLeft;
@@ -5163,23 +5176,25 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransZTransShadowIncClip(uint16_t *pBuffer, uint
   // check if whole thing is clipped
   if ((TopSkip >= (int32_t)usHeight) || (BottomSkip >= (int32_t)usHeight)) return (TRUE);
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
-  DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
+  DestPtr =
+      (uint8_t *)pBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   ZPtr = (uint8_t *)pZBuffer + (uiDestPitchBYTES * (iTempY + TopSkip)) + ((iTempX + LeftSkip) * 2);
   LineSkip = (uiDestPitchBYTES - (BlitLength * 2));
 
   if (hSrcVObject->ppZStripInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
   // setup for the z-column blitting stuff
   pZInfo = hSrcVObject->ppZStripInfo[sZIndex];
   if (pZInfo == NULL) {
-    DebugMsg(TOPIC_VIDEOOBJECT, DBG_LEVEL_0, String("Missing Z-Strip info on multi-Z object"));
+    DebugMsg(TOPIC_VIDEOOBJECT, DBG_ERROR, String("Missing Z-Strip info on multi-Z object"));
     return (FALSE);
   }
 
-  usZStartLevel = (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_SUBLAYERS * 10));
+  usZStartLevel =
+      (uint16_t)((int16_t)usZValue + ((int16_t)pZInfo->bInitialZChange * Z_SUBLAYERS * 10));
 
   if (LeftSkip > pZInfo->ubFirstZStripWidth) {
     usZStartCols = (LeftSkip - pZInfo->ubFirstZStripWidth);
@@ -5379,7 +5394,7 @@ BlitNTL2:
 		or		al, al
 		jz		BlitNTL5  // dir = 0 no change
 		js		BlitNTL4               // dir < 0 z-level down
-                     // dir > 0 z-level up (default)
+                    // dir > 0 z-level up (default)
 		add		dx, Z_SUBLAYERS
 		jmp		BlitNTL5
 
@@ -5431,7 +5446,7 @@ BlitTrans2:
 		or		al, al
 		jz		BlitTrans5  // dir = 0 no change
 		js		BlitTrans4         // dir < 0 z-level down
-                       // dir > 0 z-level up (default)
+                      // dir > 0 z-level up (default)
 		add		dx, Z_SUBLAYERS
 		jmp		BlitTrans5
 
@@ -5513,7 +5528,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5538,7 +5553,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
 
         if (gubWorldRoomInfo[usTileIndex] != NO_ROOM) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           switch (gubWorldRoomInfo[usTileIndex] % 5) {
             case 0:
               SetFontForeground(FONT_GRAY3);
@@ -5558,7 +5573,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
           }
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gubWorldRoomInfo[usTileIndex]);
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5587,7 +5602,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
 #ifdef _DEBUG
@@ -5611,7 +5626,7 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5635,11 +5650,11 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
         if (gubFOVDebugInfoInfo[usTileIndex] != 0) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           SetFontForeground(FONT_GRAY3);
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gubFOVDebugInfoInfo[usTileIndex]);
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
           Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                   gTileDatabase[0].hTileSurface, sTempPosX_S,
@@ -5648,10 +5663,10 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
         if (gubGridNoMarkers[usTileIndex] == gubGridNoValue) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           SetFontForeground(FONT_FCOLOR_YELLOW);
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY + 4, L"x");
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5680,7 +5695,7 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
 void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
@@ -5702,7 +5717,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5726,7 +5741,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
 
         if (gsCoverValue[usTileIndex] != 0x7F7F) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           if (usTileIndex == gsBestCover) {
             SetFontForeground(FONT_MCOLOR_RED);
           } else if (gsCoverValue[usTileIndex] < 0) {
@@ -5736,7 +5751,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
           }
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gsCoverValue[usTileIndex]);
-          SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+          SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5765,11 +5780,12 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
-void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
-                                  int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS) {
+void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M,
+                                  int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS,
+                                  int16_t sEndYS) {
   int8_t bXOddFlag = 0;
   int16_t sAnchorPosX_M, sAnchorPosY_M;
   int16_t sAnchorPosX_S, sAnchorPosY_S;
@@ -5787,7 +5803,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5810,7 +5826,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
         sY += gsRenderHeight;
 
         SetFont(SMALLCOMPFONT);
-        SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+        SetFontDest(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
 
         if (!GridNoOnVisibleWorldTile(usTileIndex)) {
           SetFontForeground(FONT_MCOLOR_RED);
@@ -5818,7 +5834,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
           SetFontForeground(FONT_GRAY3);
         }
         mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d", usTileIndex);
-        SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+        SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
       }
 
       sTempPosX_S += 40;
@@ -5846,7 +5862,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
 #endif
@@ -5858,8 +5874,9 @@ void ExamineZBufferRect(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBo
                                gsEndXS, gsEndYS);
 }
 
-void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
-                                  int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS) {
+void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M,
+                                  int16_t sStartPointX_S, int16_t sStartPointY_S, int16_t sEndXS,
+                                  int16_t sEndYS) {
   int8_t bXOddFlag = 0;
   int16_t sAnchorPosX_M, sAnchorPosY_M;
   int16_t sAnchorPosX_S, sAnchorPosY_S;
@@ -5880,7 +5897,7 @@ void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   // Get VObject for firt land peice!
   TileElem = &(gTileDatabase[FIRSTTEXTURE1]);
@@ -5969,7 +5986,7 @@ void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
 void CalcRenderParameters(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom) {
@@ -6092,7 +6109,7 @@ BOOLEAN Zero8BPPDataTo16BPPBufferTransparent(uint16_t *pBuffer, uint32_t uiDestP
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY;
 
   // Assertions
@@ -6100,20 +6117,24 @@ BOOLEAN Zero8BPPDataTo16BPPBufferTransparent(uint16_t *pBuffer, uint32_t uiDestP
   Assert(pBuffer != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   // Validations
-  CHECKF(iTempX >= 0);
-  CHECKF(iTempY >= 0);
+  if (!(iTempX >= 0)) {
+    return FALSE;
+  }
+  if (!(iTempY >= 0)) {
+    return FALSE;
+  }
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
   DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2);
   LineSkip = (uiDestPitchBYTES - (usWidth * 2));
 
@@ -6216,7 +6237,7 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransInvZ(uint16_t *pBuffer, uint32_t uiDestPitc
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr, *ZPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY;
 
   // Assertions
@@ -6224,20 +6245,24 @@ BOOLEAN Blt8BPPDataTo16BPPBufferTransInvZ(uint16_t *pBuffer, uint32_t uiDestPitc
   Assert(pBuffer != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   // Validations
-  CHECKF(iTempX >= 0);
-  CHECKF(iTempY >= 0);
+  if (!(iTempX >= 0)) {
+    return FALSE;
+  }
+  if (!(iTempY >= 0)) {
+    return FALSE;
+  }
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
   DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2);
   ZPtr = (uint8_t *)pZBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2);
   p16BPPPalette = hSrcVObject->pShadeCurrent;
@@ -6319,14 +6344,14 @@ BlitDone:
   return (TRUE);
 }
 
-BOOLEAN IsTileRedundent(uint16_t *pZBuffer, uint16_t usZValue, struct VObject *hSrcVObject, int32_t iX,
-                        int32_t iY, uint16_t usIndex) {
+BOOLEAN IsTileRedundent(uint16_t *pZBuffer, uint16_t usZValue, struct VObject *hSrcVObject,
+                        int32_t iX, int32_t iY, uint16_t usIndex) {
   uint16_t *p16BPPPalette;
   uint32_t uiOffset;
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *ZPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int32_t iTempX, iTempY;
   BOOLEAN fHidden = TRUE;
 
@@ -6334,20 +6359,24 @@ BOOLEAN IsTileRedundent(uint16_t *pZBuffer, uint16_t usZValue, struct VObject *h
   Assert(hSrcVObject != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Add to start position of dest buffer
-  iTempX = iX + pTrav->sOffsetX;
-  iTempY = iY + pTrav->sOffsetY;
+  iTempX = iX + pTrav->x_offset;
+  iTempY = iY + pTrav->y_offset;
 
   // Validations
-  CHECKF(iTempX >= 0);
-  CHECKF(iTempY >= 0);
+  if (!(iTempX >= 0)) {
+    return FALSE;
+  }
+  if (!(iTempY >= 0)) {
+    return FALSE;
+  }
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
   ZPtr = (uint8_t *)pZBuffer + (1280 * iTempY) + (iTempX * 2);
   p16BPPPalette = hSrcVObject->pShadeCurrent;
   LineSkip = (1280 - (usWidth * 2));

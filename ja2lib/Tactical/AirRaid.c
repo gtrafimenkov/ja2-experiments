@@ -8,7 +8,7 @@
 
 #include "GameSettings.h"
 #include "JAScreens.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
@@ -41,6 +41,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
+#include "rust_fileman.h"
 
 #define SCRIPT_DELAY 10
 #define AIR_RAID_SAY_QUOTE_TIME 3000
@@ -156,7 +157,7 @@ void ScheduleAirRaid(AIR_RAID_DEFINITION *pAirRaidDef) {
   memcpy(&gAirRaidDef, pAirRaidDef, sizeof(AIR_RAID_DEFINITION));
 
   AddSameDayStrategicEvent(EVENT_BEGIN_AIR_RAID,
-                           (GetWorldMinutesInDay() + pAirRaidDef->ubNumMinsFromCurrentTime), 0);
+                           (GetMinutesSinceDayStart() + pAirRaidDef->ubNumMinsFromCurrentTime), 0);
 
   gfAirRaidScheduled = TRUE;
 }
@@ -382,8 +383,8 @@ void AirRaidLookForDive() {
     giNumTurnsSinceLastDive = 0;
 
     // Do morale hit on our guys
-    HandleMoraleEvent(NULL, MORALE_AIRSTRIKE, (uint8_t)gAirRaidDef.sSectorX, (uint8_t)gAirRaidDef.sSectorY,
-                      (int8_t)gAirRaidDef.sSectorZ);
+    HandleMoraleEvent(NULL, MORALE_AIRSTRIKE, (uint8_t)gAirRaidDef.sSectorX,
+                      (uint8_t)gAirRaidDef.sSectorY, (int8_t)gAirRaidDef.sSectorZ);
   }
 
   // If NOT in combat....
@@ -429,7 +430,7 @@ void AirRaidLookForDive() {
       if (giNumGridNosMovedThisTurn == 0) {
         // Free up attacker...
         FreeUpAttacker(gpRaidSoldier->ubID);
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("!!!!!!! Tried to free up attacker AIR RAID NO DIVE, attack count now %d",
                         gTacticalStatus.ubAttackBusyCount));
       }
@@ -502,7 +503,7 @@ void BeginDive() {
 
   // Increment attacker bust count....
   gTacticalStatus.ubAttackBusyCount++;
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2, DBG_INFO,
            String("!!!!!!! Starting attack BEGIN DIVE %d", gTacticalStatus.ubAttackBusyCount));
 
   // Pick location...
@@ -645,7 +646,7 @@ void DoDive() {
           {
             // Increase attacker busy...
             // gTacticalStatus.ubAttackBusyCount++;
-            // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("!!!!!!! Starting attack AIR RAID ( fire gun
+            // DebugMsg( TOPIC_JA2, DBG_INFO, String("!!!!!!! Starting attack AIR RAID ( fire gun
             // ), attack count now %d", gTacticalStatus.ubAttackBusyCount) );
 
             // INcrement bullet fired...
@@ -680,7 +681,7 @@ void DoDive() {
           {
             // Increase attacker busy...
             // gTacticalStatus.ubAttackBusyCount++;
-            // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("!!!!!!! Starting attack AIR RAID ( second
+            // DebugMsg( TOPIC_JA2, DBG_INFO, String("!!!!!!! Starting attack AIR RAID ( second
             // one ), attack count now %d", gTacticalStatus.ubAttackBusyCount) );
 
             // INcrement bullet fired...
@@ -697,7 +698,7 @@ void DoDive() {
         if ((gTacticalStatus.uiFlags & INCOMBAT)) {
           // Free up attacker...
           FreeUpAttacker(gpRaidSoldier->ubID);
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+          DebugMsg(TOPIC_JA2, DBG_INFO,
                    String("!!!!!!! Tried to free up attacker AIR RAID DIVE DONE FOR THIS TURN, "
                           "attack count now %d",
                           gTacticalStatus.ubAttackBusyCount));
@@ -785,7 +786,8 @@ void DoBombing() {
           dDeltaYPos = BOMB_DIST * (float)cos(dAngle);
           sStrafeY = (int16_t)(gsDiveY + dDeltaYPos);
 
-          if (GridNoOnVisibleWorldTile((int16_t)(GETWORLDINDEXFROMWORLDCOORDS(sStrafeY, sStrafeX)))) {
+          if (GridNoOnVisibleWorldTile(
+                  (int16_t)(GETWORLDINDEXFROMWORLDCOORDS(sStrafeY, sStrafeX)))) {
             // if ( gsNotLocatedYet && !( gTacticalStatus.uiFlags & INCOMBAT ) )
             //{
             //	gsNotLocatedYet = FALSE;
@@ -807,7 +809,7 @@ void DoBombing() {
               // Increase attacker busy...
               gTacticalStatus.ubAttackBusyCount++;
               DebugMsg(
-                  TOPIC_JA2, DBG_LEVEL_3,
+                  TOPIC_JA2, DBG_INFO,
                   String("!!!!!!! Starting attack AIR RAID ( bombs away ), attack count now %d",
                          gTacticalStatus.ubAttackBusyCount));
             }
@@ -823,7 +825,7 @@ void DoBombing() {
           if ((gTacticalStatus.uiFlags & INCOMBAT)) {
             // Free up attacker...
             FreeUpAttacker(gpRaidSoldier->ubID);
-            DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+            DebugMsg(TOPIC_JA2, DBG_INFO,
                      String("!!!!!!! Tried to free up attacker AIR RAID BOMB ATTACK DONE FOR THIS "
                             "TURN, attack count now %d",
                             gTacticalStatus.ubAttackBusyCount));
@@ -939,7 +941,7 @@ void HandleAirRaid() {
             // Free up attacker...
             FreeUpAttacker(gpRaidSoldier->ubID);
             DebugMsg(
-                TOPIC_JA2, DBG_LEVEL_3,
+                TOPIC_JA2, DBG_INFO,
                 String(
                     "!!!!!!! Tried to free up attacker AIR RAID ENDING DIVE, attack count now %d",
                     gTacticalStatus.ubAttackBusyCount));
@@ -957,7 +959,7 @@ void HandleAirRaid() {
             // Free up attacker...
             FreeUpAttacker(gpRaidSoldier->ubID);
             DebugMsg(
-                TOPIC_JA2, DBG_LEVEL_3,
+                TOPIC_JA2, DBG_INFO,
                 String(
                     "!!!!!!! Tried to free up attacker AIR RAID ENDING DIVE, attack count now %d",
                     gTacticalStatus.ubAttackBusyCount));
@@ -1014,7 +1016,7 @@ BOOLEAN HandleAirRaidEndTurn(uint8_t ubTeam) {
 
   // Increment attacker bust count....
   gTacticalStatus.ubAttackBusyCount++;
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2, DBG_INFO,
            String("!!!!!!! Starting attack AIR RAID, attack count now %d",
                   gTacticalStatus.ubAttackBusyCount));
 
@@ -1039,7 +1041,7 @@ BOOLEAN HandleAirRaidEndTurn(uint8_t ubTeam) {
   return (FALSE);
 }
 
-BOOLEAN SaveAirRaidInfoToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveAirRaidInfoToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
   AIR_RAID_SAVE_STRUCT sAirRaidSaveStruct;
 
@@ -1089,7 +1091,7 @@ BOOLEAN SaveAirRaidInfoToSaveGameFile(HWFILE hFile) {
   memcpy(&sAirRaidSaveStruct.AirRaidDef, &gAirRaidDef, sizeof(AIR_RAID_DEFINITION));
 
   // Save the Air Raid Save Struct
-  FileMan_Write(hFile, &sAirRaidSaveStruct, sizeof(AIR_RAID_SAVE_STRUCT), &uiNumBytesWritten);
+  File_Write(hFile, &sAirRaidSaveStruct, sizeof(AIR_RAID_SAVE_STRUCT), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(AIR_RAID_SAVE_STRUCT)) {
     return (FALSE);
   }
@@ -1097,12 +1099,12 @@ BOOLEAN SaveAirRaidInfoToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadAirRaidInfoFromSaveGameFile(HWFILE hFile) {
+BOOLEAN LoadAirRaidInfoFromSaveGameFile(FileID hFile) {
   AIR_RAID_SAVE_STRUCT sAirRaidSaveStruct;
   uint32_t uiNumBytesRead;
 
   // Load the number of REAL_OBJECTs in the array
-  FileMan_Read(hFile, &sAirRaidSaveStruct, sizeof(AIR_RAID_SAVE_STRUCT), &uiNumBytesRead);
+  File_Read(hFile, &sAirRaidSaveStruct, sizeof(AIR_RAID_SAVE_STRUCT), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(AIR_RAID_SAVE_STRUCT)) {
     return (FALSE);
   }
@@ -1198,14 +1200,14 @@ void EndAirRaid() {
                                   // struct GROUP *pGroup;
                                   // Create a patrol group originating from sector B9
                                   // pGroup = CreateNewEnemyGroupDepartingFromSector( SEC_B9,
-                                  // (uint8_t)(2 + Random( 2 ) + gGameOptions.ubDifficultyLevel), 0 );
-                                  // Move the patrol group north to attack Omerta
+                                  // (uint8_t)(2 + Random( 2 ) + gGameOptions.ubDifficultyLevel), 0
+                                  // ); Move the patrol group north to attack Omerta
                                   // AddWaypointToPGroup( pGroup, 9, 1 ); //A9
                                   // Because we want them to arrive right away, we will toast the
                                   // arrival event.  The information is already set up though.
                                   // DeleteStrategicEvent( EVENT_GROUP_ARRIVAL, pGroup->ubGroupID );
                                   // Simply reinsert the event, but the time is now.
-                                  // AddStrategicEvent( EVENT_GROUP_ARRIVAL, GetWorldTotalMin(),
+                                  // AddStrategicEvent( EVENT_GROUP_ARRIVAL, GetGameTimeInMin(),
                                   // pGroup->ubGroupID );
   }
 

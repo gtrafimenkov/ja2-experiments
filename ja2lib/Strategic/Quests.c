@@ -7,7 +7,6 @@
 #include "GameSettings.h"
 #include "Laptop/BobbyRMailOrder.h"
 #include "Laptop/History.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Soldier.h"
@@ -34,6 +33,8 @@
 #include "TileEngine/RenderFun.h"
 #include "Town.h"
 #include "Utils/Message.h"
+#include "rust_civ_groups.h"
+#include "rust_fileman.h"
 
 #define TESTQUESTS
 
@@ -46,7 +47,8 @@ uint8_t gubFact[NUM_FACTS];  // this has to be updated when we figure out how ma
 int16_t gsFoodQuestSectorX;
 int16_t gsFoodQuestSectorY;
 
-extern void GuaranteeAtLeastXItemsOfIndex(uint8_t ubArmsDealer, uint16_t usItemIndex, uint8_t ubHowMany);
+extern void GuaranteeAtLeastXItemsOfIndex(uint8_t ubArmsDealer, uint16_t usItemIndex,
+                                          uint8_t ubHowMany);
 
 void SetFactTrue(uint16_t usFact) {
   // This function is here just for control flow purposes (debug breakpoints)
@@ -168,8 +170,7 @@ BOOLEAN CheckNPCIsEnemy(uint8_t ubProfileID) {
     if (pNPC->ubCivilianGroup != NON_CIV_GROUP) {
       // although the soldier is NOW the same side, this civ group could be set to "will become
       // hostile"
-      return (gTacticalStatus.fCivGroupHostile[pNPC->ubCivilianGroup] >=
-              CIV_GROUP_WILL_BECOME_HOSTILE);
+      return (GetCivGroupHostility(pNPC->ubCivilianGroup) >= CIV_GROUP_WILL_BECOME_HOSTILE);
     } else {
       return (FALSE);
     }
@@ -507,8 +508,8 @@ BOOLEAN InTownSectorWithTrainingLoyalty(uint8_t sSectorX, uint8_t sSectorY) {
   uint8_t ubTown;
 
   ubTown = GetTownIdForSector(sSectorX, sSectorY);
-  if ((ubTown != BLANK_SECTOR) && gTownLoyalty[ubTown].fStarted && gfTownUsesLoyalty[ubTown]) {
-    return (gTownLoyalty[ubTown].ubRating >= MIN_RATING_TO_TRAIN_TOWN);
+  if ((ubTown != BLANK_SECTOR) && IsTownLoyaltyStarted(ubTown) && DoesTownUseLoyalty(ubTown)) {
+    return (GetTownLoyaltyRating(ubTown) >= MIN_RATING_TO_TRAIN_TOWN);
   } else {
     return (FALSE);
   }
@@ -691,7 +692,7 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
       gubFact[usFact] = (NumMercsNear(ubProfileID, 5) > 0);
       break;
     case FACT_REBELS_HATE_PLAYER:
-      gubFact[usFact] = (gTacticalStatus.fCivGroupHostile[REBEL_CIV_GROUP] == CIV_GROUP_HOSTILE);
+      gubFact[usFact] = (GetCivGroupHostility(REBEL_CIV_GROUP) == CIV_GROUP_HOSTILE);
       break;
     case FACT_CURRENT_SECTOR_G9:
       gubFact[usFact] = (gWorldSectorX == 9 && gWorldSectorY == MAP_ROW_G && gbWorldSectorZ == 0);
@@ -808,9 +809,9 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
 
     case FACT_LOYALTY_OKAY:
       bTown = gMercProfiles[ubProfileID].bTown;
-      if ((bTown != BLANK_SECTOR) && gTownLoyalty[bTown].fStarted && gfTownUsesLoyalty[bTown]) {
-        gubFact[usFact] = ((gTownLoyalty[bTown].ubRating >= LOYALTY_LOW_THRESHOLD) &&
-                           (gTownLoyalty[bTown].ubRating < LOYALTY_OK_THRESHOLD));
+      if ((bTown != BLANK_SECTOR) && IsTownLoyaltyStarted(bTown) && DoesTownUseLoyalty(bTown)) {
+        gubFact[usFact] = ((GetTownLoyaltyRating(bTown) >= LOYALTY_LOW_THRESHOLD) &&
+                           (GetTownLoyaltyRating(bTown) < LOYALTY_OK_THRESHOLD));
       } else {
         gubFact[usFact] = FALSE;
       }
@@ -818,15 +819,15 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
 
     case FACT_LOYALTY_LOW:
       bTown = gMercProfiles[ubProfileID].bTown;
-      if ((bTown != BLANK_SECTOR) && gTownLoyalty[bTown].fStarted && gfTownUsesLoyalty[bTown]) {
+      if ((bTown != BLANK_SECTOR) && IsTownLoyaltyStarted(bTown) && DoesTownUseLoyalty(bTown)) {
         // if Skyrider, ignore low loyalty until he has monologues, and wait at least a day since
         // the latest monologue to avoid a hot/cold attitude
         if ((ubProfileID == SKYRIDER) &&
             ((guiHelicopterSkyriderTalkState == 0) ||
-             ((GetWorldTotalMin() - guiTimeOfLastSkyriderMonologue) < (24 * 60)))) {
+             ((GetGameTimeInMin() - guiTimeOfLastSkyriderMonologue) < (24 * 60)))) {
           gubFact[usFact] = FALSE;
         } else {
-          gubFact[usFact] = (gTownLoyalty[bTown].ubRating < LOYALTY_LOW_THRESHOLD);
+          gubFact[usFact] = (GetTownLoyaltyRating(bTown) < LOYALTY_LOW_THRESHOLD);
         }
       } else {
         gubFact[usFact] = FALSE;
@@ -835,9 +836,9 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
 
     case FACT_LOYALTY_HIGH:
       bTown = gMercProfiles[ubProfileID].bTown;
-      if ((bTown != BLANK_SECTOR) && gTownLoyalty[bTown].fStarted && gfTownUsesLoyalty[bTown]) {
+      if ((bTown != BLANK_SECTOR) && IsTownLoyaltyStarted(bTown) && DoesTownUseLoyalty(bTown)) {
         gubFact[usFact] =
-            (gTownLoyalty[gMercProfiles[ubProfileID].bTown].ubRating >= LOYALTY_HIGH_THRESHOLD);
+            (GetTownLoyaltyRating(gMercProfiles[ubProfileID].bTown) >= LOYALTY_HIGH_THRESHOLD);
       } else {
         gubFact[usFact] = FALSE;
       }
@@ -892,7 +893,7 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
 
     case FACT_BLOODCAT_QUEST_STARTED_TWO_DAYS_AGO:
       gubFact[usFact] = ((gubQuest[QUEST_BLOODCATS] != QUESTNOTSTARTED) &&
-                         (GetWorldTotalMin() - GetTimeQuestWasStarted(QUEST_BLOODCATS) >
+                         (GetGameTimeInMin() - GetTimeQuestWasStarted(QUEST_BLOODCATS) >
                           2 * NUM_SEC_IN_DAY / NUM_SEC_IN_MIN));
       break;
 
@@ -1019,50 +1020,46 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_DRASSEN);
       break;
     case FACT_PLAYER_IN_CONTROLLED_DRASSEN_MINE:
-      gubFact[usFact] =
-          (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ) ==
-               MINE_DRASSEN &&
-           !(StrategicMap[GetSectorID16((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)].fEnemyControlled));
+      gubFact[usFact] = (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                              gbWorldSectorZ) == MINE_DRASSEN &&
+                         !IsSectorEnemyControlled((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY));
       break;
     case FACT_PLAYER_SPOKE_TO_CAMBRIA_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_CAMBRIA);
       break;
     case FACT_PLAYER_IN_CONTROLLED_CAMBRIA_MINE:
-      gubFact[usFact] =
-          (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ) ==
-               MINE_CAMBRIA &&
-           !(StrategicMap[GetSectorID16((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)].fEnemyControlled));
+      gubFact[usFact] = (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                              gbWorldSectorZ) == MINE_CAMBRIA &&
+                         !IsSectorEnemyControlled((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY));
       break;
     case FACT_PLAYER_SPOKE_TO_CHITZENA_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_CHITZENA);
       break;
     case FACT_PLAYER_IN_CONTROLLED_CHITZENA_MINE:
-      gubFact[usFact] =
-          (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ) ==
-               MINE_CHITZENA &&
-           !(StrategicMap[GetSectorID16((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)].fEnemyControlled));
+      gubFact[usFact] = (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                              gbWorldSectorZ) == MINE_CHITZENA &&
+                         !IsSectorEnemyControlled((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY));
       break;
     case FACT_PLAYER_SPOKE_TO_ALMA_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_ALMA);
       break;
     case FACT_PLAYER_IN_CONTROLLED_ALMA_MINE:
-      gubFact[usFact] =
-          (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ) ==
-               MINE_ALMA &&
-           !(StrategicMap[GetSectorID16((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)].fEnemyControlled));
+      gubFact[usFact] = (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                              gbWorldSectorZ) == MINE_ALMA &&
+                         !IsSectorEnemyControlled((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY));
       break;
     case FACT_PLAYER_SPOKE_TO_GRUMM_MINER:
       gubFact[usFact] = SpokenToHeadMiner(MINE_GRUMM);
       break;
     case FACT_PLAYER_IN_CONTROLLED_GRUMM_MINE:
-      gubFact[usFact] =
-          (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ) ==
-               MINE_GRUMM &&
-           !(StrategicMap[GetSectorID16((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)].fEnemyControlled));
+      gubFact[usFact] = (GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                              gbWorldSectorZ) == MINE_GRUMM &&
+                         !IsSectorEnemyControlled((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY));
       break;
 
     case FACT_ENOUGH_LOYALTY_TO_TRAIN_MILITIA:
-      gubFact[usFact] = InTownSectorWithTrainingLoyalty((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
+      gubFact[usFact] =
+          InTownSectorWithTrainingLoyalty((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
       break;
 
     case FACT_WALKER_AT_BAR:
@@ -1097,8 +1094,7 @@ case FACT_SKYRIDER_CLOSE_TO_CHOPPER:
       break;
 
     case FACT_KINGPIN_IS_ENEMY:
-      gubFact[usFact] =
-          (gTacticalStatus.fCivGroupHostile[KINGPIN_CIV_GROUP] >= CIV_GROUP_WILL_BECOME_HOSTILE);
+      gubFact[usFact] = (GetCivGroupHostility(KINGPIN_CIV_GROUP) >= CIV_GROUP_WILL_BECOME_HOSTILE);
       break;
 
     case FACT_DYNAMO_NOT_SPEAKER:
@@ -1138,12 +1134,13 @@ void StartQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY) {
   InternalStartQuest(ubQuest, sSectorX, sSectorY, TRUE);
 }
 
-void InternalStartQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY, BOOLEAN fUpdateHistory) {
+void InternalStartQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY,
+                        BOOLEAN fUpdateHistory) {
   if (gubQuest[ubQuest] == QUESTNOTSTARTED) {
     gubQuest[ubQuest] = QUESTINPROGRESS;
 
     if (fUpdateHistory) {
-      SetHistoryFact(HISTORY_QUEST_STARTED, ubQuest, GetWorldTotalMin(), sSectorX, sSectorY);
+      SetHistoryFact(HISTORY_QUEST_STARTED, ubQuest, GetGameTimeInMin(), sSectorX, sSectorY);
     }
   } else {
     gubQuest[ubQuest] = QUESTINPROGRESS;
@@ -1215,17 +1212,17 @@ void CheckForQuests(uint32_t uiDay) {
   // Miguel the letter
 }
 
-BOOLEAN SaveQuestInfoToSavedGameFile(HWFILE hFile) {
+BOOLEAN SaveQuestInfoToSavedGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
 
   // Save all the states if the Quests
-  FileMan_Write(hFile, gubQuest, MAX_QUESTS, &uiNumBytesWritten);
+  File_Write(hFile, gubQuest, MAX_QUESTS, &uiNumBytesWritten);
   if (uiNumBytesWritten != MAX_QUESTS) {
     return (FALSE);
   }
 
   // Save all the states for the facts
-  FileMan_Write(hFile, gubFact, NUM_FACTS, &uiNumBytesWritten);
+  File_Write(hFile, gubFact, NUM_FACTS, &uiNumBytesWritten);
   if (uiNumBytesWritten != NUM_FACTS) {
     return (FALSE);
   }
@@ -1233,17 +1230,17 @@ BOOLEAN SaveQuestInfoToSavedGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadQuestInfoFromSavedGameFile(HWFILE hFile) {
+BOOLEAN LoadQuestInfoFromSavedGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
 
   // Save all the states if the Quests
-  FileMan_Read(hFile, gubQuest, MAX_QUESTS, &uiNumBytesRead);
+  File_Read(hFile, gubQuest, MAX_QUESTS, &uiNumBytesRead);
   if (uiNumBytesRead != MAX_QUESTS) {
     return (FALSE);
   }
 
   // Save all the states for the facts
-  FileMan_Read(hFile, gubFact, NUM_FACTS, &uiNumBytesRead);
+  File_Read(hFile, gubFact, NUM_FACTS, &uiNumBytesRead);
   if (uiNumBytesRead != NUM_FACTS) {
     return (FALSE);
   }

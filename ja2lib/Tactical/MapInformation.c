@@ -10,7 +10,7 @@
 #include "Editor/EditorMercs.h"
 #include "Editor/RoadSmoothing.h"
 #include "JA2.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Soldier.h"
@@ -27,6 +27,7 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/AnimatedProgressBar.h"
 #include "Utils/Message.h"
+#include "rust_fileman.h"
 
 // Don't mess with this value, unless you want to force update all maps in the game!
 #ifdef RUSSIAN
@@ -72,10 +73,10 @@ existance.  So, all current detailed placements will also have priority existanc
 -- obsolete April 16, 1998 MAJOR CONFLICT RESULTING IN A MAJOR VERSION UPDATE 2.00! Bug 10) Padding
 on detailed placements is uninitialized.  Clear all data starting at fKillSlotIfOwnerDies. Version 9
 -- Kris -- obsolete April 26, 1998 This version requires no auto updating, but external code has
-adjusted the size of the mapedgepoint arraysize from uint8_t to uint16_t.  See Map Edgepoints.c. Bug 11)
-Convert all wheelchaired placement bodytypes to cows.  Result of change in the animation database.
-Version 11 -- Kris -- obsolete May 2, 1998
-  Added new center entry point.  Need to initialize the original padding to -1.
+adjusted the size of the mapedgepoint arraysize from uint8_t to uint16_t.  See Map Edgepoints.c. Bug
+11) Convert all wheelchaired placement bodytypes to cows.  Result of change in the animation
+database. Version 11 -- Kris -- obsolete May 2, 1998 Added new center entry point.  Need to
+initialize the original padding to -1.
 */
 
 // EntryPoints can't be placed on the top two gridnos in a map.  So all we do in this case
@@ -109,16 +110,16 @@ BOOLEAN ValidateEntryPointGridNo(int16_t *sGridNo) {
   return TRUE;  // modified
 }
 
-void SaveMapInformation(HWFILE fp) {
+void SaveMapInformation(FileID fp) {
   uint32_t uiBytesWritten;
 
   gMapInformation.ubMapVersion = MINOR_MAP_VERSION;
-  FileMan_Write(fp, &gMapInformation, sizeof(MAPCREATE_STRUCT), &uiBytesWritten);
+  File_Write(fp, &gMapInformation, sizeof(MAPCREATE_STRUCT), &uiBytesWritten);
 }
 
 void LoadMapInformation(int8_t **hBuffer) {
   LOADDATA(&gMapInformation, *hBuffer, sizeof(MAPCREATE_STRUCT));
-  // FileMan_Read( hfile, &gMapInformation, sizeof( MAPCREATE_STRUCT ), &uiBytesRead);
+  // File_Read( hfile, &gMapInformation, sizeof( MAPCREATE_STRUCT ), &uiBytesRead);
 
   // ATE: OK, do some handling here for basement level scroll restrictions
   // Calcuate world scrolling restrictions

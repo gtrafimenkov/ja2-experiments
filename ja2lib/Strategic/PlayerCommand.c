@@ -25,10 +25,10 @@
 #include "Tactical/Overhead.h"
 #include "Tactical/TacticalSave.h"
 #include "Utils/Text.h"
+#include "rust_sam_sites.h"
 
-extern BOOLEAN fMapScreenBottomDirty;
-
-void GetSectorFacilitiesFlags(uint8_t sMapX, uint8_t sMapY, wchar_t* sFacilitiesString, size_t bufSize) {
+void GetSectorFacilitiesFlags(uint8_t sMapX, uint8_t sMapY, wchar_t *sFacilitiesString,
+                              size_t bufSize) {
   // will build a string stating current facilities present in sector
 
   if (SectorInfo[GetSectorID8(sMapX, sMapY)].uiFacilitiesFlags == 0) {
@@ -88,29 +88,16 @@ void GetSectorFacilitiesFlags(uint8_t sMapX, uint8_t sMapY, wchar_t* sFacilities
 }
 
 // ALL changes of control to player must be funneled through here!
-BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ, BOOLEAN fContested) {
-  // NOTE: MapSector must be 16-bit, cause MAX_WORLD_X is actually 18, so the sector numbers exceed
-  // 256 although we use only 16x16
-  uint16_t usMapSector = 0;
+BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ,
+                                        BOOLEAN fContested) {
   BOOLEAN fWasEnemyControlled = FALSE;
   TownID bTownId = 0;
-  uint8_t ubSectorID;
 
   if (AreInMeanwhile()) {
     return FALSE;
   }
 
   if (bMapZ == 0) {
-    usMapSector = GetSectorID16(sMapX, (sMapY));
-
-    /*
-                    // if enemies formerly controlled this sector
-                    if (StrategicMap[ usMapSector ].fEnemyControlled)
-                    {
-                            // remember that the enemies have lost it
-                            StrategicMap[ usMapSector ].fLostControlAtSomeTime = TRUE;
-                    }
-    */
     if (NumHostilesInSector(sMapX, sMapY, bMapZ)) {  // too premature:  enemies still in sector.
       return FALSE;
     }
@@ -125,18 +112,17 @@ BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMa
               BOBBYR_BEEN_TO_SITE_ONCE &&
           LaptopSaveInfo.ubHaveBeenToBobbyRaysAtLeastOnceWhileUnderConstruction !=
               BOBBYR_ALREADY_SENT_EMAIL) {
-        AddEmail(BOBBYR_NOW_OPEN, BOBBYR_NOW_OPEN_LENGTH, BOBBY_R, GetWorldTotalMin());
+        AddEmail(BOBBYR_NOW_OPEN, BOBBYR_NOW_OPEN_LENGTH, BOBBY_R, GetGameTimeInMin());
         LaptopSaveInfo.ubHaveBeenToBobbyRaysAtLeastOnceWhileUnderConstruction =
             BOBBYR_ALREADY_SENT_EMAIL;
       }
     }
 
-    fWasEnemyControlled = StrategicMap[usMapSector].fEnemyControlled;
-
-    StrategicMap[usMapSector].fEnemyControlled = FALSE;
+    fWasEnemyControlled = IsSectorEnemyControlled(sMapX, sMapY);
+    SetSectorEnemyControlled(sMapX, sMapY, FALSE);
     SectorInfo[GetSectorID8(sMapX, sMapY)].fPlayer[bMapZ] = TRUE;
 
-    bTownId = StrategicMap[usMapSector].townID;
+    bTownId = GetTownIdForSector(sMapX, sMapY);
 
     // check if there's a town in the sector
     if ((bTownId >= FIRST_TOWN) && (bTownId < NUM_TOWNS)) {
@@ -149,8 +135,8 @@ BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMa
       // and it's a town
       if ((bTownId >= FIRST_TOWN) && (bTownId < NUM_TOWNS)) {
         // don't do these for takeovers of Omerta sectors at the beginning of the game
-        if ((bTownId != OMERTA) || (GetWorldDay() != 1)) {
-          ubSectorID = (uint8_t)GetSectorID8(sMapX, sMapY);
+        if ((bTownId != OMERTA) || (GetGameTimeInDays() != 1)) {
+          SectorID8 ubSectorID = GetSectorID8(sMapX, sMapY);
           if (!bMapZ && ubSectorID != SEC_J9 && ubSectorID != SEC_K4) {
             HandleMoraleEvent(NULL, MORALE_TOWN_LIBERATED, sMapX, sMapY, bMapZ);
             HandleGlobalLoyaltyEvent(GLOBAL_LOYALTY_GAIN_TOWN_SECTOR, sMapX, sMapY, bMapZ);
@@ -171,12 +157,9 @@ BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMa
       }
 
       // if it's a SAM site sector
-      if (IsThisSectorASAMSector(sMapX, sMapY, bMapZ)) {
-        if (1 /*!GetSectorFlagStatus( sMapX, sMapY, bMapZ, SF_SECTOR_HAS_BEEN_LIBERATED_ONCE ) */) {
-          // SAM site liberated for first time, schedule meanwhile
-          HandleMeanWhileEventPostingForSAMLiberation(GetSAMIdFromSector(sMapX, sMapY, bMapZ));
-        }
-
+      struct OptionalSamSite samID = GetSamAtSector(sMapX, sMapY, bMapZ);
+      if (samID.tag == Some) {
+        HandleMeanWhileEventPostingForSAMLiberation(samID.some);
         HandleMoraleEvent(NULL, MORALE_SAM_SITE_LIBERATED, sMapX, sMapY, bMapZ);
         HandleGlobalLoyaltyEvent(GLOBAL_LOYALTY_GAIN_SAM, sMapX, sMapY, bMapZ);
 
@@ -191,9 +174,9 @@ BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMa
         if (!SectorInfo[GetSectorID8(sMapX, sMapY)].fSurfaceWasEverPlayerControlled) {
           // grant grace period
           if (gGameOptions.ubDifficultyLevel >= DIF_LEVEL_HARD) {
-            UpdateLastDayOfPlayerActivity((uint16_t)(GetWorldDay() + 2));
+            UpdateLastDayOfPlayerActivity((uint16_t)(GetGameTimeInDays() + 2));
           } else {
-            UpdateLastDayOfPlayerActivity((uint16_t)(GetWorldDay() + 1));
+            UpdateLastDayOfPlayerActivity((uint16_t)(GetGameTimeInDays() + 1));
           }
         }
       }
@@ -234,15 +217,15 @@ BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMa
   UpdateAirspaceControl();
 
   // redraw map/income if in mapscreen
-  MarkForRedrawalStrategicMap();
-  fMapScreenBottomDirty = TRUE;
+  SetMapPanelDirty(true);
+  SetMapScreenBottomDirty(true);
 
   return fWasEnemyControlled;
 }
 
 // ALL changes of control to enemy must be funneled through here!
-BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ, BOOLEAN fContested) {
-  uint16_t usMapSector = 0;
+BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ,
+                                       BOOLEAN fContested) {
   BOOLEAN fWasPlayerControlled = FALSE;
   TownID bTownId = 0;
   uint8_t ubTheftChance;
@@ -257,21 +240,19 @@ BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMap
   }
 
   if (bMapZ == 0) {
-    usMapSector = GetSectorID16(sMapX, (sMapY));
+    fWasPlayerControlled = !IsSectorEnemyControlled(sMapX, sMapY);
 
-    fWasPlayerControlled = !StrategicMap[usMapSector].fEnemyControlled;
-
-    StrategicMap[usMapSector].fEnemyControlled = TRUE;
+    SetSectorEnemyControlled(sMapX, sMapY, TRUE);
 
     // if player lost control to the enemy
     if (fWasPlayerControlled) {
-      if (PlayerMercsInSector((uint8_t)sMapX, (uint8_t)sMapY,
-                              (uint8_t)bMapZ)) {  // too premature:  Player mercs still in sector.
+      if (PlayerMercsInSector(sMapX, sMapY, bMapZ)) {
+        // too premature:  Player mercs still in sector.
         return FALSE;
       }
 
       // check if there's a town in the sector
-      bTownId = StrategicMap[usMapSector].townID;
+      bTownId = GetTownIdForSector(sMapX, sMapY);
 
       SectorInfo[GetSectorID8(sMapX, sMapY)].fPlayer[bMapZ] = FALSE;
 
@@ -281,7 +262,6 @@ BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMap
         if (!bMapZ && ubSectorID != SEC_J9 && ubSectorID != SEC_K4) {
           HandleMoraleEvent(NULL, MORALE_TOWN_LOST, sMapX, sMapY, bMapZ);
           HandleGlobalLoyaltyEvent(GLOBAL_LOYALTY_LOSE_TOWN_SECTOR, sMapX, sMapY, bMapZ);
-
           CheckIfEntireTownHasBeenLost(bTownId, sMapX, sMapY);
         }
       }
@@ -344,59 +324,14 @@ BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMap
   UpdateAirspaceControl();
 
   // redraw map/income if in mapscreen
-  MarkForRedrawalStrategicMap();
-  fMapScreenBottomDirty = TRUE;
+  SetMapPanelDirty(true);
+  SetMapScreenBottomDirty(true);
 
   return fWasPlayerControlled;
 }
 
-#ifdef JA2TESTVERSION
-void ClearMapControlledFlags(void) {
-  int32_t iCounterA = 0, iCounterB = 0;
-  uint16_t usMapSector = 0;
-
-  for (iCounterA = 1; iCounterA < MAP_WORLD_X - 1; iCounterA++) {
-    for (iCounterB = 1; iCounterB < MAP_WORLD_Y - 1; iCounterB++) {
-      usMapSector = GetSectorID16(iCounterA, (iCounterB));
-      StrategicMap[usMapSector].fEnemyControlled = FALSE;
-      SectorInfo[GetSectorID8(iCounterA, iCounterB)].fPlayer[0] = TRUE;
-    }
-  }
-}
-#endif
-
-/*
-BOOLEAN IsTheSectorPerceivedToBeUnderEnemyControl( int16_t sMapX, int16_t sMapY, int8_t bMapZ )
-{
-
-        // are we in battle in this sector?
-        if( ( sMapX == gWorldSectorX ) && ( sMapY == gWorldSectorY ) && ( bMapZ == gbWorldSectorZ )
-&& ( gTacticalStatus.uiFlags & INCOMBAT ) )
-        {
-                return( TRUE );
-        }
-
-
-        // does the player believe this sector is under enemy control?
-        return( !( SectorInfo[ GetSectorID8( sMapX, sMapY ) ].fPlayer[ bMapZ ] ) );
-}
-
-
-void MakePlayerPerceptionOfSectorControlCorrect( int16_t sMapX, int16_t sMapY, int8_t bMapZ )
-{
-        if (bMapZ == 0)
-        {
-                SectorInfo[ GetSectorID8( sMapX, sMapY ) ].fPlayer[ bMapZ ] = !( StrategicMap[
-GetSectorID16( sMapX, sMapY ) ].fEnemyControlled );
-        }
-        // else nothing, underground sector control is always up to date, because we don't track
-control down there
-
-        MarkForRedrawalStrategicMap();
-}
-*/
-
-void ReplaceSoldierProfileInPlayerGroup(uint8_t ubGroupID, uint8_t ubOldProfile, uint8_t ubNewProfile) {
+void ReplaceSoldierProfileInPlayerGroup(uint8_t ubGroupID, uint8_t ubOldProfile,
+                                        uint8_t ubNewProfile) {
   struct GROUP *pGroup;
   PLAYERGROUP *curr;
 

@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/WCheck.h"
 #include "Tactical/AnimationData.h"
 #include "Tactical/Points.h"
@@ -20,6 +18,7 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/DebugControl.h"
 #include "Utils/Message.h"
+#include "rust_fileman.h"
 
 #ifdef __GCC
 #pragma GCC diagnostic push
@@ -5288,22 +5287,22 @@ void InitAnimationSurfacesPerBodytype() {
 }
 
 BOOLEAN LoadAnimationStateInstructions() {
-  HWFILE hFile;
+  FileID hFile = FILE_ID_ERR;
   uint32_t uiBytesRead;
 
   // Open ani file
-  hFile = FileMan_Open(ANIMFILENAME, FILE_ACCESS_READ, FALSE);
+  hFile = File_OpenForReading(ANIMFILENAME);
 
   if (!hFile) {
     return (FALSE);
   }
 
   // Read in block
-  if (!FileMan_Read(hFile, gusAnimInst, sizeof(gusAnimInst), &uiBytesRead)) {
+  if (!File_Read(hFile, gusAnimInst, sizeof(gusAnimInst), &uiBytesRead)) {
     return (FALSE);
   }
 
-  FileMan_Close(hFile);
+  File_Close(hFile);
 
   return (TRUE);
 }
@@ -5445,7 +5444,7 @@ BOOLEAN SubstituteBodyTypeAnimation(struct SOLDIERTYPE *pSoldier, uint16_t usTes
 }
 
 int8_t GetBodyTypePaletteSubstitutionCode(struct SOLDIERTYPE *pSoldier, uint8_t ubBodyType,
-                                        char *zColFilename) {
+                                          char *zColFilename) {
   switch (ubBodyType) {
     case REGMALE:
     case BIGMALE:
@@ -5595,7 +5594,7 @@ uint16_t DetermineSoldierAnimationSurface(struct SOLDIERTYPE *pSoldier, uint16_t
     // Assume a target gridno is here.... get direction...
     // ATE: use +2 in gridno because here head is far from body
     bDir = (int8_t)GetDirectionToGridNoFromGridNo((int16_t)(pSoldier->sGridNo + 2),
-                                                pSoldier->sTargetGridNo);
+                                                  pSoldier->sTargetGridNo);
 
     return (gusQueenMonsterSpitAnimPerDir[bDir]);
   }

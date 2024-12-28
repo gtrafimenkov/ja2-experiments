@@ -4,6 +4,8 @@
 
 #include "MainMenuScreen.h"
 
+#include <string.h>
+
 #include "FadeScreen.h"
 #include "GameLoop.h"
 #include "GameScreen.h"
@@ -18,6 +20,7 @@
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
+#include "SGP/Input.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
@@ -32,7 +35,6 @@
 #include "SysGlobals.h"
 #include "Tactical/SoldierControl.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "Utils/Cursors.h"
 #include "Utils/EncryptedFile.h"
 #include "Utils/FontControl.h"
@@ -46,8 +48,6 @@
 
 #define MAINMENU_TEXT_FILE "LoadScreens\\MainMenu.edt"
 #define MAINMENU_RECORD_SIZE 80 * 2
-
-// #define TESTFOREIGNFONTS
 
 // MENU ITEMS
 enum {
@@ -70,8 +70,8 @@ int32_t iMenuButtons[NUM_MENU_ITEMS];
 
 uint16_t gusMainMenuButtonWidths[NUM_MENU_ITEMS];
 
-uint32_t guiMainMenuBackGroundImage;
-uint32_t guiJa2LogoImage;
+static struct VObject *mainMenuBackGroundImage;
+static struct VObject *ja2LogoImage;
 
 struct MOUSE_REGION gBackRegion;
 int8_t gbHandledMainMenu = 0;
@@ -100,9 +100,9 @@ void RenderMainMenu();
 void RestoreButtonBackGrounds();
 
 uint32_t MainMenuScreenInit() {
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Version Label: %S", zBuildInfo));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Version #:     %s", czVersionNumber));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Tracking #:    %S", zTrackingNumber));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("Version Label: %S", zBuildInfo));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("Version #:     %s", czVersionNumber));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("Tracking #:    %S", zTrackingNumber));
 
   return (TRUE);
 }
@@ -117,9 +117,9 @@ uint32_t MainMenuScreenHandle() {
   }
   if (guiSplashFrameFade) {  // Fade the splash screen.
     if (guiSplashFrameFade > 2)
-      ShadowVideoSurfaceRectUsingLowPercentTable(FRAME_BUFFER, 0, 0, 640, 480);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
     else if (guiSplashFrameFade > 1)
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, 0);
+      VSurfaceColorFill(vsFB, 0, 0, 640, 480, 0);
     else {
       SetMusicMode(MUSIC_MAIN_MENU);
     }
@@ -228,10 +228,6 @@ void HandleMainMenuScreen() {
 }
 
 BOOLEAN InitMainMenu() {
-  VOBJECT_DESC VObjectDesc;
-
-  //	gfDoHelpScreen = 0;
-
   // Check to see whatr saved game files exist
   InitSaveGameArray();
 
@@ -240,34 +236,24 @@ BOOLEAN InitMainMenu() {
 
   CreateDestroyMainMenuButtons(TRUE);
 
+  // TODO: there is no reason to address loaded images as indexes
+  //   just load the image, save the pointer, use the pointer, then remove the pointer when done
+
+  mainMenuBackGroundImage = LoadVObjectFromFile("LOADSCREENS\\MainMenuBackGround.sti");
+  ja2LogoImage = LoadVObjectFromFile("LOADSCREENS\\Ja2Logo.sti");
+
   // load background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LOADSCREENS\\MainMenuBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMainMenuBackGroundImage));
+  if (!mainMenuBackGroundImage) {
+    return FALSE;
+  }
 
   // load ja2 logo graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  //	FilenameForBPP("INTERFACE\\Ja2_2.sti", VObjectDesc.ImageFile);
-  FilenameForBPP("LOADSCREENS\\Ja2Logo.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiJa2LogoImage));
-
-  /*
-          // Gray out some buttons based on status of game!
-          if( gGameSettings.bLastSavedGameSlot < 0 || gGameSettings.bLastSavedGameSlot >=
-     NUM_SAVE_GAMES )
-          {
-                  DisableButton( iMenuButtons[ LOAD_GAME ] );
-          }
-          //The ini file said we have a saved game, but there is no saved game
-          else if( gbSaveGameArray[ gGameSettings.bLastSavedGameSlot ] == FALSE )
-                  DisableButton( iMenuButtons[ LOAD_GAME ] );
-  */
+  if (!ja2LogoImage) {
+    return FALSE;
+  }
 
   // if there are no saved games, disable the button
   if (!IsThereAnySavedGameFiles()) DisableButton(iMenuButtons[LOAD_GAME]);
-
-  //	DisableButton( iMenuButtons[ CREDITS ] );
-  //	DisableButton( iMenuButtons[ TITLE ] );
 
   gbHandledMainMenu = 0;
   fInitialRender = TRUE;
@@ -283,25 +269,13 @@ BOOLEAN InitMainMenu() {
 }
 
 void ExitMainMenu() {
-  //	uint32_t uiDestPitchBYTES; 	uint8_t
-  //*pDestBuf;
-
-  //	if( !gfDoHelpScreen )
-  { CreateDestroyBackGroundMouseMask(FALSE); }
-
+  CreateDestroyBackGroundMouseMask(FALSE);
   CreateDestroyMainMenuButtons(FALSE);
 
-  DeleteVideoObjectFromIndex(guiMainMenuBackGroundImage);
-  DeleteVideoObjectFromIndex(guiJa2LogoImage);
+  DeleteVideoObject(mainMenuBackGroundImage);
+  DeleteVideoObject(ja2LogoImage);
 
   gMsgBox.uiExitScreen = MAINMENU_SCREEN;
-  /*
-          // CLEAR THE FRAME BUFFER
-          pDestBuf = LockVideoSurface( FRAME_BUFFER, &uiDestPitchBYTES );
-          memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES );
-          UnLockVideoSurface( FRAME_BUFFER );
-          InvalidateScreen( );
-  */
 }
 
 void MenuButtonCallback(GUI_BUTTON *btn, int32_t reason) {
@@ -410,30 +384,13 @@ void ClearMainMenu() {
   uint8_t *pDestBuf;
 
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
   InvalidateScreen();
 }
 
-void SelectMainMenuBackGroundRegionCallBack(struct MOUSE_REGION *pRegion, int32_t iReason) {
-  if (iReason & MSYS_CALLBACK_REASON_INIT) {
-  } else if (iReason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
-    //		if( gfDoHelpScreen )
-    //		{
-    //			SetMainMenuExitScreen( INIT_SCREEN );
-    //			gfDoHelpScreen = FALSE;
-    //		}
-  } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
-    /*
-                    if( gfDoHelpScreen )
-                    {
-                            SetMainMenuExitScreen( INIT_SCREEN );
-                            gfDoHelpScreen = FALSE;
-                    }
-    */
-  }
-}
+void SelectMainMenuBackGroundRegionCallBack(struct MOUSE_REGION *pRegion, int32_t iReason) {}
 
 void SetMainMenuExitScreen(uint32_t uiNewScreen) {
   guiMainMenuExitScreen = uiNewScreen;
@@ -510,24 +467,17 @@ BOOLEAN CreateDestroyMainMenuButtons(BOOLEAN fCreate) {
           gusMainMenuButtonWidths[cnt] = GetWidthOfButtonPic((uint16_t)iMenuImages[cnt], 15);
           break;
       }
-#ifdef TESTFOREIGNFONTS
-      iMenuButtons[cnt] =
-          QuickCreateButton(iMenuImages[cnt], (int16_t)(320 - gusMainMenuButtonWidths[cnt] / 2),
-                            (int16_t)(0 + (cnt * 18)), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
-                            DEFAULT_MOVE_CALLBACK, MenuButtonCallback);
-#else
       iMenuButtons[cnt] =
           QuickCreateButton(iMenuImages[cnt], (int16_t)(320 - gusMainMenuButtonWidths[cnt] / 2),
                             (int16_t)(MAINMENU_Y + (cnt * MAINMENU_Y_SPACE)), BUTTON_TOGGLE,
                             MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK, MenuButtonCallback);
-#endif
       if (iMenuButtons[cnt] == -1) {
         return (FALSE);
       }
       ButtonList[iMenuButtons[cnt]]->UserData[0] = cnt;
 
 #ifndef _DEBUG
-      // load up some info from the 'mainmenu.edt' file.  This makes sure the file is present.  The
+      // load up some info from the 'mainmenu.edt' file.  This makes sure the file is present. The
       // file is
       // 'marked' with a code that identifies the testers
       iStartLoc = MAINMENU_RECORD_SIZE * cnt;
@@ -559,98 +509,16 @@ BOOLEAN CreateDestroyMainMenuButtons(BOOLEAN fCreate) {
 }
 
 void RenderMainMenu() {
-  struct VObject *hPixHandle;
+  BltVObject(vsSB, mainMenuBackGroundImage, 0, 0, 0);
+  BltVObject(vsFB, mainMenuBackGroundImage, 0, 0, 0);
 
-  // Get and display the background image
-  GetVideoObject(&hPixHandle, guiMainMenuBackGroundImage);
-  BltVideoObject(guiSAVEBUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, ja2LogoImage, 0, 188, 15);
+  BltVObject(vsSB, ja2LogoImage, 0, 188, 15);
 
-  GetVideoObject(&hPixHandle, guiJa2LogoImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 188, 15, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(guiSAVEBUFFER, hPixHandle, 0, 188, 15, VO_BLT_SRCTRANSPARENCY, NULL);
-
-#ifdef TESTFOREIGNFONTS
-  DrawTextToScreen(L"LARGEFONT1: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,
-                   0, 105, 640, LARGEFONT1, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE,
-                   LEFT_JUSTIFIED);
-  DrawTextToScreen(L"SMALLFONT1: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,
-                   0, 125, 640, SMALLFONT1, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE,
-                   LEFT_JUSTIFIED);
-  DrawTextToScreen(L"TINYFONT1: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,
-                   0, 145, 640, TINYFONT1, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE,
-                   LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT12POINT1: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 165,
-      640, FONT12POINT1, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(L"COMPFONT: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,
-                   0, 185, 640, COMPFONT, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE,
-                   LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"SMALLCOMPFONT: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 205,
-      640, SMALLCOMPFONT, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT10ROMAN: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 225,
-      640, FONT10ROMAN, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT12ROMAN: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 245,
-      640, FONT12ROMAN, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT14SANSERIF: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 255,
-      640, FONT14SANSERIF, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"MILITARYFONT: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 265,
-      640, MILITARYFONT1, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT10ARIAL: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 285,
-      640, FONT10ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT14ARIAL: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 305,
-      640, FONT14ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT12ARIAL: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 325,
-      640, FONT12ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT10ARIALBOLD: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 345,
-      640, FONT10ARIALBOLD, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(L"BLOCKFONT: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,
-                   0, 365, 640, BLOCKFONT, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE,
-                   LEFT_JUSTIFIED);
-  DrawTextToScreen(L"BLOCKFONT2: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,
-                   0, 385, 640, BLOCKFONT2, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE,
-                   LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT12ARIALFIXEDWIDTH: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,
-      0, 405, 640, FONT12ARIALFIXEDWIDTH, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE,
-      LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT16ARIAL: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 425,
-      640, FONT16ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"BLOCKFONTNARROW: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 445,
-      640, BLOCKFONTNARROW, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  DrawTextToScreen(
-      L"FONT14HUMANIST: ����������������������������������������" /*gzCopyrightText[ 0 ]*/, 0, 465,
-      640, FONT14HUMANIST, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-#else
   DrawTextToScreen(gzCopyrightText[0], 0, 465, 640, FONT10ARIAL, FONT_MCOLOR_WHITE,
                    FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
-#endif
 
   InvalidateRegion(0, 0, 640, 480);
 }
 
-void RestoreButtonBackGrounds() {
-  uint8_t cnt;
-
-  //	RestoreExternBackgroundRect( (uint16_t)(320 - gusMainMenuButtonWidths[TITLE]/2),
-  // MAINMENU_TITLE_Y, gusMainMenuButtonWidths[TITLE], 23 );
-
-#ifndef TESTFOREIGNFONTS
-  for (cnt = 0; cnt < NUM_MENU_ITEMS; cnt++) {
-    RestoreExternBackgroundRect((uint16_t)(320 - gusMainMenuButtonWidths[cnt] / 2),
-                                (int16_t)(MAINMENU_Y + (cnt * MAINMENU_Y_SPACE) - 1),
-                                (uint16_t)(gusMainMenuButtonWidths[cnt] + 1), 23);
-  }
-#endif
-}
+void RestoreButtonBackGrounds() {}

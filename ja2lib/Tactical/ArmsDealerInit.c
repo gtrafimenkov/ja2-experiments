@@ -8,7 +8,6 @@
 #include <string.h>
 
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Strategic/GameClock.h"
@@ -19,6 +18,7 @@
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/Weapons.h"
 #include "Utils/Message.h"
+#include "rust_fileman.h"
 
 #ifdef __GCC
 #pragma GCC diagnostic push
@@ -136,7 +136,7 @@ BOOLEAN IsItemInfoSpecial(SPECIAL_ITEM_INFO *pSpclItemInfo);
 BOOLEAN DoesItemAppearInDealerInventoryList(uint8_t ubArmsDealer, uint16_t usItemIndex,
                                             BOOLEAN fPurchaseFromPlayer);
 
-BOOLEAN LoadIncompleteArmsDealersStatus(HWFILE hFile, BOOLEAN fIncludesElgin,
+BOOLEAN LoadIncompleteArmsDealersStatus(FileID hFile, BOOLEAN fIncludesElgin,
                                         BOOLEAN fIncludesManny);
 
 // int16_t GetSpecialItemFromArmsDealerInventory( uint8_t ubArmsDealer, uint16_t usItemIndex,
@@ -146,7 +146,8 @@ void GuaranteeMinimumAlcohol(uint8_t ubArmsDealer);
 
 BOOLEAN ItemIsARocketRifle(int16_t sItemIndex);
 
-BOOLEAN GetArmsDealerShopHours(uint8_t ubArmsDealer, uint32_t *puiOpeningTime, uint32_t *puiClosingTime);
+BOOLEAN GetArmsDealerShopHours(uint8_t ubArmsDealer, uint32_t *puiOpeningTime,
+                               uint32_t *puiClosingTime);
 
 void InitAllArmsDealers() {
   uint8_t ubArmsDealer;
@@ -213,19 +214,19 @@ void ShutDownArmsDealers() {
   }
 }
 
-BOOLEAN SaveArmsDealerInventoryToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveArmsDealerInventoryToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
   uint8_t ubArmsDealer;
   uint16_t usItemIndex;
 
   // Save the arms dealers status
-  if (!FileMan_Write(hFile, gArmsDealerStatus, sizeof(gArmsDealerStatus), &uiNumBytesWritten)) {
+  if (!File_Write(hFile, gArmsDealerStatus, sizeof(gArmsDealerStatus), &uiNumBytesWritten)) {
     return (FALSE);
   }
 
   // save the dealers inventory item headers (all at once)
-  if (!FileMan_Write(hFile, gArmsDealersInventory, sizeof(gArmsDealersInventory),
-                     &uiNumBytesWritten)) {
+  if (!File_Write(hFile, gArmsDealersInventory, sizeof(gArmsDealersInventory),
+                  &uiNumBytesWritten)) {
     return (FALSE);
   }
 
@@ -235,10 +236,10 @@ BOOLEAN SaveArmsDealerInventoryToSaveGameFile(HWFILE hFile) {
     for (usItemIndex = 1; usItemIndex < MAXITEMS; usItemIndex++) {
       // if there are any special item elements allocated for this item, save them
       if (gArmsDealersInventory[ubArmsDealer][usItemIndex].ubElementsAlloced > 0) {
-        if (!FileMan_Write(hFile, &gArmsDealersInventory[ubArmsDealer][usItemIndex].SpecialItem[0],
-                           sizeof(DEALER_SPECIAL_ITEM) *
-                               gArmsDealersInventory[ubArmsDealer][usItemIndex].ubElementsAlloced,
-                           &uiNumBytesWritten)) {
+        if (!File_Write(hFile, &gArmsDealersInventory[ubArmsDealer][usItemIndex].SpecialItem[0],
+                        sizeof(DEALER_SPECIAL_ITEM) *
+                            gArmsDealersInventory[ubArmsDealer][usItemIndex].ubElementsAlloced,
+                        &uiNumBytesWritten)) {
           return (FALSE);
         }
       }
@@ -248,7 +249,7 @@ BOOLEAN SaveArmsDealerInventoryToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadArmsDealerInventoryFromSavedGameFile(HWFILE hFile, BOOLEAN fIncludesElgin,
+BOOLEAN LoadArmsDealerInventoryFromSavedGameFile(FileID hFile, BOOLEAN fIncludesElgin,
                                                  BOOLEAN fIncludesManny) {
   uint32_t uiNumBytesRead;
   uint8_t ubArmsDealer;
@@ -263,13 +264,12 @@ BOOLEAN LoadArmsDealerInventoryFromSavedGameFile(HWFILE hFile, BOOLEAN fIncludes
     // info for all dealers is in the save file
 
     // Load the arms dealers status
-    if (!FileMan_Read(hFile, gArmsDealerStatus, sizeof(gArmsDealerStatus), &uiNumBytesRead)) {
+    if (!File_Read(hFile, gArmsDealerStatus, sizeof(gArmsDealerStatus), &uiNumBytesRead)) {
       return (FALSE);
     }
 
     // load the dealers inventory item headers (all at once)
-    if (!FileMan_Read(hFile, gArmsDealersInventory, sizeof(gArmsDealersInventory),
-                      &uiNumBytesRead)) {
+    if (!File_Read(hFile, gArmsDealersInventory, sizeof(gArmsDealersInventory), &uiNumBytesRead)) {
       return (FALSE);
     }
   } else {
@@ -290,10 +290,10 @@ BOOLEAN LoadArmsDealerInventoryFromSavedGameFile(HWFILE hFile, BOOLEAN fIncludes
                 gArmsDealersInventory[ubArmsDealer][usItemIndex].ubElementsAlloced))
           return (FALSE);
 
-        if (!FileMan_Read(hFile, &gArmsDealersInventory[ubArmsDealer][usItemIndex].SpecialItem[0],
-                          sizeof(DEALER_SPECIAL_ITEM) *
-                              gArmsDealersInventory[ubArmsDealer][usItemIndex].ubElementsAlloced,
-                          &uiNumBytesRead)) {
+        if (!File_Read(hFile, &gArmsDealersInventory[ubArmsDealer][usItemIndex].SpecialItem[0],
+                       sizeof(DEALER_SPECIAL_ITEM) *
+                           gArmsDealersInventory[ubArmsDealer][usItemIndex].ubElementsAlloced,
+                       &uiNumBytesRead)) {
           return (FALSE);
         }
       }
@@ -433,7 +433,8 @@ void DailyCheckOnItemQuantities() {
                 }
 
                 // Determine when the inventory should arrive
-                uiArrivalDay = GetWorldDay() + ubReorderDays;  // consider changing this to minutes
+                uiArrivalDay =
+                    GetGameTimeInDays() + ubReorderDays;  // consider changing this to minutes
 
                 // post new order
                 gArmsDealersInventory[ubArmsDealer][usItemIndex].ubQtyOnOrder = ubNumItems;
@@ -445,7 +446,7 @@ void DailyCheckOnItemQuantities() {
         {
           // and today is the day the items come in
           if (gArmsDealersInventory[ubArmsDealer][usItemIndex].uiOrderArrivalTime >=
-              GetWorldDay()) {
+              GetGameTimeInDays()) {
             ArmsDealerGetsFreshStock(ubArmsDealer, usItemIndex,
                                      gArmsDealersInventory[ubArmsDealer][usItemIndex].ubQtyOnOrder);
 
@@ -967,7 +968,7 @@ BOOLEAN RepairmanIsFixingItemsButNoneAreDoneYet(uint8_t ubProfileID) {
             // if the item has been repaired
             if (gArmsDealersInventory[bArmsDealer][usItemIndex]
                     .SpecialItem[ubElement]
-                    .uiRepairDoneTime <= GetWorldTotalMin()) {
+                    .uiRepairDoneTime <= GetGameTimeInMin()) {
               // A repair item is ready, therefore, return false
               return (FALSE);
             } else {
@@ -982,7 +983,8 @@ BOOLEAN RepairmanIsFixingItemsButNoneAreDoneYet(uint8_t ubProfileID) {
   return (fHaveOnlyUnRepairedItems);
 }
 
-uint32_t GetTimeToFixItemBeingRepaired(uint8_t ubArmsDealer, uint16_t usItemIndex, uint8_t ubElement) {
+uint32_t GetTimeToFixItemBeingRepaired(uint8_t ubArmsDealer, uint16_t usItemIndex,
+                                       uint8_t ubElement) {
   // dealer must be a repair dealer
   Assert(DoesDealerDoRepairs(ubArmsDealer));
   // element index must be valid
@@ -996,15 +998,16 @@ uint32_t GetTimeToFixItemBeingRepaired(uint8_t ubArmsDealer, uint16_t usItemInde
 
   // if the item has already been repaired
   if (gArmsDealersInventory[ubArmsDealer][usItemIndex].SpecialItem[ubElement].uiRepairDoneTime <=
-      GetWorldTotalMin())
+      GetGameTimeInMin())
     return (0);
 
   // Return how many more minutes it will take to fix the item
   return (gArmsDealersInventory[ubArmsDealer][usItemIndex].SpecialItem[ubElement].uiRepairDoneTime -
-          GetWorldTotalMin());
+          GetGameTimeInMin());
 }
 
-BOOLEAN CanDealerTransactItem(uint8_t ubArmsDealer, uint16_t usItemIndex, BOOLEAN fPurchaseFromPlayer) {
+BOOLEAN CanDealerTransactItem(uint8_t ubArmsDealer, uint16_t usItemIndex,
+                              BOOLEAN fPurchaseFromPlayer) {
   switch (ArmsDealerInfo[ubArmsDealer].ubTypeOfArmsDealer) {
     case ARMS_DEALER_SELLS_ONLY:
       if (fPurchaseFromPlayer) {
@@ -1506,7 +1509,7 @@ void AddItemToArmsDealerInventory(uint8_t ubArmsDealer, uint16_t usItemIndex,
           fSuccess = ResizeSpecialItemArray(
               &gArmsDealersInventory[ubArmsDealer][usItemIndex],
               (uint8_t)(gArmsDealersInventory[ubArmsDealer][usItemIndex].ubElementsAlloced +
-                      ubElementsToAdd));
+                        ubElementsToAdd));
         }
 
         if (!fSuccess) {
@@ -1924,7 +1927,7 @@ uint32_t WhenWillRepairmanBeAllDoneRepairing(uint8_t ubArmsDealer) {
   Assert(DoesDealerDoRepairs(ubArmsDealer));
 
   // if nothing is in for repairs, he'll be free RIGHT NOW!
-  uiWhenFree = GetWorldTotalMin();
+  uiWhenFree = GetGameTimeInMin();
 
   // loop through the dealers inventory
   for (usItemIndex = 1; usItemIndex < MAXITEMS; usItemIndex++) {
@@ -1957,7 +1960,7 @@ uint32_t WhenWillRepairmanBeAllDoneRepairing(uint8_t ubArmsDealer) {
 }
 
 uint32_t CalculateSpecialItemRepairTime(uint8_t ubArmsDealer, uint16_t usItemIndex,
-                                      SPECIAL_ITEM_INFO *pSpclItemInfo) {
+                                        SPECIAL_ITEM_INFO *pSpclItemInfo) {
   uint32_t uiRepairTime;
   uint8_t ubCnt;
 
@@ -2002,7 +2005,8 @@ uint32_t CalculateObjectItemRepairTime(uint8_t ubArmsDealer, struct OBJECTTYPE *
   return (uiRepairTime);
 }
 
-uint32_t CalculateSimpleItemRepairTime(uint8_t ubArmsDealer, uint16_t usItemIndex, int8_t bItemCondition) {
+uint32_t CalculateSimpleItemRepairTime(uint8_t ubArmsDealer, uint16_t usItemIndex,
+                                       int8_t bItemCondition) {
   uint32_t uiTimeToRepair = 0;
   uint32_t uiRepairCost = 0;
 
@@ -2036,7 +2040,7 @@ uint32_t CalculateSimpleItemRepairTime(uint8_t ubArmsDealer, uint16_t usItemInde
 }
 
 uint32_t CalculateSpecialItemRepairCost(uint8_t ubArmsDealer, uint16_t usItemIndex,
-                                      SPECIAL_ITEM_INFO *pSpclItemInfo) {
+                                        SPECIAL_ITEM_INFO *pSpclItemInfo) {
   uint32_t uiRepairCost;
   uint8_t ubCnt;
 
@@ -2081,7 +2085,8 @@ uint32_t CalculateObjectItemRepairCost(uint8_t ubArmsDealer, struct OBJECTTYPE *
   return (uiRepairCost);
 }
 
-uint32_t CalculateSimpleItemRepairCost(uint8_t ubArmsDealer, uint16_t usItemIndex, int8_t bItemCondition) {
+uint32_t CalculateSimpleItemRepairCost(uint8_t ubArmsDealer, uint16_t usItemIndex,
+                                       int8_t bItemCondition) {
   uint32_t uiItemCost = 0;
   uint32_t uiRepairCost = 0;
   int16_t sRepairCostAdj = 0;
@@ -2223,7 +2228,8 @@ BOOLEAN DoesItemAppearInDealerInventoryList(uint8_t ubArmsDealer, uint16_t usIte
   return (FALSE);
 }
 
-uint16_t CalcValueOfItemToDealer(uint8_t ubArmsDealer, uint16_t usItemIndex, BOOLEAN fDealerSelling) {
+uint16_t CalcValueOfItemToDealer(uint8_t ubArmsDealer, uint16_t usItemIndex,
+                                 BOOLEAN fDealerSelling) {
   uint16_t usBasePrice;
   uint8_t ubItemPriceClass;
   uint8_t ubDealerPriceClass;
@@ -2319,7 +2325,7 @@ uint16_t CalcValueOfItemToDealer(uint8_t ubArmsDealer, uint16_t usItemIndex, BOO
 }
 
 // this only exists to support saves made with game versions < 54 or 55!
-BOOLEAN LoadIncompleteArmsDealersStatus(HWFILE hFile, BOOLEAN fIncludesElgin,
+BOOLEAN LoadIncompleteArmsDealersStatus(FileID hFile, BOOLEAN fIncludesElgin,
                                         BOOLEAN fIncludesManny) {
   uint32_t uiDealersSaved;
   uint32_t uiNumBytesRead;
@@ -2335,14 +2341,14 @@ BOOLEAN LoadIncompleteArmsDealersStatus(HWFILE hFile, BOOLEAN fIncludesElgin,
   }
 
   // read in all other dealer's status
-  if (!FileMan_Read(hFile, gArmsDealerStatus, uiDealersSaved * sizeof(ARMS_DEALER_STATUS),
-                    &uiNumBytesRead)) {
+  if (!File_Read(hFile, gArmsDealerStatus, uiDealersSaved * sizeof(ARMS_DEALER_STATUS),
+                 &uiNumBytesRead)) {
     return (FALSE);
   }
 
   // read in all other dealer's inventory
-  if (!FileMan_Read(hFile, gArmsDealersInventory,
-                    uiDealersSaved * sizeof(DEALER_ITEM_HEADER) * MAXITEMS, &uiNumBytesRead)) {
+  if (!File_Read(hFile, gArmsDealersInventory,
+                 uiDealersSaved * sizeof(DEALER_ITEM_HEADER) * MAXITEMS, &uiNumBytesRead)) {
     return (FALSE);
   }
 
@@ -2395,7 +2401,8 @@ BOOLEAN ItemIsARocketRifle(int16_t sItemIndex) {
   }
 }
 
-BOOLEAN GetArmsDealerShopHours(uint8_t ubArmsDealer, uint32_t *puiOpeningTime, uint32_t *puiClosingTime) {
+BOOLEAN GetArmsDealerShopHours(uint8_t ubArmsDealer, uint32_t *puiOpeningTime,
+                               uint32_t *puiClosingTime) {
   struct SOLDIERTYPE *pSoldier;
 
   pSoldier = FindSoldierByProfileID(ArmsDealerInfo[ubArmsDealer].ubShopKeeperID, FALSE);
@@ -2413,7 +2420,7 @@ BOOLEAN GetArmsDealerShopHours(uint8_t ubArmsDealer, uint32_t *puiOpeningTime, u
 }
 
 uint32_t CalculateOvernightRepairDelay(uint8_t ubArmsDealer, uint32_t uiTimeWhenFreeToStartIt,
-                                     uint32_t uiMinutesToFix) {
+                                       uint32_t uiMinutesToFix) {
   uint32_t uiOpeningTime, uiClosingTime;
   uint32_t uiMinutesClosedOvernight;
   uint32_t uiDelayInDays = 0;
@@ -2449,7 +2456,8 @@ uint32_t CalculateOvernightRepairDelay(uint8_t ubArmsDealer, uint32_t uiTimeWhen
   return (uiDelayInDays * uiMinutesClosedOvernight);
 }
 
-uint32_t CalculateMinutesClosedBetween(uint8_t ubArmsDealer, uint32_t uiStartTime, uint32_t uiEndTime) {
+uint32_t CalculateMinutesClosedBetween(uint8_t ubArmsDealer, uint32_t uiStartTime,
+                                       uint32_t uiEndTime) {
   uint32_t uiOpeningTime, uiClosingTime;
   uint32_t uiMinutesClosedOvernight;
   uint32_t uiDaysDifference = 0;

@@ -60,7 +60,7 @@
 #define BOBBYR_SHIPMENT_NUM_ITEMS_Y BOBBYR_SHIPMENT_SHIPMENT_ORDER_NUM_Y
 #define BOBBYR_SHIPMENT_NUM_ITEMS_WIDTH 116
 
-//#define		BOBBYR_SHIPMENT_
+// #define		BOBBYR_SHIPMENT_
 
 uint32_t guiBobbyRShipmentGrid;
 
@@ -100,14 +100,12 @@ int32_t CountNumberValidShipmentForTheShipmentsPage();
 void GameInitBobbyRShipments() {}
 
 BOOLEAN EnterBobbyRShipments() {
-  VOBJECT_DESC VObjectDesc;
-
   InitBobbyRWoodBackground();
 
   // load the Order Grid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BobbyRay_OnOrder.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBobbyRShipmentGrid));
+  if (!AddVObjectFromFile("LAPTOP\\BobbyRay_OnOrder.sti", &guiBobbyRShipmentGrid)) {
+    return FALSE;
+  }
 
   guiBobbyRShipmentBackImage = LoadButtonImage("LAPTOP\\CatalogueButton.sti", -1, 0, -1, 1, -1);
   guiBobbyRShipmetBack = CreateIconAndTextButton(
@@ -260,12 +258,10 @@ void DisplayShipmentGrid() {
   GetVideoObject(&hPixHandle, guiBobbyRShipmentGrid);
 
   // Shipment Order Grid
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_SHIPMENT_DELIVERY_GRID_X,
-                 BOBBYR_SHIPMENT_DELIVERY_GRID_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBYR_SHIPMENT_DELIVERY_GRID_X, BOBBYR_SHIPMENT_DELIVERY_GRID_Y);
 
   // Order Grid
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 1, BOBBYR_SHIPMENT_ORDER_GRID_X,
-                 BOBBYR_SHIPMENT_ORDER_GRID_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 1, BOBBYR_SHIPMENT_ORDER_GRID_X, BOBBYR_SHIPMENT_ORDER_GRID_Y);
 }
 
 void DisplayShipmentTitles() {
@@ -338,9 +334,9 @@ void CreatePreviousShipmentsMouseRegions() {
 
   for (uiCnt = 0; uiCnt < uiNumItems; uiCnt++) {
     MSYS_DefineRegion(&gSelectedPreviousShipmentsRegion[uiCnt], BOBBYR_SHIPMENT_ORDER_NUM_X, usPosY,
-                      (uint16_t)(BOBBYR_SHIPMENT_ORDER_NUM_X + usWidth), (uint16_t)(usPosY + usHeight),
-                      MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK,
-                      SelectPreviousShipmentsRegionCallBack);
+                      (uint16_t)(BOBBYR_SHIPMENT_ORDER_NUM_X + usWidth),
+                      (uint16_t)(usPosY + usHeight), MSYS_PRIORITY_HIGH, CURSOR_WWW,
+                      MSYS_NO_CALLBACK, SelectPreviousShipmentsRegionCallBack);
     MSYS_AddRegion(&gSelectedPreviousShipmentsRegion[uiCnt]);
     MSYS_SetRegionUserData(&gSelectedPreviousShipmentsRegion[uiCnt], 0, uiCnt);
 

@@ -23,17 +23,15 @@ uint32_t guiArmourGrid;
 void GameInitBobbyRArmour() {}
 
 BOOLEAN EnterBobbyRArmour() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Armourbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiArmourBackground));
+  if (!AddVObjectFromFile("LAPTOP\\Armourbackground.sti", &guiArmourBackground)) {
+    return FALSE;
+  }
 
   // load the gunsgrid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Armourgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiArmourGrid));
+  if (!AddVObjectFromFile("LAPTOP\\Armourgrid.sti", &guiArmourGrid)) {
+    return FALSE;
+  }
 
   InitBobbyBrTitle();
   // Draw menu bar
@@ -72,8 +70,7 @@ void RenderBobbyRArmour() {
 
   // GunForm
   GetVideoObject(&hPixHandle, guiArmourGrid);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y);
 
   DisplayItemInfo(IC_ARMOUR);
 

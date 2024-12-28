@@ -11,7 +11,6 @@
 #include "Laptop/LaptopSave.h"
 #include "Laptop/Mercs.h"
 #include "Laptop/SpeckQuotes.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -27,6 +26,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
 
 #define MERC_ACCOUNT_TEXT_FONT FONT14ARIAL
 #define MERC_ACCOUNT_TEXT_COLOR FONT_MCOLOR_WHITE
@@ -89,19 +89,19 @@ void MercAuthorizePaymentMessageBoxCallBack(uint8_t bExitValue);
 void GameInitMercsAccount() {}
 
 BOOLEAN EnterMercsAccount() {
-  VOBJECT_DESC VObjectDesc;
-
   InitMercBackGround();
 
   // load the Arrow graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_ORDERGRID);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMercOrderGrid));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_ORDERGRID);
+  if (!AddVObjectFromFile(ImageFile, &guiMercOrderGrid)) {
+    return FALSE;
+  }
 
   // load the Arrow graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\AccountNumber.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiAccountNumberGrid));
+  if (!AddVObjectFromFile("LAPTOP\\AccountNumber.sti", &guiAccountNumberGrid)) {
+    return FALSE;
+  }
 
   guiMercAuthorizeButtonImage = LoadButtonImage("LAPTOP\\BigButtons.sti", -1, 0, -1, 1, -1);
 
@@ -158,13 +158,11 @@ void RenderMercsAccount() {
 
   // Account Number Grid
   GetVideoObject(&hPixHandle, guiMercOrderGrid);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_AC_ORDER_GRID_X, MERC_AC_ORDER_GRID_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_AC_ORDER_GRID_X, MERC_AC_ORDER_GRID_Y);
 
   // Merc Order Grid
   GetVideoObject(&hPixHandle, guiAccountNumberGrid);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_AC_ACCOUNT_NUMBER_X, MERC_AC_ACCOUNT_NUMBER_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_AC_ACCOUNT_NUMBER_X, MERC_AC_ACCOUNT_NUMBER_Y);
 
   // Display Players account number
   swprintf(sText, ARR_SIZE(sText), L"%s %05d", MercAccountText[MERC_ACCOUNT_ACCOUNT],
@@ -346,7 +344,7 @@ void SettleMercAccounts() {
           gMercProfiles[ubMercID].sSalary * gMercProfiles[ubMercID].iMercMercContractLength;
 
       // if the player can afford to pay this merc
-      if (MoneyGetBalance() >= iPartialPayment + iContractCharge) {
+      if (LaptopMoneyGetBalance() >= iPartialPayment + iContractCharge) {
         // Increment the counter that keeps track of the of the number of days the player has paid
         // for merc services
         LaptopSaveInfo.guiNumberOfMercPaymentsInDays +=
@@ -373,7 +371,7 @@ void SettleMercAccounts() {
   AddTransactionToPlayersBook(PAY_SPECK_FOR_MERC, GetMercIDFromMERCArray(gubCurMercIndex),
                               -iPartialPayment);
   AddHistoryToPlayersLog(HISTORY_SETTLED_ACCOUNTS_AT_MERC, GetMercIDFromMERCArray(gubCurMercIndex),
-                         GetWorldTotalMin(), -1, -1);
+                         GetGameTimeInMin(), -1, -1);
 
   // Increment the amount of money paid to speck
   LaptopSaveInfo.uiTotalMoneyPaidToSpeck += iPartialPayment;

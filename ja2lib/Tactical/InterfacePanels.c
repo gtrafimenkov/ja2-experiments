@@ -69,7 +69,6 @@
 #include "TileEngine/RadarScreen.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
 #include "UI.h"
 #include "Utils/Cursors.h"
@@ -79,6 +78,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
 
 // DEFINES FOR VARIOUS PANELS
 #define CLOCK_X 554
@@ -367,16 +367,16 @@ INV_REGION_DESC gSMCamoXY = {
 };
 
 int16_t sTEAMAPPanelXY[] = {69,  (6 + INTERFACE_START_Y), 151, (6 + INTERFACE_START_Y),
-                          234, (6 + INTERFACE_START_Y), 317, (6 + INTERFACE_START_Y),
-                          401, (6 + INTERFACE_START_Y), 484, (6 + INTERFACE_START_Y)};
+                            234, (6 + INTERFACE_START_Y), 317, (6 + INTERFACE_START_Y),
+                            401, (6 + INTERFACE_START_Y), 484, (6 + INTERFACE_START_Y)};
 
 int16_t sTEAMFacesXY[] = {13, (366), 97, (366), 180, (366), 263, (366), 346, (366), 429, (366)};
 
 int16_t sTEAMNamesXY[] = {7, (415), 90, (415), 173, (415), 256, (415), 339, (415), 422, (415)};
 
 int16_t sTEAMFaceHighlXY[] = {4,   (2 + INTERFACE_START_Y), 87,  (2 + INTERFACE_START_Y),
-                            170, (2 + INTERFACE_START_Y), 253, (2 + INTERFACE_START_Y),
-                            336, (2 + INTERFACE_START_Y), 419, (2 + INTERFACE_START_Y)};
+                              170, (2 + INTERFACE_START_Y), 253, (2 + INTERFACE_START_Y),
+                              336, (2 + INTERFACE_START_Y), 419, (2 + INTERFACE_START_Y)};
 
 int16_t sTEAMLifeXY[] = {
     69,  (365 + TM_LIFEBAR_HEIGHT), 152, (365 + TM_LIFEBAR_HEIGHT), 235, (365 + TM_LIFEBAR_HEIGHT),
@@ -398,11 +398,11 @@ int16_t sTEAMApXY[] = {70, (413), 153, (413), 235, (413), 319, (413), 402, (413)
 int16_t sTEAMBarsXY[] = {61, (363), 145, (363), 228, (363), 311, (363), 394, (363), 477, (362)};
 
 int16_t sTEAMHandInvXY[] = {TM_INV_HAND1STARTX + (0 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
-                          TM_INV_HAND1STARTX + (1 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
-                          TM_INV_HAND1STARTX + (2 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
-                          TM_INV_HAND1STARTX + (3 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
-                          TM_INV_HAND1STARTX + (4 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
-                          TM_INV_HAND1STARTX + (5 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY};
+                            TM_INV_HAND1STARTX + (1 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
+                            TM_INV_HAND1STARTX + (2 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
+                            TM_INV_HAND1STARTX + (3 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
+                            TM_INV_HAND1STARTX + (4 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY,
+                            TM_INV_HAND1STARTX + (5 * TM_INV_HAND_SEP), TM_INV_HAND1STARTY};
 
 int32_t iSMPanelButtons[NUM_SM_BUTTONS];
 int32_t iTEAMPanelButtons[NUM_TEAM_BUTTONS];
@@ -1074,28 +1074,26 @@ void EnableSMPanelButtons(BOOLEAN fEnable, BOOLEAN fFromItemPickup) {
 uint16_t GetSMPanelCurrentMerc() { return (gusSMCurrentMerc); }
 
 BOOLEAN InitializeSMPanel() {
-  VOBJECT_DESC VObjectDesc;
-
   // failing the CHECKF after this will cause you to lose your mouse
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\inventory_bottom_panel.STI");
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMPanel));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_bottom_panel.STI", &guiSMPanel)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_gold_front.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMObjects));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_gold_front.sti", &guiSMObjects)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inv_frn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMObjects2));
+  if (!AddVObjectFromFile("INTERFACE\\inv_frn.sti", &guiSMObjects2)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\secondary_gun_hidden.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSecItemHiddenVO));
+  if (!AddVObjectFromFile("INTERFACE\\secondary_gun_hidden.sti", &guiSecItemHiddenVO)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBrownBackgroundForTeamPanel));
+  if (!AddVObjectFromFile("INTERFACE\\Bars.sti", &guiBrownBackgroundForTeamPanel)) {
+    return FALSE;
+  }
 
   // Clear inv display stuff
   memset(gfSM_HandInvDispText, 0, sizeof(gfSM_HandInvDispText));
@@ -1109,7 +1107,9 @@ BOOLEAN InitializeSMPanel() {
   MSYS_AddRegion(&gViewportRegion);
 
   // Create buttons
-  CHECKF(CreateSMPanelButtons());
+  if (!(CreateSMPanelButtons())) {
+    return FALSE;
+  }
 
   // Set viewports
   // Define region for panel
@@ -1181,7 +1181,7 @@ BOOLEAN CreateSMPanelButtons() {
   gfUIStanceDifferent = TRUE;
   gfAllDisabled = FALSE;
 
-  FilenameForBPP("INTERFACE\\inventory_buttons.sti", ubString);
+  CopyFilename("INTERFACE\\inventory_buttons.sti", ubString);
   // Load button Graphics
   iSMPanelImages[STANCEUP_IMAGES] = LoadButtonImage(ubString, -1, 0, -1, 10, -1);
 
@@ -1215,11 +1215,11 @@ BOOLEAN CreateSMPanelButtons() {
   iBurstButtonImages[WM_ATTACHED] =
       UseLoadedButtonImage(iSMPanelImages[STANCEUP_IMAGES], -1, 26, -1, -1, -1);
 
-  FilenameForBPP("INTERFACE\\invadd-ons.sti", ubString);
+  CopyFilename("INTERFACE\\invadd-ons.sti", ubString);
   // Load button Graphics
   iSMPanelImages[STANCE_IMAGES] = LoadButtonImage(ubString, 0, 0, -1, 2, -1);
 
-  FilenameForBPP("INTERFACE\\inventory_buttons_2.sti", ubString);
+  CopyFilename("INTERFACE\\inventory_buttons_2.sti", ubString);
   // Load button Graphics
   iSMPanelImages[DONE_IMAGES] = LoadButtonImage(ubString, -1, 1, -1, 3, -1);
   iSMPanelImages[MAPSCREEN_IMAGES] =
@@ -1259,7 +1259,7 @@ BOOLEAN CreateSMPanelButtons() {
       iSMPanelImages[STANCEUP_IMAGES], SM_STANCEUPB_X, SM_STANCEUPB_Y, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGH - 1, DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnStanceUpCallback);
   if (iSMPanelButtons[STANCEUP_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   SetButtonFastHelpText(iSMPanelButtons[STANCEUP_BUTTON], TacticalStr[CHANGE_STANCE_UP_POPUPTEXT]);
@@ -1271,7 +1271,7 @@ BOOLEAN CreateSMPanelButtons() {
       QuickCreateButton(iSMPanelImages[UPDOWN_IMAGES], SM_UPDOWNB_X, SM_UPDOWNB_Y, BUTTON_NEWTOGGLE,
                         MSYS_PRIORITY_HIGH - 1, MSYS_NO_CALLBACK, (GUI_CALLBACK)BtnUpdownCallback);
   if (iSMPanelButtons[UPDOWN_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   // SetButtonFastHelpText( iSMPanelButtons[ UPDOWN_BUTTON ],L"Whatever");
@@ -1282,7 +1282,7 @@ BOOLEAN CreateSMPanelButtons() {
       iSMPanelImages[CLIMB_IMAGES], SM_CLIMBB_X, SM_CLIMBB_Y, BUTTON_TOGGLE, MSYS_PRIORITY_HIGH - 1,
       DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnClimbCallback);
   if (iSMPanelButtons[CLIMB_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   // SetButtonFastHelpText( iSMPanelButtons[ CLIMB_BUTTON ],L"Climb");
@@ -1293,7 +1293,7 @@ BOOLEAN CreateSMPanelButtons() {
       iSMPanelImages[STANCEDOWN_IMAGES], SM_STANCEDOWNB_X, SM_STANCEDOWNB_Y, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGH - 1, DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnStanceDownCallback);
   if (iSMPanelButtons[STANCEDOWN_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   // SetButtonFastHelpText( iSMPanelButtons[ STANCEDOWN_BUTTON ],L"Change Stance Down");
@@ -1305,7 +1305,7 @@ BOOLEAN CreateSMPanelButtons() {
       iSMPanelImages[HANDCURSOR_IMAGES], SM_HANDCURSORB_X, SM_HANDCURSORB_Y, BUTTON_NEWTOGGLE,
       MSYS_PRIORITY_HIGH - 1, MSYS_NO_CALLBACK, (GUI_CALLBACK)BtnHandCursorCallback);
   if (iSMPanelButtons[HANDCURSOR_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   // SetButtonFastHelpText( iSMPanelButtons[ HANDCURSOR_BUTTON ],L"Change Stance Down");
@@ -1316,7 +1316,7 @@ BOOLEAN CreateSMPanelButtons() {
       iSMPanelImages[PREVMERC_IMAGES], SM_PREVMERCB_X, SM_PREVMERCB_Y, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGH - 1, DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnPrevMercCallback);
   if (iSMPanelButtons[PREVMERC_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   // SetButtonFastHelpText( iSMPanelButtons[ PREVMERC_BUTTON ],L"Change Stance Down");
@@ -1327,7 +1327,7 @@ BOOLEAN CreateSMPanelButtons() {
       iSMPanelImages[NEXTMERC_IMAGES], SM_NEXTMERCB_X, SM_NEXTMERCB_Y, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGH - 1, DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnNextMercCallback);
   if (iSMPanelButtons[NEXTMERC_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   SetButtonFastHelpText(iSMPanelButtons[NEXTMERC_BUTTON], TacticalStr[NEXT_MERC_POPUPTEXT]);
@@ -1338,7 +1338,7 @@ BOOLEAN CreateSMPanelButtons() {
       iSMPanelImages[OPTIONS_IMAGES], SM_OPTIONSB_X, SM_OPTIONSB_Y, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGH - 1, DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnOptionsCallback);
   if (iSMPanelButtons[OPTIONS_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   // SetButtonFastHelpText( iSMPanelButtons[ OPTIONS_BUTTON ],L"Change Stance Down");
@@ -1353,7 +1353,7 @@ BOOLEAN CreateSMPanelButtons() {
       MSYS_PRIORITY_HIGH, MSYS_NO_CALLBACK, (GUI_CALLBACK)BtnBurstModeCallback);
 
   if (iSMPanelButtons[BURSTMODE_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   SetButtonFastHelpText(iSMPanelButtons[BURSTMODE_BUTTON], TacticalStr[TOGGLE_BURSTMODE_POPUPTEXT]);
@@ -1364,7 +1364,7 @@ BOOLEAN CreateSMPanelButtons() {
       QuickCreateButton(iSMPanelImages[LOOK_IMAGES], SM_LOOKB_X, SM_LOOKB_Y, BUTTON_NEWTOGGLE,
                         MSYS_PRIORITY_HIGH - 1, MSYS_NO_CALLBACK, (GUI_CALLBACK)BtnLookCallback);
   if (iSMPanelButtons[LOOK_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   // SetButtonFastHelpText( iSMPanelButtons[ LOOK_BUTTON ],L"Change Stance Down");
@@ -1480,21 +1480,18 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
     //}
 
     if (InItemDescriptionBox()) {
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiSMPanel, 0, INTERFACE_START_X,
-                              INV_INTERFACE_START_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiSMPanel, 0, INTERFACE_START_X, INV_INTERFACE_START_Y);
       RenderSoldierFace(gpSMCurrentMerc, SM_SELMERC_FACE_X, SM_SELMERC_FACE_Y, TRUE);
 
       // ATE: Need these lines here to fix flash bug with face selection box
       if (gfSMDisableForItems) {
-        BltVideoObjectFromIndex(guiSAVEBUFFER, guiSMObjects2, 0, SM_SELMERC_PLATE_X,
-                                SM_SELMERC_PLATE_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsSB, guiSMObjects2, 0, SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y);
         RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y, SM_SELMERC_PLATE_WIDTH,
                                     SM_SELMERC_PLATE_HEIGHT);
       } else {
         if (gusSelectedSoldier == gpSMCurrentMerc->ubID &&
             gTacticalStatus.ubCurrentTeam == OUR_TEAM && OK_INTERRUPT_MERC(gpSMCurrentMerc)) {
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiSMObjects, 0, SM_SELMERC_PLATE_X,
-                                  SM_SELMERC_PLATE_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiSMObjects, 0, SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y);
           RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y,
                                       SM_SELMERC_PLATE_WIDTH, SM_SELMERC_PLATE_HEIGHT);
         }
@@ -1502,8 +1499,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
 
       RenderItemDescriptionBox();
     } else {
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiSMPanel, 0, INTERFACE_START_X,
-                              INV_INTERFACE_START_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiSMPanel, 0, INTERFACE_START_X, INV_INTERFACE_START_Y);
 
       RenderInvBodyPanel(gpSMCurrentMerc, SM_BODYINV_X, SM_BODYINV_Y);
 
@@ -1513,15 +1509,13 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
       // Hitlight
 
       if (gfSMDisableForItems) {
-        BltVideoObjectFromIndex(guiSAVEBUFFER, guiSMObjects2, 0, SM_SELMERC_PLATE_X,
-                                SM_SELMERC_PLATE_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsSB, guiSMObjects2, 0, SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y);
         RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y, SM_SELMERC_PLATE_WIDTH,
                                     SM_SELMERC_PLATE_HEIGHT);
       } else {
         if (gusSelectedSoldier == gpSMCurrentMerc->ubID &&
             gTacticalStatus.ubCurrentTeam == OUR_TEAM && OK_INTERRUPT_MERC(gpSMCurrentMerc)) {
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiSMObjects, 0, SM_SELMERC_PLATE_X,
-                                  SM_SELMERC_PLATE_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiSMObjects, 0, SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y);
           RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y,
                                       SM_SELMERC_PLATE_WIDTH, SM_SELMERC_PLATE_HEIGHT);
         }
@@ -1531,7 +1525,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
 
       // Render Values for stats!
       // Set font drawing to saved buffer
-      SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+      SetFontDest(vsSB, 0, 0, 640, 480, FALSE);
 
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(STATS_TITLE_FONT_COLOR);
@@ -1659,7 +1653,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
       mprintf(usX, usY, sString);
 
       // reset to frame buffer!
-      SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+      SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
       RestoreExternBackgroundRect(INTERFACE_START_X, INV_INTERFACE_START_Y,
                                   (640 - INTERFACE_START_X), (480 - INV_INTERFACE_START_Y));
@@ -1773,15 +1767,15 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
   if (gfSMDisableForItems && (*pfDirty) != DIRTYLEVEL0) {
     uint8_t *pDestBuf;
     uint32_t uiDestPitchBYTES;
-    SGPRect ClipRect;
+    struct GRect ClipRect;
 
     ClipRect.iLeft = 87;
     ClipRect.iRight = 536;
     ClipRect.iTop = INV_INTERFACE_START_Y;
     ClipRect.iBottom = 480;
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(FRAME_BUFFER);
+    VSurfaceUnlock(vsFB);
   }
 }
 
@@ -2354,8 +2348,8 @@ void HandleMouseOverSoldierFaceForContMove(struct SOLDIERTYPE *pSoldier, BOOLEAN
       }
 
       // While our mouse is here, draw a path!
-      PlotPath(pSoldier, sGridNo, NO_COPYROUTE, PLOT, TEMPORARY, (uint16_t)pSoldier->usUIMovementMode,
-               NOT_STEALTH, FORWARD, pSoldier->bActionPoints);
+      PlotPath(pSoldier, sGridNo, NO_COPYROUTE, PLOT, TEMPORARY,
+               (uint16_t)pSoldier->usUIMovementMode, NOT_STEALTH, FORWARD, pSoldier->bActionPoints);
     }
   } else {
     // Remove 'cont' on face....
@@ -2769,7 +2763,6 @@ void BtnPositionShowCallback(GUI_BUTTON *btn, int32_t reason) {}
 
 // TEAM PANEL!!!!!!!!!!!!!!
 BOOLEAN InitializeTEAMPanel() {
-  VOBJECT_DESC VObjectDesc;
   uint32_t cnt, posIndex;
 
   // INit viewport region
@@ -2782,23 +2775,25 @@ BOOLEAN InitializeTEAMPanel() {
 
   // Load interface panels
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\bottom_bar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTEAMPanel));
+  if (!AddVObjectFromFile("INTERFACE\\bottom_bar.sti", &guiTEAMPanel)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\gold_front.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTEAMObjects));
+  if (!AddVObjectFromFile("INTERFACE\\gold_front.sti", &guiTEAMObjects)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBrownBackgroundForTeamPanel));
+  if (!AddVObjectFromFile("INTERFACE\\Bars.sti", &guiBrownBackgroundForTeamPanel)) {
+    return FALSE;
+  }
 
   // Clear inv display stuff
   memset(gfTEAM_HandInvDispText, 0, sizeof(gfTEAM_HandInvDispText));
 
   // Create buttons
-  CHECKF(CreateTEAMPanelButtons());
+  if (!(CreateTEAMPanelButtons())) {
+    return FALSE;
+  }
 
   // Set viewports
   // Define region for panel
@@ -2936,8 +2931,7 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
     MarkAButtonDirty(iTEAMPanelButtons[TEAM_MAP_SCREEN_BUTTON]);
     MarkAButtonDirty(iTEAMPanelButtons[CHANGE_SQUAD_BUTTON]);
 
-    BltVideoObjectFromIndex(guiSAVEBUFFER, guiTEAMPanel, 0, INTERFACE_START_X, INTERFACE_START_Y,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsSB, guiTEAMPanel, 0, INTERFACE_START_X, INTERFACE_START_Y);
     RestoreExternBackgroundRect(INTERFACE_START_X, INTERFACE_START_Y, (640 - INTERFACE_START_X),
                                 (480 - INTERFACE_START_Y));
 
@@ -2946,24 +2940,14 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
       // GET SOLDIER
       if (!gTeamPanel[cnt].fOccupied) {
         // BLIT CLOSE PANEL
-        BltVideoObjectFromIndex(guiSAVEBUFFER, guiCLOSE, 5, sTEAMFacesXY[posIndex],
-                                sTEAMFacesXY[posIndex + 1], VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsSB, guiCLOSE, 5, sTEAMFacesXY[posIndex], sTEAMFacesXY[posIndex + 1]);
         RestoreExternBackgroundRect(sTEAMFacesXY[posIndex], sTEAMFacesXY[posIndex + 1],
                                     TM_FACE_WIDTH, TM_FACE_HEIGHT);
 
-        // BLIT AP CLOSE PANEL
-        // BltVideoObjectFromIndex( FRAME_BUFFER, guiTEAMObjects, 3, sTEAMAPPanelXY[ posIndex ],
-        // sTEAMAPPanelXY[ posIndex + 1 ], VO_BLT_SRCTRANSPARENCY, NULL );
-        // RestoreExternBackgroundRect( (int16_t)(sTEAMAPPanelXY[ posIndex ]), (int16_t)(sTEAMAPPanelXY[
-        // posIndex + 1 ]), TM_APPANEL_WIDTH, TM_APPANEL_HEIGHT ); InvalidateRegion(
-        // (int16_t)(sTEAMAPPanelXY[ posIndex ]), (int16_t)(sTEAMAPPanelXY[ posIndex + 1 ]),
-        // (int16_t)(sTEAMAPPanelXY[ posIndex ] + TM_APPANEL_WIDTH), (int16_t)(sTEAMAPPanelXY[ posIndex
-        // + 1 ] + TM_APPANEL_HEIGHT ) );
-
         if (gTacticalStatus.ubCurrentTeam != OUR_TEAM || INTERRUPT_QUEUED) {
           // Hatch out...
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
-                                  sTEAMFaceHighlXY[posIndex + 1], VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
+                              sTEAMFaceHighlXY[posIndex + 1]);
           RestoreExternBackgroundRect(sTEAMFaceHighlXY[posIndex], sTEAMFaceHighlXY[posIndex + 1],
                                       TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT);
         }
@@ -3004,27 +2988,15 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
         // Render Selected guy if selected
         if (gusSelectedSoldier == GetSolID(pSoldier) && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
             OK_INTERRUPT_MERC(pSoldier)) {
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiTEAMObjects, 0, sTEAMFaceHighlXY[posIndex],
-                                  sTEAMFaceHighlXY[posIndex + 1], VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiTEAMObjects, 0, sTEAMFaceHighlXY[posIndex],
+                              sTEAMFaceHighlXY[posIndex + 1]);
           RestoreExternBackgroundRect(sTEAMFaceHighlXY[posIndex], sTEAMFaceHighlXY[posIndex + 1],
                                       TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT);
         } else if (gTacticalStatus.ubCurrentTeam != OUR_TEAM || !OK_INTERRUPT_MERC(pSoldier)) {
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
-                                  sTEAMFaceHighlXY[posIndex + 1], VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
+                              sTEAMFaceHighlXY[posIndex + 1]);
           RestoreExternBackgroundRect(sTEAMFaceHighlXY[posIndex], sTEAMFaceHighlXY[posIndex + 1],
                                       TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT);
-          // Render non-selection
-          // BltVideoObjectFromIndex( guiSAVEBUFFER, guiTEAMObjects, 4, sTEAMFaceHighlXY[ posIndex
-          // ], sTEAMFaceHighlXY[ posIndex + 1 ], VO_BLT_SRCTRANSPARENCY, NULL );
-          // RestoreExternBackgroundRect( sTEAMFaceHighlXY[ posIndex ], sTEAMFaceHighlXY[ posIndex +
-          // 1 ], TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT );
-
-          // Render faceplate
-          // BltVideoObjectFromIndex( guiSAVEBUFFER, guiTEAMObjects, 1, sTEAMFacesXY[ posIndex ] +
-          // TM_FACEPLATE_OFFSET_X, sTEAMFacesXY[ posIndex + 1 ] + TM_FACEPLATE_OFFSET_Y,
-          // VO_BLT_SRCTRANSPARENCY, NULL ); RestoreExternBackgroundRect( (int16_t)(sTEAMFacesXY[
-          // posIndex ] + TM_FACEPLATE_OFFSET_X), (int16_t)(sTEAMFacesXY[ posIndex + 1 ] +
-          // TM_FACEPLATE_OFFSET_Y ), TM_FACEPLATE_WIDTH, TM_FACEPLATE_HEIGHT );
         }
 
         CheckForFacePanelStartAnims(pSoldier, sTEAMFacesXY[posIndex], sTEAMFacesXY[posIndex + 1]);
@@ -3045,14 +3017,14 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
         }
 
         // RENDER ON SAVE BUFFER!
-        SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+        SetFontDest(vsSB, 0, 0, 640, 480, FALSE);
         VarFindFontCenterCoordinates(
-            (int16_t)(sTEAMNamesXY[posIndex] + 2), (int16_t)(sTEAMNamesXY[posIndex + 1]), TM_NAME_WIDTH,
-            TM_NAME_HEIGHT, BLOCKFONT2, &sFontX, &sFontY, L"%s", pSoldier->name);
+            (int16_t)(sTEAMNamesXY[posIndex] + 2), (int16_t)(sTEAMNamesXY[posIndex + 1]),
+            TM_NAME_WIDTH, TM_NAME_HEIGHT, BLOCKFONT2, &sFontX, &sFontY, L"%s", pSoldier->name);
         mprintf(sFontX, sFontY, L"%s", pSoldier->name);
         gprintfRestore(sFontX, sFontY, L"%s", pSoldier->name);
         // reset to frame buffer!
-        SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+        SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
       }
     }
 
@@ -3178,7 +3150,7 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
 BOOLEAN CreateTEAMPanelButtons() {
   char ubString[48];
 
-  FilenameForBPP("INTERFACE\\bottom_bar_buttons.sti", ubString);
+  CopyFilename("INTERFACE\\bottom_bar_buttons.sti", ubString);
 
   // Load button Graphics
   iTEAMPanelImages[ENDTURN_IMAGES] = LoadButtonImage(ubString, -1, 0, -1, 3, -1);
@@ -3192,7 +3164,7 @@ BOOLEAN CreateTEAMPanelButtons() {
       iTEAMPanelImages[ENDTURN_IMAGES], TM_ENDTURN_X, TM_ENDTURN_Y, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGH - 1, DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnEndTurnCallback);
   if (iTEAMPanelButtons[TEAM_DONE_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   SetButtonFastHelpText(iTEAMPanelButtons[TEAM_DONE_BUTTON], TacticalStr[END_TURN_POPUPTEXT]);
@@ -3201,7 +3173,7 @@ BOOLEAN CreateTEAMPanelButtons() {
       iTEAMPanelImages[ROSTERMODE_IMAGES], TM_ROSTERMODE_X, TM_ROSTERMODE_Y, BUTTON_TOGGLE,
       MSYS_PRIORITY_HIGH - 1, DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnRostermodeCallback);
   if (iTEAMPanelButtons[TEAM_MAP_SCREEN_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   SetButtonFastHelpText(iTEAMPanelButtons[TEAM_MAP_SCREEN_BUTTON],
@@ -3211,7 +3183,7 @@ BOOLEAN CreateTEAMPanelButtons() {
       iTEAMPanelImages[DISK_IMAGES], TM_DISK_X, TM_DISK_Y, BUTTON_TOGGLE, MSYS_PRIORITY_HIGH - 1,
       DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)BtnSquadCallback);
   if (iTEAMPanelButtons[CHANGE_SQUAD_BUTTON] == -1) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot create Interface button");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot create Interface button");
     return (FALSE);
   }
   SetButtonFastHelpText(iTEAMPanelButtons[CHANGE_SQUAD_BUTTON],
@@ -3508,8 +3480,8 @@ void MercFacePanelCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
   }
 }
 
-extern void InternalSelectSoldier(uint16_t usSoldierID, BOOLEAN fAcknowledge, BOOLEAN fForceReselect,
-                                  BOOLEAN fFromUI);
+extern void InternalSelectSoldier(uint16_t usSoldierID, BOOLEAN fAcknowledge,
+                                  BOOLEAN fForceReselect, BOOLEAN fFromUI);
 
 void HandleLocateSelectMerc(uint8_t ubID, int8_t bFlag) {
   BOOLEAN fSelect = FALSE;
@@ -3715,9 +3687,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
       RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                   TM_FACE_HEIGHT);
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiCLOSE, pSoldier->ubClosePanelFrame,
-                              pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
+      BltVObjectFromIndex(vsFB, guiCLOSE, pSoldier->ubClosePanelFrame, pSoldier->sPanelFaceX,
+                          pSoldier->sPanelFaceY);
       InvalidateRegion(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY,
                        pSoldier->sPanelFaceX + TM_FACE_WIDTH,
                        pSoldier->sPanelFaceY + TM_FACE_HEIGHT);
@@ -3742,13 +3713,11 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
 
         // Finish!
         if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiDEAD, pSoldier->ubDeadPanelFrame,
-                                  pSoldier->sPanelFaceX, pSoldier->sPanelFaceY,
-                                  VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiDEAD, pSoldier->ubDeadPanelFrame, pSoldier->sPanelFaceX,
+                              pSoldier->sPanelFaceY);
 
           // Blit hatch!
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiHATCH, 0, pSoldier->sPanelFaceX,
-                                  pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiHATCH, 0, pSoldier->sPanelFaceX, pSoldier->sPanelFaceY);
 
           RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                       TM_FACE_HEIGHT);
@@ -3761,13 +3730,11 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
 
   if (pSoldier->fDeadPanel) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiDEAD, pSoldier->ubDeadPanelFrame,
-                              pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
+      BltVObjectFromIndex(vsFB, guiDEAD, pSoldier->ubDeadPanelFrame, pSoldier->sPanelFaceX,
+                          pSoldier->sPanelFaceY);
 
       // Blit hatch!
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiHATCH, 0, pSoldier->sPanelFaceX,
-                              pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiHATCH, 0, pSoldier->sPanelFaceX, pSoldier->sPanelFaceY);
 
       InvalidateRegion(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY,
                        pSoldier->sPanelFaceX + TM_FACE_WIDTH,
@@ -3796,9 +3763,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
       RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                   TM_FACE_HEIGHT);
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiCLOSE, pSoldier->bOpenPanelFrame,
-                              pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
+      BltVObjectFromIndex(vsFB, guiCLOSE, pSoldier->bOpenPanelFrame, pSoldier->sPanelFaceX,
+                          pSoldier->sPanelFaceY);
     }
   }
 }
@@ -3809,23 +3775,21 @@ void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY, 
                           BOOLEAN fDirty) {
   if (IsSolActive(pSoldier) && !(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
     if (pSoldier->uiStatusFlags & SOLDIER_DRIVER) {
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiVEHINV, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiVEHINV, 0, sX, sY);
       RestoreExternBackgroundRect(sX, sY, (int16_t)(TM_INV_WIDTH), (int16_t)(TM_INV_HEIGHT));
     } else {
       // Look in primary hand
-      INVRenderItem(guiSAVEBUFFER, pSoldier, &(pSoldier->inv[HANDPOS]), sX, sY, TM_INV_WIDTH,
-                    TM_INV_HEIGHT, fDirty, &(gfTEAM_HandInvDispText[ubPanelNum][HANDPOS]), 0, FALSE,
-                    0);
+      INVRenderItem(vsSB, pSoldier, &(pSoldier->inv[HANDPOS]), sX, sY, TM_INV_WIDTH, TM_INV_HEIGHT,
+                    fDirty, &(gfTEAM_HandInvDispText[ubPanelNum][HANDPOS]), 0, FALSE, 0);
     }
 
     if (pSoldier->uiStatusFlags & (SOLDIER_PASSENGER | SOLDIER_DRIVER)) {
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiVEHINV, 1, sX, (int16_t)(sY + TM_INV_HAND_SEPY),
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiVEHINV, 1, sX, (int16_t)(sY + TM_INV_HAND_SEPY));
       RestoreExternBackgroundRect(sX, (int16_t)(sY + TM_INV_HAND_SEPY), (int16_t)(TM_INV_WIDTH),
                                   (int16_t)(TM_INV_HEIGHT));
     } else {
       // Do secondary hand
-      INVRenderItem(guiSAVEBUFFER, pSoldier, &(pSoldier->inv[SECONDHANDPOS]), sX,
+      INVRenderItem(vsSB, pSoldier, &(pSoldier->inv[SECONDHANDPOS]), sX,
                     (int16_t)(sY + TM_INV_HAND_SEPY), TM_INV_WIDTH, TM_INV_HEIGHT, fDirty,
                     &(gfTEAM_HandInvDispText[ubPanelNum][SECONDHANDPOS]), 0, FALSE, 0);
     }
@@ -4119,7 +4083,7 @@ void CheckForAndAddMercToTeamPanel(struct SOLDIERTYPE *pSoldier) {
 }
 
 uint8_t FindNextMercInTeamPanel(struct SOLDIERTYPE *pSoldier, BOOLEAN fGoodForLessOKLife,
-                              BOOLEAN fOnlyRegularMercs) {
+                                BOOLEAN fOnlyRegularMercs) {
   int32_t cnt;
   int32_t bFirstID;
   struct SOLDIERTYPE *pTeamSoldier;
@@ -4267,7 +4231,7 @@ void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, int32_t iReaso
       // want the inv done button shutdown and the region behind the keyring shaded
       // ForceButtonUnDirty( giMapInvDoneButton );
       // shade the background
-      ShadowVideoSurfaceRect(FRAME_BUFFER, 0, 107, 261, 359);
+      ShadowVideoSurfaceRect(vsFB, 0, 107, 261, 359);
       InvalidateRegion(0, 107, 261, 359);
     }
 
@@ -4599,10 +4563,10 @@ void SMInvMoneyButtonCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       gfAddingMoneyToMercFromPlayersAccount = TRUE;
 
       // create the temp object from the players account balance
-      //			if( MoneyGetBalance() > MAX_MONEY_PER_SLOT )
+      //			if( LaptopMoneyGetBalance() > MAX_MONEY_PER_SLOT )
       //				CreateMoney( MAX_MONEY_PER_SLOT, &gItemPointer );
       //			else
-      CreateMoney(LaptopSaveInfo.iCurrentBalance, &gItemPointer);
+      CreateMoney(LaptopMoneyGetBalance(), &gItemPointer);
 
       InternalInitItemDescriptionBox(&gItemPointer, SM_ITEMDESC_START_X, SM_ITEMDESC_START_Y, 0,
                                      gpSMCurrentMerc);

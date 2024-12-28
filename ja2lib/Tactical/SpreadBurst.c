@@ -7,7 +7,6 @@
 #include <string.h>
 
 #include "SGP/CursorControl.h"
-#include "SGP/Debug.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
@@ -181,7 +180,7 @@ void RenderAccumulatedBurstLocations() {
         SetBackgroundRectFilled(iBack);
       }
 
-      BltVideoObject(FRAME_BUFFER, hVObject, 1, sXPos, sYPos, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hVObject, 1, sXPos, sYPos);
     }
   }
 }

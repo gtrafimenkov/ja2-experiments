@@ -34,7 +34,7 @@ void StrategicTurnsNewGame() {
 }
 
 void SyncStrategicTurnTimes() {
-  guiLastStrategicTime = GetWorldTotalSeconds();
+  guiLastStrategicTime = GetGameTimeInSec();
   guiLastTacticalRealTime = GetJA2Clock();
 }
 
@@ -47,14 +47,9 @@ void HandleStrategicTurn() {
     RESETCOUNTER(STRATEGIC_OVERHEAD);
 
     // if the game is paused, or we're in mapscreen and time is not being compressed
-    if ((GamePaused() == TRUE) || ((IsMapScreen_2()) && !IsTimeBeingCompressed())) {
+    if ((IsGamePaused() == TRUE) || ((IsMapScreen_2()) && !IsTimeBeingCompressed())) {
       // don't do any of this
       return;
-    }
-
-    // Kris -- What to do?
-    if (giTimeCompressMode == NOT_USING_TIME_COMPRESSION) {
-      SetGameTimeCompressionLevel(TIME_COMPRESS_X1);
     }
 
     uiTime = GetJA2Clock();
@@ -63,14 +58,12 @@ void HandleStrategicTurn() {
     if ((gTacticalStatus.uiFlags & TURNBASED) && (gTacticalStatus.uiFlags & INCOMBAT)) {
       guiLastTacticalRealTime = uiTime;
     } else {
-      if (giTimeCompressMode == TIME_COMPRESS_X1 || giTimeCompressMode == 0) {
+      if (GetTimeCompressMode() <= TIME_COMPRESS_X1) {
         uiCheckTime = NUM_REAL_SEC_PER_TACTICAL_TURN;
       } else {
         // OK, if we have compressed time...., adjust our check value to be faster....
-        if (giTimeCompressSpeeds[giTimeCompressMode] > 0) {
-          uiCheckTime = NUM_REAL_SEC_PER_TACTICAL_TURN / (giTimeCompressSpeeds[giTimeCompressMode] *
-                                                          RT_COMPRESSION_TACTICAL_TURN_MODIFIER);
-        }
+        uiCheckTime = NUM_REAL_SEC_PER_TACTICAL_TURN /
+                      (GetTimeCompressSpeed() * RT_COMPRESSION_TACTICAL_TURN_MODIFIER);
       }
 
       if ((uiTime - guiLastTacticalRealTime) > uiCheckTime) {

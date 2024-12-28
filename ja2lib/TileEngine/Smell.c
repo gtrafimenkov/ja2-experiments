@@ -80,7 +80,7 @@ uint8_t ubBloodGraphicLUT[] = {3, 3, 2, 2, 1, 1, 0, 0};
 
 #define DECAY_SMELL_STRENGTH(s)                     \
   {                                                 \
-    uint8_t ubStrength = SMELL_STRENGTH((s));         \
+    uint8_t ubStrength = SMELL_STRENGTH((s));       \
     ubStrength--;                                   \
     ubStrength = ubStrength << SMELL_TYPE_NUM_BITS; \
     (s) = SMELL_TYPE_BITS((s)) | ubStrength;        \
@@ -98,14 +98,14 @@ uint8_t ubBloodGraphicLUT[] = {3, 3, 2, 2, 1, 1, 0, 0};
   { (b)--; }
 
 #define SET_BLOOD_FLOOR_STRENGTH(b, nb) \
-  { (b) = ((nb) << 2) | ((b)&0xE3); }
+  { (b) = ((nb) << 2) | ((b) & 0xE3); }
 
 #define SET_BLOOD_ROOF_STRENGTH(b, nb) \
-  { (b) = BLOOD_FLOOR_STRENGTH((nb)) << 5 | ((b)&0x1F); }
+  { (b) = BLOOD_FLOOR_STRENGTH((nb)) << 5 | ((b) & 0x1F); }
 
 #define DECAY_BLOOD_FLOOR_STRENGTH(b)             \
   {                                               \
-    uint8_t ubFloorStrength;                        \
+    uint8_t ubFloorStrength;                      \
     ubFloorStrength = BLOOD_FLOOR_STRENGTH((b));  \
     ubFloorStrength--;                            \
     SET_BLOOD_FLOOR_STRENGTH(b, ubFloorStrength); \
@@ -113,7 +113,7 @@ uint8_t ubBloodGraphicLUT[] = {3, 3, 2, 2, 1, 1, 0, 0};
 
 #define DECAY_BLOOD_ROOF_STRENGTH(b)             \
   {                                              \
-    uint8_t ubRoofStrength;                        \
+    uint8_t ubRoofStrength;                      \
     ubRoofStrength = BLOOD_ROOF_STRENGTH((b));   \
     ubRoofStrength--;                            \
     SET_BLOOD_FLOOR_STRENGTH(b, ubRoofStrength); \
@@ -210,7 +210,7 @@ void DecayBloodAndSmells(uint32_t uiTime) {
   }
 
   // period between checks, in game seconds
-  switch (giTimeCompressMode) {
+  switch (GetTimeCompressMode()) {
     // in time compression, let this happen every 5 REAL seconds
     case TIME_COMPRESS_5MINS:  // rate of 300 seconds per real second
       uiCheckTime = 5 * 300;
@@ -219,7 +219,6 @@ void DecayBloodAndSmells(uint32_t uiTime) {
       uiCheckTime = 5 * 1800;
       break;
     case TIME_COMPRESS_60MINS:  // rate of 3600 seconds per real second
-    case TIME_SUPER_COMPRESS:   // should not be used but just in frigging case...
       uiCheckTime = 5 * 3600;
       break;
     default:  // not compressing
@@ -299,7 +298,8 @@ void DropSmell(struct SOLDIERTYPE* pSoldier) {
   // otherwise skip dropping smell
 }
 
-void InternalDropBlood(int16_t sGridNo, int8_t bLevel, uint8_t ubType, uint8_t ubStrength, int8_t bVisible) {
+void InternalDropBlood(int16_t sGridNo, int8_t bLevel, uint8_t ubType, uint8_t ubStrength,
+                       int8_t bVisible) {
   MAP_ELEMENT* pMapElement;
   uint8_t ubOldStrength = 0;
   uint8_t ubNewStrength = 0;

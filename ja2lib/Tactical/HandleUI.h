@@ -246,7 +246,7 @@ uint32_t UIHandleEndTurn(UI_EVENT *pUIEvent);
 
 extern BOOLEAN gfUIShowCurIntTile;
 
-extern SGPRect gRubberBandRect;
+extern struct GRect gRubberBandRect;
 extern BOOLEAN gRubberBandActive;
 
 void EndMenuEvent(uint32_t uiEvent);
@@ -287,8 +287,8 @@ void ToggleLookCursorMode(uint32_t *puiNewEvent);
 void UIHandleSoldierStanceChange(uint8_t ubSoldierID, int8_t bNewStance);
 void GetCursorMovementFlags(uint32_t *puiCursorFlags);
 
-BOOLEAN HandleUIMovementCursor(struct SOLDIERTYPE *pSoldier, uint32_t uiCursorFlags, uint16_t usMapPos,
-                               uint32_t uiFlags);
+BOOLEAN HandleUIMovementCursor(struct SOLDIERTYPE *pSoldier, uint32_t uiCursorFlags,
+                               uint16_t usMapPos, uint32_t uiFlags);
 BOOLEAN UIMouseOnValidAttackLocation(struct SOLDIERTYPE *pSoldier);
 
 BOOLEAN UIOkForItemPickup(struct SOLDIERTYPE *pSoldier, int16_t sGridNo);

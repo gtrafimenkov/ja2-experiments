@@ -13,6 +13,7 @@
 #include "GameLoop.h"
 #include "SGP/Debug.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "Tactical/PathAI.h"
@@ -21,7 +22,7 @@
 #include "TileEngine/TileSurface.h"
 #include "TileEngine/WorldMan.h"
 
-//#include "Editor/EditScreen.h"
+// #include "Editor/EditScreen.h"
 
 // GLobals
 TILE_ELEMENT gTileDatabase[NUMBEROFTILES];
@@ -292,7 +293,7 @@ void CreateTileDatabase() {
       // Build start index list
       gTileTypeStartIndex[cnt1] = (uint16_t)gTileDatabaseSize;
 
-      NumRegions = TileSurf->vo->usNumberOfObjects;
+      NumRegions = TileSurf->vo->number_of_subimages;
 
       // Check for overflow
       if (NumRegions > gNumTilesPerType[cnt1]) {
@@ -305,7 +306,7 @@ void CreateTileDatabase() {
         NumRegions = gNumTilesPerType[cnt1];
       }
 
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("Type: %s Size: %d Index: %d", gTileSurfaceName[cnt1], gNumTilesPerType[cnt1],
                       gTileDatabaseSize));
 
@@ -318,7 +319,7 @@ void CreateTileDatabase() {
         // Check for multi-z stuff
         if (TileSurf->vo->ppZStripInfo != NULL) {
           // Only do this if we are within the # of video objects
-          if (cnt2 < TileSurf->vo->usNumberOfObjects) {
+          if (cnt2 < TileSurf->vo->number_of_subimages) {
             if (TileSurf->vo->ppZStripInfo[cnt2] != NULL) {
               TileElement.uiFlags |= MULTI_Z_TILE;
             }
@@ -443,7 +444,9 @@ BOOLEAN GetLandHeadType(int32_t iMapIndex, uint32_t *puiType) {
 
   Assert(puiType != NULL);
 
-  CHECKF(gpWorldLevelData[iMapIndex].pLandHead != NULL);
+  if (!(gpWorldLevelData[iMapIndex].pLandHead != NULL)) {
+    return FALSE;
+  }
 
   usIndex = gpWorldLevelData[iMapIndex].pLandHead->usIndex;
 
@@ -482,8 +485,8 @@ BOOLEAN SetLandIndex(int32_t iMapIndex, uint16_t usIndex, uint32_t uiNewType, BO
   }
 }
 
-BOOLEAN SetLandIndexWithRadius(int32_t iMapIndex, uint16_t usIndex, uint32_t uiNewType, uint8_t ubRadius,
-                               BOOLEAN fReplace) {
+BOOLEAN SetLandIndexWithRadius(int32_t iMapIndex, uint16_t usIndex, uint32_t uiNewType,
+                               uint8_t ubRadius, BOOLEAN fReplace) {
   uint16_t usTempIndex;
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
@@ -577,30 +580,39 @@ BOOLEAN GetSubIndexFromTileIndex(uint16_t usTileIndex, uint16_t *pusSubIndex) {
   return FALSE;
 }
 
-BOOLEAN GetTypeSubIndexFromTileIndex(uint32_t uiCheckType, uint16_t usIndex, uint16_t *pusSubIndex) {
+BOOLEAN GetTypeSubIndexFromTileIndex(uint32_t uiCheckType, uint16_t usIndex,
+                                     uint16_t *pusSubIndex) {
   // Tile database is zero-based, Type indecies are 1-based!
 
-  CHECKF(uiCheckType < NUMBEROFTILETYPES);
+  if (!(uiCheckType < NUMBEROFTILETYPES)) {
+    return FALSE;
+  }
 
   *pusSubIndex = usIndex - gTileTypeStartIndex[uiCheckType] + 1;
 
   return (TRUE);
 }
 
-BOOLEAN GetTypeSubIndexFromTileIndexChar(uint32_t uiCheckType, uint16_t usIndex, uint8_t *pubSubIndex) {
+BOOLEAN GetTypeSubIndexFromTileIndexChar(uint32_t uiCheckType, uint16_t usIndex,
+                                         uint8_t *pubSubIndex) {
   // Tile database is zero-based, Type indecies are 1-based!
 
-  CHECKF(uiCheckType < NUMBEROFTILETYPES);
+  if (!(uiCheckType < NUMBEROFTILETYPES)) {
+    return FALSE;
+  }
 
   *pubSubIndex = (uint8_t)(usIndex - gTileTypeStartIndex[uiCheckType] + 1);
 
   return (TRUE);
 }
 
-BOOLEAN GetTileIndexFromTypeSubIndex(uint32_t uiCheckType, uint16_t usSubIndex, uint16_t *pusTileIndex) {
+BOOLEAN GetTileIndexFromTypeSubIndex(uint32_t uiCheckType, uint16_t usSubIndex,
+                                     uint16_t *pusTileIndex) {
   // Tile database is zero-based, Type indecies are 1-based!
 
-  CHECKF(uiCheckType < NUMBEROFTILETYPES);
+  if (!(uiCheckType < NUMBEROFTILETYPES)) {
+    return FALSE;
+  }
 
   *pusTileIndex = usSubIndex + gTileTypeStartIndex[uiCheckType] - 1;
 
@@ -620,7 +632,9 @@ BOOLEAN MoveLandIndexToTop(uint32_t iMapIndex, uint16_t usIndex) {
 BOOLEAN GetTileType(uint16_t usIndex, uint32_t *puiType) {
   TILE_ELEMENT TileElem;
 
-  CHECKF(usIndex != NO_TILE);
+  if (!(usIndex != NO_TILE)) {
+    return FALSE;
+  }
 
   // Get tile element
   TileElem = gTileDatabase[usIndex];
@@ -633,8 +647,12 @@ BOOLEAN GetTileType(uint16_t usIndex, uint32_t *puiType) {
 BOOLEAN GetTileFlags(uint16_t usIndex, uint32_t *puiFlags) {
   TILE_ELEMENT TileElem;
 
-  CHECKF(usIndex != NO_TILE);
-  CHECKF(usIndex < NUMBEROFTILES);
+  if (!(usIndex != NO_TILE)) {
+    return FALSE;
+  }
+  if (!(usIndex < NUMBEROFTILES)) {
+    return FALSE;
+  }
 
   // Get tile element
   TileElem = gTileDatabase[usIndex];
@@ -746,7 +764,9 @@ BOOLEAN AnyLowerLand(uint32_t iMapIndex, uint32_t uiSrcType, uint8_t *pubLastLev
 BOOLEAN GetWallOrientation(uint16_t usIndex, uint16_t *pusWallOrientation) {
   TILE_ELEMENT TileElem;
 
-  CHECKF(usIndex != NO_TILE);
+  if (!(usIndex != NO_TILE)) {
+    return FALSE;
+  }
 
   // Get tile element
   TileElem = gTileDatabase[usIndex];
@@ -825,11 +845,15 @@ uint8_t CalculateWallOrientationsAtGridNo(int32_t iMapIndex) {
 BOOLEAN AllocateAnimTileData(TILE_ELEMENT *pTileElem, uint8_t ubNumFrames) {
   pTileElem->pAnimData = (TILE_ANIMATION_DATA *)MemAlloc(sizeof(TILE_ANIMATION_DATA));
 
-  CHECKF(pTileElem->pAnimData != NULL);
+  if (!(pTileElem->pAnimData != NULL)) {
+    return FALSE;
+  }
 
   pTileElem->pAnimData->pusFrames = (uint16_t *)MemAlloc(sizeof(uint16_t) * ubNumFrames);
 
-  CHECKF(pTileElem->pAnimData->pusFrames != NULL);
+  if (!(pTileElem->pAnimData->pusFrames != NULL)) {
+    return FALSE;
+  }
 
   // Set # if frames!
   pTileElem->pAnimData->ubNumFrames = ubNumFrames;

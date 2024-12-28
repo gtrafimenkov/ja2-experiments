@@ -163,7 +163,6 @@ void GameInitAimSort() {
 }
 
 BOOLEAN EnterAimSort() {
-  VOBJECT_DESC VObjectDesc;
   uint8_t ubCurNumber = 0;
   uint16_t ubWidth;
   uint8_t i;
@@ -176,29 +175,33 @@ BOOLEAN EnterAimSort() {
   InitAimDefaults();
 
   // load the SortBy box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\SortBy.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSortByBox));
+  if (!AddVObjectFromFile("LAPTOP\\SortBy.sti", &guiSortByBox)) {
+    return FALSE;
+  }
 
   // load the ToAlumni graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_TOALUMNI);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiToAlumni));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_TOALUMNI);
+  if (!AddVObjectFromFile(ImageFile, &guiToAlumni)) {
+    return FALSE;
+  }
 
   // load the ToMugShots graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_TOMUGSHOTS);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiToMugShots));
+  GetMLGFilename(ImageFile, MLG_TOMUGSHOTS);
+  if (!AddVObjectFromFile(ImageFile, &guiToMugShots)) {
+    return FALSE;
+  }
 
   // load the ToStats graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_TOSTATS);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiToStats));
+  GetMLGFilename(ImageFile, MLG_TOSTATS);
+  if (!AddVObjectFromFile(ImageFile, &guiToStats)) {
+    return FALSE;
+  }
 
   // load the SelectLight graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\SelectLight.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSelectLight));
+  if (!AddVObjectFromFile("LAPTOP\\SelectLight.sti", &guiSelectLight)) {
+    return FALSE;
+  }
 
   //** Mouse Regions **
 
@@ -362,23 +365,19 @@ void RenderAimSort() {
   DrawAimDefaults();
   // SortBy
   GetVideoObject(&hSortByHandle, guiSortByBox);
-  BltVideoObject(FRAME_BUFFER, hSortByHandle, 0, AIM_SORT_SORT_BY_X, AIM_SORT_SORT_BY_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hSortByHandle, 0, AIM_SORT_SORT_BY_X, AIM_SORT_SORT_BY_Y);
 
   // To MugShots
   GetVideoObject(&hToMugShotHandle, guiToMugShots);
-  BltVideoObject(FRAME_BUFFER, hToMugShotHandle, 0, AIM_SORT_TO_MUGSHOTS_X, AIM_SORT_TO_MUGSHOTS_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hToMugShotHandle, 0, AIM_SORT_TO_MUGSHOTS_X, AIM_SORT_TO_MUGSHOTS_Y);
 
   // To stats
   GetVideoObject(&hToStatsHandle, guiToStats);
-  BltVideoObject(FRAME_BUFFER, hToStatsHandle, 0, AIM_SORT_TO_STATS_X, AIM_SORT_TO_STATS_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hToStatsHandle, 0, AIM_SORT_TO_STATS_X, AIM_SORT_TO_STATS_Y);
 
   // To Alumni
   GetVideoObject(&hToAlumniHandle, guiToAlumni);
-  BltVideoObject(FRAME_BUFFER, hToAlumniHandle, 0, AIM_SORT_TO_ALUMNI_X, AIM_SORT_TO_ALUMNI_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hToAlumniHandle, 0, AIM_SORT_TO_ALUMNI_X, AIM_SORT_TO_ALUMNI_Y);
 
   // Draw the aim slogan under the symbol
   DisplayAimSlogan();
@@ -578,8 +577,8 @@ void DrawSelectLight(uint8_t ubMode, uint8_t ubImage) {
   ubMode *= 2;
 
   GetVideoObject(&hSelectLightHandle, guiSelectLight);
-  BltVideoObject(FRAME_BUFFER, hSelectLightHandle, ubImage, (AimSortCheckBoxLoc[ubMode]),
-                 (AimSortCheckBoxLoc[ubMode + 1]), VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hSelectLightHandle, ubImage, (AimSortCheckBoxLoc[ubMode]),
+             (AimSortCheckBoxLoc[ubMode + 1]));
 
   //  InvalidateRegion(LAPTOP_SCREEN_UL_X,LAPTOP_SCREEN_WEB_UL_Y,LAPTOP_SCREEN_LR_X,LAPTOP_SCREEN_WEB_LR_Y);
 
@@ -606,8 +605,8 @@ int32_t QsortCompare(const void *pNum1, const void *pNum2) {
       break;
     // Experience			int16_t	bExpLevel
     case 1:
-      return (
-          CompareValue((int32_t)gMercProfiles[Num1].bExpLevel, (int32_t)gMercProfiles[Num2].bExpLevel));
+      return (CompareValue((int32_t)gMercProfiles[Num1].bExpLevel,
+                           (int32_t)gMercProfiles[Num2].bExpLevel));
       break;
     // Marksmanship		int16_t	bMarksmanship
     case 2:
@@ -616,8 +615,8 @@ int32_t QsortCompare(const void *pNum1, const void *pNum2) {
       break;
     // Medical					int16_t	bMedical
     case 3:
-      return (
-          CompareValue((int32_t)gMercProfiles[Num1].bMedical, (int32_t)gMercProfiles[Num2].bMedical));
+      return (CompareValue((int32_t)gMercProfiles[Num1].bMedical,
+                           (int32_t)gMercProfiles[Num2].bMedical));
       break;
     // Explosives			int16_t	bExplosive
     case 4:

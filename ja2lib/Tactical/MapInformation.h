@@ -6,6 +6,7 @@
 #define __MAP_INFORMATION_H
 
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 extern float gdMajorMapVersion;
 extern uint8_t gubMinorMapVersion;
@@ -37,11 +38,11 @@ typedef struct {
   int16_t sCenterGridNo;
   int16_t sIsolatedGridNo;
   int8_t bPadding[83];  // I'm sure lots of map info will be added
-} MAPCREATE_STRUCT;   // 99 bytes
+} MAPCREATE_STRUCT;     // 99 bytes
 
 extern MAPCREATE_STRUCT gMapInformation;
 
-void SaveMapInformation(HWFILE fp);
+void SaveMapInformation(FileID fp);
 void LoadMapInformation(int8_t **hBuffer);
 void ValidateAndUpdateMapVersionIfNecessary();
 BOOLEAN ValidateEntryPointGridNo(int16_t *sGridNo);

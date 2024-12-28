@@ -15,7 +15,6 @@
 #include "Laptop/Personnel.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
@@ -50,11 +49,11 @@
 #include "TileEngine/InteractiveTiles.h"
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/RenderFun.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
 #include "Town.h"
 #include "Utils/EventPump.h"
 #include "Utils/TimerControl.h"
+#include "rust_fileman.h"
 
 #ifdef JA2EDITOR
 extern BOOLEAN gfProfileDataLoaded;
@@ -89,7 +88,7 @@ int8_t gbSkillTraitBonus[NUM_SKILLTRAITS] = {
 };
 
 uint8_t gubBasicInventoryPositions[] = {HELMETPOS,   VESTPOS,     LEGPOS,      HANDPOS,
-                                      BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS};
+                                        BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS};
 
 #define NUM_TERRORISTS 6
 
@@ -146,24 +145,24 @@ extern BOOLEAN gfRerenderInterfaceFromHelpText;
 
 BOOLEAN LoadMercProfiles(void) {
   //	FILE *fptr;
-  HWFILE fptr;
+  FileID fptr = FILE_ID_ERR;
   char *pFileName = "BINARYDATA\\Prof.dat";
   uint32_t uiLoop, uiLoop2, uiLoop3;
   uint16_t usItem, usNewGun, usAmmo, usNewAmmo;
   uint32_t uiNumBytesRead;
 
-  fptr = FileMan_Open(pFileName, FILE_ACCESS_READ, FALSE);
+  fptr = File_OpenForReading(pFileName);
   if (!fptr) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("FAILED to LoadMercProfiles from file %s", pFileName));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("FAILED to LoadMercProfiles from file %s", pFileName));
     return (FALSE);
   }
 
   for (uiLoop = 0; uiLoop < NUM_PROFILES; uiLoop++) {
     if (JA2EncryptedFileRead(fptr, &gMercProfiles[uiLoop], sizeof(MERCPROFILESTRUCT),
                              &uiNumBytesRead) != 1) {
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("FAILED to Read Merc Profiles from File %d %s", uiLoop, pFileName));
-      FileMan_Close(fptr);
+      File_Close(fptr);
       return (FALSE);
     }
 
@@ -261,7 +260,7 @@ BOOLEAN LoadMercProfiles(void) {
 
   // SET SOME DEFAULT LOCATIONS FOR STARTING NPCS
 
-  FileMan_Close(fptr);
+  File_Close(fptr);
 
   // decide which terrorists are active
   DecideActiveTerrorists();
@@ -295,10 +294,6 @@ void DecideActiveTerrorists(void) {
   uint32_t uiChance, uiLocationChoice;
   BOOLEAN fFoundSpot;
   int16_t sTerroristPlacement[MAX_ADDITIONAL_TERRORISTS][2] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}};
-
-#ifdef CRIPPLED_VERSION
-  return;
-#endif
 
   // one terrorist will always be Elgin
   // determine how many more terrorists - 2 to 4 more
@@ -463,14 +458,10 @@ void MakeRemainingTerroristsTougher(void) {
 
 void DecideOnAssassin(void) {
   uint8_t ubAssassinPossibility[NUM_ASSASSINS] = {NO_PROFILE, NO_PROFILE, NO_PROFILE,
-                                                NO_PROFILE, NO_PROFILE, NO_PROFILE};
+                                                  NO_PROFILE, NO_PROFILE, NO_PROFILE};
   uint8_t ubAssassinsPossible = 0;
   uint8_t ubLoop, ubLoop2;
   uint8_t ubTown;
-
-#ifdef CRIPPLED_VERSION
-  return;
-#endif
 
   ubTown = GetTownIdForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
 
@@ -493,7 +484,7 @@ void DecideOnAssassin(void) {
     ubLoop = ubAssassinPossibility[Random(ubAssassinsPossible)];
     gMercProfiles[ubLoop].sSectorX = gWorldSectorX;
     gMercProfiles[ubLoop].sSectorY = gWorldSectorY;
-    AddStrategicEvent(EVENT_REMOVE_ASSASSIN, GetWorldTotalMin() + 60 * (3 + Random(3)), ubLoop);
+    AddStrategicEvent(EVENT_REMOVE_ASSASSIN, GetGameTimeInMin() + 60 * (3 + Random(3)), ubLoop);
   }
 }
 
@@ -609,9 +600,9 @@ uint16_t CalcCompetence(MERCPROFILESTRUCT *pProfile) {
 
   // marksmanship is very important, count it double
   uiSkills = (uint32_t)((2 * (pow((float)pProfile->bMarksmanship, 3) / 10000)) +
-                      1.5 * (pow((float)pProfile->bMedical, 3) / 10000) +
-                      (pow((float)pProfile->bMechanical, 3) / 10000) +
-                      (pow((float)pProfile->bExplosive, 3) / 10000));
+                        1.5 * (pow((float)pProfile->bMedical, 3) / 10000) +
+                        (pow((float)pProfile->bMechanical, 3) / 10000) +
+                        (pow((float)pProfile->bExplosive, 3) / 10000));
 
   // action points
   uiActionPoints = 5 + (((10 * pProfile->bExpLevel + 3 * pProfile->bAgility +
@@ -624,8 +615,8 @@ uint16_t CalcCompetence(MERCPROFILESTRUCT *pProfile) {
       ((pProfile->bSkillTrait != 0) ? 1 : 0) + ((pProfile->bSkillTrait2 != 0) ? 1 : 0);
 
   usCompetence = (uint16_t)((pow(pProfile->bExpLevel, 0.2) * uiStats * uiSkills *
-                           (uiActionPoints - 6) * (1 + (0.05 * (float)uiSpecialSkills))) /
-                          1000);
+                             (uiActionPoints - 6) * (1 + (0.05 * (float)uiSpecialSkills))) /
+                            1000);
 
   // this currently varies from about 10 (Flo) to 1200 (Gus)
   return (usCompetence);
@@ -800,7 +791,7 @@ BOOLEAN RecruitRPC(uint8_t ubCharNum) {
   // handle set up any RPC's that will leave us in time
   if (ubCharNum == SLAY) {
     // slay will leave in a week
-    pNewSoldier->iEndofContractTime = GetWorldTotalMin() + (7 * 24 * 60);
+    pNewSoldier->iEndofContractTime = GetGameTimeInMin() + (7 * 24 * 60);
 
     KickOutWheelchair(pNewSoldier);
   } else if (ubCharNum == DYNAMO && gubQuest[QUEST_FREE_DYNAMO] == QUESTINPROGRESS) {
@@ -848,7 +839,7 @@ BOOLEAN RecruitRPC(uint8_t ubCharNum) {
   //
   // ( pass in pNewSoldier->sSectorX cause if its invalid, -1, n/a will appear as the sector in the
   // history log )
-  AddHistoryToPlayersLog(HISTORY_RPC_JOINED_TEAM, pNewSoldier->ubProfile, GetWorldTotalMin(),
+  AddHistoryToPlayersLog(HISTORY_RPC_JOINED_TEAM, pNewSoldier->ubProfile, GetGameTimeInMin(),
                          (uint8_t)pNewSoldier->sSectorX, (uint8_t)pNewSoldier->sSectorY);
 
   // remove the merc from the Personnel screens departed list ( if they have never been hired
@@ -1076,8 +1067,8 @@ BOOLEAN DoesMercHaveABuddyOnTheTeam(uint8_t ubMercID) {
 BOOLEAN MercIsHot(struct SOLDIERTYPE *pSoldier) {
   if (GetSolProfile(pSoldier) != NO_PROFILE &&
       gMercProfiles[GetSolProfile(pSoldier)].bPersonalityTrait == HEAT_INTOLERANT) {
-    if (SectorTemperature(GetWorldMinutesInDay(), GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
-                          GetSolSectorZ(pSoldier)) > 0) {
+    if (SectorTemperature(GetMinutesSinceDayStart(), GetSolSectorX(pSoldier),
+                          GetSolSectorY(pSoldier), GetSolSectorZ(pSoldier)) > 0) {
       return (TRUE);
     }
   }

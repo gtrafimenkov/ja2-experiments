@@ -23,17 +23,15 @@ uint32_t guiUsedGrid;
 void GameInitBobbyRUsed() {}
 
 BOOLEAN EnterBobbyRUsed() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\usedbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiUsedBackground));
+  if (!AddVObjectFromFile("LAPTOP\\usedbackground.sti", &guiUsedBackground)) {
+    return FALSE;
+  }
 
   // load the gunsgrid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\usedgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiUsedGrid));
+  if (!AddVObjectFromFile("LAPTOP\\usedgrid.sti", &guiUsedGrid)) {
+    return FALSE;
+  }
 
   InitBobbyBrTitle();
 
@@ -72,8 +70,7 @@ void RenderBobbyRUsed() {
 
   // GunForm
   GetVideoObject(&hPixHandle, guiUsedGrid);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y);
 
   DisplayItemInfo(BOBBYR_USED_ITEMS);
 

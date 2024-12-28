@@ -4,7 +4,7 @@
 
 #include "Tactical/TeamTurns.h"
 
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Timer.h"
 #include "SGP/Types.h"
 #include "Soldier.h"
@@ -47,9 +47,10 @@
 #include "Utils/MusicControl.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
+#include "rust_fileman.h"
 
 #ifdef DEBUG_INTERRUPTS
-#include "SGP/Debug.h"
+
 #endif
 
 extern void DecayPublicOpplist(int8_t bTeam);
@@ -317,8 +318,8 @@ void EndTurnEvents(void) {
   // decay bomb timers and maybe set some off!
   DecayBombTimers();
 
-  DecaySmokeEffects(GetWorldTotalSeconds());
-  DecayLightEffects(GetWorldTotalSeconds());
+  DecaySmokeEffects(GetGameTimeInSec());
+  DecayLightEffects(GetGameTimeInSec());
 
   // decay AI warning values from corpses
   DecayRottingCorpseAIWarnings();
@@ -518,11 +519,11 @@ void StartInterrupt(void) {
 
   // display everyone on int queue!
   for (cnt = gubOutOfTurnPersons; cnt > 0; cnt--) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("STARTINT:  Q position %d: %d", cnt, gubOutOfTurnOrder[cnt]));
   }
 
-  // DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("INTERRUPT: %d is now on top of the interrupt queue",
+  // DebugMsg( TOPIC_JA2, DBG_INFO, String("INTERRUPT: %d is now on top of the interrupt queue",
   // ubFirstInterrupter ) );
 
   gTacticalStatus.fInterruptOccurred = TRUE;
@@ -544,7 +545,7 @@ void StartInterrupt(void) {
     // build string for display of who gets interrupt
     while (1) {
       MercPtrs[ubInterrupter]->bMoved = FALSE;
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("INTERRUPT: popping %d off of the interrupt queue", ubInterrupter));
 
       REMOVE_LATEST_INTERRUPT_GUY();
@@ -588,7 +589,7 @@ void StartInterrupt(void) {
 
     ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, sTemp);
 
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("INTERRUPT: starting interrupt for %d", ubFirstInterrupter));
     // gusSelectedSoldier should become the topmost guy on the interrupt list
     // gusSelectedSoldier = ubFirstInterrupter;
@@ -652,7 +653,7 @@ void StartInterrupt(void) {
     while (1) {
       MercPtrs[ubInterrupter]->bMoved = FALSE;
 
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("INTERRUPT: popping %d off of the interrupt queue", ubInterrupter));
 
       REMOVE_LATEST_INTERRUPT_GUY();
@@ -712,7 +713,7 @@ void EndInterrupt(BOOLEAN fMarkInterruptOccurred) {
   uint8_t ubMinAPsToAttack;
 
   for (cnt = gubOutOfTurnPersons; cnt > 0; cnt--) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("ENDINT:  Q position %d: %d", cnt, gubOutOfTurnOrder[cnt]));
   }
 
@@ -746,7 +747,7 @@ void EndInterrupt(BOOLEAN fMarkInterruptOccurred) {
   } else {
     ubInterruptedSoldier = LATEST_INTERRUPT_GUY;
 
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("INTERRUPT: interrupt over, %d's team regains control", ubInterruptedSoldier));
 
     pSoldier = MercPtrs[ubInterruptedSoldier];
@@ -1170,7 +1171,7 @@ BOOLEAN StandardInterruptConditionsMet(struct SOLDIERTYPE *pSoldier, uint8_t ubO
 }
 
 int8_t CalcInterruptDuelPts(struct SOLDIERTYPE *pSoldier, uint8_t ubOpponentID,
-                          BOOLEAN fUseWatchSpots) {
+                            BOOLEAN fUseWatchSpots) {
   int8_t bPoints;
   int8_t bLightLevel;
   uint8_t ubDistance;
@@ -1307,7 +1308,7 @@ int8_t CalcInterruptDuelPts(struct SOLDIERTYPE *pSoldier, uint8_t ubOpponentID,
   }
 
 #ifdef DEBUG_INTERRUPTS
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2, DBG_INFO,
            String("Calculating int pts for %d vs %d, number is %d", GetSolID(pSoldier),
                   ubOpponentID, bPoints));
 #endif
@@ -1346,7 +1347,7 @@ void DeleteFromIntList(uint8_t ubIndex, BOOLEAN fCommunicate) {
   }
 
 #ifdef DEBUG_INTERRUPTS
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("INTERRUPT: removing ID %d", ubID));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("INTERRUPT: removing ID %d", ubID));
 #endif
   //	ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"%d removed from int list", ubID );
   // if we're NOT deleting the LAST entry in the int list
@@ -1375,7 +1376,7 @@ void AddToIntList(uint8_t ubID, BOOLEAN fGainControl, BOOLEAN fCommunicate) {
   uint8_t ubLoop;
 
   //	ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"%d added to int list", ubID );
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2, DBG_INFO,
            String("INTERRUPT: adding ID %d who %s", ubID,
                   fGainControl ? "gains control" : "loses control"));
 
@@ -1549,7 +1550,7 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, uint8_t ubInterruptType) 
               if (PythSpacesAway(pSoldier->sGridNo, pOpponent->sGridNo) > MaxDistanceVisible()) {
                 pOpponent->bInterruptDuelPts = NO_INTERRUPT;
 #ifdef DEBUG_INTERRUPTS
-                DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+                DebugMsg(TOPIC_JA2, DBG_INFO,
                          String("Resetting int pts for %d - NOISE BEYOND SIGHT DISTANCE!?",
                                 pOpponent->ubID));
 #endif
@@ -1558,7 +1559,7 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, uint8_t ubInterruptType) 
             } else if (pOpponent->bOppList[pSoldier->ubID] != SEEN_CURRENTLY) {
               pOpponent->bInterruptDuelPts = NO_INTERRUPT;
 #ifdef DEBUG_INTERRUPTS
-              DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+              DebugMsg(TOPIC_JA2, DBG_INFO,
                        String("Resetting int pts for %d - DOESN'T SEE ON SIGHT INTERRUPT!?",
                               pOpponent->ubID));
 #endif
@@ -1575,20 +1576,20 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, uint8_t ubInterruptType) 
                 pSoldier->bInterruptDuelPts = 0;  // just to have a valid intDiff later
                 fIntOccurs = TRUE;
 #ifdef DEBUG_INTERRUPTS
-                DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+                DebugMsg(TOPIC_JA2, DBG_INFO,
                          String("INTERRUPT: automatic interrupt on %d by %d", GetSolID(pSoldier),
                                 pOpponent->ubID));
 #endif
                 break;
 
               default:  // interrupt is possible, run a duel
-                DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+                DebugMsg(TOPIC_JA2, DBG_INFO,
                          "Calculating int duel pts for onlooker in ResolveInterruptsVs");
                 pSoldier->bInterruptDuelPts = CalcInterruptDuelPts(pSoldier, pOpponent->ubID, TRUE);
                 fIntOccurs = InterruptDuel(pOpponent, pSoldier);
 #ifdef DEBUG_INTERRUPTS
                 if (fIntOccurs) {
-                  DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+                  DebugMsg(TOPIC_JA2, DBG_INFO,
                            String("INTERRUPT: standard interrupt on %d (%d pts) by %d (%d pts)",
                                   GetSolID(pSoldier), pSoldier->bInterruptDuelPts, pOpponent->ubID,
                                   pOpponent->bInterruptDuelPts));
@@ -1621,8 +1622,7 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, uint8_t ubInterruptType) 
 // either way, clear out both sides' bInterruptDuelPts field to prepare next one
 #ifdef DEBUG_INTERRUPTS
             if (pSoldier->bInterruptDuelPts != NO_INTERRUPT) {
-              DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-                       String("Resetting int pts for %d", GetSolID(pSoldier)));
+              DebugMsg(TOPIC_JA2, DBG_INFO, String("Resetting int pts for %d", GetSolID(pSoldier)));
             }
 #endif
 
@@ -1630,7 +1630,7 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, uint8_t ubInterruptType) 
 
 #ifdef DEBUG_INTERRUPTS
             if (pOpponent->bInterruptDuelPts != NO_INTERRUPT) {
-              DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Resetting int pts for %d", pOpponent->ubID));
+              DebugMsg(TOPIC_JA2, DBG_INFO, String("Resetting int pts for %d", pOpponent->ubID));
             }
 #endif
             pOpponent->bInterruptDuelPts = NO_INTERRUPT;
@@ -1701,12 +1701,12 @@ void ResolveInterruptsVs(struct SOLDIERTYPE *pSoldier, uint8_t ubInterruptType) 
   }
 }
 
-BOOLEAN SaveTeamTurnsToTheSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveTeamTurnsToTheSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
   TEAM_TURN_SAVE_STRUCT TeamTurnStruct;
 
   // Save the gubTurn Order Array
-  FileMan_Write(hFile, gubOutOfTurnOrder, sizeof(uint8_t) * MAXMERCS, &uiNumBytesWritten);
+  File_Write(hFile, gubOutOfTurnOrder, sizeof(uint8_t) * MAXMERCS, &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint8_t) * MAXMERCS) {
     return (FALSE);
   }
@@ -1720,7 +1720,7 @@ BOOLEAN SaveTeamTurnsToTheSaveGameFile(HWFILE hFile) {
   TeamTurnStruct.ubLastInterruptedGuy = gubLastInterruptedGuy;
 
   // Save the Team turn save structure
-  FileMan_Write(hFile, &TeamTurnStruct, sizeof(TEAM_TURN_SAVE_STRUCT), &uiNumBytesWritten);
+  File_Write(hFile, &TeamTurnStruct, sizeof(TEAM_TURN_SAVE_STRUCT), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(TEAM_TURN_SAVE_STRUCT)) {
     return (FALSE);
   }
@@ -1728,18 +1728,18 @@ BOOLEAN SaveTeamTurnsToTheSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadTeamTurnsFromTheSavedGameFile(HWFILE hFile) {
+BOOLEAN LoadTeamTurnsFromTheSavedGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
   TEAM_TURN_SAVE_STRUCT TeamTurnStruct;
 
   // Load the gubTurn Order Array
-  FileMan_Read(hFile, gubOutOfTurnOrder, sizeof(uint8_t) * MAXMERCS, &uiNumBytesRead);
+  File_Read(hFile, gubOutOfTurnOrder, sizeof(uint8_t) * MAXMERCS, &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint8_t) * MAXMERCS) {
     return (FALSE);
   }
 
   // Load the Team turn save structure
-  FileMan_Read(hFile, &TeamTurnStruct, sizeof(TEAM_TURN_SAVE_STRUCT), &uiNumBytesRead);
+  File_Read(hFile, &TeamTurnStruct, sizeof(TEAM_TURN_SAVE_STRUCT), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(TEAM_TURN_SAVE_STRUCT)) {
     return (FALSE);
   }

@@ -4,8 +4,11 @@
 
 #include "Utils/Slider.h"
 
+#include <string.h>
+
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
+#include "SGP/Input.h"
 #include "SGP/Line.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
@@ -13,10 +16,10 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "Utils/Cursors.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
 
 ///////////////////////////////////////////////////
 //
@@ -49,7 +52,7 @@ typedef struct TAG_SLIDER {
   uint32_t uiSliderBoxImage;
   uint16_t usCurrentSliderBoxPosition;
 
-  SGPRect LastRect;
+  struct GRect LastRect;
 
   uint32_t uiFlags;
 
@@ -91,7 +94,8 @@ void SelectedSliderMovementCallBack(struct MOUSE_REGION *pRegion, int32_t reason
 //
 ///////////////////////////////////////////////////
 
-void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_t EndY, int16_t iColor);
+void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_t EndY,
+                    int16_t iColor);
 
 void RenderSelectedSliderBar(SLIDER *pSlider);
 void CalculateNewSliderBoxPosition(SLIDER *pSlider);
@@ -108,12 +112,10 @@ void CalculateNewSliderIncrement(uint32_t uiSliderID, uint16_t usPosX);
 ///////////////////////////////////////////////////
 
 BOOLEAN InitSlider() {
-  VOBJECT_DESC VObjectDesc;
-
   // load Slider Box Graphic graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\SliderBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSliderBoxImage));
+  if (!AddVObjectFromFile("INTERFACE\\SliderBox.sti", &guiSliderBoxImage)) {
+    return FALSE;
+  }
 
   gfSliderInited = TRUE;
 
@@ -141,9 +143,9 @@ void ShutDownSlider() {
   DeleteVideoObjectFromIndex(guiSliderBoxImage);
 }
 
-int32_t AddSlider(uint8_t ubStyle, uint16_t usCursor, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
-                uint16_t usNumberOfIncrements, int8_t sPriority,
-                SLIDER_CHANGE_CALLBACK SliderChangeCallback, uint32_t uiFlags) {
+int32_t AddSlider(uint8_t ubStyle, uint16_t usCursor, uint16_t usPosX, uint16_t usPosY,
+                  uint16_t usWidth, uint16_t usNumberOfIncrements, int8_t sPriority,
+                  SLIDER_CHANGE_CALLBACK SliderChangeCallback, uint32_t uiFlags) {
   SLIDER *pTemp = NULL;
   SLIDER *pNewSlider = NULL;
 
@@ -166,7 +168,7 @@ int32_t AddSlider(uint8_t ubStyle, uint16_t usCursor, uint16_t usPosX, uint16_t 
   pNewSlider->usNumberOfIncrements = usNumberOfIncrements;
   pNewSlider->SliderChangeCallback = SliderChangeCallback;
   pNewSlider->usCurrentIncrement = 0;
-  pNewSlider->usBackGroundColor = Get16BPPColor(FROMRGB(255, 255, 255));
+  pNewSlider->usBackGroundColor = rgb32_to_rgb565(FROMRGB(255, 255, 255));
   pNewSlider->uiFlags = uiFlags;
 
   // Get a new Identifier for the slider
@@ -276,13 +278,13 @@ void RenderSelectedSliderBar(SLIDER *pSlider) {
   } else {
     // display the background ( the bar )
     OptDisplayLine((uint16_t)(pSlider->usPosX + 1), (uint16_t)(pSlider->usPosY - 1),
-                   (uint16_t)(pSlider->usPosX + pSlider->usWidth - 1), (uint16_t)(pSlider->usPosY - 1),
-                   pSlider->usBackGroundColor);
+                   (uint16_t)(pSlider->usPosX + pSlider->usWidth - 1),
+                   (uint16_t)(pSlider->usPosY - 1), pSlider->usBackGroundColor);
     OptDisplayLine(pSlider->usPosX, pSlider->usPosY, (uint16_t)(pSlider->usPosX + pSlider->usWidth),
                    pSlider->usPosY, pSlider->usBackGroundColor);
     OptDisplayLine((uint16_t)(pSlider->usPosX + 1), (uint16_t)(pSlider->usPosY + 1),
-                   (uint16_t)(pSlider->usPosX + pSlider->usWidth - 1), (uint16_t)(pSlider->usPosY + 1),
-                   pSlider->usBackGroundColor);
+                   (uint16_t)(pSlider->usPosX + pSlider->usWidth - 1),
+                   (uint16_t)(pSlider->usPosY + 1), pSlider->usBackGroundColor);
 
     // invalidate the area
     InvalidateRegion(pSlider->usPosX, pSlider->usPosY - 2, pSlider->usPosX + pSlider->usWidth + 1,
@@ -294,7 +296,7 @@ void RenderSelectedSliderBar(SLIDER *pSlider) {
 
 void RenderSliderBox(SLIDER *pSlider) {
   struct VObject *hPixHandle;
-  SGPRect DestRect;
+  struct GRect DestRect;
 
   if (pSlider->uiFlags & SLIDER_VERTICAL) {
     // fill out the settings for the current dest and source rects
@@ -306,9 +308,9 @@ void RenderSliderBox(SLIDER *pSlider) {
     // If it is not the first time to render the slider
     if (!(pSlider->LastRect.iLeft == 0 && pSlider->LastRect.iRight == 0)) {
       // Restore the old rect
-      BlitBufferToBuffer(guiSAVEBUFFER, guiRENDERBUFFER, (uint16_t)pSlider->LastRect.iLeft,
-                         (uint16_t)pSlider->LastRect.iTop, pSlider->ubSliderWidth,
-                         pSlider->ubSliderHeight);
+      VSurfaceBlitBufToBuf(vsSB, vsFB, (uint16_t)pSlider->LastRect.iLeft,
+                           (uint16_t)pSlider->LastRect.iTop, pSlider->ubSliderWidth,
+                           pSlider->ubSliderHeight);
 
       // invalidate the old area
       InvalidateRegion(pSlider->LastRect.iLeft, pSlider->LastRect.iTop, pSlider->LastRect.iRight,
@@ -316,8 +318,8 @@ void RenderSliderBox(SLIDER *pSlider) {
     }
 
     // Blit the new rect
-    BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, (uint16_t)DestRect.iLeft,
-                       (uint16_t)DestRect.iTop, pSlider->ubSliderWidth, pSlider->ubSliderHeight);
+    VSurfaceBlitBufToBuf(vsFB, vsSB, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
+                         pSlider->ubSliderWidth, pSlider->ubSliderHeight);
   } else {
     // fill out the settings for the current dest and source rects
     DestRect.iLeft = pSlider->usCurrentSliderBoxPosition;
@@ -328,13 +330,12 @@ void RenderSliderBox(SLIDER *pSlider) {
     // If it is not the first time to render the slider
     if (!(pSlider->LastRect.iLeft == 0 && pSlider->LastRect.iRight == 0)) {
       // Restore the old rect
-      BlitBufferToBuffer(guiSAVEBUFFER, guiRENDERBUFFER, (uint16_t)pSlider->LastRect.iLeft,
-                         (uint16_t)pSlider->LastRect.iTop, 8, 15);
+      VSurfaceBlitBufToBuf(vsSB, vsFB, (uint16_t)pSlider->LastRect.iLeft,
+                           (uint16_t)pSlider->LastRect.iTop, 8, 15);
     }
 
     // save the new rect
-    BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, (uint16_t)DestRect.iLeft,
-                       (uint16_t)DestRect.iTop, 8, 15);
+    VSurfaceBlitBufToBuf(vsFB, vsSB, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop, 8, 15);
   }
 
   // Save the new rect location
@@ -343,8 +344,7 @@ void RenderSliderBox(SLIDER *pSlider) {
   if (pSlider->uiFlags & SLIDER_VERTICAL) {
     // display the slider box
     GetVideoObject(&hPixHandle, guiSliderBoxImage);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, pSlider->LastRect.iLeft, pSlider->LastRect.iTop,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hPixHandle, 0, pSlider->LastRect.iLeft, pSlider->LastRect.iTop);
 
     // invalidate the area
     InvalidateRegion(pSlider->LastRect.iLeft, pSlider->LastRect.iTop, pSlider->LastRect.iRight,
@@ -352,8 +352,8 @@ void RenderSliderBox(SLIDER *pSlider) {
   } else {
     // display the slider box
     GetVideoObject(&hPixHandle, guiSliderBoxImage);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, pSlider->usCurrentSliderBoxPosition,
-                   pSlider->usPosY - DEFUALT_SLIDER_SIZE, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hPixHandle, 0, pSlider->usCurrentSliderBoxPosition,
+               pSlider->usPosY - DEFUALT_SLIDER_SIZE);
 
     // invalidate the area
     InvalidateRegion(pSlider->usCurrentSliderBoxPosition, pSlider->usPosY - DEFUALT_SLIDER_SIZE,
@@ -559,11 +559,12 @@ void CalculateNewSliderIncrement(uint32_t uiSliderID, uint16_t usPos) {
   }
 }
 
-void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_t EndY, int16_t iColor) {
+void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_t EndY,
+                    int16_t iColor) {
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
@@ -571,7 +572,7 @@ void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_
   LineDraw(FALSE, usStartX, usStartY, EndX, EndY, iColor, pDestBuf);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
 void CalculateNewSliderBoxPosition(SLIDER *pSlider) {
@@ -591,7 +592,7 @@ void CalculateNewSliderBoxPosition(SLIDER *pSlider) {
     } else {
       pSlider->usCurrentSliderBoxPosition =
           pSlider->usPosY + (uint16_t)((pSlider->usHeight / (float)pSlider->usNumberOfIncrements) *
-                                     pSlider->usCurrentIncrement);
+                                       pSlider->usCurrentIncrement);
     }
 
     usMaxPos = pSlider->usPosY + pSlider->usHeight;  // - pSlider->ubSliderHeight//2 + 1;
@@ -607,7 +608,7 @@ void CalculateNewSliderBoxPosition(SLIDER *pSlider) {
     } else {
       pSlider->usCurrentSliderBoxPosition =
           pSlider->usPosX + (uint16_t)((pSlider->usWidth / (float)pSlider->usNumberOfIncrements) *
-                                     pSlider->usCurrentIncrement);
+                                       pSlider->usCurrentIncrement);
     }
     usMaxPos = pSlider->usPosX + pSlider->usWidth - 8 + 1;
 

@@ -19,6 +19,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
 
 #define INSURANCE_BACKGROUND_WIDTH 125
 #define INSURANCE_BACKGROUND_HEIGHT 100
@@ -90,7 +91,6 @@ void SelectInsuranceTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, int32_
 void GameInitInsurance() {}
 
 BOOLEAN EnterInsurance() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX, i;
 
   SetBookMark(INSURANCE_BOOKMARK);
@@ -98,21 +98,24 @@ BOOLEAN EnterInsurance() {
   InitInsuranceDefaults();
 
   // load the Insurance title graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_INSURANCETITLE);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceTitleImage));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_INSURANCETITLE);
+  if (!AddVObjectFromFile(ImageFile, &guiInsuranceTitleImage)) {
+    return FALSE;
+  }
 
   // load the red bar on the side of the page and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceBulletImage));
+  if (!AddVObjectFromFile("LAPTOP\\Bullet.sti", &guiInsuranceBulletImage)) {
+    return FALSE;
+  }
 
   usPosX = INSURANCE_BOTTOM_LINK_RED_BAR_X;
   for (i = 0; i < 3; i++) {
-    MSYS_DefineRegion(
-        &gSelectedInsuranceLinkRegion[i], usPosX, INSURANCE_BOTTOM_LINK_RED_BAR_Y - 37,
-        (uint16_t)(usPosX + INSURANCE_BOTTOM_LINK_RED_BAR_WIDTH), INSURANCE_BOTTOM_LINK_RED_BAR_Y + 2,
-        MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK, SelectInsuranceRegionCallBack);
+    MSYS_DefineRegion(&gSelectedInsuranceLinkRegion[i], usPosX,
+                      INSURANCE_BOTTOM_LINK_RED_BAR_Y - 37,
+                      (uint16_t)(usPosX + INSURANCE_BOTTOM_LINK_RED_BAR_WIDTH),
+                      INSURANCE_BOTTOM_LINK_RED_BAR_Y + 2, MSYS_PRIORITY_HIGH, CURSOR_WWW,
+                      MSYS_NO_CALLBACK, SelectInsuranceRegionCallBack);
     MSYS_AddRegion(&gSelectedInsuranceLinkRegion[i]);
     MSYS_SetRegionUserData(&gSelectedInsuranceLinkRegion[i], 0, i);
 
@@ -150,8 +153,7 @@ void RenderInsurance() {
 
   // Get and display the insurance title
   GetVideoObject(&hPixHandle, guiInsuranceTitleImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_BIG_TITLE_X, INSURANCE_BIG_TITLE_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INSURANCE_BIG_TITLE_X, INSURANCE_BIG_TITLE_Y);
 
   // Display the title slogan
   GetInsuranceText(INS_SNGL_WERE_LISTENING, sText);
@@ -166,24 +168,21 @@ void RenderInsurance() {
 
   // Display the bulleted text 1
   GetVideoObject(&hPixHandle, guiInsuranceBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_1_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_1_Y);
   GetInsuranceText(INS_MLTI_EMPLOY_HIGH_RISK, sText);
   DrawTextToScreen(sText, INSURANCE_SUBTITLE_X + INSURANCE_BULLET_TEXT_OFFSET_X,
                    INSURANCE_BULLET_TEXT_1_Y, 0, INS_FONT_MED, INS_FONT_COLOR, FONT_MCOLOR_BLACK,
                    FALSE, LEFT_JUSTIFIED);
 
   // Display the bulleted text 2
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_2_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_2_Y);
   GetInsuranceText(INS_MLTI_HIGH_FATALITY_RATE, sText);
   DrawTextToScreen(sText, INSURANCE_SUBTITLE_X + INSURANCE_BULLET_TEXT_OFFSET_X,
                    INSURANCE_BULLET_TEXT_2_Y, 0, INS_FONT_MED, INS_FONT_COLOR, FONT_MCOLOR_BLACK,
                    FALSE, LEFT_JUSTIFIED);
 
   // Display the bulleted text 3
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_3_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_3_Y);
   GetInsuranceText(INS_MLTI_DRAIN_SALARY, sText);
   DrawTextToScreen(sText, INSURANCE_SUBTITLE_X + INSURANCE_BULLET_TEXT_OFFSET_X,
                    INSURANCE_BULLET_TEXT_3_Y, 0, INS_FONT_MED, INS_FONT_COLOR, FONT_MCOLOR_BLACK,
@@ -237,29 +236,29 @@ void RenderInsurance() {
 }
 
 BOOLEAN InitInsuranceDefaults() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Flower Account Box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BackGroundTile.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceBackGround));
+  if (!AddVObjectFromFile("LAPTOP\\BackGroundTile.sti", &guiInsuranceBackGround)) {
+    return FALSE;
+  }
 
   // load the red bar on the side of the page and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\LeftTile.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceRedBarImage));
+  if (!AddVObjectFromFile("LAPTOP\\LeftTile.sti", &guiInsuranceRedBarImage)) {
+    return FALSE;
+  }
 
   // load the red bar on the side of the page and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\LargeBar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceBigRedLineImage));
+  if (!AddVObjectFromFile("LAPTOP\\LargeBar.sti", &guiInsuranceBigRedLineImage)) {
+    return FALSE;
+  }
 
   // if it is not the first page, display the small title
   if (guiCurrentLaptopMode != LAPTOP_MODE_INSURANCE) {
     // load the small title for the every page other then the first page
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    GetMLGFilename(VObjectDesc.ImageFile, MLG_SMALLTITLE);
-    CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceSmallTitleImage));
+    SGPFILENAME ImageFile;
+    GetMLGFilename(ImageFile, MLG_SMALLTITLE);
+    if (!AddVObjectFromFile(ImageFile, &guiInsuranceSmallTitleImage)) {
+      return FALSE;
+    }
 
     // create the link to the home page on the small titles
     MSYS_DefineRegion(
@@ -285,8 +284,7 @@ void DisplayInsuranceDefaults() {
 
   GetVideoObject(&hPixHandle, guiInsuranceRedBarImage);
   for (i = 0; i < 4; i++) {
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_RED_BAR_X, usPosY, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVObject(vsFB, hPixHandle, 0, INSURANCE_RED_BAR_X, usPosY);
     usPosY += INSURANCE_BACKGROUND_HEIGHT;
   }
 
@@ -297,8 +295,7 @@ void DisplayInsuranceDefaults() {
 
       // display the top red bar
       GetVideoObject(&hPixHandle, guiInsuranceBigRedLineImage);
-      BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, usPosY,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, usPosY);
 
       break;
 
@@ -310,15 +307,13 @@ void DisplayInsuranceDefaults() {
 
   // display the Bottom red bar
   GetVideoObject(&hPixHandle, guiInsuranceBigRedLineImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, INSURANCE_BOTTOM_RED_BAR_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, INSURANCE_BOTTOM_RED_BAR_Y);
 
   // if it is not the first page, display the small title
   if (guiCurrentLaptopMode != LAPTOP_MODE_INSURANCE) {
     // display the small title bar
     GetVideoObject(&hPixHandle, guiInsuranceSmallTitleImage);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SMALL_TITLE_X, INSURANCE_SMALL_TITLE_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hPixHandle, 0, INSURANCE_SMALL_TITLE_X, INSURANCE_SMALL_TITLE_Y);
   }
 }
 
@@ -334,26 +329,27 @@ void RemoveInsuranceDefaults() {
   }
 }
 
-void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_t EndY) {
+void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_t EndX,
+                                   uint16_t EndY) {
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw the red line
-  LineDraw(FALSE, usStartX, usStartY, EndX, EndY, Get16BPPColor(FROMRGB(255, 0, 0)), pDestBuf);
+  LineDraw(FALSE, usStartX, usStartY, EndX, EndY, rgb32_to_rgb565(FROMRGB(255, 0, 0)), pDestBuf);
 
   // draw the black shadow line
-  LineDraw(FALSE, usStartX + 1, usStartY + 1, EndX + 1, EndY + 1, Get16BPPColor(FROMRGB(0, 0, 0)),
+  LineDraw(FALSE, usStartX + 1, usStartY + 1, EndX + 1, EndY + 1, rgb32_to_rgb565(FROMRGB(0, 0, 0)),
            pDestBuf);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
-void GetInsuranceText(uint8_t ubNumber, wchar_t* pString) {
+void GetInsuranceText(uint8_t ubNumber, wchar_t *pString) {
   uint32_t uiStartLoc = 0;
 
   if (ubNumber < INS_MULTI_LINE_BEGINS) {

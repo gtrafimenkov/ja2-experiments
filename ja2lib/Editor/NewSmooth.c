@@ -11,6 +11,7 @@
 #include "Editor/EditorBuildings.h"
 #include "Editor/EditorUndo.h"
 #include "Editor/SmoothingUtils.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "TileEngine/Environment.h"
 #include "TileEngine/IsometricUtils.h"
@@ -508,8 +509,8 @@ int8_t gbWallTileLUT[NUM_WALL_TYPES][7] = {
 // These construction functions do all the smoothing.
 // NOTE:  passing null for wall/roof type will force the function to search for the nearest
 //  existing respective type.
-void BuildSlantRoof(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom, uint16_t usWallType,
-                    uint16_t usRoofType, BOOLEAN fVertical);
+void BuildSlantRoof(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
+                    uint16_t usWallType, uint16_t usRoofType, BOOLEAN fVertical);
 
 void BulldozeNature(uint32_t iMapIndex);
 void EraseRoof(uint32_t iMapIndex);
@@ -522,8 +523,8 @@ void ConsiderEffectsOfNewWallPiece(uint32_t iMapIndex, uint8_t usWallOrientation
 // BEGIN IMPLEMENTATION OF PRIVATE FUNCTIONS
 //----------------------------------------------------------------------------------------------------
 
-void BuildSlantRoof(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom, uint16_t usWallType,
-                    uint16_t usRoofType, BOOLEAN fVertical) {
+void BuildSlantRoof(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
+                    uint16_t usWallType, uint16_t usRoofType, BOOLEAN fVertical) {
   int32_t i;
   uint16_t usTileIndex;
   int32_t iMapIndex;
@@ -950,7 +951,7 @@ uint8_t CalcNewCavePerimeterValue( int32_t iMapIndex );
 void AddCave( int32_t iMapIndex, uint16_t usIndex );
 */
 
-void RemoveCaveSectionFromWorld(SGPRect *pSelectRegion) {
+void RemoveCaveSectionFromWorld(struct GRect *pSelectRegion) {
   uint32_t top, left, right, bottom, x, y;
   uint32_t iMapIndex;
   uint16_t usIndex;
@@ -983,7 +984,7 @@ void RemoveCaveSectionFromWorld(SGPRect *pSelectRegion) {
     }
 }
 
-void AddCaveSectionToWorld(SGPRect *pSelectRegion) {
+void AddCaveSectionToWorld(struct GRect *pSelectRegion) {
   int32_t top, left, right, bottom, x, y;
   uint32_t uiMapIndex;
   uint16_t usIndex;
@@ -1032,7 +1033,7 @@ void AddCaveSectionToWorld(SGPRect *pSelectRegion) {
 // When the user removes a section from a building, it will not only erase the
 // entire highlighted area, it'll repair the building itself so there are no
 // outside walls missing from the new building.
-void RemoveBuildingSectionFromWorld(SGPRect *pSelectRegion) {
+void RemoveBuildingSectionFromWorld(struct GRect *pSelectRegion) {
   uint32_t top, left, right, bottom, x, y;
   uint32_t iMapIndex;
   uint16_t usTileIndex;
@@ -1102,7 +1103,7 @@ void RemoveBuildingSectionFromWorld(SGPRect *pSelectRegion) {
     }
 }
 
-void AddBuildingSectionToWorld(SGPRect *pSelectRegion) {
+void AddBuildingSectionToWorld(struct GRect *pSelectRegion) {
   int32_t top, left, right, bottom, x, y;
   uint32_t iMapIndex;
   uint16_t usFloorType, usWallType, usRoofType;

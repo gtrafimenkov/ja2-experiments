@@ -15,7 +15,6 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
@@ -68,6 +67,8 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
+#include "rust_fileman.h"
 
 // inventory pool position on screen
 #define MAP_INVEN_POOL_X 300
@@ -171,7 +172,7 @@ int32_t iHeightOfInitFastHelpText = 0;
 
 extern int32_t giMapContractButton;
 extern int32_t giCharInfoButton[];
-extern wchar_t* pUpdatePanelButtons[];
+extern wchar_t *pUpdatePanelButtons[];
 
 // the list of soldiers that are moving
 struct SOLDIERTYPE *pSoldierMovingList[MAX_CHARACTER_COUNT];
@@ -197,7 +198,6 @@ extern uint32_t guiSAVEBUFFER;
 extern BOOLEAN fShowInventoryFlag;
 extern FACETYPE *gpCurrentTalkingFace;
 extern uint8_t gubCurrentTalkingID;
-extern BOOLEAN fMapScreenBottomDirty;
 extern struct MOUSE_REGION gMPanelRegion;
 
 // has the inventory pool been selected to be on or off?
@@ -251,7 +251,7 @@ int32_t giContractHighLine = -1;
 int32_t giSleepHighLine = -1;
 
 // pop up box textures
-uint32_t guiPOPUPTEX;
+struct Image *popupTextures = NULL;
 uint32_t guiPOPUPBORDERS;
 
 // the currently selected character arrow
@@ -290,22 +290,22 @@ BOOLEAN fShowRemoveMenu = FALSE;
 BOOLEAN fRebuildMoveBox = FALSE;
 
 // positions for all the pop up boxes
-SGPRect ContractDimensions = {0, 0, 140, 60};
+struct GRect ContractDimensions = {0, 0, 140, 60};
 SGPPoint ContractPosition = {120, 50};
-SGPRect AttributeDimensions = {0, 0, 100, 95};
+struct GRect AttributeDimensions = {0, 0, 100, 95};
 SGPPoint AttributePosition = {220, 150};
-SGPRect TrainDimensions = {0, 0, 100, 95};
+struct GRect TrainDimensions = {0, 0, 100, 95};
 SGPPoint TrainPosition = {160, 150};
-SGPRect VehicleDimensions = {0, 0, 80, 60};
+struct GRect VehicleDimensions = {0, 0, 80, 60};
 SGPPoint VehiclePosition = {160, 150};
 
 SGPPoint RepairPosition = {160, 150};
-SGPRect RepairDimensions = {0, 0, 80, 80};
+struct GRect RepairDimensions = {0, 0, 80, 80};
 
-SGPRect AssignmentDimensions = {0, 0, 100, 95};
+struct GRect AssignmentDimensions = {0, 0, 100, 95};
 SGPPoint AssignmentPosition = {120, 150};
 SGPPoint SquadPosition = {160, 150};
-SGPRect SquadDimensions = {0, 0, 140, 60};
+struct GRect SquadDimensions = {0, 0, 140, 60};
 
 SGPPoint OrigContractPosition = {120, 50};
 SGPPoint OrigAttributePosition = {220, 150};
@@ -857,9 +857,9 @@ void EnableTeamInfoPanels(void) {
   return;
 }
 
-int32_t DoMapMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
-                              MSGBOX_CALLBACK ReturnCallback,
-                              const SGPRect *pCenteringRect) {  // reset the highlighted line
+int32_t DoMapMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
+                                uint16_t usFlags, MSGBOX_CALLBACK ReturnCallback,
+                                const struct GRect *pCenteringRect) {  // reset the highlighted line
   giHighLine = -1;
   return DoMessageBox(ubStyle, zString, uiExitScreen,
                       (uint16_t)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
@@ -867,7 +867,7 @@ int32_t DoMapMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t uiEx
 }
 
 int32_t DoMapMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
-                      MSGBOX_CALLBACK ReturnCallback) {
+                        MSGBOX_CALLBACK ReturnCallback) {
   // reset the highlighted line
   giHighLine = -1;
 
@@ -922,7 +922,7 @@ void CheckAndUpdateBasedOnContractTimes(void) {
       if (Menptr[gCharactersList[iCounter].usSolID].ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
         // amount of time left on contract
         iTimeRemaining =
-            Menptr[gCharactersList[iCounter].usSolID].iEndofContractTime - GetWorldTotalMin();
+            Menptr[gCharactersList[iCounter].usSolID].iEndofContractTime - GetGameTimeInMin();
         if (iTimeRemaining > 60 * 24) {
           // more than a day, display in green
           iTimeRemaining /= (60 * 24);
@@ -987,8 +987,7 @@ void HandleDisplayOfSelectedMercArrows(void) {
   }
 
   GetVideoObject(&hHandle, guiSelectedCharArrow);
-  BltVideoObject(guiSAVEBUFFER, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsSB, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition);
 
   // now run through the selected list of guys, an arrow for each
   for (ubCount = 0; ubCount < MAX_CHARACTER_COUNT; ubCount++) {
@@ -1007,8 +1006,7 @@ void HandleDisplayOfSelectedMercArrows(void) {
         }
 
         GetVideoObject(&hHandle, guiSelectedCharArrow);
-        BltVideoObject(guiSAVEBUFFER, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition,
-                       VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsSB, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition);
       }
     }
   }
@@ -1050,7 +1048,7 @@ void HandleDisplayOfItemPopUpForSector(uint8_t sMapX, uint8_t sMapY, int8_t sMap
     RemoveScreenMaskForInventoryPoolPopUp();
 
     // drity nessacary regions
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
   }
 
   // showing it
@@ -1081,7 +1079,7 @@ void InventoryScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReaso
   }
 }
 
-void GetMoraleString(struct SOLDIERTYPE *pSoldier, wchar_t* sString) {
+void GetMoraleString(struct SOLDIERTYPE *pSoldier, wchar_t *sString) {
   int8_t bMorale = pSoldier->bMorale;
 
   if (pSoldier->uiStatusFlags & SOLDIER_DEAD) {
@@ -1140,9 +1138,10 @@ void HandleLeavingOfEquipmentInCurrentSector(uint32_t uiMercId) {
           Menptr[uiMercId].bSectorZ != gbWorldSectorZ) {
         // Set flag for item...
         AddItemsToUnLoadedSector(
-            (uint8_t)Menptr[uiMercId].sSectorX, (uint8_t)Menptr[uiMercId].sSectorY, Menptr[uiMercId].bSectorZ,
-            sGridNo, 1, &(Menptr[uiMercId].inv[iCounter]), Menptr[uiMercId].bLevel,
-            WOLRD_ITEM_FIND_SWEETSPOT_FROM_GRIDNO | WORLD_ITEM_REACHABLE, 0, 1, FALSE);
+            (uint8_t)Menptr[uiMercId].sSectorX, (uint8_t)Menptr[uiMercId].sSectorY,
+            Menptr[uiMercId].bSectorZ, sGridNo, 1, &(Menptr[uiMercId].inv[iCounter]),
+            Menptr[uiMercId].bLevel, WOLRD_ITEM_FIND_SWEETSPOT_FROM_GRIDNO | WORLD_ITEM_REACHABLE,
+            0, 1, FALSE);
       } else {
         AddItemToPool(sGridNo, &(Menptr[uiMercId].inv[iCounter]), 1, Menptr[uiMercId].bLevel,
                       WORLD_ITEM_REACHABLE, 0);
@@ -1159,7 +1158,7 @@ void HandleMercLeavingEquipmentInOmerta(uint32_t uiMercId) {
   // stash the items into a linked list hanging of a free "leave item list" slot
   if ((iSlotIndex = SetUpDropItemListForMerc(uiMercId)) != -1) {
     // post event to drop it there 6 hours later
-    AddStrategicEvent(EVENT_MERC_LEAVE_EQUIP_IN_OMERTA, GetWorldTotalMin() + (6 * 60), iSlotIndex);
+    AddStrategicEvent(EVENT_MERC_LEAVE_EQUIP_IN_OMERTA, GetGameTimeInMin() + (6 * 60), iSlotIndex);
   } else {
     // otherwise there's no free slots left (shouldn't ever happen)
     AssertMsg(FALSE, "HandleMercLeavingEquipmentInOmerta: No more free slots, equipment lost");
@@ -1172,7 +1171,7 @@ void HandleMercLeavingEquipmentInDrassen(uint32_t uiMercId) {
   // stash the items into a linked list hanging of a free "leave item list" slot
   if ((iSlotIndex = SetUpDropItemListForMerc(uiMercId)) != -1) {
     // post event to drop it there 6 hours later
-    AddStrategicEvent(EVENT_MERC_LEAVE_EQUIP_IN_DRASSEN, GetWorldTotalMin() + (6 * 60), iSlotIndex);
+    AddStrategicEvent(EVENT_MERC_LEAVE_EQUIP_IN_DRASSEN, GetGameTimeInMin() + (6 * 60), iSlotIndex);
   } else {
     // otherwise there's no free slots left (shouldn't ever happen)
     AssertMsg(FALSE, "HandleMercLeavingEquipmentInDrassen: No more free slots, equipment lost");
@@ -1429,7 +1428,7 @@ BOOLEAN RemoveItemFromLeaveIndex( MERC_LEAVE_ITEM *pItem, uint32_t uiSlotIndex )
 
 void HandleGroupAboutToArrive(void) {
   // reblit map to change the color of the "people in motion" marker
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 
   // ARM - commented out - don't see why this is needed
   //	fTeamPanelDirty = TRUE;
@@ -1451,7 +1450,8 @@ void HandleMapScreenUpArrow( void )
                 {
                         if( iHighLine ==  0)
                         {
-                                iHighLine = ( int32_t )GetNumberOfLinesOfTextInBox( ghAssignmentBox );
+                                iHighLine = ( int32_t )GetNumberOfLinesOfTextInBox( ghAssignmentBox
+);
                         }
                         else
                         {
@@ -1499,7 +1499,8 @@ void HandleMapScreenDownArrow( void )
         {
                 if( GetBoxShadeFlag( ghAssignmentBox, iValue ) == FALSE )
                 {
-                        if( iHighLine == ( int32_t )GetNumberOfLinesOfTextInBox( ghAssignmentBox ) - 1
+                        if( iHighLine == ( int32_t )GetNumberOfLinesOfTextInBox( ghAssignmentBox ) -
+1
 )
                         {
                                 iHighLine = 0;
@@ -1656,7 +1657,7 @@ void FindAndSetThisContractSoldier(struct SOLDIERTYPE *pSoldier) {
 
 void HandleMAPUILoseCursorFromOtherScreen(void) {
   // rerender map without cursors
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 
   if (fInMapMode) {
     RenderMapRegionBackground();
@@ -1956,8 +1957,8 @@ void GoToPrevCharacterInList(void) {
   }
 }
 
-void HandleMinerEvent(uint8_t bMinerNumber, uint8_t sSectorX, uint8_t sSectorY, int16_t sQuoteNumber,
-                      BOOLEAN fForceMapscreen) {
+void HandleMinerEvent(uint8_t bMinerNumber, uint8_t sSectorX, uint8_t sSectorY,
+                      int16_t sQuoteNumber, BOOLEAN fForceMapscreen) {
   BOOLEAN fFromMapscreen = FALSE;
 
   if (IsMapScreen_2()) {
@@ -1983,7 +1984,7 @@ void HandleMinerEvent(uint8_t bMinerNumber, uint8_t sSectorX, uint8_t sSectorY, 
     gsSectorLocatorX = sSectorX;
     gsSectorLocatorY = sSectorY;
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
 
     // post dialogue events for miners to say this quote and flash the sector where his mine is
     CharacterDialogueWithSpecialEvent((uint8_t)uiExternalFaceProfileIds[bMinerNumber], sQuoteNumber,
@@ -2040,7 +2041,7 @@ void ShutDownUserDefineHelpTextRegions(void) {
 // user is to pass in the x,y position of the box, the width to wrap the strings and the string
 // itself
 BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition[], int32_t iYPosition[], int32_t iWidth[],
-                                 wchar_t* sString[], int32_t iSize) {
+                                 wchar_t *sString[], int32_t iSize) {
   int32_t iCounter = 0;
 
   // reset the size
@@ -2048,7 +2049,9 @@ BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition[], int32_t iYPosition[], int
 
   for (iCounter = 0; iCounter < iSize; iCounter++) {
     // forgiving way of making sure we don't go too far
-    CHECKF(iCounter < MAX_MAPSCREEN_FAST_HELP);
+    if (!(iCounter < MAX_MAPSCREEN_FAST_HELP)) {
+      return FALSE;
+    }
 
     // now copy over info
     pFastHelpMapScreenList[iCounter].iX = iXPosition[iCounter];
@@ -2146,27 +2149,22 @@ void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion) {
   // too far
   if ((iY + iH) >= SCREEN_HEIGHT) iY = (SCREEN_HEIGHT - iH - 15);
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
-  RectangleDraw(TRUE, iX + 1, iY + 1, iX + iW - 1, iY + iH - 1, Get16BPPColor(FROMRGB(65, 57, 15)),
+  RectangleDraw(TRUE, iX + 1, iY + 1, iX + iW - 1, iY + iH - 1,
+                rgb32_to_rgb565(FROMRGB(65, 57, 15)), pDestBuf);
+  RectangleDraw(TRUE, iX, iY, iX + iW - 2, iY + iH - 2, rgb32_to_rgb565(FROMRGB(227, 198, 88)),
                 pDestBuf);
-  RectangleDraw(TRUE, iX, iY, iX + iW - 2, iY + iH - 2, Get16BPPColor(FROMRGB(227, 198, 88)),
-                pDestBuf);
-  UnLockVideoSurface(FRAME_BUFFER);
-  ShadowVideoSurfaceRect(FRAME_BUFFER, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
-  ShadowVideoSurfaceRect(FRAME_BUFFER, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
-
-  // fillt he video surface areas
-  // ColorFillVideoSurfaceArea(FRAME_BUFFER, iX, iY, (iX + iW), (iY + iH), 0);
-  // ColorFillVideoSurfaceArea(FRAME_BUFFER, (iX + 1), (iY + 1), (iX + iW - 1), (iY + iH - 1),
-  // usFillColor);
+  VSurfaceUnlock(vsFB);
+  ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
+  ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
 
   SetFont(FONT10ARIAL);
   SetFontForeground(FONT_BEIGE);
 
   iH = (int32_t)DisplayWrappedString((int16_t)(iX + 10), (int16_t)(iY + 6), (int16_t)pRegion->iW, 0,
-                                   FONT10ARIAL, FONT_BEIGE, pRegion->FastHelpText, FONT_NEARBLACK,
-                                   TRUE, 0);
+                                     FONT10ARIAL, FONT_BEIGE, pRegion->FastHelpText, FONT_NEARBLACK,
+                                     TRUE, 0);
 
   iHeightOfInitFastHelpText = iH + 20;
 
@@ -2224,9 +2222,9 @@ void SetUpMapScreenFastHelpText(void) {
 void StopMapScreenHelpText(void) {
   fShowMapScreenHelpText = FALSE;
   fTeamPanelDirty = TRUE;
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
   fCharacterInfoPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 
   SetUpShutDownMapScreenHelpTextScreenMask();
   return;
@@ -2667,7 +2665,7 @@ void CreateDestroyMovementBox(uint8_t sSectorX, uint8_t sSectorY, int8_t sSector
     CreatePopUpBoxForMovementBox();
     BuildMouseRegionsForMoveBox();
     CreateScreenMaskForMoveBox();
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
   } else if ((fShowMapScreenMovementList == FALSE) && (fCreated == TRUE)) {
     fCreated = FALSE;
 
@@ -2676,8 +2674,8 @@ void CreateDestroyMovementBox(uint8_t sSectorX, uint8_t sSectorY, int8_t sSector
     RemoveBox(ghMoveBox);
     ghMoveBox = -1;
     RemoveScreenMaskForMoveBox();
-    MarkForRedrawalStrategicMap();
-    fMapScreenBottomDirty = TRUE;  // really long move boxes can overlap bottom panel
+    SetMapPanelDirty(true);
+    SetMapScreenBottomDirty(true);  // really long move boxes can overlap bottom panel
   }
 }
 
@@ -2733,7 +2731,7 @@ void SetUpMovingListsForSector(uint8_t sSectorX, uint8_t sSectorY, int8_t sSecto
 
 void CreatePopUpBoxForMovementBox(void) {
   SGPPoint Position;
-  SGPRect Dimensions;
+  struct GRect Dimensions;
 
   // create the pop up box and mouse regions for movement list
 
@@ -2748,7 +2746,7 @@ void CreatePopUpBoxForMovementBox(void) {
   SetBorderType(ghMoveBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghMoveBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghMoveBox, popupTextures);
 
   // margin sizes
   SetMargins(ghMoveBox, 6, 6, 4, 4);
@@ -2930,7 +2928,7 @@ void BuildMouseRegionsForMoveBox(void) {
   int32_t iCounter = 0, iTotalNumberOfLines = 0, iCount = 0, iCountB = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect Dimensions;
+  struct GRect Dimensions;
   int32_t iFontHeight = 0;
   int32_t iBoxXPosition = 0;
   int32_t iBoxYPosition = 0;
@@ -2995,11 +2993,12 @@ void BuildMouseRegionsForMoveBox(void) {
 
       for (iCountB = 0; iCountB < giNumberOfSoldiersInSectorMoving; iCountB++) {
         if (pSoldierMovingList[iCountB]->bAssignment == iSquadMovingList[iCount]) {
-          MSYS_DefineRegion(
-              &gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
-              (int16_t)(iBoxYPosition + iFontHeight * iCounter), (int16_t)(iBoxXPosition + iBoxWidth),
-              (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)), MSYS_PRIORITY_HIGHEST,
-              MSYS_NO_CURSOR, MoveMenuMvtCallback, MoveMenuBtnCallback);
+          MSYS_DefineRegion(&gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
+                            (int16_t)(iBoxYPosition + iFontHeight * iCounter),
+                            (int16_t)(iBoxXPosition + iBoxWidth),
+                            (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)),
+                            MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MoveMenuMvtCallback,
+                            MoveMenuBtnCallback);
 
           // set user defines
           MSYS_SetRegionUserData(&gMoveMenuRegion[iCounter], 0, iCounter);
@@ -3027,11 +3026,12 @@ void BuildMouseRegionsForMoveBox(void) {
       for (iCountB = 0; iCountB < giNumberOfSoldiersInSectorMoving; iCountB++) {
         if ((pSoldierMovingList[iCountB]->bAssignment == VEHICLE) &&
             (pSoldierMovingList[iCountB]->iVehicleId == iVehicleMovingList[iCount])) {
-          MSYS_DefineRegion(
-              &gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
-              (int16_t)(iBoxYPosition + iFontHeight * iCounter), (int16_t)(iBoxXPosition + iBoxWidth),
-              (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)), MSYS_PRIORITY_HIGHEST,
-              MSYS_NO_CURSOR, MoveMenuMvtCallback, MoveMenuBtnCallback);
+          MSYS_DefineRegion(&gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
+                            (int16_t)(iBoxYPosition + iFontHeight * iCounter),
+                            (int16_t)(iBoxXPosition + iBoxWidth),
+                            (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)),
+                            MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MoveMenuMvtCallback,
+                            MoveMenuBtnCallback);
 
           // set user defines
           MSYS_SetRegionUserData(&gMoveMenuRegion[iCounter], 0, iCounter);
@@ -3049,11 +3049,12 @@ void BuildMouseRegionsForMoveBox(void) {
           (pSoldierMovingList[iCount]->bAssignment != VEHICLE)) {
         // this line gets place only once...
         if (!fDefinedOtherRegion) {
-          MSYS_DefineRegion(
-              &gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
-              (int16_t)(iBoxYPosition + iFontHeight * iCounter), (int16_t)(iBoxXPosition + iBoxWidth),
-              (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)), MSYS_PRIORITY_HIGHEST,
-              MSYS_NO_CURSOR, MoveMenuMvtCallback, MoveMenuBtnCallback);
+          MSYS_DefineRegion(&gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
+                            (int16_t)(iBoxYPosition + iFontHeight * iCounter),
+                            (int16_t)(iBoxXPosition + iBoxWidth),
+                            (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)),
+                            MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MoveMenuMvtCallback,
+                            MoveMenuBtnCallback);
 
           // set user defines
           MSYS_SetRegionUserData(&gMoveMenuRegion[iCounter], 0, iCounter);
@@ -3089,11 +3090,11 @@ void BuildMouseRegionsForMoveBox(void) {
 
   if (IsAnythingSelectedForMoving()) {
     // DONE line
-    MSYS_DefineRegion(&gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
-                      (int16_t)(iBoxYPosition + iFontHeight * iCounter),
-                      (int16_t)(iBoxXPosition + iBoxWidth),
-                      (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)), MSYS_PRIORITY_HIGHEST,
-                      MSYS_NO_CURSOR, MoveMenuMvtCallback, MoveMenuBtnCallback);
+    MSYS_DefineRegion(
+        &gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
+        (int16_t)(iBoxYPosition + iFontHeight * iCounter), (int16_t)(iBoxXPosition + iBoxWidth),
+        (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)), MSYS_PRIORITY_HIGHEST,
+        MSYS_NO_CURSOR, MoveMenuMvtCallback, MoveMenuBtnCallback);
 
     // set user defines
     MSYS_SetRegionUserData(&gMoveMenuRegion[iCounter], 0, iCounter);
@@ -3105,8 +3106,8 @@ void BuildMouseRegionsForMoveBox(void) {
     MSYS_DefineRegion(&gMoveMenuRegion[iCounter], (int16_t)(iBoxXPosition),
                       (int16_t)(iBoxYPosition + iFontHeight * iCounter),
                       (int16_t)(iBoxXPosition + iBoxWidth),
-                      (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)), MSYS_PRIORITY_HIGHEST,
-                      MSYS_NO_CURSOR, MSYS_NO_CALLBACK, MSYS_NO_CALLBACK);
+                      (int16_t)(iBoxYPosition + iFontHeight * (iCounter + 1)),
+                      MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MSYS_NO_CALLBACK, MSYS_NO_CALLBACK);
     iCounter++;
   }
 
@@ -3276,7 +3277,7 @@ void MoveMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
       fRebuildMoveBox = TRUE;
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       MarkAllBoxesAsAltered();
     }
@@ -3466,7 +3467,7 @@ void HandleSettingTheSelectedListOfMercs(void) {
     // set cursor
     SetUpCursorForStrategicMap();
     fTeamPanelDirty = TRUE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
 
     DeselectSelectedListMercsWhoCantMoveWithThisGuy(
@@ -3499,7 +3500,8 @@ BOOLEAN AllOtherSoldiersInListAreSelected(void) {
   return (FALSE);
 }
 
-BOOLEAN IsThisSquadInThisSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ, int8_t bSquadValue) {
+BOOLEAN IsThisSquadInThisSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
+                                int8_t bSquadValue) {
   int16_t sX = 0, sY = 0;
   int8_t bZ = 0;
 
@@ -3554,7 +3556,7 @@ void ReBuildMoveBox(void) {
   // reset the fact
   fRebuildMoveBox = FALSE;
   fTeamPanelDirty = TRUE;
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
   fCharacterInfoPanelDirty = TRUE;
 
   // stop showing the box
@@ -3684,10 +3686,8 @@ void ShowUpdateBox(void) {
 
 void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
   int32_t iCounter = 0;
-  VOBJECT_DESC VObjectDesc;
 
   // going to load face
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
 
   if (pSoldier->bLife == 0) {
     return;
@@ -3699,8 +3699,7 @@ void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
 
   // if update
   if (pUpdateSoldierBox[iCounter] == NULL) {
-    sprintf(VObjectDesc.ImageFile, "Interface\\panels.sti");
-    if (!AddVideoObject(&VObjectDesc, &giMercPanelImage)) {
+    if (!AddVObjectFromFile("Interface\\panels.sti", &giMercPanelImage)) {
       AssertMsg(0, "Failed to load Interface\\panels.sti");
     }
   }
@@ -3712,18 +3711,19 @@ void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
       // add to box
       pUpdateSoldierBox[iCounter] = pSoldier;
 
+      SGPFILENAME ImageFile;
       if (gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex < 100) {
         // grab filename of face
-        sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
+        sprintf(ImageFile, "Faces\\65Face\\%02d.sti",
                 gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
       } else {
         // grab filename of face
-        sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%03d.sti",
+        sprintf(ImageFile, "Faces\\65Face\\%03d.sti",
                 gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
       }
 
       // load the face
-      AddVideoObject(&VObjectDesc, &giUpdateSoldierFaces[iCounter]);
+      AddVObjectFromFile(ImageFile, &giUpdateSoldierFaces[iCounter]);
 
       return;
     }
@@ -3770,9 +3770,8 @@ void DisplaySoldierUpdateBox() {
   giContractHighLine = -1;
   giAssignHighLine = -1;
 
-  // InterruptTime();
   PauseGame();
-  LockPauseState(4);
+  LockPause();
 
   PauseDialogueQueue();
 
@@ -3834,25 +3833,21 @@ void DisplaySoldierUpdateBox() {
   GetVideoObject(&hBackGroundHandle, guiUpdatePanelTactical);
 
   // Display the 2 TOP corner pieces
-  BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 0, iX - 4, iY - 4, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 2, iX + iUpdatePanelWidth, iY - 4,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsSB, hBackGroundHandle, 0, iX - 4, iY - 4);
+  BltVObject(vsSB, hBackGroundHandle, 2, iX + iUpdatePanelWidth, iY - 4);
 
   if (fFourWideMode) {
     // Display 2 vertical lines starting at the bottom
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 3, iX - 4, iY + iUpdatePanelHeight - 3 - 70,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
-                   iY + iUpdatePanelHeight - 3 - 70, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsSB, hBackGroundHandle, 3, iX - 4, iY + iUpdatePanelHeight - 3 - 70);
+    BltVObject(vsSB, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
+               iY + iUpdatePanelHeight - 3 - 70);
 
     // Display the 2 bottom corner pieces
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 0, iX - 4, iY + iUpdatePanelHeight - 3,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 2, iX + iUpdatePanelWidth,
-                   iY + iUpdatePanelHeight - 3, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsSB, hBackGroundHandle, 0, iX - 4, iY + iUpdatePanelHeight - 3);
+    BltVObject(vsSB, hBackGroundHandle, 2, iX + iUpdatePanelWidth, iY + iUpdatePanelHeight - 3);
   }
 
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsSB, 0, 0, 640, 480, FALSE);
 
   iUpperLimit = fFourWideMode
                     ? (iNumberOfMercsOnUpdatePanel + NUMBER_OF_MERC_COLUMNS_FOR_FOUR_WIDE_MODE)
@@ -3866,8 +3861,7 @@ void DisplaySoldierUpdateBox() {
     iFaceX = iX + (iCounter % iNumberWide) * TACT_UPDATE_MERC_FACE_X_WIDTH;
     iFaceY = iY + (iCounter / iNumberWide) * TACT_UPDATE_MERC_FACE_X_HEIGHT;
 
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 20, iFaceX, iFaceY, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVObject(vsSB, hBackGroundHandle, 20, iFaceX, iFaceY);
   }
 
   // loop through the mercs to be displayed
@@ -3903,28 +3897,26 @@ void DisplaySoldierUpdateBox() {
   // the button container box
   if (fFourWideMode) {
     // def: 3/1/99 WAS SUBINDEX 6,
-    BltVideoObject(
-        guiSAVEBUFFER, hBackGroundHandle, 19, iX - 4 + TACT_UPDATE_MERC_FACE_X_WIDTH,
-        iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3,
-        VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(
+        vsSB, hBackGroundHandle, 19, iX - 4 + TACT_UPDATE_MERC_FACE_X_WIDTH,
+        iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3);
 
     // ATE: Display string for time compression
     DisplayWrappedString((uint16_t)(iX),
                          (uint16_t)(iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + 5 +
-                                  REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3),
+                                    REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3),
                          (uint16_t)(iUpdatePanelWidth), 0, MAP_SCREEN_FONT, FONT_WHITE,
                          gzLateLocalizedString[49], FONT_BLACK, 0, CENTER_JUSTIFIED);
   } else {
     // def: 3/1/99 WAS SUBINDEX 6,
-    BltVideoObject(
-        guiSAVEBUFFER, hBackGroundHandle, 19, iX - 4,
-        iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3,
-        VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(
+        vsSB, hBackGroundHandle, 19, iX - 4,
+        iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3);
 
     // ATE: Display string for time compression
     DisplayWrappedString((uint16_t)(iX),
                          (uint16_t)(iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + 5 +
-                                  REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3),
+                                    REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3),
                          (uint16_t)(iUpdatePanelWidth), 0, MAP_SCREEN_FONT, FONT_WHITE,
                          gzLateLocalizedString[49], FONT_BLACK, 0, CENTER_JUSTIFIED);
   }
@@ -3934,39 +3926,35 @@ void DisplaySoldierUpdateBox() {
   // now wrap the border
   for (iCounter = 0; iCounter < iNumberHigh; iCounter++) {
     // the sides
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 3, iX - 4,
-                   iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
-                   iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsSB, hBackGroundHandle, 3, iX - 4, iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT);
+    BltVObject(vsSB, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
+               iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT);
   }
 
   // big horizontal line
   for (iCounter = 0; iCounter < iNumberWide; iCounter++) {
     // the top bottom
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 1,
-                   iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter), iY - 4, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
-    BltVideoObject(guiSAVEBUFFER, hBackGroundHandle, 1,
-                   iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter), iY + iUpdatePanelHeight - 3,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsSB, hBackGroundHandle, 1, iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter), iY - 4);
+    BltVObject(vsSB, hBackGroundHandle, 1, iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter),
+               iY + iUpdatePanelHeight - 3);
   }
 
   // Display the reason for the update box
   if (fFourWideMode) {
-    DisplayWrappedString((int16_t)(iX), (int16_t)(iY + 6), (int16_t)iUpdatePanelWidth, 0, MAP_SCREEN_FONT,
-                         FONT_WHITE, pUpdateMercStrings[iReasonForSoldierUpDate], FONT_BLACK, 0,
-                         CENTER_JUSTIFIED);
+    DisplayWrappedString((int16_t)(iX), (int16_t)(iY + 6), (int16_t)iUpdatePanelWidth, 0,
+                         MAP_SCREEN_FONT, FONT_WHITE, pUpdateMercStrings[iReasonForSoldierUpDate],
+                         FONT_BLACK, 0, CENTER_JUSTIFIED);
   } else {
-    DisplayWrappedString((int16_t)(iX), (int16_t)(iY + 3), (int16_t)iUpdatePanelWidth, 0, MAP_SCREEN_FONT,
-                         FONT_WHITE, pUpdateMercStrings[iReasonForSoldierUpDate], FONT_BLACK, 0,
-                         CENTER_JUSTIFIED);
+    DisplayWrappedString((int16_t)(iX), (int16_t)(iY + 3), (int16_t)iUpdatePanelWidth, 0,
+                         MAP_SCREEN_FONT, FONT_WHITE, pUpdateMercStrings[iReasonForSoldierUpDate],
+                         FONT_BLACK, 0, CENTER_JUSTIFIED);
   }
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
   // restore extern background rect
-  RestoreExternBackgroundRect((int16_t)(iX - 5), (int16_t)(iY - 5), (int16_t)(iUpdatePanelWidth + 10),
-                              (int16_t)(iUpdatePanelHeight + 6));
+  RestoreExternBackgroundRect((int16_t)(iX - 5), (int16_t)(iY - 5),
+                              (int16_t)(iUpdatePanelWidth + 10), (int16_t)(iUpdatePanelHeight + 6));
 
   CreateDestroyUpdatePanelButtons(iX, (iY + iUpdatePanelHeight - 18), fFourWideMode);
   MarkAButtonDirty(guiUpdatePanelButtons[0]);
@@ -4053,13 +4041,12 @@ void CreateDestroyTheUpdateBox(void) {
 
     fCreated = TRUE;
 
-    // InterruptTime();
     // create screen mask
     CreateScreenMaskForMoveBox();
 
     // lock it paused
     PauseGame();
-    LockPauseState(5);
+    LockPause();
 
     // display the box
     DisplaySoldierUpdateBox();
@@ -4069,11 +4056,11 @@ void CreateDestroyTheUpdateBox(void) {
   } else if ((fCreated == TRUE) && (fShowUpdateBox == FALSE)) {
     fCreated = FALSE;
 
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
 
     // dirty screen
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
 
@@ -4107,14 +4094,13 @@ void RenderSoldierSmallFaceForUpdatePanel(int32_t iIndex, int32_t iX, int32_t iY
   struct SOLDIERTYPE *pSoldier = NULL;
 
   // fill the background for the info bars black
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 36, iY + 2, iX + 44, iY + 30, 0);
+  VSurfaceColorFill(vsSB, iX + 36, iY + 2, iX + 44, iY + 30, 0);
 
   // put down the background
-  BltVideoObjectFromIndex(guiSAVEBUFFER, giMercPanelImage, 0, iX, iY, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsSB, giMercPanelImage, 0, iX, iY);
 
   // grab the face
-  BltVideoObjectFromIndex(guiSAVEBUFFER, giUpdateSoldierFaces[iIndex], 0, iX + 2, iY + 2,
-                          VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsSB, giUpdateSoldierFaces[iIndex], 0, iX + 2, iY + 2);
 
   // HEALTH BAR
   pSoldier = pUpdateSoldierBox[iIndex];
@@ -4124,38 +4110,32 @@ void RenderSoldierSmallFaceForUpdatePanel(int32_t iIndex, int32_t iX, int32_t iY
 
   // yellow one for bleeding
   iStartY = iY + 29 - 27 * pSoldier->bLifeMax / 100;
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 36, iStartY, iX + 37, iY + 29,
-                            Get16BPPColor(FROMRGB(107, 107, 57)));
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 37, iStartY, iX + 38, iY + 29,
-                            Get16BPPColor(FROMRGB(222, 181, 115)));
+  VSurfaceColorFill(vsSB, iX + 36, iStartY, iX + 37, iY + 29,
+                    rgb32_to_rgb565(FROMRGB(107, 107, 57)));
+  VSurfaceColorFill(vsSB, iX + 37, iStartY, iX + 38, iY + 29,
+                    rgb32_to_rgb565(FROMRGB(222, 181, 115)));
 
   // pink one for bandaged.
   iStartY += 27 * pSoldier->bBleeding / 100;
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 36, iStartY, iX + 37, iY + 29,
-                            Get16BPPColor(FROMRGB(156, 57, 57)));
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 37, iStartY, iX + 38, iY + 29,
-                            Get16BPPColor(FROMRGB(222, 132, 132)));
+  VSurfaceColorFill(vsSB, iX + 36, iStartY, iX + 37, iY + 29,
+                    rgb32_to_rgb565(FROMRGB(156, 57, 57)));
+  VSurfaceColorFill(vsSB, iX + 37, iStartY, iX + 38, iY + 29,
+                    rgb32_to_rgb565(FROMRGB(222, 132, 132)));
 
   // red one for actual health
   iStartY = iY + 29 - 27 * pSoldier->bLife / 100;
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 36, iStartY, iX + 37, iY + 29,
-                            Get16BPPColor(FROMRGB(107, 8, 8)));
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 37, iStartY, iX + 38, iY + 29,
-                            Get16BPPColor(FROMRGB(206, 0, 0)));
+  VSurfaceColorFill(vsSB, iX + 36, iStartY, iX + 37, iY + 29, rgb32_to_rgb565(FROMRGB(107, 8, 8)));
+  VSurfaceColorFill(vsSB, iX + 37, iStartY, iX + 38, iY + 29, rgb32_to_rgb565(FROMRGB(206, 0, 0)));
 
   // BREATH BAR
   iStartY = iY + 29 - 27 * pSoldier->bBreathMax / 100;
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 39, iStartY, iX + 40, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 8, 132)));
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 40, iStartY, iX + 41, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 8, 107)));
+  VSurfaceColorFill(vsSB, iX + 39, iStartY, iX + 40, iY + 29, rgb32_to_rgb565(FROMRGB(8, 8, 132)));
+  VSurfaceColorFill(vsSB, iX + 40, iStartY, iX + 41, iY + 29, rgb32_to_rgb565(FROMRGB(8, 8, 107)));
 
   // MORALE BAR
   iStartY = iY + 29 - 27 * pSoldier->bMorale / 100;
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 42, iStartY, iX + 43, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 156, 8)));
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, iX + 43, iStartY, iX + 44, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 107, 8)));
+  VSurfaceColorFill(vsSB, iX + 42, iStartY, iX + 43, iY + 29, rgb32_to_rgb565(FROMRGB(8, 156, 8)));
+  VSurfaceColorFill(vsSB, iX + 43, iStartY, iX + 44, iY + 29, rgb32_to_rgb565(FROMRGB(8, 107, 8)));
 
   return;
 }
@@ -4209,19 +4189,19 @@ void SetUpdateBoxFlag(BOOLEAN fFlag) {
 void SetTixaAsFound(void) {
   // set the town of Tixa as found by the player
   fFoundTixa = TRUE;
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void SetOrtaAsFound(void) {
   // set the town of Orta as found by the player
   fFoundOrta = TRUE;
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
-void SetSAMSiteAsFound(uint8_t uiSamIndex) {
+void SetSAMSiteAsFound(enum SamSite uiSamIndex) {
   // set this SAM site as being found by the player
-  fSamSiteFound[uiSamIndex] = TRUE;
-  MarkForRedrawalStrategicMap();
+  SetSamSiteFound(uiSamIndex, true);
+  SetMapPanelDirty(true);
 }
 
 // ste up the timers for move menu in mapscreen for double click detection
@@ -4290,56 +4270,6 @@ void CreateDestroyInsuranceMouseRegionForMercs(BOOLEAN fCreate) {
   }
 }
 
-/*
-void HandlePlayerEnteringMapScreenBeforeGoingToTactical( void )
-{
-        wchar_t sString[ 256 ];
-
-        if( !( AnyMercsHired( ) ) )
-        {
-                // no mercs hired inform player they must hire mercs
-                swprintf( sString, pMapScreenJustStartedHelpText[ 0 ] );
-                DoMapMessageBox( MSG_BOX_BASIC_STYLE, sString, MAP_SCREEN, MSG_BOX_FLAG_OK,
-DoneHandlePlayerFirstEntryToMapScreen );
-
-        }
-        else
-        {
-                // player has mercs hired, tell them to time compress to get things underway
-                swprintf( sString, pMapScreenJustStartedHelpText[ 1 ] );
-                fShowMapScreenHelpText = TRUE;
-        }
-
-
-
-        // now inform the player
-
-        if( fShowMapScreenHelpText )
-        {
-                fShowMapScreenHelpText = FALSE;
-                SetUpShutDownMapScreenHelpTextScreenMask( );
-                fShowMapScreenHelpText = TRUE;
-        }
-
-        return;
-}
-
-
-void DoneHandlePlayerFirstEntryToMapScreen(  uint8_t bExitValue )
-{
-        static BOOLEAN fFirstTime = TRUE;
-
-        if( bExitValue == MSG_BOX_RETURN_OK )
-        {
-                if( fFirstTime == TRUE )
-                {
-                        fFirstTime = FALSE;
-                        fShowMapScreenHelpText = TRUE;
-                }
-        }
-}
-*/
-
 BOOLEAN HandleTimeCompressWithTeamJackedInAndGearedToGo(void) {
   // check a team is ready to go
   if (!(AnyMercsHired())) {
@@ -4375,7 +4305,7 @@ BOOLEAN HandleTimeCompressWithTeamJackedInAndGearedToGo(void) {
   SetUpShutDownMapScreenHelpTextScreenMask();
 
   // Add e-mail message
-  AddEmail(ENRICO_CONGRATS, ENRICO_CONGRATS_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
+  AddEmail(ENRICO_CONGRATS, ENRICO_CONGRATS_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
 
   return (TRUE);
 }
@@ -4408,7 +4338,7 @@ void HandleDisplayOfExitToTacticalMessageForFirstEntryToMapScreen(void) {
 
   if (iDifference > TIMER_FOR_SHOW_EXIT_TO_TACTICAL_MESSAGE) {
     fShowMapScreenHelpText = FALSE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
     giExitToTactBaseTime = 0;
@@ -4417,12 +4347,11 @@ void HandleDisplayOfExitToTacticalMessageForFirstEntryToMapScreen(void) {
   return;
 }
 
-BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
-                                                           BOOLEAN fContested) {
+BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uint8_t sSectorY,
+                                                           int8_t bSectorZ, BOOLEAN fContested) {
   wchar_t sString[128], sStringA[64], sStringB[256], sStringC[64];
   int32_t iValue = 0;
   TownID bTownId = 0;
-  int16_t sSector = 0;
   int8_t bMineIndex;
 
   // are we below ground?
@@ -4480,10 +4409,7 @@ BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uin
     return (TRUE);
   }
 
-  // get the strategic sector value
-  sSector = GetSectorID16(sSectorX, sSectorY);
-
-  if (StrategicMap[sSector].townID == BLANK_SECTOR) {
+  if (GetTownIdForSector(sSectorX, sSectorY) == BLANK_SECTOR) {
     return (FALSE);
   }
 
@@ -4501,7 +4427,6 @@ BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uin
 
 void NotifyPlayerOfInvasionByEnemyForces(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
                                          MSGBOX_CALLBACK ReturnCallback) {
-  int16_t sSector = 0;
   TownID bTownId = 0;
   wchar_t sString[128], sStringA[128];
 
@@ -4510,16 +4435,13 @@ void NotifyPlayerOfInvasionByEnemyForces(uint8_t sSectorX, uint8_t sSectorY, int
     return;
   }
 
-  // grab sector value
-  sSector = GetSectorID16(sSectorX, sSectorY);
-
-  if (StrategicMap[sSector].fEnemyControlled == TRUE) {
+  if (IsSectorEnemyControlled(sSectorX, sSectorY)) {
     // enemy controlled any ways, leave
     return;
   }
 
   // get the town id
-  bTownId = StrategicMap[sSector].townID;
+  bTownId = GetTownIdForSector(sSectorX, sSectorY);
 
   // check if SAM site here
   if (IsThisSectorASAMSector(sSectorX, sSectorY, bSectorZ)) {
@@ -4866,17 +4788,7 @@ void RequestDecreaseInTimeCompression(void) {
     if (!AllowedToTimeCompress()) {
       // not allowed to compress time
       TellPlayerWhyHeCantCompressTime();
-      return;
     }
-
-    // ARM Change: do nothing
-    /*
-                    // if compression mode is set, just restart time so player can see it
-                    if ( giTimeCompressMode > TIME_COMPRESS_X1 )
-                    {
-                            StartTimeCompression();
-                    }
-    */
   }
 }
 
@@ -4924,7 +4836,7 @@ BOOLEAN CanSoldierMoveWithVehicleId(struct SOLDIERTYPE *pSoldier, int32_t iVehic
   return (FALSE);
 }
 
-BOOLEAN SaveLeaveItemList(HWFILE hFile) {
+BOOLEAN SaveLeaveItemList(FileID hFile) {
   int32_t iCounter = 0;
   MERC_LEAVE_ITEM *pCurrentItem;
   uint32_t uiCount = 0;
@@ -4938,7 +4850,7 @@ BOOLEAN SaveLeaveItemList(HWFILE hFile) {
       fNodeExists = TRUE;
 
       // Save the to specify that a node DOES exist
-      FileMan_Write(hFile, &fNodeExists, sizeof(BOOLEAN), &uiNumBytesWritten);
+      File_Write(hFile, &fNodeExists, sizeof(BOOLEAN), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(BOOLEAN)) {
         return (FALSE);
       }
@@ -4953,7 +4865,7 @@ BOOLEAN SaveLeaveItemList(HWFILE hFile) {
       }
 
       // Save the number specifing how many items there are in the list
-      FileMan_Write(hFile, &uiCount, sizeof(uint32_t), &uiNumBytesWritten);
+      File_Write(hFile, &uiCount, sizeof(uint32_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint32_t)) {
         return (FALSE);
       }
@@ -4963,7 +4875,7 @@ BOOLEAN SaveLeaveItemList(HWFILE hFile) {
       // loop through all the nodes to see how many there are
       for (uiCnt = 0; uiCnt < uiCount; uiCnt++) {
         // Save the items
-        FileMan_Write(hFile, pCurrentItem, sizeof(MERC_LEAVE_ITEM), &uiNumBytesWritten);
+        File_Write(hFile, pCurrentItem, sizeof(MERC_LEAVE_ITEM), &uiNumBytesWritten);
         if (uiNumBytesWritten != sizeof(MERC_LEAVE_ITEM)) {
           return (FALSE);
         }
@@ -4973,7 +4885,7 @@ BOOLEAN SaveLeaveItemList(HWFILE hFile) {
     } else {
       fNodeExists = FALSE;
       // Save the to specify that a node DOENST exist
-      FileMan_Write(hFile, &fNodeExists, sizeof(BOOLEAN), &uiNumBytesWritten);
+      File_Write(hFile, &fNodeExists, sizeof(BOOLEAN), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(BOOLEAN)) {
         return (FALSE);
       }
@@ -4982,7 +4894,7 @@ BOOLEAN SaveLeaveItemList(HWFILE hFile) {
 
   // Save the leave list profile id's
   for (iCounter = 0; iCounter < NUM_LEAVE_LIST_SLOTS; iCounter++) {
-    FileMan_Write(hFile, &guiLeaveListOwnerProfileId[iCounter], sizeof(uint32_t), &uiNumBytesWritten);
+    File_Write(hFile, &guiLeaveListOwnerProfileId[iCounter], sizeof(uint32_t), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(uint32_t)) {
       return (FALSE);
     }
@@ -4991,7 +4903,7 @@ BOOLEAN SaveLeaveItemList(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadLeaveItemList(HWFILE hFile) {
+BOOLEAN LoadLeaveItemList(FileID hFile) {
   int32_t iCounter = 0;
   MERC_LEAVE_ITEM *pCurrentItem;
   MERC_LEAVE_ITEM *pItem;
@@ -5009,7 +4921,7 @@ BOOLEAN LoadLeaveItemList(HWFILE hFile) {
   // loop through all the lists
   for (iCounter = 0; iCounter < NUM_LEAVE_LIST_SLOTS; iCounter++) {
     // load the flag that specifis that a node DOES exist
-    FileMan_Read(hFile, &fNodeExists, sizeof(BOOLEAN), &uiNumBytesRead);
+    File_Read(hFile, &fNodeExists, sizeof(BOOLEAN), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(BOOLEAN)) {
       return (FALSE);
     }
@@ -5017,7 +4929,7 @@ BOOLEAN LoadLeaveItemList(HWFILE hFile) {
     // if a root node is supposed to exist
     if (fNodeExists) {
       // load the number specifing how many items there are in the list
-      FileMan_Read(hFile, &uiCount, sizeof(uint32_t), &uiNumBytesRead);
+      File_Read(hFile, &uiCount, sizeof(uint32_t), &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(uint32_t)) {
         return (FALSE);
       }
@@ -5040,7 +4952,7 @@ BOOLEAN LoadLeaveItemList(HWFILE hFile) {
         memset(pItem, 0, sizeof(MERC_LEAVE_ITEM));
 
         // Load the items
-        FileMan_Read(hFile, pItem, sizeof(MERC_LEAVE_ITEM), &uiNumBytesRead);
+        File_Read(hFile, pItem, sizeof(MERC_LEAVE_ITEM), &uiNumBytesRead);
         if (uiNumBytesRead != sizeof(MERC_LEAVE_ITEM)) {
           return (FALSE);
         }
@@ -5061,7 +4973,7 @@ BOOLEAN LoadLeaveItemList(HWFILE hFile) {
 
   // Load the leave list profile id's
   for (iCounter = 0; iCounter < NUM_LEAVE_LIST_SLOTS; iCounter++) {
-    FileMan_Read(hFile, &guiLeaveListOwnerProfileId[iCounter], sizeof(uint32_t), &uiNumBytesRead);
+    File_Read(hFile, &guiLeaveListOwnerProfileId[iCounter], sizeof(uint32_t), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(uint32_t)) {
       return (FALSE);
     }
@@ -5103,10 +5015,11 @@ void TurnOnSectorLocator(uint8_t ubProfileID) {
 
 void TurnOffSectorLocator() {
   gubBlitSectorLocatorCode = LOCATOR_COLOR_NONE;
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
-void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ, uint8_t ubLocatorID) {
+void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ,
+                                   uint8_t ubLocatorID) {
   static uint8_t ubFrame = 0;
   uint8_t ubBaseFrame = 0;
   uint32_t uiTimer = 0;
@@ -5174,10 +5087,11 @@ void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t s
     }
   }
 
-  RestoreExternBackgroundRect((int16_t)(sScreenX + 1), (int16_t)(sScreenY - 1), MAP_GRID_X, MAP_GRID_Y);
+  RestoreExternBackgroundRect((int16_t)(sScreenX + 1), (int16_t)(sScreenY - 1), MAP_GRID_X,
+                              MAP_GRID_Y);
 
   // blit object to frame buffer
-  BltVideoObject(FRAME_BUFFER, hHandle, ubFrame, sScreenX, sScreenY, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, ubFrame, sScreenX, sScreenY);
 
   // invalidate region on frame buffer
   InvalidateRegion(sScreenX, sScreenY - 1, sScreenX + MAP_GRID_X, sScreenY + MAP_GRID_Y);

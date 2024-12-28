@@ -30,6 +30,7 @@
 #include "GameSettings.h"
 #include "Globals.h"
 #include "JAScreens.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"
@@ -37,6 +38,7 @@
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "ScreenIDs.h"
@@ -74,6 +76,10 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/TextInput.h"
+#include "rust_colors.h"
+#include "rust_images.h"
+
+extern struct SGPPaletteEntry gEditorLightColor;
 
 extern void CopyMercPlacement(int32_t iMapIndex);
 extern void PasteMercPlacement(int32_t iMapIndex);
@@ -138,7 +144,7 @@ BOOLEAN gfFakeLights = FALSE;
 
 int16_t gsLightRadius = 5;
 
-BOOLEAN gfOldDoVideoScroll;    // Saved for returning to previous settings
+BOOLEAN gfOldDoVideoScroll;      // Saved for returning to previous settings
 uint8_t gubOldCurScrollSpeedID;  // Saved for returning to previous settings
 
 int32_t iOldTaskMode = TASK_OPTIONS;
@@ -231,13 +237,13 @@ uint32_t EditScreenInit(void) {
 
   // Set the editor colors.
   // gusEditorTaskbarColor = 9581;
-  // gusEditorTaskbarColor =		Get16BPPColor( FROMRGB(  72,  88, 104 ) );
-  // gusEditorTaskbarHiColor = Get16BPPColor( FROMRGB( 136, 138, 135 ) );
-  // gusEditorTaskbarLoColor = Get16BPPColor( FROMRGB(  24,  61,  81 ) );
+  // gusEditorTaskbarColor =		rgb32_to_rgb565( FROMRGB(  72,  88, 104 ) );
+  // gusEditorTaskbarHiColor = rgb32_to_rgb565( FROMRGB( 136, 138, 135 ) );
+  // gusEditorTaskbarLoColor = rgb32_to_rgb565( FROMRGB(  24,  61,  81 ) );
 
-  gusEditorTaskbarColor = Get16BPPColor(FROMRGB(65, 79, 94));
-  gusEditorTaskbarHiColor = Get16BPPColor(FROMRGB(122, 124, 121));
-  gusEditorTaskbarLoColor = Get16BPPColor(FROMRGB(22, 55, 73));
+  gusEditorTaskbarColor = rgb32_to_rgb565(FROMRGB(65, 79, 94));
+  gusEditorTaskbarHiColor = rgb32_to_rgb565(FROMRGB(122, 124, 121));
+  gusEditorTaskbarLoColor = rgb32_to_rgb565(FROMRGB(22, 55, 73));
 
   InitClipboard();
 
@@ -270,7 +276,7 @@ BOOLEAN EditModeInit(void) {
   int32_t i;
   struct SGPPaletteEntry LColors[2];
 
-  DebugPrint("Entering editor mode...\n");
+  PrintToDebuggerConsole("Entering editor mode...\n");
 
   gfRealGunNut = gGameOptions.fGunNut;
   gGameOptions.fGunNut = TRUE;
@@ -396,7 +402,7 @@ BOOLEAN EditModeInit(void) {
     ShowLightPositionHandles();
     LightSpriteRenderAll();
   } else {
-    DebugPrint("Creating summary window...\n");
+    PrintToDebuggerConsole("Creating summary window...\n");
     CreateSummaryWindow();
     gfNeedToInitGame = TRUE;
   }
@@ -411,7 +417,7 @@ BOOLEAN EditModeInit(void) {
 
   gfIntendOnEnteringEditor = FALSE;
 
-  DebugPrint("Finished entering editor mode...\n");
+  PrintToDebuggerConsole("Finished entering editor mode...\n");
 
   return (TRUE);
 }
@@ -716,7 +722,7 @@ BOOLEAN DrawTempMouseCursorObject(void) {
 
 // Displays the current drawing object in the small, lower left window of the editor's toolbar.
 void ShowCurrentDrawingMode(void) {
-  SGPRect ClipRect, NewRect;
+  struct GRect ClipRect, NewRect;
   int32_t iShowMode;
   uint16_t usUseIndex;
   uint16_t usObjIndex;
@@ -725,7 +731,7 @@ void ShowCurrentDrawingMode(void) {
   int32_t iPicHeight, iPicWidth;
   int16_t sTempOffsetX;
   int16_t sTempOffsetY;
-  ETRLEObject *pETRLEObject;
+  struct Subimage *subimages;
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
   uint16_t usFillColor;
@@ -741,7 +747,7 @@ void ShowCurrentDrawingMode(void) {
   SetClippingRect(&NewRect);
 
   // Clear it out
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 400, 100, 458, 0);
+  VSurfaceColorFill(vsFB, 0, 400, 100, 458, 0);
 
   iShowMode = iDrawMode;
   if (iDrawMode >= DRAW_MODE_ERASE) iShowMode -= DRAW_MODE_ERASE;
@@ -905,39 +911,39 @@ void ShowCurrentDrawingMode(void) {
 
   // If we actually have something to draw, draw it
   if ((usUseIndex != 0xffff) && (usObjIndex != 0xffff)) {
-    pETRLEObject =
-        &(gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface->pETRLEObject[usUseIndex]);
+    subimages =
+        &(gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface->subimages[usUseIndex]);
 
-    iPicWidth = (int32_t)pETRLEObject->usWidth;
-    iPicHeight = (int32_t)pETRLEObject->usHeight;
+    iPicWidth = (int32_t)subimages->width;
+    iPicHeight = (int32_t)subimages->height;
 
     // Center the picture in the display window.
     iStartX = (100 - iPicWidth) / 2;
     iStartY = (60 - iPicHeight) / 2;
 
     // We have to store the offset data in temp variables before zeroing them and blitting
-    sTempOffsetX = pETRLEObject->sOffsetX;
-    sTempOffsetY = pETRLEObject->sOffsetY;
+    sTempOffsetX = subimages->x_offset;
+    sTempOffsetY = subimages->y_offset;
 
     // Set the offsets used for blitting to 0
-    pETRLEObject->sOffsetX = 0;
-    pETRLEObject->sOffsetY = 0;
+    subimages->x_offset = 0;
+    subimages->y_offset = 0;
 
     SetObjectShade(gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface,
                    DEFAULT_SHADE_LEVEL);
-    BltVideoObject(FRAME_BUFFER, gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface,
-                   usUseIndex, (0 + iStartX), (400 + iStartY), VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface, usUseIndex,
+               (0 + iStartX), (400 + iStartY));
 
-    pETRLEObject->sOffsetX = sTempOffsetX;
-    pETRLEObject->sOffsetY = sTempOffsetY;
+    subimages->x_offset = sTempOffsetX;
+    subimages->y_offset = sTempOffsetY;
   }
 
   // Set the color for the window's border. Blueish color = Normal, Red = Fake lighting is turned on
   usFillColor = GenericButtonFillColors[0];
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   RectangleDraw(FALSE, 0, 400, 99, 458, usFillColor, pDestBuf);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 
   InvalidateRegion(0, 400, 100, 458);
   SetClippingRect(&ClipRect);
@@ -2204,9 +2210,9 @@ uint32_t WaitForHelpScreenResponse(void) {
   InputAtom DummyEvent;
   BOOLEAN fLeaveScreen;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 50, 50, 590, 310, Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 51, 51, 590, 310, Get16BPPColor(FROMRGB(24, 61, 81)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 51, 51, 589, 309, GenericButtonFillColors[0]);
+  VSurfaceColorFill(vsFB, 50, 50, 590, 310, rgb32_to_rgb565(FROMRGB(136, 138, 135)));
+  VSurfaceColorFill(vsFB, 51, 51, 590, 310, rgb32_to_rgb565(FROMRGB(24, 61, 81)));
+  VSurfaceColorFill(vsFB, 51, 51, 589, 309, GenericButtonFillColors[0]);
 
   SetFont(gp12PointFont1);
 
@@ -2380,29 +2386,29 @@ void GetMasterList(void) {}
 //	(usually a 16 bit image)
 //
 void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
-  SGPRect ClipRect, WinRect;
+  struct GRect ClipRect, WinRect;
   int32_t iStartX;
   int32_t iStartY;
   int32_t iPicHeight, iPicWidth;
   struct VSurface *hvSurface;
   int32_t iWinWidth, iWinHeight;
-  blt_vs_fx vSfx;
+  struct BltOpts vSfx;
 
   WinRect.iLeft = (iWindow == 0) ? (336) : (488);
   WinRect.iTop = 211;
   WinRect.iRight = (iWindow == 0) ? (485) : (637);
   WinRect.iBottom = 399;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
-                            WinRect.iBottom + 1, Get16BPPColor(FROMRGB(128, 0, 0)));
+  VSurfaceColorFill(vsFB, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
+                    WinRect.iBottom + 1, rgb32_to_rgb565(FROMRGB(128, 0, 0)));
 
   iWinWidth = WinRect.iRight - WinRect.iLeft;
   iWinHeight = WinRect.iBottom - WinRect.iTop;
 
   GetVideoSurface(&hvSurface, vSurface);
 
-  iPicWidth = (int32_t)hvSurface->usWidth;
-  iPicHeight = (int32_t)hvSurface->usHeight;
+  iPicWidth = (int32_t)GetVSurfaceWidth(hvSurface);
+  iPicHeight = (int32_t)GetVSurfaceHeight(hvSurface);
 
   if (iPicWidth > iWinWidth) {
     ClipRect.iLeft = (iPicWidth - iWinWidth) / 2;
@@ -2425,7 +2431,7 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
   }
 
   vSfx.SrcRect = ClipRect;
-  BltVideoSurface(FRAME_BUFFER, vSurface, 0, iStartX, iStartY, VS_BLT_SRCSUBRECT, &vSfx);
+  BltVideoSurface(vsFB, GetVSByID(vSurface), iStartX, iStartY, VS_BLT_SRCSUBRECT, &vSfx);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -2435,13 +2441,13 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
 //	8 bit image (.STI) files
 //
 void ShowCurrentSlotImage(struct VObject *hVObj, int32_t iWindow) {
-  SGPRect ClipRect, NewRect;
+  struct GRect ClipRect, NewRect;
   int32_t iStartX;
   int32_t iStartY;
   int32_t iPicHeight, iPicWidth;
   int16_t sTempOffsetX;
   int16_t sTempOffsetY;
-  ETRLEObject *pETRLEObject;
+  struct Subimage *subimages;
   int32_t iWinWidth, iWinHeight;
 
   NewRect.iLeft = (iWindow == 0) ? (336) : (488);
@@ -2455,27 +2461,27 @@ void ShowCurrentSlotImage(struct VObject *hVObj, int32_t iWindow) {
   GetClippingRect(&ClipRect);
   SetClippingRect(&NewRect);
 
-  pETRLEObject = &(hVObj->pETRLEObject[0]);
+  subimages = &(hVObj->subimages[0]);
 
-  iPicWidth = (int32_t)pETRLEObject->usWidth;
-  iPicHeight = (int32_t)pETRLEObject->usHeight;
+  iPicWidth = (int32_t)subimages->width;
+  iPicHeight = (int32_t)subimages->height;
 
   iStartX = ((iWinWidth - iPicWidth) / 2) + NewRect.iLeft;
   iStartY = ((iWinHeight - iPicHeight) / 2) + NewRect.iTop;
 
   // We have to store the offset data in temp variables before zeroing them and blitting
-  sTempOffsetX = pETRLEObject->sOffsetX;
-  sTempOffsetY = pETRLEObject->sOffsetY;
+  sTempOffsetX = subimages->x_offset;
+  sTempOffsetY = subimages->y_offset;
 
   // Set the offsets used for blitting to 0
-  pETRLEObject->sOffsetX = 0;
-  pETRLEObject->sOffsetY = 0;
+  subimages->x_offset = 0;
+  subimages->y_offset = 0;
 
   SetObjectShade(hVObj, DEFAULT_SHADE_LEVEL);
-  BltVideoObject(FRAME_BUFFER, hVObj, 0, (iStartX), (iStartY), VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hVObj, 0, (iStartX), (iStartY));
 
-  pETRLEObject->sOffsetX = sTempOffsetX;
-  pETRLEObject->sOffsetY = sTempOffsetY;
+  subimages->x_offset = sTempOffsetX;
+  subimages->y_offset = sTempOffsetY;
 
   SetClippingRect(&ClipRect);
 }
@@ -2500,21 +2506,21 @@ BOOLEAN PlaceLight(int16_t sRadius, int16_t iMapX, int16_t iMapY, int16_t sType)
     ubIntensity = (uint8_t)((float)sRadius / LIGHT_DECAY);
     if ((iLightHandle = LightCreateOmni(ubIntensity, sRadius)) == (-1)) {
       // Can't create light template
-      DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+      DebugMsg(TOPIC_GAME, DBG_ERROR,
                String("PlaceLight: Can't create light template for radius %d", sRadius));
       return (FALSE);
     }
 
     if (!LightSave(iLightHandle, Filename)) {
       // Can't save light template
-      DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+      DebugMsg(TOPIC_GAME, DBG_ERROR,
                String("PlaceLight: Can't save light template for radius %d", sRadius));
       return (FALSE);
     }
 
     if ((iLightHandle = LightSpriteCreate(Filename, sType)) == (-1)) {
       // Can't create sprite
-      DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+      DebugMsg(TOPIC_GAME, DBG_ERROR,
                String("PlaceLight: Can't create light sprite of radius %d", sRadius));
       return (FALSE);
     }
@@ -2522,13 +2528,13 @@ BOOLEAN PlaceLight(int16_t sRadius, int16_t iMapX, int16_t iMapY, int16_t sType)
 
   if (!LightSpritePower(iLightHandle, TRUE)) {
     // Can't turn this light on
-    DebugMsg(TOPIC_GAME, DBG_LEVEL_1, String("PlaceLight: Can't turn on light %d", iLightHandle));
+    DebugMsg(TOPIC_GAME, DBG_ERROR, String("PlaceLight: Can't turn on light %d", iLightHandle));
     return (FALSE);
   }
 
   if (!LightSpritePosition(iLightHandle, iMapX, iMapY)) {
     // Can't set light's position
-    DebugMsg(TOPIC_GAME, DBG_LEVEL_1,
+    DebugMsg(TOPIC_GAME, DBG_ERROR,
              String("PlaceLight: Can't set light position for light %d", iLightHandle));
     return (FALSE);
   }
@@ -2637,7 +2643,8 @@ void ShowLightPositionHandles(void) {
       }
 
       if (!fSoldierLight) {
-        iMapIndex = ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
+        iMapIndex =
+            ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
         if (!TypeExistsInObjectLayer(iMapIndex, GOODRING, &usTmpIndex)) {
           AddObjectToHead(iMapIndex, GOODRING1);
           gpWorldLevelData[iMapIndex].pObjectHead->ubShadeLevel = DEFAULT_SHADE_LEVEL;
@@ -2672,7 +2679,8 @@ void RemoveLightPositionHandles(void) {
       }
 
       if (!fSoldierLight) {
-        iMapIndex = ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
+        iMapIndex =
+            ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
         RemoveAllObjectsOfTypeRange(iMapIndex, GOODRING, GOODRING);
       }
     }
@@ -3468,7 +3476,7 @@ uint32_t EditScreenHandle(void) {
   // Handle video overlays, for FPS and screen message stuff
   if (gfScrollPending) {
     AllocateVideoOverlaysArea();
-    SaveVideoOverlaysArea(FRAME_BUFFER);
+    SaveVideoOverlaysArea(vsFB);
   }
   ExecuteVideoOverlays();
 

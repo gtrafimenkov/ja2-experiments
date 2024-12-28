@@ -11,7 +11,6 @@
 #include "BuildDefines.h"
 #include "JAScreens.h"
 #include "Local.h"
-#include "SGP/FileMan.h"
 #include "SGP/Font.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
@@ -28,6 +27,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 #include "Utils/WordWrap.h"
+#include "rust_fileman.h"
 
 // #include "mbstring.h"
 
@@ -106,23 +106,23 @@ void AlignString(ScrollStringStPtr pPermStringSt);
 
 int32_t GetMessageQueueSize(void);
 
-ScrollStringStPtr AddString(wchar_t* string, uint16_t usColor, uint32_t uiFont, BOOLEAN fStartOfNewString,
-                            uint8_t ubPriority);
-void SetString(ScrollStringStPtr pStringSt, wchar_t* String);
+ScrollStringStPtr AddString(wchar_t *string, uint16_t usColor, uint32_t uiFont,
+                            BOOLEAN fStartOfNewString, uint8_t ubPriority);
+void SetString(ScrollStringStPtr pStringSt, wchar_t *String);
 
 void SetStringPosition(ScrollStringStPtr pStringSt, uint16_t x, uint16_t y);
 void SetStringColor(ScrollStringStPtr pStringSt, uint16_t color);
 ScrollStringStPtr SetStringNext(ScrollStringStPtr pStringSt, ScrollStringStPtr pNext);
 ScrollStringStPtr SetStringPrev(ScrollStringStPtr pStringSt, ScrollStringStPtr pPrev);
-void AddStringToMapScreenMessageList(wchar_t* pString, uint16_t usColor, uint32_t uiFont,
+void AddStringToMapScreenMessageList(wchar_t *pString, uint16_t usColor, uint32_t uiFont,
                                      BOOLEAN fStartOfNewString, uint8_t ubPriority);
 
 // clear up a linked list of wrapped strings
 void ClearWrappedStrings(WRAPPED_STRING *pStringWrapperHead);
-void WriteMessageToFile(wchar_t* pString);
+void WriteMessageToFile(wchar_t *pString);
 
 // tactical screen message
-void TacticalScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t* pStringA, ...);
+void TacticalScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t *pStringA, ...);
 
 // play bee when new message is added
 void PlayNewMessageSound(void);
@@ -135,8 +135,8 @@ void SetStringFont(ScrollStringStPtr pStringSt, uint32_t uiFont) { pStringSt->ui
 
 uint32_t GetStringFont(ScrollStringStPtr pStringSt) { return pStringSt->uiFont; }
 
-ScrollStringStPtr AddString(wchar_t* pString, uint16_t usColor, uint32_t uiFont, BOOLEAN fStartOfNewString,
-                            uint8_t ubPriority) {
+ScrollStringStPtr AddString(wchar_t *pString, uint16_t usColor, uint32_t uiFont,
+                            BOOLEAN fStartOfNewString, uint8_t ubPriority) {
   // add a new string to the list of strings
   ScrollStringStPtr pStringSt = NULL;
   pStringSt = (ScrollStringSt *)MemAlloc(sizeof(ScrollStringSt));
@@ -157,9 +157,9 @@ ScrollStringStPtr AddString(wchar_t* pString, uint16_t usColor, uint32_t uiFont,
   return (pStringSt);
 }
 
-void SetString(ScrollStringStPtr pStringSt, wchar_t* pString) {
+void SetString(ScrollStringStPtr pStringSt, wchar_t *pString) {
   // ARM: Why x2 + 4 ???
-  pStringSt->pString16 = (wchar_t*)MemAlloc((wcslen(pString) * 2) + 4);
+  pStringSt->pString16 = (wchar_t *)MemAlloc((wcslen(pString) * 2) + 4);
   wcsncpy(pStringSt->pString16, pString, wcslen(pString));
   pStringSt->pString16[wcslen(pString)] = 0;
 }
@@ -257,7 +257,7 @@ void BlitString(VIDEO_OVERLAY *pBlitter) {
     return;
   }
 
-  pDestBuf = LockVideoSurface(pBlitter->uiDestBuff, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(GetVSByID(pBlitter->uiDestBuff), &uiDestPitchBYTES);
   SetFont(pBlitter->uiFontID);
 
   SetFontBackground(pBlitter->ubFontBack);
@@ -265,7 +265,7 @@ void BlitString(VIDEO_OVERLAY *pBlitter) {
   SetFontShadow(DEFAULT_SHADOW);
   mprintf_buffer_coded(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                        pBlitter->zText);
-  UnLockVideoSurface(pBlitter->uiDestBuff);
+  VSurfaceUnlock(GetVSByID(pBlitter->uiDestBuff));
 }
 
 void EnableStringVideoOverlay(ScrollStringStPtr pStringSt, BOOLEAN fEnable) {
@@ -305,7 +305,7 @@ void ScrollString() {
   uint32_t suiTimer = 0;
   uint32_t cnt;
   int32_t iNumberOfNewStrings = 0;  // the count of new strings, so we can update position by
-                                  // WIDTH_BETWEEN_NEW_STRINGS pixels in the y
+                                    // WIDTH_BETWEEN_NEW_STRINGS pixels in the y
   int32_t iNumberOfMessagesOnQueue = 0;
   int32_t iMaxAge = 0;
   BOOLEAN fDitchLastMessage = FALSE;
@@ -397,7 +397,7 @@ void ScrollString() {
           SetStringVideoOverlayPosition(
               gpDisplayList[cnt], X_START,
               (int16_t)((Y_START - ((cnt)*GetFontHeight(SMALLFONT1))) -
-                      (int16_t)(WIDTH_BETWEEN_NEW_STRINGS * (iNumberOfNewStrings))));
+                        (int16_t)(WIDTH_BETWEEN_NEW_STRINGS * (iNumberOfNewStrings))));
 
           // start of new string, increment count of new strings, for spacing purposes
           if (gpDisplayList[cnt]->fBeginningOfNewString == TRUE) {
@@ -481,7 +481,7 @@ void UnHideMessagesDuringNPCDialogue(void) {
 }
 
 // new screen message
-void ScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t* pStringA, ...) {
+void ScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t *pStringA, ...) {
   wchar_t DestString[512];
   va_list argptr;
 
@@ -572,7 +572,7 @@ void ClearWrappedStrings(WRAPPED_STRING *pStringWrapperHead) {
 }
 
 // new tactical and mapscreen message system
-void TacticalScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t* pStringA, ...) {
+void TacticalScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t *pStringA, ...) {
   // this function sets up the string into several single line structures
 
   ScrollStringStPtr pStringSt;
@@ -586,7 +586,7 @@ void TacticalScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t* pStringA, 
   BOOLEAN fNewString = FALSE;
   uint16_t usLineWidthIfWordIsWiderThenWidth = 0;
 
-  if (giTimeCompressMode > TIME_COMPRESS_X1) {
+  if (GetTimeCompressMode() > TIME_COMPRESS_X1) {
     return;
   }
 
@@ -687,7 +687,7 @@ void TacticalScreenMsg(uint16_t usColor, uint8_t ubPriority, wchar_t* pStringA, 
   return;
 }
 
-void MapScreenMessage(uint16_t usColor, uint8_t ubPriority, wchar_t* pStringA, ...) {
+void MapScreenMessage(uint16_t usColor, uint8_t ubPriority, wchar_t *pStringA, ...) {
   // this function sets up the string into several single line structures
 
   ScrollStringStPtr pStringSt;
@@ -834,7 +834,7 @@ void MapScreenMessage(uint16_t usColor, uint8_t ubPriority, wchar_t* pStringA, .
 }
 
 // add string to the map screen message list
-void AddStringToMapScreenMessageList(wchar_t* pString, uint16_t usColor, uint32_t uiFont,
+void AddStringToMapScreenMessageList(wchar_t *pString, uint16_t usColor, uint32_t uiFont,
                                      BOOLEAN fStartOfNewString, uint8_t ubPriority) {
   ScrollStringStPtr pStringSt = NULL;
 
@@ -883,7 +883,7 @@ void DisplayStringsInMapScreenMessageList(void) {
   int16_t sY;
   uint16_t usSpacing;
 
-  SetFontDestBuffer(FRAME_BUFFER, 17, 360 + 6, 407, 360 + 101, FALSE);
+  SetFontDest(vsFB, 17, 360 + 6, 407, 360 + 101, FALSE);
 
   SetFont(MAP_SCREEN_MESSAGE_FONT);  // no longer supports variable fonts
   SetFontBackground(FONT_BLACK);
@@ -917,7 +917,7 @@ void DisplayStringsInMapScreenMessageList(void) {
     ubCurrentStringIndex = (ubCurrentStringIndex + 1) % 256;
   }
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 }
 
 void EnableDisableScrollStringVideoOverlay(BOOLEAN fEnable) {
@@ -952,25 +952,25 @@ void PlayNewMessageSound(void) {
   return;
 }
 
-BOOLEAN SaveMapScreenMessagesToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveMapScreenMessagesToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
   uint32_t uiCount;
   uint32_t uiSizeOfString;
   StringSaveStruct StringSave;
 
   //	write to the begining of the message list
-  FileMan_Write(hFile, &gubEndOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesWritten);
+  File_Write(hFile, &gubEndOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint8_t)) {
     return (FALSE);
   }
 
-  FileMan_Write(hFile, &gubStartOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesWritten);
+  File_Write(hFile, &gubStartOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint8_t)) {
     return (FALSE);
   }
 
   //	write the current message string
-  FileMan_Write(hFile, &gubCurrentMapMessageString, sizeof(uint8_t), &uiNumBytesWritten);
+  File_Write(hFile, &gubCurrentMapMessageString, sizeof(uint8_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint8_t)) {
     return (FALSE);
   }
@@ -983,7 +983,7 @@ BOOLEAN SaveMapScreenMessagesToSaveGameFile(HWFILE hFile) {
       uiSizeOfString = 0;
 
     //	write to the file the size of the message
-    FileMan_Write(hFile, &uiSizeOfString, sizeof(uint32_t), &uiNumBytesWritten);
+    File_Write(hFile, &uiSizeOfString, sizeof(uint32_t), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(uint32_t)) {
       return (FALSE);
     }
@@ -991,8 +991,8 @@ BOOLEAN SaveMapScreenMessagesToSaveGameFile(HWFILE hFile) {
     // if there is a message
     if (uiSizeOfString) {
       //	write the message to the file
-      FileMan_Write(hFile, gMapScreenMessageList[uiCount]->pString16, uiSizeOfString,
-                    &uiNumBytesWritten);
+      File_Write(hFile, gMapScreenMessageList[uiCount]->pString16, uiSizeOfString,
+                 &uiNumBytesWritten);
       if (uiNumBytesWritten != uiSizeOfString) {
         return (FALSE);
       }
@@ -1005,7 +1005,7 @@ BOOLEAN SaveMapScreenMessagesToSaveGameFile(HWFILE hFile) {
       StringSave.uiFlags = gMapScreenMessageList[uiCount]->uiFlags;
 
       // Write the rest of the message information to the saved game file
-      FileMan_Write(hFile, &StringSave, sizeof(StringSaveStruct), &uiNumBytesWritten);
+      File_Write(hFile, &StringSave, sizeof(StringSaveStruct), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(StringSaveStruct)) {
         return (FALSE);
       }
@@ -1015,7 +1015,7 @@ BOOLEAN SaveMapScreenMessagesToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadMapScreenMessagesFromSaveGameFile(HWFILE hFile) {
+BOOLEAN LoadMapScreenMessagesFromSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
   uint32_t uiCount;
   uint32_t uiSizeOfString;
@@ -1030,19 +1030,19 @@ BOOLEAN LoadMapScreenMessagesFromSaveGameFile(HWFILE hFile) {
   gubCurrentMapMessageString = 0;
 
   //	Read to the begining of the message list
-  FileMan_Read(hFile, &gubEndOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesRead);
+  File_Read(hFile, &gubEndOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint8_t)) {
     return (FALSE);
   }
 
   //	Read the current message string
-  FileMan_Read(hFile, &gubStartOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesRead);
+  File_Read(hFile, &gubStartOfMapScreenMessageList, sizeof(uint8_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint8_t)) {
     return (FALSE);
   }
 
   //	Read the current message string
-  FileMan_Read(hFile, &gubCurrentMapMessageString, sizeof(uint8_t), &uiNumBytesRead);
+  File_Read(hFile, &gubCurrentMapMessageString, sizeof(uint8_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint8_t)) {
     return (FALSE);
   }
@@ -1050,7 +1050,7 @@ BOOLEAN LoadMapScreenMessagesFromSaveGameFile(HWFILE hFile) {
   // Loopthrough all the messages
   for (uiCount = 0; uiCount < 256; uiCount++) {
     //	Read to the file the size of the message
-    FileMan_Read(hFile, &uiSizeOfString, sizeof(uint32_t), &uiNumBytesRead);
+    File_Read(hFile, &uiSizeOfString, sizeof(uint32_t), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(uint32_t)) {
       return (FALSE);
     }
@@ -1058,7 +1058,7 @@ BOOLEAN LoadMapScreenMessagesFromSaveGameFile(HWFILE hFile) {
     // if there is a message
     if (uiSizeOfString) {
       //	Read the message from the file
-      FileMan_Read(hFile, SavedString, uiSizeOfString, &uiNumBytesRead);
+      File_Read(hFile, SavedString, uiSizeOfString, &uiNumBytesRead);
       if (uiNumBytesRead != uiSizeOfString) {
         return (FALSE);
       }
@@ -1082,7 +1082,7 @@ BOOLEAN LoadMapScreenMessagesFromSaveGameFile(HWFILE hFile) {
       }
 
       // allocate space for the new string
-      gMapScreenMessageList[uiCount]->pString16 = (wchar_t*)MemAlloc(uiSizeOfString);
+      gMapScreenMessageList[uiCount]->pString16 = (wchar_t *)MemAlloc(uiSizeOfString);
       if (gMapScreenMessageList[uiCount]->pString16 == NULL) return (FALSE);
 
       memset(gMapScreenMessageList[uiCount]->pString16, 0, uiSizeOfString);
@@ -1091,7 +1091,7 @@ BOOLEAN LoadMapScreenMessagesFromSaveGameFile(HWFILE hFile) {
       wcscpy(gMapScreenMessageList[uiCount]->pString16, SavedString);
 
       // Read the rest of the message information to the saved game file
-      FileMan_Read(hFile, &StringSave, sizeof(StringSaveStruct), &uiNumBytesRead);
+      File_Read(hFile, &StringSave, sizeof(StringSaveStruct), &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(StringSaveStruct)) {
         return (FALSE);
       }
@@ -1172,7 +1172,7 @@ void ClearTacticalMessageQueue(void) {
   return;
 }
 
-void WriteMessageToFile(wchar_t* pString) {
+void WriteMessageToFile(wchar_t *pString) {
 #ifdef JA2BETAVERSION
 
   FILE *fp;
@@ -1335,7 +1335,8 @@ void MoveCurrentMessagePointerDownList( void )
         // check to see if we can move 'down' to newer messages?
         if( gMapScreenMessageList[ ( uint8_t )( gubCurrentMapMessageString  + 1 )  ] != NULL )
         {
-                if(  ( uint8_t ) ( gubCurrentMapMessageString + 1 ) != gubEndOfMapScreenMessageList )
+                if(  ( uint8_t ) ( gubCurrentMapMessageString + 1 ) != gubEndOfMapScreenMessageList
+)
                 {
                         if( ( AreThereASetOfStringsAfterThisIndex( gubCurrentMapMessageString,
 MAX_MESSAGES_ON_MAP_BOTTOM ) == TRUE ) )
@@ -1376,8 +1377,8 @@ void ScrollToHereInMapScreenMessageList( uint8_t ubPosition )
                 ubRange += 9;
         }
 
-        ubTestPosition = ( uint8_t )( gubEndOfMapScreenMessageList - ( uint8_t )(  ubRange  ) + (  ( (
-uint8_t )( ubRange )  * ubPosition ) / 256 ) );
+        ubTestPosition = ( uint8_t )( gubEndOfMapScreenMessageList - ( uint8_t )(  ubRange  ) + (  (
+( uint8_t )( ubRange )  * ubPosition ) / 256 ) );
 
         if( AreThereASetOfStringsAfterThisIndex( ubTestPosition, MAX_MESSAGES_ON_MAP_BOTTOM ) ==
 TRUE )
@@ -1457,8 +1458,9 @@ uint8_t GetNewMessageValueGivenPosition( uint8_t ubPosition )
 {
         // if we were to scroll to this position, what would current message index value be?
 
-        return( ( uint8_t )( ( gubEndOfMapScreenMessageList - ( uint8_t )( GetRangeOfMapScreenMessages(
-) ) ) + ( uint8_t )( ( GetRangeOfMapScreenMessages( ) * ubPosition ) / 255 ) ) );
+        return( ( uint8_t )( ( gubEndOfMapScreenMessageList - ( uint8_t )(
+GetRangeOfMapScreenMessages( ) ) ) + ( uint8_t )( ( GetRangeOfMapScreenMessages( ) * ubPosition ) /
+255 ) ) );
 
 }
 
@@ -1467,8 +1469,8 @@ BOOLEAN IsThisTheLastMessageInTheList( void )
 {
         // is the current message the last message in the list?
 
-        if( ( ( uint8_t )( gubCurrentMapMessageString + 1 ) ) == ( gubEndOfMapScreenMessageList ) && (
-GetRangeOfMapScreenMessages( ) < 255 ) )
+        if( ( ( uint8_t )( gubCurrentMapMessageString + 1 ) ) == ( gubEndOfMapScreenMessageList ) &&
+( GetRangeOfMapScreenMessages( ) < 255 ) )
         {
                 return( TRUE );
         }
@@ -1519,8 +1521,8 @@ void DisplayLastMessage( void )
 
 
         // set counter to end of list
-        while( ( gMapScreenMessageList[ ( uint8_t )( ubCounter  + 1 )  ] != NULL ) && ( ( uint8_t ) (
-ubCounter + 1 ) != gubEndOfMapScreenMessageList ) )
+        while( ( gMapScreenMessageList[ ( uint8_t )( ubCounter  + 1 )  ] != NULL ) && ( ( uint8_t )
+( ubCounter + 1 ) != gubEndOfMapScreenMessageList ) )
         {
                 ubCounter++;
         }
@@ -1593,8 +1595,8 @@ fBeginningOfNewString ) )
                         ubCounter++;
                 }
                 // execute text box
-                ExecuteTacticalTextBoxForLastQuote( ( int16_t )( ( 640 - gusSubtitleBoxWidth ) / 2 ),
-sString );
+                ExecuteTacticalTextBoxForLastQuote( ( int16_t )( ( 640 - gusSubtitleBoxWidth ) / 2
+), sString );
         }
 
         return;

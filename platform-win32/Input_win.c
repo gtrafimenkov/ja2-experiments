@@ -8,7 +8,6 @@
 
 #include "Local.h"
 #include "Point.h"
-#include "Rect.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
@@ -17,6 +16,7 @@
 #include "SGP/Video.h"
 #include "platform.h"
 #include "platform_win.h"
+#include "rust_geometry.h"
 
 #define SCAN_CODE_MASK 0xff0000
 #define EXT_CODE_MASK 0x01000000
@@ -60,8 +60,8 @@ uint32_t guiRightButtonRepeatTimer;
 BOOLEAN gfTrackMousePos;     // TRUE = queue mouse movement events, FALSE = don't
 BOOLEAN gfLeftButtonState;   // TRUE = Pressed, FALSE = Not Pressed
 BOOLEAN gfRightButtonState;  // TRUE = Pressed, FALSE = Not Pressed
-uint16_t gusMouseXPos;         // X position of the mouse on screen
-uint16_t gusMouseYPos;         // y position of the mouse on screen
+uint16_t gusMouseXPos;       // X position of the mouse on screen
+uint16_t gusMouseYPos;       // y position of the mouse on screen
 
 // The queue structures are used to track input events using queued events
 
@@ -188,8 +188,6 @@ LRESULT CALLBACK MouseHandler(int Code, WPARAM wParam, LPARAM lParam) {
 }
 
 BOOLEAN InitializeInputManager(void) {
-  // Link to debugger
-  RegisterDebugTopic(TOPIC_INPUT, "Input Manager");
   // Initialize the gfKeyState table to FALSE everywhere
   memset(gfKeyState, FALSE, 256);
   // Initialize the Event Queue
@@ -222,18 +220,17 @@ BOOLEAN InitializeInputManager(void) {
   // Activate the hook functions for both keyboard and Mouse
   ghKeyboardHook =
       SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)KeyboardHandler, (HINSTANCE)0, GetCurrentThreadId());
-  DbgMessage(TOPIC_INPUT, DBG_LEVEL_2, String("Set keyboard hook returned %d", ghKeyboardHook));
+  DebugMsg(TOPIC_INPUT, DBG_NORMAL, String("Set keyboard hook returned %d", ghKeyboardHook));
 
   ghMouseHook =
       SetWindowsHookEx(WH_MOUSE, (HOOKPROC)MouseHandler, (HINSTANCE)0, GetCurrentThreadId());
-  DbgMessage(TOPIC_INPUT, DBG_LEVEL_2, String("Set mouse hook returned %d", ghMouseHook));
+  DebugMsg(TOPIC_INPUT, DBG_NORMAL, String("Set mouse hook returned %d", ghMouseHook));
   return TRUE;
 }
 
-void ShutdownInputManager(void) {  // There's very little to do when shutting down the input
-                                   // manager. In the future, this is where the keyboard and
-  // mouse hooks will be destroyed
-  UnRegisterDebugTopic(TOPIC_INPUT, "Input Manager");
+void ShutdownInputManager(void) {
+  // There's very little to do when shutting down the input
+  // manager. In the future, this is where the keyboard and
   UnhookWindowsHookEx(ghKeyboardHook);
   UnhookWindowsHookEx(ghMouseHook);
 }
@@ -697,7 +694,7 @@ void KeyChange(uint32_t usParam, uint32_t uiParam, uint8_t ufKeyState) {
         QueueEvent(KEY_DOWN, ubChar, uiTmpLParam);
       } else {  // There is a current input string which will capture this event
         RedirectToString(ubChar);
-        DbgMessage(TOPIC_INPUT, DBG_LEVEL_0, String("Pressed character %d (%d)", ubChar, ubKey));
+        DebugMsg(TOPIC_INPUT, DBG_ERROR, String("Pressed character %d (%d)", ubChar, ubKey));
       }
     } else {  // Well the key gets repeated
       if (gfCurrentStringInputState ==
@@ -727,7 +724,7 @@ void KeyChange(uint32_t usParam, uint32_t uiParam, uint8_t ufKeyState) {
 
 void KeyDown(uint32_t usParam,
              uint32_t uiParam) {  // Are we PRESSING down one of SHIFT, ALT or CTRL ???
-  if (usParam == 16) {          // SHIFT key is PRESSED
+  if (usParam == 16) {            // SHIFT key is PRESSED
     gfShiftState = SHIFT_DOWN;
     gfKeyState[16] = TRUE;
   } else {
@@ -755,7 +752,7 @@ void KeyDown(uint32_t usParam,
 }
 
 void KeyUp(uint32_t usParam, uint32_t uiParam) {  // Are we RELEASING one of SHIFT, ALT or CTRL ???
-  if (usParam == 16) {                        // SHIFT key is RELEASED
+  if (usParam == 16) {                            // SHIFT key is RELEASED
     gfShiftState = FALSE;
     gfKeyState[16] = FALSE;
   } else {
@@ -770,10 +767,7 @@ void KeyUp(uint32_t usParam, uint32_t uiParam) {  // Are we RELEASING one of SHI
         if (usParam == SNAPSHOT) {
           // DB this used to be keyed to SCRL_LOCK
           // which I believe Luis gave the wrong value
-          if (_KeyDown(CTRL))
-            VideoCaptureToggle();
-          else
-            PrintScreen();
+          PrintScreen();
         } else {
           // No special keys have been pressed
           // Call KeyChange() and pass FALSE to indicate key has been PRESSED and not RELEASED
@@ -1003,7 +997,7 @@ void RestoreString(StringInput *pStringDescriptor) {
 //
 
 void RestrictMouseToXYXY(uint16_t usX1, uint16_t usY1, uint16_t usX2, uint16_t usY2) {
-  SGPRect TempRect;
+  struct GRect TempRect;
 
   TempRect.iLeft = usX1;
   TempRect.iTop = usY1;
@@ -1013,7 +1007,7 @@ void RestrictMouseToXYXY(uint16_t usX1, uint16_t usY1, uint16_t usX2, uint16_t u
   RestrictMouseCursor(&TempRect);
 }
 
-void RestrictMouseCursor(SGPRect *pRectangle) {
+void RestrictMouseCursor(struct GRect *pRectangle) {
   // Make a copy of our rect....
   gCursorClipRect.left = pRectangle->iLeft;
   gCursorClipRect.right = pRectangle->iRight;
@@ -1034,7 +1028,7 @@ void ReapplyCursorClipRect(void) {
   }
 }
 
-void GetRestrictedClipCursor(SGPRect *pRectangle) { GetClipCursor((RECT *)pRectangle); }
+void GetRestrictedClipCursor(struct GRect *pRectangle) { GetClipCursor((RECT *)pRectangle); }
 
 BOOLEAN IsCursorRestricted(void) { return (fCursorWasClipped); }
 
@@ -1057,7 +1051,8 @@ void SimulateMouseMovement(uint32_t uiNewXPos, uint32_t uiNewYPos) {
   flNewXPos = ((float)uiNewXPos / SCREEN_WIDTH) * 65536;
   flNewYPos = ((float)uiNewYPos / SCREEN_HEIGHT) * 65536;
 
-  mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, (uint32_t)flNewXPos, (uint32_t)flNewYPos, 0, 0);
+  mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, (uint32_t)flNewXPos, (uint32_t)flNewYPos, 0,
+              0);
 }
 
 void DequeueAllKeyBoardEvents() {
@@ -1065,8 +1060,7 @@ void DequeueAllKeyBoardEvents() {
   MSG KeyMessage;
 
   // dequeue all the events waiting in the windows queue
-  while (PeekMessage(&KeyMessage, ghWindow, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
-    ;
+  while (PeekMessage(&KeyMessage, ghWindow, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE));
 
   // Deque all the events waiting in the SGP queue
   while (DequeueEvent(&InputEvent) == TRUE) {

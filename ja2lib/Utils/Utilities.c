@@ -9,7 +9,6 @@
 #include <time.h>
 
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Font.h"
 #include "SGP/HImage.h"
 #include "SGP/VObject.h"
@@ -19,45 +18,49 @@
 #include "Tactical/OverheadTypes.h"
 #include "Tactical/SoldierControl.h"
 #include "Utils/FontControl.h"
+#include "rust_colors.h"
+#include "rust_fileman.h"
+#include "rust_images.h"
 
-void FilenameForBPP(char* pFilename, char* pDestination) { strcpy(pDestination, pFilename); }
+void CopyFilename(char* pFilename, char* pDestination) { strcpy(pDestination, pFilename); }
 
-BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry *pPalette, SGPFILENAME ColFile) {
-  HWFILE hFileHandle;
+BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry* pPalette, SGPFILENAME ColFile) {
+  FileID hFileHandle = FILE_ID_ERR;
   uint8_t bColHeader[8];
   uint32_t cnt;
 
   // See if files exists, if not, return error
-  if (!FileMan_Exists(ColFile)) {
+  if (!File_Exists(ColFile)) {
     // Return FALSE w/ debug
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot find COL file");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot find COL file");
     return (FALSE);
   }
 
   // Open and read in the file
-  if ((hFileHandle = FileMan_Open(ColFile, FILE_ACCESS_READ, FALSE)) == 0) {
+  if ((hFileHandle = File_OpenForReading(ColFile)) == 0) {
     // Return FALSE w/ debug
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Cannot open COL file");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Cannot open COL file");
     return (FALSE);
   }
 
   // Skip header
-  FileMan_Read(hFileHandle, bColHeader, sizeof(bColHeader), NULL);
+  File_Read(hFileHandle, bColHeader, sizeof(bColHeader), NULL);
 
   // Read in a palette entry at a time
   for (cnt = 0; cnt < 256; cnt++) {
-    FileMan_Read(hFileHandle, &pPalette[cnt].peRed, sizeof(uint8_t), NULL);
-    FileMan_Read(hFileHandle, &pPalette[cnt].peGreen, sizeof(uint8_t), NULL);
-    FileMan_Read(hFileHandle, &pPalette[cnt].peBlue, sizeof(uint8_t), NULL);
+    File_Read(hFileHandle, &pPalette[cnt].red, sizeof(uint8_t), NULL);
+    File_Read(hFileHandle, &pPalette[cnt].green, sizeof(uint8_t), NULL);
+    File_Read(hFileHandle, &pPalette[cnt].blue, sizeof(uint8_t), NULL);
   }
 
   // Close file
-  FileMan_Close(hFileHandle);
+  File_Close(hFileHandle);
 
   return (TRUE);
 }
 
-BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos, uint32_t uiDestSurface) {
+BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
+                          uint32_t uiDestSurface) {
   uint16_t us16BPPColor;
   uint32_t cnt1;
   uint8_t ubSize;
@@ -65,7 +68,9 @@ BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos, 
   uint8_t ubPaletteRep;
 
   // Create 16BPP Palette
-  CHECKF(GetPaletteRepIndexFromID(aPalRep, &ubPaletteRep));
+  if (!(GetPaletteRepIndexFromID(aPalRep, &ubPaletteRep))) {
+    return FALSE;
+  }
 
   SetFont(LARGEFONT1);
 
@@ -78,10 +83,10 @@ BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos, 
     sBRY = sTLY + 20;
 
     us16BPPColor =
-        Get16BPPColor(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
-                              gpPalRep[ubPaletteRep].b[cnt1]));
+        rgb32_to_rgb565(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
+                                gpPalRep[ubPaletteRep].b[cnt1]));
 
-    ColorFillVideoSurfaceArea(uiDestSurface, sTLX, sTLY, sBRX, sBRY, us16BPPColor);
+    VSurfaceColorFill(GetVSByID(uiDestSurface), sTLX, sTLY, sBRX, sBRY, us16BPPColor);
   }
 
   gprintf(ubXPos + (16 * 20), ubYPos, L"%S", gpPalRep[ubPaletteRep].ID);
@@ -89,11 +94,12 @@ BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos, 
   return (TRUE);
 }
 
-BOOLEAN WrapString(wchar_t* pStr, wchar_t* pStr2, size_t buf2Size, uint16_t usWidth, int32_t uiFont) {
+BOOLEAN WrapString(wchar_t* pStr, wchar_t* pStr2, size_t buf2Size, uint16_t usWidth,
+                   int32_t uiFont) {
   uint32_t Cur, uiLet, uiNewLet, uiHyphenLet;
   wchar_t *curletter, transletter;
   BOOLEAN fLineSplit = FALSE;
-  struct VObject *hFont;
+  struct VObject* hFont;
 
   // CHECK FOR WRAP
   Cur = 0;

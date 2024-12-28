@@ -13,8 +13,7 @@
 #include "Laptop/InsuranceContract.h"
 #include "Laptop/Mercs.h"
 #include "Laptop/Personnel.h"
-#include "Money.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
@@ -41,6 +40,9 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
+#include "rust_fileman.h"
+#include "rust_geometry.h"
+#include "rust_laptop.h"
 
 void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier);
 void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *pSoldier,
@@ -89,15 +91,15 @@ BOOLEAN gfInContractMenuFromRenewSequence = FALSE;
 #define AIRPORT_X 13
 #define AIRPORT_Y 2
 
-BOOLEAN SaveContractRenewalDataToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveContractRenewalDataToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
 
-  FileMan_Write(hFile, ContractRenewalList, sizeof(ContractRenewalList), &uiNumBytesWritten);
+  File_Write(hFile, ContractRenewalList, sizeof(ContractRenewalList), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(ContractRenewalList)) {
     return (FALSE);
   }
 
-  FileMan_Write(hFile, &ubNumContractRenewals, sizeof(ubNumContractRenewals), &uiNumBytesWritten);
+  File_Write(hFile, &ubNumContractRenewals, sizeof(ubNumContractRenewals), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(ubNumContractRenewals)) {
     return (FALSE);
   }
@@ -105,15 +107,15 @@ BOOLEAN SaveContractRenewalDataToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadContractRenewalDataFromSaveGameFile(HWFILE hFile) {
+BOOLEAN LoadContractRenewalDataFromSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
 
-  FileMan_Read(hFile, ContractRenewalList, sizeof(ContractRenewalList), &uiNumBytesRead);
+  File_Read(hFile, ContractRenewalList, sizeof(ContractRenewalList), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(ContractRenewalList)) {
     return (FALSE);
   }
 
-  FileMan_Read(hFile, &ubNumContractRenewals, sizeof(ubNumContractRenewals), &uiNumBytesRead);
+  File_Read(hFile, &ubNumContractRenewals, sizeof(ubNumContractRenewals), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(ubNumContractRenewals)) {
     return (FALSE);
   }
@@ -157,7 +159,7 @@ void BeginContractRenewalSequence() {
       ubCurrentContractRenewalInProgress = 0;
 
       PauseGame();
-      LockPauseState(7);
+      LockPause();
       InterruptTime();
 
       // Go into mapscreen if not already...
@@ -332,7 +334,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, uint8_t ubDesiredActi
   }
 
   // check to see if the merc has enough money
-  if (MoneyGetBalance() < iContractCharge) return (FALSE);
+  if (LaptopMoneyGetBalance() < iContractCharge) return (FALSE);
 
   // Check to see if merc will renew
   if (!WillMercRenew(pSoldier, TRUE)) {
@@ -369,7 +371,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, uint8_t ubDesiredActi
 
     HandleImportantMercQuote(pSoldier, QUOTE_ACCEPT_CONTRACT_RENEWAL);
 
-    if (iCostOfInsurance > MoneyGetBalance()) {
+    if (iCostOfInsurance > LaptopMoneyGetBalance()) {
       // no can afford
       HandleNotifyPlayerCantAffordInsurance();
 
@@ -403,7 +405,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, uint8_t ubDesiredActi
 
   // ARM: Do not reset because of renewal!  The quote is for early dismissal from *initial* time of
   // hiring
-  //	pSoldier->uiTimeOfLastContractUpdate = GetWorldTotalMin();
+  //	pSoldier->uiTimeOfLastContractUpdate = GetGameTimeInMin();
 
   // ARM: Do not reset because of renewal!  The deposit in the profile goes up when merc levels, but
   // the one in the soldier structure must always reflect the deposit actually paid (which does NOT
@@ -414,7 +416,7 @@ BOOLEAN MercContractHandling(struct SOLDIERTYPE *pSoldier, uint8_t ubDesiredActi
   AddTransactionToPlayersBook(ubFinancesContractType, GetSolProfile(pSoldier), -iContractCharge);
 
   // add an entry in the history page for the extending of the merc contract
-  AddHistoryToPlayersLog(ubHistoryContractType, GetSolProfile(pSoldier), GetWorldTotalMin(),
+  AddHistoryToPlayersLog(ubHistoryContractType, GetSolProfile(pSoldier), GetGameTimeInMin(),
                          GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
 
   return (TRUE);
@@ -553,8 +555,8 @@ BOOLEAN WillMercRenew(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote) {
   if (fSayQuote) {
     if (fUnhappy) {
       if (fBuddyAround) {
-        if (GetMercPrecedentQuoteBitStatus(GetSolProfile(pSoldier),
-                                           GetQuoteBitNumberFromQuoteID((uint32_t)(usBuddyQuote))) ==
+        if (GetMercPrecedentQuoteBitStatus(
+                GetSolProfile(pSoldier), GetQuoteBitNumberFromQuoteID((uint32_t)(usBuddyQuote))) ==
             TRUE) {
           fSayPrecedent = TRUE;
         } else {
@@ -562,8 +564,8 @@ BOOLEAN WillMercRenew(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote) {
                                          GetQuoteBitNumberFromQuoteID((uint32_t)(usBuddyQuote)));
         }
       } else {
-        if (GetMercPrecedentQuoteBitStatus(GetSolProfile(pSoldier),
-                                           GetQuoteBitNumberFromQuoteID((uint32_t)(usReasonQuote))) ==
+        if (GetMercPrecedentQuoteBitStatus(
+                GetSolProfile(pSoldier), GetQuoteBitNumberFromQuoteID((uint32_t)(usReasonQuote))) ==
             TRUE) {
           fSayPrecedent = TRUE;
         } else {
@@ -655,7 +657,7 @@ player if( pSoldier->ubWhatKindOfMercAmI != MERC_TYPE__AIM_MERC ) return( FALSE 
 
         // type of contract the merc had
         bTypeOfCurrentContract = pSoldier -> bTypeOfLastContract;
-        iLeftTimeOnContract = pSoldier->iEndofContractTime - GetWorldTotalMin();
+        iLeftTimeOnContract = pSoldier->iEndofContractTime - GetGameTimeInMin();
 
         // grab tolerance
         switch( bTypeOfCurrentContract )
@@ -695,7 +697,7 @@ void CheckIfMercGetsAnotherContract(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->ubWhatKindOfMercAmI != MERC_TYPE__AIM_MERC) return;
 
   // ATE: check time we have and see if we can accept new contracts....
-  if (GetWorldTotalMin() <= (uint32_t)pSoldier->iTimeCanSignElsewhere) {
+  if (GetGameTimeInMin() <= (uint32_t)pSoldier->iTimeCanSignElsewhere) {
     return;
   }
 
@@ -703,7 +705,7 @@ void CheckIfMercGetsAnotherContract(struct SOLDIERTYPE *pSoldier) {
   if (!pSoldier->fSignedAnotherContract) {
     // chance depends on how much time he has left in his contract, and his experience level
     // (determines demand)
-    uiFullDaysRemaining = (pSoldier->iEndofContractTime - GetWorldTotalMin()) / (24 * 60);
+    uiFullDaysRemaining = (pSoldier->iEndofContractTime - GetGameTimeInMin()) / (24 * 60);
 
     if (uiFullDaysRemaining == 0) {
       // less than a full day left on contract
@@ -735,7 +737,7 @@ void CheckIfMercGetsAnotherContract(struct SOLDIERTYPE *pSoldier) {
 BOOLEAN BeginStrategicRemoveMerc(struct SOLDIERTYPE *pSoldier, BOOLEAN fAddRehireButton) {
   InterruptTime();
   PauseGame();
-  LockPauseState(8);
+  LockPause();
 
   // if the soldier may have some special action when he/she leaves the party, handle it
   HandleUniqueEventWhenPlayerLeavesTeam(pSoldier);
@@ -817,7 +819,7 @@ BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier) {
   // add an entry in the history page for the firing/quiting of the merc
   // ATE: Don't do this if they are already dead!
   if (!(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
-    AddHistoryToPlayersLog(ubHistoryCode, GetSolProfile(pSoldier), GetWorldTotalMin(),
+    AddHistoryToPlayersLog(ubHistoryCode, GetSolProfile(pSoldier), GetGameTimeInMin(),
                            GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
   }
 
@@ -842,7 +844,7 @@ BOOLEAN StrategicRemoveMerc(struct SOLDIERTYPE *pSoldier) {
     ReBuildCharactersList();
   }
 
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
   fTeamPanelDirty = TRUE;
   fCharacterInfoPanelDirty = TRUE;
 
@@ -870,14 +872,14 @@ void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier) {
 
     // add an email
     AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_REFUND, AIM_MEDICAL_DEPOSIT_REFUND_LENGTH, AIM_SITE,
-                            GetWorldTotalMin(), pSoldier->usMedicalDeposit,
+                            GetGameTimeInMin(), pSoldier->usMedicalDeposit,
                             GetSolProfile(pSoldier));
   }
   // else if the merc is a dead, refund NOTHING!!
   else if (pSoldier->bLife <= 0) {
     // add an email
     AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_NO_REFUND, AIM_MEDICAL_DEPOSIT_NO_REFUND_LENGTH,
-                            AIM_SITE, GetWorldTotalMin(), pSoldier->usMedicalDeposit,
+                            AIM_SITE, GetGameTimeInMin(), pSoldier->usMedicalDeposit,
                             GetSolProfile(pSoldier));
 
   }
@@ -892,7 +894,7 @@ void CalculateMedicalDepositRefund(struct SOLDIERTYPE *pSoldier) {
 
     // add an email
     AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_PARTIAL_REFUND,
-                            AIM_MEDICAL_DEPOSIT_PARTIAL_REFUND_LENGTH, AIM_SITE, GetWorldTotalMin(),
+                            AIM_MEDICAL_DEPOSIT_PARTIAL_REFUND_LENGTH, AIM_SITE, GetGameTimeInMin(),
                             iRefundAmount, GetSolProfile(pSoldier));
   }
 }
@@ -906,7 +908,7 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
   wchar_t zShortTownIDString[50];
 
   // use YES/NO Pop up box, settup for particular screen
-  SGPRect pCenteringRect = {0, 0, 640, 480};
+  struct GRect pCenteringRect = {0, 0, 640, 480};
 
   GetShortSectorString(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier), zShortTownIDString,
                        ARR_SIZE(zShortTownIDString));
@@ -941,7 +943,7 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
   }
 
   // check if drassen controlled
-  else if (StrategicMap[(AIRPORT_X + (MAP_WORLD_X * AIRPORT_Y))].fEnemyControlled == FALSE) {
+  else if (!IsSectorEnemyControlled(AIRPORT_X, AIRPORT_Y)) {
     if ((GetSolSectorX(pSoldier) == AIRPORT_X) && (GetSolSectorY(pSoldier) == AIRPORT_Y) &&
         (GetSolSectorZ(pSoldier) == 0)) {
       if (gMercProfiles[GetSolProfile(pSoldier)].bSex == MALE) {
@@ -1006,12 +1008,12 @@ void NotifyPlayerOfMercDepartureAndPromptEquipmentPlacement(struct SOLDIERTYPE *
       DoMessageBox(
           MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
           (uint16_t)(MSG_BOX_FLAG_USE_CENTERING_RECT |
-                   (fAddRehireButton ? MSG_BOX_FLAG_GENERICCONTRACT : MSG_BOX_FLAG_GENERIC)),
+                     (fAddRehireButton ? MSG_BOX_FLAG_GENERICCONTRACT : MSG_BOX_FLAG_GENERIC)),
           MercDepartEquipmentBoxCallBack, &pCenteringRect);
     } else {
       DoMessageBox(MSG_BOX_BASIC_STYLE, sString, guiCurrentScreen,
                    (uint16_t)(MSG_BOX_FLAG_USE_CENTERING_RECT |
-                            (fAddRehireButton ? MSG_BOX_FLAG_OKCONTRACT : MSG_BOX_FLAG_OK)),
+                              (fAddRehireButton ? MSG_BOX_FLAG_OKCONTRACT : MSG_BOX_FLAG_OK)),
                    MercDepartEquipmentBoxCallBack, &pCenteringRect);
     }
   }
@@ -1050,8 +1052,7 @@ void MercDepartEquipmentBoxCallBack(uint8_t bExitValue) {
     }
   } else {
     // no
-    if (StrategicMap[GetSectorID16(BOBBYR_SHIPPING_DEST_SECTOR_X, (BOBBYR_SHIPPING_DEST_SECTOR_Y))]
-            .fEnemyControlled == FALSE) {
+    if (!IsSectorEnemyControlled(BOBBYR_SHIPPING_DEST_SECTOR_X, BOBBYR_SHIPPING_DEST_SECTOR_Y)) {
       HandleMercLeavingEquipmentInDrassen(pLeaveSoldier->ubID);
     } else {
       HandleMercLeavingEquipmentInOmerta(pLeaveSoldier->ubID);
@@ -1095,7 +1096,7 @@ BOOLEAN HandleFiredDeadMerc(struct SOLDIERTYPE *pSoldier) {
 		Corpse.bDirection	= pSoldier->bDirection;
 
 		// Set time of death
-		Corpse.uiTimeOfDeath = GetWorldTotalMin( );
+		Corpse.uiTimeOfDeath = GetGameTimeInMin( );
 
 		// Set type
 		Corpse.ubType	= (uint8_t)gubAnimSurfaceCorpseID[ pSoldier->ubBodyType][ pSoldier->usAnimState ];
@@ -1119,7 +1120,7 @@ void HandleExtendMercsContract(struct SOLDIERTYPE *pSoldier) {
   } else {
     FindAndSetThisContractSoldier(pSoldier);
     pContractReHireSoldier = pSoldier;
-    uiContractTimeMode = giTimeCompressMode;
+    uiContractTimeMode = GetTimeCompressMode();
   }
 
   fTeamPanelDirty = TRUE;
@@ -1294,11 +1295,11 @@ BOOLEAN ContractIsExpiring(struct SOLDIERTYPE *pSoldier) {
   uint32_t uiCheckHour;
 
   // First at least make sure same day....
-  if ((pSoldier->iEndofContractTime / 1440) <= (int32_t)GetWorldDay()) {
+  if ((pSoldier->iEndofContractTime / 1440) <= (int32_t)GetGameTimeInDays()) {
     uiCheckHour = GetHourWhenContractDone(pSoldier);
 
     // See if the hour we are on is the same....
-    if (GetWorldHour() == uiCheckHour) {
+    if (GetGameClockHour() == uiCheckHour) {
       // All's good for go!
       return (TRUE);
     }
@@ -1312,11 +1313,11 @@ BOOLEAN ContractIsGoingToExpireSoon(struct SOLDIERTYPE *pSoldier) {
   uint32_t uiCheckHour;
 
   // First at least make sure same day....
-  if ((pSoldier->iEndofContractTime / 1440) <= (int32_t)GetWorldDay()) {
+  if ((pSoldier->iEndofContractTime / 1440) <= (int32_t)GetGameTimeInDays()) {
     uiCheckHour = GetHourWhenContractDone(pSoldier);
 
     // If we are <= 2 hours from expiry.
-    if (GetWorldHour() >= (uiCheckHour - 2)) {
+    if (GetGameClockHour() >= (uiCheckHour - 2)) {
       // All's good for go!
       return (TRUE);
     }

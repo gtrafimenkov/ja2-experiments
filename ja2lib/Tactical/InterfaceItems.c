@@ -15,17 +15,16 @@
 #include "LanguageDefines.h"
 #include "Laptop/Finances.h"
 #include "MessageBoxScreen.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/HImage.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -69,7 +68,6 @@
 #include "TileEngine/RadarScreen.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "UI.h"
@@ -80,6 +78,10 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
+#include "rust_fileman.h"
+#include "rust_images.h"
+#include "rust_laptop.h"
 
 #define ITEMDESC_FONT BLOCKFONT2
 #define ITEMDESC_FONTSHADOW1 MILITARY_SHADOW
@@ -341,7 +343,6 @@ int16_t gsKeyRingPopupInvWidth;
 int16_t gsKeyRingPopupInvHeight;
 
 struct SOLDIERTYPE *gpItemPopupSoldier;
-extern BOOLEAN fMapScreenBottomDirty;
 
 // inventory description done button for mapscreen
 int32_t giMapInvDescButtonImage;
@@ -400,8 +401,8 @@ typedef struct {
   int32_t iXPosition[NUM_INV_HELPTEXT_ENTRIES];
   int32_t iYPosition[NUM_INV_HELPTEXT_ENTRIES];
   int32_t iWidth[NUM_INV_HELPTEXT_ENTRIES];
-  wchar_t* sString1[NUM_INV_HELPTEXT_ENTRIES];
-  wchar_t* sString2[NUM_INV_HELPTEXT_ENTRIES];
+  wchar_t *sString1[NUM_INV_HELPTEXT_ENTRIES];
+  wchar_t *sString2[NUM_INV_HELPTEXT_ENTRIES];
 } INV_HELPTEXT;
 
 INV_DESC_STATS gWeaponStats[] = {
@@ -443,12 +444,12 @@ INV_ATTACHXY gMapItemDescAttachmentsXY[] = {
     {173, 36, SM_INV_SLOT_HEIGHT, 26, INV_BAR_DX + 2, INV_BAR_DY},
     {211, 36, SM_INV_SLOT_HEIGHT, 26, INV_BAR_DX + 2, INV_BAR_DY}};
 
-SGPRect gItemDescProsConsRects[] =
+struct GRect gItemDescProsConsRects[] =
     {  // NB the left value is calculated based on the width of the 'pros' and 'cons' labels
         {0, 111, 313, 118},
         {0, 119, 313, 126}};
 
-SGPRect gMapItemDescProsConsRects[] = {
+struct GRect gMapItemDescProsConsRects[] = {
     {0, 231, 313, 238},
     {0, 239, 313, 246},
 };
@@ -648,7 +649,7 @@ uint32_t guiBodyInvVO[4][2];
 uint32_t guiGoldKeyVO;
 int8_t gbCompatibleApplyItem = FALSE;
 
-BOOLEAN AttemptToAddSubstring(wchar_t* zDest, wchar_t* zTemp, uint32_t *puiStringLength,
+BOOLEAN AttemptToAddSubstring(wchar_t *zDest, wchar_t *zTemp, uint32_t *puiStringLength,
                               uint32_t uiPixLimit) {
   uint32_t uiRequiredStringLength, uiTempStringLength;
 
@@ -839,45 +840,44 @@ BOOLEAN InitInvSlotInterface(INV_REGION_DESC *pRegionDesc, INV_REGION_DESC *pCam
                              MOUSE_CALLBACK INVMoveCammoCallback,
                              MOUSE_CALLBACK INVClickCammoCallback, BOOLEAN fSetHighestPrioity) {
   int32_t cnt;
-  VOBJECT_DESC VObjectDesc;
 
   // Load all four body type images
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_figure_large_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[1][0])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_figure_large_male.sti", &(guiBodyInvVO[1][0]))) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_figure_large_male_H.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[1][1])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_figure_large_male_H.sti", &(guiBodyInvVO[1][1]))) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_normal_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[0][0])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_normal_male.sti", &(guiBodyInvVO[0][0]))) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_normal_male_H.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[0][1])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_normal_male_H.sti", &(guiBodyInvVO[0][1]))) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_normal_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[2][0])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_normal_male.sti", &(guiBodyInvVO[2][0]))) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_normal_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[2][1])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_normal_male.sti", &(guiBodyInvVO[2][1]))) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_figure_female.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[3][0])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_figure_female.sti", &(guiBodyInvVO[3][0]))) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\inventory_figure_female_H.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(guiBodyInvVO[3][1])));
+  if (!AddVObjectFromFile("INTERFACE\\inventory_figure_female_H.sti", &(guiBodyInvVO[3][1]))) {
+    return FALSE;
+  }
 
   // add gold key graphic
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\gold_key_button.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiGoldKeyVO));
+  if (!AddVObjectFromFile("INTERFACE\\gold_key_button.sti", &guiGoldKeyVO)) {
+    return FALSE;
+  }
 
   // Add cammo region
   MSYS_DefineRegion(&gSMInvCamoRegion, pCamoRegion->sX, pCamoRegion->sY,
@@ -991,8 +991,7 @@ void RenderInvBodyPanel(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY) {
   // Blit body inv, based on body type
   int8_t bSubImageIndex = gbCompatibleApplyItem;
 
-  BltVideoObjectFromIndex(guiSAVEBUFFER, guiBodyInvVO[pSoldier->ubBodyType][bSubImageIndex], 0, sX,
-                          sY, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsSB, guiBodyInvVO[pSoldier->ubBodyType][bSubImageIndex], 0, sX, sY);
 }
 
 void HandleRenderInvSlots(struct SOLDIERTYPE *pSoldier, uint8_t fDirtyLevel) {
@@ -1014,12 +1013,10 @@ void HandleRenderInvSlots(struct SOLDIERTYPE *pSoldier, uint8_t fDirtyLevel) {
     if (KeyExistsInKeyRing(pSoldier, ANYKEY, NULL)) {
       // blit gold key here?
       if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
-        BltVideoObjectFromIndex(guiSAVEBUFFER, guiGoldKeyVO, 0, 496, 446, VO_BLT_SRCTRANSPARENCY,
-                                NULL);
+        BltVObjectFromIndex(vsSB, guiGoldKeyVO, 0, 496, 446);
         RestoreExternBackgroundRect(496, 446, 29, 23);
       } else {
-        BltVideoObjectFromIndex(guiSAVEBUFFER, guiGoldKeyVO, 0, 217, 271, VO_BLT_SRCTRANSPARENCY,
-                                NULL);
+        BltVObjectFromIndex(vsSB, guiGoldKeyVO, 0, 217, 271);
         RestoreExternBackgroundRect(217, 271, 29, 23);
       }
     }
@@ -1044,59 +1041,19 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
   sY = gSMInvData[sPocket].sY;
 
   if (fDirtyLevel == DIRTYLEVEL2) {
-    // CHECK FOR COMPATIBILITY WITH MAGAZINES
-
-    /*	OLD VERSION OF GUN/AMMO MATCH HIGHLIGHTING
-                    uint32_t	uiDestPitchBYTES;
-                    uint8_t		*pDestBuf;
-                    uint16_t	usLineColor;
-
-                    if ( ( Item [ pSoldier->inv[ HANDPOS ].usItem ].usItemClass & IC_GUN )  && (
-       Item[ pObject->usItem ].usItemClass & IC_AMMO ) )
-                    {
-                            // CHECK
-                            if (Weapon[pSoldier->inv[ HANDPOS ].usItem].ubCalibre ==
-       Magazine[Item[pObject->usItem].ubClassIndex].ubCalibre )
-                            {
-                                    // IT's an OK calibre ammo, do something!
-                                    // Render Item with specific color
-                                    //fOutline = TRUE;
-                                    //sOutlineColor = Get16BPPColor( FROMRGB( 96, 104, 128 ) );
-                                    //sOutlineColor = Get16BPPColor( FROMRGB( 20, 20, 120 ) );
-
-                                    // Draw rectangle!
-                                    pDestBuf = LockVideoSurface( guiSAVEBUFFER, &uiDestPitchBYTES );
-                                    SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640, 480
-       );
-
-                                    //usLineColor = Get16BPPColor( FROMRGB( 255, 255, 0 ) );
-                                    usLineColor = Get16BPPColor( FROMRGB( 230, 215, 196 ) );
-                                    RectangleDraw( TRUE, (sX+1), (sY+1), (sX + gSMInvData[ sPocket
-       ].sWidth - 2 ),( sY + gSMInvData[ sPocket ].sHeight - 2 ), usLineColor, pDestBuf );
-
-                                    SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640, 480
-       );
-
-                                    UnLockVideoSurface( guiSAVEBUFFER );
-                            }
-                    }
-    */
-
     if (gbCompatibleAmmo[sPocket]) {
       fOutline = TRUE;
-      sOutlineColor = Get16BPPColor(FROMRGB(255, 255, 255));
+      sOutlineColor = rgb32_to_rgb565(FROMRGB(255, 255, 255));
     }
 
     // IF it's the second hand and this hand cannot contain anything, remove the second hand
     // position graphic
     if (sPocket == SECONDHANDPOS && Item[pSoldier->inv[HANDPOS].usItem].fFlags & ITEM_TWO_HANDED) {
       if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
-        BltVideoObjectFromIndex(guiSAVEBUFFER, guiSecItemHiddenVO, 0, 217, 448,
-                                VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsSB, guiSecItemHiddenVO, 0, 217, 448);
         RestoreExternBackgroundRect(217, 448, 72, 28);
       } else {
-        BltVideoObjectFromIndex(guiSAVEBUFFER, guiMapInvSecondHandBlockout, 0, 14, 218,
-                                VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsSB, guiMapInvSecondHandBlockout, 0, 14, 218);
         RestoreExternBackgroundRect(14, 218, 102, 24);
       }
     }
@@ -1112,10 +1069,7 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
   }
 
   // Now render as normal
-  // INVRenderItem( guiSAVEBUFFER, pObject, (int16_t)(sX + gSMInvData[ sPocket ].sSubX), (int16_t)(sY +
-  // gSMInvData[ sPocket ].sSubY), gSMInvData[ sPocket ].sWidth, gSMInvData[ sPocket ].sHeight,
-  // fDirtyLevel, &(gfSM_HandInvDispText[ sPocket ] ) );
-  INVRenderItem(guiSAVEBUFFER, pSoldier, pObject, sX, sY, gSMInvData[sPocket].sWidth,
+  INVRenderItem(vsSB, pSoldier, pObject, sX, sY, gSMInvData[sPocket].sWidth,
                 gSMInvData[sPocket].sHeight, fRenderDirtyLevel, NULL, 0, fOutline, sOutlineColor);
 
   if (gbInvalidPlacementSlot[sPocket]) {
@@ -1137,7 +1091,7 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
 
   if (fHatchItOut) {
     uint32_t uiWhichBuffer =
-        (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? guiSAVEBUFFER : guiRENDERBUFFER;
+        (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? guiSAVEBUFFER : FRAME_BUFFER;
     DrawHatchOnInventory(uiWhichBuffer, sX, sY, (uint16_t)(gSMInvData[sPocket].sWidth - 1),
                          (uint16_t)(gSMInvData[sPocket].sHeight - 1));
   }
@@ -1148,7 +1102,7 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
     sBarX = sX - gSMInvData[sPocket].sBarDx;
     sBarY = sY + gSMInvData[sPocket].sBarDy;
     DrawItemUIBarEx(pObject, 0, sBarX, sBarY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT,
-                    Get16BPPColor(STATUS_BAR), Get16BPPColor(STATUS_BAR_SHADOW), TRUE,
+                    rgb32_to_rgb565(STATUS_BAR), rgb32_to_rgb565(STATUS_BAR_SHADOW), TRUE,
                     guiSAVEBUFFER);
   }
 }
@@ -1245,8 +1199,8 @@ void HandleAnyMercInSquadHasCompatibleStuff(uint8_t ubSquad, struct OBJECTTYPE *
   }
 }
 
-BOOLEAN HandleCompatibleAmmoUIForMapScreen(struct SOLDIERTYPE *pSoldier, int32_t bInvPos, BOOLEAN fOn,
-                                           BOOLEAN fFromMerc) {
+BOOLEAN HandleCompatibleAmmoUIForMapScreen(struct SOLDIERTYPE *pSoldier, int32_t bInvPos,
+                                           BOOLEAN fOn, BOOLEAN fFromMerc) {
   BOOLEAN fFound = FALSE;
   int32_t cnt;
   struct OBJECTTYPE *pObject, *pTestObject;
@@ -1658,7 +1612,7 @@ void HandleNewlyAddedItems(struct SOLDIERTYPE *pSoldier, BOOLEAN *fDirtyLevel) {
         continue;
       }
 
-      INVRenderItem(guiSAVEBUFFER, pSoldier, pObject, sX, sY, gSMInvData[cnt].sWidth,
+      INVRenderItem(vsSB, pSoldier, pObject, sX, sY, gSMInvData[cnt].sWidth,
                     gSMInvData[cnt].sHeight, DIRTYLEVEL2, NULL, 0, TRUE,
                     us16BPPItemCyclePlacedItemColors[pSoldier->bNewItemCycleCount[cnt]]);
     }
@@ -1721,19 +1675,19 @@ void InitItemInterface() {
   uint32_t cnt, cnt2;
 
   for (cnt = 0, cnt2 = 0; cnt2 < 20; cnt += 3, cnt2++) {
-    us16BPPItemCyclePlacedItemColors[cnt2] = Get16BPPColor(
+    us16BPPItemCyclePlacedItemColors[cnt2] = rgb32_to_rgb565(
         FROMRGB(ubRGBItemCyclePlacedItemColors[cnt], ubRGBItemCyclePlacedItemColors[cnt + 1],
                 ubRGBItemCyclePlacedItemColors[cnt + 2]));
   }
 }
 
-void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObject,
+void INVRenderItem(struct VSurface *dest, struct SOLDIERTYPE *pSoldier, struct OBJECTTYPE *pObject,
                    int16_t sX, int16_t sY, int16_t sWidth, int16_t sHeight, uint8_t fDirtyLevel,
                    uint8_t *pubHighlightCounter, uint8_t ubStatusIndex, BOOLEAN fOutline,
                    int16_t sOutlineColor) {
   uint16_t uiStringLength;
   INVTYPE *pItem;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t usHeight, usWidth;
   int16_t sCenX, sCenY, sNewY, sNewX;
   struct VObject *hVObject;
@@ -1756,23 +1710,23 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
   if (fDirtyLevel == DIRTYLEVEL2) {
     // TAKE A LOOK AT THE VIDEO OBJECT SIZE ( ONE OF TWO SIZES ) AND CENTER!
     GetVideoObject(&hVObject, GetInterfaceGraphicForItem(pItem));
-    pTrav = &(hVObject->pETRLEObject[pItem->ubGraphicNum]);
-    usHeight = (uint32_t)pTrav->usHeight;
-    usWidth = (uint32_t)pTrav->usWidth;
+    pTrav = &(hVObject->subimages[pItem->ubGraphicNum]);
+    usHeight = (uint32_t)pTrav->height;
+    usWidth = (uint32_t)pTrav->width;
 
     // CENTER IN SLOT!
     // CANCEL OFFSETS!
-    sCenX = sX + (abs((int16_t)(sWidth - usWidth)) / 2) - pTrav->sOffsetX;
-    sCenY = sY + (abs((int16_t)(sHeight - usHeight)) / 2) - pTrav->sOffsetY;
+    sCenX = sX + (abs((int16_t)(sWidth - usWidth)) / 2) - pTrav->x_offset;
+    sCenY = sY + (abs((int16_t)(sHeight - usHeight)) / 2) - pTrav->y_offset;
 
     // Shadow area
-    BltVideoObjectOutlineShadowFromIndex(uiBuffer, GetInterfaceGraphicForItem(pItem),
+    BltVideoObjectOutlineShadowFromIndex(dest, GetInterfaceGraphicForItem(pItem),
                                          pItem->ubGraphicNum, sCenX - 2, sCenY + 2);
 
-    BltVideoObjectOutlineFromIndex(uiBuffer, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
+    BltVideoObjectOutlineFromIndex(dest, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
                                    sCenX, sCenY, sOutlineColor, fOutline);
 
-    if (uiBuffer == FRAME_BUFFER) {
+    if (dest == vsFB) {
       InvalidateRegion(sX, sY, (int16_t)(sX + sWidth), (int16_t)(sY + sHeight));
     } else {
       RestoreExternBackgroundRect(sX, sY, sWidth, sHeight);
@@ -1814,7 +1768,7 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
         }
 
         swprintf(pStr, ARR_SIZE(pStr), L"%d", pObject->ubGunShotsLeft);
-        if (uiBuffer == guiSAVEBUFFER) {
+        if (dest == vsSB) {
           RestoreExternBackgroundRect(sNewX, sNewY, 20, 15);
         }
         mprintf(sNewX, sNewY, pStr);
@@ -1851,7 +1805,7 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
 
             sNewX = sX + sWidth - uiStringLength - 4;
 
-            if (uiBuffer == guiSAVEBUFFER) {
+            if (dest == vsSB) {
               RestoreExternBackgroundRect(sNewX, sNewY, 15, 15);
             }
             mprintf(sNewX, sNewY, pStr);
@@ -1875,7 +1829,7 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
 
         sNewX = sX + sWidth - uiStringLength - 4;
 
-        if (uiBuffer == guiSAVEBUFFER) {
+        if (dest == vsSB) {
           RestoreExternBackgroundRect(sNewX, sNewY, 15, 15);
         }
         mprintf(sNewX, sNewY, pStr);
@@ -1899,7 +1853,7 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
 
         sNewX = sX + sWidth - uiStringLength - 4;
 
-        if (uiBuffer == guiSAVEBUFFER) {
+        if (dest == vsSB) {
           RestoreExternBackgroundRect(sNewX, sNewY, 15, 15);
         }
         mprintf(sNewX, sNewY, pStr);
@@ -1984,8 +1938,8 @@ void CycleItemDescriptionItem() {
                                  gpItemDescSoldier);
 }
 
-BOOLEAN InitItemDescriptionBox(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int16_t sX, int16_t sY,
-                               uint8_t ubStatusIndex) {
+BOOLEAN InitItemDescriptionBox(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int16_t sX,
+                               int16_t sY, uint8_t ubStatusIndex) {
   struct OBJECTTYPE *pObject;
 
   // DEF:
@@ -2015,7 +1969,6 @@ BOOLEAN InitKeyItemDescriptionBox(struct SOLDIERTYPE *pSoldier, uint8_t ubPositi
 
 BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, int16_t sY,
                                        uint8_t ubStatusIndex, struct SOLDIERTYPE *pSoldier) {
-  VOBJECT_DESC VObjectDesc;
   char ubString[48];
   int32_t cnt;
   wchar_t pStr[10];
@@ -2057,8 +2010,9 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
     fShowDescriptionFlag = TRUE;
   } else {
     MSYS_DefineRegion(&gInvDesc, (uint16_t)gsInvDescX, (uint16_t)gsInvDescY,
-                      (uint16_t)(gsInvDescX + ITEMDESC_WIDTH), (uint16_t)(gsInvDescY + ITEMDESC_HEIGHT),
-                      MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MSYS_NO_CALLBACK, ItemDescCallback);
+                      (uint16_t)(gsInvDescX + ITEMDESC_WIDTH),
+                      (uint16_t)(gsInvDescY + ITEMDESC_HEIGHT), MSYS_PRIORITY_HIGHEST,
+                      MSYS_NO_CURSOR, MSYS_NO_CALLBACK, ItemDescCallback);
     MSYS_AddRegion(&gInvDesc);
   }
   // Add region
@@ -2066,7 +2020,7 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
     // Add button
     swprintf(pStr, ARR_SIZE(pStr), L"%d/%d", gpItemDescObject->ubGunShotsLeft,
              Weapon[gpItemDescObject->usItem].ubMagSize);
-    FilenameForBPP("INTERFACE\\infobox.sti", ubString);
+    CopyFilename("INTERFACE\\infobox.sti", ubString);
     sForeColour = ITEMDESC_AMMO_FORE;
 
     switch (pObject->ubGunAmmoType) {
@@ -2091,15 +2045,15 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
       giItemDescAmmoButton = CreateIconAndTextButton(
           giItemDescAmmoButtonImages, pStr, TINYFONT1, sForeColour, FONT_MCOLOR_BLACK, sForeColour,
           FONT_MCOLOR_BLACK, TEXT_CJUSTIFIED, (int16_t)(ITEMDESC_AMMO_X + 18),
-          (int16_t)(ITEMDESC_AMMO_Y - 5), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-          (GUI_CALLBACK)ItemDescAmmoCallback);
+          (int16_t)(ITEMDESC_AMMO_Y - 5), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+          DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)ItemDescAmmoCallback);
 
     } else {
       // not in mapscreen
       giItemDescAmmoButton = CreateIconAndTextButton(
           giItemDescAmmoButtonImages, pStr, TINYFONT1, sForeColour, FONT_MCOLOR_BLACK, sForeColour,
-          FONT_MCOLOR_BLACK, TEXT_CJUSTIFIED, (int16_t)(ITEMDESC_AMMO_X), (int16_t)(ITEMDESC_AMMO_Y),
-          BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
+          FONT_MCOLOR_BLACK, TEXT_CJUSTIFIED, (int16_t)(ITEMDESC_AMMO_X),
+          (int16_t)(ITEMDESC_AMMO_Y), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
           (GUI_CALLBACK)ItemDescAmmoCallback);
 
       // if we are being called from the
@@ -2195,17 +2149,17 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
   }
 
   // Load graphic
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\infobox.sti");
-  CHECKF(AddVideoObject(&VObjectDesc, &guiItemDescBox));
+  if (!AddVObjectFromFile("INTERFACE\\infobox.sti", &guiItemDescBox)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\iteminfoc.STI");
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMapItemDescBox));
+  if (!AddVObjectFromFile("INTERFACE\\iteminfoc.STI", &guiMapItemDescBox)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\bullet.STI");
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBullet));
+  if (!AddVObjectFromFile("INTERFACE\\bullet.STI", &guiBullet)) {
+    return FALSE;
+  }
 
   if (gpItemDescObject->usItem != MONEY) {
     for (cnt = 0; cnt < MAX_ATTACHMENTS; cnt++) {
@@ -2215,19 +2169,20 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
                           (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX),
                           (int16_t)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY),
                           (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX +
-                                  gMapItemDescAttachmentsXY[cnt].sWidth),
+                                    gMapItemDescAttachmentsXY[cnt].sWidth),
                           (int16_t)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY +
-                                  gMapItemDescAttachmentsXY[cnt].sHeight),
+                                    gMapItemDescAttachmentsXY[cnt].sHeight),
                           MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MSYS_NO_CALLBACK,
                           ItemDescAttachmentsCallback);
       else
         MSYS_DefineRegion(
-            &gItemDescAttachmentRegions[cnt], (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX),
+            &gItemDescAttachmentRegions[cnt],
+            (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX),
             (int16_t)(gsInvDescY + gItemDescAttachmentsXY[cnt].sY),
             (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX +
-                    gItemDescAttachmentsXY[cnt].sBarDx + gItemDescAttachmentsXY[cnt].sWidth),
+                      gItemDescAttachmentsXY[cnt].sBarDx + gItemDescAttachmentsXY[cnt].sWidth),
             (int16_t)(gsInvDescY + gItemDescAttachmentsXY[cnt].sY +
-                    gItemDescAttachmentsXY[cnt].sHeight),
+                      gItemDescAttachmentsXY[cnt].sHeight),
             MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MSYS_NO_CALLBACK, ItemDescAttachmentsCallback);
       // Add region
       MSYS_AddRegion(&gItemDescAttachmentRegions[cnt]);
@@ -2249,9 +2204,9 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
     gRemoveMoney.uiMoneyRemoving = 0;
 
     // Load graphic
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    strcpy(VObjectDesc.ImageFile, "INTERFACE\\info_bil.sti");
-    CHECKF(AddVideoObject(&VObjectDesc, &guiMoneyGraphicsForDescBox));
+    if (!AddVObjectFromFile("INTERFACE\\info_bil.sti", &guiMoneyGraphicsForDescBox)) {
+      return FALSE;
+    }
 
     // Create buttons for the money
     //		if (guiCurrentScreen ==  MAP_SCREEN )
@@ -2304,7 +2259,8 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
       guiMoneyDoneButtonImage = UseLoadedButtonImage(guiMoneyButtonImage, -1, 3, 6, 4, 5);
       guiMoneyButtonBtn[cnt] = CreateIconAndTextButton(
           guiMoneyDoneButtonImage, gzMoneyAmounts[cnt], BLOCKFONT2, 5, DEFAULT_SHADOW, 5,
-          DEFAULT_SHADOW, TEXT_CJUSTIFIED, (uint16_t)(gMoneyButtonLoc.x + gMoneyButtonOffsets[cnt].x),
+          DEFAULT_SHADOW, TEXT_CJUSTIFIED,
+          (uint16_t)(gMoneyButtonLoc.x + gMoneyButtonOffsets[cnt].x),
           (uint16_t)(gMoneyButtonLoc.y + gMoneyButtonOffsets[cnt].y), BUTTON_TOGGLE,
           MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK, BtnMoneyButtonCallback);
       MSYS_SetBtnUserData(guiMoneyButtonBtn[cnt], 0, cnt);
@@ -2315,7 +2271,9 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
 
   gfInItemDescBox = TRUE;
 
-  CHECKF(ReloadItemDesc());
+  if (!(ReloadItemDesc())) {
+    return FALSE;
+  }
 
   if (gpItemPointer) {
     gpAttachSoldier = gpItemPointerSoldier;
@@ -2617,7 +2575,7 @@ void ItemDescAttachmentsCallback(struct MOUSE_REGION *pRegion, int32_t iReason) 
 }
 
 void RenderItemDescriptionBox() {
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t usHeight, usWidth;
   int16_t sCenX, sCenY, sStrX;
   struct VObject *hVObject;
@@ -2636,40 +2594,37 @@ void RenderItemDescriptionBox() {
   if ((guiCurrentItemDescriptionScreen == MAP_SCREEN) && (gfInItemDescBox)) {
     // TAKE A LOOK AT THE VIDEO OBJECT SIZE ( ONE OF TWO SIZES ) AND CENTER!
     GetVideoObject(&hVObject, guiItemGraphic);
-    pTrav = &(hVObject->pETRLEObject[0]);
-    usHeight = (uint32_t)pTrav->usHeight;
-    usWidth = (uint32_t)pTrav->usWidth;
+    pTrav = &(hVObject->subimages[0]);
+    usHeight = (uint32_t)pTrav->height;
+    usWidth = (uint32_t)pTrav->width;
 
     // CENTER IN SLOT!
     // REMOVE OFFSETS!
     sCenX =
-        MAP_ITEMDESC_ITEM_X + (abs((int16_t)(ITEMDESC_ITEM_WIDTH - usWidth)) / 2) - pTrav->sOffsetX;
-    sCenY =
-        MAP_ITEMDESC_ITEM_Y + (abs((int16_t)(ITEMDESC_ITEM_HEIGHT - usHeight)) / 2) - pTrav->sOffsetY;
+        MAP_ITEMDESC_ITEM_X + (abs((int16_t)(ITEMDESC_ITEM_WIDTH - usWidth)) / 2) - pTrav->x_offset;
+    sCenY = MAP_ITEMDESC_ITEM_Y + (abs((int16_t)(ITEMDESC_ITEM_HEIGHT - usHeight)) / 2) -
+            pTrav->y_offset;
 
-    BltVideoObjectFromIndex(guiSAVEBUFFER, guiMapItemDescBox, 0, gsInvDescX, gsInvDescY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsSB, guiMapItemDescBox, 0, gsInvDescX, gsInvDescY);
 
     // Display the money 'seperating' border
     if (gpItemDescObject->usItem == MONEY) {
       // Render the money Boxes
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiMoneyGraphicsForDescBox, 0,
-                              (uint16_t)(gMapMoneyButtonLoc.x + gMoneyButtonOffsets[0].x),
-                              (uint16_t)(gMapMoneyButtonLoc.y + gMoneyButtonOffsets[0].y),
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiMoneyGraphicsForDescBox, 0,
+                          (uint16_t)(gMapMoneyButtonLoc.x + gMoneyButtonOffsets[0].x),
+                          (uint16_t)(gMapMoneyButtonLoc.y + gMoneyButtonOffsets[0].y));
     }
 
     // Display item
-    BltVideoObjectOutlineShadowFromIndex(guiSAVEBUFFER, guiItemGraphic, 0, sCenX - 2, sCenY + 2);
+    BltVideoObjectOutlineShadowFromIndex(vsSB, guiItemGraphic, 0, sCenX - 2, sCenY + 2);
 
-    BltVideoObjectFromIndex(guiSAVEBUFFER, guiItemGraphic, 0, sCenX, sCenY, VO_BLT_SRCTRANSPARENCY,
-                            NULL);
+    BltVObjectFromIndex(vsSB, guiItemGraphic, 0, sCenX, sCenY);
 
     // Display ststus
     DrawItemUIBarEx(gpItemDescObject, gubItemDescStatusIndex, (int16_t)MAP_ITEMDESC_ITEM_STATUS_X,
                     (int16_t)MAP_ITEMDESC_ITEM_STATUS_Y, ITEMDESC_ITEM_STATUS_WIDTH,
-                    ITEMDESC_ITEM_STATUS_HEIGHT_MAP, Get16BPPColor(DESC_STATUS_BAR),
-                    Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
+                    ITEMDESC_ITEM_STATUS_HEIGHT_MAP, rgb32_to_rgb565(DESC_STATUS_BAR),
+                    rgb32_to_rgb565(DESC_STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
 
     if (gpItemPointer) {
       if ((Item[gpItemPointer->usItem].fFlags & ITEM_HIDDEN_ADDON) ||
@@ -2689,7 +2644,7 @@ void RenderItemDescriptionBox() {
           sCenX = (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX + 5);
           sCenY = (int16_t)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY - 1);
 
-          INVRenderItem(guiSAVEBUFFER, NULL, gpItemDescObject, sCenX, sCenY,
+          INVRenderItem(vsSB, NULL, gpItemDescObject, sCenX, sCenY,
                         gMapItemDescAttachmentsXY[cnt].sWidth,
                         gMapItemDescAttachmentsXY[cnt].sHeight, DIRTYLEVEL2, NULL,
                         (uint8_t)(RENDER_ITEM_ATTACHMENT1 + cnt), FALSE, 0);
@@ -2697,14 +2652,14 @@ void RenderItemDescriptionBox() {
           sCenX = sCenX - gMapItemDescAttachmentsXY[cnt].sBarDx;
           sCenY = sCenY + gMapItemDescAttachmentsXY[cnt].sBarDy;
           DrawItemUIBarEx(gpItemDescObject, (uint8_t)(DRAW_ITEM_STATUS_ATTACHMENT1 + cnt), sCenX,
-                          sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-                          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
+                          sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, rgb32_to_rgb565(STATUS_BAR),
+                          rgb32_to_rgb565(STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
 
         } else {
           sCenX = (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX + 5);
           sCenY = (int16_t)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY - 1);
 
-          INVRenderItem(guiSAVEBUFFER, NULL, gpItemDescObject, sCenX, sCenY,
+          INVRenderItem(vsSB, NULL, gpItemDescObject, sCenX, sCenY,
                         gMapItemDescAttachmentsXY[cnt].sWidth,
                         gMapItemDescAttachmentsXY[cnt].sHeight, DIRTYLEVEL2, NULL,
                         (uint8_t)(RENDER_ITEM_ATTACHMENT1 + cnt), FALSE, 0);
@@ -2712,30 +2667,29 @@ void RenderItemDescriptionBox() {
           sCenX = sCenX - gItemDescAttachmentsXY[cnt].sBarDx;
           sCenY = sCenY + gItemDescAttachmentsXY[cnt].sBarDy;
           DrawItemUIBarEx(gpItemDescObject, (uint8_t)(DRAW_ITEM_STATUS_ATTACHMENT1 + cnt), sCenX,
-                          sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-                          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
+                          sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, rgb32_to_rgb565(STATUS_BAR),
+                          rgb32_to_rgb565(STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
         }
       }
 
       if (fHatchOutAttachments) {
-        DrawHatchOnInventory(
-            guiSAVEBUFFER, (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX),
-            (int16_t)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY - 2),
-            (int16_t)(gMapItemDescAttachmentsXY[cnt].sWidth + gMapItemDescAttachmentsXY[cnt].sBarDx),
-            (int16_t)(gMapItemDescAttachmentsXY[cnt].sHeight + 2));
+        DrawHatchOnInventory(guiSAVEBUFFER,
+                             (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX),
+                             (int16_t)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY - 2),
+                             (int16_t)(gMapItemDescAttachmentsXY[cnt].sWidth +
+                                       gMapItemDescAttachmentsXY[cnt].sBarDx),
+                             (int16_t)(gMapItemDescAttachmentsXY[cnt].sHeight + 2));
       }
     }
 
     if (Item[gpItemDescObject->usItem].usItemClass & IC_GUN) {
       // display bullets for ROF
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiBullet, 0, MAP_BULLET_SING_X, MAP_BULLET_SING_Y,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiBullet, 0, MAP_BULLET_SING_X, MAP_BULLET_SING_Y);
 
       if (Weapon[gpItemDescObject->usItem].ubShotsPerBurst > 0) {
         for (cnt = 0; cnt < Weapon[gpItemDescObject->usItem].ubShotsPerBurst; cnt++) {
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiBullet, 0,
-                                  MAP_BULLET_BURST_X + cnt * (BULLET_WIDTH + 1), MAP_BULLET_BURST_Y,
-                                  VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiBullet, 0, MAP_BULLET_BURST_X + cnt * (BULLET_WIDTH + 1),
+                              MAP_BULLET_BURST_Y);
         }
       }
     }
@@ -2927,8 +2881,8 @@ void RenderItemDescriptionBox() {
         swprintf(pStr, ARR_SIZE(pStr), L"%2d", (GunRange(gpItemDescObject)) / 10);
         FindFontRightCoordinates(
             (int16_t)(gMapWeaponStats[3].sX + gsInvDescX + gMapWeaponStats[3].sValDx),
-            (int16_t)(gMapWeaponStats[3].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
-            BLOCKFONT2, &usX, &usY);
+            (int16_t)(gMapWeaponStats[3].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT,
+            pStr, BLOCKFONT2, &usX, &usY);
         mprintf(usX, usY, pStr);
       }
 
@@ -2944,8 +2898,8 @@ void RenderItemDescriptionBox() {
         swprintf(pStr, ARR_SIZE(pStr), L"%2d", Weapon[gpItemDescObject->usItem].ubImpact);
         FindFontRightCoordinates(
             (int16_t)(gMapWeaponStats[4].sX + gsInvDescX + gMapWeaponStats[4].sValDx),
-            (int16_t)(gMapWeaponStats[4].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
-            BLOCKFONT2, &usX, &usY);
+            (int16_t)(gMapWeaponStats[4].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT,
+            pStr, BLOCKFONT2, &usX, &usY);
         mprintf(usX, usY, pStr);
       }
 
@@ -2977,8 +2931,8 @@ void RenderItemDescriptionBox() {
                  ubAttackAPs + CalcAPsToBurst(DEFAULT_APS, gpItemDescObject));
         FindFontRightCoordinates(
             (int16_t)(gMapWeaponStats[6].sX + gsInvDescX + gMapWeaponStats[6].sValDx),
-            (int16_t)(gMapWeaponStats[6].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
-            BLOCKFONT2, &usX, &usY);
+            (int16_t)(gMapWeaponStats[6].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT,
+            pStr, BLOCKFONT2, &usX, &usY);
         mprintf(usX, usY, pStr);
       }
 
@@ -2992,7 +2946,7 @@ void RenderItemDescriptionBox() {
 
       // if the player is taking money from their account
       if (gfAddingMoneyToMercFromPlayersAccount)
-        swprintf(pStr, ARR_SIZE(pStr), L"%ld", MoneyGetBalance());
+        swprintf(pStr, ARR_SIZE(pStr), L"%ld", LaptopMoneyGetBalance());
       else
         swprintf(pStr, ARR_SIZE(pStr), L"%ld", gRemoveMoney.uiTotalAmount);
 
@@ -3090,8 +3044,8 @@ void RenderItemDescriptionBox() {
         //].sValDx + ( uiRightLength - uiStringLength );
         FindFontRightCoordinates(
             (int16_t)(gMapWeaponStats[2].sX + gsInvDescX + gMapWeaponStats[2].sValDx + 6),
-            (int16_t)(gMapWeaponStats[2].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
-            BLOCKFONT2, &sStrX, &usY);
+            (int16_t)(gMapWeaponStats[2].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT,
+            pStr, BLOCKFONT2, &sStrX, &usY);
         mprintf(sStrX, gMapWeaponStats[2].sY + gsInvDescY, pStr);
       } else {
         // Status
@@ -3101,8 +3055,8 @@ void RenderItemDescriptionBox() {
         //].sValDx + ( uiRightLength - uiStringLength );
         FindFontRightCoordinates(
             (int16_t)(gMapWeaponStats[1].sX + gsInvDescX + gMapWeaponStats[1].sValDx + 6),
-            (int16_t)(gMapWeaponStats[1].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
-            BLOCKFONT2, &sStrX, &usY);
+            (int16_t)(gMapWeaponStats[1].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT,
+            pStr, BLOCKFONT2, &sStrX, &usY);
         wcscat(pStr, L"%%");
         mprintf(sStrX, gMapWeaponStats[1].sY + gsInvDescY, pStr);
       }
@@ -3129,9 +3083,10 @@ void RenderItemDescriptionBox() {
                 gMapWeaponStats[4].sY + gsInvDescY + GetFontHeight(BLOCKFONT) + 2, pStr);
 
         SetFontForeground(5);
-        GetShortSectorString(SectorID8_X((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound),
-                             SectorID8_Y((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound),
-                             sTempString, ARR_SIZE(sTempString));
+        GetShortSectorString(
+            SectorID8_X((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound),
+            SectorID8_Y((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound), sTempString,
+            ARR_SIZE(sTempString));
         swprintf(pStr, ARR_SIZE(pStr), L"%s", sTempString);
         FindFontRightCoordinates((int16_t)(gMapWeaponStats[4].sX + gsInvDescX),
                                  (int16_t)(gMapWeaponStats[4].sY + gsInvDescY), 110,
@@ -3151,35 +3106,33 @@ void RenderItemDescriptionBox() {
   } else if (gfInItemDescBox) {
     // TAKE A LOOK AT THE VIDEO OBJECT SIZE ( ONE OF TWO SIZES ) AND CENTER!
     GetVideoObject(&hVObject, guiItemGraphic);
-    pTrav = &(hVObject->pETRLEObject[0]);
-    usHeight = (uint32_t)pTrav->usHeight;
-    usWidth = (uint32_t)pTrav->usWidth;
+    pTrav = &(hVObject->subimages[0]);
+    usHeight = (uint32_t)pTrav->height;
+    usWidth = (uint32_t)pTrav->width;
 
     // CENTER IN SLOT!
-    sCenX = ITEMDESC_ITEM_X + (abs((int16_t)(ITEMDESC_ITEM_WIDTH - usWidth)) / 2) - pTrav->sOffsetX;
-    sCenY = ITEMDESC_ITEM_Y + (abs((int16_t)(ITEMDESC_ITEM_HEIGHT - usHeight)) / 2) - pTrav->sOffsetY;
+    sCenX = ITEMDESC_ITEM_X + (abs((int16_t)(ITEMDESC_ITEM_WIDTH - usWidth)) / 2) - pTrav->x_offset;
+    sCenY =
+        ITEMDESC_ITEM_Y + (abs((int16_t)(ITEMDESC_ITEM_HEIGHT - usHeight)) / 2) - pTrav->y_offset;
 
-    BltVideoObjectFromIndex(guiSAVEBUFFER, guiItemDescBox, 0, gsInvDescX, gsInvDescY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsSB, guiItemDescBox, 0, gsInvDescX, gsInvDescY);
 
     if (gpItemDescObject->usItem == MONEY) {
       // Render the money Boxes
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiMoneyGraphicsForDescBox, 0,
-                              (uint16_t)(gsInvDescX + gItemDescAttachmentsXY[0].sX - 1),
-                              (uint16_t)(gsInvDescY + gItemDescAttachmentsXY[0].sY - 2),
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiMoneyGraphicsForDescBox, 0,
+                          (uint16_t)(gsInvDescX + gItemDescAttachmentsXY[0].sX - 1),
+                          (uint16_t)(gsInvDescY + gItemDescAttachmentsXY[0].sY - 2));
     }
 
     // Display item
-    BltVideoObjectOutlineShadowFromIndex(guiSAVEBUFFER, guiItemGraphic, 0, sCenX - 2, sCenY + 2);
-    BltVideoObjectFromIndex(guiSAVEBUFFER, guiItemGraphic, 0, sCenX, sCenY, VO_BLT_SRCTRANSPARENCY,
-                            NULL);
+    BltVideoObjectOutlineShadowFromIndex(vsSB, guiItemGraphic, 0, sCenX - 2, sCenY + 2);
+    BltVObjectFromIndex(vsSB, guiItemGraphic, 0, sCenX, sCenY);
 
     // Display status
     DrawItemUIBarEx(gpItemDescObject, gubItemDescStatusIndex, (int16_t)ITEMDESC_ITEM_STATUS_X,
                     (int16_t)ITEMDESC_ITEM_STATUS_Y, ITEMDESC_ITEM_STATUS_WIDTH,
-                    ITEMDESC_ITEM_STATUS_HEIGHT, Get16BPPColor(DESC_STATUS_BAR),
-                    Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
+                    ITEMDESC_ITEM_STATUS_HEIGHT, rgb32_to_rgb565(DESC_STATUS_BAR),
+                    rgb32_to_rgb565(DESC_STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
 
     if (gpItemPointer) {
       if ((Item[gpItemPointer->usItem].fFlags & ITEM_HIDDEN_ADDON) ||
@@ -3198,15 +3151,15 @@ void RenderItemDescriptionBox() {
         sCenX = (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX + 5);
         sCenY = (int16_t)(gsInvDescY + gItemDescAttachmentsXY[cnt].sY - 1);
 
-        INVRenderItem(guiSAVEBUFFER, NULL, gpItemDescObject, sCenX, sCenY,
+        INVRenderItem(vsSB, NULL, gpItemDescObject, sCenX, sCenY,
                       gItemDescAttachmentsXY[cnt].sWidth, gItemDescAttachmentsXY[cnt].sHeight,
                       DIRTYLEVEL2, NULL, (uint8_t)(RENDER_ITEM_ATTACHMENT1 + cnt), FALSE, 0);
 
         sCenX = sCenX - gItemDescAttachmentsXY[cnt].sBarDx;
         sCenY = sCenY + gItemDescAttachmentsXY[cnt].sBarDy;
-        DrawItemUIBarEx(gpItemDescObject, (uint8_t)(DRAW_ITEM_STATUS_ATTACHMENT1 + cnt), sCenX, sCenY,
-                        ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-                        Get16BPPColor(STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
+        DrawItemUIBarEx(gpItemDescObject, (uint8_t)(DRAW_ITEM_STATUS_ATTACHMENT1 + cnt), sCenX,
+                        sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, rgb32_to_rgb565(STATUS_BAR),
+                        rgb32_to_rgb565(STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
 
         SetRegionFastHelpText(&(gItemDescAttachmentRegions[cnt]),
                               ItemNames[gpItemDescObject->usAttachItem[cnt]]);
@@ -3216,8 +3169,6 @@ void RenderItemDescriptionBox() {
         SetRegionHelpEndCallback(&(gItemDescAttachmentRegions[cnt]), HelpTextDoneCallback);
       }
       if (fHatchOutAttachments) {
-        // uint32_t uiWhichBuffer = ( guiCurrentItemDescriptionScreen == MAP_SCREEN ) ? guiSAVEBUFFER
-        // : guiRENDERBUFFER;
         DrawHatchOnInventory(
             guiSAVEBUFFER, (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX),
             (int16_t)(gsInvDescY + gItemDescAttachmentsXY[cnt].sY - 2),
@@ -3228,14 +3179,12 @@ void RenderItemDescriptionBox() {
 
     if (Item[gpItemDescObject->usItem].usItemClass & IC_GUN) {
       // display bullets for ROF
-      BltVideoObjectFromIndex(guiSAVEBUFFER, guiBullet, 0, BULLET_SING_X, BULLET_SING_Y,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsSB, guiBullet, 0, BULLET_SING_X, BULLET_SING_Y);
 
       if (Weapon[gpItemDescObject->usItem].ubShotsPerBurst > 0) {
         for (cnt = 0; cnt < Weapon[gpItemDescObject->usItem].ubShotsPerBurst; cnt++) {
-          BltVideoObjectFromIndex(guiSAVEBUFFER, guiBullet, 0,
-                                  BULLET_BURST_X + cnt * (BULLET_WIDTH + 1), BULLET_BURST_Y,
-                                  VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsSB, guiBullet, 0, BULLET_BURST_X + cnt * (BULLET_WIDTH + 1),
+                              BULLET_BURST_Y);
         }
       }
     }
@@ -3401,9 +3350,10 @@ void RenderItemDescriptionBox() {
         }
 
         swprintf(pStr, ARR_SIZE(pStr), L"%2d", (GunRange(gpItemDescObject)) / 10);
-        FindFontRightCoordinates((int16_t)(gWeaponStats[3].sX + gsInvDescX + gWeaponStats[3].sValDx),
-                                 (int16_t)(gWeaponStats[3].sY + gsInvDescY), ITEM_STATS_WIDTH,
-                                 ITEM_STATS_HEIGHT, pStr, BLOCKFONT2, &usX, &usY);
+        FindFontRightCoordinates(
+            (int16_t)(gWeaponStats[3].sX + gsInvDescX + gWeaponStats[3].sValDx),
+            (int16_t)(gWeaponStats[3].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
+            BLOCKFONT2, &usX, &usY);
         mprintf(usX, usY, pStr);
       }
 
@@ -3416,9 +3366,10 @@ void RenderItemDescriptionBox() {
         }
 
         swprintf(pStr, ARR_SIZE(pStr), L"%2d", Weapon[gpItemDescObject->usItem].ubImpact);
-        FindFontRightCoordinates((int16_t)(gWeaponStats[4].sX + gsInvDescX + gWeaponStats[4].sValDx),
-                                 (int16_t)(gWeaponStats[4].sY + gsInvDescY), ITEM_STATS_WIDTH,
-                                 ITEM_STATS_HEIGHT, pStr, BLOCKFONT2, &usX, &usY);
+        FindFontRightCoordinates(
+            (int16_t)(gWeaponStats[4].sX + gsInvDescX + gWeaponStats[4].sValDx),
+            (int16_t)(gWeaponStats[4].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
+            BLOCKFONT2, &usX, &usY);
         mprintf(usX, usY, pStr);
       }
 
@@ -3446,9 +3397,10 @@ void RenderItemDescriptionBox() {
 
         swprintf(pStr, ARR_SIZE(pStr), L"%2d",
                  ubAttackAPs + CalcAPsToBurst(DEFAULT_APS, gpItemDescObject));
-        FindFontRightCoordinates((int16_t)(gWeaponStats[6].sX + gsInvDescX + gWeaponStats[6].sValDx),
-                                 (int16_t)(gWeaponStats[6].sY + gsInvDescY), ITEM_STATS_WIDTH,
-                                 ITEM_STATS_HEIGHT, pStr, BLOCKFONT2, &usX, &usY);
+        FindFontRightCoordinates(
+            (int16_t)(gWeaponStats[6].sX + gsInvDescX + gWeaponStats[6].sValDx),
+            (int16_t)(gWeaponStats[6].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
+            BLOCKFONT2, &usX, &usY);
         mprintf(usX, usY, pStr);
       }
 
@@ -3523,8 +3475,8 @@ void RenderItemDescriptionBox() {
       InsertDollarSignInToString(pStr);
       FindFontRightCoordinates((int16_t)(gMoneyStats[1].sX + gsInvDescX + gMoneyStats[1].sValDx),
                                (int16_t)(gMoneyStats[1].sY + gsInvDescY),
-                               (uint16_t)(ITEM_STATS_WIDTH - 3), ITEM_STATS_HEIGHT, pStr, BLOCKFONT2,
-                               &usX, &usY);
+                               (uint16_t)(ITEM_STATS_WIDTH - 3), ITEM_STATS_HEIGHT, pStr,
+                               BLOCKFONT2, &usX, &usY);
       mprintf(usX, usY, pStr);
 
       // Display the total amount of money removing
@@ -3533,8 +3485,8 @@ void RenderItemDescriptionBox() {
       InsertDollarSignInToString(pStr);
       FindFontRightCoordinates((int16_t)(gMoneyStats[3].sX + gsInvDescX + gMoneyStats[3].sValDx),
                                (int16_t)(gMoneyStats[3].sY + gsInvDescY),
-                               (uint16_t)(ITEM_STATS_WIDTH - 3), ITEM_STATS_HEIGHT, pStr, BLOCKFONT2,
-                               &usX, &usY);
+                               (uint16_t)(ITEM_STATS_WIDTH - 3), ITEM_STATS_HEIGHT, pStr,
+                               BLOCKFONT2, &usX, &usY);
       mprintf(usX, usY, pStr);
 
     } else if (Item[gpItemDescObject->usItem].usItemClass == IC_MONEY) {
@@ -3574,16 +3526,18 @@ void RenderItemDescriptionBox() {
         // Status
         swprintf(pStr, ARR_SIZE(pStr), L"%d/%d", gpItemDescObject->ubShotsLeft[0],
                  Magazine[Item[gpItemDescObject->usItem].ubClassIndex].ubMagSize);
-        FindFontRightCoordinates((int16_t)(gWeaponStats[2].sX + gsInvDescX + gWeaponStats[2].sValDx),
-                                 (int16_t)(gWeaponStats[2].sY + gsInvDescY), ITEM_STATS_WIDTH,
-                                 ITEM_STATS_HEIGHT, pStr, BLOCKFONT2, &usX, &usY);
+        FindFontRightCoordinates(
+            (int16_t)(gWeaponStats[2].sX + gsInvDescX + gWeaponStats[2].sValDx),
+            (int16_t)(gWeaponStats[2].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
+            BLOCKFONT2, &usX, &usY);
         mprintf(usX, usY, pStr);
       } else {
         // Status
         swprintf(pStr, ARR_SIZE(pStr), L"%2d%%", gpItemDescObject->bStatus[gubItemDescStatusIndex]);
-        FindFontRightCoordinates((int16_t)(gWeaponStats[1].sX + gsInvDescX + gWeaponStats[1].sValDx),
-                                 (int16_t)(gWeaponStats[1].sY + gsInvDescY), ITEM_STATS_WIDTH,
-                                 ITEM_STATS_HEIGHT, pStr, BLOCKFONT2, &usX, &usY);
+        FindFontRightCoordinates(
+            (int16_t)(gWeaponStats[1].sX + gsInvDescX + gWeaponStats[1].sValDx),
+            (int16_t)(gWeaponStats[1].sY + gsInvDescY), ITEM_STATS_WIDTH, ITEM_STATS_HEIGHT, pStr,
+            BLOCKFONT2, &usX, &usY);
         wcscat(pStr, L"%%");
         mprintf(usX, usY, pStr);
       }
@@ -3599,9 +3553,10 @@ void RenderItemDescriptionBox() {
                 gWeaponStats[4].sY + gsInvDescY + GetFontHeight(BLOCKFONT) + 2, pStr);
 
         SetFontForeground(5);
-        GetShortSectorString(SectorID8_X((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound),
-                             SectorID8_Y((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound),
-                             sTempString, ARR_SIZE(sTempString));
+        GetShortSectorString(
+            SectorID8_X((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound),
+            SectorID8_Y((uint8_t)KeyTable[gpItemDescObject->ubKeyID].usSectorFound), sTempString,
+            ARR_SIZE(sTempString));
         swprintf(pStr, ARR_SIZE(pStr), L"%s", sTempString);
         FindFontRightCoordinates((int16_t)(gWeaponStats[4].sX + gsInvDescX),
                                  (int16_t)(gWeaponStats[4].sY + gsInvDescY), 110, ITEM_STATS_HEIGHT,
@@ -3741,9 +3696,9 @@ void DeleteItemDescriptionBox() {
   }
   if (guiCurrentItemDescriptionScreen == MAP_SCREEN) {
     fCharacterInfoPanelDirty = TRUE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
   }
 
   if (InKeyRingPopup() == TRUE) {
@@ -3900,9 +3855,11 @@ BOOLEAN SoldierCanSeeCatchComing(struct SOLDIERTYPE *pSoldier, int16_t sSrcGridN
   return (TRUE);
   /*-
           int32_t							cnt;
-          int8_t							bDirection, bTargetDirection;
+          int8_t							bDirection,
+  bTargetDirection;
 
-          bTargetDirection = (int8_t)GetDirectionToGridNoFromGridNo( pSoldier->sGridNo, sSrcGridNo );
+          bTargetDirection = (int8_t)GetDirectionToGridNoFromGridNo( pSoldier->sGridNo, sSrcGridNo
+  );
 
           // Look 3 directions Clockwise from what we are facing....
           bDirection = pSoldier->bDirection;
@@ -4586,13 +4543,13 @@ BOOLEAN HandleItemPointerClick(uint16_t usMapPos) {
 
       // Increment attacker count...
       gTacticalStatus.ubAttackBusyCount++;
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("INcremtning ABC: Throw item to %d", gTacticalStatus.ubAttackBusyCount));
 
       // Given our gridno, throw grenate!
       CalculateLaunchItemParamsForThrow(gpItemPointerSoldier, sGridNo, gpItemPointerSoldier->bLevel,
-                                        (int16_t)((gsInterfaceLevel * 256) + sEndZ), gpItemPointer, 0,
-                                        ubThrowActionCode, uiThrowActionData);
+                                        (int16_t)((gsInterfaceLevel * 256) + sEndZ), gpItemPointer,
+                                        0, ubThrowActionCode, uiThrowActionData);
 
       // OK, goto throw animation
       HandleSoldierThrowItem(gpItemPointerSoldier, usMapPos);
@@ -4618,13 +4575,12 @@ BOOLEAN InItemStackPopup() { return (gfInItemStackPopup); }
 
 BOOLEAN InKeyRingPopup() { return (gfInKeyRingPopup); }
 
-BOOLEAN InitItemStackPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int16_t sInvX, int16_t sInvY,
-                           int16_t sInvWidth, int16_t sInvHeight) {
-  VOBJECT_DESC VObjectDesc;
+BOOLEAN InitItemStackPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int16_t sInvX,
+                           int16_t sInvY, int16_t sInvWidth, int16_t sInvHeight) {
   int16_t sX, sY, sCenX, sCenY;
-  SGPRect aRect;
+  struct GRect aRect;
   uint8_t ubLimit;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   struct VObject *hVObject;
   int32_t cnt;
   uint16_t usPopupWidth;
@@ -4654,14 +4610,14 @@ BOOLEAN InitItemStackPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int
   }
 
   // Load graphics
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\extra_inventory.STI");
-  CHECKF(AddVideoObject(&VObjectDesc, &guiItemPopupBoxes));
+  if (!AddVObjectFromFile("INTERFACE\\extra_inventory.STI", &guiItemPopupBoxes)) {
+    return FALSE;
+  }
 
   // Get size
   GetVideoObject(&hVObject, guiItemPopupBoxes);
-  pTrav = &(hVObject->pETRLEObject[0]);
-  usPopupWidth = pTrav->usWidth;
+  pTrav = &(hVObject->subimages[0]);
+  usPopupWidth = pTrav->width;
 
   // Determine position, height and width of mouse region, area
   GetSlotInvXY(ubPosition, &sX, &sY);
@@ -4669,7 +4625,7 @@ BOOLEAN InitItemStackPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int
 
   // Get Width, Height
   gsItemPopupWidth = ubLimit * usPopupWidth;
-  gsItemPopupHeight = pTrav->usHeight;
+  gsItemPopupHeight = pTrav->height;
   gubNumItemPopups = ubLimit;
 
   // Calculate X,Y, first center
@@ -4748,7 +4704,7 @@ void EndItemStackPopupWithItemInHand() {
 }
 
 void RenderItemStackPopup(BOOLEAN fFullRender) {
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t usWidth;
   struct VObject *hVObject;
   uint32_t cnt;
@@ -4760,33 +4716,32 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(FRAME_BUFFER, gsItemPopupInvX, gsItemPopupInvY,
+      ShadowVideoSurfaceRect(vsFB, gsItemPopupInvX, gsItemPopupInvY,
                              gsItemPopupInvX + gsItemPopupInvWidth,
                              gsItemPopupInvY + gsItemPopupInvHeight);
     }
   }
   // TAKE A LOOK AT THE VIDEO OBJECT SIZE ( ONE OF TWO SIZES ) AND CENTER!
   GetVideoObject(&hVObject, guiItemPopupBoxes);
-  pTrav = &(hVObject->pETRLEObject[0]);
-  usWidth = (uint32_t)pTrav->usWidth;
+  pTrav = &(hVObject->subimages[0]);
+  usWidth = (uint32_t)pTrav->width;
 
   for (cnt = 0; cnt < gubNumItemPopups; cnt++) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth),
-                            gsItemPopupY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth), gsItemPopupY);
 
     if (cnt < gpItemPopupObject->ubNumberOfObjects) {
       sX = (int16_t)(gsItemPopupX + (cnt * usWidth) + 11);
       sY = (int16_t)(gsItemPopupY + 3);
 
-      INVRenderItem(FRAME_BUFFER, NULL, gpItemPopupObject, sX, sY, 29, 23, DIRTYLEVEL2, NULL,
+      INVRenderItem(vsFB, NULL, gpItemPopupObject, sX, sY, 29, 23, DIRTYLEVEL2, NULL,
                     (uint8_t)RENDER_ITEM_NOSTATUS, FALSE, 0);
 
       // Do status bar here...
       sNewX = (int16_t)(gsItemPopupX + (cnt * usWidth) + 7);
       sNewY = gsItemPopupY + INV_BAR_DY + 3;
-      DrawItemUIBarEx(gpItemPopupObject, (uint8_t)cnt, sNewX, sNewY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT,
-                      Get16BPPColor(STATUS_BAR), Get16BPPColor(STATUS_BAR_SHADOW), TRUE,
-                      FRAME_BUFFER);
+      DrawItemUIBarEx(gpItemPopupObject, (uint8_t)cnt, sNewX, sNewY, ITEM_BAR_WIDTH,
+                      ITEM_BAR_HEIGHT, rgb32_to_rgb565(STATUS_BAR),
+                      rgb32_to_rgb565(STATUS_BAR_SHADOW), TRUE, FRAME_BUFFER);
     }
   }
 
@@ -4823,11 +4778,10 @@ void DeleteItemStackPopup() {
   FreeMouseCursor();
 }
 
-BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, int16_t sInvX, int16_t sInvY, int16_t sInvWidth,
-                         int16_t sInvHeight) {
-  VOBJECT_DESC VObjectDesc;
-  SGPRect aRect;
-  ETRLEObject *pTrav;
+BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, int16_t sInvX, int16_t sInvY,
+                         int16_t sInvWidth, int16_t sInvHeight) {
+  struct GRect aRect;
+  struct Subimage *pTrav;
   struct VObject *hVObject;
   int32_t cnt;
   uint16_t usPopupWidth, usPopupHeight;
@@ -4853,15 +4807,15 @@ BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, int16_t sInvX, int16_t sI
   gpItemPopupSoldier = pSoldier;
 
   // Load graphics
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\extra_inventory.STI");
-  CHECKF(AddVideoObject(&VObjectDesc, &guiItemPopupBoxes));
+  if (!AddVObjectFromFile("INTERFACE\\extra_inventory.STI", &guiItemPopupBoxes)) {
+    return FALSE;
+  }
 
   // Get size
   GetVideoObject(&hVObject, guiItemPopupBoxes);
-  pTrav = &(hVObject->pETRLEObject[0]);
-  usPopupWidth = pTrav->usWidth;
-  usPopupHeight = pTrav->usHeight;
+  pTrav = &(hVObject->subimages[0]);
+  usPopupWidth = pTrav->width;
+  usPopupHeight = pTrav->height;
 
   // Determine position, height and width of mouse region, area
   // GetSlotInvHeightWidth( ubSlotSimilarToKeySlot, &sItemSlotWidth, &sItemSlotHeight );
@@ -4871,12 +4825,12 @@ BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, int16_t sInvX, int16_t sI
     MSYS_DefineRegion(
         &gKeyRingRegions[cnt],
         (int16_t)(gsKeyRingPopupInvX + (cnt % sKeyRingItemWidth * usPopupWidth) +
-                sOffSetX),                                                      // top left
+                  sOffSetX),                                                      // top left
         (int16_t)(sInvY + sOffSetY + (cnt / sKeyRingItemWidth * usPopupHeight)),  // top right
         (int16_t)(gsKeyRingPopupInvX + ((cnt % sKeyRingItemWidth) + 1) * usPopupWidth +
-                sOffSetX),  // bottom left
+                  sOffSetX),  // bottom left
         (int16_t)(sInvY + ((cnt / sKeyRingItemWidth + 1) * usPopupHeight) +
-                sOffSetY),  // bottom right
+                  sOffSetY),  // bottom right
         MSYS_PRIORITY_HIGHEST, MSYS_NO_CURSOR, MSYS_NO_CALLBACK, KeyRingSlotInvClickCallback);
     // Add region
     MSYS_AddRegion(&gKeyRingRegions[cnt]);
@@ -4917,7 +4871,7 @@ BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, int16_t sInvX, int16_t sI
 }
 
 void RenderKeyRingPopup(BOOLEAN fFullRender) {
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t usHeight, usWidth;
   struct VObject *hVObject;
   uint32_t cnt;
@@ -4938,7 +4892,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(FRAME_BUFFER, 0, gsKeyRingPopupInvY,
+      ShadowVideoSurfaceRect(vsFB, 0, gsKeyRingPopupInvY,
                              gsKeyRingPopupInvX + gsKeyRingPopupInvWidth,
                              gsKeyRingPopupInvY + gsKeyRingPopupInvHeight);
     }
@@ -4951,9 +4905,9 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
 
   // TAKE A LOOK AT THE VIDEO OBJECT SIZE ( ONE OF TWO SIZES ) AND CENTER!
   GetVideoObject(&hVObject, guiItemPopupBoxes);
-  pTrav = &(hVObject->pETRLEObject[0]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
+  pTrav = &(hVObject->subimages[0]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
 
   if (IsMapScreen_2()) {
     sKeyRingItemWidth = MAP_KEY_RING_ROW_WIDTH;
@@ -4963,11 +4917,10 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
   }
 
   for (cnt = 0; cnt < NUMBER_KEYS_ON_KEYRING; cnt++) {
-    BltVideoObjectFromIndex(
-        FRAME_BUFFER, guiItemPopupBoxes, 0,
+    BltVObjectFromIndex(
+        vsFB, guiItemPopupBoxes, 0,
         (int16_t)(gsKeyRingPopupInvX + (cnt % sKeyRingItemWidth * usWidth) + sOffSetX),
-        (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)),
-        VO_BLT_SRCTRANSPARENCY, NULL);
+        (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)));
 
     // will want to draw key here.. if there is one
     if ((gpItemPopupSoldier->pKeyRing[cnt].ubKeyID != INVALID_KEY_NUMBER) &&
@@ -4979,23 +4932,19 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
           &pObject, 0,
           (int16_t)(gsKeyRingPopupInvX + sOffSetX + (cnt % sKeyRingItemWidth * usWidth) + 7),
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight) + 24),
-          ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, FRAME_BUFFER);
+          ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, rgb32_to_rgb565(STATUS_BAR),
+          rgb32_to_rgb565(STATUS_BAR_SHADOW), TRUE, FRAME_BUFFER);
 
       // set item type
       pObject.usItem = FIRST_KEY + LockTable[gpItemPopupSoldier->pKeyRing[cnt].ubKeyID].usKeyItem;
 
       // render the item
       INVRenderItem(
-          FRAME_BUFFER, NULL, &pObject,
+          vsFB, NULL, &pObject,
           (int16_t)(gsKeyRingPopupInvX + sOffSetX + (cnt % sKeyRingItemWidth * usWidth) + 8),
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)),
           (uint16_t)(usWidth - 8), (uint16_t)(usHeight - 2), DIRTYLEVEL2, NULL, 0, 0, 0);
     }
-
-    // BltVideoObjectFromIndex( FRAME_BUFFER, guiItemPopupBoxes, 0, (int16_t)(gsKeyRingPopupInvX + (
-    // cnt % KEY_RING_ROW_WIDTH * usWidth ) ), ( int16_t )( gsKeyRingPopupInvY + ( cnt /
-    // KEY_RING_ROW_WIDTH * usHeight ) ), VO_BLT_SRCTRANSPARENCY, NULL );
   }
 
   // RestoreExternBackgroundRect( gsItemPopupInvX, gsItemPopupInvY, gsItemPopupInvWidth,
@@ -5063,9 +5012,8 @@ uint16_t GetTileGraphicForItem(INVTYPE *pItem) {
 }
 
 BOOLEAN LoadTileGraphicForItem(INVTYPE *pItem, uint32_t *puiVo) {
-  char zName[100];
+  char zName[80];
   uint32_t uiVo;
-  VOBJECT_DESC VObjectDesc;
   uint8_t ubGraphic;
 
   // CHECK SUBCLASS
@@ -5101,9 +5049,11 @@ BOOLEAN LoadTileGraphicForItem(INVTYPE *pItem, uint32_t *puiVo) {
   }
 
   // Load item
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  sprintf(VObjectDesc.ImageFile, "BIGITEMS\\%s", zName);
-  CHECKF(AddVideoObject(&VObjectDesc, &uiVo));
+  SGPFILENAME ImageFile;
+  sprintf(ImageFile, "BIGITEMS\\%s", zName);
+  if (!AddVObjectFromFile(ImageFile, &uiVo)) {
+    return FALSE;
+  }
 
   *puiVo = uiVo;
 
@@ -5251,7 +5201,8 @@ void ItemPopupRegionCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       RestoreExternBackgroundRect(gsItemPopupInvX, gsItemPopupInvY, gsItemPopupInvWidth,
                                   gsItemPopupInvHeight);
       if (guiCurrentItemDescriptionScreen == MAP_SCREEN) {
-        MAPInternalInitItemDescriptionBox(gpItemPopupObject, (uint8_t)uiItemPos, gpItemPopupSoldier);
+        MAPInternalInitItemDescriptionBox(gpItemPopupObject, (uint8_t)uiItemPos,
+                                          gpItemPopupSoldier);
       } else {
         InternalInitItemDescriptionBox(gpItemPopupObject, (int16_t)ITEMDESC_START_X,
                                        (int16_t)ITEMDESC_START_Y, (uint8_t)uiItemPos,
@@ -5372,7 +5323,6 @@ void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel) { gItemPickupMenu.fDirtyLevel =
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
                                  struct ITEM_POOL *pItemPool, int16_t sScreenX, int16_t sScreenY,
                                  int8_t bZLevel) {
-  VOBJECT_DESC VObjectDesc;
   char ubString[48];
   struct ITEM_POOL *pTempItemPool;
   int32_t cnt;
@@ -5392,7 +5342,7 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
 
   InterruptTime();
   PauseGame();
-  LockPauseState(18);
+  LockPause();
   // Pause timers as well....
   PauseTime(TRUE);
 
@@ -5423,9 +5373,9 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
     gItemPickupMenu.bNumSlotsPerPage = gItemPickupMenu.ubTotalItems;
   }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\itembox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &(gItemPickupMenu.uiPanelVo)));
+  if (!AddVObjectFromFile("INTERFACE\\itembox.sti", &(gItemPickupMenu.uiPanelVo))) {
+    return FALSE;
+  }
 
   // Memalloc selection array...
   gItemPickupMenu.pfSelectedArray =
@@ -5482,7 +5432,7 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
   gItemPickupMenu.fAllSelected = FALSE;
 
   // Load images for buttons
-  FilenameForBPP("INTERFACE\\itembox.sti", ubString);
+  CopyFilename("INTERFACE\\itembox.sti", ubString);
   gItemPickupMenu.iUpButtonImages = LoadButtonImage(ubString, -1, 5, -1, 10, -1);
   gItemPickupMenu.iDownButtonImages =
       UseLoadedButtonImage(gItemPickupMenu.iUpButtonImages, -1, 7, -1, 12, -1);
@@ -5744,8 +5694,7 @@ void RenderItemPickupMenu() {
         usSubRegion = 1;
       }
 
-      BltVideoObjectFromIndex(FRAME_BUFFER, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY);
 
       // Add hieght of object
       GetVideoObjectETRLESubregionProperties(gItemPickupMenu.uiPanelVo, usSubRegion, &usWidth,
@@ -5757,18 +5706,16 @@ void RenderItemPickupMenu() {
     // Do end
     if (gItemPickupMenu.bNumSlotsPerPage == NUM_PICKUP_SLOTS &&
         gItemPickupMenu.ubTotalItems > NUM_PICKUP_SLOTS) {
-      BltVideoObjectFromIndex(FRAME_BUFFER, gItemPickupMenu.uiPanelVo, 2, sX, sY,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 2, sX, sY);
     } else {
-      BltVideoObjectFromIndex(FRAME_BUFFER, gItemPickupMenu.uiPanelVo, 3, sX, sY,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 3, sX, sY);
     }
 
     // Render items....
     sX = ITEMPICK_GRAPHIC_X + gItemPickupMenu.sX;
     sY = ITEMPICK_GRAPHIC_Y + gItemPickupMenu.sY;
 
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
     SetFont(ITEMDESC_FONT);
     SetFontBackground(FONT_MCOLOR_BLACK);
@@ -5800,7 +5747,7 @@ void RenderItemPickupMenu() {
             Blt8BPPDataTo16BPPBufferOutline((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                             gTileDatabase[usItemTileIndex].hTileSurface, sCenX,
                                             sCenY, gTileDatabase[usItemTileIndex].usRegionIndex,
-                                            Get16BPPColor(FROMRGB(255, 255, 0)), TRUE);
+                                            rgb32_to_rgb565(FROMRGB(255, 255, 0)), TRUE);
           } else {
             // SetFontForeground( FONT_BLACK );
             // SetFontShadow( ITEMDESC_FONTSHADOW2 );
@@ -5857,10 +5804,10 @@ void RenderItemPickupMenu() {
           //}
           // Blt8BPPDataTo16BPPBufferOutline( (uint16_t*)pDestBuf, uiDestPitchBYTES, gTileDatabase[
           // usItemTileIndex ].hTileSurface, sCenX, sCenY, gTileDatabase[ usItemTileIndex
-          // ].usRegionIndex, Get16BPPColor( FROMRGB( 255, 0, 0 ) ), TRUE );
+          // ].usRegionIndex, rgb32_to_rgb565( FROMRGB( 255, 0, 0 ) ), TRUE );
           // Blt8BPPDataTo16BPPBufferOutline( (uint16_t*)pDestBuf, uiDestPitchBYTES, gTileDatabase[
           // usItemTileIndex ].hTileSurface, sCenX, sCenY, gTileDatabase[ usItemTileIndex
-          // ].usRegionIndex, Get16BPPColor( FROMRGB( 255, 0, 0 ) ), TRUE );
+          // ].usRegionIndex, rgb32_to_rgb565( FROMRGB( 255, 0, 0 ) ), TRUE );
         } else {
           SetFontForeground(FONT_BLACK);
           SetFontShadow(ITEMDESC_FONTSHADOW2);
@@ -5891,7 +5838,7 @@ void RenderItemPickupMenu() {
 
     SetFontShadow(DEFAULT_SHADOW);
 
-    UnLockVideoSurface(FRAME_BUFFER);
+    VSurfaceUnlock(vsFB);
 
     InvalidateRegion(gItemPickupMenu.sX, gItemPickupMenu.sY,
                      gItemPickupMenu.sX + gItemPickupMenu.sWidth,
@@ -5909,7 +5856,7 @@ void RemoveItemPickupMenu() {
 
     HandleAnyMercInSquadHasCompatibleStuff((int8_t)CurrentSquad(), NULL, TRUE);
 
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
     // UnPause timers as well....
     PauseTime(FALSE);
@@ -6489,14 +6436,14 @@ typedef struct {
 
 } ITEM_CURSOR_SAVE_INFO;
 
-BOOLEAN LoadItemCursorFromSavedGame(HWFILE hFile) {
+BOOLEAN LoadItemCursorFromSavedGame(FileID hFile) {
   uint32_t uiLoadSize = 0;
   uint32_t uiNumBytesRead = 0;
   ITEM_CURSOR_SAVE_INFO SaveStruct;
 
   // Load structure
   uiLoadSize = sizeof(ITEM_CURSOR_SAVE_INFO);
-  FileMan_Read(hFile, &SaveStruct, uiLoadSize, &uiNumBytesRead);
+  File_Read(hFile, &SaveStruct, uiLoadSize, &uiNumBytesRead);
   if (uiNumBytesRead != uiLoadSize) {
     return (FALSE);
   }
@@ -6526,7 +6473,7 @@ BOOLEAN LoadItemCursorFromSavedGame(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN SaveItemCursorToSavedGame(HWFILE hFile) {
+BOOLEAN SaveItemCursorToSavedGame(FileID hFile) {
   uint32_t uiSaveSize = 0;
   uint32_t uiNumBytesWritten = 0;
 
@@ -6555,7 +6502,7 @@ BOOLEAN SaveItemCursorToSavedGame(HWFILE hFile) {
 
   // save locations of watched points
   uiSaveSize = sizeof(ITEM_CURSOR_SAVE_INFO);
-  FileMan_Write(hFile, &SaveStruct, uiSaveSize, &uiNumBytesWritten);
+  File_Write(hFile, &SaveStruct, uiSaveSize, &uiNumBytesWritten);
   if (uiNumBytesWritten != uiSaveSize) {
     return (FALSE);
   }

@@ -15,7 +15,6 @@
 #include "Editor/SummaryInfo.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/Line.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Shading.h"
@@ -37,6 +36,8 @@
 #include "Utils/TextInput.h"
 #include "Utils/TimerControl.h"
 #include "platform.h"
+#include "rust_colors.h"
+#include "rust_fileman.h"
 
 extern BOOLEAN gfOverheadMapDirty;
 
@@ -277,8 +278,8 @@ void CreateSummaryWindow() {
   gfRenderGrid = TRUE;
 
   iSummaryButton[SUMMARY_PROGRESSCHECKBOX] = CreateCheckBoxButton(
-      (int16_t)(MAP_LEFT + 50), (int16_t)(MAP_BOTTOM + 5), "EDITOR//smcheckbox.sti", MSYS_PRIORITY_HIGH,
-      SummaryToggleProgressCallback);
+      (int16_t)(MAP_LEFT + 50), (int16_t)(MAP_BOTTOM + 5), "EDITOR//smcheckbox.sti",
+      MSYS_PRIORITY_HIGH, SummaryToggleProgressCallback);
   ButtonList[iSummaryButton[SUMMARY_PROGRESSCHECKBOX]]->uiFlags |= BUTTON_CLICKED_ON;
   gfRenderProgress = TRUE;
 
@@ -644,7 +645,8 @@ void RenderItemDetails() {
   int32_t index, i;
   wchar_t str[100];
   uint32_t uiQuantity, uiExistChance, uiStatus;
-  uint32_t uiTriggerQuantity[8], uiActionQuantity[8], uiTriggerExistChance[8], uiActionExistChance[8];
+  uint32_t uiTriggerQuantity[8], uiActionQuantity[8], uiTriggerExistChance[8],
+      uiActionExistChance[8];
   uint32_t xp, yp;
   int8_t bFreqIndex;
   SetFont(FONT10ARIAL);
@@ -914,7 +916,7 @@ void RenderItemDetails() {
 void RenderSummaryWindow() {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
-  SGPRect ClipRect;
+  struct GRect ClipRect;
   int32_t i, x, y;
   if ((GetActiveFieldID() == 1) != gfTempFile) {
     gfTempFile ^= 1;
@@ -1251,34 +1253,30 @@ void RenderSummaryWindow() {
     // Draw the mode tabs
     SetFontForeground(FONT_YELLOW);
     mprintf(354, 18, L"Summary");
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 15, 405, 28, 0, pDestBuf);
-    UnLockVideoSurface(FRAME_BUFFER);
-    ShadowVideoSurfaceRectUsingLowPercentTable(FRAME_BUFFER, 351, 16, 404, 27);
-    if (gpCurrentSectorSummary)
-    /*&& gpCurrentSectorSummary->usNumItems ||
-            gpPEnemyItemsSummaryArray && gusPEnemyItemsSummaryArraySize ||
-            gpNEnemyItemsSummaryArray && gusNEnemyItemsSummaryArraySize )*/
-    {
+    VSurfaceUnlock(vsFB);
+    ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 351, 16, 404, 27);
+    if (gpCurrentSectorSummary) {
       SetFontForeground(FONT_YELLOW);
     } else {
       SetFontForeground(FONT_RED);
     }
     mprintf(354, 33, L"Items");
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 30, 405, 43, 0, pDestBuf);
-    UnLockVideoSurface(FRAME_BUFFER);
+    VSurfaceUnlock(vsFB);
     if (gpCurrentSectorSummary)
     /*&& gpCurrentSectorSummary->usNumItems ||
             gpPEnemyItemsSummaryArray && gusPEnemyItemsSummaryArraySize ||
             gpNEnemyItemsSummaryArray && gusNEnemyItemsSummaryArraySize )
             */
     {
-      ShadowVideoSurfaceRectUsingLowPercentTable(FRAME_BUFFER, 351, 31, 404, 42);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 351, 31, 404, 42);
     } else {
-      ShadowVideoSurfaceRect(FRAME_BUFFER, 351, 31, 404, 42);
+      ShadowVideoSurfaceRect(vsFB, 351, 31, 404, 42);
     }
     SetFontForeground(FONT_GRAY2);
   }
@@ -1287,8 +1285,7 @@ void RenderSummaryWindow() {
 
   if (gfRenderMap) {
     gfRenderMap = FALSE;
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiOmertaMap, 0, MAP_LEFT - 2, MAP_TOP - 2,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiOmertaMap, 0, MAP_LEFT - 2, MAP_TOP - 2);
     InvalidateRegion(MAP_LEFT - 1, MAP_TOP - 1, MAP_RIGHT + 1, MAP_BOTTOM + 1);
     // Draw the coordinates
     SetFont(SMALLCOMPFONT);
@@ -1303,7 +1300,7 @@ void RenderSummaryWindow() {
     }
     if (gfRenderGrid) {
       uint16_t pos;
-      pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+      pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
       SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
       for (i = 1; i <= 15; i++) {
         // draw vertical lines
@@ -1313,7 +1310,7 @@ void RenderSummaryWindow() {
         pos = (uint16_t)(i * 13 + MAP_TOP);
         LineDraw(TRUE, MAP_LEFT, pos, MAP_RIGHT - 1, pos, 0, pDestBuf);
       }
-      UnLockVideoSurface(FRAME_BUFFER);
+      VSurfaceUnlock(vsFB);
     }
     if (gfRenderProgress) {
       uint8_t ubNumUndergroundLevels;
@@ -1363,7 +1360,7 @@ void RenderSummaryWindow() {
           }
           ClipRect.iLeft = MAP_LEFT + x * 13;
           ClipRect.iRight = ClipRect.iLeft + 12;
-          pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+          pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
           Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
           if (giCurrentViewLevel == BASEMENT1_LEVEL_MASK ||
               giCurrentViewLevel == BASEMENT2_LEVEL_MASK ||
@@ -1371,36 +1368,36 @@ void RenderSummaryWindow() {
               giCurrentViewLevel == ALTERNATE_B1_MASK || giCurrentViewLevel == ALTERNATE_B2_MASK ||
               giCurrentViewLevel == ALTERNATE_B3_MASK)
             Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-          UnLockVideoSurface(FRAME_BUFFER);
+          VSurfaceUnlock(vsFB);
         }
       }
     }
   }
 
   if (gfGlobalSummaryExists) {
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     // Render the grid for the map currently residing in memory (blue).
     if (gfWorldLoaded && !gfTempFile && gsSectorX) {
       x = MAP_LEFT + (gsSectorX - 1) * 13 + 1;
       y = MAP_TOP + (gsSectorY - 1) * 13 + 1;
-      RectangleDraw(TRUE, x, y, x + 11, y + 11, Get16BPPColor(FROMRGB(50, 50, 200)), pDestBuf);
+      RectangleDraw(TRUE, x, y, x + 11, y + 11, rgb32_to_rgb565(FROMRGB(50, 50, 200)), pDestBuf);
     }
 
     // Render the grid for the sector currently in focus (red).
     if (gsSelSectorX > 0 && !gfTempFile) {
       x = MAP_LEFT + (gsSelSectorX - 1) * 13;
       y = MAP_TOP + (gsSelSectorY - 1) * 13;
-      RectangleDraw(TRUE, x, y, x + 13, y + 13, Get16BPPColor(FROMRGB(200, 50, 50)), pDestBuf);
+      RectangleDraw(TRUE, x, y, x + 13, y + 13, rgb32_to_rgb565(FROMRGB(200, 50, 50)), pDestBuf);
     }
 
     // Render the grid for the sector if the mouse is over it (yellow).
     if (gsHiSectorX > 0) {
       x = MAP_LEFT + (gsHiSectorX - 1) * 13 - 1;
       y = MAP_TOP + (gsHiSectorY - 1) * 13 - 1;
-      RectangleDraw(TRUE, x, y, x + 15, y + 15, Get16BPPColor(FROMRGB(200, 200, 50)), pDestBuf);
+      RectangleDraw(TRUE, x, y, x + 15, y + 15, rgb32_to_rgb565(FROMRGB(200, 200, 50)), pDestBuf);
     }
-    UnLockVideoSurface(FRAME_BUFFER);
+    VSurfaceUnlock(vsFB);
   }
   // Check to see if the user clicked on one of the hot spot mode change areas.
   if (gfLeftButtonState) {
@@ -1425,7 +1422,7 @@ void RenderSummaryWindow() {
   }
 }
 
-void UpdateSectorSummary(wchar_t* gszFilename, BOOLEAN fUpdate) {
+void UpdateSectorSummary(wchar_t *gszFilename, BOOLEAN fUpdate) {
   wchar_t str[50];
   char szCoord[40];
   wchar_t *ptr;
@@ -1602,25 +1599,7 @@ void SummaryToggleProgressCallback(GUI_BUTTON *btn, int32_t reason) {
 
 #include "TileEngine/TileSurface.h"
 
-void PerformTest() {
-#if 0
-	DebugPrint( "PERFORMING A NEW TEST -------------------------------------------------\n" );
-	memset( gbDefaultSurfaceUsed, 0, sizeof( gbDefaultSurfaceUsed ) );
-	giCurrentTilesetID = -1;
-	switch( Random( 3 ) )
-	{
-		case 0:
-			LoadWorld( "J9.dat" );
-			break;
-		case 1:
-			LoadWorld( "J9_b1.dat" );
-			break;
-		case 2:
-			LoadWorld( "J9_b2.dat" );
-			break;
-	}
-#endif
-}
+void PerformTest() {}
 
 BOOLEAN HandleSummaryInput(InputAtom *pEvent) {
   if (!gfSummaryWindowActive) return FALSE;
@@ -1723,15 +1702,17 @@ BOOLEAN HandleSummaryInput(InputAtom *pEvent) {
 
 void CreateGlobalSummary() {
   FILE *fp;
-  char Dir[300];
-  char ExecDir[256];
+  char Dir[600];
+  struct Str512 ExecDir;
 
-  DebugPrint("Generating GlobalSummary Information...\n");
+  PrintToDebuggerConsole("Generating GlobalSummary Information...\n");
 
   gfGlobalSummaryExists = FALSE;
   // Set current directory to JA2\DevInfo which contains all of the summary data
-  Plat_GetExecutableDirectory(ExecDir, sizeof(ExecDir));
-  snprintf(Dir, ARR_SIZE(Dir), "%s\\DevInfo", ExecDir);
+  if (!Plat_GetExecutableDirectory(&ExecDir)) {
+    return;
+  }
+  snprintf(Dir, ARR_SIZE(Dir), "%s\\DevInfo", ExecDir.buf);
 
   // Directory doesn't exist, so create it, and continue.
   if (!Plat_CreateDirectory(Dir))
@@ -1745,14 +1726,14 @@ void CreateGlobalSummary() {
           "This directory or it's contents shouldn't be included with final release.");
   fclose(fp);
 
-  snprintf(Dir, ARR_SIZE(Dir), "%s\\Data", ExecDir);
+  snprintf(Dir, ARR_SIZE(Dir), "%s\\Data", ExecDir.buf);
   Plat_SetCurrentDirectory(Dir);
 
   LoadGlobalSummary();
   RegenerateSummaryInfoForAllOutdatedMaps();
   gfRenderSummary = TRUE;
 
-  DebugPrint("GlobalSummary Information generated successfully.\n");
+  PrintToDebuggerConsole("GlobalSummary Information generated successfully.\n");
 }
 
 void MapMoveCallback(struct MOUSE_REGION *reg, int32_t reason) {
@@ -1955,7 +1936,7 @@ void SummarySaveMapCallback(GUI_BUTTON *btn, int32_t reason) {
       if (gubOverrideStatus == READONLY) {
         char filename[1024];
         snprintf(filename, ARR_SIZE(filename), "MAPS\\%S", gszDisplayName);
-        Plat_ClearFileAttributes(filename);
+        Plat_RemoveReadOnlyAttribute(filename);
       }
       if (ExternalSaveMap(gszDisplayName)) {
         if (gsSelSectorX && gsSelSectorY) {
@@ -2017,34 +1998,37 @@ void CalculateOverrideStatus() {
 }
 
 void LoadGlobalSummary() {
-  HWFILE hfile;
-  char ExecDir[256];
-  char DevInfoDir[300];
-  char MapsDir[300];
+  FileID hfile = FILE_ID_ERR;
+  struct Str512 ExecDir;
+  char DevInfoDir[600];
+  char MapsDir[600];
   uint32_t uiNumBytesRead;
   float dMajorVersion;
   int32_t x, y;
   char szFilename[40];
   char szSector[6];
 
-  DebugPrint("Executing LoadGlobalSummary()...\n");
+  PrintToDebuggerConsole("Executing LoadGlobalSummary()...\n");
 
   gfMustForceUpdateAllMaps = FALSE;
   gusNumberOfMapsToBeForceUpdated = 0;
   gfGlobalSummaryExists = FALSE;
   // Set current directory to JA2\DevInfo which contains all of the summary data
-  Plat_GetExecutableDirectory(ExecDir, sizeof(ExecDir));
-  sprintf(DevInfoDir, "%s\\DevInfo", ExecDir);
-  sprintf(MapsDir, "%s\\Data\\Maps", ExecDir);
+  if (!Plat_GetExecutableDirectory(&ExecDir)) {
+    return;
+  }
+  snprintf(DevInfoDir, ARR_SIZE(DevInfoDir), "%s\\DevInfo", ExecDir.buf);
+  snprintf(MapsDir, ARR_SIZE(MapsDir), "%s\\Data\\Maps", ExecDir.buf);
 
   // Check to make sure we have a DevInfo directory.  If we don't create one!
   if (!Plat_SetCurrentDirectory(DevInfoDir)) {
-    DebugPrint("LoadGlobalSummary() aborted -- doesn't exist on this local computer.\n");
+    PrintToDebuggerConsole(
+        "LoadGlobalSummary() aborted -- doesn't exist on this local computer.\n");
     return;
   }
 
   // TEMP
-  FileMan_Delete("_global.sum");
+  Plat_DeleteFile("_global.sum");
 
   gfGlobalSummaryExists = TRUE;
 
@@ -2060,139 +2044,141 @@ void LoadGlobalSummary() {
       // main ground level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= GROUND_LEVEL_MASK;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 0, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
       // main B1 level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d_b1.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= BASEMENT1_LEVEL_MASK;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 1, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s_b1.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
       // main B2 level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d_b2.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= BASEMENT2_LEVEL_MASK;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 2, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s_b2.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
       // main B3 level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d_b3.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= BASEMENT3_LEVEL_MASK;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 3, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s_b3.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
       // alternate ground level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d_a.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= ALTERNATE_GROUND_MASK;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 4, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s_a.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
       // alternate B1 level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d_b1_a.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= ALTERNATE_B1_MASK;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 5, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s_b1_a.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
       // alternate B2 level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d_b2_a.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= ALTERNATE_B2_MASK;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 6, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s_b2_a.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
       // alternate B3 level
       snprintf(szFilename, ARR_SIZE(szFilename), "%c%d_b3_a.dat", 'A' + y, x + 1);
       Plat_SetCurrentDirectory(MapsDir);
-      hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+      hfile = File_OpenForReading(szFilename);
       Plat_SetCurrentDirectory(DevInfoDir);
       if (hfile) {
         gbSectorLevels[x][y] |= ALTERNATE_B1_MASK;
         ;
-        FileMan_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
-        FileMan_Close(hfile);
+        File_Read(hfile, &dMajorVersion, sizeof(float), &uiNumBytesRead);
+        File_Close(hfile);
         LoadSummary(szSector, 7, dMajorVersion);
       } else {
         snprintf(szFilename, ARR_SIZE(szFilename), "%s_b3_a.sum", szSector);
-        FileMan_Delete(szFilename);
+        Plat_DeleteFile(szFilename);
       }
     }
-    DebugPrint(String("Sector Row %c complete... \n", y + 'A'));
+    PrintToDebuggerConsole(String("Sector Row %c complete... \n", y + 'A'));
   }
 
-  sprintf(MapsDir, "%s\\Data", ExecDir);
+  snprintf(MapsDir, ARR_SIZE(MapsDir), "%s\\Data", ExecDir.buf);
   Plat_SetCurrentDirectory(MapsDir);
 
   if (gfMustForceUpdateAllMaps) {
-    DebugPrint(String("A MAJOR MAP UPDATE EVENT HAS BEEN DETECTED FOR %d MAPS!!!!.\n",
-                      gusNumberOfMapsToBeForceUpdated));
+    PrintToDebuggerConsole(String("A MAJOR MAP UPDATE EVENT HAS BEEN DETECTED FOR %d MAPS!!!!.\n",
+                                  gusNumberOfMapsToBeForceUpdated));
   }
 
-  DebugPrint("LoadGlobalSummary() finished...\n");
+  PrintToDebuggerConsole("LoadGlobalSummary() finished...\n");
 }
 
 void GenerateSummaryList() {
   FILE *fp;
-  char ExecDir[256];
-  char Dir[300];
+  struct Str512 ExecDir;
+  char Dir[600];
 
   // Set current directory to JA2\DevInfo which contains all of the summary data
-  Plat_GetExecutableDirectory(ExecDir, sizeof(ExecDir));
-  snprintf(Dir, ARR_SIZE(Dir), "%s\\DevInfo", ExecDir);
+  if (!Plat_GetExecutableDirectory(&ExecDir)) {
+    return;
+  }
+  snprintf(Dir, ARR_SIZE(Dir), "%s\\DevInfo", ExecDir.buf);
   if (!Plat_SetCurrentDirectory(Dir)) {
     // Directory doesn't exist, so create it, and continue.
     if (!Plat_CreateDirectory(Dir))
@@ -2208,20 +2194,22 @@ void GenerateSummaryList() {
   }
 
   // Set current directory back to data directory!
-  snprintf(Dir, ARR_SIZE(Dir), "%s\\Data", ExecDir);
+  snprintf(Dir, ARR_SIZE(Dir), "%s\\Data", ExecDir.buf);
   Plat_SetCurrentDirectory(Dir);
 }
 
 void WriteSectorSummaryUpdate(char *puiFilename, uint8_t ubLevel, SUMMARYFILE *pSummaryFileInfo) {
   FILE *fp;
-  char ExecDir[256];
-  char Dir[300];
+  struct Str512 ExecDir;
+  char Dir[600];
   char *ptr;
   int8_t x, y;
 
   // Set current directory to JA2\DevInfo which contains all of the summary data
-  Plat_GetExecutableDirectory(ExecDir, sizeof(ExecDir));
-  snprintf(Dir, ARR_SIZE(Dir), "%s\\DevInfo", ExecDir);
+  if (!Plat_GetExecutableDirectory(&ExecDir)) {
+    return;
+  }
+  snprintf(Dir, ARR_SIZE(Dir), "%s\\DevInfo", ExecDir.buf);
   if (!Plat_SetCurrentDirectory(Dir))
     AssertMsg(0, "JA2\\DevInfo folder not found and should exist!");
 
@@ -2251,7 +2239,7 @@ void WriteSectorSummaryUpdate(char *puiFilename, uint8_t ubLevel, SUMMARYFILE *p
   gpSectorSummary[x][y][ubLevel] = pSummaryFileInfo;
 
   // Set current directory back to data directory!
-  snprintf(Dir, ARR_SIZE(Dir), "%s\\Data", ExecDir);
+  snprintf(Dir, ARR_SIZE(Dir), "%s\\Data", ExecDir.buf);
   Plat_SetCurrentDirectory(Dir);
 }
 
@@ -2575,7 +2563,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
 }
 
 void SetupItemDetailsMode(BOOLEAN fAllowRecursion) {
-  HWFILE hfile;
+  FileID hfile = FILE_ID_ERR;
   uint32_t uiNumBytesRead;
   uint32_t uiNumItems;
   char szFilename[1024];
@@ -2612,27 +2600,27 @@ void SetupItemDetailsMode(BOOLEAN fAllowRecursion) {
   }
   // Open the original map for the sector
   snprintf(szFilename, ARR_SIZE(szFilename), "MAPS\\%ls", gszFilename);
-  hfile = FileMan_Open(szFilename, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+  hfile = File_OpenForReading(szFilename);
   if (!hfile) {  // The file couldn't be found!
     return;
   }
   // Now fileseek directly to the file position where the number of world items are stored
-  if (!FileMan_Seek(hfile, gpCurrentSectorSummary->uiNumItemsPosition,
-                    FILE_SEEK_FROM_START)) {  // Position couldn't be found!
-    FileMan_Close(hfile);
+  if (!File_Seek(hfile, gpCurrentSectorSummary->uiNumItemsPosition,
+                 FILE_SEEK_START)) {  // Position couldn't be found!
+    File_Close(hfile);
     return;
   }
   // Now load the number of world items from the map.
-  FileMan_Read(hfile, &uiNumItems, 4, &uiNumBytesRead);
+  File_Read(hfile, &uiNumItems, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) {  // Invalid situation.
-    FileMan_Close(hfile);
+    File_Close(hfile);
     return;
   }
   // Now compare this number with the number the summary thinks we should have.  If they are
   // different, the the summary doesn't match the map.  What we will do is force regenerate the map
   // so that they do match
   if (uiNumItems != gpCurrentSectorSummary->usNumItems && fAllowRecursion) {
-    FileMan_Close(hfile);
+    File_Close(hfile);
     gpCurrentSectorSummary->uiNumItemsPosition = 0;
     SetupItemDetailsMode(FALSE);
     return;
@@ -2644,7 +2632,7 @@ void SetupItemDetailsMode(BOOLEAN fAllowRecursion) {
   ShowButton(iSummaryButton[SUMMARY_ENEMY]);
   gpWorldItemsSummaryArray = (WORLDITEM *)MemAlloc(sizeof(WORLDITEM) * uiNumItems);
   gusWorldItemsSummaryArraySize = gpCurrentSectorSummary->usNumItems;
-  FileMan_Read(hfile, gpWorldItemsSummaryArray, sizeof(WORLDITEM) * uiNumItems, &uiNumBytesRead);
+  File_Read(hfile, gpWorldItemsSummaryArray, sizeof(WORLDITEM) * uiNumItems, &uiNumBytesRead);
 
   // NOW, do the enemy's items!
   // We need to do two passes.  The first pass simply processes all the enemies and counts all the
@@ -2655,21 +2643,21 @@ void SetupItemDetailsMode(BOOLEAN fAllowRecursion) {
   // second pass will repeat the process, except it will record the actual items.
 
   // PASS #1
-  if (!FileMan_Seek(hfile, gpCurrentSectorSummary->uiEnemyPlacementPosition,
-                    FILE_SEEK_FROM_START)) {  // Position couldn't be found!
-    FileMan_Close(hfile);
+  if (!File_Seek(hfile, gpCurrentSectorSummary->uiEnemyPlacementPosition,
+                 FILE_SEEK_START)) {  // Position couldn't be found!
+    File_Close(hfile);
     return;
   }
   for (i = 0; i < gpCurrentSectorSummary->MapInfo.ubNumIndividuals; i++) {
-    FileMan_Read(hfile, &basic, sizeof(BASIC_SOLDIERCREATE_STRUCT), &uiNumBytesRead);
+    File_Read(hfile, &basic, sizeof(BASIC_SOLDIERCREATE_STRUCT), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(BASIC_SOLDIERCREATE_STRUCT)) {  // Invalid situation.
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return;
     }
     if (basic.fDetailedPlacement) {  // skip static priority placement
-      FileMan_Read(hfile, &priority, sizeof(SOLDIERCREATE_STRUCT), &uiNumBytesRead);
+      File_Read(hfile, &priority, sizeof(SOLDIERCREATE_STRUCT), &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(SOLDIERCREATE_STRUCT)) {  // Invalid situation.
-        FileMan_Close(hfile);
+        File_Close(hfile);
         return;
       }
     } else {  // non detailed placements don't have items, so skip
@@ -2710,21 +2698,21 @@ void SetupItemDetailsMode(BOOLEAN fAllowRecursion) {
   // During this pass, simply copy all the data instead of counting it, now that we have already
   // done so.
   usPEnemyIndex = usNEnemyIndex = 0;
-  if (!FileMan_Seek(hfile, gpCurrentSectorSummary->uiEnemyPlacementPosition,
-                    FILE_SEEK_FROM_START)) {  // Position couldn't be found!
-    FileMan_Close(hfile);
+  if (!File_Seek(hfile, gpCurrentSectorSummary->uiEnemyPlacementPosition,
+                 FILE_SEEK_START)) {  // Position couldn't be found!
+    File_Close(hfile);
     return;
   }
   for (i = 0; i < gpCurrentSectorSummary->MapInfo.ubNumIndividuals; i++) {
-    FileMan_Read(hfile, &basic, sizeof(BASIC_SOLDIERCREATE_STRUCT), &uiNumBytesRead);
+    File_Read(hfile, &basic, sizeof(BASIC_SOLDIERCREATE_STRUCT), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(BASIC_SOLDIERCREATE_STRUCT)) {  // Invalid situation.
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return;
     }
     if (basic.fDetailedPlacement) {  // skip static priority placement
-      FileMan_Read(hfile, &priority, sizeof(SOLDIERCREATE_STRUCT), &uiNumBytesRead);
+      File_Read(hfile, &priority, sizeof(SOLDIERCREATE_STRUCT), &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(SOLDIERCREATE_STRUCT)) {  // Invalid situation.
-        FileMan_Close(hfile);
+        File_Close(hfile);
         return;
       }
     } else {  // non detailed placements don't have items, so skip
@@ -2747,7 +2735,7 @@ void SetupItemDetailsMode(BOOLEAN fAllowRecursion) {
       }
     }
   }
-  FileMan_Close(hfile);
+  File_Close(hfile);
 }
 
 uint8_t GetCurrentSummaryVersion() {

@@ -29,8 +29,8 @@ enum {
   MVT_MODE_FOOT,
 };
 
-int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNumber,
-                    BOOLEAN fTacticalTraversal);
+int32_t FindStratPath(uint8_t startX, uint8_t startY, uint8_t destX, uint8_t destY,
+                      int16_t sMvtGroupNumber, BOOLEAN fTacticalTraversal);
 
 BOOLEAN AddSectorToPathList(struct path* pPath, uint16_t uiSectorNum);
 
@@ -94,11 +94,12 @@ void RebuildWayPointsForGroupPath(struct path* pHeadOfPath, int16_t sMvtGroup);
 void ClearMvtForThisSoldierAndGang(struct SOLDIERTYPE* pSoldier);
 
 // start movement of this group to this sector...not to be used by the player merc groups.
-BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY, uint8_t sDestX, uint8_t sDestY);
+BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY,
+                                    uint8_t sDestX, uint8_t sDestY);
 
-BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectors(uint8_t ubGroupID, uint8_t sStartX,
-                                                                   uint8_t sStartY, uint8_t sDestX,
-                                                                   uint8_t sDestY);
+BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectors(uint8_t ubGroupID,
+                                                                   uint8_t sStartX, uint8_t sStartY,
+                                                                   uint8_t sDestX, uint8_t sDestY);
 BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectorsAndStopOneSectorBeforeEnd(
     uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY, uint8_t sDestX, uint8_t sDestY);
 

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
@@ -16,6 +16,7 @@
 #include "TileEngine/Environment.h"
 #include "TileEngine/Lighting.h"
 #include "Utils/SoundControl.h"
+#include "rust_fileman.h"
 
 AMBIENTDATA_STRUCT gAmbData[MAX_AMBIENT_SOUNDS];
 int16_t gsNumAmbData = 0;
@@ -192,26 +193,26 @@ STEADY_STATE_AMBIENCE gSteadyStateAmbientTable[NUM_STEADY_STATE_AMBIENCES] = {
 
 BOOLEAN LoadAmbientControlFile(uint8_t ubAmbientID) {
   char zFilename[200];
-  HWFILE hFile;
+  FileID hFile = FILE_ID_ERR;
   int32_t cnt;
 
   // BUILD FILENAME
   sprintf(zFilename, "AMBIENT\\%d.bad", ubAmbientID);
 
   // OPEN, LOAD
-  hFile = FileMan_Open(zFilename, FILE_ACCESS_READ, FALSE);
+  hFile = File_OpenForReading(zFilename);
   if (!hFile) {
     return (FALSE);
   }
 
   // READ #
-  if (!FileMan_Read(hFile, &gsNumAmbData, sizeof(int16_t), NULL)) {
+  if (!File_Read(hFile, &gsNumAmbData, sizeof(int16_t), NULL)) {
     return (FALSE);
   }
 
   // LOOP FOR OTHERS
   for (cnt = 0; cnt < gsNumAmbData; cnt++) {
-    if (!FileMan_Read(hFile, &(gAmbData[cnt]), sizeof(AMBIENTDATA_STRUCT), NULL)) {
+    if (!File_Read(hFile, &(gAmbData[cnt]), sizeof(AMBIENTDATA_STRUCT), NULL)) {
       return (FALSE);
     }
 
@@ -219,7 +220,7 @@ BOOLEAN LoadAmbientControlFile(uint8_t ubAmbientID) {
     strcpy(gAmbData[cnt].zFilename, zFilename);
   }
 
-  FileMan_Close(hFile);
+  File_Close(hFile);
 
   return (TRUE);
 }
@@ -243,7 +244,7 @@ void HandleNewSectorAmbience(uint8_t ubAmbientID) {
       // OK, load them up!
       BuildDayAmbientSounds();
     } else {
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_0, String("Cannot load Ambient data for tileset"));
+      DebugMsg(TOPIC_JA2, DBG_ERROR, String("Cannot load Ambient data for tileset"));
     }
   }
 }

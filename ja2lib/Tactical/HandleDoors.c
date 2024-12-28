@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include "LanguageDefines.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Strategic/MapScreenInterfaceMap.h"
@@ -38,6 +39,7 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
+#include "rust_civ_groups.h"
 
 BOOLEAN gfSetPerceivedDoorState = FALSE;
 
@@ -81,7 +83,8 @@ void HandleDoorChangeFromGridNo(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
   }
 }
 
-uint16_t GetAnimStateForInteraction(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor, uint16_t usAnimState) {
+uint16_t GetAnimStateForInteraction(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor,
+                                    uint16_t usAnimState) {
   switch (usAnimState) {
     case OPEN_DOOR:
 
@@ -250,7 +253,7 @@ void InteractWithOpenableStruct(struct SOLDIERTYPE *pSoldier, struct STRUCTURE *
       if (pSoldier->bTeam == gbPlayerNum) {
         ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_UI_FEEDBACK, TacticalStr[DOOR_IS_BUSY]);
       } else {
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("Trying to open door and door is busy: %d", GetSolID(pSoldier)));
       }
       return;
@@ -976,7 +979,8 @@ BOOLEAN HandleDoorsOpenClose(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
 
   } else {
     // ATE, the last parameter is the perceived value, I dont know what it is so could you please
-    // add the value? ModifyDoorStatus( int16_t sGridNo, BOOLEAN fOpen, BOOLEAN fInitiallyPercieveOpen
+    // add the value? ModifyDoorStatus( int16_t sGridNo, BOOLEAN fOpen, BOOLEAN
+    // fInitiallyPercieveOpen
     // )
 
     if (gfSetPerceivedDoorState) {

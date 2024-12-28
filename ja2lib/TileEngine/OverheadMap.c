@@ -16,6 +16,7 @@
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -39,7 +40,6 @@
 #include "TileEngine/RadarScreen.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TacticalPlacementGUI.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/TileSurface.h"
@@ -48,6 +48,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/Utilities.h"
+#include "rust_colors.h"
 
 #ifdef JA2EDITOR
 #include "Tactical/SoldierInitList.h"
@@ -62,7 +63,7 @@ extern SOLDIERINITNODE *gpSelected;
 #define NORMAL_MAP_SCREEN_BY 2400
 #define NORMAL_MAP_SCREEN_TY 860
 
-#define FASTMAPROWCOLTOPOS(r, c) ((r)*WORLD_COLS + (c))
+#define FASTMAPROWCOLTOPOS(r, c) ((r) * WORLD_COLS + (c))
 
 typedef struct {
   struct VObject *vo;
@@ -111,7 +112,6 @@ void RenderOverheadOverlays();
 
 void InitNewOverheadDB(uint8_t ubTilesetID) {
   uint32_t uiLoop;
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hVObject;
   char cFileBPP[128];
   char cAdjustedFile[200];
@@ -124,31 +124,25 @@ void InitNewOverheadDB(uint8_t ubTilesetID) {
     // Create video object
 
     // Adjust for BPP
-    FilenameForBPP(gTilesets[ubTilesetID].TileSurfaceFilenames[uiLoop], cFileBPP);
+    CopyFilename(gTilesets[ubTilesetID].TileSurfaceFilenames[uiLoop], cFileBPP);
 
     // Adjust for tileset position
     sprintf(cAdjustedFile, "TILESETS\\%d\\T\\%s", ubTilesetID, cFileBPP);
 
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    strcpy(VObjectDesc.ImageFile, cAdjustedFile);
-    hVObject = CreateVideoObject(&VObjectDesc);
+    hVObject = LoadVObjectFromFile(cAdjustedFile);
 
     if (hVObject == NULL) {
       // TRY loading from default directory
-      FilenameForBPP(gTilesets[GENERIC_1].TileSurfaceFilenames[uiLoop], cFileBPP);
+      CopyFilename(gTilesets[GENERIC_1].TileSurfaceFilenames[uiLoop], cFileBPP);
       // Adjust for tileset position
       sprintf(cAdjustedFile, "TILESETS\\0\\T\\%s", cFileBPP);
 
       // LOAD ONE WE KNOW ABOUT!
-      VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-      strcpy(VObjectDesc.ImageFile, cAdjustedFile);
-      hVObject = CreateVideoObject(&VObjectDesc);
+      hVObject = LoadVObjectFromFile(cAdjustedFile);
 
       if (hVObject == NULL) {
         // LOAD ONE WE KNOW ABOUT!
-        VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-        strcpy(VObjectDesc.ImageFile, "TILESETS\\0\\T\\grass.sti");
-        hVObject = CreateVideoObject(&VObjectDesc);
+        hVObject = LoadVObjectFromFile("TILESETS\\0\\T\\grass.sti");
       }
     }
 
@@ -161,7 +155,7 @@ void InitNewOverheadDB(uint8_t ubTilesetID) {
     // Get number of regions
     s = gSmTileSurf[cnt1];
 
-    NumRegions = s.vo->usNumberOfObjects;
+    NumRegions = s.vo->number_of_subimages;
 
     // Check for overflow
     if (NumRegions > gNumTilesPerType[cnt1]) {
@@ -322,8 +316,8 @@ void DisplayMercNameInOverhead(struct SOLDIERTYPE *pSoldier) {
   SetFontForeground(FONT_MCOLOR_WHITE);
 
   // Center here....
-  FindFontCenterCoordinates(sWorldScreenX, sWorldScreenY, (int16_t)(1), 1, pSoldier->name, TINYFONT1,
-                            &sX, &sY);
+  FindFontCenterCoordinates(sWorldScreenX, sWorldScreenY, (int16_t)(1), 1, pSoldier->name,
+                            TINYFONT1, &sX, &sY);
 
   // OK, selected guy is here...
   gprintfdirty(sX, sY, pSoldier->name);
@@ -365,7 +359,7 @@ void HandleOverheadMap() {
   RestoreBackgroundRects();
 
   // RENDER!!!!!!!!
-  RenderOverheadMap(0, (WORLD_COLS / 2), 0, 0, 640, 320, FALSE);
+  RenderOverheadMap(0, (WORLD_COLS / 2), 0, 0, 640, 320);
 
   HandleTalkingAutoFaces();
 
@@ -473,7 +467,6 @@ void HandleOverheadMap() {
 BOOLEAN InOverheadMap() { return (gfInOverheadMap); }
 
 void GoIntoOverheadMap() {
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hVObject;
 
   gfInOverheadMap = TRUE;
@@ -489,20 +482,18 @@ void GoIntoOverheadMap() {
   MSYS_AddRegion(&OverheadRegion);
 
   // LOAD CLOSE ANIM
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\MAP_BORD.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &uiOVERMAP)) AssertMsg(0, "Missing INTERFACE\\MAP_BORD.sti");
+  if (!AddVObjectFromFile("INTERFACE\\MAP_BORD.sti", &uiOVERMAP))
+    AssertMsg(0, "Missing INTERFACE\\MAP_BORD.sti");
 
   // LOAD PERSONS
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\PERSONS.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &uiPERSONS)) AssertMsg(0, "Missing INTERFACE\\PERSONS.sti");
+  if (!AddVObjectFromFile("INTERFACE\\PERSONS.sti", &uiPERSONS))
+    AssertMsg(0, "Missing INTERFACE\\PERSONS.sti");
 
   // Add shades to persons....
   GetVideoObject(&hVObject, uiPERSONS);
-  hVObject->pShades[0] = Create16BPPPaletteShaded(hVObject->pPaletteEntry, 256, 256, 256, FALSE);
-  hVObject->pShades[1] = Create16BPPPaletteShaded(hVObject->pPaletteEntry, 310, 310, 310, FALSE);
-  hVObject->pShades[2] = Create16BPPPaletteShaded(hVObject->pPaletteEntry, 0, 0, 0, FALSE);
+  VObjectUpdateShade(hVObject, 0, 256, 256, 256, FALSE);
+  VObjectUpdateShade(hVObject, 1, 310, 310, 310, FALSE);
+  VObjectUpdateShade(hVObject, 2, 0, 0, 0, FALSE);
 
   gfOverheadMapDirty = TRUE;
 
@@ -599,7 +590,7 @@ int16_t GetModifiedOffsetLandHeight(int32_t sGridNo) {
 }
 
 void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
-                       int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS, BOOLEAN fFromMapUtility) {
+                       int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS) {
   int8_t bXOddFlag = 0;
   int16_t sModifiedHeight = 0;
   int16_t sAnchorPosX_M, sAnchorPosY_M;
@@ -618,13 +609,11 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
   int16_t sX1, sX2, sY1, sY2;
 
   // Get video object for persons...
-  if (!fFromMapUtility) {
-    GetVideoObject(&hVObject, uiPERSONS);
-  }
+  GetVideoObject(&hVObject, uiPERSONS);
 
   if (gfOverheadMapDirty) {
     // Black out.......
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, sStartPointX_S, sStartPointY_S, sEndXS, sEndYS, 0);
+    VSurfaceColorFill(vsFB, sStartPointX_S, sStartPointY_S, sEndXS, sEndYS, 0);
 
     InvalidateScreen();
     gfOverheadMapDirty = FALSE;
@@ -635,11 +624,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
     sAnchorPosX_S = sStartPointX_S;
     sAnchorPosY_S = sStartPointY_S;
 
-    // Zero out area!
-    // ColorFillVideoSurfaceArea( FRAME_BUFFER, 0, 0, (int16_t)(640),
-    // (int16_t)(gsVIEWPORT_WINDOW_END_Y), Get16BPPColor( FROMRGB( 0, 0, 0 ) ) );
-
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
     do {
       fEndRenderRow = FALSE;
@@ -665,13 +650,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
 
             pTile->vo->pShadeCurrent = gSmTileSurf[pTile->fType].vo->pShades[pNode->ubShadeLevel];
 
-            // RENDER!
-            // BltVideoObjectFromIndex(  FRAME_BUFFER, SGR1, gSmallTileDatabase[ gpWorldLevelData[
-            // usTileIndex ].pLandHead->usIndex ], sX, sY, VO_BLT_SRCTRANSPARENCY, NULL );
-            // BltVideoObjectFromIndex(  FRAME_BUFFER, SGR1, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL
-            // );
-            Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo, sX,
-                                                sY, pTile->usSubIndex);
+            Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo,
+                                                sX, sY, pTile->usSubIndex);
 
             pNode = pNode->pPrevNode;
           }
@@ -749,8 +729,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
                     gSmTileSurf[pTile->fType].vo->pShades[pNode->ubShadeLevel];
 
                 // RENDER!
-                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo,
-                                                    sX, sY, pTile->usSubIndex);
+                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES,
+                                                    pTile->vo, sX, sY, pTile->usSubIndex);
               }
             }
 
@@ -799,8 +779,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
                     gSmTileSurf[pTile->fType].vo->pShades[pNode->ubShadeLevel];
 
                 // RENDER!
-                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo,
-                                                    sX, sY, pTile->usSubIndex);
+                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES,
+                                                    pTile->vo, sX, sY, pTile->usSubIndex);
               }
             }
 
@@ -833,7 +813,6 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
 
     } while (!fEndRenderCol);
 
-    // if ( !fFromMapUtility && !gfEditMode )
     {
       // ROOF RENDR LOOP
       // Begin Render Loop
@@ -911,46 +890,43 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       } while (!fEndRenderCol);
     }
 
-    UnLockVideoSurface(FRAME_BUFFER);
+    VSurfaceUnlock(vsFB);
 
     // OK, blacken out edges of smaller maps...
     if (gMapInformation.ubRestrictedScrollID != 0) {
       CalculateRestrictedMapCoords(NORTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      VSurfaceColorFill(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(WEST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      VSurfaceColorFill(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(SOUTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      VSurfaceColorFill(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(EAST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      VSurfaceColorFill(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
     }
 
-    if (!fFromMapUtility) {
-      // Render border!
-      BltVideoObjectFromIndex(FRAME_BUFFER, uiOVERMAP, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
-    }
+    // Render border!
+    BltVObjectFromIndex(vsFB, uiOVERMAP, 0, 0, 0);
 
     // Update the save buffer
     {
       uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
       uint8_t *pDestBuf, *pSrcBuf;
       uint16_t usWidth, usHeight;
-      uint8_t ubBitDepth;
 
       // Update saved buffer - do for the viewport size ony!
-      GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
+      GetCurrentVideoSettings(&usWidth, &usHeight);
 
-      pSrcBuf = LockVideoSurface(guiRENDERBUFFER, &uiSrcPitchBYTES);
-      pDestBuf = LockVideoSurface(guiSAVEBUFFER, &uiDestPitchBYTES);
+      pSrcBuf = VSurfaceLockOld(vsFB, &uiSrcPitchBYTES);
+      pDestBuf = VSurfaceLockOld(vsSB, &uiDestPitchBYTES);
 
-      Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
-                      0, 0, 0, usWidth, usHeight);
+      Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
+                      0, 0, NewGRect(0, 0, usWidth, usHeight));
 
-      UnLockVideoSurface(guiRENDERBUFFER);
-      UnLockVideoSurface(guiSAVEBUFFER);
+      VSurfaceUnlock(vsFB);
+      VSurfaceUnlock(vsSB);
     }
   }
 }
@@ -967,7 +943,7 @@ void RenderOverheadOverlays() {
   uint8_t *pDestBuf;
   uint8_t ubPassengers = 0;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   GetVideoObject(&hVObject, uiPERSONS);
 
   // SOLDIER OVERLAY
@@ -1033,8 +1009,8 @@ void RenderOverheadOverlays() {
     } else if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {  // vehicle
       Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, hVObject, sX, sY,
                                           9);
-      RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, (int16_t)(sX - 6), (int16_t)(sY), (int16_t)(sX + 9),
-                             (int16_t)(sY + 10));
+      RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, (int16_t)(sX - 6), (int16_t)(sY),
+                             (int16_t)(sX + 9), (int16_t)(sY + 10));
     }
     // else if( pSoldier->uiStatusFlags & (SOLDIER_PASSENGER | SOLDIER_DRIVER) )
     //{// //don't draw person, because they are inside the vehicle.
@@ -1083,28 +1059,28 @@ void RenderOverheadOverlays() {
       sY += (gsRenderHeight / 5);
 
       if (gfRadarCurrentGuyFlash) {
-        usLineColor = Get16BPPColor(FROMRGB(0, 0, 0));
+        usLineColor = rgb32_to_rgb565(FROMRGB(0, 0, 0));
       } else
         switch (pWorldItem->bVisible) {
           case HIDDEN_ITEM:
-            usLineColor = Get16BPPColor(FROMRGB(0, 0, 255));
+            usLineColor = rgb32_to_rgb565(FROMRGB(0, 0, 255));
             break;
           case BURIED:
-            usLineColor = Get16BPPColor(FROMRGB(255, 0, 0));
+            usLineColor = rgb32_to_rgb565(FROMRGB(255, 0, 0));
             break;
           case HIDDEN_IN_OBJECT:
-            usLineColor = Get16BPPColor(FROMRGB(0, 0, 255));
+            usLineColor = rgb32_to_rgb565(FROMRGB(0, 0, 255));
             break;
           case INVISIBLE:
-            usLineColor = Get16BPPColor(FROMRGB(0, 255, 0));
+            usLineColor = rgb32_to_rgb565(FROMRGB(0, 255, 0));
             break;
           case VISIBLE:
-            usLineColor = Get16BPPColor(FROMRGB(255, 255, 255));
+            usLineColor = rgb32_to_rgb565(FROMRGB(255, 255, 255));
             break;
         }
 
       if (gfOverItemPool && gsOveritemPoolGridNo == pWorldItem->sGridNo) {
-        usLineColor = Get16BPPColor(FROMRGB(255, 0, 0));
+        usLineColor = rgb32_to_rgb565(FROMRGB(255, 0, 0));
       }
 
       PixelDraw(FALSE, sX, sY, usLineColor, pDestBuf);
@@ -1113,209 +1089,10 @@ void RenderOverheadOverlays() {
     }
   }
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
-/*//Render the soldiers and items on top of the pristine overhead map.
-void RenderOverheadOverlays( int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S, int16_t
-sStartPointY_S, int16_t sEndXS, int16_t sEndYS )
-{
-        int8_t				bXOddFlag = 0;
-        int16_t				sAnchorPosX_M, sAnchorPosY_M;
-        int16_t				sAnchorPosX_S, sAnchorPosY_S;
-        int16_t				sTempPosX_M, sTempPosY_M;
-        int16_t				sTempPosX_S, sTempPosY_S;
-        BOOLEAN			fEndRenderRow = FALSE, fEndRenderCol = FALSE;
-        uint32_t			usTileIndex;
-        int16_t				sX, sY;
-        uint32_t			uiDestPitchBYTES;
-        uint8_t				*pDestBuf;
-        struct LEVELNODE		*pNode;
-        uint16_t			usLineColor;
-        int16_t				sHeight;
-        struct SOLDIERTYPE	*pSoldier;
-        struct VObject* hVObject;
-        pDestBuf = LockVideoSurface( FRAME_BUFFER, &uiDestPitchBYTES );
-        // Begin Render Loop
-        sAnchorPosX_M = sStartPointX_M;
-        sAnchorPosY_M = sStartPointY_M;
-        sAnchorPosX_S = sStartPointX_S;
-        sAnchorPosY_S = sStartPointY_S;
-        bXOddFlag = 0;
-        fEndRenderRow = FALSE;
-        fEndRenderCol = FALSE;
-
-        GetVideoObject( &hVObject, uiPERSONS );
-        do
-        {
-
-                fEndRenderRow = FALSE;
-                sTempPosX_M = sAnchorPosX_M;
-                sTempPosY_M = sAnchorPosY_M;
-                sTempPosX_S = sAnchorPosX_S;
-                sTempPosY_S = sAnchorPosY_S;
-
-                if(bXOddFlag > 0)
-                        sTempPosX_S += 4;
-
-
-                do
-                {
-
-                        usTileIndex=FASTMAPROWCOLTOPOS( sTempPosY_M, sTempPosX_M );
-
-                        if ( usTileIndex < GRIDSIZE )
-                        {
-                                sHeight=(gpWorldLevelData[usTileIndex].sHeight/5);
-
-                                pNode = gpWorldLevelData[ usTileIndex ].pStructHead;
-                                while( pNode != NULL )
-                                {
-                                        // Render itempools!
-                                        if ( ( pNode->uiFlags & LEVELNODE_ITEM ) )
-                                        {
-                                                sX = sTempPosX_S;
-                                                sY = sTempPosY_S - sHeight;
-                                                // RENDER!
-                                                if ( pNode->pItemPool->bVisible == -1 &&
-!(gTacticalStatus.uiFlags & SHOW_ALL_ITEMS)  )
-                                                {
-
-                                                }
-                                                else
-                                                {
-                                                        if ( gfRadarCurrentGuyFlash )
-                                                        {
-                                                                usLineColor = Get16BPPColor(
-FROMRGB( 0, 0, 0 ) );
-                                                        }
-                                                        else
-                                                        {
-                                                                usLineColor = Get16BPPColor(
-FROMRGB( 255, 255, 255 ) );
-                                                        }
-                                                        RectangleDraw( TRUE, sX, sY, sX + 1, sY + 1,
-usLineColor, pDestBuf );
-
-                                                        InvalidateRegion( sX, sY, (int16_t)( sX + 2 ),
-(int16_t)( sY + 2 ) );
-
-                                                }
-                                                break;
-                                        }
-
-                                        pNode = pNode->pNext;
-                                }
-
-
-                                pNode = gpWorldLevelData[ usTileIndex ].pMercHead;
-                                while( pNode != NULL )
-                                {
-                                                pSoldier = pNode->pSoldier;
-
-                                                sX = sTempPosX_S;
-                                                sY = sTempPosY_S - sHeight - 8; // 8 height of doll
-guy
-
-                                                // RENDER!
-                                                if ( pSoldier->bLastRenderVisibleValue == -1 &&
-!(gTacticalStatus.uiFlags&SHOW_ALL_MERCS)  )
-                                                {
-
-                                                }
-                                                else
-                                                {
-                                                        // Adjust for height...
-                                                        sY -= ( pSoldier->sHeightAdjustment / 5 );
-
-                                                        // Adjust shade a bit...
-                                                        SetObjectShade( hVObject, 0 );
-
-                                                        // If on roof....
-                                                        if ( pSoldier->sHeightAdjustment )
-                                                        {
-                                                                SetObjectShade( hVObject, 1 );
-                                                        }
-
-                                                        if ( GetSolID(pSoldier) ==
-gusSelectedSoldier )
-                                                        {
-                                                                if( gfRadarCurrentGuyFlash &&
-!gfTacticalPlacementGUIActive )
-                                                                {
-                                                                        SetObjectShade( hVObject, 2
-);
-                                                                }
-                                                        }
-                                                        #ifdef JA2EDITOR
-                                                        if( gfEditMode && gpSelected &&
-gpSelected->pSoldier == pSoldier ) { //editor:  show the selected edited merc as the yellow one.
-                                                                Blt8BPPDataTo16BPPBufferTransparent((uint16_t*)pDestBuf,
-uiDestPitchBYTES, hVObject, sX, sY, 0 );
-                                                        }
-                                                        else
-                                                        #endif
-                                                        if( gfTacticalPlacementGUIActive &&
-gpTacticalPlacementSelectedSoldier == pSoldier ) { //tactical placement selected merc
-                                                                Blt8BPPDataTo16BPPBufferTransparent((uint16_t*)pDestBuf,
-uiDestPitchBYTES, hVObject, sX, sY, 7 );
-                                                        }
-                                                        else if( gfTacticalPlacementGUIActive &&
-gpTacticalPlacementHilightedSoldier == pSoldier ) { //tactical placement selected merc
-                                                                Blt8BPPDataTo16BPPBufferTransparent((uint16_t*)pDestBuf,
-uiDestPitchBYTES, hVObject, sX, sY, 8 );
-                                                        }
-                                                        else
-                                                        { //normal
-                                                                Blt8BPPDataTo16BPPBufferTransparent((uint16_t*)pDestBuf,
-uiDestPitchBYTES, hVObject, sX, sY, pSoldier->bTeam );
-                                                        }
-                                                        RegisterBackgroundRect(BGND_FLAG_SINGLE,
-NULL, (int16_t)(sX-2), (int16_t)(sY-2), (int16_t)(sX + 5), (int16_t)(sY + 11));
-                                                }
-
-                                                pNode = pNode->pNext;
-                                }
-                        }
-
-                        sTempPosX_S += 8;
-                        sTempPosX_M ++;
-                        sTempPosY_M --;
-
-                        if ( sTempPosX_S >= sEndXS )
-                        {
-                                fEndRenderRow = TRUE;
-                        }
-
-                } while( !fEndRenderRow );
-
-                if ( bXOddFlag > 0 )
-                {
-                        sAnchorPosY_M ++;
-                }
-                else
-                {
-                        sAnchorPosX_M ++;
-                }
-
-
-                bXOddFlag = !bXOddFlag;
-                sAnchorPosY_S += 2;
-
-                if ( sAnchorPosY_S >= sEndYS )
-                {
-                        fEndRenderCol = TRUE;
-                }
-
-        }
-        while( !fEndRenderCol );
-        UnLockVideoSurface( FRAME_BUFFER );
-}
-*/
-
-void MoveInOverheadRegionCallback(struct MOUSE_REGION *reg, int32_t reason) {
-  // Calculate the cursor...
-}
+void MoveInOverheadRegionCallback(struct MOUSE_REGION *reg, int32_t reason) {}
 
 void ClickOverheadRegionCallback(struct MOUSE_REGION *reg, int32_t reason) {
   int32_t uiCellX, uiCellY;
@@ -1398,7 +1175,7 @@ BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(int16_t *psGridNo) {
   if ((OverheadRegion.uiFlags & MSYS_MOUSE_IN_AREA)) {
     // ATE: Adjust alogrithm values a tad to reflect map positioning
     sWorldScreenX = gsStartRestrictedX + (gusMouseXPos - 5) * 5;
-    sWorldScreenY = gsStartRestrictedY + (gusMouseYPos)*5;
+    sWorldScreenY = gsStartRestrictedY + (gusMouseYPos) * 5;
 
     // Get new proposed center location.
     GetFromAbsoluteScreenXYWorldXY(&uiCellX, &uiCellY, sWorldScreenX, sWorldScreenY);
@@ -1467,7 +1244,7 @@ void CopyOverheadDBShadetablesFromTileset() {
   for (uiLoop = 0; uiLoop < NUMBEROFTILETYPES; uiLoop++) {
     pTileSurf = (gTileSurfaceArray[uiLoop]);
 
-    gSmTileSurf[uiLoop].vo->fFlags |= VOBJECT_FLAG_SHADETABLE_SHARED;
+    gSmTileSurf[uiLoop].vo->shared_shadetable = true;
 
     for (uiLoop2 = 0; uiLoop2 < HVOBJECT_SHADE_TABLES; uiLoop2++) {
       gSmTileSurf[uiLoop].vo->pShades[uiLoop2] = pTileSurf->vo->pShades[uiLoop2];

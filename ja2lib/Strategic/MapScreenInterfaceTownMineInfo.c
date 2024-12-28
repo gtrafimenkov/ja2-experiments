@@ -10,6 +10,8 @@
 #include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "Strategic/MapScreenHelicopter.h"
@@ -33,6 +35,8 @@
 #include "Utils/PopUpBox.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
+#include "rust_images.h"
+#include "rust_sam_sites.h"
 
 #define BOX_BUTTON_WIDTH 100
 #define BOX_BUTTON_HEIGHT 20
@@ -42,7 +46,7 @@ BOOLEAN fShowTownInfo = FALSE;
 
 int32_t ghTownMineBox = -1;
 SGPPoint TownMinePosition = {300, 150};
-SGPRect TownMineDimensions = {0, 0, 240, 60};
+struct GRect TownMineDimensions = {0, 0, 240, 60};
 
 int8_t bCurrentTownMineSectorX = 0;
 int8_t bCurrentTownMineSectorY = 0;
@@ -56,8 +60,6 @@ uint16_t sTotalButtonWidth = 0;
 
 extern MINE_LOCATION_TYPE gMineLocation[];
 extern MINE_STATUS_TYPE gMineStatus[];
-extern BOOLEAN fMapScreenBottomDirty;
-// extern uint8_t gubMonsterMineInfestation[];
 
 // create the town/mine info box
 void CreateTownInfoBox(void);
@@ -110,7 +112,7 @@ void DisplayTownInfo(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ) {
 void CreateDestroyTownInfoBox(void) {
   // create destroy pop up box for town/mine info
   static BOOLEAN fCreated = FALSE;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   SGPPoint pPosition;
   TownID bTownId = 0;
 
@@ -239,7 +241,7 @@ void CreateTownInfoBox(void) {
   SetBorderType(ghTownMineBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghTownMineBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghTownMineBox, popupTextures);
 
   // margin sizes
   SetMargins(ghTownMineBox, 6, 6, 8, 6);
@@ -290,7 +292,7 @@ void AddTextToTownBox(void) {
       AddMonoString(&hStringHandle, pLandTypeStrings[MEDUNA_AIRPORT_SITE]);
       break;
     default:
-      if (usTownSectorIndex == SEC_N4 && fSamSiteFound[SAM_SITE_FOUR]) {  // Meduna's SAM site
+      if (usTownSectorIndex == SEC_N4 && IsSamSiteFound(SamSiteMeduna)) {  // Meduna's SAM site
         AddMonoString(&hStringHandle, pLandTypeStrings[MEDUNA_SAM_SITE]);
       } else {  // town name
         swprintf(wString, ARR_SIZE(wString), L"%s", pTownNames[ubTownId]);
@@ -329,11 +331,11 @@ void AddTextToTownBox(void) {
   }
 
   // the concept of town loyalty is only meaningful in towns where loyalty is tracked
-  if (gTownLoyalty[ubTownId].fStarted && gfTownUsesLoyalty[ubTownId]) {
+  if (IsTownLoyaltyStarted(ubTownId) && DoesTownUseLoyalty(ubTownId)) {
     // town loyalty
     swprintf(wString, ARR_SIZE(wString), L"%s:", pwTownInfoStrings[5]);
     AddMonoString(&hStringHandle, wString);
-    swprintf(wString, ARR_SIZE(wString), L"%d%%%%", gTownLoyalty[ubTownId].ubRating);
+    swprintf(wString, ARR_SIZE(wString), L"%d%%%%", GetTownLoyaltyRating(ubTownId));
     AddSecondColumnMonoString(&hStringHandle, wString);
   }
 
@@ -429,12 +431,12 @@ void AddTextToMineBox(void) {
     AddSecondColumnMonoString(&hStringHandle, wString);
 
     ubTown = gMineLocation[ubMineIndex].bAssociatedTown;
-    if (gTownLoyalty[ubTown].fStarted && gfTownUsesLoyalty[ubTown]) {
+    if (IsTownLoyaltyStarted(ubTown) && DoesTownUseLoyalty(ubTown)) {
       // town loyalty percentage
       swprintf(wString, ARR_SIZE(wString), L"%s:", pwMineStrings[13]);
       AddMonoString(&hStringHandle, wString);
       swprintf(wString, ARR_SIZE(wString), L"%d%%%%",
-               gTownLoyalty[gMineLocation[ubMineIndex].bAssociatedTown].ubRating);
+               GetTownLoyaltyRating(gMineLocation[ubMineIndex].bAssociatedTown));
       AddSecondColumnMonoString(&hStringHandle, wString);
     }
 
@@ -475,19 +477,19 @@ void AddTextToBlankSectorBox(void) {
 
   switch (usSectorValue) {
     case SEC_D2:  // Chitzena SAM
-      if (!fSamSiteFound[SAM_SITE_ONE])
+      if (!IsSamSiteFound(SamSiteChitzena))
         AddMonoString(&hStringHandle, pLandTypeStrings[TROPICS]);
       else
         AddMonoString(&hStringHandle, pLandTypeStrings[TROPICS_SAM_SITE]);
       break;
     case SEC_D15:  // Drassen SAM
-      if (!fSamSiteFound[SAM_SITE_TWO])
+      if (!IsSamSiteFound(SamSiteDrassen))
         AddMonoString(&hStringHandle, pLandTypeStrings[SPARSE]);
       else
         AddMonoString(&hStringHandle, pLandTypeStrings[SPARSE_SAM_SITE]);
       break;
     case SEC_I8:  // Cambria SAM
-      if (!fSamSiteFound[SAM_SITE_THREE])
+      if (!IsSamSiteFound(SamSiteCambria))
         AddMonoString(&hStringHandle, pLandTypeStrings[SAND]);
       else
         AddMonoString(&hStringHandle, pLandTypeStrings[SAND_SAM_SITE]);
@@ -534,13 +536,13 @@ void AddCommonInfoToBox(void) {
 
   switch (GetSectorID8(bCurrentTownMineSectorX, bCurrentTownMineSectorY)) {
     case SEC_D2:  // Chitzena SAM
-      if (!fSamSiteFound[SAM_SITE_ONE]) fUnknownSAMSite = TRUE;
+      if (!IsSamSiteFound(SamSiteChitzena)) fUnknownSAMSite = TRUE;
       break;
     case SEC_D15:  // Drassen SAM
-      if (!fSamSiteFound[SAM_SITE_TWO]) fUnknownSAMSite = TRUE;
+      if (!IsSamSiteFound(SamSiteDrassen)) fUnknownSAMSite = TRUE;
       break;
     case SEC_I8:  // Cambria SAM
-      if (!fSamSiteFound[SAM_SITE_THREE]) fUnknownSAMSite = TRUE;
+      if (!IsSamSiteFound(SamSiteCambria)) fUnknownSAMSite = TRUE;
       break;
     // SAM Site 4 in Meduna is within town limits, so it's always controllable
     default:
@@ -557,20 +559,17 @@ void AddCommonInfoToBox(void) {
     AddMonoString(&hStringHandle, wString);
 
     // No/Yes
-    swprintf(wString, ARR_SIZE(wString), L"%s",
-             pwMiscSectorStrings[(StrategicMap[GetSectorID16(bCurrentTownMineSectorX,
-                                                             bCurrentTownMineSectorY)]
-                                      .fEnemyControlled)
-                                     ? 6
-                                     : 5]);
+    swprintf(
+        wString, ARR_SIZE(wString), L"%s",
+        pwMiscSectorStrings
+            [IsSectorEnemyControlled(bCurrentTownMineSectorX, bCurrentTownMineSectorY) ? 6 : 5]);
     AddSecondColumnMonoString(&hStringHandle, wString);
 
     // militia - is there any?
     swprintf(wString, ARR_SIZE(wString), L"%s:", pwTownInfoStrings[11]);
     AddMonoString(&hStringHandle, wString);
 
-    uint8_t ubMilitiaTotal =
-        CountAllMilitiaInSector(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
+    uint8_t ubMilitiaTotal = CountMilitiaInSector(bCurrentTownMineSectorX, bCurrentTownMineSectorY);
     if (ubMilitiaTotal > 0) {
       // some militia, show total & their breakdown by level
       struct MilitiaCount milCount =
@@ -645,7 +644,7 @@ void AddItemsInSectorToBox(void) {
 
 void PositionTownMineInfoBox(void) {
   // position town mine info box
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   SGPPoint pPosition;
   int16_t sX = 0, sY = 0;
 
@@ -696,26 +695,23 @@ void PositionTownMineInfoBox(void) {
 
 void AddInventoryButtonForMapPopUpBox(void) {
   int16_t sX, sY;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   SGPPoint pPosition;
-  VOBJECT_DESC VObjectDesc;
   uint32_t uiObject;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   int16_t sWidthA = 0, sTotalBoxWidth = 0;
   struct VObject *hHandle;
 
   // load the button
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\mapinvbtns.sti", VObjectDesc.ImageFile);
-  AddVideoObject(&VObjectDesc, &uiObject);
+  AddVObjectFromFile("INTERFACE\\mapinvbtns.sti", &uiObject);
 
   // Calculate smily face positions...
   GetVideoObject(&hHandle, uiObject);
-  pTrav = &(hHandle->pETRLEObject[0]);
+  pTrav = &(hHandle->subimages[0]);
 
-  sWidthA = pTrav->usWidth;
+  sWidthA = pTrav->width;
 
-  pTrav = &(hHandle->pETRLEObject[1]);
+  pTrav = &(hHandle->subimages[1]);
 
   sTotalBoxWidth = sTotalButtonWidth;
 
@@ -738,11 +734,11 @@ void AddInventoryButtonForMapPopUpBox(void) {
 
   guiMapButtonInventoryImage[1] = LoadButtonImage("INTERFACE\\mapinvbtns.sti", -1, 1, -1, 3, -1);
 
-  guiMapButtonInventory[1] =
-      CreateIconAndTextButton(guiMapButtonInventoryImage[1], pMapPopUpInventoryText[1], BLOCKFONT2,
-                              FONT_WHITE, FONT_BLACK, FONT_WHITE, FONT_BLACK, TEXT_CJUSTIFIED,
-                              (int16_t)(sX), (int16_t)(sY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-                              DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)MapTownMineExitButtonCallBack);
+  guiMapButtonInventory[1] = CreateIconAndTextButton(
+      guiMapButtonInventoryImage[1], pMapPopUpInventoryText[1], BLOCKFONT2, FONT_WHITE, FONT_BLACK,
+      FONT_WHITE, FONT_BLACK, TEXT_CJUSTIFIED, (int16_t)(sX), (int16_t)(sY), BUTTON_TOGGLE,
+      MSYS_PRIORITY_HIGHEST - 1, DEFAULT_MOVE_CALLBACK,
+      (GUI_CALLBACK)MapTownMineExitButtonCallBack);
 
   // delete video object
   DeleteVideoObjectFromIndex(uiObject);
@@ -778,8 +774,8 @@ void MapTownMineInventoryButtonCallBack(GUI_BUTTON *btn, int32_t reason) {
 
       // done
       fShowMapInventoryPool = TRUE;
-      MarkForRedrawalStrategicMap();
-      fMapScreenBottomDirty = TRUE;
+      SetMapPanelDirty(true);
+      SetMapScreenBottomDirty(true);
       fShowTownInfo = FALSE;
 
       // since we are bring up the sector inventory, check to see if the help screen should come up
@@ -800,8 +796,8 @@ void MapTownMineExitButtonCallBack(GUI_BUTTON *btn, int32_t reason) {
       btn->uiFlags &= ~(BUTTON_CLICKED_ON);
 
       // done
-      MarkForRedrawalStrategicMap();
-      fMapScreenBottomDirty = TRUE;
+      SetMapPanelDirty(true);
+      SetMapScreenBottomDirty(true);
       fShowTownInfo = FALSE;
     }
   }
@@ -810,23 +806,20 @@ void MapTownMineExitButtonCallBack(GUI_BUTTON *btn, int32_t reason) {
 // get the min width of the town mine info pop up box
 void MinWidthOfTownMineInfoBox(void) {
   struct VObject *hHandle;
-  VOBJECT_DESC VObjectDesc;
   int16_t sWidthA = 0, sWidthB = 0, sTotalBoxWidth = 0;
   uint32_t uiObject;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\mapinvbtns.sti", VObjectDesc.ImageFile);
-  AddVideoObject(&VObjectDesc, &uiObject);
+  AddVObjectFromFile("INTERFACE\\mapinvbtns.sti", &uiObject);
 
   // Calculate smily face positions...
   GetVideoObject(&hHandle, uiObject);
-  pTrav = &(hHandle->pETRLEObject[0]);
+  pTrav = &(hHandle->subimages[0]);
 
-  sWidthA = pTrav->usWidth;
+  sWidthA = pTrav->width;
 
-  pTrav = &(hHandle->pETRLEObject[1]);
-  sWidthB = pTrav->usWidth;
+  pTrav = &(hHandle->subimages[1]);
+  sWidthB = pTrav->width;
 
   sTotalBoxWidth = sWidthA + sWidthB;
   sTotalButtonWidth = sTotalBoxWidth;

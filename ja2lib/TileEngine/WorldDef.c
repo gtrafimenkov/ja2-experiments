@@ -15,7 +15,6 @@
 #include "Editor/SummaryInfo.h"
 #include "JAScreens.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Shading.h"
 #include "SGP/VObject.h"
@@ -70,6 +69,8 @@
 #include "Utils/MusicControl.h"
 #include "Utils/Utilities.h"
 #include "platform.h"
+#include "rust_fileman.h"
+#include "rust_images.h"
 
 #define SET_MOVEMENTCOST(a, b, c, d) \
   ((gubWorldMovementCosts[a][b][c] < d) ? (gubWorldMovementCosts[a][b][c] = d) : 0);
@@ -123,7 +124,7 @@ BOOLEAN IsRoofVisibleForWireframe(int16_t sMapPos);
 int8_t IsHiddenTileMarkerThere(int16_t sGridNo);
 extern void SetInterfaceHeightLevel();
 
-void SaveMapLights(HWFILE hfile);
+void SaveMapLights(FileID hfile);
 void LoadMapLights(int8_t **hBuffer);
 
 // Global Variables
@@ -247,7 +248,9 @@ BOOLEAN InitializeWorld() {
   // Initialize world data
 
   gpWorldLevelData = (MAP_ELEMENT *)MemAlloc(WORLD_MAX * sizeof(MAP_ELEMENT));
-  CHECKF(gpWorldLevelData);
+  if (!(gpWorldLevelData)) {
+    return FALSE;
+  }
 
   // Zero world
   memset(gpWorldLevelData, 0, WORLD_MAX * sizeof(MAP_ELEMENT));
@@ -336,7 +339,8 @@ BOOLEAN LoadTileSurfaces(char ppTileSurfaceFilenames[][32], uint8_t ubTilesetID)
   return (TRUE);
 }
 
-BOOLEAN AddTileSurface(char *cFilename, uint32_t ubType, uint8_t ubTilesetID, BOOLEAN fGetFromRoot) {
+BOOLEAN AddTileSurface(SGPFILENAME cFilename, uint32_t ubType, uint8_t ubTilesetID,
+                       BOOLEAN fGetFromRoot) {
   // Add tile surface
   struct TILE_IMAGERY *TileSurf;
   char cFileBPP[128];
@@ -352,7 +356,7 @@ BOOLEAN AddTileSurface(char *cFilename, uint32_t ubType, uint8_t ubTilesetID, BO
   gbSameAsDefaultSurfaceUsed[ubType] = FALSE;
 
   // Adjust for BPP
-  FilenameForBPP(cFilename, cFileBPP);
+  CopyFilename(cFilename, cFileBPP);
 
   if (!fGetFromRoot) {
     // Adjust for tileset position
@@ -386,9 +390,9 @@ BOOLEAN AddTileSurface(char *cFilename, uint32_t ubType, uint8_t ubTilesetID, BO
 extern BOOLEAN gfLoadShadeTablesFromTextFile;
 
 void BuildTileShadeTables() {
-  HWFILE hfile;
-  char DataDir[256];
-  char ShadeTableDir[300];
+  FileID hfile = FILE_ID_ERR;
+  struct Str512 DataDir;
+  char ShadeTableDir[600];
   uint32_t uiLoop;
   char cRootFile[128];
   BOOLEAN fForceRebuildForSlot = FALSE;
@@ -406,26 +410,28 @@ void BuildTileShadeTables() {
 #endif
 
   // Set the directory to the shadetable directory
-  Plat_GetCurrentDirectory(DataDir);
-  sprintf(ShadeTableDir, "%s\\ShadeTables", DataDir);
+  if (!Plat_GetCurrentDirectory(&DataDir)) {
+    return;
+  }
+  snprintf(ShadeTableDir, ARR_SIZE(ShadeTableDir), "%s\\ShadeTables", DataDir.buf);
   if (!Plat_SetCurrentDirectory(ShadeTableDir)) {
     AssertMsg(0, "Can't set the directory to Data\\ShadeTable.  Kris' big problem!");
   }
-  hfile = FileMan_Open("IgnoreShadeTables.txt", FILE_ACCESS_READ, FALSE);
+  hfile = File_OpenForReading("IgnoreShadeTables.txt");
   if (hfile) {
-    FileMan_Close(hfile);
+    File_Close(hfile);
     gfForceBuildShadeTables = TRUE;
   } else {
     gfForceBuildShadeTables = FALSE;
   }
   // now, determine if we are using specialized colors.
-  if (gpLightColors[0].peRed || gpLightColors[0].peGreen ||
-      gpLightColors[0].peBlue) {  // we are, which basically means we force build the shadetables.
-                                  // However, the one
+  if (gpLightColors[0].red || gpLightColors[0].green ||
+      gpLightColors[0].blue) {  // we are, which basically means we force build the shadetables.
+                                // However, the one
     // exception is if we are loading another map and the colors are the same.
-    if (gpLightColors[0].peRed != ubLastRed || gpLightColors[0].peGreen != ubLastGreen ||
-        gpLightColors[0].peBlue != ubLastBlue) {  // Same tileset, but colors are different, so set
-                                                  // things up to regenerate the shadetables.
+    if (gpLightColors[0].red != ubLastRed || gpLightColors[0].green != ubLastGreen ||
+        gpLightColors[0].blue != ubLastBlue) {  // Same tileset, but colors are different, so set
+                                                // things up to regenerate the shadetables.
       gfForceBuildShadeTables = TRUE;
     } else {  // same colors, same tileset, so don't rebuild shadetables -- much faster!
       gfForceBuildShadeTables = FALSE;
@@ -465,11 +471,11 @@ void BuildTileShadeTables() {
   }
 
   // Restore the data directory once we are finished.
-  Plat_SetCurrentDirectory(DataDir);
+  Plat_SetCurrentDirectory(DataDir.buf);
 
-  ubLastRed = gpLightColors[0].peRed;
-  ubLastGreen = gpLightColors[0].peGreen;
-  ubLastBlue = gpLightColors[0].peBlue;
+  ubLastRed = gpLightColors[0].red;
+  ubLastGreen = gpLightColors[0].green;
+  ubLastBlue = gpLightColors[0].blue;
 
 #ifdef JA2TESTVERSION
   uiBuildShadeTableTime = GetJA2Clock() - uiStartTime;
@@ -592,7 +598,8 @@ void CompileTileMovementCosts(uint16_t usGridNo) {
     pLand = gpWorldLevelData[usGridNo].pLandHead;
     if (pLand != NULL) {
       // Get terrain type
-      ubTerrainID = gpWorldLevelData[usGridNo].ubTerrainID;  // = GetTerrainType( (int16_t)usGridNo );
+      ubTerrainID =
+          gpWorldLevelData[usGridNo].ubTerrainID;  // = GetTerrainType( (int16_t)usGridNo );
 
       for (ubDirLoop = 0; ubDirLoop < NUM_WORLD_DIRECTIONS; ubDirLoop++) {
         SET_CURRMOVEMENTCOST(ubDirLoop, gTileTypeMovementCost[ubTerrainID]);
@@ -1347,7 +1354,7 @@ void CompileWorldMovementCosts() {
 }
 
 // SAVING CODE
-BOOLEAN SaveWorld(char* puiFilename) {
+BOOLEAN SaveWorld(char *puiFilename) {
 #ifdef JA2EDITOR
   int32_t cnt;
   uint32_t uiSoldierSize;
@@ -1355,7 +1362,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
   uint32_t uiFlags;
   uint32_t uiBytesWritten;
   uint32_t uiNumWarningsCaught = 0;
-  HWFILE hfile;
+  FileID hfile = FILE_ID_ERR;
   struct LEVELNODE *pLand;
   struct LEVELNODE *pObject;
   struct LEVELNODE *pStruct;
@@ -1381,16 +1388,16 @@ BOOLEAN SaveWorld(char* puiFilename) {
   sprintf(aFilename, "MAPS\\%s", puiFilename);
 
   // Open file
-  hfile = FileMan_Open(aFilename, FILE_ACCESS_WRITE | FILE_CREATE_ALWAYS, FALSE);
+  hfile = File_OpenForWriting(aFilename);
 
   if (!hfile) {
     return (FALSE);
   }
 
   // Write JA2 Version ID
-  FileMan_Write(hfile, &gdMajorMapVersion, sizeof(float), &uiBytesWritten);
+  File_Write(hfile, &gdMajorMapVersion, sizeof(float), &uiBytesWritten);
   if (gdMajorMapVersion >= 4.00) {
-    FileMan_Write(hfile, &gubMinorMapVersion, sizeof(uint8_t), &uiBytesWritten);
+    File_Write(hfile, &gubMinorMapVersion, sizeof(uint8_t), &uiBytesWritten);
   }
 
   // Write FLAGS FOR WORLD
@@ -1405,21 +1412,21 @@ BOOLEAN SaveWorld(char* puiFilename) {
   if (gfBasement || gfCaves) uiFlags |= MAP_AMBIENTLIGHTLEVEL_SAVED;
   uiFlags |= MAP_NPCSCHEDULES_SAVED;
 
-  FileMan_Write(hfile, &uiFlags, sizeof(int32_t), &uiBytesWritten);
+  File_Write(hfile, &uiFlags, sizeof(int32_t), &uiBytesWritten);
 
   // Write tileset ID
-  FileMan_Write(hfile, &giCurrentTilesetID, sizeof(int32_t), &uiBytesWritten);
+  File_Write(hfile, &giCurrentTilesetID, sizeof(int32_t), &uiBytesWritten);
 
   // Write SOLDIER CONTROL SIZE
   uiSoldierSize = sizeof(struct SOLDIERTYPE);
-  FileMan_Write(hfile, &uiSoldierSize, sizeof(int32_t), &uiBytesWritten);
+  File_Write(hfile, &uiSoldierSize, sizeof(int32_t), &uiBytesWritten);
 
   // REMOVE WORLD VISIBILITY TILES
   RemoveWorldWireFrameTiles();
 
   for (cnt = 0; cnt < WORLD_MAX; cnt++) {
     // Write out height values
-    FileMan_Write(hfile, &gpWorldLevelData[cnt].sHeight, sizeof(int16_t), &uiBytesWritten);
+    File_Write(hfile, &gpWorldLevelData[cnt].sHeight, sizeof(int16_t), &uiBytesWritten);
   }
 
   // Write out # values - we'll have no more than 15 per level!
@@ -1438,7 +1445,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
                L"  Need to fix before map can be saved!  There are %d additional warnings.",
                LayerCount, cnt, uiNumWarningsCaught);
       gfErrorCatch = TRUE;
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return FALSE;
     }
     if (LayerCount > 10) {
@@ -1453,7 +1460,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
     // Combine # of land layers with worlddef flags ( first 4 bits )
     ubCombine = (uint8_t)((LayerCount & 0xf) | ((gpWorldLevelData[cnt].uiFlags & 0xf) << 4));
     // Write combination
-    FileMan_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
+    File_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
 
     // Determine # of objects
     pObject = gpWorldLevelData[cnt].pObjectHead;
@@ -1474,7 +1481,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
                L"  Need to fix before map can be saved!  There are %d additional warnings.",
                ObjectCount, cnt, uiNumWarningsCaught);
       gfErrorCatch = TRUE;
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return FALSE;
     }
     if (ObjectCount > 10) {
@@ -1502,7 +1509,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
                L"  Need to fix before map can be saved!  There are %d additional warnings.",
                StructCount, cnt, uiNumWarningsCaught);
       gfErrorCatch = TRUE;
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return FALSE;
     }
     if (StructCount > 10) {
@@ -1516,7 +1523,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
 
     ubCombine = (uint8_t)((ObjectCount & 0xf) | ((StructCount & 0xf) << 4));
     // Write combination
-    FileMan_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
+    File_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
 
     // Determine # of shadows
     pShadow = gpWorldLevelData[cnt].pShadowHead;
@@ -1534,7 +1541,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
                L"  Need to fix before map can be saved!  There are %d additional warnings.",
                ShadowCount, cnt, uiNumWarningsCaught);
       gfErrorCatch = TRUE;
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return FALSE;
     }
     if (ShadowCount > 10) {
@@ -1562,7 +1569,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
                L"  Need to fix before map can be saved!  There are %d additional warnings.",
                RoofCount, cnt, uiNumWarningsCaught);
       gfErrorCatch = TRUE;
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return FALSE;
     }
     if (RoofCount > 10) {
@@ -1576,7 +1583,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
 
     ubCombine = (uint8_t)((ShadowCount & 0xf) | ((RoofCount & 0xf) << 4));
     // Write combination
-    FileMan_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
+    File_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
 
     // Write OnRoof layer
     // Determine # of OnRoofs
@@ -1593,7 +1600,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
                L"  Need to fix before map can be saved!  There are %d additional warnings.",
                OnRoofCount, cnt, uiNumWarningsCaught);
       gfErrorCatch = TRUE;
-      FileMan_Close(hfile);
+      File_Close(hfile);
       return FALSE;
     }
     if (OnRoofCount > 10) {
@@ -1608,13 +1615,13 @@ BOOLEAN SaveWorld(char* puiFilename) {
     // Write combination of onroof and nothing...
     ubCombine = (uint8_t)((OnRoofCount & 0xf));
     // Write combination
-    FileMan_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
+    File_Write(hfile, &ubCombine, sizeof(ubCombine), &uiBytesWritten);
   }
 
   for (cnt = 0; cnt < WORLD_MAX; cnt++) {
     if (bCounts[cnt][0] == 0) {
-      FileMan_Write(hfile, &ubTest, sizeof(uint8_t), &uiBytesWritten);
-      FileMan_Write(hfile, &ubTest, sizeof(uint8_t), &uiBytesWritten);
+      File_Write(hfile, &ubTest, sizeof(uint8_t), &uiBytesWritten);
+      File_Write(hfile, &ubTest, sizeof(uint8_t), &uiBytesWritten);
     } else {
       // Write land layers
       // Write out land peices backwards so that they are loaded properly
@@ -1630,8 +1637,8 @@ BOOLEAN SaveWorld(char* puiFilename) {
         GetTileType(pTailLand->usIndex, &uiType);
         ubType = (uint8_t)uiType;
         GetTypeSubIndexFromTileIndexChar(uiType, pTailLand->usIndex, &ubTypeSubIndex);
-        FileMan_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
-        FileMan_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
 
         pTailLand = pTailLand->pPrevNode;
       }
@@ -1652,8 +1659,8 @@ BOOLEAN SaveWorld(char* puiFilename) {
           // ROADPIECES slot contains more than 256 subindices.
           ubType = (uint8_t)uiType;
           GetTypeSubIndexFromTileIndex(uiType, pObject->usIndex, &usTypeSubIndex);
-          FileMan_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
-          FileMan_Write(hfile, &usTypeSubIndex, sizeof(uint16_t), &uiBytesWritten);
+          File_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
+          File_Write(hfile, &usTypeSubIndex, sizeof(uint16_t), &uiBytesWritten);
         }
       }
       pObject = pObject->pNext;
@@ -1670,8 +1677,8 @@ BOOLEAN SaveWorld(char* puiFilename) {
         GetTileType(pStruct->usIndex, &uiType);
         ubType = (uint8_t)uiType;
         GetTypeSubIndexFromTileIndexChar(uiType, pStruct->usIndex, &ubTypeSubIndex);
-        FileMan_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
-        FileMan_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
       }
 
       pStruct = pStruct->pNext;
@@ -1689,8 +1696,8 @@ BOOLEAN SaveWorld(char* puiFilename) {
         GetTileType(pShadow->usIndex, &uiType);
         ubType = (uint8_t)uiType;
         GetTypeSubIndexFromTileIndexChar(uiType, pShadow->usIndex, &ubTypeSubIndex);
-        FileMan_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
-        FileMan_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
 
       } else if (pShadow->uiFlags & LEVELNODE_EXITGRID) {  // count the number of exitgrids
         usNumExitGrids++;
@@ -1709,8 +1716,8 @@ BOOLEAN SaveWorld(char* puiFilename) {
         GetTileType(pRoof->usIndex, &uiType);
         ubType = (uint8_t)uiType;
         GetTypeSubIndexFromTileIndexChar(uiType, pRoof->usIndex, &ubTypeSubIndex);
-        FileMan_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
-        FileMan_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
+        File_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
       }
 
       pRoof = pRoof->pNext;
@@ -1725,8 +1732,8 @@ BOOLEAN SaveWorld(char* puiFilename) {
       GetTileType(pOnRoof->usIndex, &uiType);
       ubType = (uint8_t)uiType;
       GetTypeSubIndexFromTileIndexChar(uiType, pOnRoof->usIndex, &ubTypeSubIndex);
-      FileMan_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
-      FileMan_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
+      File_Write(hfile, &ubType, sizeof(uint8_t), &uiBytesWritten);
+      File_Write(hfile, &ubTypeSubIndex, sizeof(uint8_t), &uiBytesWritten);
 
       pOnRoof = pOnRoof->pNext;
     }
@@ -1734,7 +1741,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
 
   for (cnt = 0; cnt < WORLD_MAX; cnt++) {
     // Write out room information
-    FileMan_Write(hfile, &gubWorldRoomInfo[cnt], sizeof(int8_t), &uiBytesWritten);
+    File_Write(hfile, &gubWorldRoomInfo[cnt], sizeof(int8_t), &uiBytesWritten);
   }
 
   if (uiFlags & MAP_WORLDITEMS_SAVED) {
@@ -1743,9 +1750,9 @@ BOOLEAN SaveWorld(char* puiFilename) {
   }
 
   if (uiFlags & MAP_AMBIENTLIGHTLEVEL_SAVED) {
-    FileMan_Write(hfile, &gfBasement, 1, &uiBytesWritten);
-    FileMan_Write(hfile, &gfCaves, 1, &uiBytesWritten);
-    FileMan_Write(hfile, &ubAmbientLightLevel, 1, &uiBytesWritten);
+    File_Write(hfile, &gfBasement, 1, &uiBytesWritten);
+    File_Write(hfile, &gfCaves, 1, &uiBytesWritten);
+    File_Write(hfile, &ubAmbientLightLevel, 1, &uiBytesWritten);
   }
 
   if (uiFlags & MAP_WORLDLIGHTS_SAVED) {
@@ -1772,7 +1779,7 @@ BOOLEAN SaveWorld(char* puiFilename) {
     SaveSchedules(hfile);
   }
 
-  FileMan_Close(hfile);
+  File_Close(hfile);
 
   sprintf(gubFilename, puiFilename);
 #endif  // JA2EDITOR
@@ -1791,7 +1798,8 @@ void OptimizeMapForShadows() {
     if (IsTreePresentAtGridno((int16_t)cnt)) {
       // CHECK FOR A struct STRUCTURE A FOOTPRINT AWAY
       for (dir = 0; dir < NUM_DIR_SEARCHES; dir++) {
-        sNewGridNo = NewGridNo((int16_t)cnt, (uint16_t)DirectionInc(bDirectionsForShadowSearch[dir]));
+        sNewGridNo =
+            NewGridNo((int16_t)cnt, (uint16_t)DirectionInc(bDirectionsForShadowSearch[dir]));
 
         if (gpWorldLevelData[sNewGridNo].pStructureHead == NULL) {
           break;
@@ -1861,7 +1869,7 @@ extern BOOLEAN gfUpdatingNow;
 BOOLEAN EvaluateWorld(char *pSector, uint8_t ubLevel) {
   float dMajorMapVersion;
   SUMMARYFILE *pSummary;
-  HWFILE hfile;
+  FileID hfile = FILE_ID_ERR;
   MAPCREATE_STRUCT mapInfo;
   int8_t *pBuffer, *pBufferHead;
   uint32_t uiFileSize;
@@ -1893,18 +1901,18 @@ BOOLEAN EvaluateWorld(char *pSector, uint8_t ubLevel) {
   if (gfMajorUpdate) {
     if (!LoadWorld(szFilename))  // error
       return FALSE;
-    Plat_ClearFileAttributes(szDirFilename);
+    Plat_RemoveReadOnlyAttribute(szDirFilename);
     SaveWorld(szFilename);
   }
 
-  hfile = FileMan_Open(szDirFilename, FILE_ACCESS_READ, FALSE);
+  hfile = File_OpenForReading(szDirFilename);
   if (!hfile) return FALSE;
 
-  uiFileSize = FileMan_GetSize(hfile);
+  uiFileSize = File_GetSize(hfile);
   pBuffer = (int8_t *)MemAlloc(uiFileSize);
   pBufferHead = pBuffer;
-  FileMan_Read(hfile, pBuffer, uiFileSize, &uiBytesRead);
-  FileMan_Close(hfile);
+  File_Read(hfile, pBuffer, uiFileSize, &uiBytesRead);
+  File_Close(hfile);
 
   swprintf(str, ARR_SIZE(str), L"Analyzing map %S", szFilename);
   if (!gfUpdatingNow)
@@ -2234,8 +2242,8 @@ BOOLEAN EvaluateWorld(char *pSector, uint8_t ubLevel) {
 extern uint8_t GetCurrentSummaryVersion();
 extern void LoadShadeTablesFromTextFile();
 
-BOOLEAN LoadWorld(char* puiFilename) {
-  HWFILE hfile;
+BOOLEAN LoadWorld(char *puiFilename) {
+  FileID hfile = FILE_ID_ERR;
   float dMajorMapVersion;
   uint32_t uiFlags;
   uint32_t uiBytesRead;
@@ -2277,7 +2285,7 @@ BOOLEAN LoadWorld(char* puiFilename) {
   gfCaves = FALSE;
 
   // Open file
-  hfile = FileMan_Open(aFilename, FILE_ACCESS_READ, FALSE);
+  hfile = File_OpenForReading(aFilename);
 
   if (!hfile) {
     SET_ERROR("Could not load map file %S", aFilename);
@@ -2299,11 +2307,11 @@ BOOLEAN LoadWorld(char* puiFilename) {
 
   // Get the file size and alloc one huge buffer for it.
   // We will use this buffer to transfer all of the data from.
-  uiFileSize = FileMan_GetSize(hfile);
+  uiFileSize = File_GetSize(hfile);
   pBuffer = (int8_t *)MemAlloc(uiFileSize);
   pBufferHead = pBuffer;
-  FileMan_Read(hfile, pBuffer, uiFileSize, &uiBytesRead);
-  FileMan_Close(hfile);
+  File_Read(hfile, pBuffer, uiFileSize, &uiBytesRead);
+  File_Close(hfile);
 
   // Read JA2 Version ID
   LOADDATA(&dMajorMapVersion, pBuffer, sizeof(float));
@@ -2333,7 +2341,9 @@ BOOLEAN LoadWorld(char* puiFilename) {
 #ifdef JA2TESTVERSION
   uiStartTime = GetJA2Clock();
 #endif
-  CHECKF(LoadMapTileset(iTilesetID) != FALSE);
+  if (!(LoadMapTileset(iTilesetID) != FALSE)) {
+    return FALSE;
+  }
 #ifdef JA2TESTVERSION
   uiLoadMapTilesetTime = GetJA2Clock() - uiStartTime;
 #endif
@@ -2611,7 +2621,7 @@ BOOLEAN LoadWorld(char* puiFilename) {
   } else {  // We are above ground.
     gfBasement = FALSE;
     gfCaves = FALSE;
-    if (!gfEditMode && guiCurrentScreen != MAPUTILITY_SCREEN) {
+    if (!gfEditMode) {
       ubAmbientLightLevel = GetTimeOfDayAmbientLightLevel();
     } else {
       ubAmbientLightLevel = 4;
@@ -2726,15 +2736,6 @@ BOOLEAN LoadWorld(char* puiFilename) {
 
 #ifdef JA2TESTVERSION
   uiLoadWorldTime = GetJA2Clock() - uiLoadWorldStartTime;
-#endif
-
-#ifdef JA2TESTVERSION
-
-  // ATE: Not while updating maps!
-  if (guiCurrentScreen != MAPUTILITY_SCREEN) {
-    GenerateBuildings();
-  }
-
 #endif
 
   RenderProgressBar(0, 100);
@@ -3025,7 +3026,7 @@ BOOLEAN LoadMapTileset(int32_t iTilesetID) {
   if (gTilesets[iTilesetID].MovementCostFnc != NULL) {
     gTilesets[iTilesetID].MovementCostFnc();
   } else {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("Tileset %d has no callback function for movement costs. Using default.",
                     iTilesetID));
     SetTilesetOneTerrainValues();
@@ -3044,7 +3045,7 @@ BOOLEAN LoadMapTileset(int32_t iTilesetID) {
 
 BOOLEAN SaveMapTileset(int32_t iTilesetID) {
   //	FILE *hTSet;
-  HWFILE hTSet;
+  FileID hTSet = FILE_ID_ERR;
   char zTilesetName[65];
   int cnt;
   uint32_t uiBytesWritten;
@@ -3055,7 +3056,7 @@ BOOLEAN SaveMapTileset(int32_t iTilesetID) {
   sprintf(zTilesetName, "TSET%04d.SET", iTilesetID);
 
   // Open file
-  hTSet = FileMan_Open(zTilesetName, FILE_ACCESS_WRITE | FILE_CREATE_ALWAYS, FALSE);
+  hTSet = File_OpenForWriting(zTilesetName);
 
   if (!hTSet) {
     return (FALSE);
@@ -3063,8 +3064,8 @@ BOOLEAN SaveMapTileset(int32_t iTilesetID) {
 
   // Save current tile set in map file.
   for (cnt = 0; cnt < NUMBEROFTILETYPES; cnt++)
-    FileMan_Write(hTSet, TileSurfaceFilenames[cnt], 65, &uiBytesWritten);
-  FileMan_Close(hTSet);
+    File_Write(hTSet, TileSurfaceFilenames[cnt], 65, &uiBytesWritten);
+  File_Close(hTSet);
 
   return (TRUE);
 }
@@ -3416,10 +3417,10 @@ void ReloadTileset(uint8_t ubID) {
   // Delete file
   sprintf(aFilename, "MAPS\\%s", TEMP_FILE_FOR_TILESET_CHANGE);
 
-  FileMan_Delete(aFilename);
+  Plat_DeleteFile(aFilename);
 }
 
-void SaveMapLights(HWFILE hfile) {
+void SaveMapLights(FileID hfile) {
   struct SOLDIERTYPE *pSoldier;
   struct SGPPaletteEntry LColors[3];
   uint8_t ubNumColors;
@@ -3432,8 +3433,8 @@ void SaveMapLights(HWFILE hfile) {
   ubNumColors = LightGetColors(LColors);
 
   // Save the current light colors!
-  FileMan_Write(hfile, &ubNumColors, 1, &uiBytesWritten);
-  FileMan_Write(hfile, LColors, sizeof(struct SGPPaletteEntry) * ubNumColors, &uiBytesWritten);
+  File_Write(hfile, &ubNumColors, 1, &uiBytesWritten);
+  File_Write(hfile, LColors, sizeof(struct SGPPaletteEntry) * ubNumColors, &uiBytesWritten);
 
   // count number of non-merc lights.
   for (cnt = 0; cnt < MAX_LIGHT_SPRITES; cnt++) {
@@ -3450,7 +3451,7 @@ void SaveMapLights(HWFILE hfile) {
   }
 
   // save the number of lights.
-  FileMan_Write(hfile, &usNumLights, 2, &uiBytesWritten);
+  File_Write(hfile, &usNumLights, 2, &uiBytesWritten);
 
   for (cnt = 0; cnt < MAX_LIGHT_SPRITES; cnt++) {
     if (LightSprites[cnt].uiFlags & LIGHT_SPR_ACTIVE) {  // found an active light.  Check to make
@@ -3462,11 +3463,11 @@ void SaveMapLights(HWFILE hfile) {
         }
       }
       if (!fSoldierLight) {  // save the light
-        FileMan_Write(hfile, &LightSprites[cnt], sizeof(LIGHT_SPRITE), &uiBytesWritten);
+        File_Write(hfile, &LightSprites[cnt], sizeof(LIGHT_SPRITE), &uiBytesWritten);
 
         ubStrLen = (uint8_t)(strlen(pLightNames[LightSprites[cnt].iTemplate]) + 1);
-        FileMan_Write(hfile, &ubStrLen, 1, &uiBytesWritten);
-        FileMan_Write(hfile, pLightNames[LightSprites[cnt].iTemplate], ubStrLen, &uiBytesWritten);
+        File_Write(hfile, &ubStrLen, 1, &uiBytesWritten);
+        File_Write(hfile, pLightNames[LightSprites[cnt].iTemplate], ubStrLen, &uiBytesWritten);
       }
     }
   }
@@ -3496,14 +3497,14 @@ void LoadMapLights(int8_t **hBuffer) {
   ubNumColors = 1;
 
   // ATE: OK, only regenrate if colors are different.....
-  // if ( LColors[0].peRed != gpLightColors[0].peRed ||
-  //		 LColors[0].peGreen != gpLightColors[0].peGreen ||
-  //		 LColors[0].peBlue != gpLightColors[0].peBlue )
+  // if ( LColors[0].red != gpLightColors[0].red ||
+  //		 LColors[0].green != gpLightColors[0].green ||
+  //		 LColors[0].blue != gpLightColors[0].blue )
   { LightSetColors(LColors, ubNumColors); }
 
   // Determine which lights are valid for the current time.
   if (!gfEditMode) {
-    uiHour = GetWorldHour();
+    uiHour = GetGameClockHour();
     if (uiHour >= NIGHT_TIME_LIGHT_START_HOUR || uiHour < NIGHT_TIME_LIGHT_END_HOUR) {
       fNightTime = TRUE;
     }
@@ -3525,7 +3526,7 @@ void LoadMapLights(int8_t **hBuffer) {
     iLSprite = LightSpriteCreate(str, TmpLight.uiLightType);
     // if this fails, then we will ignore the light.
     // ATE: Don't add ANY lights of mapscreen util is on
-    if (iLSprite != -1 && guiCurrentScreen != MAPUTILITY_SCREEN) {
+    if (iLSprite != -1) {
       if (!gfCaves || gfEditMode) {
         if (gfEditMode || (TmpLight.uiFlags & LIGHT_PRIMETIME && fPrimeTime) ||
             (TmpLight.uiFlags & LIGHT_NIGHTTIME && fNightTime) ||

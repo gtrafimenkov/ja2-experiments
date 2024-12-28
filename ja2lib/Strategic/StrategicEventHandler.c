@@ -7,6 +7,7 @@
 #include "Laptop/BobbyRMailOrder.h"
 #include "Laptop/Email.h"
 #include "Laptop/History.h"
+#include "SGP/Debug.h"
 #include "SGP/MemMan.h"
 #include "SGP/Random.h"
 #include "Strategic/GameClock.h"
@@ -29,6 +30,7 @@
 #include "TileEngine/SaveLoadMap.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Message.h"
+#include "rust_civ_groups.h"
 
 #define MEDUNA_ITEM_DROP_OFF_GRIDNO 10959
 #define MEDUNA_ITEM_DROP_OFF_SECTOR_X 3
@@ -86,11 +88,9 @@ void BobbyRayPurchaseEventCallback(uint8_t ubOrderID) {
     SetFactTrue(FACT_LAST_SHIPMENT_WENT_TO_WRONG_AIRPORT);
     usStandardMapPos = LOST_SHIPMENT_GRIDNO;
     SetFactFalse(FACT_NEXT_PACKAGE_CAN_BE_DELAYED);
-  } else if ((gTownLoyalty[DRASSEN].ubRating < 20) ||
-             StrategicMap[GetSectorID16(13, MAP_ROW_B)].fEnemyControlled) {
+  } else if ((GetTownLoyaltyRating(DRASSEN) < 20) || IsSectorEnemyControlled(13, MAP_ROW_B)) {
     // loss of the whole shipment
     gpNewBobbyrShipments[ubOrderID].fActive = FALSE;
-
     SetFactTrue(FACT_AGENTS_PREVENTED_SHIPMENT);
     return;
   }
@@ -310,7 +310,7 @@ void BobbyRayPurchaseEventCallback(uint8_t ubOrderID) {
     SetFactTrue(FACT_REALLY_NEW_BOBBYRAY_SHIPMENT_WAITING);
 
     // set up even to make shipment "old"
-    AddSameDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay() + 120,
+    AddSameDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart() + 120,
                              FACT_REALLY_NEW_BOBBYRAY_SHIPMENT_WAITING);
   }
 
@@ -323,13 +323,13 @@ void BobbyRayPurchaseEventCallback(uint8_t ubOrderID) {
   // if the shipment is NOT from John Kulba, send an email
   if (!fThisShipmentIsFromJohnKulba) {
     // Add an email from Bobby r telling the user the shipment 'Should' be there
-    AddEmail(BOBBYR_SHIPMENT_ARRIVED, BOBBYR_SHIPMENT_ARRIVED_LENGTH, BOBBY_R, GetWorldTotalMin());
+    AddEmail(BOBBYR_SHIPMENT_ARRIVED, BOBBYR_SHIPMENT_ARRIVED_LENGTH, BOBBY_R, GetGameTimeInMin());
   } else {
     // if the shipment is from John Kulba
 
     // Add an email from kulba telling the user the shipment is there
     AddEmail(JOHN_KULBA_GIFT_IN_DRASSEN, JOHN_KULBA_GIFT_IN_DRASSEN_LENGTH, JOHN_KULBA,
-             GetWorldTotalMin());
+             GetGameTimeInMin());
   }
 }
 
@@ -440,8 +440,8 @@ void AddSecondAirportAttendant(void) {
 void SetPabloToUnbribed(void) {
   if (guiPabloExtraDaysBribed > 0) {
     // set new event for later on, because the player gave Pablo more money!
-    AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(), FACT_PABLOS_BRIBED,
-                               guiPabloExtraDaysBribed);
+    AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
+                               FACT_PABLOS_BRIBED, guiPabloExtraDaysBribed);
     guiPabloExtraDaysBribed = 0;
   } else {
     SetFactFalse(FACT_PABLOS_BRIBED);
@@ -483,7 +483,7 @@ void CheckForKingpinsMoneyMissing(BOOLEAN fFirstCheck) {
 
     if (uiTotalCash < 30000) {
       // add history log here
-      AddHistoryToPlayersLog(HISTORY_FOUND_MONEY, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+      AddHistoryToPlayersLog(HISTORY_FOUND_MONEY, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                              (uint8_t)gWorldSectorY);
 
       SetFactTrue(FACT_KINGPIN_WILL_LEARN_OF_MONEY_GONE);
@@ -561,7 +561,7 @@ void HandleNPCSystemEvent(uint32_t uiEvent) {
           if (gubQuest[QUEST_KINGPIN_MONEY] == QUESTNOTSTARTED) {
             // KP knows money is gone, hasn't told player, if this event is called then the 2
             // days are up... send email
-            AddEmail(KING_PIN_LETTER, KING_PIN_LETTER_LENGTH, KING_PIN, GetWorldTotalMin());
+            AddEmail(KING_PIN_LETTER, KING_PIN_LETTER_LENGTH, KING_PIN, GetGameTimeInMin());
             StartQuest(QUEST_KINGPIN_MONEY, 5, MAP_ROW_D);
             // add event to send terrorists two days from now
             AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, Random(120),
@@ -572,7 +572,7 @@ void HandleNPCSystemEvent(uint32_t uiEvent) {
             SetFactTrue(FACT_KINGPIN_CAN_SEND_ASSASSINS);
             gMercProfiles[SPIKE].sSectorX = 5;
             gMercProfiles[SPIKE].sSectorY = MAP_ROW_C;
-            gTacticalStatus.fCivGroupHostile[KINGPIN_CIV_GROUP] = CIV_GROUP_WILL_BECOME_HOSTILE;
+            SetCivGroupHostility(KINGPIN_CIV_GROUP, CIV_GROUP_WILL_BECOME_HOSTILE);
           }
         }
         break;
@@ -632,7 +632,7 @@ void HandleNPCSystemEvent(uint32_t uiEvent) {
           if (pJoey) {
             // he's in the currently loaded sector...delay this an hour!
             AddSameDayStrategicEvent(
-                EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay() + 60,
+                EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart() + 60,
                 NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_ADD_JOEY_TO_WORLD);
           } else {
             // move Joey from caves to San Mona
@@ -644,7 +644,7 @@ void HandleNPCSystemEvent(uint32_t uiEvent) {
         break;
 
       case NPC_ACTION_SEND_ENRICO_MIGUEL_EMAIL:
-        AddEmail(ENRICO_MIGUEL, ENRICO_MIGUEL_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
+        AddEmail(ENRICO_MIGUEL, ENRICO_MIGUEL_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
         break;
 
       case NPC_ACTION_TIMER_FOR_VEHICLE:
@@ -865,12 +865,11 @@ void HandleEarlyMorningEvents(void) {
 
 void MakeCivGroupHostileOnNextSectorEntrance(uint8_t ubCivGroup) {
   // if it's the rebels that will become hostile, reduce town loyalties NOW, not later
-  if (ubCivGroup == REBEL_CIV_GROUP &&
-      gTacticalStatus.fCivGroupHostile[ubCivGroup] == CIV_GROUP_NEUTRAL) {
+  if (ubCivGroup == REBEL_CIV_GROUP && GetCivGroupHostility(ubCivGroup) == CIV_GROUP_NEUTRAL) {
     ReduceLoyaltyForRebelsBetrayed();
   }
 
-  gTacticalStatus.fCivGroupHostile[ubCivGroup] = CIV_GROUP_WILL_BECOME_HOSTILE;
+  SetCivGroupHostility(ubCivGroup, CIV_GROUP_WILL_BECOME_HOSTILE);
 }
 
 void RemoveAssassin(uint8_t ubProfile) {
@@ -938,8 +937,7 @@ void DropOffItemsInMeduna(uint8_t ubOrderNum) {
   uint32_t i;
 
   // if the player doesnt "own" the sector,
-  if (StrategicMap[GetSectorID16(MEDUNA_ITEM_DROP_OFF_SECTOR_X, MEDUNA_ITEM_DROP_OFF_SECTOR_Y)]
-          .fEnemyControlled) {
+  if (IsSectorEnemyControlled(MEDUNA_ITEM_DROP_OFF_SECTOR_X, MEDUNA_ITEM_DROP_OFF_SECTOR_Y)) {
     // the items disappear
     gpNewBobbyrShipments[ubOrderNum].fActive = FALSE;
     return;
@@ -1019,5 +1017,5 @@ void DropOffItemsInMeduna(uint8_t ubOrderNum) {
   gpNewBobbyrShipments[ubOrderNum].fActive = FALSE;
 
   // Add an email from kulba telling the user the shipment is there
-  AddEmail(BOBBY_R_MEDUNA_SHIPMENT, BOBBY_R_MEDUNA_SHIPMENT_LENGTH, BOBBY_R, GetWorldTotalMin());
+  AddEmail(BOBBY_R_MEDUNA_SHIPMENT, BOBBY_R_MEDUNA_SHIPMENT_LENGTH, BOBBY_R, GetGameTimeInMin());
 }

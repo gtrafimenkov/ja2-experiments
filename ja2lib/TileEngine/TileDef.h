@@ -135,7 +135,7 @@ extern uint16_t gTileDatabaseSize;
 extern uint8_t gFullBaseTileValues[];
 extern uint16_t gNumTilesPerType[NUMBEROFTILETYPES];
 extern uint16_t gTileTypeStartIndex[NUMBEROFTILETYPES];
-extern char* gTileSurfaceName[NUMBEROFTILETYPES];
+extern char *gTileSurfaceName[NUMBEROFTILETYPES];
 extern uint8_t gTileTypeLogicalHeight[NUMBEROFTILETYPES];
 
 extern uint16_t gusNumAnimatedTiles;
@@ -152,8 +152,8 @@ BOOLEAN SetLandIndex(int32_t iMapIndex, uint16_t usIndex, uint32_t uiNewType, BO
 BOOLEAN GetTypeLandLevel(uint32_t iMapIndex, uint32_t uiNewType, uint8_t *pubLevel);
 uint8_t GetLandLevelDepth(uint32_t iMapIndex);
 
-BOOLEAN SetLandIndexWithRadius(int32_t iMapIndex, uint16_t usIndex, uint32_t uiNewType, uint8_t ubRadius,
-                               BOOLEAN fReplace);
+BOOLEAN SetLandIndexWithRadius(int32_t iMapIndex, uint16_t usIndex, uint32_t uiNewType,
+                               uint8_t ubRadius, BOOLEAN fReplace);
 
 BOOLEAN LandTypeHeigher(uint32_t uiDestType, uint32_t uiSrcType);
 
@@ -162,8 +162,10 @@ BOOLEAN MoveLandIndexToTop(uint32_t iMapIndex, uint16_t usIndex);
 // Database access functions
 BOOLEAN GetSubIndexFromTileIndex(uint16_t usIndex, uint16_t *pusSubIndex);
 BOOLEAN GetTypeSubIndexFromTileIndex(uint32_t uiCheckType, uint16_t usIndex, uint16_t *pusSubIndex);
-BOOLEAN GetTypeSubIndexFromTileIndexChar(uint32_t uiCheckType, uint16_t usIndex, uint8_t *pusSubIndex);
-BOOLEAN GetTileIndexFromTypeSubIndex(uint32_t uiCheckType, uint16_t usSubIndex, uint16_t *pusTileIndex);
+BOOLEAN GetTypeSubIndexFromTileIndexChar(uint32_t uiCheckType, uint16_t usIndex,
+                                         uint8_t *pusSubIndex);
+BOOLEAN GetTileIndexFromTypeSubIndex(uint32_t uiCheckType, uint16_t usSubIndex,
+                                     uint16_t *pusTileIndex);
 BOOLEAN GetTileType(uint16_t usIndex, uint32_t *puiType);
 BOOLEAN GetTileFlags(uint16_t usIndex, uint32_t *puiFlags);
 

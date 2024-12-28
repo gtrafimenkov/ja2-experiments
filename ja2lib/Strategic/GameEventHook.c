@@ -10,6 +10,7 @@
 #include "Laptop/InsuranceContract.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/Mercs.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
@@ -31,7 +32,6 @@
 #include "Strategic/StrategicMines.h"
 #include "Strategic/StrategicMovement.h"
 #include "Strategic/StrategicStatus.h"
-#include "Strategic/StrategicTownLoyalty.h"
 #include "Strategic/StrategicTownReputation.h"
 #include "Tactical/AirRaid.h"
 #include "Tactical/ArmsDealerInit.h"
@@ -56,11 +56,6 @@ extern void HandleMinuteUpdate();
 extern BOOLEAN gfProcessingGameEvents;
 extern uint32_t guiTimeStampOfCurrentlyExecutingEvent;
 extern BOOLEAN gfPreventDeletionOfAnyEvent;
-
-#ifdef CRIPPLED_VERSION
-void CrippledVersionEndGameCheckCallBack(uint8_t bExitValue);
-void CrippledVersionEndGameCheck();
-#endif
 
 BOOLEAN DelayEventIfBattleInProgress(STRATEGICEVENT *pEvent) {
   STRATEGICEVENT *pNewEvent;
@@ -120,7 +115,7 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
       if (!gfBasement && !gfCaves) gfDoLighting = TRUE;
       break;
     case EVENT_CHECKFORQUESTS:
-      CheckForQuests(GetWorldDay());
+      CheckForQuests(GetGameTimeInDays());
       break;
     case EVENT_AMBIENT:
       if (pEvent->ubEventType == ENDRANGED_EVENT) {
@@ -153,14 +148,14 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
     // contract.
     // Also if the player hasn't paid for a while Specks will start sending e-mails to the player
     case EVENT_DAILY_UPDATE_OF_MERC_SITE:
-      DailyUpdateOfMercSite((uint16_t)GetWorldDay());
+      DailyUpdateOfMercSite((uint16_t)GetGameTimeInDays());
       break;
     case EVENT_DAY3_ADD_EMAIL_FROM_SPECK:
-      AddEmail(MERC_INTRO, MERC_INTRO_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
+      AddEmail(MERC_INTRO, MERC_INTRO_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
       break;
     case EVENT_DAY2_ADD_EMAIL_FROM_IMP:
       AddEmail(IMP_EMAIL_PROFILE_RESULTS, IMP_EMAIL_PROFILE_RESULTS_LENGTH, IMP_PROFILE_RESULTS,
-               GetWorldTotalMin());
+               GetGameTimeInMin());
       break;
     // If a merc gets hired and they dont show up immediately, the merc gets added to the queue and
     // shows up
@@ -220,7 +215,7 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
       break;
     case EVENT_HANDLE_MINE_INCOME:
       HandleIncomeFromMines();
-      // ScreenMsg( FONT_MCOLOR_DKRED, MSG_INTERFACE, L"Income From Mines at %d", GetWorldTotalMin(
+      // ScreenMsg( FONT_MCOLOR_DKRED, MSG_INTERFACE, L"Income From Mines at %d", GetGameTimeInMin(
       // ) );
       break;
     case EVENT_SETUP_MINE_INCOME:
@@ -352,7 +347,6 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
       GetMercSiteBackOnline();
       break;
     case EVENT_INVESTIGATE_SECTOR:
-      InvestigateSector((uint8_t)pEvent->uiParam);
       break;
     case EVENT_CHECK_IF_MINE_CLEARED:
       // If so, the head miner will say so, and the mine's shutdown will be ended.
@@ -383,50 +377,7 @@ BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent) {
     case EVENT_MERC_SITE_NEW_MERC_AVAILABLE:
       NewMercsAvailableAtMercSiteCallBack();
       break;
-
-#ifdef CRIPPLED_VERSION
-    case EVENT_CRIPPLED_VERSION_END_GAME_CHECK:
-      CrippledVersionEndGameCheck();
-      break;
-#endif
   }
   gfPreventDeletionOfAnyEvent = fOrigPreventFlag;
   return TRUE;
 }
-
-#ifdef CRIPPLED_VERSION
-void CrippledVersionEndGameCheck() {
-  wchar_t zString[512];
-
-  // Dont want this to appear before we arrive
-  if (guiDay == 1) return;
-
-  if (guiDay >= 8) {
-    swprintf(
-        zString,
-        L"Game Over.  We hope you have enjoyed playing the limited version of Jagged Alliance 2.");
-  } else {
-    swprintf(zString, ARR_SIZE(zString),
-             L"You have %d game days left in this limited version of Jagged Alliance 2.",
-             (8 - guiDay));
-  }
-
-  DoScreenIndependantMessageBox(zString, MSG_BOX_FLAG_OK, CrippledVersionEndGameCheckCallBack);
-}
-
-void CrippledVersionEndGameCheckCallBack(uint8_t bExitValue) {
-  // if we should restart the game
-  if (guiDay >= 8) {
-    // clean up the code
-    ReStartingGame();
-
-    // go to the main menu
-    if (IsMapScreen_2()) {
-      SetPendingNewScreen(MAINMENU_SCREEN);
-    } else {
-      InternalLeaveTacticalScreen(MAINMENU_SCREEN);
-    }
-  }
-}
-
-#endif

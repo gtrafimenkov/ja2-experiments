@@ -15,12 +15,14 @@
 #include "Editor/ItemStatistics.h"
 #include "Editor/PopupMenu.h"
 #include "Editor/SelectWin.h"
+#include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/Line.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -29,6 +31,8 @@
 #include "Strategic/StrategicMap.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/AnimationData.h"
+#include "Tactical/HandleUI.h"
+#include "Tactical/Interface.h"
 #include "Tactical/InterfaceItems.h"
 #include "Tactical/InterfacePanels.h"
 #include "Tactical/InventoryChoosing.h"
@@ -46,7 +50,6 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SimpleRenderUtils.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
@@ -56,6 +59,8 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
+#include "rust_images.h"
 
 extern void GetSoldierAboveGuyPositions(struct SOLDIERTYPE *pSoldier, int16_t *psX, int16_t *psY,
                                         BOOLEAN fRadio);
@@ -133,7 +138,7 @@ struct OBJECTTYPE *gpMercSlotItem[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL
 // Because we only support these nine slots, they aren't continuous values, so this array helps
 // processing functions by referring to this array to get the appropriate slot.
 int8_t gbMercSlotTypes[9] = {HELMETPOS,   VESTPOS,     LEGPOS,      HANDPOS,    SECONDHANDPOS,
-                           BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS};
+                             BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS};
 // returns the usItem index of specified slot in the currently selected merc.
 #define GetSelectedMercSlotItemIndex(x) \
   (gpSelected->pDetailedPlacement->Inv[gbMercSlotTypes[x]].usItem)
@@ -152,7 +157,7 @@ void SetupTextInputForMercSchedule();
 void ExtractAndUpdateMercAttributes();
 void ExtractAndUpdateMercProfile();
 void ExtractAndUpdateMercSchedule();
-void CalcStringForValue(wchar_t* str, int bufSize, int32_t iValue, uint32_t uiMax);
+void CalcStringForValue(wchar_t *str, int bufSize, int32_t iValue, uint32_t uiMax);
 void ChangeBodyType(int8_t bOffset);  //+1 or -1 only
 
 // internal merc variables
@@ -231,20 +236,22 @@ BOOLEAN gfShowCivilians = TRUE;
 
 int16_t sCurBaseDiff = DEFAULT_DIFF;
 BOOLEAN fAskForBaseDifficulty = TRUE;
-wchar_t *zDiffNames[NUM_DIFF_LVLS] = {L"Wimp", L"Easy", L"Average", L"Tough", L"Steroid Users Only"};
+wchar_t *zDiffNames[NUM_DIFF_LVLS] = {L"Wimp", L"Easy", L"Average", L"Tough",
+                                      L"Steroid Users Only"};
 int16_t sBaseStat[NUM_DIFF_LVLS] = {50, 60, 70, 80, 90};
 int16_t sBaseExpLvl[NUM_DIFF_LVLS] = {1, 3, 5, 7, 9};
 
 wchar_t *EditMercStat[12] = {L"Max Health", L"Cur Health", L"Strength",   L"Agility",
-                            L"Dexterity",  L"Charisma",   L"Wisdom",     L"Marksmanship",
-                            L"Explosives", L"Medical",    L"Scientific", L"Exp Level"};
+                             L"Dexterity",  L"Charisma",   L"Wisdom",     L"Marksmanship",
+                             L"Explosives", L"Medical",    L"Scientific", L"Exp Level"};
 
 #define NUM_MERC_ORDERS 8
-wchar_t *EditMercOrders[8] = {L"Stationary",   L"On Guard", L"Close Patrol", L"Far Patrol",
-                             L"Point Patrol", L"On Call",  L"Seek Enemy",   L"Random Point Patrol"};
+wchar_t *EditMercOrders[8] = {L"Stationary", L"On Guard",           L"Close Patrol",
+                              L"Far Patrol", L"Point Patrol",       L"On Call",
+                              L"Seek Enemy", L"Random Point Patrol"};
 
 wchar_t *EditMercAttitudes[6] = {L"Defensive",     L"Brave Loner",   L"Brave Buddy",
-                                L"Cunning Loner", L"Cunning Buddy", L"Aggressive"};
+                                 L"Cunning Loner", L"Cunning Buddy", L"Aggressive"};
 
 // information for bodytypes.
 #ifdef RANDOM
@@ -258,16 +265,16 @@ wchar_t *EditMercAttitudes[6] = {L"Defensive",     L"Brave Loner",   L"Brave Bud
 #define MAX_CIVTYPES 18
 // #define MAX_CIVRANDOMTYPES		11
 int8_t bEnemyArray[MAX_ENEMYTYPES] = {RANDOM,    REGMALE, BIGMALE, STOCKYMALE,
-                                    REGFEMALE, TANK_NW, TANK_NE};
+                                      REGFEMALE, TANK_NW, TANK_NE};
 int8_t bCreatureArray[MAX_CREATURETYPES] = {BLOODCAT,    LARVAE_MONSTER, INFANT_MONSTER,
-                                          YAF_MONSTER, YAM_MONSTER,    ADULTFEMALEMONSTER,
-                                          AM_MONSTER,  QUEENMONSTER};
+                                            YAF_MONSTER, YAM_MONSTER,    ADULTFEMALEMONSTER,
+                                            AM_MONSTER,  QUEENMONSTER};
 int8_t bRebelArray[MAX_REBELTYPES] = {RANDOM,  FATCIV,     MANCIV,   REGMALE,
-                                    BIGMALE, STOCKYMALE, REGFEMALE};
+                                      BIGMALE, STOCKYMALE, REGFEMALE};
 int8_t bCivArray[MAX_CIVTYPES] = {RANDOM,     FATCIV,        MANCIV,   MINICIV,       DRESSCIV,
-                                HATKIDCIV,  KIDCIV,        REGMALE,  BIGMALE,       STOCKYMALE,
-                                REGFEMALE,  HUMVEE,        ELDORADO, ICECREAMTRUCK, JEEP,
-                                CRIPPLECIV, ROBOTNOWEAPON, COW};
+                                  HATKIDCIV,  KIDCIV,        REGMALE,  BIGMALE,       STOCKYMALE,
+                                  REGFEMALE,  HUMVEE,        ELDORADO, ICECREAMTRUCK, JEEP,
+                                  CRIPPLECIV, ROBOTNOWEAPON, COW};
 int8_t gbCurrCreature = BLOODCAT;
 
 BOOLEAN gfSaveBuffer = FALSE;
@@ -332,7 +339,8 @@ void ProcessMercEditing() {
           if ((ubPaletteRep < (uint8_t)iEditColorStart[ubType]) ||
               (ubPaletteRep >
                ((uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType])))
-            ubPaletteRep = (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
+            ubPaletteRep =
+                (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
 
           SET_PALETTEREP_ID(pSoldier->HeadPal, gpPalRep[ubPaletteRep].ID);
           memcpy(gpSelected->pDetailedPlacement->HeadPal, pSoldier->HeadPal, sizeof(PaletteRepID));
@@ -358,7 +366,8 @@ void ProcessMercEditing() {
 
           ubPaletteRep--;
           if (ubPaletteRep < (uint8_t)iEditColorStart[ubType])
-            ubPaletteRep = (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
+            ubPaletteRep =
+                (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
 
           SET_PALETTEREP_ID(pSoldier->SkinPal, gpPalRep[ubPaletteRep].ID);
           memcpy(gpSelected->pDetailedPlacement->SkinPal, pSoldier->SkinPal, sizeof(PaletteRepID));
@@ -384,7 +393,8 @@ void ProcessMercEditing() {
 
           ubPaletteRep--;
           if (ubPaletteRep < (uint8_t)iEditColorStart[ubType])
-            ubPaletteRep = (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
+            ubPaletteRep =
+                (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
 
           SET_PALETTEREP_ID(pSoldier->VestPal, gpPalRep[ubPaletteRep].ID);
           memcpy(gpSelected->pDetailedPlacement->VestPal, pSoldier->VestPal, sizeof(PaletteRepID));
@@ -410,7 +420,8 @@ void ProcessMercEditing() {
 
           ubPaletteRep--;
           if (ubPaletteRep < (uint8_t)iEditColorStart[ubType])
-            ubPaletteRep = (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
+            ubPaletteRep =
+                (uint8_t)iEditColorStart[ubType] + gubpNumReplacementsPerRange[ubType] - 1;
 
           SET_PALETTEREP_ID(pSoldier->PantsPal, gpPalRep[ubPaletteRep].ID);
           memcpy(gpSelected->pDetailedPlacement->PantsPal, pSoldier->PantsPal,
@@ -672,7 +683,7 @@ void ChangeBaseSoldierStats(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier == NULL) return;
 
   pSoldier->bLifeMax = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                               (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+                                 (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
   pSoldier->bLife = pSoldier->bLifeMax;
 
   pSoldier->bBleeding = 0;
@@ -680,26 +691,32 @@ void ChangeBaseSoldierStats(struct SOLDIERTYPE *pSoldier) {
 
   pSoldier->bMarksmanship =
       (uint8_t)(sBaseStat[sCurBaseDiff] +
-              (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
   pSoldier->bMedical = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                               (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
-  pSoldier->bMechanical = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                                  (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
-  pSoldier->bExplosive = (uint8_t)(sBaseStat[sCurBaseDiff] +
                                  (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+  pSoldier->bMechanical =
+      (uint8_t)(sBaseStat[sCurBaseDiff] +
+                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+  pSoldier->bExplosive =
+      (uint8_t)(sBaseStat[sCurBaseDiff] +
+                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
   pSoldier->bAgility = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                               (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
-  pSoldier->bDexterity = (uint8_t)(sBaseStat[sCurBaseDiff] +
                                  (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+  pSoldier->bDexterity =
+      (uint8_t)(sBaseStat[sCurBaseDiff] +
+                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
 
-  pSoldier->bStrength = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
-  pSoldier->bLeadership = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                                  (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+  pSoldier->bStrength =
+      (uint8_t)(sBaseStat[sCurBaseDiff] +
+                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+  pSoldier->bLeadership =
+      (uint8_t)(sBaseStat[sCurBaseDiff] +
+                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
   pSoldier->bWisdom = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                              (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
-  pSoldier->bScientific = (uint8_t)(sBaseStat[sCurBaseDiff] +
-                                  (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+                                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
+  pSoldier->bScientific =
+      (uint8_t)(sBaseStat[sCurBaseDiff] +
+                (uint16_t)(Random(BASE_STAT_DEVIATION * 2) - BASE_STAT_DEVIATION));
 
   pSoldier->bExpLevel = (uint8_t)sBaseExpLvl[sCurBaseDiff];
   pSoldier->bGunType = (int8_t)Random(BASE_GUNTYPE_DEVIATION);
@@ -732,9 +749,9 @@ void DisplayEditMercWindow(void) {
   GetSoldier(&pSoldier, (int16_t)gsSelectedMercID);
 
   //	usFillColorBack = GenericButtonFillColors[0];
-  usFillColorDark = Get16BPPColor(FROMRGB(24, 61, 81));
-  usFillColorLight = Get16BPPColor(FROMRGB(136, 138, 135));
-  usFillColorTextBk = Get16BPPColor(FROMRGB(250, 240, 188));
+  usFillColorDark = rgb32_to_rgb565(FROMRGB(24, 61, 81));
+  usFillColorLight = rgb32_to_rgb565(FROMRGB(136, 138, 135));
+  usFillColorTextBk = rgb32_to_rgb565(FROMRGB(250, 240, 188));
 
   iWidth = 266;
   iHeight = 360;
@@ -742,45 +759,43 @@ void DisplayEditMercWindow(void) {
   iXPos = 0;
 
   // Main window
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos, iYPos, iXPos + iWidth, iYPos + iHeight,
-                            usFillColorLight);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 1, iYPos + 1, iXPos + iWidth, iYPos + iHeight,
-                            usFillColorDark);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 1, iYPos + 1, iXPos + iWidth - 1,
-                            iYPos + iHeight - 1, usFillColorBack);
+  VSurfaceColorFill(vsFB, iXPos, iYPos, iXPos + iWidth, iYPos + iHeight, usFillColorLight);
+  VSurfaceColorFill(vsFB, iXPos + 1, iYPos + 1, iXPos + iWidth, iYPos + iHeight, usFillColorDark);
+  VSurfaceColorFill(vsFB, iXPos + 1, iYPos + 1, iXPos + iWidth - 1, iYPos + iHeight - 1,
+                    usFillColorBack);
 
   SetFont(FONT12POINT1);
 
   // Name window
   gprintf(iXPos + 128, iYPos + 3, L"Merc Name:");
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 128, iYPos + 16, iXPos + 128 + 104,
-                            iYPos + 16 + 19, usFillColorDark);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 129, iYPos + 17, iXPos + 128 + 104,
-                            iYPos + 17 + 19, usFillColorLight);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 129, iYPos + 17, iXPos + 128 + 103,
-                            iYPos + 17 + 18, usFillColorTextBk);
+  VSurfaceColorFill(vsFB, iXPos + 128, iYPos + 16, iXPos + 128 + 104, iYPos + 16 + 19,
+                    usFillColorDark);
+  VSurfaceColorFill(vsFB, iXPos + 129, iYPos + 17, iXPos + 128 + 104, iYPos + 17 + 19,
+                    usFillColorLight);
+  VSurfaceColorFill(vsFB, iXPos + 129, iYPos + 17, iXPos + 128 + 103, iYPos + 17 + 18,
+                    usFillColorTextBk);
   iXOff = (105 - StringPixLength(pSoldier->name, FONT12POINT1)) / 2;
   gprintf(iXPos + 130 + iXOff, iYPos + 20, L"%s", pSoldier->name);
 
   // Orders window
   gprintf(iXPos + 128, iYPos + 38, L"Orders:");
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 128, iYPos + 51, iXPos + 128 + 104,
-                            iYPos + 51 + 19, usFillColorDark);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 129, iYPos + 52, iXPos + 128 + 104,
-                            iYPos + 52 + 19, usFillColorLight);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 129, iYPos + 52, iXPos + 128 + 103,
-                            iYPos + 52 + 18, usFillColorTextBk);
+  VSurfaceColorFill(vsFB, iXPos + 128, iYPos + 51, iXPos + 128 + 104, iYPos + 51 + 19,
+                    usFillColorDark);
+  VSurfaceColorFill(vsFB, iXPos + 129, iYPos + 52, iXPos + 128 + 104, iYPos + 52 + 19,
+                    usFillColorLight);
+  VSurfaceColorFill(vsFB, iXPos + 129, iYPos + 52, iXPos + 128 + 103, iYPos + 52 + 18,
+                    usFillColorTextBk);
   iXOff = (105 - StringPixLength(EditMercOrders[pSoldier->bOrders], FONT12POINT1)) / 2;
   gprintf(iXPos + 130 + iXOff, iYPos + 55, L"%s", EditMercOrders[pSoldier->bOrders]);
 
   // Combat window
   gprintf(iXPos + 128, iYPos + 73, L"Combat Attitude:");
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 128, iYPos + 86, iXPos + 128 + 104,
-                            iYPos + 86 + 19, usFillColorDark);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 129, iYPos + 87, iXPos + 128 + 104,
-                            iYPos + 87 + 19, usFillColorLight);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 129, iYPos + 87, iXPos + 128 + 103,
-                            iYPos + 87 + 18, usFillColorTextBk);
+  VSurfaceColorFill(vsFB, iXPos + 128, iYPos + 86, iXPos + 128 + 104, iYPos + 86 + 19,
+                    usFillColorDark);
+  VSurfaceColorFill(vsFB, iXPos + 129, iYPos + 87, iXPos + 128 + 104, iYPos + 87 + 19,
+                    usFillColorLight);
+  VSurfaceColorFill(vsFB, iXPos + 129, iYPos + 87, iXPos + 128 + 103, iYPos + 87 + 18,
+                    usFillColorTextBk);
   iXOff = (105 - StringPixLength(EditMercAttitudes[pSoldier->bAttitude], FONT12POINT1)) / 2;
   gprintf(iXPos + 130 + iXOff, iYPos + 90, L"%s", EditMercAttitudes[pSoldier->bAttitude]);
 
@@ -801,12 +816,12 @@ void DisplayEditMercWindow(void) {
   // Stat value windows
   for (x = 0; x < 12; x++) {
     gprintf(iXPos + 6, iYPos + 114 + (20 * x), L"%s", EditMercStat[x]);
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 116, iYPos + 110 + (20 * x), iXPos + 116 + 30,
-                              iYPos + 110 + (20 * x) + 19, usFillColorDark);
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 117, iYPos + 111 + (20 * x), iXPos + 116 + 30,
-                              iYPos + 111 + (20 * x) + 19, usFillColorLight);
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, iXPos + 117, iYPos + 111 + (20 * x), iXPos + 116 + 29,
-                              iYPos + 111 + (20 * x) + 18, usFillColorTextBk);
+    VSurfaceColorFill(vsFB, iXPos + 116, iYPos + 110 + (20 * x), iXPos + 116 + 30,
+                      iYPos + 110 + (20 * x) + 19, usFillColorDark);
+    VSurfaceColorFill(vsFB, iXPos + 117, iYPos + 111 + (20 * x), iXPos + 116 + 30,
+                      iYPos + 111 + (20 * x) + 19, usFillColorLight);
+    VSurfaceColorFill(vsFB, iXPos + 117, iYPos + 111 + (20 * x), iXPos + 116 + 29,
+                      iYPos + 111 + (20 * x) + 18, usFillColorTextBk);
 
     swprintf(TempString, ARR_SIZE(TempString), L"%d", iEditStat[x]);
     iXOff = (30 - StringPixLength(TempString, FONT12POINT1)) / 2;
@@ -1127,12 +1142,12 @@ void ShowEditMercColorSet(uint8_t ubPaletteRep, int16_t sSet) {
   sLeft = 230;
   sRight = 359;
 
-  usFillColorDark = Get16BPPColor(FROMRGB(24, 61, 81));
-  usFillColorLight = Get16BPPColor(FROMRGB(136, 138, 135));
+  usFillColorDark = rgb32_to_rgb565(FROMRGB(24, 61, 81));
+  usFillColorLight = rgb32_to_rgb565(FROMRGB(136, 138, 135));
 
   // Draw color bar window area
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sLeft, sTop, sRight, sBottom, usFillColorDark);
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sLeft + 1, sTop + 1, sRight, sBottom, usFillColorLight);
+  VSurfaceColorFill(vsFB, sLeft, sTop, sRight, sBottom, usFillColorDark);
+  VSurfaceColorFill(vsFB, sLeft + 1, sTop + 1, sRight, sBottom, usFillColorLight);
   InvalidateRegion(sLeft, sTop, sRight, sBottom);
 
   sTop++;
@@ -1144,12 +1159,12 @@ void ShowEditMercColorSet(uint8_t ubPaletteRep, int16_t sSet) {
   for (cnt1 = 0; cnt1 < ubSize; cnt1++) {
     if (cnt1 == (ubSize - 1)) sRight = 358;
     if (ubPaletteRep == 0xff)
-      us16BPPColor = Get16BPPColor(FROMRGB((16 - cnt1) * 10, (16 - cnt1) * 10, (16 - cnt1) * 10));
+      us16BPPColor = rgb32_to_rgb565(FROMRGB((16 - cnt1) * 10, (16 - cnt1) * 10, (16 - cnt1) * 10));
     else
       us16BPPColor =
-          Get16BPPColor(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
-                                gpPalRep[ubPaletteRep].b[cnt1]));
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, sLeft, sTop, sRight, sBottom, us16BPPColor);
+          rgb32_to_rgb565(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
+                                  gpPalRep[ubPaletteRep].b[cnt1]));
+    VSurfaceColorFill(vsFB, sLeft, sTop, sRight, sBottom, us16BPPColor);
 
     sLeft += sUnitSize;
     sRight += sUnitSize;
@@ -1234,26 +1249,26 @@ void CreateEditMercWindow(void) {
   gpWorldLevelData[iEditMercLocation].pObjectHead->ubShadeLevel = DEFAULT_SHADE_LEVEL;
 
   iEditMercBkgrndArea =
-      CreateHotSpot((int16_t)iXPos, (int16_t)iYPos, (int16_t)iWidth, (int16_t)iHeight, MSYS_PRIORITY_NORMAL,
-                    DEFAULT_MOVE_CALLBACK, EditMercBkgrndCallback);
+      CreateHotSpot((int16_t)iXPos, (int16_t)iYPos, (int16_t)iWidth, (int16_t)iHeight,
+                    MSYS_PRIORITY_NORMAL, DEFAULT_MOVE_CALLBACK, EditMercBkgrndCallback);
 
   iEditMercColorPage = CreateTextButton(
       L"Merc Colors", (int16_t)FONT12POINT1, FONT_BLACK, FONT_BLACK, BUTTON_USE_DEFAULT,
       (int16_t)(iXPos + 183), (int16_t)(iYPos + 315), 80, 20, BUTTON_NO_TOGGLE,
       MSYS_PRIORITY_NORMAL + 1, DEFAULT_MOVE_CALLBACK, EditMercChangeToColorPageCallback);
-  iEditMercEnd = CreateTextButton(L"Done", (int16_t)FONT12POINT1, FONT_MCOLOR_BLACK, FONT_BLACK,
-                                  BUTTON_USE_DEFAULT, (int16_t)(iXPos + 183), (int16_t)(iYPos + 337),
-                                  80, 20, BUTTON_NO_TOGGLE, MSYS_PRIORITY_NORMAL + 1,
-                                  DEFAULT_MOVE_CALLBACK, EditMercDoneEditCallback);
+  iEditMercEnd = CreateTextButton(
+      L"Done", (int16_t)FONT12POINT1, FONT_MCOLOR_BLACK, FONT_BLACK, BUTTON_USE_DEFAULT,
+      (int16_t)(iXPos + 183), (int16_t)(iYPos + 337), 80, 20, BUTTON_NO_TOGGLE,
+      MSYS_PRIORITY_NORMAL + 1, DEFAULT_MOVE_CALLBACK, EditMercDoneEditCallback);
 
   // Disable color editing for PC Mercs
   if ((uint16_t)gsSelectedMercID >= gTacticalStatus.Team[OUR_TEAM].bFirstID &&
       (uint16_t)gsSelectedMercID <= gTacticalStatus.Team[OUR_TEAM].bLastID)
     DisableButton(iEditMercColorPage);
 
-  iEditorButton[8] = QuickCreateButton(giEditMercImage[0], (int16_t)(iXPos + 98), (int16_t)(iYPos + 51),
-                                       BUTTON_NO_TOGGLE, MSYS_PRIORITY_NORMAL + 1,
-                                       DEFAULT_MOVE_CALLBACK, EditMercPrevOrderCallback);
+  iEditorButton[8] = QuickCreateButton(
+      giEditMercImage[0], (int16_t)(iXPos + 98), (int16_t)(iYPos + 51), BUTTON_NO_TOGGLE,
+      MSYS_PRIORITY_NORMAL + 1, DEFAULT_MOVE_CALLBACK, EditMercPrevOrderCallback);
   iEditorButton[9] = QuickCreateButton(
       giEditMercImage[1], (int16_t)(iXPos + 233), (int16_t)(iYPos + 51), BUTTON_NO_TOGGLE,
       MSYS_PRIORITY_NORMAL + 1, DEFAULT_MOVE_CALLBACK, EditMercNextOrderCallback);
@@ -1674,7 +1689,7 @@ void SetupTextInputForMercAttributes() {
 // In the merc editing, all detailed placement values for generated attributes are set to -1.
 // When making a generated attribute static, we then set the value to its applicable value.
 // This function is similar to the itoa function except that -1 is converted to a null string.
-void CalcStringForValue(wchar_t* str, int bufSize, int32_t iValue, uint32_t uiMax) {
+void CalcStringForValue(wchar_t *str, int bufSize, int32_t iValue, uint32_t uiMax) {
   if (iValue < 0)  // a blank string is determined by a negative value.
     str[0] = '\0';
   else if ((uint32_t)iValue > uiMax)  // higher than max attribute value, so convert it to the max.
@@ -1695,7 +1710,8 @@ void ExtractAndUpdateMercAttributes() {
   gpSelected->pDetailedPlacement->bExpLevel = (int8_t)min(GetNumericStrictValueFromField(0), 100);
   gpSelected->pDetailedPlacement->bLife = (int8_t)min(GetNumericStrictValueFromField(1), 100);
   gpSelected->pDetailedPlacement->bLifeMax = (int8_t)min(GetNumericStrictValueFromField(2), 100);
-  gpSelected->pDetailedPlacement->bMarksmanship = (int8_t)min(GetNumericStrictValueFromField(3), 100);
+  gpSelected->pDetailedPlacement->bMarksmanship =
+      (int8_t)min(GetNumericStrictValueFromField(3), 100);
   gpSelected->pDetailedPlacement->bStrength = (int8_t)min(GetNumericStrictValueFromField(4), 100);
   gpSelected->pDetailedPlacement->bAgility = (int8_t)min(GetNumericStrictValueFromField(5), 100);
   gpSelected->pDetailedPlacement->bDexterity = (int8_t)min(GetNumericStrictValueFromField(6), 100);
@@ -1703,7 +1719,8 @@ void ExtractAndUpdateMercAttributes() {
   gpSelected->pDetailedPlacement->bLeadership = (int8_t)min(GetNumericStrictValueFromField(8), 100);
   gpSelected->pDetailedPlacement->bExplosive = (int8_t)min(GetNumericStrictValueFromField(9), 100);
   gpSelected->pDetailedPlacement->bMedical = (int8_t)min(GetNumericStrictValueFromField(10), 100);
-  gpSelected->pDetailedPlacement->bMechanical = (int8_t)min(GetNumericStrictValueFromField(11), 100);
+  gpSelected->pDetailedPlacement->bMechanical =
+      (int8_t)min(GetNumericStrictValueFromField(11), 100);
   gpSelected->pDetailedPlacement->bMorale = (int8_t)min(GetNumericStrictValueFromField(11), 100);
 
   // make sure that experience level ranges between 1 and 9
@@ -2336,9 +2353,8 @@ void UpdateMercsInfo() {
       break;
     case MERC_BASICMODE:
     case MERC_GENERALMODE:
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiExclamation, 0, 188, 362, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiKeyImage, 0, 186, 387, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, guiExclamation, 0, 188, 362);
+      BltVObjectFromIndex(vsFB, guiKeyImage, 0, 186, 387);
       SetFont(SMALLCOMPFONT);
       SetFontForeground(FONT_YELLOW);
       SetFontShadow(FONT_NEARBLACK);
@@ -2489,8 +2505,7 @@ void UpdateMercsInfo() {
       if (gubScheduleInstructions) {
         wchar_t str[255];
         wchar_t keyword[10] = L"";
-        ColorFillVideoSurfaceArea(FRAME_BUFFER, 431, 388, 590, 450,
-                                  Get16BPPColor(FROMRGB(32, 45, 72)));
+        VSurfaceColorFill(vsFB, 431, 388, 590, 450, rgb32_to_rgb565(FROMRGB(32, 45, 72)));
         switch (gCurrSchedule.ubAction[gubCurrentScheduleActionIndex]) {
           case SCHEDULE_ACTION_LOCKDOOR:
             swprintf(keyword, ARR_SIZE(keyword), L"lock");
@@ -2537,7 +2552,7 @@ void UpdateMercsInfo() {
 // is called by the region callback functions to handle these cases.  The event types are defined
 // in Editor Taskbar Utils.h.  Here are the internal functions...
 
-SGPRect mercRects[9] = {
+struct GRect mercRects[9] = {
     {75, 0, 104, 19},    // head
     {75, 22, 104, 41},   // body
     {76, 73, 105, 92},   // legs
@@ -2549,18 +2564,18 @@ SGPRect mercRects[9] = {
     {180, 75, 232, 94}   // pack 4
 };
 
-BOOLEAN PointInRect(SGPRect *pRect, int32_t x, int32_t y) {
+BOOLEAN PointInRect(struct GRect *pRect, int32_t x, int32_t y) {
   return (x >= pRect->iLeft && x <= pRect->iRight && y >= pRect->iTop && y <= pRect->iBottom);
 }
 
-void DrawRect(SGPRect *pRect, int16_t color) {
+void DrawRect(struct GRect *pRect, int16_t color) {
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, pRect->iLeft + MERCPANEL_X, pRect->iTop + MERCPANEL_Y,
                 pRect->iRight + MERCPANEL_X, pRect->iBottom + MERCPANEL_Y, color, pDestBuf);
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
   // InvalidateRegion( pRect->iLeft+175, pRect->iTop+361, pRect->iRight+176, pRect->iBottom+362 );
 }
 
@@ -2576,12 +2591,12 @@ void RenderSelectedMercsInventory() {
     if (gpMercSlotItem[i]) {  // Render the current image.
       xp = mercRects[i].iLeft + 4 + MERCPANEL_X;
       yp = mercRects[i].iTop + MERCPANEL_Y;
-      pDst = LockVideoSurface(FRAME_BUFFER, &uiDstPitchBYTES);
-      pSrc = LockVideoSurface(guiMercInvPanelBuffers[i], &uiSrcPitchBYTES);
-      Blt16BPPTo16BPPTrans((uint16_t *)pDst, uiDstPitchBYTES, (uint16_t *)pSrc, uiSrcPitchBYTES, xp, yp,
-                           0, 0, i < 3 ? 22 : 44, 15, 0);
-      UnLockVideoSurface(FRAME_BUFFER);
-      UnLockVideoSurface(guiMercInvPanelBuffers[i]);
+      pDst = VSurfaceLockOld(vsFB, &uiDstPitchBYTES);
+      pSrc = VSurfaceLockOld(GetVSByID(guiMercInvPanelBuffers[i]), &uiSrcPitchBYTES);
+      Blt16BPPTo16BPPTrans((uint16_t *)pDst, uiDstPitchBYTES, (uint16_t *)pSrc, uiSrcPitchBYTES, xp,
+                           yp, 0, 0, i < 3 ? 22 : 44, 15, 0);
+      VSurfaceUnlock(vsFB);
+      VSurfaceUnlock(GetVSByID(guiMercInvPanelBuffers[i]));
       LoadItemInfo(gpMercSlotItem[i]->usItem, pItemName, NULL);
       // Render the text
       switch (i) {
@@ -2612,8 +2627,8 @@ void RenderSelectedMercsInventory() {
         ubFontColor = FONT_YELLOW;
       else
         ubFontColor = FONT_WHITE;
-      DisplayWrappedString((uint16_t)xp, (uint16_t)yp, 60, 2, SMALLCOMPFONT, ubFontColor, pItemName, 0,
-                           FALSE, LEFT_JUSTIFIED);
+      DisplayWrappedString((uint16_t)xp, (uint16_t)yp, 60, 2, SMALLCOMPFONT, ubFontColor, pItemName,
+                           0, FALSE, LEFT_JUSTIFIED);
     }
   }
 }
@@ -2634,23 +2649,16 @@ void DeleteSelectedMercsItem() {
 // NOTE:  Step one can be skipped (when selecting an existing merc).  By setting the
 void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   uint32_t uiVideoObjectIndex;
-  uint32_t uiSrcID, uiDstID;
   struct VObject *hVObject;
-  ETRLEObject *pObject;
+  struct Subimage *pObject;
   INVTYPE *item;
-  SGPRect SrcRect, DstRect;
+  struct GRect SrcRect, DstRect;
   int32_t iSrcWidth, iSrcHeight;
   int32_t iDstWidth, iDstHeight;
   float rScalar, rWidthScalar, rHeightScalar;
   BOOLEAN fUnDroppable;
 
   if (fCreate) {
-    /*
-    if( gpMercSlotItem[ gbCurrSelect ] && gpMercSlotItem[ gbCurrSelect ]->usItem ==
-    gusMercsNewItemIndex ) { //User selected same item, so ignore. gusMercsNewItemIndex = 0xffff;
-            return;
-    }
-    */
     if (gusMercsNewItemIndex == 0xffff) {  // User selected no item, so ignore.
       return;
     }
@@ -2702,8 +2710,8 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   // the rendering happens.
 
   // assign the buffers
-  uiSrcID = guiMercTempBuffer;
-  uiDstID = guiMercInvPanelBuffers[gbCurrSelect];
+  struct VSurface *src = GetVSByID(guiMercTempBuffer);
+  struct VSurface *dest = GetVSByID(guiMercInvPanelBuffers[gbCurrSelect]);
 
   // build the rects
   iDstWidth = gbCurrSelect < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH;
@@ -2718,10 +2726,8 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   DstRect.iBottom = iDstHeight;
 
   // clear both buffers (fill with black to erase previous graphic)
-  ColorFillVideoSurfaceArea(uiSrcID, SrcRect.iLeft, SrcRect.iTop, SrcRect.iRight, SrcRect.iBottom,
-                            0);
-  ColorFillVideoSurfaceArea(uiDstID, DstRect.iLeft, DstRect.iTop, DstRect.iRight, DstRect.iBottom,
-                            0);
+  VSurfaceColorFill(src, SrcRect.iLeft, SrcRect.iTop, SrcRect.iRight, SrcRect.iBottom, 0);
+  VSurfaceColorFill(dest, DstRect.iLeft, DstRect.iTop, DstRect.iRight, DstRect.iBottom, 0);
 
   // if the index is 0, then there is no item.
   if (!gusMercsNewItemIndex) return;
@@ -2730,15 +2736,15 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   item = &Item[gusMercsNewItemIndex];
   uiVideoObjectIndex = GetInterfaceGraphicForItem(item);
   GetVideoObject(&hVObject, uiVideoObjectIndex);
-  BltVideoObjectOutlineFromIndex(uiSrcID, uiVideoObjectIndex, item->ubGraphicNum, 0, 0, 0, FALSE);
+  BltVideoObjectOutlineFromIndex(src, uiVideoObjectIndex, item->ubGraphicNum, 0, 0, 0, FALSE);
 
   // crop the source image
-  pObject = &hVObject->pETRLEObject[item->ubGraphicNum];
-  iSrcWidth = pObject->usWidth;
-  iSrcHeight = pObject->usHeight;
-  SrcRect.iLeft += pObject->sOffsetX;
+  pObject = &hVObject->subimages[item->ubGraphicNum];
+  iSrcWidth = pObject->width;
+  iSrcHeight = pObject->height;
+  SrcRect.iLeft += pObject->x_offset;
   SrcRect.iRight = SrcRect.iLeft + iSrcWidth;
-  SrcRect.iTop += pObject->sOffsetY;
+  SrcRect.iTop += pObject->y_offset;
   SrcRect.iBottom = SrcRect.iTop + iSrcHeight;
 
   // if the source image width is less than 30 (small slot), then modify the DstRect.
@@ -2781,7 +2787,7 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   DstRect.iBottom = DstRect.iTop + iDstHeight;
 
   // scale the item down to the smaller buffer.
-  BltStretchVideoSurface(uiDstID, uiSrcID, 0, 0, VO_BLT_SRCTRANSPARENCY, &SrcRect, &DstRect);
+  BltStretchVideoSurface(dest, src, 0, 0, VO_BLT_SRCTRANSPARENCY, &SrcRect, &DstRect);
 
   // invalidate the mercs new item index
   gusMercsNewItemIndex = 0xffff;
@@ -2790,15 +2796,14 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
 void RenderMercInventoryPanel() {
   int32_t x;
   // Draw the graphical panel
-  BltVideoObjectFromIndex(FRAME_BUFFER, guiMercInventoryPanel, 0, MERCPANEL_X, MERCPANEL_Y,
-                          VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsFB, guiMercInventoryPanel, 0, MERCPANEL_X, MERCPANEL_Y);
   // Mark the buttons dirty, so they don't disappear.
   for (x = FIRST_MERCS_INVENTORY_BUTTON; x <= LAST_MERCS_INVENTORY_BUTTON; x++) {
     MarkAButtonDirty(iEditorButton[x]);
   }
   RenderButtons();
-  if (gbCurrHilite != -1) DrawRect(&mercRects[gbCurrHilite], Get16BPPColor(FROMRGB(200, 200, 0)));
-  if (gbCurrSelect != -1) DrawRect(&mercRects[gbCurrSelect], Get16BPPColor(FROMRGB(200, 0, 0)));
+  if (gbCurrHilite != -1) DrawRect(&mercRects[gbCurrHilite], rgb32_to_rgb565(FROMRGB(200, 200, 0)));
+  if (gbCurrSelect != -1) DrawRect(&mercRects[gbCurrSelect], rgb32_to_rgb565(FROMRGB(200, 0, 0)));
   RenderSelectedMercsInventory();
   InvalidateRegion(MERCPANEL_X, MERCPANEL_Y, 475, 460);
   UpdateItemStatsPanel();
@@ -2983,7 +2988,7 @@ void RenderMercStrings() {
   struct SOLDIERTYPE *pSoldier;
   int16_t sXPos, sYPos;
   int16_t sX, sY;
-  wchar_t* pStr;
+  wchar_t *pStr;
   SOLDIERINITNODE *curr;
   wchar_t str[50];
 

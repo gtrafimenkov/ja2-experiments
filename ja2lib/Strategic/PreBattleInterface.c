@@ -12,7 +12,9 @@
 #include "JAScreens.h"
 #include "Laptop/History.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
+#include "SGP/Input.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
@@ -45,7 +47,6 @@
 #include "Tactical/SoldierMacros.h"
 #include "Tactical/Squads.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TacticalPlacementGUI.h"
 #include "Town.h"
 #include "UI.h"
@@ -60,14 +61,6 @@
 extern void InitializeTacticalStatusAtBattleStart();
 extern BOOLEAN gfDelayAutoResolveStart;
 extern BOOLEAN gfTransitionMapscreenToAutoResolve;
-
-#ifdef JA2BETAVERSION
-extern BOOLEAN gfExitViewer;
-#endif
-
-// zoom flag
-extern BOOLEAN fZoomFlag;
-extern BOOLEAN fMapScreenBottomDirty;
 
 BOOLEAN gfTacticalTraversal = FALSE;
 struct GROUP *gpTacticalTraversalGroup = NULL;
@@ -110,8 +103,8 @@ void AutoResolveBattleCallback(GUI_BUTTON *btn, int32_t reason);
 void GoToSectorCallback(GUI_BUTTON *btn, int32_t reason);
 void RetreatMercsCallback(GUI_BUTTON *btn, int32_t reason);
 
-void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition, int szConditionSize,
-                             uint8_t *pubHPPercent, uint8_t *pubBPPercent);
+void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition,
+                             int szConditionSize, uint8_t *pubHPPercent, uint8_t *pubBPPercent);
 
 void CheckForRobotAndIfItsControlled(void);
 
@@ -255,7 +248,6 @@ void ValidateAndCorrectInBattleCounters(struct GROUP *pLocGroup) {
 #endif
 
 void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) {
-  VOBJECT_DESC VObjectDesc;
   int32_t i;
   uint8_t ubGroupID = 0;
   uint8_t ubNumStationaryEnemies = 0;
@@ -294,19 +286,6 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
       }
     }
 
-// If we are currently in the AI Viewer development utility, then remove it first.  It automatically
-// returns to the mapscreen upon removal, which is where we want to go.
-#ifdef JA2BETAVERSION
-    if (guiCurrentScreen == AIVIEWER_SCREEN) {
-      gfExitViewer = TRUE;
-      gpBattleGroup = pBattleGroup;
-      gfEnteringMapScreen = TRUE;
-      gfEnteringMapScreenToEnterPreBattleInterface = TRUE;
-      gfUsePersistantPBI = TRUE;
-      return;
-    }
-#endif
-
     // ATE: Added check for fPersistantPBI = TRUE if pBattleGroup == NULL
     // Searched code and saw that this condition only happens for creatures
     // fixing a bug
@@ -340,7 +319,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
       // get number of enemies thought to be here
       SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)].bLastKnownEnemies =
           NumEnemiesInSector(gubPBSectorX, gubPBSectorY);
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
     } else {
       gubPBSectorX = SectorID8_X(gubSectorIDOfCreatureAttack);
       gubPBSectorY = SectorID8_Y(gubSectorIDOfCreatureAttack);
@@ -383,7 +362,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
     }
   }
 
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
   ChangeSelectedMapSector(gubPBSectorX, gubPBSectorY, gubPBSectorZ);
   RenderMapScreenInterfaceBottom();
 
@@ -400,9 +379,9 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
   MSYS_DefineRegion(&PBInterfaceBlanket, 0, 0, 261, 359, MSYS_PRIORITY_HIGHEST - 5, 0, 0, 0);
 
   // Create the panel
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_PREBATTLEPANEL);
-  if (!AddVideoObject(&VObjectDesc, &uiInterfaceImages))
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_PREBATTLEPANEL);
+  if (!AddVObjectFromFile(ImageFile, &uiInterfaceImages))
     AssertMsg(0, "Failed to load interface\\PreBattlePanel.sti");
 
   // Create the 3 buttons
@@ -529,7 +508,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
               pSector = &SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)];
               if (!(pSector->uiFlags & SF_ALREADY_VISITED)) {
                 iChance = (uint8_t)(4 - bBestExpLevel + 2 * gGameOptions.ubDifficultyLevel +
-                                  CurrentPlayerProgressPercentage() / 10);
+                                    CurrentPlayerProgressPercentage() / 10);
                 if (pSector->uiFlags & SF_ENEMY_AMBUSH_LOCATION) {
                   iChance += 20;
                 }
@@ -688,15 +667,13 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
 }
 
 void DoTransitionFromMapscreenToPreBattleInterface() {
-  SGPRect DstRect, PBIRect;
+  struct GRect DstRect, PBIRect;
   uint32_t uiStartTime, uiCurrTime;
   int32_t iPercentage, iFactor;
   uint32_t uiTimeRange;
   int16_t sStartLeft, sEndLeft, sStartTop, sEndTop;
   int32_t iLeft, iTop, iWidth, iHeight;
   BOOLEAN fEnterAutoResolveMode = FALSE;
-
-  if (!gfExtraBuffer) return;
 
   PauseTime(FALSE);
 
@@ -718,7 +695,7 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
   sEndTop = 180;
 
   // save the mapscreen buffer
-  BlitBufferToBuffer(FRAME_BUFFER, guiEXTRABUFFER, 0, 0, 640, 480);
+  VSurfaceBlitBufToBuf(vsFB, vsExtraBuffer, 0, 0, 640, 480);
 
   if (gfEnterAutoResolveMode) {  // If we are intending on immediately entering autoresolve, change
                                  // the global flag so that it will actually
@@ -736,16 +713,16 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     gfEnterAutoResolveMode = TRUE;
   }
 
-  BlitBufferToBuffer(guiSAVEBUFFER, FRAME_BUFFER, 27, 54, 209, 32);
+  VSurfaceBlitBufToBuf(vsSB, vsFB, 27, 54, 209, 32);
   RenderButtons();
-  BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, 27, 54, 209, 32);
+  VSurfaceBlitBufToBuf(vsFB, vsSB, 27, 54, 209, 32);
   gfRenderPBInterface = TRUE;
 
   // hide the prebattle interface
-  BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, 0, 0, 261, 359);
+  VSurfaceBlitBufToBuf(vsExtraBuffer, vsFB, 0, 0, 261, 359);
   PlayJA2SampleFromFile("SOUNDS\\Laptop power up (8-11).wav", RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
   InvalidateScreen();
-  RefreshScreen(NULL);
+  RefreshScreen();
 
   while (iPercentage < 100) {
     uiCurrTime = GetJA2Clock();
@@ -771,17 +748,17 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     DstRect.iTop = iTop - iHeight * iPercentage / 200;
     DstRect.iBottom = DstRect.iTop + max(iHeight * iPercentage / 100, 1);
 
-    BltStretchVideoSurface(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 0, &PBIRect, &DstRect);
+    BltStretchVideoSurface(vsFB, vsSB, 0, 0, 0, &PBIRect, &DstRect);
 
     InvalidateScreen();
-    RefreshScreen(NULL);
+    RefreshScreen();
 
     // Restore the previous rect.
-    BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
-                       (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
-                       (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
+    VSurfaceBlitBufToBuf(vsExtraBuffer, vsFB, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
+                         (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
+                         (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
   }
-  BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 640, 480);
+  VSurfaceBlitBufToBuf(vsFB, vsSB, 0, 0, 640, 480);
 }
 
 void KillPreBattleInterface() {
@@ -812,16 +789,16 @@ void KillPreBattleInterface() {
   // UpdateCharRegionHelpText( );
 
   // re draw affected regions
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
   fTeamPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
   fCharacterInfoPanelDirty = TRUE;
   gfDisplayPotentialRetreatPaths = FALSE;
 
   // Enable the options button when the auto resolve  screen comes up
   EnableDisAbleMapScreenOptionsButton(TRUE);
 
-  ColorFillVideoSurfaceArea(guiSAVEBUFFER, 0, 0, 261, 359, 0);
+  VSurfaceColorFill(vsSB, 0, 0, 261, 359, 0);
 
   EnableTeamInfoPanels();
   if (ButtonList[giMapContractButton]) {
@@ -907,13 +884,13 @@ void RenderPreBattleInterface() {
       fMouseInRetreatButtonArea = TRUE;
     if (fMouseInRetreatButtonArea != gfDisplayPotentialRetreatPaths) {
       gfDisplayPotentialRetreatPaths = fMouseInRetreatButtonArea;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
     }
   }
 
   if (gfRenderPBInterface) {
     // set font destinanation buffer to the save buffer
-    SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+    SetFontDest(vsSB, 0, 0, 640, 480, FALSE);
 
     if (gfPBButtonsHidden) {
       ShowButton(iPBButton[0]);
@@ -929,20 +906,20 @@ void RenderPreBattleInterface() {
     gfRenderPBInterface = FALSE;
     GetVideoObject(&hVObject, uiInterfaceImages);
     // main panel
-    BltVideoObject(guiSAVEBUFFER, hVObject, MAINPANEL, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsSB, hVObject, MAINPANEL, 0, 0);
     // main title
 
     RenderPBHeader(&x, &width);
     // now draw the title bars up to the text.
     for (i = x - 12; i > 20; i -= 10) {
-      BltVideoObject(guiSAVEBUFFER, hVObject, TITLE_BAR_PIECE, i, 6, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsSB, hVObject, TITLE_BAR_PIECE, i, 6);
     }
     for (i = x + width + 2; i < 231; i += 10) {
-      BltVideoObject(guiSAVEBUFFER, hVObject, TITLE_BAR_PIECE, i, 6, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsSB, hVObject, TITLE_BAR_PIECE, i, 6);
     }
 
     y = BOTTOM_Y - ACTUAL_HEIGHT - ROW_HEIGHT * max(guiNumUninvolved, 1);
-    BltVideoObject(guiSAVEBUFFER, hVObject, UNINVOLVED_HEADER, 8, y, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsSB, hVObject, UNINVOLVED_HEADER, 8, y);
 
     SetFont(BLOCKFONT);
     SetFontForeground(FONT_BEIGE);
@@ -991,12 +968,12 @@ void RenderPreBattleInterface() {
     // Draw the bottom columns
     for (i = 0; i < (int32_t)max(guiNumUninvolved, 1); i++) {
       y = BOTTOM_Y - ROW_HEIGHT * (i + 1) + 1;
-      BltVideoObject(guiSAVEBUFFER, hVObject, BOTTOM_COLUMN, 161, y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsSB, hVObject, BOTTOM_COLUMN, 161, y);
     }
 
     for (i = 0; i < (int32_t)(21 - max(guiNumUninvolved, 1)); i++) {
       y = TOP_Y + ROW_HEIGHT * i;
-      BltVideoObject(guiSAVEBUFFER, hVObject, TOP_COLUMN, 186, y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsSB, hVObject, TOP_COLUMN, 186, y);
     }
 
     // location
@@ -1031,7 +1008,7 @@ void RenderPreBattleInterface() {
     x = 142 + (27 - StringPixLength(str, FONT14ARIAL)) / 2;
     mprintf(x, y, str);
     // militia
-    swprintf(str, ARR_SIZE(str), L"%d", CountAllMilitiaInSector(gubPBSectorX, gubPBSectorY));
+    swprintf(str, ARR_SIZE(str), L"%d", CountMilitiaInSector(gubPBSectorX, gubPBSectorY));
     x = 227 + (27 - StringPixLength(str, FONT14ARIAL)) / 2;
     mprintf(x, y, str);
     SetFontShadow(FONT_NEARBLACK);
@@ -1135,7 +1112,7 @@ void RenderPreBattleInterface() {
     RestoreExternBackgroundRect(0, 0, 261, 359);
 
     // restore font destinanation buffer to the frame buffer
-    SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+    SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
   } else if (gfBlinkHeader) {
     RenderPBHeader(&x, &width);  // the text is important enough to blink.
   }
@@ -1172,7 +1149,7 @@ void AutoResolveBattleCallback(GUI_BUTTON *btn, int32_t reason) {
                          btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
         ExecuteBaseDirtyRectQueue();
         EndFrameBufferRender();
-        RefreshScreen(NULL);
+        RefreshScreen();
         KillPreBattleInterface();
         StopTimeCompression();
         SetMusicMode(MUSIC_TACTICAL_NOTHING);
@@ -1205,7 +1182,7 @@ void GoToSectorCallback(GUI_BUTTON *btn, int32_t reason) {
                          btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
         ExecuteBaseDirtyRectQueue();
         EndFrameBufferRender();
-        RefreshScreen(NULL);
+        RefreshScreen();
         KillPreBattleInterface();
         StopTimeCompression();
         SetMusicMode(MUSIC_TACTICAL_NOTHING);
@@ -1223,7 +1200,7 @@ void GoToSectorCallback(GUI_BUTTON *btn, int32_t reason) {
                        btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
       ExecuteBaseDirtyRectQueue();
       EndFrameBufferRender();
-      RefreshScreen(NULL);
+      RefreshScreen();
       if (gubPBSectorX == gWorldSectorX && gubPBSectorY == gWorldSectorY && !gbWorldSectorZ) {
         gfGotoSectorTransition = TRUE;
       }
@@ -1256,7 +1233,7 @@ void RetreatMercsCallback(GUI_BUTTON *btn, int32_t reason) {
 
       // NOTE: this code assumes you can never retreat while underground
       HandleLoyaltyImplicationsOfMercRetreat(RETREAT_PBI, gubPBSectorX, gubPBSectorY, 0);
-      if (CountAllMilitiaInSector(
+      if (CountMilitiaInSector(
               gubPBSectorX,
               gubPBSectorY)) {  // Mercs retreat, but enemies still need to fight the militia
         gfEnterAutoResolveMode = TRUE;
@@ -1273,7 +1250,7 @@ void RetreatMercsCallback(GUI_BUTTON *btn, int32_t reason) {
                        btn->Area.RegionBottomRightX, btn->Area.RegionBottomRightY);
       ExecuteBaseDirtyRectQueue();
       EndFrameBufferRender();
-      RefreshScreen(NULL);
+      RefreshScreen();
       KillPreBattleInterface();
       StopTimeCompression();
       gpBattleGroup = NULL;
@@ -1296,8 +1273,8 @@ enum {
   COND_DEAD
 };
 
-void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition, int szConditionSize,
-                             uint8_t *pubHPPercent, uint8_t *pubBPPercent) {
+void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition,
+                             int szConditionSize, uint8_t *pubHPPercent, uint8_t *pubBPPercent) {
   Assert(pSoldier);
   *pubHPPercent = (uint8_t)(pSoldier->bLife * 100 / pSoldier->bLifeMax);
   *pubBPPercent = pSoldier->bBreath;
@@ -1512,7 +1489,8 @@ void CalculateNonPersistantPBIInfo() {
         gubEnemyEncounterCode = ENTERING_ENEMY_SECTOR_CODE;
       }
     } else {
-      SECTORINFO *pSector = &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
+      SECTORINFO *pSector =
+          &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
       Assert(pSector);
       if (pSector->ubCreaturesInBattle) {
         gubExplicitEnemyEncounterCode = FIGHTING_CREATURES_CODE;
@@ -1763,51 +1741,51 @@ void LogBattleResults(uint8_t ubVictoryCode) {
   if (ubVictoryCode == LOG_VICTORY) {
     switch (gubEnemyEncounterCode) {
       case ENEMY_INVASION_CODE:
-        AddHistoryToPlayersLog(HISTORY_DEFENDEDTOWNSECTOR, 0, GetWorldTotalMin(), sSectorX,
+        AddHistoryToPlayersLog(HISTORY_DEFENDEDTOWNSECTOR, 0, GetGameTimeInMin(), sSectorX,
                                sSectorY);
         break;
       case ENEMY_ENCOUNTER_CODE:
-        AddHistoryToPlayersLog(HISTORY_WONBATTLE, 0, GetWorldTotalMin(), sSectorX, sSectorY);
+        AddHistoryToPlayersLog(HISTORY_WONBATTLE, 0, GetGameTimeInMin(), sSectorX, sSectorY);
         break;
       case ENEMY_AMBUSH_CODE:
-        AddHistoryToPlayersLog(HISTORY_WIPEDOUTENEMYAMBUSH, 0, GetWorldTotalMin(), sSectorX,
+        AddHistoryToPlayersLog(HISTORY_WIPEDOUTENEMYAMBUSH, 0, GetGameTimeInMin(), sSectorX,
                                sSectorY);
         break;
       case ENTERING_ENEMY_SECTOR_CODE:
-        AddHistoryToPlayersLog(HISTORY_SUCCESSFULATTACK, 0, GetWorldTotalMin(), sSectorX, sSectorY);
+        AddHistoryToPlayersLog(HISTORY_SUCCESSFULATTACK, 0, GetGameTimeInMin(), sSectorX, sSectorY);
         break;
       case CREATURE_ATTACK_CODE:
-        AddHistoryToPlayersLog(HISTORY_CREATURESATTACKED, 0, GetWorldTotalMin(), sSectorX,
+        AddHistoryToPlayersLog(HISTORY_CREATURESATTACKED, 0, GetGameTimeInMin(), sSectorX,
                                sSectorY);
         break;
       case BLOODCAT_AMBUSH_CODE:
       case ENTERING_BLOODCAT_LAIR_CODE:
-        AddHistoryToPlayersLog(HISTORY_SLAUGHTEREDBLOODCATS, 0, GetWorldTotalMin(), sSectorX,
+        AddHistoryToPlayersLog(HISTORY_SLAUGHTEREDBLOODCATS, 0, GetGameTimeInMin(), sSectorX,
                                sSectorY);
         break;
     }
   } else {
     switch (gubEnemyEncounterCode) {
       case ENEMY_INVASION_CODE:
-        AddHistoryToPlayersLog(HISTORY_LOSTTOWNSECTOR, 0, GetWorldTotalMin(), sSectorX, sSectorY);
+        AddHistoryToPlayersLog(HISTORY_LOSTTOWNSECTOR, 0, GetGameTimeInMin(), sSectorX, sSectorY);
         break;
       case ENEMY_ENCOUNTER_CODE:
-        AddHistoryToPlayersLog(HISTORY_LOSTBATTLE, 0, GetWorldTotalMin(), sSectorX, sSectorY);
+        AddHistoryToPlayersLog(HISTORY_LOSTBATTLE, 0, GetGameTimeInMin(), sSectorX, sSectorY);
         break;
       case ENEMY_AMBUSH_CODE:
-        AddHistoryToPlayersLog(HISTORY_FATALAMBUSH, 0, GetWorldTotalMin(), sSectorX, sSectorY);
+        AddHistoryToPlayersLog(HISTORY_FATALAMBUSH, 0, GetGameTimeInMin(), sSectorX, sSectorY);
         break;
       case ENTERING_ENEMY_SECTOR_CODE:
-        AddHistoryToPlayersLog(HISTORY_UNSUCCESSFULATTACK, 0, GetWorldTotalMin(), sSectorX,
+        AddHistoryToPlayersLog(HISTORY_UNSUCCESSFULATTACK, 0, GetGameTimeInMin(), sSectorX,
                                sSectorY);
         break;
       case CREATURE_ATTACK_CODE:
-        AddHistoryToPlayersLog(HISTORY_CREATURESATTACKED, 0, GetWorldTotalMin(), sSectorX,
+        AddHistoryToPlayersLog(HISTORY_CREATURESATTACKED, 0, GetGameTimeInMin(), sSectorX,
                                sSectorY);
         break;
       case BLOODCAT_AMBUSH_CODE:
       case ENTERING_BLOODCAT_LAIR_CODE:
-        AddHistoryToPlayersLog(HISTORY_KILLEDBYBLOODCATS, 0, GetWorldTotalMin(), sSectorX,
+        AddHistoryToPlayersLog(HISTORY_KILLEDBYBLOODCATS, 0, GetGameTimeInMin(), sSectorX,
                                sSectorY);
         break;
     }

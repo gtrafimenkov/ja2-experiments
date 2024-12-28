@@ -17,7 +17,6 @@
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
-#include "SGP/LibraryDataBasePub.h"
 #include "SGP/Types.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -44,8 +43,8 @@ uint32_t guiPreviousScreen = NO_PENDING_SCREEN;
 #define DONT_CHECK_FOR_FREE_SPACE 255
 uint8_t gubCheckForFreeSpaceOnHardDriveCount = DONT_CHECK_FOR_FREE_SPACE;
 
-extern BOOLEAN DoSkiMessageBox(uint8_t ubStyle, wchar_t* zString, uint32_t uiExitScreen, uint8_t ubFlags,
-                               MSGBOX_CALLBACK ReturnCallback);
+extern BOOLEAN DoSkiMessageBox(uint8_t ubStyle, wchar_t* zString, uint32_t uiExitScreen,
+                               uint8_t ubFlags, MSGBOX_CALLBACK ReturnCallback);
 extern void NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack(uint8_t bExitValue);
 extern BOOLEAN gfTacticalPlacementGUIActive;
 extern BOOLEAN gfTacticalPlacementGUIDirty;
@@ -90,10 +89,6 @@ void ReportMapscreenErrorLock() {
 BOOLEAN InitializeGame(void) {
   uint32_t uiIndex;
 
-  ClearAllDebugTopics();
-  RegisterJA2DebugTopic(TOPIC_JA2OPPLIST, "Reg");
-  // RegisterJA2DebugTopic( TOPIC_MEMORY_MANAGER, "Reg" );
-
   // Initlaize mouse subsystems
   MSYS_Init();
   InitButtonSystem();
@@ -102,7 +97,7 @@ BOOLEAN InitializeGame(void) {
   // Init Fonts
   if (!InitializeFonts()) {
     // Send debug message and quit
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "COULD NOT INUT FONT SYSTEM...");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "COULD NOT INUT FONT SYSTEM...");
     return (ERROR_SCREEN);
   }
 
@@ -127,7 +122,7 @@ BOOLEAN InitializeGame(void) {
   InitGameOptions();
 
   // preload mapscreen graphics
-  HandlePreloadOfMapGraphics();
+  PreloadMapScreenGraphics();
 
   guiCurrentScreen = INIT_SCREEN;
 
@@ -138,16 +133,12 @@ BOOLEAN InitializeGame(void) {
 // It will also be responsible to making sure that all Gaming Engine tasks exit properly
 
 void ShutdownGame(void) {
-  // handle shutdown of game with respect to preloaded mapscreen graphics
-  HandleRemovalOfPreLoadedMapGraphics();
+  UnloadMapScreenGraphics();
 
   ShutdownJA2();
 
   // Save the general save game settings to disk
   SaveGameSettings();
-
-  // shutdown the file database manager
-  ShutDownFileDatabase();
 
   // Deletes all the Temp files in the Maps\Temp directory
   InitTacticalSave(FALSE);
@@ -181,20 +172,20 @@ void GameLoop(void) {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
   }
@@ -278,7 +269,7 @@ void GameLoop(void) {
     guiCurrentScreen = uiOldScreen;
   }
 
-  RefreshScreen(NULL);
+  RefreshScreen();
 
   guiGameCycleCounter++;
 

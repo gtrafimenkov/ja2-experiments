@@ -4,6 +4,7 @@
 
 #include "Tactical/SoldierAdd.h"
 
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Soldier.h"
@@ -31,8 +32,8 @@ void AddSoldierToSectorGridNo(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, uin
                               BOOLEAN fUseAnimation, uint16_t usAnimState, uint16_t usAnimCode);
 
 uint16_t FindGridNoFromSweetSpotWithStructData(struct SOLDIERTYPE *pSoldier, uint16_t usAnimState,
-                                             int16_t sSweetGridNo, int8_t ubRadius, uint8_t *pubDirection,
-                                             BOOLEAN fClosestToMerc);
+                                               int16_t sSweetGridNo, int8_t ubRadius,
+                                               uint8_t *pubDirection, BOOLEAN fClosestToMerc);
 
 // SO, STEPS IN CREATING A MERC!
 
@@ -55,8 +56,8 @@ uint16_t FindGridNoFromSweetSpotWithStructData(struct SOLDIERTYPE *pSoldier, uin
 
 // Kris:  modified to actually path from sweetspot to gridno.  Previously, it only checked if the
 // destination was sittable (though it was possible that that location would be trapped.
-uint16_t FindGridNoFromSweetSpot(struct SOLDIERTYPE *pSoldier, int16_t sSweetGridNo, int8_t ubRadius,
-                               uint8_t *pubDirection) {
+uint16_t FindGridNoFromSweetSpot(struct SOLDIERTYPE *pSoldier, int16_t sSweetGridNo,
+                                 int8_t ubRadius, uint8_t *pubDirection) {
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
   int16_t cnt1, cnt2;
@@ -152,7 +153,7 @@ uint16_t FindGridNoFromSweetSpot(struct SOLDIERTYPE *pSoldier, int16_t sSweetGri
 }
 
 uint16_t FindGridNoFromSweetSpotThroughPeople(struct SOLDIERTYPE *pSoldier, int16_t sSweetGridNo,
-                                            int8_t ubRadius, uint8_t *pubDirection) {
+                                              int8_t ubRadius, uint8_t *pubDirection) {
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
   int16_t cnt1, cnt2;
@@ -244,8 +245,8 @@ uint16_t FindGridNoFromSweetSpotThroughPeople(struct SOLDIERTYPE *pSoldier, int1
 // Kris:  modified to actually path from sweetspot to gridno.  Previously, it only checked if the
 // destination was sittable (though it was possible that that location would be trapped.
 uint16_t FindGridNoFromSweetSpotWithStructData(struct SOLDIERTYPE *pSoldier, uint16_t usAnimState,
-                                             int16_t sSweetGridNo, int8_t ubRadius, uint8_t *pubDirection,
-                                             BOOLEAN fClosestToMerc) {
+                                               int16_t sSweetGridNo, int8_t ubRadius,
+                                               uint8_t *pubDirection, BOOLEAN fClosestToMerc) {
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
   int16_t cnt1, cnt2, cnt3;
@@ -541,9 +542,10 @@ uint16_t FindGridNoFromSweetSpotWithStructDataUsingGivenDirectionFirst(
 }
 
 uint16_t FindGridNoFromSweetSpotWithStructDataFromSoldier(struct SOLDIERTYPE *pSoldier,
-                                                        uint16_t usAnimState, int8_t ubRadius,
-                                                        uint8_t *pubDirection, BOOLEAN fClosestToMerc,
-                                                        struct SOLDIERTYPE *pSrcSoldier) {
+                                                          uint16_t usAnimState, int8_t ubRadius,
+                                                          uint8_t *pubDirection,
+                                                          BOOLEAN fClosestToMerc,
+                                                          struct SOLDIERTYPE *pSrcSoldier) {
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
   int16_t cnt1, cnt2, cnt3;
@@ -680,8 +682,9 @@ uint16_t FindGridNoFromSweetSpotWithStructDataFromSoldier(struct SOLDIERTYPE *pS
   }
 }
 
-uint16_t FindGridNoFromSweetSpotExcludingSweetSpot(struct SOLDIERTYPE *pSoldier, int16_t sSweetGridNo,
-                                                 int8_t ubRadius, uint8_t *pubDirection) {
+uint16_t FindGridNoFromSweetSpotExcludingSweetSpot(struct SOLDIERTYPE *pSoldier,
+                                                   int16_t sSweetGridNo, int8_t ubRadius,
+                                                   uint8_t *pubDirection) {
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
   int16_t cnt1, cnt2;
@@ -737,9 +740,9 @@ uint16_t FindGridNoFromSweetSpotExcludingSweetSpot(struct SOLDIERTYPE *pSoldier,
 }
 
 uint16_t FindGridNoFromSweetSpotExcludingSweetSpotInQuardent(struct SOLDIERTYPE *pSoldier,
-                                                           int16_t sSweetGridNo, int8_t ubRadius,
-                                                           uint8_t *pubDirection,
-                                                           int8_t ubQuardentDir) {
+                                                             int16_t sSweetGridNo, int8_t ubRadius,
+                                                             uint8_t *pubDirection,
+                                                             int8_t ubQuardentDir) {
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
   int16_t cnt1, cnt2;
@@ -830,7 +833,7 @@ BOOLEAN CanSoldierReachGridNoInGivenTileLimit(struct SOLDIERTYPE *pSoldier, int1
 }
 
 uint16_t FindRandomGridNoFromSweetSpot(struct SOLDIERTYPE *pSoldier, int16_t sSweetGridNo,
-                                     int8_t ubRadius, uint8_t *pubDirection) {
+                                       int8_t ubRadius, uint8_t *pubDirection) {
   int16_t sX, sY;
   int16_t sGridNo;
   int32_t leftmost;
@@ -924,8 +927,8 @@ uint16_t FindRandomGridNoFromSweetSpot(struct SOLDIERTYPE *pSoldier, int16_t sSw
 }
 
 uint16_t FindRandomGridNoFromSweetSpotExcludingSweetSpot(struct SOLDIERTYPE *pSoldier,
-                                                       int16_t sSweetGridNo, int8_t ubRadius,
-                                                       uint8_t *pubDirection) {
+                                                         int16_t sSweetGridNo, int8_t ubRadius,
+                                                         uint8_t *pubDirection) {
   int16_t sX, sY;
   int16_t sGridNo;
   int32_t leftmost;

@@ -71,7 +71,6 @@ extern int16_t gsCurInterfacePanel;
 extern uint32_t guiCLOSE;
 extern uint32_t guiDEAD;
 extern uint32_t guiHATCH;
-extern uint32_t guiINTEXT;
 extern uint32_t guiGUNSM;
 extern uint32_t guiP1ITEMS;
 extern uint32_t guiP2ITEMS;
@@ -131,7 +130,6 @@ void CancelOpenDoorMenu();
 
 void HandleInterfaceBackgrounds();
 
-void BeginOverlayMessage(uint32_t uiFont, wchar_t *pFontString, ...);
 void EndOverlayMessage();
 
 void DrawSelectedUIAboveGuy(uint16_t usSoldierID);
@@ -198,8 +196,8 @@ void ResetAimCubeAI();
 void SetupAimCubeAI();
 void IncrementAimCubeUI();
 void EndAimCubeUI();
-void BeginAimCubeUI(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t ubLevel, uint8_t bStartPower,
-                    int8_t bStartHeight);
+void BeginAimCubeUI(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t ubLevel,
+                    uint8_t bStartPower, int8_t bStartHeight);
 BOOLEAN AimCubeUIClick();
 
 void ResetPhysicsTrajectoryUI();

@@ -19,7 +19,6 @@ typedef uint32_t FLAGS32;
 typedef uint8_t BOOLEAN;
 typedef uint16_t HNDL;
 typedef char STRING512[512];
-typedef uint32_t HWFILE;
 
 #define SGPFILENAME_LEN 100
 typedef char SGPFILENAME[SGPFILENAME_LEN];
@@ -45,22 +44,13 @@ typedef char SGPFILENAME[SGPFILENAME_LEN];
 #endif
 
 typedef struct {
-  int32_t iLeft;
-  int32_t iTop;
-  int32_t iRight;
-  int32_t iBottom;
-} SGPRect;
-
-typedef struct {
   int32_t iX;
   int32_t iY;
-
 } SGPPoint;
 
 typedef struct {
   int32_t Min;
   int32_t Max;
-
 } SGPRange;
 
 typedef float VECTOR2[2];  // 2d vector (2x1 matrix)

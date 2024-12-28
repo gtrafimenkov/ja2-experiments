@@ -11,6 +11,7 @@
 #include "Laptop/MercsAccount.h"
 #include "Laptop/SpeckQuotes.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -33,6 +34,7 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
 
 #define MERC_TEXT_FONT FONT12ARIAL
 #define MERC_TEXT_COLOR FONT_MCOLOR_WHITE
@@ -266,7 +268,8 @@ BOOLEAN DisplayMercVideoIntro(uint16_t usTimeTillFinish);
 void HandleCurrentMercDistortion();
 void HandleTalkingSpeck();
 // BOOLEAN DistortVideoMercImage();
-BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth, uint16_t usHeight);
+BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
+                              uint16_t usHeight);
 BOOLEAN IsAnyMercMercsHired();
 BOOLEAN IsAnyMercMercsDead();
 uint8_t CountNumberOfMercMercsHired();
@@ -328,9 +331,6 @@ void GameInitMercs() {
 }
 
 BOOLEAN EnterMercs() {
-  VOBJECT_DESC VObjectDesc;
-  VSURFACE_DESC vs_desc;
-
   SetBookMark(MERC_BOOKMARK);
 
   // Reset a static variable
@@ -339,34 +339,34 @@ BOOLEAN EnterMercs() {
   InitMercBackGround();
 
   // load the Account box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\AccountBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiAccountBox));
+  if (!AddVObjectFromFile("LAPTOP\\AccountBox.sti", &guiAccountBox)) {
+    return FALSE;
+  }
 
   // load the files Box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\FilesBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFilesBox));
+  if (!AddVObjectFromFile("LAPTOP\\FilesBox.sti", &guiFilesBox)) {
+    return FALSE;
+  }
 
   // load the MercSymbol graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\MERCSymbol.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMercSymbol));
+  if (!AddVObjectFromFile("LAPTOP\\MERCSymbol.sti", &guiMercSymbol)) {
+    return FALSE;
+  }
 
   // load the SpecPortrait graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\SpecPortrait.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSpecPortrait));
+  if (!AddVObjectFromFile("LAPTOP\\SpecPortrait.sti", &guiSpecPortrait)) {
+    return FALSE;
+  }
 
   // load the Arrow graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Arrow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiArrow));
+  if (!AddVObjectFromFile("LAPTOP\\Arrow.sti", &guiArrow)) {
+    return FALSE;
+  }
 
   // load the Merc video conf background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\SpeckComWindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMercVideoPopupBackground));
+  if (!AddVObjectFromFile("LAPTOP\\SpeckComWindow.sti", &guiMercVideoPopupBackground)) {
+    return FALSE;
+  }
 
   // Account Box button
   guiAccountBoxButtonImage = LoadButtonImage("LAPTOP\\SmallButtons.sti", -1, 0, -1, 1, -1);
@@ -393,11 +393,12 @@ BOOLEAN EnterMercs() {
   //
 
   // Create a background video surface to blt the face onto
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+  VSURFACE_DESC vs_desc;
   vs_desc.usWidth = MERC_VIDEO_FACE_WIDTH;
   vs_desc.usHeight = MERC_VIDEO_FACE_HEIGHT;
-  vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(&vs_desc, &guiMercVideoFaceBackground));
+  if (!(AddVideoSurface(&vs_desc, &guiMercVideoFaceBackground))) {
+    return FALSE;
+  }
 
   RenderMercs();
 
@@ -540,23 +541,19 @@ void RenderMercs() {
 
   // Title
   GetVideoObject(&hPixHandle, guiMercSymbol);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_TITLE_X, MERC_TITLE_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_TITLE_X, MERC_TITLE_Y);
 
   // Speck Portrait
   GetVideoObject(&hPixHandle, guiSpecPortrait);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_PORTRAIT_X, MERC_PORTRAIT_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_PORTRAIT_X, MERC_PORTRAIT_Y);
 
   // Account Box
   GetVideoObject(&hPixHandle, guiAccountBox);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_ACCOUNT_BOX_X, MERC_ACCOUNT_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_ACCOUNT_BOX_X, MERC_ACCOUNT_BOX_Y);
 
   // Files Box
   GetVideoObject(&hPixHandle, guiFilesBox);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_FILE_BOX_X, MERC_FILE_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_FILE_BOX_X, MERC_FILE_BOX_Y);
 
   // Text on the Speck Portrait
   DisplayWrappedString(MERC_PORTRAIT_TEXT_X, MERC_PORTRAIT_TEXT_Y, MERC_PORTRAIT_TEXT_WIDTH, 2,
@@ -602,12 +599,10 @@ void RenderMercs() {
 }
 
 BOOLEAN InitMercBackGround() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Merc background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\MERCBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMercBackGround));
+  if (!AddVObjectFromFile("LAPTOP\\MERCBackGround.sti", &guiMercBackGround)) {
+    return FALSE;
+  }
 
   return (TRUE);
 }
@@ -718,12 +713,12 @@ void DailyUpdateOfMercSite(uint16_t usDate) {
   if (iNumDays > MERC_NUM_DAYS_TILL_ACCOUNT_INVALID) {
     if (LaptopSaveInfo.gubPlayersMercAccountStatus != MERC_ACCOUNT_INVALID) {
       LaptopSaveInfo.gubPlayersMercAccountStatus = MERC_ACCOUNT_INVALID;
-      AddEmail(MERC_INVALID, MERC_INVALID_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
+      AddEmail(MERC_INVALID, MERC_INVALID_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
     }
   } else if (iNumDays > MERC_NUM_DAYS_TILL_ACCOUNT_SUSPENDED) {
     if (LaptopSaveInfo.gubPlayersMercAccountStatus != MERC_ACCOUNT_SUSPENDED) {
       LaptopSaveInfo.gubPlayersMercAccountStatus = MERC_ACCOUNT_SUSPENDED;
-      AddEmail(MERC_WARNING, MERC_WARNING_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
+      AddEmail(MERC_WARNING, MERC_WARNING_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
 
       // Have speck complain next time player come to site
       LaptopSaveInfo.uiSpeckQuoteFlags |= SPECK_QUOTE__SENT_EMAIL_ABOUT_LACK_OF_PAYMENT;
@@ -731,7 +726,7 @@ void DailyUpdateOfMercSite(uint16_t usDate) {
   } else if (iNumDays > MERC_NUM_DAYS_TILL_FIRST_WARNING) {
     if (LaptopSaveInfo.gubPlayersMercAccountStatus != MERC_ACCOUNT_VALID_FIRST_WARNING) {
       LaptopSaveInfo.gubPlayersMercAccountStatus = MERC_ACCOUNT_VALID_FIRST_WARNING;
-      AddEmail(MERC_FIRST_WARNING, MERC_FIRST_WARNING_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
+      AddEmail(MERC_FIRST_WARNING, MERC_FIRST_WARNING_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
 
       // Have speck complain next time player come to site
       LaptopSaveInfo.uiSpeckQuoteFlags |= SPECK_QUOTE__SENT_EMAIL_ABOUT_LACK_OF_PAYMENT;
@@ -776,7 +771,7 @@ void DailyUpdateOfMercSite(uint16_t usDate) {
                                   if( !fAlreadySentEmailToPlayerThisTurn )
                                   {
                                           AddEmail( NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH,
-  SPECK_FROM_MERC, GetWorldTotalMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
+  SPECK_FROM_MERC, GetGameTimeInMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
                                   }
                                   LaptopSaveInfo.gbNumDaysTillFirstMercArrives = -1;
                           }
@@ -805,7 +800,7 @@ void DailyUpdateOfMercSite(uint16_t usDate) {
                                   if( !fAlreadySentEmailToPlayerThisTurn )
                                   {
                                           AddEmail( NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH,
-  SPECK_FROM_MERC, GetWorldTotalMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
+  SPECK_FROM_MERC, GetGameTimeInMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
                                   }
                                   LaptopSaveInfo.gbNumDaysTillSecondMercArrives = -1;
                           }
@@ -833,7 +828,7 @@ void DailyUpdateOfMercSite(uint16_t usDate) {
                                   if( !fAlreadySentEmailToPlayerThisTurn )
                                   {
                                           AddEmail( NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH,
-  SPECK_FROM_MERC, GetWorldTotalMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
+  SPECK_FROM_MERC, GetGameTimeInMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
                                   }
                                   LaptopSaveInfo.gbNumDaysTillThirdMercArrives = -1;
                           }
@@ -861,7 +856,7 @@ void DailyUpdateOfMercSite(uint16_t usDate) {
                                   if( !fAlreadySentEmailToPlayerThisTurn )
                                   {
                                           AddEmail( NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH,
-  SPECK_FROM_MERC, GetWorldTotalMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
+  SPECK_FROM_MERC, GetGameTimeInMin()); fAlreadySentEmailToPlayerThisTurn = TRUE;
                                   }
                                   LaptopSaveInfo.gbNumDaysTillFourthMercArrives = -1;
                           }
@@ -883,7 +878,7 @@ void DailyUpdateOfMercSite(uint16_t usDate) {
     //		RemoveBookMark( MERC_BOOKMARK );
 
     // Get the site up the next day at 6:00 pm
-    uiTimeInMinutes = GetMidnightOfFutureDayInMinutes(1) + 18 * 60;
+    uiTimeInMinutes = GetFutureMidnightInMinutes(1) + 18 * 60;
 
     // Add an event that will get the site back up and running
     AddStrategicEvent(EVENT_MERC_SITE_BACK_ONLINE, uiTimeInMinutes, 0);
@@ -987,8 +982,8 @@ BOOLEAN StartSpeckTalking(uint16_t usQuoteNum) {
 BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
   static BOOLEAN fWasTheMercTalking = FALSE;
   BOOLEAN fIsTheMercTalking;
-  SGPRect SrcRect;
-  SGPRect DestRect;
+  struct GRect SrcRect;
+  struct GRect DestRect;
 
   if (fReset) {
     fWasTheMercTalking = FALSE;
@@ -1010,7 +1005,7 @@ BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
   HandleTalkingAutoFaces();
 
   // Blt the face surface to the video background surface
-  if (!BltStretchVideoSurface(FRAME_BUFFER, guiMercVideoFaceBackground, 0, 0,
+  if (!BltStretchVideoSurface(vsFB, GetVSByID(guiMercVideoFaceBackground), 0, 0,
                               VO_BLT_SRCTRANSPARENCY, &SrcRect, &DestRect))
     return (FALSE);
 
@@ -1104,7 +1099,7 @@ BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, uint16_t usPosX, uint16_t usPosY, ui
   BOOLEAN fReturnStatus = FALSE;
   i = 0;
 
-  pBuffer = (uint16_t *)LockVideoSurface(FRAME_BUFFER, &uiPitch);
+  pBuffer = (uint16_t *)VSurfaceLockOld(vsFB, &uiPitch);
   Assert(pBuffer);
 
   if (ubPixelationAmount == 255) {
@@ -1160,12 +1155,13 @@ BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, uint16_t usPosX, uint16_t usPosY, ui
     }
   }
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 
   return (fReturnStatus);
 }
 
-BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth, uint16_t usHeight) {
+BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
+                              uint16_t usHeight) {
   uint32_t uiPitch;
   uint16_t i, j;
   uint16_t *pBuffer = NULL, DestColor;
@@ -1175,7 +1171,7 @@ BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth
   uint8_t uiReturnValue;
   uint16_t usEndOnLine = 0;
 
-  pBuffer = (uint16_t *)LockVideoSurface(FRAME_BUFFER, &uiPitch);
+  pBuffer = (uint16_t *)VSurfaceLockOld(vsFB, &uiPitch);
   Assert(pBuffer);
 
   uiPitch /= 2;
@@ -1201,19 +1197,19 @@ BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth
       for (i = usPosX; i < usPosX + usWidth; i++) {
         DestColor = pBuffer[(j * uiPitch) + i];
 
-        uiColor = GetRGBColor(DestColor);
+        uiColor = rgb565_to_rgb32(DestColor);
 
         red = (uint8_t)uiColor;
         green = (uint8_t)(uiColor >> 8);
         blue = (uint8_t)(uiColor >> 16);
 
-        DestColor = Get16BPPColor(FROMRGB(255 - red, 250 - green, 250 - blue));
+        DestColor = rgb32_to_rgb565(FROMRGB(255 - red, 250 - green, 250 - blue));
 
         pBuffer[(j * uiPitch) + i] = DestColor;
       }
     }
   }
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 
   return (uiReturnValue);
 }
@@ -1284,9 +1280,9 @@ BOOLEAN DisplayMercVideoIntro(uint16_t usTimeTillFinish) {
   // init variable
   if (uiLastTime == 0) uiLastTime = uiCurTime;
 
-  ColorFillVideoSurfaceArea(
-      FRAME_BUFFER, MERC_VIDEO_FACE_X, MERC_VIDEO_FACE_Y, MERC_VIDEO_FACE_X + MERC_VIDEO_FACE_WIDTH,
-      MERC_VIDEO_FACE_Y + MERC_VIDEO_FACE_HEIGHT, Get16BPPColor(FROMRGB(0, 0, 0)));
+  VSurfaceColorFill(vsFB, MERC_VIDEO_FACE_X, MERC_VIDEO_FACE_Y,
+                    MERC_VIDEO_FACE_X + MERC_VIDEO_FACE_WIDTH,
+                    MERC_VIDEO_FACE_Y + MERC_VIDEO_FACE_HEIGHT, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
   // if the intro is done
   if ((uiCurTime - uiLastTime) > usTimeTillFinish) {
@@ -1396,7 +1392,7 @@ void HandleTalkingSpeck() {
   }
 }
 
-void DisplayTextForSpeckVideoPopUp(wchar_t* pString) {
+void DisplayTextForSpeckVideoPopUp(wchar_t *pString) {
   uint16_t usActualHeight;
   int32_t iOldMercPopUpBoxId = iMercPopUpBox;
 
@@ -1426,12 +1422,9 @@ void DisplayTextForSpeckVideoPopUp(wchar_t* pString) {
   }
 
   // Create the popup box
-  SET_USE_WINFONTS(TRUE);
-  SET_WINFONT(giSubTitleWinFont);
   iMercPopUpBox = PrepareMercPopupBox(iMercPopUpBox, BASIC_MERC_POPUP_BACKGROUND,
                                       BASIC_MERC_POPUP_BORDER, gsSpeckDialogueTextPopUp, 300, 0, 0,
                                       0, &gusSpeckDialogueActualWidth, &usActualHeight);
-  SET_USE_WINFONTS(FALSE);
 
   gusSpeckDialogueX = (LAPTOP_SCREEN_LR_X - gusSpeckDialogueActualWidth - LAPTOP_SCREEN_UL_X) / 2 +
                       LAPTOP_SCREEN_UL_X;
@@ -1807,7 +1800,7 @@ void HandlePlayerHiringMerc(uint8_t ubHiredMercID) {
 
   // if the players is in good finacial standing
   // DEF: 3/19/99: Dont know why this was done
-  //	if( MoneyGetBalance() >= 2000 )
+  //	if( LaptopMoneyGetBalance() >= 2000 )
   {
     // determine which quote to say based on the merc that was hired
     switch (ubHiredMercID) {
@@ -2019,7 +2012,7 @@ void EnterInitMercSite() {
 }
 
 BOOLEAN ShouldTheMercSiteServerGoDown() {
-  uint32_t uiDay = GetWorldDay();
+  uint32_t uiDay = GetGameTimeInDays();
 
   // If the merc site has never gone down, the first new merc has shown ( which shows the player is
   // using the site ), and the players account status is ok ( cant have the merc site going down
@@ -2041,7 +2034,7 @@ BOOLEAN ShouldTheMercSiteServerGoDown() {
 void GetMercSiteBackOnline() {
   // Add an email telling the user the site is back up
   AddEmail(MERC_NEW_SITE_ADDRESS, MERC_NEW_SITE_ADDRESS_LENGTH, SPECK_FROM_MERC,
-           GetWorldTotalMin());
+           GetGameTimeInMin());
 
   // Set a flag indicating that the server just went up ( so speck can make a comment when the
   // player next visits the site )
@@ -2052,8 +2045,7 @@ void DrawMercVideoBackGround() {
   struct VObject *hPixHandle;
 
   GetVideoObject(&hPixHandle, guiMercVideoPopupBackground);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_VIDEO_BACKGROUND_X, MERC_VIDEO_BACKGROUND_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_VIDEO_BACKGROUND_X, MERC_VIDEO_BACKGROUND_Y);
 
   // put the title on the window
   DrawTextToScreen(MercHomePageText[MERC_SPECK_COM], MERC_X_VIDEO_TITLE_X, MERC_X_VIDEO_TITLE_Y, 0,
@@ -2186,7 +2178,7 @@ void ShouldAnyNewMercMercBecomeAvailable() {
   if (fNewMercAreAvailable) {
     // Set up an event to add the merc in x days
     AddStrategicEvent(EVENT_MERC_SITE_NEW_MERC_AVAILABLE,
-                      GetMidnightOfFutureDayInMinutes(1) + 420 + Random(3 * 60), 0);
+                      GetFutureMidnightInMinutes(1) + 420 + Random(3 * 60), 0);
   }
 }
 
@@ -2205,7 +2197,7 @@ BOOLEAN CanMercBeAvailableYet(uint8_t ubMercToCheck) {
   // day
   if (gConditionsForMercAvailability[ubMercToCheck].usMoneyPaid <=
           LaptopSaveInfo.uiTotalMoneyPaidToSpeck &&
-      gConditionsForMercAvailability[ubMercToCheck].usDay <= GetWorldDay()) {
+      gConditionsForMercAvailability[ubMercToCheck].usDay <= GetGameTimeInDays()) {
     return (TRUE);
   }
 
@@ -2255,7 +2247,7 @@ void NewMercsAvailableAtMercSiteCallBack() {
   }
 
   if (fSendEmail)
-    AddEmail(NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
+    AddEmail(NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
 
   // new mercs are available
   LaptopSaveInfo.fNewMercsAvailableAtMercSite = TRUE;

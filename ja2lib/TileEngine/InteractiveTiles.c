@@ -9,11 +9,13 @@
 #include <time.h>
 
 #include "GameSettings.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/HImage.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 #include "Soldier.h"
@@ -33,17 +35,19 @@
 #include "TacticalAI/NPC.h"
 #include "TileEngine/Environment.h"
 #include "TileEngine/ExplosionControl.h"
+#include "TileEngine/IsometricUtils.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/Structure.h"
 #include "TileEngine/StructureInternals.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileAnimation.h"
 #include "TileEngine/TileCache.h"
 #include "TileEngine/TileDef.h"
+#include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
+#include "rust_images.h"
 
 #ifdef __GCC
 // since some of the code is not complied on Linux
@@ -102,8 +106,8 @@ BOOLEAN AddInteractiveTile(int16_t sGridNo, struct LEVELNODE *pLevelNode, uint32
   return (TRUE);
 }
 
-BOOLEAN StartInteractiveObject(int16_t sGridNo, uint16_t usStructureID, struct SOLDIERTYPE *pSoldier,
-                               uint8_t ubDirection) {
+BOOLEAN StartInteractiveObject(int16_t sGridNo, uint16_t usStructureID,
+                               struct SOLDIERTYPE *pSoldier, uint8_t ubDirection) {
   struct STRUCTURE *pStructure;
 
   // ATE: Patch fix: Don't allow if alreay in animation
@@ -266,8 +270,8 @@ void HandleStructChangeFromGridNo(struct SOLDIERTYPE *pSoldier, int16_t sGridNo)
         SetItemPoolVisibilityOn(pItemPool, ANY_VISIBILITY_VALUE, fDoLocators);
 
         // Display quote!
-        // TacticalCharacterDialogue( pSoldier, (uint16_t)( QUOTE_SPOTTED_SOMETHING_ONE + Random( 2 )
-        // ) );
+        // TacticalCharacterDialogue( pSoldier, (uint16_t)( QUOTE_SPOTTED_SOMETHING_ONE + Random( 2
+        // ) ) );
 
         // ATE: Check now many things in pool.....
         if (!fDidMissingQuote) {
@@ -366,12 +370,12 @@ void SetActionModeDoorCursorText() {
   }
 }
 
-void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, int16_t sXPos, int16_t sYPos,
-                            int16_t sGridNo) {
+void GetLevelNodeScreenRect(struct LEVELNODE *pNode, struct GRect *pRect, int16_t sXPos,
+                            int16_t sYPos, int16_t sGridNo) {
   int16_t sScreenX, sScreenY;
   int16_t sOffsetX, sOffsetY;
   int16_t sTempX_S, sTempY_S;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t usHeight, usWidth;
   TILE_ELEMENT *TileElem;
 
@@ -383,7 +387,7 @@ void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, int16_t sXP
 
   if (pNode->uiFlags & LEVELNODE_CACHEDANITILE) {
     pTrav = &(gpTileCache[pNode->pAniTile->sCachedTileID]
-                  .pImagery->vo->pETRLEObject[pNode->pAniTile->sCurrentFrame]);
+                  .pImagery->vo->subimages[pNode->pAniTile->sCurrentFrame]);
   } else {
     TileElem = &(gTileDatabase[pNode->usIndex]);
 
@@ -398,7 +402,7 @@ void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, int16_t sXP
       }
     }
 
-    pTrav = &(TileElem->hTileSurface->pETRLEObject[TileElem->usRegionIndex]);
+    pTrav = &(TileElem->hTileSurface->subimages[TileElem->usRegionIndex]);
   }
 
   sScreenX = ((gsVIEWPORT_END_X - gsVIEWPORT_START_X) / 2) + (int16_t)sTempX_S;
@@ -417,12 +421,12 @@ void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, int16_t sXP
   // Adjust for render height
   sScreenY += gsRenderHeight;
 
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
 
   // Add to start position of dest buffer
-  sScreenX += (pTrav->sOffsetX - (WORLD_TILE_X / 2));
-  sScreenY += (pTrav->sOffsetY - (WORLD_TILE_Y / 2));
+  sScreenX += (pTrav->x_offset - (WORLD_TILE_X / 2));
+  sScreenY += (pTrav->y_offset - (WORLD_TILE_Y / 2));
 
   // Adjust y offset!
   sScreenY += (WORLD_TILE_Y / 2);
@@ -436,7 +440,7 @@ void GetLevelNodeScreenRect(struct LEVELNODE *pNode, SGPRect *pRect, int16_t sXP
 void CompileInteractiveTiles() {}
 
 void LogMouseOverInteractiveTile(int16_t sGridNo) {
-  SGPRect aRect;
+  struct GRect aRect;
   int16_t sXMapPos, sYMapPos, sScreenX, sScreenY;
   struct LEVELNODE *pNode;
 
@@ -777,7 +781,7 @@ BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObject, uint
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr;
   uint32_t LineSkip;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   BOOLEAN fDataFound = FALSE;
   int32_t iTestPos, iStartPos;
 
@@ -785,10 +789,10 @@ BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObject, uint
   Assert(hSrcVObject != NULL);
 
   // Get Offsets from Index into structure
-  pTrav = &(hSrcVObject->pETRLEObject[usIndex]);
-  usHeight = (uint32_t)pTrav->usHeight;
-  usWidth = (uint32_t)pTrav->usWidth;
-  uiOffset = pTrav->uiDataOffset;
+  pTrav = &(hSrcVObject->subimages[usIndex]);
+  usHeight = (uint32_t)pTrav->height;
+  usWidth = (uint32_t)pTrav->width;
+  uiOffset = pTrav->data_offset;
 
   // Calculate test position we are looking for!
   // Calculate from 0, 0 at top left!
@@ -796,7 +800,7 @@ BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObject, uint
   iStartPos = 0;
   LineSkip = usWidth;
 
-  SrcPtr = (uint8_t *)hSrcVObject->pPixData + uiOffset;
+  SrcPtr = (uint8_t *)hSrcVObject->image_data + uiOffset;
 
 #ifdef _WINDOWS
   __asm {

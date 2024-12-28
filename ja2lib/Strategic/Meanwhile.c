@@ -9,6 +9,7 @@
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
@@ -40,6 +41,7 @@
 #include "UI.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
+#include "rust_sam_sites.h"
 
 #define MAX_MEANWHILE_PROFILES 10
 
@@ -310,8 +312,7 @@ BOOLEAN BeginMeanwhile(uint8_t ubMeanwhileID) {
 
   gfMeanwhileTryingToStart = TRUE;
   PauseGame();
-  // prevent anyone from messing with the pause!
-  LockPauseState(6);
+  LockPause();
 
   // Set NO_PROFILE info....
   for (cnt = 0; cnt < MAX_MEANWHILE_PROFILES; cnt++) {
@@ -531,7 +532,8 @@ void StartMeanwhile() {
 void DoneFadeOutMeanwhile() {
   // OK, insertion data found, enter sector!
 
-  SetCurrentWorldSector((uint8_t)gCurrentMeanwhileDef.sSectorX, (uint8_t)gCurrentMeanwhileDef.sSectorY, 0);
+  SetCurrentWorldSector((uint8_t)gCurrentMeanwhileDef.sSectorX,
+                        (uint8_t)gCurrentMeanwhileDef.sSectorY, 0);
 
   // LocateToMeanwhileCharacter( );
   LocateMeanWhileGrid();
@@ -566,7 +568,7 @@ void BeginMeanwhileCallBack(uint8_t bExitValue) {
   } else {
     // skipped scene!
     ProcessImplicationsOfMeanwhile();
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
   }
 }
@@ -589,7 +591,7 @@ BOOLEAN AreInMeanwhile() {
   // second.
   curr = gpEventList;
   while (curr) {
-    if (curr->uiTimeStamp == GetWorldTotalSeconds()) {
+    if (curr->uiTimeStamp == GetGameTimeInSec()) {
       if (curr->ubCallbackID == EVENT_MEANWHILE) {
         return TRUE;
       }
@@ -655,13 +657,13 @@ void ProcessImplicationsOfMeanwhile(void) {
       gMercProfiles[ROBOT].bSectorZ = 0;
     } break;
     case NW_SAM:
-      ExecuteStrategicAIAction(NPC_ACTION_SEND_TROOPS_TO_SAM, SAM_1_X, SAM_1_Y);
+      ExecuteStrategicAIAction(NPC_ACTION_SEND_TROOPS_TO_SAM, GetSamSiteX(0), GetSamSiteY(0));
       break;
     case NE_SAM:
-      ExecuteStrategicAIAction(NPC_ACTION_SEND_TROOPS_TO_SAM, SAM_2_X, SAM_2_Y);
+      ExecuteStrategicAIAction(NPC_ACTION_SEND_TROOPS_TO_SAM, GetSamSiteX(1), GetSamSiteY(1));
       break;
     case CENTRAL_SAM:
-      ExecuteStrategicAIAction(NPC_ACTION_SEND_TROOPS_TO_SAM, SAM_3_X, SAM_3_X);
+      ExecuteStrategicAIAction(NPC_ACTION_SEND_TROOPS_TO_SAM, GetSamSiteX(2), GetSamSiteY(2));
       break;
 
     default:
@@ -682,7 +684,7 @@ void EndMeanwhile() {
 
   gTacticalStatus.uiFlags &= (~ENGAGED_IN_CONV);
 
-  UnLockPauseState();
+  UnlockPause();
   UnPauseGame();
 
   // ATE: Make sure!
@@ -812,7 +814,7 @@ void HandleCreatureRelease(void) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   MeanwhileDef.ubMeanwhileID = CREATURES;
 
@@ -833,7 +835,7 @@ void HandleMeanWhileEventPostingForTownLiberation(uint8_t bTownId) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   // which town iberated?
   switch (bTownId) {
@@ -885,7 +887,7 @@ void HandleMeanWhileEventPostingForTownLoss(uint8_t bTownId) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   MeanwhileDef.ubMeanwhileID = LOST_TOWN;
 
@@ -912,7 +914,7 @@ void HandleMeanWhileEventPostingForSAMLiberation(int8_t bSamId) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   // which SAM iberated?
   switch (bSamId) {
@@ -958,10 +960,10 @@ void HandleFlowersMeanwhileScene(int8_t bTimeCode) {
   // time delay should be based on time code, 0 next day, 1 seeral days (random)
   if (bTimeCode == 0) {
     // 20-24 hours later
-    uiTime = GetWorldTotalMin() + 60 * (20 + Random(5));
+    uiTime = GetGameTimeInMin() + 60 * (20 + Random(5));
   } else {
     // 2-4 days later
-    uiTime = GetWorldTotalMin() + 60 * (24 + Random(48));
+    uiTime = GetGameTimeInMin() + 60 * (24 + Random(48));
   }
 
   MeanwhileDef.ubMeanwhileID = FLOWERS;
@@ -984,7 +986,7 @@ void HandleOutskirtsOfMedunaMeanwhileScene(void) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   MeanwhileDef.ubMeanwhileID = OUTSKIRTS_MEDUNA;
 
@@ -1006,7 +1008,7 @@ void HandleKillChopperMeanwhileScene(void) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 55 + Random(10);
+  uiTime = GetGameTimeInMin() + 55 + Random(10);
 
   MeanwhileDef.ubMeanwhileID = KILL_CHOPPER;
 
@@ -1028,7 +1030,7 @@ void HandleScientistAWOLMeanwhileScene(void) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   MeanwhileDef.ubMeanwhileID = AWOL_SCIENTIST;
 
@@ -1050,7 +1052,7 @@ void HandleInterrogationMeanwhileScene(void) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 60;
+  uiTime = GetGameTimeInMin() + 60;
 
   MeanwhileDef.ubMeanwhileID = INTERROGATION;
 
@@ -1072,7 +1074,7 @@ void HandleFirstBattleVictory(void) {
   MeanwhileDef.ubNPCNumber = QUEEN;
   MeanwhileDef.usTriggerEvent = 0;
 
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   ubId = END_OF_PLAYERS_FIRST_BATTLE;
 
@@ -1100,9 +1102,9 @@ void HandleDelayedFirstBattleVictory(void) {
   //It is theoretically impossible to liberate a town within 60 minutes of the first battle (which
   is supposed to
   //occur outside of a town in this scenario).  The delay is attributed to the info taking longer to
-  reach the queen. uiTime = GetWorldTotalMin() + 60;
+  reach the queen. uiTime = GetGameTimeInMin() + 60;
   */
-  uiTime = GetWorldTotalMin() + 5;
+  uiTime = GetGameTimeInMin() + 5;
 
   ubId = END_OF_PLAYERS_FIRST_BATTLE;
 
@@ -1115,7 +1117,6 @@ void HandleDelayedFirstBattleVictory(void) {
 void HandleFirstBattleEndingWhileInTown(uint8_t sSectorX, uint8_t sSectorY, int16_t bSectorZ,
                                         BOOLEAN fFromAutoResolve) {
   TownID bTownId = 0;
-  int16_t sSector = 0;
 
   if (GetMeanWhileFlag(END_OF_PLAYERS_FIRST_BATTLE)) {
     return;
@@ -1125,11 +1126,8 @@ void HandleFirstBattleEndingWhileInTown(uint8_t sSectorX, uint8_t sSectorY, int1
   // gfFirstBattleMeanwhileScenePending true if  is true then this is the end of the second battle,
   // post the first meanwhile OR, on call to trash world, that means player is leaving sector
 
-  // grab sector value
-  sSector = GetSectorID16(sSectorX, sSectorY);
-
   // get town name id
-  bTownId = StrategicMap[sSector].townID;
+  bTownId = GetTownIdForSector(sSectorX, sSectorY);
 
   if (bTownId == BLANK_SECTOR) {
     // invalid town

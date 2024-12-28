@@ -4,6 +4,8 @@
 
 #include "Intro.h"
 
+#include <string.h>
+
 #include "GameScreen.h"
 #include "Intro.h"
 #include "Local.h"
@@ -12,9 +14,8 @@
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
+#include "SGP/Input.h"
 #include "SGP/Ja2Libs.h"
-#include "SGP/LibraryDataBasePub.h"
 #include "SGP/Line.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
@@ -26,7 +27,6 @@
 #include "SysGlobals.h"
 #include "Tactical/SoldierProfile.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "Utils/Cinematics.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
@@ -35,8 +35,9 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_fileman.h"
 
-extern wchar_t* gzIntroScreen[];
+extern wchar_t *gzIntroScreen[];
 
 enum {
   INTRO_TXT__CANT_FIND_INTRO,
@@ -162,17 +163,11 @@ BOOLEAN EnterIntroScreen() {
   SetMusicMode(MUSIC_NONE);
 
 #ifdef JA2BETAVERSION
-  if (FileMan_Exists("..\\NoIntro.txt")) {
+  if (File_Exists("..\\NoIntro.txt")) {
     PrepareToExitIntroScreen();
     return (TRUE);
   }
 #endif
-
-  // if the library doesnt exist, exit
-  if (!IsLibraryOpened(LIBRARY_INTRO)) {
-    PrepareToExitIntroScreen();
-    return (TRUE);
-  }
 
   // initialize smacker
   SmkInitialize(640, 480);
@@ -243,20 +238,20 @@ void GetIntroScreenUserInput() {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
 
@@ -407,34 +402,25 @@ void SetIntroType(int8_t bIntroType) {
 
 void DisplaySirtechSplashScreen() {
   struct VObject *hPixHandle;
-  VOBJECT_DESC VObjectDesc;
   uint32_t uiLogoID;
 
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
 
-  // JA3Gold: do nothing until we have a graphic to replace Talonsoft's
-  // return;
-
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 
-  memset(&VObjectDesc, 0, sizeof(VOBJECT_DESC));
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\SirtechSplash.sti", VObjectDesc.ImageFile);
-
-  //	FilenameForBPP("INTERFACE\\TShold.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &uiLogoID)) {
-    AssertMsg(0, String("Failed to load %s", VObjectDesc.ImageFile));
+  if (!AddVObjectFromFile("INTERFACE\\SirtechSplash.sti", &uiLogoID)) {
+    AssertMsg(0, "Failed to load SirtechSplash.sti");
     return;
   }
 
   GetVideoObject(&hPixHandle, uiLogoID);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, 0, 0);
   DeleteVideoObjectFromIndex(uiLogoID);
 
   InvalidateScreen();
-  RefreshScreen(NULL);
+  RefreshScreen();
 }

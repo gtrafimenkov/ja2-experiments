@@ -7,6 +7,7 @@
 #include <memory.h>
 
 #include "GameSettings.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "Soldier.h"
 #include "Strategic/AutoResolve.h"
@@ -152,7 +153,8 @@ void MarkAllWeaponsOfSameGunClassAsDropped(uint16_t usWeapon) {
 // that different groups can have.  Basically,
 // there are variations, so a guy at a certain level may get a better gun and worse armour or vice
 // versa.
-void GenerateRandomEquipment(SOLDIERCREATE_STRUCT *pp, int8_t bSoldierClass, int8_t bEquipmentRating) {
+void GenerateRandomEquipment(SOLDIERCREATE_STRUCT *pp, int8_t bSoldierClass,
+                             int8_t bEquipmentRating) {
   struct OBJECTTYPE *pItem;
   // general rating information
   int8_t bRating = 0;
@@ -513,7 +515,8 @@ void GenerateRandomEquipment(SOLDIERCREATE_STRUCT *pp, int8_t bSoldierClass, int
 // the worst class of item, while 11 is the best.
 
 void ChooseWeaponForSoldierCreateStruct(SOLDIERCREATE_STRUCT *pp, int8_t bWeaponClass,
-                                        int8_t bAmmoClips, int8_t bAttachClass, BOOLEAN fAttachment) {
+                                        int8_t bAmmoClips, int8_t bAttachClass,
+                                        BOOLEAN fAttachment) {
   INVTYPE *pItem;
   struct OBJECTTYPE Object;
   uint16_t i;
@@ -1099,8 +1102,8 @@ void ChooseFaceGearForSoldierCreateStruct(SOLDIERCREATE_STRUCT *pp) {
   int8_t bDifficultyRating = CalcDifficultyModifier(pp->ubSoldierClass);
 
   if (gWorldSectorX == TIXA_SECTOR_X && gWorldSectorY == TIXA_SECTOR_Y &&
-      StrategicMap[GetSectorID16(TIXA_SECTOR_X, TIXA_SECTOR_Y)]
-          .fEnemyControlled) {  // Tixa is a special case that is handled differently.
+      IsSectorEnemyControlled(TIXA_SECTOR_X, TIXA_SECTOR_Y)) {
+    // Tixa is a special case that is handled differently.
     return;
   }
 
@@ -1216,19 +1219,19 @@ void ChooseMiscGearForSoldierCreateStruct(SOLDIERCREATE_STRUCT *pp, int8_t bMisc
 
   // not all of these are IC_MISC, some are IC_PUNCH (not covered anywhere else)
   int32_t iMiscItemsList[] = {CANTEEN,
-                            CANTEEN,
-                            CANTEEN,
-                            CANTEEN,
-                            ALCOHOL,
-                            ALCOHOL,
-                            ADRENALINE_BOOSTER,
-                            ADRENALINE_BOOSTER,
-                            REGEN_BOOSTER,
-                            BRASS_KNUCKLES,
-                            CHEWING_GUM,
-                            CIGARS,
-                            GOLDWATCH,
-                            -1};
+                              CANTEEN,
+                              CANTEEN,
+                              CANTEEN,
+                              ALCOHOL,
+                              ALCOHOL,
+                              ADRENALINE_BOOSTER,
+                              ADRENALINE_BOOSTER,
+                              REGEN_BOOSTER,
+                              BRASS_KNUCKLES,
+                              CHEWING_GUM,
+                              CIGARS,
+                              GOLDWATCH,
+                              -1};
 
   // count how many are eligible
   i = 0;
@@ -1312,7 +1315,7 @@ void ChooseLocationSpecificGearForSoldierCreateStruct(SOLDIERCREATE_STRUCT *pp) 
   // If this is Tixa and the player doesn't control Tixa then give all enemies gas masks,
   // but somewhere on their person, not in their face positions
   if (gWorldSectorX == TIXA_SECTOR_X && gWorldSectorY == TIXA_SECTOR_Y &&
-      StrategicMap[GetSectorID16(TIXA_SECTOR_X, TIXA_SECTOR_Y)].fEnemyControlled) {
+      IsSectorEnemyControlled(TIXA_SECTOR_X, TIXA_SECTOR_Y)) {
     CreateItem(GASMASK, (int8_t)(95 + Random(6)), &Object);
     PlaceObjectInSoldierCreateStruct(pp, &Object);
   }
@@ -1745,13 +1748,13 @@ void AssignCreatureInventory(struct SOLDIERTYPE *pSoldier) {
 
   // decide if the creature will drop any REAL bodyparts
   if (Random(100) < uiChanceToDrop) {
-    CreateItem((uint16_t)(fBloodcat ? BLOODCAT_CLAWS : CREATURE_PART_CLAWS), (int8_t)(80 + Random(21)),
-               &(pSoldier->inv[BIGPOCK1POS]));
+    CreateItem((uint16_t)(fBloodcat ? BLOODCAT_CLAWS : CREATURE_PART_CLAWS),
+               (int8_t)(80 + Random(21)), &(pSoldier->inv[BIGPOCK1POS]));
   }
 
   if (Random(100) < uiChanceToDrop) {
-    CreateItem((uint16_t)(fBloodcat ? BLOODCAT_TEETH : CREATURE_PART_FLESH), (int8_t)(80 + Random(21)),
-               &(pSoldier->inv[BIGPOCK2POS]));
+    CreateItem((uint16_t)(fBloodcat ? BLOODCAT_TEETH : CREATURE_PART_FLESH),
+               (int8_t)(80 + Random(21)), &(pSoldier->inv[BIGPOCK2POS]));
   }
 
   // as requested by ATE, males are more likely to drop their "organs" (he actually suggested this,
@@ -1762,8 +1765,8 @@ void AssignCreatureInventory(struct SOLDIERTYPE *pSoldier) {
   }
 
   if (Random(100) < uiChanceToDrop) {
-    CreateItem((uint16_t)(fBloodcat ? BLOODCAT_PELT : CREATURE_PART_ORGAN), (int8_t)(80 + Random(21)),
-               &(pSoldier->inv[BIGPOCK3POS]));
+    CreateItem((uint16_t)(fBloodcat ? BLOODCAT_PELT : CREATURE_PART_ORGAN),
+               (int8_t)(80 + Random(21)), &(pSoldier->inv[BIGPOCK3POS]));
   }
 }
 

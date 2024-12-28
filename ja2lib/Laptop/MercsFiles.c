@@ -17,6 +17,7 @@
 #include "SGP/Font.h"
 #include "SGP/Input.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -147,24 +148,24 @@ void EnableDisableMercFilesNextPreviousButton();
 void GameInitMercsFiles() {}
 
 BOOLEAN EnterMercsFiles() {
-  VOBJECT_DESC VObjectDesc;
-
   InitMercBackGround();
 
   // load the stats box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_STATSBOX);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiStatsBox));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_STATSBOX);
+  if (!AddVObjectFromFile(ImageFile, &guiStatsBox)) {
+    return FALSE;
+  }
 
   // load the Portrait box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\PortraitBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiPortraitBox));
+  if (!AddVObjectFromFile("LAPTOP\\PortraitBox.sti", &guiPortraitBox)) {
+    return FALSE;
+  }
 
   // load the bio box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BioBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBioBox));
+  if (!AddVObjectFromFile("LAPTOP\\BioBox.sti", &guiBioBox)) {
+    return FALSE;
+  }
 
   // Prev Box button
   guiButtonImage = LoadButtonImage("LAPTOP\\BigButtons.sti", -1, 0, -1, 1, -1);
@@ -233,18 +234,15 @@ void RenderMercsFiles() {
 
   // Portrait Box
   GetVideoObject(&hPixHandle, guiPortraitBox);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_FILES_PORTRAIT_BOX_X, MERC_FILES_PORTRAIT_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_FILES_PORTRAIT_BOX_X, MERC_FILES_PORTRAIT_BOX_Y);
 
   // Stats Box
   GetVideoObject(&hPixHandle, guiStatsBox);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_FILES_STATS_BOX_X, MERC_FILES_STATS_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_FILES_STATS_BOX_X, MERC_FILES_STATS_BOX_Y);
 
   // bio box
   GetVideoObject(&hPixHandle, guiBioBox);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_FILES_BIO_BOX_X + 1, MERC_FILES_BIO_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_FILES_BIO_BOX_X + 1, MERC_FILES_BIO_BOX_Y);
 
   // Display the mercs face
   DisplayMercFace(GetMercIDFromMERCArray(gubCurMercIndex));
@@ -394,16 +392,14 @@ void BtnMercHireButtonCallback(GUI_BUTTON *btn, int32_t reason) {
 BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   struct VObject *hFaceHandle;
   struct VObject *hPortraitHandle;
-  char* sFaceLoc = "FACES\\BIGFACES\\";
+  char *sFaceLoc = "FACES\\BIGFACES\\";
   char sTemp[100];
   MERCPROFILESTRUCT *pMerc;
-  VOBJECT_DESC VObjectDesc;
   struct SOLDIERTYPE *pSoldier = NULL;
 
   // Portrait Frame
   GetVideoObject(&hPortraitHandle, guiPortraitBox);
-  BltVideoObject(FRAME_BUFFER, hPortraitHandle, 0, MERC_FILES_PORTRAIT_BOX_X,
-                 MERC_FILES_PORTRAIT_BOX_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPortraitHandle, 0, MERC_FILES_PORTRAIT_BOX_X, MERC_FILES_PORTRAIT_BOX_Y);
 
   pMerc = &gMercProfiles[ubMercID];
 
@@ -412,14 +408,13 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
 
   // load the Face graphic and add it
   sprintf(sTemp, "%s%02d.sti", sFaceLoc, ubMercID);
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMercFace));
+  if (!AddVObjectFromFile(sTemp, &guiMercFace)) {
+    return FALSE;
+  }
 
   // Blt face to screen
   GetVideoObject(&hFaceHandle, guiMercFace);
-  BltVideoObject(FRAME_BUFFER, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y);
 
   // if the merc is dead, shadow the face red and put text over top saying the merc is dead
   if (IsMercDead(ubMercID)) {
@@ -435,8 +430,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
     SetObjectHandleShade(guiMercFace, 0);
 
     // Blt face to screen
-    BltVideoObject(FRAME_BUFFER, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVObject(vsFB, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y);
 
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, MercInfo[MERC_FILES_MERC_IS_DEAD], FONT_MCOLOR_BLACK,
@@ -444,7 +438,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   }
 
   else if (ubMercID == FLO && gubFact[FACT_PC_MARRYING_DARYL_IS_FLO]) {
-    ShadowVideoSurfaceRect(FRAME_BUFFER, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, pPersonnelDepartedStateStrings[3], FONT_MCOLOR_BLACK,
@@ -454,7 +448,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   // else if the merc is currently a POW or, the merc was fired as a pow
   else if (pMerc->bMercStatus == MERC_FIRED_AS_A_POW ||
            (pSoldier && GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
-    ShadowVideoSurfaceRect(FRAME_BUFFER, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, pPOWStrings[0], FONT_MCOLOR_BLACK, FALSE,
@@ -464,7 +458,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   // if the merc is hired already, say it
   else if (!IsMercHireable(ubMercID) &&
            (pMerc->bMercStatus == MERC_HIRED_BUT_NOT_ARRIVED_YET || pMerc->bMercStatus > 0)) {
-    ShadowVideoSurfaceRect(FRAME_BUFFER, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, MercInfo[MERC_FILES_ALREADY_HIRED], FONT_MCOLOR_BLACK,
@@ -473,7 +467,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
 
   // if the merc is away on another assignemnt, say the merc is unavailable
   else if (!IsMercHireable(ubMercID)) {
-    ShadowVideoSurfaceRect(FRAME_BUFFER, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, MercInfo[MERC_FILES_MERC_UNAVAILABLE], FONT_MCOLOR_BLACK,

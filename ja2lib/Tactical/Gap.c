@@ -8,12 +8,12 @@
 #include <string.h>
 
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/MemMan.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
+#include "rust_fileman.h"
 
 #if 0
 static void AILCALLBACK timer_func( uint32_t user )
@@ -52,9 +52,9 @@ void AudioGapListInit(char *zSoundFile, AudioGapList *pGapList) {
   // while counting the number of elements loaded
 
   //	FILE *pFile;
-  HWFILE pFile;
-  char* pSourceFileName;
-  char* pDestFileName;
+  FileID pFile = FILE_ID_ERR;
+  char *pSourceFileName;
+  char *pDestFileName;
   char sFileName[256];
   uint8_t counter = 0;
   AUDIO_GAP *pCurrentGap, *pPreviousGap;
@@ -72,7 +72,7 @@ void AudioGapListInit(char *zSoundFile, AudioGapList *pGapList) {
   pGapList->pCurrent = 0;
   pGapList->audio_gap_active = FALSE;
   pPreviousGap = pCurrentGap = 0;
-  // DebugMsg(TOPIC_JA2, DBG_LEVEL_3,String("File is %s", szSoundEffects[uiSampleNum]));
+  // DebugMsg(TOPIC_JA2, DBG_INFO,String("File is %s", szSoundEffects[uiSampleNum]));
   // Get filename
   strcpy(pDestFileName, pSourceFileName);
   // strip .wav and change to .gap
@@ -86,20 +86,15 @@ void AudioGapListInit(char *zSoundFile, AudioGapList *pGapList) {
   pDestFileName[counter + 3] = 'p';
   pDestFileName[counter + 4] = '\0';
 
-  pFile = FileMan_Open(pDestFileName, FILE_ACCESS_READ, FALSE);
+  pFile = File_OpenForReading(pDestFileName);
   if (pFile) {
     counter = 0;
     // gap file exists
     // now read in the AUDIO_GAPs
 
-    // fread(&Start,sizeof(uint32_t), 1, pFile);
-    FileMan_Read(pFile, &Start, sizeof(uint32_t), &uiNumBytesRead);
-
-    //	while ( !feof(pFile) )
-    while (!FileMan_CheckEndOfFile(pFile)) {
+    while (File_Read(pFile, &Start, sizeof(uint32_t), &uiNumBytesRead) && uiNumBytesRead != 0) {
       // can read the first element, there exists a second
-      // fread(&End, sizeof(uint32_t),1,pFile);
-      FileMan_Read(pFile, &End, sizeof(uint32_t), &uiNumBytesRead);
+      File_Read(pFile, &End, sizeof(uint32_t), &uiNumBytesRead);
 
       // allocate space for AUDIO_GAP
       pCurrentGap = (AUDIO_GAP *)MemAlloc(sizeof(AUDIO_GAP));
@@ -115,22 +110,19 @@ void AudioGapListInit(char *zSoundFile, AudioGapList *pGapList) {
       pCurrentGap->pNext = 0;
       pCurrentGap->uiStart = Start;
       pCurrentGap->uiEnd = End;
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Gap Start %d and Ends %d", Start, End));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("Gap Start %d and Ends %d", Start, End));
 
       // Increment pointer
       pPreviousGap = pCurrentGap;
-
-      //	fread(&Start,sizeof(uint32_t), 1, pFile);
-      FileMan_Read(pFile, &Start, sizeof(uint32_t), &uiNumBytesRead);
     }
 
     pGapList->audio_gap_active = FALSE;
     pGapList->current_time = 0;
 
     // fclose(pFile);
-    FileMan_Close(pFile);
+    File_Close(pFile);
   }
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2, DBG_INFO,
            String("Gap List Started From File %s and has %d gaps", pDestFileName, pGapList->size));
 }
 
@@ -156,7 +148,7 @@ void AudioGapListDone(AudioGapList *pGapList) {
   pGapList->pHead = 0;
   pGapList->pCurrent = 0;
   pGapList->size = 0;
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Audio Gap List Deleted"));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("Audio Gap List Deleted"));
 }
 
 void PollAudioGap(uint32_t uiSampleNum, AudioGapList *pGapList) {
@@ -179,7 +171,7 @@ void PollAudioGap(uint32_t uiSampleNum, AudioGapList *pGapList) {
 
   if (pGapList->size > 0) {
     time = SoundGetPosition(uiSampleNum);
-    //  DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String("Sound Sample Time is %d", time) );
+    //  DebugMsg( TOPIC_JA2, DBG_INFO, String("Sound Sample Time is %d", time) );
   } else {
     pGapList->audio_gap_active = (FALSE);
     return;
@@ -205,13 +197,13 @@ void PollAudioGap(uint32_t uiSampleNum, AudioGapList *pGapList) {
   if ((time > pCurrent->uiStart) && (time < pCurrent->uiEnd)) {
     if ((time > pCurrent->uiStart) && (time < pCurrent->uiEnd)) {
       // we are within the time frame
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Gap Started at %d", time));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("Gap Started at %d", time));
       pGapList->audio_gap_active = (TRUE);
 
     } else if ((time > pCurrent->uiEnd) && (pGapList->audio_gap_active == TRUE)) {
       // reset if already set
       pGapList->audio_gap_active = (FALSE);
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Gap Ended at %d", time));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("Gap Ended at %d", time));
     }
   } else {
     pGapList->audio_gap_active = (FALSE);
@@ -219,7 +211,7 @@ void PollAudioGap(uint32_t uiSampleNum, AudioGapList *pGapList) {
 }
 
 uint32_t PlayJA2GapSample(char *zSoundFile, uint32_t usRate, uint32_t ubVolume, uint32_t ubLoops,
-                        uint32_t uiPan, AudioGapList *pData) {
+                          uint32_t uiPan, AudioGapList *pData) {
   SOUNDPARMS spParms;
 
   memset(&spParms, 0xff, sizeof(SOUNDPARMS));

@@ -18,22 +18,24 @@
 #include "Editor/EditorMercs.h"
 #include "Editor/ItemStatistics.h"
 #include "Editor/SelectWin.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Font.h"
+#include "SGP/Input.h"
 #include "SGP/Line.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "Strategic/Scheduling.h"
+#include "Tactical/Interface.h"
 #include "Tactical/OverheadTypes.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldDat.h"
+#include "TileEngine/WorldDef.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
+#include "rust_colors.h"
 
 CurrentPopupMenuInformation gPopup;
 
@@ -233,11 +235,11 @@ void RenderPopupMenu() {
   uint16_t usStart;
 
   // Draw the menu
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, gPopup.usLeft, gPopup.usTop, gPopup.usRight,
-                            gPopup.usBottom, Get16BPPColor(FROMRGB(128, 128, 128)));
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  VSurfaceColorFill(vsFB, gPopup.usLeft, gPopup.usTop, gPopup.usRight, gPopup.usBottom,
+                    rgb32_to_rgb565(FROMRGB(128, 128, 128)));
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
-  usLineColor = Get16BPPColor(FROMRGB(64, 64, 64));
+  usLineColor = rgb32_to_rgb565(FROMRGB(64, 64, 64));
   RectangleDraw(TRUE, gPopup.usLeft, gPopup.usTop, gPopup.usRight, gPopup.usBottom, usLineColor,
                 pDestBuf);
   if (gPopup.ubColumns > 1) {  // draw a vertical line between each column
@@ -247,7 +249,7 @@ void RenderPopupMenu() {
     }
     usStart += (uint16_t)gPopup.ubColumnWidth[ubColumn];
   }
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 
   // Set up the text attributes.
   SetFont(gPopup.usFont);

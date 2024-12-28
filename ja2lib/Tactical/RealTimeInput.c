@@ -13,7 +13,6 @@
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
 #include "SGP/CursorControl.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
@@ -59,6 +58,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
+#include "rust_geometry.h"
 
 #ifdef __GCC
 #pragma GCC diagnostic push

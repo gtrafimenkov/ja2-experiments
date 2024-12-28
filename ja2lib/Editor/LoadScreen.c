@@ -27,7 +27,6 @@
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
@@ -50,8 +49,13 @@
 #include "Utils/TextInput.h"
 #include "platform.h"
 #include "platform_strings.h"
+#include "rust_colors.h"
+#include "rust_fileman.h"
+#include "rust_images.h"
 
 struct FileDialogList;
+
+extern struct SGPPaletteEntry gEditorLightColor;
 
 //===========================================================================
 
@@ -115,7 +119,7 @@ char gszCurrFilename[1024];
 
 enum { IOSTATUS_NONE, INITIATE_MAP_SAVE, SAVING_MAP, INITIATE_MAP_LOAD, LOADING_MAP };
 int8_t gbCurrentFileIOStatus;  // 1 init saving message, 2 save, 3 init loading message, 4 load, 0
-                             // none
+                               // none
 uint32_t ProcessFileIO();
 
 // BOOLEAN fSavingFile;
@@ -193,10 +197,10 @@ uint32_t ProcessLoadSaveScreenMessageBoxResult() {
       }
       if (curr) {
         if (gfReadOnly) {
-          Plat_ClearFileAttributes(gszCurrFilename);
+          Plat_RemoveReadOnlyAttribute(gszCurrFilename);
           gfReadOnly = FALSE;
         }
-        FileMan_Delete(gszCurrFilename);
+        Plat_DeleteFile(gszCurrFilename);
 
         // File is deleted so redo the text fields so they show the
         // next file in the list.
@@ -343,7 +347,7 @@ uint32_t LoadSaveScreenHandle(void) {
         return LOADSAVE_SCREEN;
       }
       snprintf(gszCurrFilename, ARR_SIZE(gszCurrFilename), "MAPS\\%ls", gzFilename);
-      if (FileMan_Exists(gszCurrFilename)) {
+      if (File_Exists(gszCurrFilename)) {
         gfFileExists = TRUE;
         gfReadOnly = FALSE;
         if (Plat_GetFileFirst(gszCurrFilename, &FileInfo)) {
@@ -488,19 +492,16 @@ void RemoveFileDialog(void) {
 }
 
 void DrawFileDialog(void) {
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 179, 69, (179 + 281), 261,
-                            Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 180, 70, (179 + 281), 261,
-                            Get16BPPColor(FROMRGB(24, 61, 81)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 180, 70, (179 + 280), 260,
-                            Get16BPPColor(FROMRGB(65, 79, 94)));
+  VSurfaceColorFill(vsFB, 179, 69, (179 + 281), 261, rgb32_to_rgb565(FROMRGB(136, 138, 135)));
+  VSurfaceColorFill(vsFB, 180, 70, (179 + 281), 261, rgb32_to_rgb565(FROMRGB(24, 61, 81)));
+  VSurfaceColorFill(vsFB, 180, 70, (179 + 280), 260, rgb32_to_rgb565(FROMRGB(65, 79, 94)));
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, (179 + 4), (69 + 3), (179 + 4 + 240), (69 + 123),
-                            Get16BPPColor(FROMRGB(24, 61, 81)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, (179 + 5), (69 + 4), (179 + 4 + 240), (69 + 123),
-                            Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, (179 + 5), (69 + 4), (179 + 3 + 240), (69 + 122),
-                            Get16BPPColor(FROMRGB(250, 240, 188)));
+  VSurfaceColorFill(vsFB, (179 + 4), (69 + 3), (179 + 4 + 240), (69 + 123),
+                    rgb32_to_rgb565(FROMRGB(24, 61, 81)));
+  VSurfaceColorFill(vsFB, (179 + 5), (69 + 4), (179 + 4 + 240), (69 + 123),
+                    rgb32_to_rgb565(FROMRGB(136, 138, 135)));
+  VSurfaceColorFill(vsFB, (179 + 5), (69 + 4), (179 + 3 + 240), (69 + 122),
+                    rgb32_to_rgb565(FROMRGB(250, 240, 188)));
 
   MarkButtonsDirty();
   RenderButtons();
@@ -725,8 +726,8 @@ void HandleMainKeyEvents(InputAtom *pEvent) {
 }
 
 // editor doesn't care about the z value.  It uses it's own methods.
-void SetGlobalSectorValues(wchar_t* szFilename) {
-  wchar_t* pStr;
+void SetGlobalSectorValues(wchar_t *szFilename) {
+  wchar_t *pStr;
   if (ValidCoordinate()) {
     // convert the coordinate string into into the actual global sector coordinates.
     if (gzFilename[0] >= 'A' && gzFilename[0] <= 'P')
@@ -751,7 +752,7 @@ void SetGlobalSectorValues(wchar_t* szFilename) {
 }
 
 void InitErrorCatchDialog() {
-  SGPRect CenteringRect = {0, 0, 639, 479};
+  struct GRect CenteringRect = {0, 0, 639, 479};
 
   // do message box and return
   giErrorCatchMessageBox = DoMessageBox(MSG_BOX_BASIC_STYLE, gzErrorCatchString, EDIT_SCREEN,
@@ -967,7 +968,7 @@ BOOLEAN ValidFilename() {
   return FALSE;
 }
 
-BOOLEAN ExternalLoadMap(wchar_t* szFilename) {
+BOOLEAN ExternalLoadMap(wchar_t *szFilename) {
   Assert(szFilename);
   if (!wcslen(szFilename)) return FALSE;
   wcscpy(gzFilename, szFilename);
@@ -976,12 +977,12 @@ BOOLEAN ExternalLoadMap(wchar_t* szFilename) {
   ProcessFileIO();  // always returns loadsave_screen and changes iostatus to loading_map.
   ExecuteBaseDirtyRectQueue();
   EndFrameBufferRender();
-  RefreshScreen(NULL);
+  RefreshScreen();
   if (ProcessFileIO() == EDIT_SCREEN) return TRUE;
   return FALSE;
 }
 
-BOOLEAN ExternalSaveMap(wchar_t* szFilename) {
+BOOLEAN ExternalSaveMap(wchar_t *szFilename) {
   Assert(szFilename);
   if (!wcslen(szFilename)) return FALSE;
   wcscpy(gzFilename, szFilename);
@@ -990,7 +991,7 @@ BOOLEAN ExternalSaveMap(wchar_t* szFilename) {
   if (ProcessFileIO() == ERROR_SCREEN) return FALSE;
   ExecuteBaseDirtyRectQueue();
   EndFrameBufferRender();
-  RefreshScreen(NULL);
+  RefreshScreen();
   if (ProcessFileIO() == EDIT_SCREEN) return TRUE;
   return FALSE;
 }

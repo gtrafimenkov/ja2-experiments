@@ -5,47 +5,12 @@
 #ifndef __TOWN_H
 #define __TOWN_H
 
-#include <stdint.h>
+#include "rust_towns.h"
 
-#include "Sector.h"
+typedef enum TownID TownID;
 
-// Sector name identifiers.  Also town names.
-typedef enum {
-  BLANK_SECTOR = 0,
-  OMERTA,
-  DRASSEN,
-  ALMA,
-  GRUMM,
-  TIXA,
-  CAMBRIA,
-  SAN_MONA,
-  ESTONI,
-  ORTA,
-  BALIME,
-  MEDUNA,
-  CHITZENA,
-  NUM_TOWNS
-} TownID;
-
+#define NUM_TOWNS 13
 #define FIRST_TOWN OMERTA
-
-int8_t GetTownIdForSector(uint8_t sMapX, uint8_t sMapY);
-int8_t GetTownIdForStrategicMapIndex(int32_t index);
-
-// Mapping townID -> sectorID
-struct TownSector {
-  TownID townID;
-  SectorID16 sectorID;
-};
-
-// Mapping of all town sectors.  There may be max 40 mappings.
-// The mapping is over, when townID is BLANK_SECTOR.
-typedef struct TownSector TownSectors[40];
-
-const TownSectors* GetAllTownSectors();
-
-// build list of town sectors
-void BuildListOfTownSectors();
 
 // gain pts per real loyalty pt
 #define GAIN_PTS_PER_LOYALTY_PT 500
@@ -94,11 +59,5 @@ void BuildListOfTownSectors();
   (20 * GAIN_PTS_PER_LOYALTY_PT)  // exact impact depends on rebel sentiment in that town
 // Loyalty penalty for being inactive, per day after the third
 #define LOYALTY_PENALTY_INACTIVE (10 * GAIN_PTS_PER_LOYALTY_PT)
-
-// increment the town loyalty rating (hundredths!)
-void IncrementTownLoyalty(TownID bTownId, uint32_t uiLoyaltyIncrease);
-
-// decrement the town loyalty rating (hundredths!)
-void DecrementTownLoyalty(TownID bTownId, uint32_t uiLoyaltyDecrease);
 
 #endif

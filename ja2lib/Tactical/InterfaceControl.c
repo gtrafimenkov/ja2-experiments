@@ -44,7 +44,6 @@
 #include "TileEngine/RadarScreen.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "UI.h"
@@ -53,10 +52,11 @@
 #include "Utils/PopUpBox.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Utilities.h"
+#include "rust_colors.h"
 
 #define CLOCK_X 554
 #define CLOCK_Y 459
-SGPRect gOldClippingRect, gOldDirtyClippingRect;
+struct GRect gOldClippingRect, gOldDirtyClippingRect;
 
 uint32_t guiTacticalInterfaceFlags;
 
@@ -343,9 +343,9 @@ void ResetInterface() {
 extern BOOLEAN AnyItemsVisibleOnLevel(struct ITEM_POOL *pItemPool, int8_t bZLevel);
 
 uint32_t guiColors[12] = {FROMRGB(198, 163, 0), FROMRGB(185, 150, 0), FROMRGB(172, 136, 0),
-                        FROMRGB(159, 123, 0), FROMRGB(146, 110, 0), FROMRGB(133, 96, 0),
-                        FROMRGB(120, 83, 0),  FROMRGB(133, 96, 0),  FROMRGB(146, 110, 0),
-                        FROMRGB(159, 123, 0), FROMRGB(172, 136, 0), FROMRGB(185, 150, 0)};
+                          FROMRGB(159, 123, 0), FROMRGB(146, 110, 0), FROMRGB(133, 96, 0),
+                          FROMRGB(120, 83, 0),  FROMRGB(133, 96, 0),  FROMRGB(146, 110, 0),
+                          FROMRGB(159, 123, 0), FROMRGB(172, 136, 0), FROMRGB(185, 150, 0)};
 
 void RenderRubberBanding() {
   uint16_t usLineColor;
@@ -377,10 +377,10 @@ void RenderRubberBanding() {
   }
 
   // Draw rectangle.....
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, gsVIEWPORT_END_X, gsVIEWPORT_WINDOW_END_Y);
 
-  usLineColor = Get16BPPColor(guiColors[iFlashColor]);
+  usLineColor = rgb32_to_rgb565(guiColors[iFlashColor]);
 
   if ((iRight - iLeft) > 0) {
     LineDraw(TRUE, iLeft, iTop, iRight, iTop, usLineColor, pDestBuf);
@@ -432,26 +432,25 @@ void RenderRubberBanding() {
 
   if ((iBottom - iTop) > 0) {
     LineDraw(TRUE, iRight, iTop, iRight, iBottom, usLineColor, pDestBuf);
-    iBack =
-        RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iTop, (int16_t)(iRight + 1), iBottom);
+    iBack = RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iTop, (int16_t)(iRight + 1),
+                                   iBottom);
   } else if ((iBottom - iTop) < 0) {
     LineDraw(TRUE, iRight, iTop, iRight, iBottom, usLineColor, pDestBuf);
-    iBack =
-        RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iBottom, (int16_t)(iRight + 1), iTop);
+    iBack = RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iBottom, (int16_t)(iRight + 1),
+                                   iTop);
   }
 
   if (iBack != -1) {
     SetBackgroundRectFilled(iBack);
   }
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
 }
 
 void RenderTopmostTacticalInterface() {
   struct SOLDIERTYPE *pSoldier;
   uint32_t cnt;
   static uint32_t uiBogTarget = 0;
-  VOBJECT_DESC VObjectDesc;
   int16_t sX, sY;
   int16_t sOffsetX, sOffsetY, sTempY_S, sTempX_S;
   int16_t usMapPos;
@@ -510,14 +509,12 @@ void RenderTopmostTacticalInterface() {
           // Blit bogus target
           if (uiBogTarget == 0) {
             // Loadup cursor!
-            VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-            FilenameForBPP("CURSORS\\targblak.sti", VObjectDesc.ImageFile);
-            AddVideoObject(&VObjectDesc, &uiBogTarget);
+            AddVObjectFromFile("CURSORS\\targblak.sti", &uiBogTarget);
           }
 
           if (GridNoOnScreen(
                   (int16_t)MAPROWCOLTOPOS((MercPtrs[cnt]->sPlannedTargetY / CELL_Y_SIZE),
-                                        (MercPtrs[cnt]->sPlannedTargetX / CELL_X_SIZE)))) {
+                                          (MercPtrs[cnt]->sPlannedTargetX / CELL_X_SIZE)))) {
             // GET SCREEN COORDINATES
             sOffsetX = (MercPtrs[cnt]->sPlannedTargetX - gsRenderCenterX);
             sOffsetY = (MercPtrs[cnt]->sPlannedTargetY - gsRenderCenterY);
@@ -534,8 +531,7 @@ void RenderTopmostTacticalInterface() {
             sX -= 10;
             sY -= 10;
 
-            BltVideoObjectFromIndex(FRAME_BUFFER, uiBogTarget, 0, sX, sY, VO_BLT_SRCTRANSPARENCY,
-                                    NULL);
+            BltVObjectFromIndex(vsFB, uiBogTarget, 0, sX, sY);
             InvalidateRegion(sX, sY, sX + 20, sY + 20);
           }
         }
@@ -769,8 +765,7 @@ void StartViewportOverlays() {
   gDirtyClipRect.iBottom = gsVIEWPORT_WINDOW_END_Y;
 
   SaveFontSettings();
-  SetFontDestBuffer(FRAME_BUFFER, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
-                    FALSE);
+  SetFontDest(vsFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y, FALSE);
 }
 
 void EndViewportOverlays() {

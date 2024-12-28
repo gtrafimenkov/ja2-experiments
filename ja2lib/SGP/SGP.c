@@ -10,7 +10,7 @@
 #include "JA2Splash.h"
 #include "Laptop/Laptop.h"
 #include "Local.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/Input.h"
 #include "SGP/Random.h"
@@ -21,6 +21,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "platform.h"
+#include "rust_fileman.h"
 
 void SGPExit(void);
 
@@ -35,21 +36,11 @@ BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params) {
   InitializeDebugManager();
 #endif
 
-  // Now start up everything else.
-  RegisterDebugTopic(TOPIC_SGP, "Standard Gaming Platform");
-
   // this one needs to go ahead of all others (except Debug), for MemDebugCounter to work right...
   FastDebugMsg("Initializing Memory Manager");
   // Initialize the Memory Manager
   if (InitializeMemoryManager() == FALSE) {  // We were unable to initialize the memory manager
     FastDebugMsg("FAILED : Initializing Memory Manager");
-    return FALSE;
-  }
-
-  FastDebugMsg("Initializing File Manager");
-  // Initialize the File Manager
-  if (FileMan_Initialize() == FALSE) {  // We were unable to initialize the file manager
-    FastDebugMsg("FAILED : Initializing File Manager");
     return FALSE;
   }
 

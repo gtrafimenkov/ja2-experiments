@@ -58,7 +58,6 @@ void SelectLinkRegionCallBack(struct MOUSE_REGION* pRegion, int32_t iReason);
 void GameInitAimLinks() {}
 
 BOOLEAN EnterAimLinks() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosY;
   int16_t i;
 
@@ -66,19 +65,23 @@ BOOLEAN EnterAimLinks() {
   InitAimMenuBar();
 
   // load the Bobby link graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYRAYLINK);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBobbyLink));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_BOBBYRAYLINK);
+  if (!AddVObjectFromFile(ImageFile, &guiBobbyLink)) {
+    return FALSE;
+  }
 
   // load the Funeral graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_MORTUARYLINK);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFuneralLink));
+  GetMLGFilename(ImageFile, MLG_MORTUARYLINK);
+  if (!AddVObjectFromFile(ImageFile, &guiFuneralLink)) {
+    return FALSE;
+  }
 
   // load the Insurance graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_INSURANCELINK);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceLink));
+  GetMLGFilename(ImageFile, MLG_INSURANCELINK);
+  if (!AddVObjectFromFile(ImageFile, &guiInsuranceLink)) {
+    return FALSE;
+  }
 
   usPosY = AIM_LINK_BOBBY_LINK_Y;
   for (i = 0; i < AIM_LINK_NUM_LINKS; i++) {
@@ -118,19 +121,16 @@ void RenderAimLinks() {
   DisableAimButton();
 
   GetVideoObject(&hPixHandle, guiBobbyLink);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, AIM_LINK_BOBBY_LINK_X, AIM_LINK_BOBBY_LINK_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, AIM_LINK_BOBBY_LINK_X, AIM_LINK_BOBBY_LINK_Y);
 
   GetVideoObject(&hPixHandle, guiFuneralLink);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, AIM_LINK_FUNERAL_LINK_X, AIM_LINK_FUNERAL_LINK_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, AIM_LINK_FUNERAL_LINK_X, AIM_LINK_FUNERAL_LINK_Y);
   //	DrawTextToScreen(AimLinkText[AIM_LINK_FUNERAL], AIM_LINK_BOBBY_LINK_X,
   // AIM_LINK_LINK_TEXT_2_Y, AIM_LINK_LINK_WIDTH, AIM_LINK_FONT, AIM_LINK_COLOR, FONT_MCOLOR_BLACK,
   // FALSE, CENTER_JUSTIFIED);
 
   GetVideoObject(&hPixHandle, guiInsuranceLink);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, AIM_LINK_INSURANCE_LINK_X, AIM_LINK_INSURANCE_LINK_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, AIM_LINK_INSURANCE_LINK_X, AIM_LINK_INSURANCE_LINK_Y);
   //	DrawTextToScreen(AimLinkText[AIM_LINK_LISTENING], AIM_LINK_BOBBY_LINK_X,
   // AIM_LINK_LINK_TEXT_3_Y, AIM_LINK_LINK_WIDTH, AIM_LINK_FONT, AIM_LINK_COLOR, FONT_MCOLOR_BLACK,
   // FALSE, CENTER_JUSTIFIED);

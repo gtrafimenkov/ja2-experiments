@@ -10,6 +10,7 @@
 #include "Editor/EditorDefines.h"
 #include "Editor/EditorMercs.h"
 #include "Editor/EditorTaskbarUtils.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -19,6 +20,7 @@
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
+#include "rust_geometry.h"
 
 BOOLEAN fValidCursor = FALSE;
 BOOLEAN fAnchored = FALSE;

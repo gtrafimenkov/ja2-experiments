@@ -14,6 +14,7 @@
 #include "Laptop/History.h"
 #include "Laptop/Laptop.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
@@ -169,7 +170,6 @@ BOOLEAN fFirstClickInAssignmentScreenMask = FALSE;
 
 // render pre battle interface?
 extern BOOLEAN gfRenderPBInterface;
-extern BOOLEAN fMapScreenBottomDirty;
 
 // in the mapscreen?
 extern BOOLEAN fInMapMode;
@@ -299,7 +299,7 @@ uint8_t GetMinHealingSkillNeeded(struct SOLDIERTYPE *pPatient);
 
 // heal patient, given doctor and total healing pts available to doctor at this time
 uint16_t HealPatient(struct SOLDIERTYPE *pPatient, struct SOLDIERTYPE *pDoctor,
-                   uint16_t usHundredthsHealed);
+                     uint16_t usHundredthsHealed);
 
 // can item be repaired?
 BOOLEAN IsItemRepairable(uint16_t usItem, int8_t bStatus);
@@ -393,7 +393,7 @@ BOOLEAN CanSoldierBeHealedByDoctor(struct SOLDIERTYPE *pSoldier, struct SOLDIERT
                                    BOOLEAN fIgnoreAssignment, BOOLEAN fThisHour,
                                    BOOLEAN fSkipKitCheck, BOOLEAN fSkipSkillCheck);
 uint8_t GetNumberThatCanBeDoctored(struct SOLDIERTYPE *pDoctor, BOOLEAN fThisHour,
-                                 BOOLEAN fSkipKitCheck, BOOLEAN fSkipSkillCheck);
+                                   BOOLEAN fSkipKitCheck, BOOLEAN fSkipSkillCheck);
 void CheckForAndHandleHospitalPatients(void);
 void HealHospitalPatient(struct SOLDIERTYPE *pPatient, uint16_t usHealingPtsLeft);
 
@@ -411,16 +411,18 @@ BOOLEAN CanCharacterRepairButDoesntHaveARepairkit(struct SOLDIERTYPE *pSoldier);
 // robot replated stuff
 BOOLEAN IsRobotInThisSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
 struct SOLDIERTYPE *GetRobotSoldier(void);
-uint8_t RepairRobot(struct SOLDIERTYPE *pRobot, uint8_t ubRepairPts, BOOLEAN *pfNothingLeftToRepair);
+uint8_t RepairRobot(struct SOLDIERTYPE *pRobot, uint8_t ubRepairPts,
+                    BOOLEAN *pfNothingLeftToRepair);
 uint8_t HandleRepairOfRobotBySoldier(struct SOLDIERTYPE *pSoldier, uint8_t ubRepairPts,
-                                   BOOLEAN *pfNothingLeftToRepair);
+                                     BOOLEAN *pfNothingLeftToRepair);
 BOOLEAN HandleAssignmentExpansionAndHighLightForAssignMenu(struct SOLDIERTYPE *pSoldier);
 BOOLEAN HandleAssignmentExpansionAndHighLightForTrainingMenu(void);
 BOOLEAN HandleShowingOfMovementBox(void);
 // BOOLEAN HandleShowingOfUpBox( void );
 void ReportTrainersTraineesWithoutPartners(void);
 BOOLEAN ValidTrainingPartnerInSameSectorOnAssignmentFound(struct SOLDIERTYPE *pSoldier,
-                                                          int8_t bTargetAssignment, int8_t bTargetStat);
+                                                          int8_t bTargetAssignment,
+                                                          int8_t bTargetStat);
 
 extern void AddSectorForSoldierToListOfSectorsThatCompletedMilitiaTraining(
     struct SOLDIERTYPE *pSoldier);
@@ -430,7 +432,7 @@ extern BOOLEAN SectorIsImpassable(int16_t sSector);
 extern BOOLEAN CanChangeSleepStatusForCharSlot(int8_t bCharNumber);
 
 extern uint32_t VirtualSoldierDressWound(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pVictim,
-                                       struct OBJECTTYPE *pKit, int16_t sKitPts, int16_t sStatus);
+                                         struct OBJECTTYPE *pKit, int16_t sKitPts, int16_t sStatus);
 
 // only 2 trainers are allowed per sector, so this function counts the # in a guy's sector
 int8_t CountMilitiaTrainersInSoldiersSector(struct SOLDIERTYPE *pSoldier);
@@ -501,7 +503,7 @@ void ChangeSoldiersAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment) 
   pSoldier->bVehicleUnderRepairID = -1;
 
   if ((bAssignment == DOCTOR) || (bAssignment == PATIENT) || (bAssignment == ASSIGNMENT_HOSPITAL)) {
-    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetWorldTotalMin() + 1, 0);
+    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetGameTimeInMin() + 1, 0);
   }
 
   // update character info, and the team panel
@@ -509,7 +511,7 @@ void ChangeSoldiersAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment) 
   fTeamPanelDirty = TRUE;
 
   // merc may have come on/off duty, make sure map icons are updated
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 BOOLEAN BasicCanCharacterAssignment(struct SOLDIERTYPE *pSoldier, BOOLEAN fNotInCombat) {
@@ -756,7 +758,8 @@ BOOLEAN DoesCharacterHaveAnyItemsToRepair(struct SOLDIERTYPE *pSoldier, int8_t b
         }
 
         // repair everyone's hands and armor slots first, then headgear, and pockets last
-        for (ubPassType = REPAIR_HANDS_AND_ARMOR; ubPassType <= (uint8_t)bHighestPass; ubPassType++) {
+        for (ubPassType = REPAIR_HANDS_AND_ARMOR; ubPassType <= (uint8_t)bHighestPass;
+             ubPassType++) {
           bPocket = FindRepairableItemOnOtherSoldier(pOtherSoldier, ubPassType);
           if (bPocket != NO_SLOT) {
             return (TRUE);
@@ -923,8 +926,7 @@ BOOLEAN BasicCanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
   }
 
   // is there a town in the character's current sector?
-  if (StrategicMap[GetSectorID16(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))].townID ==
-      BLANK_SECTOR) {
+  if (GetSolTown(pSoldier) == BLANK_SECTOR) {
     fSamSitePresent = IsThisSectorASAMSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier),
                                              GetSolSectorZ(pSoldier));
 
@@ -994,7 +996,7 @@ BOOLEAN CanCharacterTrainMilitia(struct SOLDIERTYPE *pSoldier) {
 
 BOOLEAN DoesTownHaveRatingToTrainMilitia(TownID bTownId) {
   // min loyalty rating?
-  if ((gTownLoyalty[bTownId].ubRating < MIN_RATING_TO_TRAIN_TOWN)) {
+  if ((GetTownLoyaltyRating(bTownId) < MIN_RATING_TO_TRAIN_TOWN)) {
     // nope
     return (FALSE);
   }
@@ -1012,7 +1014,7 @@ BOOLEAN DoesSectorMercIsInHaveSufficientLoyaltyToTrainMilitia(struct SOLDIERTYPE
     return (FALSE);
   }
 
-  bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+  bTownId = GetSolTown(pSoldier);
 
   // is there a town really here
   if (bTownId == BLANK_SECTOR) {
@@ -1063,7 +1065,7 @@ BOOLEAN IsMilitiaTrainableFromSoldiersSectorMaxed(struct SOLDIERTYPE *pSoldier) 
     return (TRUE);
   }
 
-  bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+  bTownId = GetSolTown(pSoldier);
 
   // is there a town really here
   if (bTownId == BLANK_SECTOR) {
@@ -1685,7 +1687,7 @@ void UpdateAssignments() {
   // update mapscreen
   fCharacterInfoPanelDirty = TRUE;
   fTeamPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 }
 
 #ifdef JA2BETAVERSION
@@ -1704,7 +1706,7 @@ void VerifyTownTrainingIsPaidFor(void) {
 
     if (IsSolActive(pSoldier) && (GetSolAssignment(pSoldier) == TRAIN_TOWN)) {
       // make sure that sector is paid up!
-      if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
+      if (!IsMilitiaTrainingPayedForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
         // NOPE!  We've got a bug somewhere
         StopTimeCompression();
 
@@ -1747,7 +1749,7 @@ uint8_t FindNumberInSectorWithAssignment(uint8_t sX, uint8_t sY, int8_t bAssignm
 }
 
 uint8_t GetNumberThatCanBeDoctored(struct SOLDIERTYPE *pDoctor, BOOLEAN fThisHour,
-                                 BOOLEAN fSkipKitCheck, BOOLEAN fSkipSkillCheck) {
+                                   BOOLEAN fSkipKitCheck, BOOLEAN fSkipSkillCheck) {
   int cnt;
   struct SOLDIERTYPE *pSoldier = MercPtrs[0], *pTeamSoldier = NULL;
   uint8_t ubNumberOfPeople = 0;
@@ -1790,7 +1792,7 @@ struct SOLDIERTYPE *AnyDoctorWhoCanHealThisPatient(struct SOLDIERTYPE *pPatient,
 }
 
 uint16_t CalculateHealingPointsForDoctor(struct SOLDIERTYPE *pDoctor, uint16_t *pusMaxPts,
-                                       BOOLEAN fMakeSureKitIsInHand) {
+                                         BOOLEAN fMakeSureKitIsInHand) {
   uint16_t usHealPts = 0;
   uint16_t usKitPts = 0;
   int8_t bMedFactor;
@@ -1844,7 +1846,7 @@ uint16_t CalculateHealingPointsForDoctor(struct SOLDIERTYPE *pDoctor, uint16_t *
 }
 
 uint8_t CalculateRepairPointsForRepairman(struct SOLDIERTYPE *pSoldier, uint16_t *pusMaxPts,
-                                        BOOLEAN fMakeSureKitIsInHand) {
+                                          BOOLEAN fMakeSureKitIsInHand) {
   uint16_t usRepairPts;
   uint16_t usKitPts;
   uint8_t ubKitEffectiveness;
@@ -2217,7 +2219,7 @@ uint8_t GetMinHealingSkillNeeded(struct SOLDIERTYPE *pPatient) {
 }
 
 uint16_t HealPatient(struct SOLDIERTYPE *pPatient, struct SOLDIERTYPE *pDoctor,
-                   uint16_t usHundredthsHealed) {
+                     uint16_t usHundredthsHealed) {
   // heal patient and return the number of healing pts used
   uint16_t usHealingPtsLeft;
   uint16_t usTotalFullPtsUsed = 0;
@@ -2306,7 +2308,7 @@ uint16_t HealPatient(struct SOLDIERTYPE *pPatient, struct SOLDIERTYPE *pDoctor,
         // into lower healing pts) but it does effect how fast the medkit is used up!  First aid
         // kits disappear at double their doctoring rate!
         bPointsUsed = (int8_t)UseKitPoints(&(pDoctor->inv[bPocket]),
-                                         (uint16_t)(bPointsToUse * bMedFactor), pDoctor);
+                                           (uint16_t)(bPointsToUse * bMedFactor), pDoctor);
         bPointsHealed = bPointsUsed / bMedFactor;
 
         bPointsToUse -= bPointsHealed;
@@ -2346,7 +2348,7 @@ uint16_t HealPatient(struct SOLDIERTYPE *pPatient, struct SOLDIERTYPE *pDoctor,
         // into lower healing pts) but it does effect how fast the medkit is used up!  First aid
         // kits disappear at double their doctoring rate!
         bPointsUsed = (int8_t)UseKitPoints(&(pDoctor->inv[bPocket]),
-                                         (uint16_t)(bPointsToUse * bMedFactor), pDoctor);
+                                           (uint16_t)(bPointsToUse * bMedFactor), pDoctor);
         bPointsHealed = bPointsUsed / bMedFactor;
 
         bPointsToUse -= bPointsHealed;
@@ -2496,71 +2498,6 @@ void HandleRepairmenInSector(int16_t sX, int16_t sY, int8_t bZ) {
   return;
 }
 
-/* No point in allowing SAM site repair any more.  Jan/13/99.  ARM
-int8_t HandleRepairOfSAMSite( struct SOLDIERTYPE *pSoldier, int8_t bPointsAvailable, BOOLEAN *
-pfNothingLeftToRepair )
-{
-        int8_t bPtsUsed = 0;
-        int16_t sStrategicSector = 0;
-
-        if( IsThisSectorASAMSector( pSoldier -> sSectorX, pSoldier -> sSectorY, pSoldier -> bSectorZ
-) == FALSE )
-        {
-                return( bPtsUsed );
-        }
-        else if( ( pSoldier -> sSectorX == gWorldSectorX ) && ( pSoldier -> bSectorZ ==
-gbWorldSectorZ )&&( pSoldier -> sSectorY == gWorldSectorY ) )
-        {
-                if( CanSoldierRepairSAM( pSoldier, bPointsAvailable ) == FALSE )
-                {
-                        return( bPtsUsed );
-                }
-        }
-
-        // repair the SAM
-
-        sStrategicSector = GetSectorID16( GetSolSectorX(pSoldier),
-GetSolSectorY(pSoldier) );
-
-        // do we have more than enough?
-        if( 100 - StrategicMap[ sStrategicSector ].bSAMCondition >= bPointsAvailable /
-SAM_SITE_REPAIR_DIVISOR )
-        {
-                // no, use up all we have
-                StrategicMap[ sStrategicSector ].bSAMCondition += bPointsAvailable /
-SAM_SITE_REPAIR_DIVISOR; bPtsUsed = bPointsAvailable - ( bPointsAvailable % SAM_SITE_REPAIR_DIVISOR
-);
-
-                // SAM site may have been put back into working order...
-                UpdateAirspaceControl( );
-        }
-        else
-        {
-                // yep
-                bPtsUsed = SAM_SITE_REPAIR_DIVISOR * ( 100 - StrategicMap[ sStrategicSector
-].bSAMCondition ); StrategicMap[ sStrategicSector ].bSAMCondition = 100;
-
-//ARM: NOTE THAT IF THIS CODE IS EVER RE-ACTIVATED, THE SAM GRAPHICS SHOULD CHANGE NOT WHEN THE SAM
-SITE RETURNS TO
-// FULL STRENGTH (condition 100), but as soon as it reaches MIN_CONDITION_TO_FIX_SAM!!!
-
-                // Bring Hit points back up to full, adjust graphic to full graphic.....
-                UpdateSAMDoneRepair( pSoldier -> sSectorX, pSoldier -> sSectorY, pSoldier ->
-bSectorZ );
-        }
-
-        if ( StrategicMap[ sStrategicSector ].bSAMCondition == 100 )
-        {
-                *pfNothingLeftToRepair = TRUE;
-        }
-        else
-        {
-                *pfNothingLeftToRepair = FALSE;
-        }
-        return( bPtsUsed );
-}
-*/
-
 int8_t FindRepairableItemOnOtherSoldier(struct SOLDIERTYPE *pSoldier, uint8_t ubPassType) {
   int8_t bLoop, bLoop2;
   REPAIR_PASS_SLOTS_TYPE *pPassList;
@@ -2657,8 +2594,8 @@ BOOLEAN RepairObject(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOwner,
     if (IsItemRepairable(pObj->usItem, pObj->bStatus[ubLoop])) {
       // repairable, try to repair it
 
-      // void DoActualRepair( struct SOLDIERTYPE * pSoldier, uint16_t usItem, int8_t * pbStatus, uint8_t *
-      // pubRepairPtsLeft )
+      // void DoActualRepair( struct SOLDIERTYPE * pSoldier, uint16_t usItem, int8_t * pbStatus,
+      // uint8_t * pubRepairPtsLeft )
       DoActualRepair(pSoldier, pObj->usItem, &(pObj->bStatus[ubLoop]), pubRepairPtsLeft);
 
       fSomethingWasRepaired = TRUE;
@@ -2811,7 +2748,7 @@ void HandleRepairBySoldier(struct SOLDIERTYPE *pSoldier) {
     // check if kit damaged/depleted
     if ((Random(100)) <
         (uint32_t)(ubRepairPtsUsed *
-                 5))  // CJC: added a x5 as this wasn't going down anywhere fast enough
+                   5))  // CJC: added a x5 as this wasn't going down anywhere fast enough
     {
       // kit item damaged/depleted, burn up points of toolkit..which is in right hand
       UseKitPoints(&(pSoldier->inv[HANDPOS]), 1, pSoldier);
@@ -3107,8 +3044,7 @@ void HandleTrainingInSector(uint8_t sMapX, uint8_t sMapY, int8_t bZ) {
   }
 
   // check if we're doing a sector where militia can be trained
-  if (((StrategicMap[GetSectorID16(sMapX, (sMapY))].townID != BLANK_SECTOR) ||
-       (fSamSiteInSector == TRUE)) &&
+  if (((GetTownIdForSector(sMapX, sMapY) != BLANK_SECTOR) || (fSamSiteInSector == TRUE)) &&
       (bZ == 0)) {
     // init town trainer list
     memset(TownTrainer, 0, sizeof(TownTrainer));
@@ -3173,8 +3109,8 @@ int TownTrainerQsortCompare(const void *pArg1, const void *pArg2) {
 }
 
 int16_t GetBonusTrainingPtsDueToInstructor(struct SOLDIERTYPE *pInstructor,
-                                         struct SOLDIERTYPE *pStudent, int8_t bTrainStat,
-                                         BOOLEAN fAtGunRange, uint16_t *pusMaxPts) {
+                                           struct SOLDIERTYPE *pStudent, int8_t bTrainStat,
+                                           BOOLEAN fAtGunRange, uint16_t *pusMaxPts) {
   // return the bonus training pts of this instructor with this student,...if student null, simply
   // assignment student skill of 0 and student wisdom of 100
   uint16_t sTrainingPts = 0;
@@ -3357,7 +3293,7 @@ int16_t GetBonusTrainingPtsDueToInstructor(struct SOLDIERTYPE *pInstructor,
 }
 
 int16_t GetSoldierTrainingPts(struct SOLDIERTYPE *pSoldier, int8_t bTrainStat, BOOLEAN fAtGunRange,
-                            uint16_t *pusMaxPts) {
+                              uint16_t *pusMaxPts) {
   uint16_t sTrainingPts = 0;
   int8_t bTrainingBonus = 0;
   int8_t bSkill = 0;
@@ -3433,7 +3369,7 @@ int16_t GetSoldierTrainingPts(struct SOLDIERTYPE *pSoldier, int8_t bTrainStat, B
 }
 
 int16_t GetSoldierStudentPts(struct SOLDIERTYPE *pSoldier, int8_t bTrainStat, BOOLEAN fAtGunRange,
-                           uint16_t *pusMaxPts) {
+                             uint16_t *pusMaxPts) {
   uint16_t sTrainingPts = 0;
   int8_t bTrainingBonus = 0;
   int8_t bSkill = 0;
@@ -3610,7 +3546,7 @@ static BOOLEAN TrainTownInSector(struct SOLDIERTYPE *pTrainer, uint8_t sMapX, ui
   fSamSiteInSector = IsThisSectorASAMSector(sMapX, sMapY, 0);
 
   // get town index
-  ubTownId = StrategicMap[pTrainer->sSectorX + pTrainer->sSectorY * MAP_WORLD_X].townID;
+  ubTownId = GetSolTown(pTrainer);
   if (fSamSiteInSector == FALSE) {
     Assert(ubTownId != BLANK_SECTOR);
   }
@@ -3637,7 +3573,7 @@ static BOOLEAN TrainTownInSector(struct SOLDIERTYPE *pTrainer, uint8_t sMapX, ui
     pSectorInfo->ubMilitiaTrainingHundredths = 0;
 
     // make the player pay again next time he wants to train here
-    SetMilitiaTrainingPayedForSectorID8(GetSectorID8(sMapX, sMapY), false);
+    SetMilitiaTrainingPayedForSector(sMapX, sMapY, false);
 
     TownMilitiaTrainingCompleted(pTrainer, sMapX, sMapY);
 
@@ -3687,16 +3623,6 @@ int16_t GetTownTrainPtsForCharacter(struct SOLDIERTYPE *pTrainer, uint16_t *pusM
   // adjust for fatigue of trainer
   ReducePointsForFatigue(pTrainer, &sTotalTrainingPts);
 
-  /* ARM: Decided this didn't make much sense - the guys I'm training damn well BETTER be loyal -
-     and screw the rest!
-          // get town index
-          ubTownId = StrategicMap[ pTrainer -> sSectorX + pTrainer -> sSectorY * MAP_WORLD_X
-     ].townID; Assert(ubTownId != BLANK_SECTOR);
-
-          // adjust for town loyalty
-          sTotalTrainingPts = (sTotalTrainingPts * gTownLoyalty[ ubTownId ].ubRating) / 100;
-  */
-
   return (sTotalTrainingPts);
 }
 
@@ -3729,7 +3655,7 @@ void AssignmentAborted(struct SOLDIERTYPE *pSoldier, uint8_t ubReason) {
   // update mapscreen
   fCharacterInfoPanelDirty = TRUE;
   fTeamPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 }
 
 void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMeToo) {
@@ -3793,7 +3719,7 @@ void AssignmentDone(struct SOLDIERTYPE *pSoldier, BOOLEAN fSayQuote, BOOLEAN fMe
   // update mapscreen
   fCharacterInfoPanelDirty = TRUE;
   fTeamPanelDirty = TRUE;
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 }
 
 BOOLEAN CharacterIsBetweenSectors(struct SOLDIERTYPE *pSoldier) {
@@ -3961,7 +3887,7 @@ pSoldier -> name );
                 // update mapscreen
                 fCharacterInfoPanelDirty = TRUE;
                 fTeamPanelDirty = TRUE;
-                fMapScreenBottomDirty = TRUE;
+                SetMapScreenBottomDirty(true);
 
                 return( TRUE );
         }
@@ -3994,7 +3920,7 @@ void CreateDestroyMouseRegionsForAssignmentMenu(void) {
   struct SOLDIERTYPE *pSoldier = NULL;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   static BOOLEAN fShowRemoveMenu = FALSE;
 
   // will create/destroy mouse regions for the map screen assignment main menu
@@ -4074,7 +4000,7 @@ void CreateDestroyMouseRegionsForAssignmentMenu(void) {
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight)*iCounter),
           (int16_t)(iBoxXPosition + iBoxWidth),
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
-                  (iFontHeight) * (iCounter + 1)),
+                    (iFontHeight) * (iCounter + 1)),
           MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, AssignmentMenuMvtCallBack,
           AssignmentMenuBtnCallback);
 
@@ -4113,7 +4039,7 @@ void CreateDestroyMouseRegionForVehicleMenu(void) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition, pPoint;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   struct SOLDIERTYPE *pSoldier = NULL;
 
   if (fShowVehicleMenu) {
@@ -4155,14 +4081,14 @@ void CreateDestroyMouseRegionForVehicleMenu(void) {
       if (pVehicleList[iVehicleId].fValid == TRUE) {
         if (IsThisVehicleAccessibleToSoldier(pSoldier, iVehicleId)) {
           // add mouse region for each accessible vehicle
-          MSYS_DefineRegion(
-              &gVehicleMenuRegion[uiMenuLine], (int16_t)(iBoxXPosition),
-              (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight)*uiMenuLine),
-              (int16_t)(iBoxXPosition + iBoxWidth),
-              (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
-                      (iFontHeight) * (uiMenuLine + 1)),
-              MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, VehicleMenuMvtCallback,
-              VehicleMenuBtnCallback);
+          MSYS_DefineRegion(&gVehicleMenuRegion[uiMenuLine], (int16_t)(iBoxXPosition),
+                            (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
+                                      (iFontHeight)*uiMenuLine),
+                            (int16_t)(iBoxXPosition + iBoxWidth),
+                            (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
+                                      (iFontHeight) * (uiMenuLine + 1)),
+                            MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, VehicleMenuMvtCallback,
+                            VehicleMenuBtnCallback);
 
           MSYS_SetRegionUserData(&gVehicleMenuRegion[uiMenuLine], 0, uiMenuLine);
           // store vehicle ID in the SECOND user data
@@ -4179,7 +4105,7 @@ void CreateDestroyMouseRegionForVehicleMenu(void) {
         (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight)*uiMenuLine),
         (int16_t)(iBoxXPosition + iBoxWidth),
         (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
-                (iFontHeight) * (uiMenuLine + 1)),
+                  (iFontHeight) * (uiMenuLine + 1)),
         MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, VehicleMenuMvtCallback, VehicleMenuBtnCallback);
     MSYS_SetRegionUserData(&gVehicleMenuRegion[uiMenuLine], 0, VEHICLE_MENU_CANCEL);
 
@@ -4262,7 +4188,7 @@ void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       fShowVehicleMenu = FALSE;
       UnHighLightBox(ghAssignmentBox);
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       return;
     }
@@ -4285,7 +4211,7 @@ void VehicleMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     // update mapscreen
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     giAssignHighLine = -1;
 
@@ -4482,7 +4408,7 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   struct SOLDIERTYPE *pSoldier = NULL;
   int32_t iVehicleIndex = 0;
 
@@ -4527,14 +4453,14 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
             // repairable
             if (IsThisVehicleAccessibleToSoldier(pSoldier, iVehicleIndex)) {
               // add mouse region for each line of text..and set user data
-              MSYS_DefineRegion(
-                  &gRepairMenuRegion[iCount], (int16_t)(iBoxXPosition),
-                  (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight)*iCount),
-                  (int16_t)(iBoxXPosition + iBoxWidth),
-                  (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
-                          (iFontHeight) * (iCount + 1)),
-                  MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, RepairMenuMvtCallback,
-                  RepairMenuBtnCallback);
+              MSYS_DefineRegion(&gRepairMenuRegion[iCount], (int16_t)(iBoxXPosition),
+                                (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
+                                          (iFontHeight)*iCount),
+                                (int16_t)(iBoxXPosition + iBoxWidth),
+                                (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
+                                          (iFontHeight) * (iCount + 1)),
+                                MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, RepairMenuMvtCallback,
+                                RepairMenuBtnCallback);
 
               MSYS_SetRegionUserData(&gRepairMenuRegion[iCount], 0, iCount);
               // 2nd user data is the vehicle index, which can easily be different from the region
@@ -4555,8 +4481,8 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
                     {
                             MSYS_DefineRegion( &gRepairMenuRegion[ iCount ], 	( int16_t )(
        iBoxXPosition ), ( int16_t )( iBoxYPosition + GetTopMarginSize( ghAssignmentBox ) + (
-       iFontHeight ) * iCount ), ( int16_t )( iBoxXPosition + iBoxWidth ), ( int16_t )( iBoxYPosition +
-       GetTopMarginSize( ghAssignmentBox ) + ( iFontHeight ) * ( iCount + 1 ) ),
+       iFontHeight ) * iCount ), ( int16_t )( iBoxXPosition + iBoxWidth ), ( int16_t )(
+       iBoxYPosition + GetTopMarginSize( ghAssignmentBox ) + ( iFontHeight ) * ( iCount + 1 ) ),
        MSYS_PRIORITY_HIGHEST - 4 , MSYS_NO_CURSOR, RepairMenuMvtCallback, RepairMenuBtnCallback );
 
                             MSYS_SetRegionUserData( &gRepairMenuRegion[ iCount ], 0,
@@ -4571,7 +4497,8 @@ void CreateDestroyMouseRegionForRepairMenu(void) {
           &gRepairMenuRegion[iCount], (int16_t)(iBoxXPosition),
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight)*iCount),
           (int16_t)(iBoxXPosition + iBoxWidth),
-          (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight) * (iCount + 1)),
+          (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
+                    (iFontHeight) * (iCount + 1)),
           MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, RepairMenuMvtCallback, RepairMenuBtnCallback);
 
       MSYS_SetRegionUserData(&gRepairMenuRegion[iCount], 0, iCount);
@@ -4754,7 +4681,7 @@ void RepairMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     // update mapscreen
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     giAssignHighLine = -1;
   }
@@ -5100,7 +5027,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghTrainingBox)) {
       HideBox(ghTrainingBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5115,7 +5042,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghRepairBox)) {
       HideBox(ghRepairBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5129,7 +5056,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghAttributeBox)) {
       HideBox(ghAttributeBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5142,7 +5069,7 @@ void DetermineWhichAssignmentMenusCanBeShown(void) {
     if (IsBoxShown(ghVehicleBox)) {
       HideBox(ghVehicleBox);
       fTeamPanelDirty = TRUE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       //	SetRenderFlags(RENDER_FLAG_FULL);
     }
@@ -5209,7 +5136,7 @@ void AssignmentScreenMaskBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReas
     // update mapscreen
     fTeamPanelDirty = TRUE;
     fCharacterInfoPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     gfRenderPBInterface = TRUE;
     SetRenderFlags(RENDER_FLAG_FULL);
@@ -5248,7 +5175,7 @@ void CreateDestroyMouseRegions(void) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
 
   // will create/destroy mouse regions for the map screen assignment main menu
 
@@ -5286,7 +5213,7 @@ void CreateDestroyMouseRegions(void) {
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) + (iFontHeight)*iCounter),
           (int16_t)(iBoxXPosition + iBoxWidth),
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAssignmentBox) +
-                  (iFontHeight) * (iCounter + 1)),
+                    (iFontHeight) * (iCounter + 1)),
           MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, AssignmentMenuMvtCallBack,
           AssignmentMenuBtnCallback);
 
@@ -5300,10 +5227,10 @@ void CreateDestroyMouseRegions(void) {
     // pause game
     PauseGame();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     // unhighlight all strings in box
     UnHighLightBox(ghAssignmentBox);
@@ -5329,7 +5256,7 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   static BOOLEAN fShowRemoveMenu = FALSE;
 
   // will create/destroy mouse regions for the map screen Contract main menu
@@ -5396,7 +5323,8 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
           &gContractMenuRegion[iCounter], (int16_t)(iBoxXPosition),
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghContractBox) + (iFontHeight)*iCounter),
           (int16_t)(iBoxXPosition + iBoxWidth),
-          (int16_t)(iBoxYPosition + GetTopMarginSize(ghContractBox) + (iFontHeight) * (iCounter + 1)),
+          (int16_t)(iBoxYPosition + GetTopMarginSize(ghContractBox) +
+                    (iFontHeight) * (iCounter + 1)),
           MSYS_PRIORITY_HIGHEST - 4, MSYS_NO_CURSOR, ContractMenuMvtCallback,
           ContractMenuBtnCallback);
 
@@ -5422,7 +5350,7 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
     fShownContractMenu = FALSE;
     // if( ( fProcessingAMerc ) && ( pProcessingSoldier ) )
     //{
-    //	if( (uint32_t)(pProcessingSoldier->iEndofContractTime) == GetWorldTotalMin() )
+    //	if( (uint32_t)(pProcessingSoldier->iEndofContractTime) == GetGameTimeInMin() )
     //	{
     //		StrategicRemoveMerc( pProcessingSoldier, MERC_FIRED );
     //		pProcessingSoldier = NULL;
@@ -5430,10 +5358,10 @@ void CreateDestroyMouseRegionsForContractMenu(void) {
     //	}
     //}
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     RestorePopUpBoxes();
 
@@ -5450,7 +5378,7 @@ void CreateDestroyMouseRegionsForTrainingMenu(void) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
 
   // will create/destroy mouse regions for the map screen assignment main menu
 
@@ -5490,7 +5418,8 @@ void CreateDestroyMouseRegionsForTrainingMenu(void) {
           &gTrainingMenuRegion[iCounter], (int16_t)(iBoxXPosition),
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghTrainingBox) + (iFontHeight)*iCounter),
           (int16_t)(iBoxXPosition + iBoxWidth),
-          (int16_t)(iBoxYPosition + GetTopMarginSize(ghTrainingBox) + (iFontHeight) * (iCounter + 1)),
+          (int16_t)(iBoxYPosition + GetTopMarginSize(ghTrainingBox) +
+                    (iFontHeight) * (iCounter + 1)),
           MSYS_PRIORITY_HIGHEST - 3, MSYS_NO_CURSOR, TrainingMenuMvtCallBack,
           TrainingMenuBtnCallback);
 
@@ -5518,10 +5447,10 @@ void CreateDestroyMouseRegionsForTrainingMenu(void) {
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     HideBox(ghTrainingBox);
     SetRenderFlags(RENDER_FLAG_FULL);
 
@@ -5543,7 +5472,7 @@ void CreateDestroyMouseRegionsForAttributeMenu(void) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
 
   // will create/destroy mouse regions for the map screen attribute  menu
 
@@ -5582,7 +5511,7 @@ void CreateDestroyMouseRegionsForAttributeMenu(void) {
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAttributeBox) + (iFontHeight)*iCounter),
           (int16_t)(iBoxXPosition + iBoxWidth),
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAttributeBox) +
-                  (iFontHeight) * (iCounter + 1)),
+                    (iFontHeight) * (iCounter + 1)),
           MSYS_PRIORITY_HIGHEST - 2, MSYS_NO_CURSOR, AttributeMenuMvtCallBack,
           AttributesMenuBtnCallback);
 
@@ -5613,10 +5542,10 @@ void CreateDestroyMouseRegionsForAttributeMenu(void) {
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     HideBox(ghAttributeBox);
     SetRenderFlags(RENDER_FLAG_FULL);
 
@@ -5638,7 +5567,7 @@ void CreateDestroyMouseRegionsForRemoveMenu(void) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
 
   // will create/destroy mouse regions for the map screen attribute  menu
   if (((fShowAssignmentMenu == TRUE) || (fShowContractMenu == TRUE)) && (fCreated == FALSE)) {
@@ -5686,7 +5615,7 @@ void CreateDestroyMouseRegionsForRemoveMenu(void) {
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAttributeBox) + (iFontHeight)*iCounter),
           (int16_t)(iBoxXPosition + iBoxWidth),
           (int16_t)(iBoxYPosition + GetTopMarginSize(ghAttributeBox) +
-                  (iFontHeight) * (iCounter + 1)),
+                    (iFontHeight) * (iCounter + 1)),
           MSYS_PRIORITY_HIGHEST - 2, MSYS_NO_CURSOR, RemoveMercMenuMvtCallBack,
           RemoveMercMenuBtnCallback);
 
@@ -5711,16 +5640,16 @@ void CreateDestroyMouseRegionsForRemoveMenu(void) {
     // stop showing  menu
     if (fShowRemoveMenu == FALSE) {
       fShowAttributeMenu = FALSE;
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
     }
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     // turn off the GLOBAL fShowRemoveMenu flag!!!
     fShowRemoveMenu = FALSE;
@@ -5740,7 +5669,7 @@ void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox) {
   int32_t iBoxYPosition = 0;
   SGPPoint pPosition;
   int32_t iBoxWidth = 0;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
 
   // will create/destroy mouse regions for the map screen attribute  menu
 
@@ -5817,15 +5746,15 @@ void CreateDestroyMouseRegionsForSquadMenu(BOOLEAN fPositionBox) {
 
     RestorePopUpBoxes();
 
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     SetRenderFlags(RENDER_FLAG_FULL);
 
     // not created
     fCreated = FALSE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
 
     if (fShowAssignmentMenu) {
       // remove highlight on the parent menu
@@ -5962,7 +5891,7 @@ void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
         // dirty regions
         fCharacterInfoPanelDirty = TRUE;
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
 
         // stop contratc glow if we are
@@ -5976,7 +5905,7 @@ void RemoveMercMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
         // dirty region
         fCharacterInfoPanelDirty = TRUE;
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
 
         // stop contratc glow if we are
@@ -6020,7 +5949,7 @@ void BeginRemoveMercFromContract(struct SOLDIERTYPE *pSoldier) {
 
     } else
       // quote is different if he's fired in less than 48 hours
-      if ((GetWorldTotalMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 48) {
+      if ((GetGameTimeInMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 48) {
         SpecialCharacterDialogueEvent(DIALOGUE_SPECIAL_EVENT_LOCK_INTERFACE, 1, MAP_SCREEN, 0, 0,
                                       0);
         if ((pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC)) {
@@ -6057,7 +5986,7 @@ void BeginRemoveMercFromContract(struct SOLDIERTYPE *pSoldier) {
                                                   DIALOGUE_SPECIAL_EVENT_CONTRACT_ENDING, 1, 0);
       }
 
-    if ((GetWorldTotalMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 3) {
+    if ((GetGameTimeInMin() - pSoldier->uiTimeOfLastContractUpdate) < 60 * 3) {
       // this will cause him give us lame excuses for a while until he gets over it
       // 3-6 days (but the first 1-2 days of that are spent "returning" home)
       gMercProfiles[GetSolProfile(pSoldier)].ubDaysOfMoraleHangover = (uint8_t)(3 + Random(4));
@@ -6114,7 +6043,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       fShowContractMenu = FALSE;
       // dirty region
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       gfRenderPBInterface = TRUE;
 
@@ -6173,7 +6102,7 @@ void ContractMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
     // dirty region
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     fCharacterInfoPanelDirty = TRUE;
     gfRenderPBInterface = TRUE;
   }
@@ -6250,7 +6179,7 @@ void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
       // dirty region
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       gfRenderPBInterface = TRUE;
 
@@ -6331,7 +6260,7 @@ void SquadMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
       // dirty region
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
       gfRenderPBInterface = TRUE;
     } else {
@@ -6414,7 +6343,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
         break;
       case (TRAIN_MENU_TOWN):
         if (BasicCanCharacterTrainMilitia(pSoldier)) {
-          bTownId = GetTownIdForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier));
+          bTownId = GetSolTown(pSoldier);
 
           // if it's a town sector (the following 2 errors can't happen at non-town SAM sites)
           if (bTownId != BLANK_SECTOR) {
@@ -6480,7 +6409,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           // assign to a movement group
           AssignMercToAMovementGroup(pSoldier);
-          if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
+          if (!IsMilitiaTrainingPayedForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
             // show a message to confirm player wants to charge cost
             HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
           } else {
@@ -6527,7 +6456,7 @@ void TrainingMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     }
 
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
   } else if (iReason & MSYS_CALLBACK_REASON_RBUTTON_UP) {
     if (fShowAttributeMenu) {
       // cancel attribute submenu
@@ -6597,7 +6526,7 @@ void AttributesMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
     gfRenderPBInterface = TRUE;
 
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
   }
 };
 
@@ -6629,7 +6558,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowTrainingMenu = FALSE;
             fShowVehicleMenu = FALSE;
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
           }
           break;
         case (EPC_MENU_PATIENT):
@@ -6657,7 +6586,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
             // set dirty flag
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             // remove from squad
 
@@ -6696,7 +6625,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           // set dirty flag
           fTeamPanelDirty = TRUE;
-          fMapScreenBottomDirty = TRUE;
+          SetMapScreenBottomDirty(true);
 
           // reset list of characters
           ResetSelectedListForMapScreen();
@@ -6711,7 +6640,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowTrainingMenu = FALSE;
             fShowVehicleMenu = FALSE;
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
             fShowRepairMenu = FALSE;
           }
           break;
@@ -6745,13 +6674,13 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
             // set dirty flag
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             // set assignment for group
             SetAssignmentForList((int8_t)DOCTOR, 0);
           } else if (CanCharacterDoctorButDoesntHaveMedKit(pSoldier)) {
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
             swprintf(sString, ARR_SIZE(sString), zMarksMapScreenText[19], pSoldier->name);
 
             DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_OK, NULL);
@@ -6784,7 +6713,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
             // set dirty flag
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             // remove from squad
 
@@ -6817,7 +6746,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowTrainingMenu = FALSE;
             fShowVehicleMenu = FALSE;
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
 
             pSoldier->bOldAssignment = pSoldier->bAssignment;
 
@@ -6831,7 +6760,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           } else if (CanCharacterRepairButDoesntHaveARepairkit(pSoldier)) {
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
             swprintf(sString, ARR_SIZE(sString), zMarksMapScreenText[18], pSoldier->name);
 
             DoScreenIndependantMessageBox(sString, MSG_BOX_FLAG_OK, NULL);
@@ -6846,7 +6775,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
             fShowRepairMenu = FALSE;
 
             fTeamPanelDirty = TRUE;
-            fMapScreenBottomDirty = TRUE;
+            SetMapScreenBottomDirty(true);
           }
           break;
         case (ASSIGN_MENU_CANCEL):
@@ -6855,7 +6784,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
           // set dirty flag
           fTeamPanelDirty = TRUE;
-          fMapScreenBottomDirty = TRUE;
+          SetMapScreenBottomDirty(true);
 
           // reset list of characters
           ResetSelectedListForMapScreen();
@@ -6878,7 +6807,7 @@ void AssignmentMenuBtnCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
 
       // set dirty flag
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
 
       return;
     }
@@ -6899,7 +6828,7 @@ void RestorePopUpBoxes(void) {
 void CreateSquadBox(void) {
   // will create a pop up box for squad selection
   SGPPoint pPoint;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   uint32_t hStringHandle;
   uint32_t uiCounter;
   wchar_t sString[64];
@@ -6916,7 +6845,7 @@ void CreateSquadBox(void) {
   SetBorderType(ghSquadBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghSquadBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghSquadBox, popupTextures);
 
   // margin sizes
   SetMargins(ghSquadBox, 6, 6, 4, 4);
@@ -6979,7 +6908,7 @@ void CreateSquadBox(void) {
 void CreateEPCBox(void) {
   // will create a pop up box for squad selection
   SGPPoint pPoint;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   uint32_t hStringHandle;
   int32_t iCount;
 
@@ -6994,7 +6923,7 @@ void CreateEPCBox(void) {
   SetBorderType(ghEpcBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghEpcBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghEpcBox, popupTextures);
 
   // margin sizes
   SetMargins(ghEpcBox, 6, 6, 4, 4);
@@ -7133,7 +7062,7 @@ void CreateVehicleBox() {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
   SetBoxBuffer(ghVehicleBox, FRAME_BUFFER);
   SetBorderType(ghVehicleBox, guiPOPUPBORDERS);
-  SetBackGroundSurface(ghVehicleBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghVehicleBox, popupTextures);
   SetMargins(ghVehicleBox, 6, 6, 4, 4);
   SetLineSpace(ghVehicleBox, 2);
 }
@@ -7143,7 +7072,7 @@ void CreateRepairBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
   SetBoxBuffer(ghRepairBox, FRAME_BUFFER);
   SetBorderType(ghRepairBox, guiPOPUPBORDERS);
-  SetBackGroundSurface(ghRepairBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghRepairBox, popupTextures);
   SetMargins(ghRepairBox, 6, 6, 4, 4);
   SetLineSpace(ghRepairBox, 2);
 }
@@ -7164,7 +7093,7 @@ void CreateContractBox(struct SOLDIERTYPE *pCharacter) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_RESIZE));
   SetBoxBuffer(ghContractBox, FRAME_BUFFER);
   SetBorderType(ghContractBox, guiPOPUPBORDERS);
-  SetBackGroundSurface(ghContractBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghContractBox, popupTextures);
   SetMargins(ghContractBox, 6, 6, 4, 4);
   SetLineSpace(ghContractBox, 2);
 
@@ -7179,7 +7108,7 @@ void CreateContractBox(struct SOLDIERTYPE *pCharacter) {
           /*
                                           // add current balance after title string
                                            swprintf( sDollarString, L"%d",
-             MoneyGetBalance()); InsertCommasForDollarFigure( sDollarString );
+             LaptopMoneyGetBalance()); InsertCommasForDollarFigure( sDollarString );
                                            InsertDollarSignInToString( sDollarString );
                                            swprintf( sString, L"%s %s", pContractStrings[uiCounter],
              sDollarString ); AddMonoString(&hStringHandle, sString);
@@ -7281,7 +7210,7 @@ void CreateAttributeBox(void) {
   SetBorderType(ghAttributeBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghAttributeBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghAttributeBox, popupTextures);
 
   // margin sizes
   SetMargins(ghAttributeBox, 6, 6, 4, 4);
@@ -7342,7 +7271,7 @@ void CreateTrainingBox(void) {
   SetBorderType(ghTrainingBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghTrainingBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghTrainingBox, popupTextures);
 
   // margin sizes
   SetMargins(ghTrainingBox, 6, 6, 4, 4);
@@ -7411,7 +7340,7 @@ void CreateAssignmentsBox(void) {
   SetBorderType(ghAssignmentBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghAssignmentBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghAssignmentBox, popupTextures);
 
   // margin sizes
   SetMargins(ghAssignmentBox, 6, 6, 4, 4);
@@ -7478,7 +7407,7 @@ void CreateMercRemoveAssignBox(void) {
   SetBorderType(ghRemoveMercAssignBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghRemoveMercAssignBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghRemoveMercAssignBox, popupTextures);
 
   // margin sizes
   SetMargins(ghRemoveMercAssignBox, 6, 6, 4, 4);
@@ -7518,17 +7447,16 @@ void CreateMercRemoveAssignBox(void) {
 
 BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
   static BOOLEAN fCreated = FALSE;
-  VSURFACE_DESC vs_desc;
-  VOBJECT_DESC VObjectDesc;
 
   if ((fShowAssignmentMenu == TRUE) && (fCreated == FALSE)) {
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &guiPOPUPBORDERS));
+    if (!AddVObjectFromFile("INTERFACE\\popup.sti", &guiPOPUPBORDERS)) {
+      return FALSE;
+    }
 
-    vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
-    strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
-    CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
+    popupTextures = CreateImage("INTERFACE\\popupbackground.pcx", false);
+    if (!popupTextures) {
+      return FALSE;
+    }
 
     // these boxes are always created while in mapscreen...
     CreateEPCBox();
@@ -7543,7 +7471,7 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
     fCreated = TRUE;
   } else if ((fShowAssignmentMenu == FALSE) && (fCreated == TRUE)) {
     DeleteVideoObjectFromIndex(guiPOPUPBORDERS);
-    DeleteVideoSurfaceFromIndex(guiPOPUPTEX);
+    DestroyImage(popupTextures);
 
     RemoveBox(ghAttributeBox);
     ghAttributeBox = -1;
@@ -7575,7 +7503,7 @@ void DetermineBoxPositions(void) {
   // depending on how many boxes there are, reposition as needed
   SGPPoint pPoint;
   SGPPoint pNewPoint;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   struct SOLDIERTYPE *pSoldier = NULL;
 
   if ((fShowAssignmentMenu == FALSE) || (ghAssignmentBox == -1)) {
@@ -7685,10 +7613,11 @@ void RepositionMouseRegions(void) {
   if (fShowAssignmentMenu == TRUE) {
     sDeltaX = gsAssignmentBoxesX - gAssignmentMenuRegion[0].RegionTopLeftX;
     sDeltaY = (int16_t)(gsAssignmentBoxesY - gAssignmentMenuRegion[0].RegionTopLeftY +
-                      GetTopMarginSize(ghAssignmentBox));
+                        GetTopMarginSize(ghAssignmentBox));
 
     // find the delta from the old to the new, and alter values accordingly
-    for (iCounter = 0; iCounter < (int32_t)GetNumberOfLinesOfTextInBox(ghAssignmentBox); iCounter++) {
+    for (iCounter = 0; iCounter < (int32_t)GetNumberOfLinesOfTextInBox(ghAssignmentBox);
+         iCounter++) {
       gAssignmentMenuRegion[iCounter].RegionTopLeftX += sDeltaX;
       gAssignmentMenuRegion[iCounter].RegionTopLeftY += sDeltaY;
 
@@ -7701,7 +7630,7 @@ void RepositionMouseRegions(void) {
 }
 
 void CheckAndUpdateTacticalAssignmentPopUpPositions(void) {
-  SGPRect pDimensions, pDimensions2, pDimensions3;
+  struct GRect pDimensions, pDimensions2, pDimensions3;
   SGPPoint pPoint;
   int16_t sLongest;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -7732,11 +7661,11 @@ void CheckAndUpdateTacticalAssignmentPopUpPositions(void) {
     }
 
     if (pDimensions2.iBottom > pDimensions.iBottom) {
-      sLongest =
-          (int16_t)pDimensions2.iBottom + ((GetFontHeight(MAP_SCREEN_FONT) + 2) * ASSIGN_MENU_REPAIR);
+      sLongest = (int16_t)pDimensions2.iBottom +
+                 ((GetFontHeight(MAP_SCREEN_FONT) + 2) * ASSIGN_MENU_REPAIR);
     } else {
-      sLongest =
-          (int16_t)pDimensions.iBottom + ((GetFontHeight(MAP_SCREEN_FONT) + 2) * ASSIGN_MENU_REPAIR);
+      sLongest = (int16_t)pDimensions.iBottom +
+                 ((GetFontHeight(MAP_SCREEN_FONT) + 2) * ASSIGN_MENU_REPAIR);
     }
 
     if (gsAssignmentBoxesY + sLongest >= 360) {
@@ -7814,7 +7743,7 @@ void CheckAndUpdateTacticalAssignmentPopUpPositions(void) {
             ((GetFontHeight(MAP_SCREEN_FONT) + 2) * ASSIGN_MENU_TRAIN) >=
         360) {
       gsAssignmentBoxesY = (int16_t)(359 - (pDimensions2.iBottom) -
-                                   ((GetFontHeight(MAP_SCREEN_FONT) + 2) * ASSIGN_MENU_TRAIN));
+                                     ((GetFontHeight(MAP_SCREEN_FONT) + 2) * ASSIGN_MENU_TRAIN));
       SetRenderFlags(RENDER_FLAG_FULL);
     }
 
@@ -7851,7 +7780,7 @@ void CheckAndUpdateTacticalAssignmentPopUpPositions(void) {
 void PositionCursorForTacticalAssignmentBox(void) {
   // position cursor over y of on duty in tactical assignments
   SGPPoint pPosition;
-  SGPRect pDimensions;
+  struct GRect pDimensions;
   int32_t iFontHeight;
 
   // get x.y position of box
@@ -8151,7 +8080,7 @@ BOOLEAN CanCharacterRepairRobot(struct SOLDIERTYPE *pSoldier) {
 }
 
 uint8_t HandleRepairOfRobotBySoldier(struct SOLDIERTYPE *pSoldier, uint8_t ubRepairPts,
-                                   BOOLEAN *pfNothingLeftToRepair) {
+                                     BOOLEAN *pfNothingLeftToRepair) {
   struct SOLDIERTYPE *pRobot = NULL;
 
   pRobot = GetRobotSoldier();
@@ -8160,7 +8089,8 @@ uint8_t HandleRepairOfRobotBySoldier(struct SOLDIERTYPE *pSoldier, uint8_t ubRep
   return (RepairRobot(pRobot, ubRepairPts, pfNothingLeftToRepair));
 }
 
-uint8_t RepairRobot(struct SOLDIERTYPE *pRobot, uint8_t ubRepairPts, BOOLEAN *pfNothingLeftToRepair) {
+uint8_t RepairRobot(struct SOLDIERTYPE *pRobot, uint8_t ubRepairPts,
+                    BOOLEAN *pfNothingLeftToRepair) {
   uint8_t ubPointsUsed = 0;
 
   // is it "dead" ?
@@ -8204,7 +8134,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
 
         // remove from squad
 
@@ -8234,7 +8164,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
 
         // remove from squad
         RemoveCharacterFromSquads(pSoldier);
@@ -8260,7 +8190,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
 
         // remove from squad
@@ -8288,7 +8218,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
 
         // remove from squad
         RemoveCharacterFromSquads(pSoldier);
@@ -8306,7 +8236,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // probably this condition is not needed
         // if (pMilitiaTrainerSoldier == NULL) {
-        if (!IsMilitiaTrainingPayedForSectorID8(GetSolSectorID8(pSoldier))) {
+        if (!IsMilitiaTrainingPayedForSector(GetSolSectorX(pSoldier), GetSolSectorY(pSoldier))) {
           // show a message to confirm player wants to charge cost
           HandleInterfaceMessageForCostOfTrainingMilitia(pSoldier);
         }
@@ -8315,7 +8245,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
         AssignMercToAMovementGroup(pSoldier);
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8345,7 +8275,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8372,7 +8302,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8402,7 +8332,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
         // set dirty flag
         fTeamPanelDirty = TRUE;
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
         gfRenderPBInterface = TRUE;
       }
       break;
@@ -8439,7 +8369,7 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
           // set dirty flag
           fTeamPanelDirty = TRUE;
-          fMapScreenBottomDirty = TRUE;
+          SetMapScreenBottomDirty(true);
           gfRenderPBInterface = TRUE;
 
           if (pSoldier->bOldAssignment == VEHICLE) {
@@ -8470,125 +8400,6 @@ void SetSoldierAssignment(struct SOLDIERTYPE *pSoldier, int8_t bAssignment, int3
 
   return;
 }
-
-/* No point in allowing SAM site repair any more.  Jan/13/99.  ARM
-BOOLEAN CanSoldierRepairSAM( struct SOLDIERTYPE *pSoldier, int8_t bRepairPoints)
-{
-        int16_t sGridNoA = 0, sGridNoB = 0;
-
-        // is the soldier in the sector as the SAM
-        if( SoldierInSameSectorAsSAM( pSoldier ) == FALSE )
-        {
-                return( FALSE );
-        }
-
-        // is the soldier close enough to the control panel?
-        if( IsSoldierCloseEnoughToSAMControlPanel( pSoldier ) == FALSE )
-        {
-                return( FALSE );
-        }
-
-        //can it be fixed?
-        if( IsTheSAMSiteInSectorRepairable( pSoldier -> sSectorX, pSoldier -> sSectorY, pSoldier ->
-bSectorZ ) == FALSE )
-        {
-                return( FALSE );
-        }
-
-        // is he good enough?  (Because of the division of repair pts in SAM repair formula, a guy
-with any less that this
-        // can't make any headway
-        if (bRepairPoints < SAM_SITE_REPAIR_DIVISOR )
-        {
-                return( FALSE );
-        }
-
-        return( TRUE );
-}
-
-BOOLEAN IsTheSAMSiteInSectorRepairable( uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ )
-{
-        int32_t iCounter = 0;
-        int8_t bSAMCondition;
-
-
-        // is the guy above ground, if not, it can't be fixed, now can it?
-        if( sSectorZ != 0 )
-        {
-                return( FALSE );
-        }
-
-        for( iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++ )
-        {
-                if( pSamList[ iCounter ] == GetSectorID8( sSectorX, sSectorY ) )
-                {
-                        bSAMCondition = StrategicMap[ GetSectorID16( sSectorX, sSectorY
-) ].bSAMCondition;
-
-                        if( ( bSAMCondition < 100 ) && ( bSAMCondition >= MIN_CONDITION_TO_FIX_SAM )
-)
-                        {
-                                return( TRUE );
-                        }
-                        else
-                        {
-                                // it's not broken at all, or it's beyond repair
-                                return( FALSE );
-                        }
-                }
-        }
-
-        // none found
-        return( FALSE );
-}
-
-BOOLEAN SoldierInSameSectorAsSAM( struct SOLDIERTYPE *pSoldier )
-{
-        int32_t iCounter = 0;
-
-        // is the soldier on the surface?
-        if( pSoldier -> bSectorZ != 0 )
-        {
-                return( FALSE );
-        }
-
-        // now check each sam site in the list
-        for( iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++ )
-        {
-                if( pSamList[ iCounter] == GetSectorID8( pSoldier -> sSectorX, pSoldier -> sSectorY
-) )
-                {
-                        return( TRUE );
-                }
-        }
-
-        return( FALSE );
-}
-
-BOOLEAN IsSoldierCloseEnoughToSAMControlPanel( struct SOLDIERTYPE *pSoldier )
-{
-
-        int32_t iCounter = 0;
-
-                // now check each sam site in the list
-        for( iCounter = 0; iCounter < NUMBER_OF_SAMS; iCounter++ )
-        {
-                if( pSamList[ iCounter ] == GetSectorID8( pSoldier -> sSectorX, pSoldier -> sSectorY
-) )
-                {
-// Assignment distance limits removed.  Sep/11/98.  ARM
-//			if( ( PythSpacesAway( pSamGridNoAList[ iCounter ], pSoldier -> sGridNo ) <
-MAX_DISTANCE_FOR_REPAIR )||( PythSpacesAway( pSamGridNoBList[ iCounter ], pSoldier -> sGridNo ) <
-MAX_DISTANCE_FOR_REPAIR ) )
-                        {
-                                return( TRUE );
-                        }
-                }
-        }
-
-        return( FALSE );
-}
-*/
 
 BOOLEAN HandleAssignmentExpansionAndHighLightForAssignMenu(struct SOLDIERTYPE *pSoldier) {
   if (fShowSquadMenu) {
@@ -8655,10 +8466,10 @@ BOOLEAN HandleShowingOfUpBox( void )
                 if( IsBoxShown( ghUpdateBox ) )
                 {
                         HideBox( ghUpdateBox );
-                        MarkForRedrawalStrategicMap();
+                        SetMapPanelDirty(true);
                         gfRenderPBInterface = TRUE;
                         fTeamPanelDirty = TRUE;
-                        fMapScreenBottomDirty = TRUE;
+                        SetMapScreenBottomDirty(true);
                         fCharacterInfoPanelDirty = TRUE;
                 }
         }
@@ -8676,10 +8487,10 @@ BOOLEAN HandleShowingOfMovementBox(void) {
   } else {
     if (IsBoxShown(ghMoveBox)) {
       HideBox(ghMoveBox);
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       gfRenderPBInterface = TRUE;
       fTeamPanelDirty = TRUE;
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
       fCharacterInfoPanelDirty = TRUE;
     }
   }
@@ -8930,7 +8741,7 @@ void SetTimeOfAssignmentChangeForMerc(struct SOLDIERTYPE *pSoldier) {
   }
 
   // set time of last assignment change
-  pSoldier->uiLastAssignmentChangeMin = GetWorldTotalMin();
+  pSoldier->uiLastAssignmentChangeMin = GetGameTimeInMin();
 
   // assigning new PATIENTs gives a DOCTOR something to do, etc., so set flag to recheck them all.
   // CAN'T DO IT RIGHT AWAY IN HERE 'CAUSE WE TYPICALLY GET CALLED *BEFORE* bAssignment GETS SET TO
@@ -8942,7 +8753,7 @@ void SetTimeOfAssignmentChangeForMerc(struct SOLDIERTYPE *pSoldier) {
 
 // have we spent enough time on assignment for it to count?
 BOOLEAN EnoughTimeOnAssignment(struct SOLDIERTYPE *pSoldier) {
-  if (GetWorldTotalMin() - pSoldier->uiLastAssignmentChangeMin >= MINUTES_FOR_ASSIGNMENT_TO_COUNT) {
+  if (GetGameTimeInMin() - pSoldier->uiLastAssignmentChangeMin >= MINUTES_FOR_ASSIGNMENT_TO_COUNT) {
     return (TRUE);
   }
 
@@ -9236,7 +9047,7 @@ void BandageBleedingDyingPatientsBeingTreated() {
   DeleteAllStrategicEventsOfType(EVENT_BANDAGE_BLEEDING_MERCS);
 
   if (fSomeoneStillBleedingDying) {
-    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetWorldTotalMin() + 1, 0);
+    AddStrategicEvent(EVENT_BANDAGE_BLEEDING_MERCS, GetGameTimeInMin() + 1, 0);
   }
 }
 
@@ -9315,7 +9126,7 @@ void ReEvaluateEveryonesNothingToDo() {
 
   // redraw the map, in case we're showing teams, and someone just came on duty or off duty, their
   // icon needs updating
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void SetAssignmentForList(int8_t bAssignment, int8_t bParam) {
@@ -9672,7 +9483,7 @@ void UnEscortEPC(struct SOLDIERTYPE *pSoldier) {
 
     // set dirty flag
     fTeamPanelDirty = TRUE;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
     fCharacterInfoPanelDirty = TRUE;
   } else {
     // how do we handle this if it's the right sector?
@@ -9825,36 +9636,6 @@ void ResumeOldAssignment(struct SOLDIERTYPE *pSoldier) {
   // later, anyway? so I'd rather just settle for putting him into any squad:
   fOldAssignmentInvalid = TRUE;
 
-  /*
-          if ( pSoldier->bOldAssignment == pSoldier->bAssigment )
-          {
-                  // no good: we rely on this to make sure guys training militia STOP training
-     militia! fOldAssignmentInvalid = TRUE;
-          }
-          else if( pSoldier->bOldAssignment == VEHICLE )
-          {
-                  SetSoldierAssignment( pSoldier, ( int8_t )( pSoldier->bOldAssignment ), (
-     pSoldier->iVehicleId ), 0, 0 );
-
-                  // it might not work - check
-                  if ( pSoldier->bAssignment != VEHICLE )
-                  {
-                          fOldAssignmentInvalid = TRUE;
-                  }
-          }
-          else if( pSoldier->bOldAssignment < ON_DUTY )
-          {
-                  if( AddCharacterToSquad( pSoldier, pSoldier->bOldAssignment ) == FALSE )
-                  {
-                          fOldAssignmentInvalid = TRUE;
-                  }
-          }
-          else
-          {
-                  fOldAssignmentInvalid = TRUE;
-          }
-  */
-
   if (fOldAssignmentInvalid) {
     AddCharacterToAnySquad(pSoldier);
   }
@@ -9865,7 +9646,7 @@ void ResumeOldAssignment(struct SOLDIERTYPE *pSoldier) {
   // assignment has changed, redraw left side as well as the map (to update on/off duty icons)
   fTeamPanelDirty = TRUE;
   fCharacterInfoPanelDirty = TRUE;
-  MarkForRedrawalStrategicMap();
+  SetMapPanelDirty(true);
 }
 
 void RepairItemsOnOthers(struct SOLDIERTYPE *pSoldier, uint8_t *pubRepairPtsLeft) {

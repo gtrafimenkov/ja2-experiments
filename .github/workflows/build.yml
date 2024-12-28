@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: 1.81.0
     - run: python xx.py build-debug
     - run: python xx.py build-release
     - run: python xx.py test
@@ -21,6 +24,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: 1.81.0
+        targets: i686-pc-windows-msvc
     - run: python xx.py build-debug
     - run: python xx.py build-release
     - run: python xx.py test

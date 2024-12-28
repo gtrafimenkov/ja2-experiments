@@ -4,13 +4,15 @@
 
 #include "Utils/PopUpBox.h"
 
+#include <string.h>
+
 #include "SGP/Debug.h"
+#include "SGP/Font.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
-#include "TileEngine/SysUtil.h"
 
 #define BORDER_WIDTH 16
 #define BORDER_HEIGHT 8
@@ -76,15 +78,15 @@ void SpecifyBoxMinWidth(int32_t hBoxHandle, int32_t iMinWidth) {
   return;
 }
 
-BOOLEAN CreatePopUpBox(int32_t *phBoxHandle, SGPRect Dimensions, SGPPoint Position, uint32_t uiFlags) {
+BOOLEAN CreatePopUpBox(int32_t *phBoxHandle, struct GRect Dimensions, SGPPoint Position,
+                       uint32_t uiFlags) {
   int32_t iCounter = 0;
   int32_t iCount = 0;
   PopUpBoxPt pBox = NULL;
 
   // find first free box
   for (iCounter = 0; (iCounter < MAX_POPUP_BOX_COUNT) && (PopUpBoxList[iCounter] != NULL);
-       iCounter++)
-    ;
+       iCounter++);
 
   if (iCounter >= MAX_POPUP_BOX_COUNT) {
     // ran out of available popup boxes - probably not freeing them up right!
@@ -132,7 +134,8 @@ void SetBoxFlags(int32_t hBoxHandle, uint32_t uiFlags) {
   return;
 }
 
-void SetMargins(int32_t hBoxHandle, uint32_t uiLeft, uint32_t uiTop, uint32_t uiBottom, uint32_t uiRight) {
+void SetMargins(int32_t hBoxHandle, uint32_t uiLeft, uint32_t uiTop, uint32_t uiBottom,
+                uint32_t uiRight) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
@@ -265,7 +268,7 @@ void GetBoxPosition(int32_t hBoxHandle, SGPPoint *Position) {
   return;
 }
 
-void SetBoxSize(int32_t hBoxHandle, SGPRect Dimensions) {
+void SetBoxSize(int32_t hBoxHandle, struct GRect Dimensions) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
@@ -280,7 +283,7 @@ void SetBoxSize(int32_t hBoxHandle, SGPRect Dimensions) {
   return;
 }
 
-void GetBoxSize(int32_t hBoxHandle, SGPRect *Dimensions) {
+void GetBoxSize(int32_t hBoxHandle, struct GRect *Dimensions) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
@@ -301,17 +304,17 @@ void SetBorderType(int32_t hBoxHandle, int32_t iBorderObjectIndex) {
   return;
 }
 
-void SetBackGroundSurface(int32_t hBoxHandle, int32_t iBackGroundSurfaceIndex) {
+void SetBackGroundSurface(int32_t hBoxHandle, struct Image *image) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
-  PopUpBoxList[hBoxHandle]->iBackGroundSurface = iBackGroundSurfaceIndex;
+  PopUpBoxList[hBoxHandle]->backgroundImage = image;
   return;
 }
 
 // adds a FIRST column string to the CURRENT popup box
-void AddMonoString(uint32_t *hStringHandle, wchar_t* pString) {
-  wchar_t* pLocalString = NULL;
+void AddMonoString(uint32_t *hStringHandle, wchar_t *pString) {
+  wchar_t *pLocalString = NULL;
   POPUPSTRINGPTR pStringSt = NULL;
   uint32_t iCounter = 0;
 
@@ -322,8 +325,7 @@ void AddMonoString(uint32_t *hStringHandle, wchar_t* pString) {
   // find first free slot in list
   for (iCounter = 0; (iCounter < MAX_POPUP_BOX_STRING_COUNT) &&
                      (PopUpBoxList[guiCurrentBox]->Text[iCounter] != NULL);
-       iCounter++)
-    ;
+       iCounter++);
 
   if (iCounter >= MAX_POPUP_BOX_STRING_COUNT) {
     // using too many text lines, or not freeing them up properly
@@ -334,7 +336,7 @@ void AddMonoString(uint32_t *hStringHandle, wchar_t* pString) {
   pStringSt = (POPUPSTRING *)(MemAlloc(sizeof(POPUPSTRING)));
   if (pStringSt == NULL) return;
 
-  pLocalString = (wchar_t*)(MemAlloc(wcslen(pString) * 2 + 2));
+  pLocalString = (wchar_t *)(MemAlloc(wcslen(pString) * 2 + 2));
   if (pLocalString == NULL) return;
 
   wcscpy(pLocalString, pString);
@@ -356,8 +358,8 @@ void AddMonoString(uint32_t *hStringHandle, wchar_t* pString) {
 }
 
 // adds a SECOND column string to the CURRENT popup box
-void AddSecondColumnMonoString(uint32_t *hStringHandle, wchar_t* pString) {
-  wchar_t* pLocalString = NULL;
+void AddSecondColumnMonoString(uint32_t *hStringHandle, wchar_t *pString) {
+  wchar_t *pLocalString = NULL;
   POPUPSTRINGPTR pStringSt = NULL;
   uint32_t iCounter = 0;
 
@@ -368,8 +370,7 @@ void AddSecondColumnMonoString(uint32_t *hStringHandle, wchar_t* pString) {
   // find the LAST USED text string index
   for (iCounter = 0; (iCounter + 1 < MAX_POPUP_BOX_STRING_COUNT) &&
                      (PopUpBoxList[guiCurrentBox]->Text[iCounter + 1] != NULL);
-       iCounter++)
-    ;
+       iCounter++);
 
   if (iCounter >= MAX_POPUP_BOX_STRING_COUNT) {
     // using too many text lines, or not freeing them up properly
@@ -380,7 +381,7 @@ void AddSecondColumnMonoString(uint32_t *hStringHandle, wchar_t* pString) {
   pStringSt = (POPUPSTRING *)(MemAlloc(sizeof(POPUPSTRING)));
   if (pStringSt == NULL) return;
 
-  pLocalString = (wchar_t*)(MemAlloc(wcslen(pString) * 2 + 2));
+  pLocalString = (wchar_t *)(MemAlloc(wcslen(pString) * 2 + 2));
   if (pLocalString == NULL) return;
 
   wcscpy(pLocalString, pString);
@@ -399,8 +400,8 @@ void AddSecondColumnMonoString(uint32_t *hStringHandle, wchar_t* pString) {
 }
 
 // Adds a COLORED first column string to the CURRENT box
-void AddColorString(int32_t *hStringHandle, wchar_t* pString) {
-  wchar_t* pLocalString;
+void AddColorString(int32_t *hStringHandle, wchar_t *pString) {
+  wchar_t *pLocalString;
   POPUPSTRINGPTR pStringSt = NULL;
   int32_t iCounter = 0;
 
@@ -411,8 +412,7 @@ void AddColorString(int32_t *hStringHandle, wchar_t* pString) {
   // find first free slot in list
   for (iCounter = 0; (iCounter < MAX_POPUP_BOX_STRING_COUNT) &&
                      (PopUpBoxList[guiCurrentBox]->Text[iCounter] != NULL);
-       iCounter++)
-    ;
+       iCounter++);
 
   if (iCounter >= MAX_POPUP_BOX_STRING_COUNT) {
     // using too many text lines, or not freeing them up properly
@@ -423,7 +423,7 @@ void AddColorString(int32_t *hStringHandle, wchar_t* pString) {
   pStringSt = (POPUPSTRING *)(MemAlloc(sizeof(POPUPSTRING)));
   if (pStringSt == NULL) return;
 
-  pLocalString = (wchar_t*)(MemAlloc(wcslen(pString) * 2 + 2));
+  pLocalString = (wchar_t *)(MemAlloc(wcslen(pString) * 2 + 2));
   if (pLocalString == NULL) return;
 
   wcscpy(pLocalString, pString);
@@ -1027,12 +1027,11 @@ BOOLEAN DrawBox(uint32_t uiCounter) {
   uint32_t uiNumTilesHigh;
   uint32_t uiCount = 0;
   struct VObject *hBoxHandle;
-  struct VSurface *hSrcVSurface;
-  uint32_t uiDestPitchBYTES;
-  uint32_t uiSrcPitchBYTES;
-  uint16_t *pDestBuf;
-  uint8_t *pSrcBuf;
-  SGPRect clip;
+  // struct VSurface *hSrcVSurface;
+  // uint32_t uiDestPitchBYTES;
+  // uint32_t uiSrcPitchBYTES;
+  // uint16_t *pDestBuf;
+  // uint8_t *pSrcBuf;
   uint16_t usTopX, usTopY;
   uint16_t usWidth, usHeight;
 
@@ -1055,9 +1054,9 @@ BOOLEAN DrawBox(uint32_t uiCounter) {
   usTopX = (uint16_t)PopUpBoxList[uiCounter]->Position.iX;
   usTopY = (uint16_t)PopUpBoxList[uiCounter]->Position.iY;
   usWidth = ((uint16_t)(PopUpBoxList[uiCounter]->Dimensions.iRight -
-                      PopUpBoxList[uiCounter]->Dimensions.iLeft));
+                        PopUpBoxList[uiCounter]->Dimensions.iLeft));
   usHeight = ((uint16_t)(PopUpBoxList[uiCounter]->Dimensions.iBottom -
-                       PopUpBoxList[uiCounter]->Dimensions.iTop));
+                         PopUpBoxList[uiCounter]->Dimensions.iTop));
 
   // check if we have a min width, if so then update box for such
   if ((PopUpBoxList[uiCounter]->uiBoxMinWidth) &&
@@ -1073,64 +1072,59 @@ BOOLEAN DrawBox(uint32_t uiCounter) {
   uiNumTilesWide = ((usWidth - 4) / BORDER_WIDTH);
   uiNumTilesHigh = ((usHeight - 4) / BORDER_HEIGHT);
 
+  struct GRect clip;
   clip.iLeft = 0;
   clip.iRight = clip.iLeft + usWidth;
   clip.iTop = 0;
   clip.iBottom = clip.iTop + usHeight;
 
   // blit in texture first, then borders
-  // blit in surface
-  pDestBuf = (uint16_t *)LockVideoSurface(PopUpBoxList[uiCounter]->uiBuffer, &uiDestPitchBYTES);
-  CHECKF(GetVideoSurface(&hSrcVSurface, PopUpBoxList[uiCounter]->iBackGroundSurface));
-  pSrcBuf = LockVideoSurface(PopUpBoxList[uiCounter]->iBackGroundSurface, &uiSrcPitchBYTES);
-  Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
-                              usTopX, usTopY, &clip);
-  UnLockVideoSurface(PopUpBoxList[uiCounter]->iBackGroundSurface);
-  UnLockVideoSurface(PopUpBoxList[uiCounter]->uiBuffer);
+
+  BlitImageToSurfaceRect(PopUpBoxList[uiCounter]->backgroundImage,
+                         GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), usTopX, usTopY, clip);
+
   GetVideoObject(&hBoxHandle, PopUpBoxList[uiCounter]->iBorderObjectIndex);
 
   // blit in 4 corners (they're 2x2 pixels)
-  BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_LEFT_CORNER, usTopX, usTopY,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_RIGHT_CORNER,
-                 usTopX + usWidth - 2, usTopY, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_RIGHT_CORNER,
-                 usTopX + usWidth - 2, usTopY + usHeight - 2, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_LEFT_CORNER, usTopX,
-                 usTopY + usHeight - 2, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, TOP_LEFT_CORNER, usTopX,
+             usTopY);
+  BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, TOP_RIGHT_CORNER,
+             usTopX + usWidth - 2, usTopY);
+  BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, BOTTOM_RIGHT_CORNER,
+             usTopX + usWidth - 2, usTopY + usHeight - 2);
+  BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, BOTTOM_LEFT_CORNER, usTopX,
+             usTopY + usHeight - 2);
 
   // blit in edges
   if (uiNumTilesWide > 0) {
     // full pieces
     for (uiCount = 0; uiCount < uiNumTilesWide; uiCount++) {
-      BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_EDGE,
-                     usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY, VO_BLT_SRCTRANSPARENCY, NULL);
-      BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_EDGE,
-                     usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY + usHeight - 2,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, TOP_EDGE,
+                 usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY);
+      BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, BOTTOM_EDGE,
+                 usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY + usHeight - 2);
     }
 
     // partial pieces
-    BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_EDGE,
-                   usTopX + usWidth - 2 - BORDER_WIDTH, usTopY, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_EDGE,
-                   usTopX + usWidth - 2 - BORDER_WIDTH, usTopY + usHeight - 2,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, TOP_EDGE,
+               usTopX + usWidth - 2 - BORDER_WIDTH, usTopY);
+    BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, BOTTOM_EDGE,
+               usTopX + usWidth - 2 - BORDER_WIDTH, usTopY + usHeight - 2);
   }
   if (uiNumTilesHigh > 0) {
     // full pieces
     for (uiCount = 0; uiCount < uiNumTilesHigh; uiCount++) {
-      BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE, usTopX,
-                     usTopY + 2 + (uiCount * BORDER_HEIGHT), VO_BLT_SRCTRANSPARENCY, NULL);
-      BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE, usTopX + usWidth - 2,
-                     usTopY + 2 + (uiCount * BORDER_HEIGHT), VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, SIDE_EDGE, usTopX,
+                 usTopY + 2 + (uiCount * BORDER_HEIGHT));
+      BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, SIDE_EDGE,
+                 usTopX + usWidth - 2, usTopY + 2 + (uiCount * BORDER_HEIGHT));
     }
 
     // partial pieces
-    BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE, usTopX,
-                   usTopY + usHeight - 2 - BORDER_HEIGHT, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE, usTopX + usWidth - 2,
-                   usTopY + usHeight - 2 - BORDER_HEIGHT, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, SIDE_EDGE, usTopX,
+               usTopY + usHeight - 2 - BORDER_HEIGHT);
+    BltVObject(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer), hBoxHandle, SIDE_EDGE,
+               usTopX + usWidth - 2, usTopY + usHeight - 2 - BORDER_HEIGHT);
   }
 
   InvalidateRegion(usTopX, usTopY, usTopX + usWidth, usTopY + usHeight);
@@ -1148,15 +1142,14 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
 
   // clip text?
   if (PopUpBoxList[uiCounter]->uiFlags & POPUP_BOX_FLAG_CLIP_TEXT) {
-    SetFontDestBuffer(
-        PopUpBoxList[uiCounter]->uiBuffer,
-        PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin - 1,
-        PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->uiTopMargin,
-        PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->Dimensions.iRight -
-            PopUpBoxList[uiCounter]->uiRightMargin,
-        PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->Dimensions.iBottom -
-            PopUpBoxList[uiCounter]->uiBottomMargin,
-        FALSE);
+    SetFontDest(GetVSByID(PopUpBoxList[uiCounter]->uiBuffer),
+                PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin - 1,
+                PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->uiTopMargin,
+                PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->Dimensions.iRight -
+                    PopUpBoxList[uiCounter]->uiRightMargin,
+                PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->Dimensions.iBottom -
+                    PopUpBoxList[uiCounter]->uiBottomMargin,
+                FALSE);
   }
 
   for (uiCount = 0; uiCount < MAX_POPUP_BOX_STRING_COUNT; uiCount++) {
@@ -1191,23 +1184,24 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
       // cnetering?
       if (PopUpBoxList[uiCounter]->uiFlags & POPUP_BOX_FLAG_CENTER_TEXT) {
         FindFontCenterCoordinates(
-            ((int16_t)(PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin)),
+            ((int16_t)(PopUpBoxList[uiCounter]->Position.iX +
+                       PopUpBoxList[uiCounter]->uiLeftMargin)),
             ((int16_t)(PopUpBoxList[uiCounter]->Position.iY +
-                     uiCount * GetFontHeight(PopUpBoxList[uiCounter]->Text[uiCount]->uiFont) +
-                     PopUpBoxList[uiCounter]->uiTopMargin +
-                     uiCount * PopUpBoxList[uiCounter]->uiLineSpace)),
+                       uiCount * GetFontHeight(PopUpBoxList[uiCounter]->Text[uiCount]->uiFont) +
+                       PopUpBoxList[uiCounter]->uiTopMargin +
+                       uiCount * PopUpBoxList[uiCounter]->uiLineSpace)),
             ((int16_t)(PopUpBoxList[uiCounter]->Dimensions.iRight -
-                     (PopUpBoxList[uiCounter]->uiRightMargin +
-                      PopUpBoxList[uiCounter]->uiLeftMargin + 2))),
+                       (PopUpBoxList[uiCounter]->uiRightMargin +
+                        PopUpBoxList[uiCounter]->uiLeftMargin + 2))),
             ((int16_t)GetFontHeight(PopUpBoxList[uiCounter]->Text[uiCount]->uiFont)), (sString),
             ((int32_t)PopUpBoxList[uiCounter]->Text[uiCount]->uiFont), &uX, &uY);
       } else {
-        uX =
-            ((int16_t)(PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin));
+        uX = ((int16_t)(PopUpBoxList[uiCounter]->Position.iX +
+                        PopUpBoxList[uiCounter]->uiLeftMargin));
         uY = ((int16_t)(PopUpBoxList[uiCounter]->Position.iY +
-                      uiCount * GetFontHeight(PopUpBoxList[uiCounter]->Text[uiCount]->uiFont) +
-                      PopUpBoxList[uiCounter]->uiTopMargin +
-                      uiCount * PopUpBoxList[uiCounter]->uiLineSpace));
+                        uiCount * GetFontHeight(PopUpBoxList[uiCounter]->Text[uiCount]->uiFont) +
+                        PopUpBoxList[uiCounter]->uiTopMargin +
+                        uiCount * PopUpBoxList[uiCounter]->uiLineSpace));
       }
 
       // print
@@ -1243,26 +1237,30 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
       // cnetering?
       if (PopUpBoxList[uiCounter]->uiFlags & POPUP_BOX_FLAG_CENTER_TEXT) {
         FindFontCenterCoordinates(
-            ((int16_t)(PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin)),
+            ((int16_t)(PopUpBoxList[uiCounter]->Position.iX +
+                       PopUpBoxList[uiCounter]->uiLeftMargin)),
             ((int16_t)(PopUpBoxList[uiCounter]->Position.iY +
-                     uiCount * GetFontHeight(
-                                   PopUpBoxList[uiCounter]->pSecondColumnString[uiCount]->uiFont) +
-                     PopUpBoxList[uiCounter]->uiTopMargin +
-                     uiCount * PopUpBoxList[uiCounter]->uiLineSpace)),
+                       uiCount *
+                           GetFontHeight(
+                               PopUpBoxList[uiCounter]->pSecondColumnString[uiCount]->uiFont) +
+                       PopUpBoxList[uiCounter]->uiTopMargin +
+                       uiCount * PopUpBoxList[uiCounter]->uiLineSpace)),
             ((int16_t)(PopUpBoxList[uiCounter]->Dimensions.iRight -
-                     (PopUpBoxList[uiCounter]->uiRightMargin +
-                      PopUpBoxList[uiCounter]->uiLeftMargin + 2))),
+                       (PopUpBoxList[uiCounter]->uiRightMargin +
+                        PopUpBoxList[uiCounter]->uiLeftMargin + 2))),
             ((int16_t)GetFontHeight(PopUpBoxList[uiCounter]->pSecondColumnString[uiCount]->uiFont)),
-            (sString), ((int32_t)PopUpBoxList[uiCounter]->pSecondColumnString[uiCount]->uiFont), &uX,
-            &uY);
+            (sString), ((int32_t)PopUpBoxList[uiCounter]->pSecondColumnString[uiCount]->uiFont),
+            &uX, &uY);
       } else {
-        uX = ((int16_t)(PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin +
-                      PopUpBoxList[uiCounter]->uiSecondColumnCurrentOffset));
+        uX = ((int16_t)(PopUpBoxList[uiCounter]->Position.iX +
+                        PopUpBoxList[uiCounter]->uiLeftMargin +
+                        PopUpBoxList[uiCounter]->uiSecondColumnCurrentOffset));
         uY = ((int16_t)(PopUpBoxList[uiCounter]->Position.iY +
-                      uiCount * GetFontHeight(
-                                    PopUpBoxList[uiCounter]->pSecondColumnString[uiCount]->uiFont) +
-                      PopUpBoxList[uiCounter]->uiTopMargin +
-                      uiCount * PopUpBoxList[uiCounter]->uiLineSpace));
+                        uiCount *
+                            GetFontHeight(
+                                PopUpBoxList[uiCounter]->pSecondColumnString[uiCount]->uiFont) +
+                        PopUpBoxList[uiCounter]->uiTopMargin +
+                        uiCount * PopUpBoxList[uiCounter]->uiLineSpace));
       }
 
       // print
@@ -1281,7 +1279,7 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
             PopUpBoxList[uiCounter]->uiBottomMargin);
   }
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
   return TRUE;
 }

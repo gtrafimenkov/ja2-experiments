@@ -7,6 +7,7 @@
 
 #include "Laptop/LaptopSave.h"
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 // enums for the various destinations that are available in the bobbyR dest drop down box
 enum {
@@ -71,7 +72,7 @@ BOOLEAN AddNewBobbyRShipment(BobbyRayPurchaseStruct *pPurchaseStruct, uint8_t ub
 
 uint16_t CountNumberOfBobbyPurchasesThatAreInTransit();
 
-BOOLEAN NewWayOfLoadingBobbyRMailOrdersToSaveGameFile(HWFILE hFile);
-BOOLEAN NewWayOfSavingBobbyRMailOrdersToSaveGameFile(HWFILE hFile);
+BOOLEAN NewWayOfLoadingBobbyRMailOrdersToSaveGameFile(FileID hFile);
+BOOLEAN NewWayOfSavingBobbyRMailOrdersToSaveGameFile(FileID hFile);
 
 #endif

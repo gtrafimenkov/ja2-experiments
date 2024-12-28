@@ -6,12 +6,13 @@
 #define __STRATEGIC_AI_H
 
 #include "Strategic/StrategicMovement.h"
+#include "rust_fileman.h"
 
 void InitStrategicAI();
 void KillStrategicAI();
 
-BOOLEAN SaveStrategicAI(HWFILE hFile);
-BOOLEAN LoadStrategicAI(HWFILE hFile);
+BOOLEAN SaveStrategicAI(FileID hFile);
+BOOLEAN LoadStrategicAI(FileID hFile);
 
 // NPC ACTION TRIGGERS SPECIAL CASE AI
 enum {
@@ -38,8 +39,6 @@ BOOLEAN OkayForEnemyToMoveThroughSector(uint8_t ubSectorID);
 BOOLEAN EnemyPermittedToAttackSector(struct GROUP **pGroup, uint8_t ubSectorID);
 
 void StrategicHandleQueenLosingControlOfSector(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ);
-
-void InvestigateSector(uint8_t ubSectorID);
 
 void WakeUpQueen();
 

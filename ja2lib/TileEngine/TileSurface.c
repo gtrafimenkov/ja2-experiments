@@ -9,9 +9,9 @@
 
 #include "Editor/Smooth.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "SysGlobals.h"
@@ -24,6 +24,7 @@
 #include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "platform_strings.h"
+#include "rust_fileman.h"
 
 struct TILE_IMAGERY *gTileSurfaceArray[NUMBEROFTILETYPES];
 uint8_t gbDefaultSurfaceUsed[NUMBEROFTILETYPES];
@@ -32,25 +33,21 @@ uint8_t gbSameAsDefaultSurfaceUsed[NUMBEROFTILETYPES];
 struct TILE_IMAGERY *LoadTileSurface(char *cFilename) {
   // Add tile surface
   struct TILE_IMAGERY *pTileSurf = NULL;
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hVObject;
-  HIMAGE hImage;
+  struct Image *hImage;
   SGPFILENAME cStructureFilename;
-  char* cEndOfName;
+  char *cEndOfName;
   struct STRUCTURE_FILE_REF *pStructureFileRef;
   BOOLEAN fOk;
 
-  hImage = CreateImage(cFilename, IMAGE_ALLDATA);
+  hImage = CreateImage(cFilename, true);
   if (hImage == NULL) {
     // Report error
     SET_ERROR("Could not load tile file: %s", cFilename);
     return (NULL);
   }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMHIMAGE;
-  VObjectDesc.hImage = hImage;
-
-  hVObject = CreateVideoObject(&VObjectDesc);
+  hVObject = CreateVObjectFromImage(hImage);
 
   if (hVObject == NULL) {
     // Report error
@@ -71,17 +68,17 @@ struct TILE_IMAGERY *LoadTileSurface(char *cFilename) {
     strcat(cStructureFilename, ".");
   }
   strcat(cStructureFilename, STRUCTURE_FILE_EXTENSION);
-  if (FileMan_Exists(cStructureFilename)) {
+  if (File_Exists(cStructureFilename)) {
     pStructureFileRef = LoadStructureFile(cStructureFilename);
     if (pStructureFileRef == NULL ||
-        hVObject->usNumberOfObjects != pStructureFileRef->usNumberOfStructures) {
+        hVObject->number_of_subimages != pStructureFileRef->usNumberOfStructures) {
       DestroyImage(hImage);
       DeleteVideoObject(hVObject);
       SET_ERROR("Structure file error: %s", cStructureFilename);
       return (NULL);
     }
 
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, cStructureFilename);
+    DebugMsg(TOPIC_JA2, DBG_INFO, cStructureFilename);
 
     fOk = AddZStripInfoToVObject(hVObject, pStructureFileRef, FALSE, 0);
     if (fOk == FALSE) {
@@ -106,15 +103,16 @@ struct TILE_IMAGERY *LoadTileSurface(char *cFilename) {
   if (pStructureFileRef && pStructureFileRef->pAuxData != NULL) {
     pTileSurf->pAuxData = pStructureFileRef->pAuxData;
     pTileSurf->pTileLocData = pStructureFileRef->pTileLocData;
-  } else if (hImage->uiAppDataSize == hVObject->usNumberOfObjects * sizeof(struct AuxObjectData)) {
+  } else if (hImage->app_data_size ==
+             hVObject->number_of_subimages * sizeof(struct AuxObjectData)) {
     // Valid auxiliary data, so make a copy of it for TileSurf
-    pTileSurf->pAuxData = (struct AuxObjectData *)MemAlloc(hImage->uiAppDataSize);
+    pTileSurf->pAuxData = (struct AuxObjectData *)MemAlloc(hImage->app_data_size);
     if (pTileSurf->pAuxData == NULL) {
       DestroyImage(hImage);
       DeleteVideoObject(hVObject);
       return (NULL);
     }
-    memcpy(pTileSurf->pAuxData, hImage->pAppData, hImage->uiAppDataSize);
+    memcpy(pTileSurf->pAuxData, hImage->app_data, hImage->app_data_size);
   } else {
     pTileSurf->pAuxData = NULL;
   }
@@ -144,7 +142,7 @@ void SetRaisedObjectFlag(char *cFilename, struct TILE_IMAGERY *pTileSurf) {
   int32_t cnt = 0;
   char cRootFile[128];
   char ubRaisedObjectFiles[][80] = {"bones",    "bones2", "grass2", "grass3", "l_weed3", "litter",
-                                     "miniweed", "sblast", "sweeds", "twigs",  "wing",    "1"};
+                                    "miniweed", "sblast", "sweeds", "twigs",  "wing",    "1"};
 
   // Loop through array of RAISED objecttype imagery and
   // set global value...

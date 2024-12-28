@@ -8,6 +8,8 @@
 #include "MessageBoxScreen.h"
 #include "SGP/Types.h"
 #include "Tactical/SoldierControl.h"
+#include "rust_fileman.h"
+#include "rust_sam_sites.h"
 
 typedef struct FASTHELPREGION {
   // the string
@@ -200,7 +202,7 @@ extern BOOLEAN fLockOutMapScreenInterface;
 // The character data structure
 typedef struct {
   uint16_t usSolID;  // soldier ID in MenPtrs
-  BOOLEAN fValid;  // is the current soldier a valid soldier
+  BOOLEAN fValid;    // is the current soldier a valid soldier
 
 } MapScreenCharacterSt;
 
@@ -223,21 +225,21 @@ extern uint32_t guiUpdatePanel;
 extern uint32_t guiUpdatePanelTactical;
 extern BOOLEAN fShowUpdateBox;
 
-extern SGPRect ContractDimensions;
+extern struct GRect ContractDimensions;
 extern SGPPoint ContractPosition;
-extern SGPRect AttributeDimensions;
+extern struct GRect AttributeDimensions;
 extern SGPPoint AttributePosition;
-extern SGPRect TrainDimensions;
+extern struct GRect TrainDimensions;
 extern SGPPoint TrainPosition;
-extern SGPRect VehicleDimensions;
+extern struct GRect VehicleDimensions;
 extern SGPPoint VehiclePosition;
-extern SGPRect AssignmentDimensions;
+extern struct GRect AssignmentDimensions;
 extern SGPPoint AssignmentPosition;
 extern SGPPoint SquadPosition;
-extern SGPRect SquadDimensions;
+extern struct GRect SquadDimensions;
 
 extern SGPPoint RepairPosition;
-extern SGPRect RepairDimensions;
+extern struct GRect RepairDimensions;
 
 extern SGPPoint OrigContractPosition;
 extern SGPPoint OrigAttributePosition;
@@ -258,7 +260,7 @@ extern int32_t iCurrentMapSectorZ;
 extern int32_t giBoxY;
 
 // pop up box textures
-extern uint32_t guiPOPUPTEX;
+extern struct Image *popupTextures;
 extern uint32_t guiPOPUPBORDERS;
 
 // the level-changing markers on the map border
@@ -319,7 +321,8 @@ void DisableTeamInfoPanels(void);
 void EnableTeamInfoPanels(void);
 
 // activate pop up for soldiers in the pre battle interface
-void ActivateSoldierPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPopupType, int16_t xp, int16_t yp);
+void ActivateSoldierPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPopupType, int16_t xp,
+                          int16_t yp);
 
 // hop up one leve,l int he map screen level interface
 void GoUpOneLevelInMap(void);
@@ -343,7 +346,7 @@ void HandleDisplayOfSelectedMercArrows(void);
 void DeselectSelectedListMercsWhoCantMoveWithThisGuy(struct SOLDIERTYPE *pSoldier);
 
 // get morale string for this grunt given this morale level
-void GetMoraleString(struct SOLDIERTYPE *pSoldier, wchar_t* sString);
+void GetMoraleString(struct SOLDIERTYPE *pSoldier, wchar_t *sString);
 
 // handle leaving of equipment in sector
 void HandleLeavingOfEquipmentInCurrentSector(uint32_t uiMercId);
@@ -408,8 +411,8 @@ void GoToPrevCharacterInList(void);
 void GoToNextCharacterInList(void);
 
 // this does the whole miner giving player info speil
-void HandleMinerEvent(uint8_t bMinerNumber, uint8_t sSectorX, uint8_t sSectorY, int16_t sQuoteNumber,
-                      BOOLEAN fForceMapscreen);
+void HandleMinerEvent(uint8_t bMinerNumber, uint8_t sSectorX, uint8_t sSectorY,
+                      int16_t sQuoteNumber, BOOLEAN fForceMapscreen);
 
 // set up the event of animating a mine sector
 void SetUpAnimationOfMineSectors(int32_t iEvent);
@@ -439,7 +442,8 @@ extern uint8_t gubBlitSectorLocatorCode;
 enum { LOCATOR_COLOR_NONE, LOCATOR_COLOR_RED, LOCATOR_COLOR_YELLOW };
 
 extern uint32_t guiSectorLocatorGraphicID;
-void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ, uint8_t ubLocatorID);
+void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ,
+                                   uint8_t ubLocatorID);
 
 // the tactical version
 
@@ -457,7 +461,7 @@ BOOLEAN IsTheInterfaceFastHelpTextActive(void);
 
 // set up the tactical lists
 BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition[], int32_t iYPosition[], int32_t iWidth[],
-                                 wchar_t* sString[], int32_t iSize);
+                                 wchar_t *sString[], int32_t iSize);
 
 // the alternate mapscreen movement system
 void InitializeMovingLists(void);
@@ -498,7 +502,7 @@ void SetTixaAsFound(void);
 void SetOrtaAsFound(void);
 
 // set this SAM site as being found by the player
-void SetSAMSiteAsFound(uint8_t uiSamIndex);
+void SetSAMSiteAsFound(enum SamSite uiSamIndex);
 
 // init time menus
 void InitTimersForMoveMenuMouseRegions(void);
@@ -516,8 +520,8 @@ BOOLEAN HandleTimeCompressWithTeamJackedInAndGearedToGo(void);
 // void HandlePlayerEnteringMapScreenBeforeGoingToTactical( void );
 
 // handle sector being taken over uncontested
-BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
-                                                           BOOLEAN fContested);
+BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uint8_t sSectorY,
+                                                           int8_t bSectorZ, BOOLEAN fContested);
 
 // handle notifying player of invasion by enemy
 void NotifyPlayerOfInvasionByEnemyForces(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
@@ -546,8 +550,8 @@ void RequestDecreaseInTimeCompression(void);
 void SelectUnselectedMercsWhoMustMoveWithThisGuy(void);
 BOOLEAN AnyMercInSameSquadOrVehicleIsSelected(struct SOLDIERTYPE *pSoldier);
 
-BOOLEAN LoadLeaveItemList(HWFILE hFile);
-BOOLEAN SaveLeaveItemList(HWFILE hFile);
+BOOLEAN LoadLeaveItemList(FileID hFile);
+BOOLEAN SaveLeaveItemList(FileID hFile);
 
 BOOLEAN CheckIfSalaryIncreasedAndSayQuote(struct SOLDIERTYPE *pSoldier,
                                           BOOLEAN fTriggerContractMenu);

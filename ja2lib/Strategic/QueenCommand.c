@@ -7,7 +7,6 @@
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "ScreenIDs.h"
 #include "Soldier.h"
@@ -45,6 +44,8 @@
 #include "TownMilitia.h"
 #include "UI.h"
 #include "Utils/Message.h"
+#include "rust_fileman.h"
+#include "rust_geometry.h"
 
 #ifdef JA2BETAVERSION
 extern BOOLEAN gfClearCreatureQuest;
@@ -63,15 +64,11 @@ extern void EndCreatureQuest();
 extern GARRISON_GROUP *gGarrisonGroup;
 extern int32_t giGarrisonArraySize;
 
-#ifdef JA2TESTVERSION
-extern BOOLEAN gfOverrideSector;
-#endif
-
 int16_t gsInterrogationGridNo[3] = {7756, 7757, 7758};
 
 void ValidateEnemiesHaveWeapons() {
 #ifdef JA2BETAVERSION
-  SGPRect CenteringRect = {0, 0, 639, 479};
+  struct GRect CenteringRect = {0, 0, 639, 479};
   int32_t i, iErrorDialog;
   struct SOLDIERTYPE *pSoldier;
   int32_t iNumInvalid = 0;
@@ -112,7 +109,7 @@ uint8_t NumHostilesInSector(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ)
     pSector = FindUnderGroundSector(sSectorX, sSectorY, (uint8_t)sSectorZ);
     if (pSector) {
       ubNumHostiles = (uint8_t)(pSector->ubNumAdmins + pSector->ubNumTroops + pSector->ubNumElites +
-                              pSector->ubNumCreatures);
+                                pSector->ubNumCreatures);
     }
   } else {
     SECTORINFO *pSector;
@@ -121,7 +118,7 @@ uint8_t NumHostilesInSector(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ)
     // Count stationary hostiles
     pSector = &SectorInfo[GetSectorID8(sSectorX, sSectorY)];
     ubNumHostiles = (uint8_t)(pSector->ubNumAdmins + pSector->ubNumTroops + pSector->ubNumElites +
-                            pSector->ubNumCreatures);
+                              pSector->ubNumCreatures);
 
     // Count mobile enemies
     pGroup = gpGroupList;
@@ -280,8 +277,8 @@ void GetNumberOfStationaryEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, ui
   *pubNumElites = pSector->ubNumElites;
 }
 
-void GetNumberOfEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins, uint8_t *pubNumTroops,
-                                uint8_t *pubNumElites) {
+void GetNumberOfEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins,
+                                uint8_t *pubNumTroops, uint8_t *pubNumElites) {
   uint8_t ubNumAdmins, ubNumTroops, ubNumElites;
 
   GetNumberOfStationaryEnemiesInSector(sSectorX, sSectorY, pubNumAdmins, pubNumTroops,
@@ -461,16 +458,6 @@ BOOLEAN PrepareEnemyForSectorBattle() {
   pSector->ubAdminsInBattle += ubTotalAdmins;
   pSector->ubTroopsInBattle += ubTotalTroops;
   pSector->ubElitesInBattle += ubTotalElites;
-
-#ifdef JA2TESTVERSION
-  if (gfOverrideSector) {
-    // if there are no troops in the current groups, then we're done.
-    if (!ubTotalAdmins && !ubTotalTroops && !ubTotalElites) return FALSE;
-    AddSoldierInitListEnemyDefenceSoldiers(ubTotalAdmins, ubTotalTroops, ubTotalElites);
-    ValidateEnemiesHaveWeapons();
-    return TRUE;
-  }
-#endif
 
   // Search for movement groups that happen to be in the sector.
   sNumSlots = NumFreeEnemySlots();
@@ -676,9 +663,9 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
         }
       } else {
         UNDERGROUND_SECTORINFO *pUnderground;
-        pUnderground =
-            FindUnderGroundSector((uint8_t)GetSolSectorX(pSoldier), (uint8_t)GetSolSectorY(pSoldier),
-                                  (uint8_t)GetSolSectorZ(pSoldier));
+        pUnderground = FindUnderGroundSector((uint8_t)GetSolSectorX(pSoldier),
+                                             (uint8_t)GetSolSectorY(pSoldier),
+                                             (uint8_t)GetSolSectorZ(pSoldier));
         Assert(pUnderground);
         if (pUnderground->ubNumElites) {
           pUnderground->ubNumElites--;
@@ -1018,8 +1005,7 @@ void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier) {
 
             // a monster has died.  Post an event to immediately check whether a mine has been
             // cleared.
-            AddStrategicEventUsingSeconds(EVENT_CHECK_IF_MINE_CLEARED, GetWorldTotalSeconds() + 15,
-                                          0);
+            AddStrategicEventUsingSeconds(EVENT_CHECK_IF_MINE_CLEARED, GetGameTimeInSec() + 15, 0);
 
             if (pSoldier->ubBodyType == QUEENMONSTER) {
               // Need to call this, as the queen is really big, and killing her leaves a bunch
@@ -1214,7 +1200,8 @@ void AddEnemiesToBattle(struct GROUP *pGroup, uint8_t ubStrategicInsertionCode, 
 
   if (fMagicallyAppeared) {  // update the strategic counters
     if (!gbWorldSectorZ) {
-      SECTORINFO *pSector = &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
+      SECTORINFO *pSector =
+          &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
       pSector->ubNumAdmins += ubNumAdmins;
       pSector->ubAdminsInBattle += ubNumAdmins;
       pSector->ubNumTroops += ubNumTroops;
@@ -1260,7 +1247,8 @@ void AddEnemiesToBattle(struct GROUP *pGroup, uint8_t ubStrategicInsertionCode, 
         pSoldier->ubStrategicInsertionCode = ubStrategicInsertionCode;
       }
       UpdateMercInSector(pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, 0);
-    } else if (ubNumTroops && (uint8_t)Random(ubTotalSoldiers) < (uint8_t)(ubNumElites + ubNumTroops)) {
+    } else if (ubNumTroops &&
+               (uint8_t)Random(ubTotalSoldiers) < (uint8_t)(ubNumElites + ubNumTroops)) {
       ubNumTroops--;
       ubTotalSoldiers--;
       pSoldier = TacticalCreateArmyTroop();
@@ -1277,8 +1265,8 @@ void AddEnemiesToBattle(struct GROUP *pGroup, uint8_t ubStrategicInsertionCode, 
         pSoldier->ubStrategicInsertionCode = ubStrategicInsertionCode;
       }
       UpdateMercInSector(pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, 0);
-    } else if (ubNumAdmins &&
-               (uint8_t)Random(ubTotalSoldiers) < (uint8_t)(ubNumElites + ubNumTroops + ubNumAdmins)) {
+    } else if (ubNumAdmins && (uint8_t)Random(ubTotalSoldiers) <
+                                  (uint8_t)(ubNumElites + ubNumTroops + ubNumAdmins)) {
       ubNumAdmins--;
       ubTotalSoldiers--;
       pSoldier = TacticalCreateAdministrator();
@@ -1299,7 +1287,7 @@ void AddEnemiesToBattle(struct GROUP *pGroup, uint8_t ubStrategicInsertionCode, 
   }
 }
 
-BOOLEAN SaveUnderGroundSectorInfoToSaveGame(HWFILE hFile) {
+BOOLEAN SaveUnderGroundSectorInfoToSaveGame(FileID hFile) {
   uint32_t uiNumBytesWritten;
   uint32_t uiNumOfRecords = 0;
   UNDERGROUND_SECTORINFO *TempNode = gpUndergroundSectorInfoHead;
@@ -1311,7 +1299,7 @@ BOOLEAN SaveUnderGroundSectorInfoToSaveGame(HWFILE hFile) {
   }
 
   // Write how many nodes there are
-  FileMan_Write(hFile, &uiNumOfRecords, sizeof(uint32_t), &uiNumBytesWritten);
+  File_Write(hFile, &uiNumOfRecords, sizeof(uint32_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint32_t)) {
     return (FALSE);
   }
@@ -1320,7 +1308,7 @@ BOOLEAN SaveUnderGroundSectorInfoToSaveGame(HWFILE hFile) {
 
   // Go through each node and save it.
   while (TempNode) {
-    FileMan_Write(hFile, TempNode, sizeof(UNDERGROUND_SECTORINFO), &uiNumBytesWritten);
+    File_Write(hFile, TempNode, sizeof(UNDERGROUND_SECTORINFO), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(UNDERGROUND_SECTORINFO)) {
       return (FALSE);
     }
@@ -1331,7 +1319,7 @@ BOOLEAN SaveUnderGroundSectorInfoToSaveGame(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadUnderGroundSectorInfoFromSavedGame(HWFILE hFile) {
+BOOLEAN LoadUnderGroundSectorInfoFromSavedGame(FileID hFile) {
   uint32_t uiNumBytesRead;
   uint32_t uiNumOfRecords = 0;
   uint32_t cnt = 0;
@@ -1342,7 +1330,7 @@ BOOLEAN LoadUnderGroundSectorInfoFromSavedGame(HWFILE hFile) {
   TrashUndergroundSectorInfo();
 
   // Read in the number of nodes stored
-  FileMan_Read(hFile, &uiNumOfRecords, sizeof(uint32_t), &uiNumBytesRead);
+  File_Read(hFile, &uiNumOfRecords, sizeof(uint32_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint32_t)) {
     return (FALSE);
   }
@@ -1353,7 +1341,7 @@ BOOLEAN LoadUnderGroundSectorInfoFromSavedGame(HWFILE hFile) {
     if (TempNode == NULL) return (FALSE);
 
     // read in the new node
-    FileMan_Read(hFile, TempNode, sizeof(UNDERGROUND_SECTORINFO), &uiNumBytesRead);
+    File_Read(hFile, TempNode, sizeof(UNDERGROUND_SECTORINFO), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(UNDERGROUND_SECTORINFO)) {
       return (FALSE);
     }
@@ -1681,7 +1669,7 @@ void HandleEnemyStatusInCurrentMapBeforeLoadingNewMap() {
 }
 
 BOOLEAN PlayerSectorDefended(uint8_t ubSectorID) {
-  if (CountAllMilitiaInSectorID8(ubSectorID) > 0) {
+  if (CountMilitiaInSector(SectorID8_X(ubSectorID), SectorID8_Y(ubSectorID)) > 0) {
     // militia in sector
     return TRUE;
   }

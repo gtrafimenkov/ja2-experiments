@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "SGP/Debug.h"
 #include "SGP/Types.h"
 
 extern void InitializeRandom(void);

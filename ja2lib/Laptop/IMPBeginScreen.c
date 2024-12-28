@@ -19,7 +19,6 @@
 #include "Laptop/LaptopSave.h"
 #include "MessageBoxScreen.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Line.h"
 #include "SGP/VObject.h"
@@ -38,6 +37,7 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
 
 #define FULL_NAME_CURSOR_Y LAPTOP_SCREEN_WEB_UL_Y + 138
 #define NICK_NAME_CURSOR_Y LAPTOP_SCREEN_WEB_UL_Y + 195
@@ -572,22 +572,23 @@ void DisplayFullNameStringCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
-  LineDraw(TRUE, (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y - 3,
-           (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y + CURSOR_HEIGHT - 2,
-           Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                                 GlowColorsList[iCurrentState][2])),
-           pDestBuf);
+  LineDraw(
+      TRUE, (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y - 3,
+      (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y + CURSOR_HEIGHT - 2,
+      rgb32_to_rgb565(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                              GlowColorsList[iCurrentState][2])),
+      pDestBuf);
 
   InvalidateRegion((uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y - 3,
                    (uint16_t)uiFullNameCursorPosition + 1,
                    FULL_NAME_CURSOR_Y + CURSOR_HEIGHT + 1 - 2);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
   return;
 }
 
@@ -628,21 +629,22 @@ void DisplayNickNameStringCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
-  LineDraw(TRUE, (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y,
-           (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y + CURSOR_HEIGHT,
-           Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                                 GlowColorsList[iCurrentState][2])),
-           pDestBuf);
+  LineDraw(
+      TRUE, (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y,
+      (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y + CURSOR_HEIGHT,
+      rgb32_to_rgb565(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                              GlowColorsList[iCurrentState][2])),
+      pDestBuf);
 
   InvalidateRegion((uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y,
                    (uint16_t)uiNickNameCursorPosition + 1, NICK_NAME_CURSOR_Y + CURSOR_HEIGHT + 1);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
   return;
 }
 
@@ -733,21 +735,21 @@ void DisplayMaleGlowCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw rectangle
   RectangleDraw(
       TRUE, MALE_BOX_X, MALE_BOX_Y, MALE_BOX_X + MALE_BOX_WIDTH, MALE_BOX_Y + MALE_BOX_HEIGHT,
-      Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                            GlowColorsList[iCurrentState][2])),
+      rgb32_to_rgb565(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                              GlowColorsList[iCurrentState][2])),
       pDestBuf);
 
   InvalidateRegion((uint16_t)MALE_BOX_X, MALE_BOX_Y, MALE_BOX_X + MALE_BOX_WIDTH + 1,
                    MALE_BOX_Y + MALE_BOX_HEIGHT + 1);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
   return;
 }
 
@@ -788,21 +790,21 @@ void DisplayFemaleGlowCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw rectangle
   RectangleDraw(
       TRUE, FEMALE_BOX_X, MALE_BOX_Y, FEMALE_BOX_X + MALE_BOX_WIDTH, MALE_BOX_Y + MALE_BOX_HEIGHT,
-      Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                            GlowColorsList[iCurrentState][2])),
+      rgb32_to_rgb565(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                              GlowColorsList[iCurrentState][2])),
       pDestBuf);
 
   InvalidateRegion((uint16_t)FEMALE_BOX_X, MALE_BOX_Y, FEMALE_BOX_X + MALE_BOX_WIDTH + 1,
                    MALE_BOX_Y + MALE_BOX_HEIGHT + 1);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(vsFB);
   return;
 }
 

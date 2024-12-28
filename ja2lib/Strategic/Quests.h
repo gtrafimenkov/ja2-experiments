@@ -6,6 +6,7 @@
 #define __QUESTS_H
 
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 //  Quest.ubStatus values
 #define QUESTNOTSTARTED 0
@@ -548,14 +549,16 @@ extern BOOLEAN CheckFact(uint16_t usFact, uint8_t ubProfileID);
 extern void StartQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY);
 extern void EndQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY);
 
-extern void InternalStartQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY, BOOLEAN fUpdateHistory);
-extern void InternalEndQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY, BOOLEAN fUpdateHistory);
+extern void InternalStartQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY,
+                               BOOLEAN fUpdateHistory);
+extern void InternalEndQuest(uint8_t ubQuest, uint8_t sSectorX, uint8_t sSectorY,
+                             BOOLEAN fUpdateHistory);
 
 extern void CheckForQuests(uint32_t uiDay);
 
 void InitQuestEngine();
 
-BOOLEAN LoadQuestInfoFromSavedGameFile(HWFILE hFile);
-BOOLEAN SaveQuestInfoToSavedGameFile(HWFILE hFile);
+BOOLEAN LoadQuestInfoFromSavedGameFile(FileID hFile);
+BOOLEAN SaveQuestInfoToSavedGameFile(FileID hFile);
 
 #endif

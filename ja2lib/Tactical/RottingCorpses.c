@@ -12,6 +12,7 @@
 #include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/WCheck.h"
 #include "Soldier.h"
 #include "Strategic/GameClock.h"
@@ -36,6 +37,7 @@
 #include "Tactical/WorldItems.h"
 #include "TileEngine/ExplosionControl.h"
 #include "TileEngine/IsometricUtils.h"
+#include "TileEngine/Lighting.h"
 #include "TileEngine/RenderFun.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/Smell.h"
@@ -47,6 +49,7 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Utilities.h"
+#include "rust_images.h"
 
 #define CORPSE_WARNING_MAX 5
 #define CORPSE_WARNING_DIST 5
@@ -60,7 +63,6 @@
 #define MAX_NUM_CROWS 6
 
 // From lighting
-extern struct SGPPaletteEntry gpLightColors[3];
 extern uint16_t gusShadeLevels[16][3];
 
 void MakeCorpseVisible(struct SOLDIERTYPE *pSoldier, ROTTING_CORPSE *pCorpse);
@@ -466,7 +468,7 @@ int32_t AddRottingCorpse(ROTTING_CORPSE_DEFINITION *pCorpseDef) {
 
   if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
     // OK, AS WE ADD, CHECK FOR TOD AND DECAY APPROPRIATELY
-    if (((GetWorldTotalMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_ROTTING) &&
+    if (((GetGameTimeInMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_ROTTING) &&
         (pCorpse->def.ubType < ROTTING_STAGE2)) {
       if (pCorpse->def.ubType <= FMERC_FALLF) {
         // Rott!
@@ -475,7 +477,7 @@ int32_t AddRottingCorpse(ROTTING_CORPSE_DEFINITION *pCorpseDef) {
     }
 
     // If time of death is a few days, now, don't add at all!
-    if (((GetWorldTotalMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_DONE_ROTTING)) {
+    if (((GetGameTimeInMin() - pCorpse->def.uiTimeOfDeath) > DELAY_UNTIL_DONE_ROTTING)) {
       return (-1);
     }
   }
@@ -637,7 +639,9 @@ BOOLEAN CreateCorpsePalette(ROTTING_CORPSE *pCorpse) {
 
   pCorpse->p8BPPPalette = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
 
-  CHECKF(pCorpse->p8BPPPalette != NULL);
+  if (!(pCorpse->p8BPPPalette != NULL)) {
+    return FALSE;
+  }
 
   bBodyTypePalette =
       GetBodyTypePaletteSubstitutionCode(NULL, pCorpse->def.ubBodyType, zColFilename);
@@ -755,7 +759,7 @@ BOOLEAN TurnSoldierIntoCorpse(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemoveMerc,
   //	}
 
   // Set time of death
-  Corpse.uiTimeOfDeath = GetWorldTotalMin();
+  Corpse.uiTimeOfDeath = GetGameTimeInMin();
 
   // If corpse is not valid. make items visible
   if (ubType == NO_CORPSE && pSoldier->bTeam != gbPlayerNum) {
@@ -968,7 +972,7 @@ void HandleRottingCorpses() {
   }
 
   // ATE: If it's too late, don't!
-  if (NightTime()) {
+  if (IsNightTime()) {
     return;
   }
 
@@ -1171,12 +1175,12 @@ uint16_t CreateCorpsePaletteTables(ROTTING_CORPSE *pCorpse) {
   // create the basic shade table
   for (uiCount = 0; uiCount < 256; uiCount++) {
     // combine the rgb of the light color with the object's palette
-    LightPal[uiCount].peRed = (uint8_t)(min(
-        (uint16_t)pCorpse->p8BPPPalette[uiCount].peRed + (uint16_t)gpLightColors[0].peRed, 255));
-    LightPal[uiCount].peGreen = (uint8_t)(min(
-        (uint16_t)pCorpse->p8BPPPalette[uiCount].peGreen + (uint16_t)gpLightColors[0].peGreen, 255));
-    LightPal[uiCount].peBlue = (uint8_t)(min(
-        (uint16_t)pCorpse->p8BPPPalette[uiCount].peBlue + (uint16_t)gpLightColors[0].peBlue, 255));
+    LightPal[uiCount].red = (uint8_t)(min(
+        (uint16_t)pCorpse->p8BPPPalette[uiCount].red + (uint16_t)gpLightColors[0].red, 255));
+    LightPal[uiCount].green = (uint8_t)(min(
+        (uint16_t)pCorpse->p8BPPPalette[uiCount].green + (uint16_t)gpLightColors[0].green, 255));
+    LightPal[uiCount].blue = (uint8_t)(min(
+        (uint16_t)pCorpse->p8BPPPalette[uiCount].blue + (uint16_t)gpLightColors[0].blue, 255));
   }
   // build the shade tables
   CreateCorpseShadedPalette(pCorpse, 0, LightPal);

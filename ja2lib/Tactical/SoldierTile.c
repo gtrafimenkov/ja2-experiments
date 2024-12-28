@@ -54,6 +54,7 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
+#include "rust_civ_groups.h"
 
 extern int8_t gbNumMercsUntilWaitingOver;
 extern uint8_t gubWaitingForAllMercsToExitCode;
@@ -72,25 +73,25 @@ void OutputDebugInfoForTurnBasedNextTileWaiting(struct SOLDIERTYPE *pSoldier) {
                             DirectionInc((uint8_t)pSoldier->usPathingData[pSoldier->usPathIndex]));
 
     // provide more info!!
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("  Soldier path size %d, index %d", pSoldier->usPathDataSize,
                     pSoldier->usPathIndex));
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("  Who is at blocked gridno: %d", WhoIsThere2(usNewGridNo, pSoldier->bLevel)));
 
     for (uiLoop = 0; uiLoop < pSoldier->usPathDataSize; uiLoop++) {
       if (uiLoop > pSoldier->usPathIndex) {
         usTemp = NewGridNo(usTemp, DirectionInc((uint8_t)pSoldier->usPathingData[uiLoop]));
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("  Soldier path[%d]: %d == gridno %d", uiLoop,
                         pSoldier->usPathingData[uiLoop], usTemp));
       } else if (uiLoop == pSoldier->usPathIndex) {
         usTemp = usNewGridNo;
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("  Soldier path[%d]: %d == gridno %d", uiLoop,
                         pSoldier->usPathingData[uiLoop], usTemp));
       } else {
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("  Soldier path[%d]: %d", uiLoop, pSoldier->usPathingData[uiLoop]));
       }
     }
@@ -187,7 +188,8 @@ void UnMarkMovementReserved(struct SOLDIERTYPE *pSoldier) {
   }
 }
 
-int8_t TileIsClear(struct SOLDIERTYPE *pSoldier, int8_t bDirection, int16_t sGridNo, int8_t bLevel) {
+int8_t TileIsClear(struct SOLDIERTYPE *pSoldier, int8_t bDirection, int16_t sGridNo,
+                   int8_t bLevel) {
   uint8_t ubPerson;
   int16_t sTempDestGridNo;
   int16_t sNewGridNo;
@@ -456,8 +458,8 @@ BOOLEAN HandleNextTileWaiting(struct SOLDIERTYPE *pSoldier) {
       RESETTIMECOUNTER(pSoldier->NextTileCounter, NEXT_TILE_CHECK_DELAY);
 
       // Get direction from gridno...
-      bCauseDirection = (int8_t)GetDirectionToGridNoFromGridNo(pSoldier->sGridNo,
-                                                             pSoldier->sDelayedMovementCauseGridNo);
+      bCauseDirection = (int8_t)GetDirectionToGridNoFromGridNo(
+          pSoldier->sGridNo, pSoldier->sDelayedMovementCauseGridNo);
 
       bBlocked = TileIsClear(pSoldier, bCauseDirection, pSoldier->sDelayedMovementCauseGridNo,
                              pSoldier->bLevel);
@@ -535,13 +537,14 @@ BOOLEAN HandleNextTileWaiting(struct SOLDIERTYPE *pSoldier) {
         }
 
         sCost = (int16_t)FindBestPath(pSoldier, sCheckGridNo, pSoldier->bLevel,
-                                    pSoldier->usUIMovementMode, NO_COPYROUTE, fFlags);
+                                      pSoldier->usUIMovementMode, NO_COPYROUTE, fFlags);
         gfPlotPathToExitGrid = FALSE;
 
         // Can we get there
         if (sCost > 0) {
           // Is the next tile blocked too?
-          sNewGridNo = NewGridNo((uint16_t)pSoldier->sGridNo, DirectionInc((uint8_t)guiPathingData[0]));
+          sNewGridNo =
+              NewGridNo((uint16_t)pSoldier->sGridNo, DirectionInc((uint8_t)guiPathingData[0]));
 
           bPathBlocked =
               TileIsClear(pSoldier, (uint8_t)guiPathingData[0], sNewGridNo, pSoldier->bLevel);
@@ -555,8 +558,8 @@ BOOLEAN HandleNextTileWaiting(struct SOLDIERTYPE *pSoldier) {
             }
 
             sCost = (int16_t)FindBestPath(pSoldier, sCheckGridNo, pSoldier->bLevel,
-                                        pSoldier->usUIMovementMode, NO_COPYROUTE,
-                                        PATH_IGNORE_PERSON_AT_DEST);
+                                          pSoldier->usUIMovementMode, NO_COPYROUTE,
+                                          PATH_IGNORE_PERSON_AT_DEST);
 
             gfPlotPathToExitGrid = FALSE;
 

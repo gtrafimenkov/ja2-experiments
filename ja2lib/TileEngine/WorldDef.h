@@ -27,7 +27,7 @@ struct VObject;
 #define WORLD_CLIFF_HEIGHT 80
 
 // A macro that actually memcpy's over data and increments the pointer automatically
-// based on the size.  Works like a FileMan_Read except with a buffer instead of a file pointer.
+// based on the size.  Works like a File_Read except with a buffer instead of a file pointer.
 // Used by LoadWorld() and child functions.
 #define LOADDATA(dst, src, size) \
   memcpy(dst, src, size);        \
@@ -117,8 +117,8 @@ struct LEVELNODE {
   union {
     struct LEVELNODE *pPrevNode;       // FOR LAND, GOING BACKWARDS POINTER
     struct STRUCTURE *pStructureData;  // struct STRUCTURE DATA
-    int32_t iPhysicsObjectID;            // ID FOR PHYSICS ITEM
-    int32_t uiAPCost;                    // FOR AP DISPLAY
+    int32_t iPhysicsObjectID;          // ID FOR PHYSICS ITEM
+    int32_t uiAPCost;                  // FOR AP DISPLAY
     int32_t iExitGridInfo;
   };  // ( 4 byte union )
 
@@ -146,7 +146,7 @@ struct LEVELNODE {
 
     struct {
       uint32_t uiAnimHitLocationFlags;  // Animation profile flags for soldier placeholders ( prone
-                                      // merc hit location values )
+                                        // merc hit location values )
     };
 
     // Some can contains index values into animated tile data
@@ -243,8 +243,8 @@ void DestroyTileShadeTables();
 void TrashWorld(void);
 void TrashMapTile(int16_t MapTile);
 BOOLEAN NewWorld(void);
-BOOLEAN SaveWorld(char* puiFilename);
-BOOLEAN LoadWorld(char* puiFilename);
+BOOLEAN SaveWorld(char *puiFilename);
+BOOLEAN LoadWorld(char *puiFilename);
 void CompileWorldMovementCosts();
 void RecompileLocalMovementCosts(int16_t sCentreGridNo);
 void RecompileLocalMovementCostsFromRadius(int16_t sCentreGridNo, int8_t bRadius);

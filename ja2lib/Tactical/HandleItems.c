@@ -6,6 +6,7 @@
 
 #include "GameSettings.h"
 #include "MessageBoxScreen.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -16,7 +17,6 @@
 #include "Strategic/MapScreenInterfaceMapInventory.h"
 #include "Strategic/Quests.h"
 #include "Strategic/StrategicMap.h"
-#include "Strategic/StrategicTownLoyalty.h"
 #include "Tactical/ActionItems.h"
 #include "Tactical/AnimationControl.h"
 #include "Tactical/ArmsDealerInit.h"
@@ -68,6 +68,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
+#include "rust_civ_groups.h"
 
 #define NUM_ITEMS_LISTED 8
 #define NUM_ITEM_FLASH_SLOTS 50
@@ -77,8 +78,8 @@ ITEM_POOL_LOCATOR FlashItemSlots[NUM_ITEM_FLASH_SLOTS];
 uint32_t guiNumFlashItemSlots = 0;
 
 struct LEVELNODE *AddItemGraphicToWorld(INVTYPE *pItem, int16_t sGridNo, uint8_t ubLevel);
-int8_t GetListMouseHotSpot(int16_t sLargestLineWidth, int8_t bNumItemsListed, int16_t sFontX, int16_t sFontY,
-                         int8_t bCurStart);
+int8_t GetListMouseHotSpot(int16_t sLargestLineWidth, int8_t bNumItemsListed, int16_t sFontX,
+                           int16_t sFontY, int8_t bCurStart);
 void RemoveItemGraphicFromWorld(INVTYPE *pItem, int16_t sGridNo, uint8_t ubLevel,
                                 struct LEVELNODE *pLevelNode);
 
@@ -86,7 +87,8 @@ struct ITEM_POOL *GetItemPoolForIndex(int16_t sGridNo, int32_t iItemIndex, uint8
 
 int32_t GetFreeFlashItemSlot(void);
 void RecountFlashItemSlots(void);
-int32_t AddFlashItemSlot(struct ITEM_POOL *pItemPool, ITEM_POOL_LOCATOR_HOOK Callback, uint8_t ubFlags);
+int32_t AddFlashItemSlot(struct ITEM_POOL *pItemPool, ITEM_POOL_LOCATOR_HOOK Callback,
+                         uint8_t ubFlags);
 BOOLEAN RemoveFlashItemSlot(struct ITEM_POOL *pItemPool);
 
 // Disgusting hacks: have to keep track of these values for accesses in callbacks
@@ -127,8 +129,8 @@ BOOLEAN gfJustFoundBoobyTrap = FALSE;
 void StartBombMessageBox(struct SOLDIERTYPE *pSoldier, int16_t sGridNo);
 
 BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
-                                            struct SOLDIERTYPE *pTargetSoldier, int16_t sTargetGridNo,
-                                            int8_t bLevel) {
+                                            struct SOLDIERTYPE *pTargetSoldier,
+                                            int16_t sTargetGridNo, int8_t bLevel) {
   BOOLEAN fBadChangeToGetThrough = FALSE;
 
   if (pTargetSoldier != NULL) {
@@ -180,8 +182,8 @@ BOOLEAN HandleCheckForBadChangeToGetThrough(struct SOLDIERTYPE *pSoldier,
   return (TRUE);
 }
 
-int32_t HandleItem(struct SOLDIERTYPE *pSoldier, uint16_t usGridNo, int8_t bLevel, uint16_t usHandItem,
-                 BOOLEAN fFromUI) {
+int32_t HandleItem(struct SOLDIERTYPE *pSoldier, uint16_t usGridNo, int8_t bLevel,
+                   uint16_t usHandItem, BOOLEAN fFromUI) {
   struct SOLDIERTYPE *pTargetSoldier = NULL;
   uint16_t usSoldierIndex;
   int16_t sTargetGridNo;
@@ -221,7 +223,7 @@ int32_t HandleItem(struct SOLDIERTYPE *pSoldier, uint16_t usGridNo, int8_t bLeve
 
   // ATE: If in realtime, set attacker count to 0...
   if (!(gTacticalStatus.uiFlags & INCOMBAT)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Setting attack busy count to 0 due to no combat"));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("Setting attack busy count to 0 due to no combat"));
     gTacticalStatus.ubAttackBusyCount = 0;
   }
 
@@ -577,9 +579,9 @@ int32_t HandleItem(struct SOLDIERTYPE *pSoldier, uint16_t usGridNo, int8_t bLeve
 
     // Calculate AP costs...
     sAPCost = GetAPsToBeginFirstAid(pSoldier);
-    sAPCost +=
-        PlotPath(pSoldier, sActionGridNo, NO_COPYROUTE, FALSE, TEMPORARY,
-                 (uint16_t)pSoldier->usUIMovementMode, NOT_STEALTH, FORWARD, pSoldier->bActionPoints);
+    sAPCost += PlotPath(pSoldier, sActionGridNo, NO_COPYROUTE, FALSE, TEMPORARY,
+                        (uint16_t)pSoldier->usUIMovementMode, NOT_STEALTH, FORWARD,
+                        pSoldier->bActionPoints);
 
     if (EnoughPoints(pSoldier, sAPCost, 0, fFromUI)) {
       // OK, set UI
@@ -1023,7 +1025,7 @@ int32_t HandleItem(struct SOLDIERTYPE *pSoldier, uint16_t usGridNo, int8_t bLeve
     // pSoldier->ubTargetID = WhoIsThere2( sTargetGridNo, pSoldier->bTargetLevel );
 
     gTacticalStatus.ubAttackBusyCount++;
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("!!!!!!! Starting swipe attack, incrementing a.b.c in HandleItems to %d",
                     gTacticalStatus.ubAttackBusyCount));
 
@@ -1423,27 +1425,6 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, int32_t iItemIndex, i
                 // continue, to try and place ay others...
                 continue;
               }
-              /*
-              // handle theft.. will return true if theft has failed ( if soldier was caught )
-              if( pSoldier->bTeam == OUR_TEAM )
-              {
-                      // check to see if object was owned by another
-                      if( Object.fFlags & OBJECT_OWNED_BY_CIVILIAN )
-                      {
-                              // owned by a civilian
-                              if( HandleLoyaltyAdjustmentForRobbery( pSoldier ) == TRUE )
-                              {
-                                      // implememnt actual tactical reaction for theft..shoot
-              robber, yell out, etc
-                              }
-
-                              // reset who owns object
-                              Object.fFlags &= ~( OBJECT_OWNED_BY_CIVILIAN );
-                      }
-              }
-              */
-
-              // pItemPoolToDelete = pItemPool;
               iItemIndexToDelete = pItemPool->iItemIndex;
               pItemPool = pItemPool->pNext;
               RemoveItemFromPool(sGridNo, iItemIndexToDelete, pSoldier->bLevel);
@@ -1486,27 +1467,6 @@ void SoldierGetItemFromWorld(struct SOLDIERTYPE *pSoldier, int32_t iItemIndex, i
           DoMessageBox(MSG_BOX_BASIC_STYLE, TacticalStr[ACTIVATE_SWITCH_PROMPT], GAME_SCREEN,
                        (uint8_t)MSG_BOX_FLAG_YESNO, SwitchMessageBoxCallBack, NULL);
         } else {
-          /*
-                                                  // handle theft.. will return true if theft has
-             failed ( if soldier was caught ) if( pSoldier->bTeam == OUR_TEAM )
-                                                  {
-                                                          // check to see if object was owned by
-             another if( Object.fFlags & OBJECT_OWNED_BY_CIVILIAN )
-                                                          {
-                                                                  // owned by a civilian
-                                                                  if(
-             HandleLoyaltyAdjustmentForRobbery( pSoldier ) == TRUE )
-                                                                  {
-                                                                          // implememnt actual
-             tactical reaction for theft..shoot robber, yell out, etc
-                                                                  }
-
-                                                                  // reset who owns object
-                                                                  Object.fFlags &= ~(
-             OBJECT_OWNED_BY_CIVILIAN );
-                                                          }
-                                                  }
-          */
           RemoveItemFromPool(sGridNo, iItemIndex, pSoldier->bLevel);
 
           if (!AutoPlaceObject(pSoldier, &(gWorldItems[iItemIndex].o), TRUE)) {
@@ -1599,7 +1559,8 @@ void HandleSoldierPickupItem(struct SOLDIERTYPE *pSoldier, int32_t iItemIndex, i
             StatChange(pSoldier, WISDOMAMT, 5, FALSE);
 
             // We've found something!
-            TacticalCharacterDialogue(pSoldier, (uint16_t)(QUOTE_SPOTTED_SOMETHING_ONE + Random(2)));
+            TacticalCharacterDialogue(pSoldier,
+                                      (uint16_t)(QUOTE_SPOTTED_SOMETHING_ONE + Random(2)));
           } else {
             // Say NOTHING quote...
             DoMercBattleSound(pSoldier, BATTLE_SOUND_NOTHING);
@@ -1701,7 +1662,8 @@ void RemoveItemGraphicFromWorld(INVTYPE *pItem, int16_t sGridNo, uint8_t ubLevel
 
 // INVENTORY POOL STUFF
 struct OBJECTTYPE *AddItemToPool(int16_t sGridNo, struct OBJECTTYPE *pObject, int8_t bVisible,
-                                 uint8_t ubLevel, uint16_t usFlags, int8_t bRenderZHeightAboveLevel) {
+                                 uint8_t ubLevel, uint16_t usFlags,
+                                 int8_t bRenderZHeightAboveLevel) {
   return InternalAddItemToPool(&sGridNo, pObject, bVisible, ubLevel, usFlags,
                                bRenderZHeightAboveLevel, NULL);
 }
@@ -1713,8 +1675,8 @@ struct OBJECTTYPE *AddItemToPoolAndGetIndex(int16_t sGridNo, struct OBJECTTYPE *
                                 bRenderZHeightAboveLevel, piItemIndex));
 }
 
-struct OBJECTTYPE *InternalAddItemToPool(int16_t *psGridNo, struct OBJECTTYPE *pObject, int8_t bVisible,
-                                         uint8_t ubLevel, uint16_t usFlags,
+struct OBJECTTYPE *InternalAddItemToPool(int16_t *psGridNo, struct OBJECTTYPE *pObject,
+                                         int8_t bVisible, uint8_t ubLevel, uint16_t usFlags,
                                          int8_t bRenderZHeightAboveLevel, int32_t *piItemIndex) {
   struct ITEM_POOL *pItemPool;
   struct ITEM_POOL *pItemPoolTemp;
@@ -1976,7 +1938,8 @@ BOOLEAN ItemExistsAtLocation(int16_t sGridNo, int32_t iItemIndex, uint8_t ubLeve
   return (FALSE);
 }
 
-BOOLEAN ItemTypeExistsAtLocation(int16_t sGridNo, uint16_t usItem, uint8_t ubLevel, int32_t *piItemIndex) {
+BOOLEAN ItemTypeExistsAtLocation(int16_t sGridNo, uint16_t usItem, uint8_t ubLevel,
+                                 int32_t *piItemIndex) {
   struct ITEM_POOL *pItemPool;
   struct ITEM_POOL *pItemPoolTemp;
 
@@ -2091,7 +2054,8 @@ BOOLEAN LookForHiddenItems(int16_t sGridNo, int8_t ubLevel, BOOLEAN fSetLocator,
   return (fFound);
 }
 
-int8_t GetZLevelOfItemPoolGivenStructure(int16_t sGridNo, uint8_t ubLevel, struct STRUCTURE *pStructure) {
+int8_t GetZLevelOfItemPoolGivenStructure(int16_t sGridNo, uint8_t ubLevel,
+                                         struct STRUCTURE *pStructure) {
   struct ITEM_POOL *pItemPool;
 
   if (pStructure == NULL) {
@@ -2604,8 +2568,8 @@ BOOLEAN ItemPoolOKForPickup(struct SOLDIERTYPE *pSoldier, struct ITEM_POOL *pIte
 extern void HandleAnyMercInSquadHasCompatibleStuff(uint8_t ubSquad, struct OBJECTTYPE *pObject,
                                                    BOOLEAN fReset);
 
-BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, int16_t sGridNo, uint8_t bCommand, int8_t bZLevel,
-                         int16_t sXPos, int16_t sYPos) {
+BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, int16_t sGridNo, uint8_t bCommand,
+                         int8_t bZLevel, int16_t sXPos, int16_t sYPos) {
   int16_t sY;
   struct ITEM_POOL *pTempItemPool;
   wchar_t pStr[100];
@@ -2806,8 +2770,8 @@ BOOLEAN DrawItemPoolList(struct ITEM_POOL *pItemPool, int16_t sGridNo, uint8_t b
   return (fSelectionDone);
 }
 
-int8_t GetListMouseHotSpot(int16_t sLargestLineWidth, int8_t bNumItemsListed, int16_t sFontX, int16_t sFontY,
-                         int8_t bCurStart) {
+int8_t GetListMouseHotSpot(int16_t sLargestLineWidth, int8_t bNumItemsListed, int16_t sFontX,
+                           int16_t sFontY, int8_t bCurStart) {
   int16_t cnt = 0;
   int16_t sTestX1, sTestX2, sTestY1, sTestY2;
   int16_t sLineHeight;
@@ -2880,7 +2844,7 @@ void RecountFlashItemSlots(void) {
 }
 
 int32_t AddFlashItemSlot(struct ITEM_POOL *pItemPool, ITEM_POOL_LOCATOR_HOOK Callback,
-                       uint8_t ubFlags) {
+                         uint8_t ubFlags) {
   int32_t iFlashItemIndex;
 
   if ((iFlashItemIndex = GetFreeFlashItemSlot()) == (-1)) return (-1);
@@ -2901,7 +2865,9 @@ int32_t AddFlashItemSlot(struct ITEM_POOL *pItemPool, ITEM_POOL_LOCATOR_HOOK Cal
 BOOLEAN RemoveFlashItemSlot(struct ITEM_POOL *pItemPool) {
   uint32_t uiCount;
 
-  CHECKF(pItemPool != NULL);
+  if (!(pItemPool != NULL)) {
+    return FALSE;
+  }
 
   for (uiCount = 0; uiCount < guiNumFlashItemSlots; uiCount++) {
     if (FlashItemSlots[uiCount].fAllocated) {
@@ -3055,14 +3021,13 @@ void RenderTopmostFlashingItems() {
           sXPos -= 20;
           sYPos -= 20;
 
-          iBack = RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, sXPos, sYPos, (int16_t)(sXPos + 40),
-                                         (int16_t)(sYPos + 40));
+          iBack = RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, sXPos, sYPos,
+                                         (int16_t)(sXPos + 40), (int16_t)(sYPos + 40));
           if (iBack != -1) {
             SetBackgroundRectFilled(iBack);
           }
 
-          BltVideoObjectFromIndex(FRAME_BUFFER, guiRADIO, pLocator->bRadioFrame, sXPos, sYPos,
-                                  VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsFB, guiRADIO, pLocator->bRadioFrame, sXPos, sYPos);
 
           DrawItemPoolList(pItemPool, pItemPool->sGridNo, ITEMLIST_DISPLAY,
                            pItemPool->bRenderZHeightAboveLevel, sXPos, sYPos);
@@ -3509,10 +3474,10 @@ void SetOffBoobyTrap(struct ITEM_POOL *pItemPool) {
     int16_t sX, sY;
     sX = CenterX(pItemPool->sGridNo);
     sY = CenterY(pItemPool->sGridNo);
-    IgniteExplosion(
-        NOBODY, sX, sY,
-        (int16_t)(gpWorldLevelData[pItemPool->sGridNo].sHeight + pItemPool->bRenderZHeightAboveLevel),
-        pItemPool->sGridNo, MINI_GRENADE, 0);
+    IgniteExplosion(NOBODY, sX, sY,
+                    (int16_t)(gpWorldLevelData[pItemPool->sGridNo].sHeight +
+                              pItemPool->bRenderZHeightAboveLevel),
+                    pItemPool->sGridNo, MINI_GRENADE, 0);
     RemoveItemFromPool(pItemPool->sGridNo, pItemPool->iItemIndex, pItemPool->ubLevel);
   }
 }
@@ -4035,7 +4000,7 @@ void TestPotentialOwner(struct SOLDIERTYPE *pSoldier) {
     if (SoldierToSoldierLineOfSightTest(
             pSoldier, gpTempSoldier,
             (uint8_t)DistanceVisible(pSoldier, DIRECTION_IRRELEVANT, 0, gpTempSoldier->sGridNo,
-                                   gpTempSoldier->bLevel),
+                                     gpTempSoldier->bLevel),
             TRUE)) {
       MakeNPCGrumpyForMinorOffense(pSoldier, gpTempSoldier);
     }

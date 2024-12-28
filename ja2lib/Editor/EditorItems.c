@@ -12,11 +12,14 @@
 #include "Editor/EditorTaskbarUtils.h"
 #include "Editor/ItemStatistics.h"
 #include "Editor/SelectWin.h"
+#include "SGP/Debug.h"
 #include "SGP/Font.h"
+#include "SGP/Input.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -27,15 +30,17 @@
 #include "Tactical/SoldierControl.h"
 #include "Tactical/Weapons.h"
 #include "Tactical/WorldItems.h"
+#include "TileEngine/IsometricUtils.h"
 #include "TileEngine/Pits.h"
 #include "TileEngine/SimpleRenderUtils.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
+#include "rust_images.h"
 
 #define NUMBER_TRIGGERS 27
 #define PRESSURE_ACTION_ID (NUMBER_TRIGGERS - 1)
@@ -44,7 +49,7 @@ extern struct ITEM_POOL *gpEditingItemPool;
 
 // Simply counts the number of items in the world.  This is used for display purposes.
 uint16_t CountNumberOfEditorPlacementsInWorld(uint16_t usEInfoIndex,
-                                            uint16_t *pusQuantity);  // wrapper for the next three
+                                              uint16_t *pusQuantity);  // wrapper for the next three
 uint16_t CountNumberOfItemPlacementsInWorld(uint16_t usItem, uint16_t *pusQuantity);
 uint16_t CountNumberOfItemsWithFrequency(uint16_t usItem, int8_t bFrequency);
 uint16_t CountNumberOfPressureActionsInWorld();
@@ -182,11 +187,10 @@ void EntryInitEditorItemsInfo() {
 }
 
 void InitEditorItemsInfo(uint32_t uiItemType) {
-  VSURFACE_DESC vs_desc;
   uint8_t *pDestBuf, *pSrcBuf;
   uint32_t uiSrcPitchBYTES, uiDestPitchBYTES;
   INVTYPE *item;
-  SGPRect SaveRect, NewRect;
+  struct GRect SaveRect, NewRect;
   struct VObject *hVObject;
   uint32_t uiVideoObjectIndex;
   uint16_t usUselessWidth, usUselessHeight;
@@ -195,7 +199,6 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   uint16_t usCounter;
   wchar_t pStr[100];  //, pStr2[ 100 ];
   wchar_t pItemName[SIZE_ITEM_NAME];
-  uint8_t ubBitDepth;
   BOOLEAN fTypeMatch;
   int32_t iEquipCount = 0;
 
@@ -278,11 +281,10 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   eInfo.sWidth = (eInfo.sNumItems > 12) ? ((eInfo.sNumItems + 1) / 2) * 60 : 360;
   eInfo.sHeight = 80;
   // Create item buffer
-  GetCurrentVideoSettings(&usUselessWidth, &usUselessHeight, &ubBitDepth);
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+  GetCurrentVideoSettings(&usUselessWidth, &usUselessHeight);
+  VSURFACE_DESC vs_desc;
   vs_desc.usWidth = eInfo.sWidth;
   vs_desc.usHeight = eInfo.sHeight;
-  vs_desc.ubBitDepth = ubBitDepth;
 
   //!!!Memory check.  Create the item buffer
   if (!AddVideoSurface(&vs_desc, &eInfo.uiBuffer)) {
@@ -291,17 +293,17 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
     return;
   }
 
-  pDestBuf = LockVideoSurface(eInfo.uiBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(FRAME_BUFFER, &uiSrcPitchBYTES);
+  pDestBuf = VSurfaceLockOld(GetVSByID(eInfo.uiBuffer), &uiDestPitchBYTES);
+  pSrcBuf = VSurfaceLockOld(vsFB, &uiSrcPitchBYTES);
 
   // copy a blank chunk of the editor interface to the new buffer.
   for (i = 0; i < eInfo.sWidth; i += 60) {
-    Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0 + i,
-                    0, 100, 360, 60, 80);
+    Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
+                    0 + i, 0, NewGRect(100, 360, 60, 80));
   }
 
-  UnLockVideoSurface(eInfo.uiBuffer);
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(GetVSByID(eInfo.uiBuffer));
+  VSurfaceUnlock(vsFB);
 
   x = 0;
   y = 0;
@@ -324,19 +326,19 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
 
       SetFont(SMALLCOMPFONT);
       SetFontForeground(FONT_MCOLOR_WHITE);
-      SetFontDestBuffer(eInfo.uiBuffer, 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
+      SetFontDest(GetVSByID(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
 
       swprintf(pStr, ARR_SIZE(pStr), L"%S", LockTable[i].ubEditorName);
-      DisplayWrappedString(x, (uint16_t)(y + 25), 60, 2, SMALLCOMPFONT, FONT_WHITE, pStr, FONT_BLACK,
-                           TRUE, CENTER_JUSTIFIED);
+      DisplayWrappedString(x, (uint16_t)(y + 25), 60, 2, SMALLCOMPFONT, FONT_WHITE, pStr,
+                           FONT_BLACK, TRUE, CENTER_JUSTIFIED);
 
       // Calculate the center position of the graphic in a 60 pixel wide area.
-      sWidth = hVObject->pETRLEObject[item->ubGraphicNum].usWidth;
-      sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
+      sWidth = hVObject->subimages[item->ubGraphicNum].width;
+      sOffset = hVObject->subimages[item->ubGraphicNum].x_offset;
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
 
-      BltVideoObjectOutlineFromIndex(eInfo.uiBuffer, uiVideoObjectIndex, item->ubGraphicNum, sStart,
-                                     y + 2, 0, FALSE);
+      BltVideoObjectOutlineFromIndex(GetVSByID(eInfo.uiBuffer), uiVideoObjectIndex,
+                                     item->ubGraphicNum, sStart, y + 2, 0, FALSE);
       // cycle through the various slot positions (0,0), (0,40), (60,0), (60,40), (120,0)...
       if (y == 0) {
         y = 40;
@@ -411,7 +413,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
 
           SetFont(SMALLCOMPFONT);
           SetFontForeground(FONT_MCOLOR_WHITE);
-          SetFontDestBuffer(eInfo.uiBuffer, 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
+          SetFontDest(GetVSByID(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
 
           if (eInfo.uiItemType != TBAR_MODE_ITEM_TRIGGERS) {
             LoadItemInfo(usCounter, pItemName, NULL);
@@ -445,13 +447,13 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
                                FONT_BLACK, TRUE, CENTER_JUSTIFIED);
 
           // Calculate the center position of the graphic in a 60 pixel wide area.
-          sWidth = hVObject->pETRLEObject[item->ubGraphicNum].usWidth;
-          sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
+          sWidth = hVObject->subimages[item->ubGraphicNum].width;
+          sOffset = hVObject->subimages[item->ubGraphicNum].x_offset;
           sStart = x + (60 - sWidth - sOffset * 2) / 2;
 
           if (sWidth) {
-            BltVideoObjectOutlineFromIndex(eInfo.uiBuffer, uiVideoObjectIndex, item->ubGraphicNum,
-                                           sStart, y + 2, 0, FALSE);
+            BltVideoObjectOutlineFromIndex(GetVSByID(eInfo.uiBuffer), uiVideoObjectIndex,
+                                           item->ubGraphicNum, sStart, y + 2, 0, FALSE);
           }
           // cycle through the various slot positions (0,0), (0,40), (60,0), (60,40), (120,0)...
           if (y == 0) {
@@ -464,7 +466,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
         usCounter++;
       }
     }
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
   SetClippingRect(&SaveRect);
   gfRenderTaskbar = TRUE;
 }
@@ -503,15 +505,15 @@ void RenderEditorItemsInfo() {
                              // highlighted.
     eInfo.sHilitedItemIndex = -1;
   }
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(eInfo.uiBuffer, &uiSrcPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
+  pSrcBuf = VSurfaceLockOld(GetVSByID(eInfo.uiBuffer), &uiSrcPitchBYTES);
 
   // copy the items buffer to the editor bar
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 110,
-                  360, 60 * eInfo.sScrollIndex, 0, 360, 80);
+                  360, NewGRect(60 * eInfo.sScrollIndex, 0, 360, 80));
 
-  UnLockVideoSurface(eInfo.uiBuffer);
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(GetVSByID(eInfo.uiBuffer));
+  VSurfaceUnlock(vsFB);
 
   // calculate the min and max index that is currently shown.  This determines
   // if the highlighted and/or selected items are drawn with the outlines.
@@ -526,12 +528,12 @@ void RenderEditorItemsInfo() {
       GetVideoObject(&hVObject, uiVideoObjectIndex);
       x = (eInfo.sHilitedItemIndex / 2 - eInfo.sScrollIndex) * 60 + 110;
       y = 360 + (eInfo.sHilitedItemIndex % 2) * 40;
-      sWidth = hVObject->pETRLEObject[item->ubGraphicNum].usWidth;
-      sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
+      sWidth = hVObject->subimages[item->ubGraphicNum].width;
+      sOffset = hVObject->subimages[item->ubGraphicNum].x_offset;
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
-        BltVideoObjectOutlineFromIndex(FRAME_BUFFER, uiVideoObjectIndex, item->ubGraphicNum, sStart,
-                                       y + 2, Get16BPPColor(FROMRGB(250, 250, 0)), TRUE);
+        BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
+                                       rgb32_to_rgb565(FROMRGB(250, 250, 0)), TRUE);
       }
     }
   }
@@ -543,12 +545,12 @@ void RenderEditorItemsInfo() {
       GetVideoObject(&hVObject, uiVideoObjectIndex);
       x = (eInfo.sSelItemIndex / 2 - eInfo.sScrollIndex) * 60 + 110;
       y = 360 + (eInfo.sSelItemIndex % 2) * 40;
-      sWidth = hVObject->pETRLEObject[item->ubGraphicNum].usWidth;
-      sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
+      sWidth = hVObject->subimages[item->ubGraphicNum].width;
+      sOffset = hVObject->subimages[item->ubGraphicNum].x_offset;
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
-        BltVideoObjectOutlineFromIndex(FRAME_BUFFER, uiVideoObjectIndex, item->ubGraphicNum, sStart,
-                                       y + 2, Get16BPPColor(FROMRGB(250, 0, 0)), TRUE);
+        BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
+                                       rgb32_to_rgb565(FROMRGB(250, 0, 0)), TRUE);
       }
     }
   }
@@ -751,7 +753,8 @@ void AddSelectedItemToWorld(int16_t sGridNo) {
       else if (eInfo.sSelItemIndex < 6)
         tempObject.bFrequency = PANIC_FREQUENCY_3;
       else
-        tempObject.bFrequency = (int8_t)(FIRST_MAP_PLACED_FREQUENCY + (eInfo.sSelItemIndex - 4) / 2);
+        tempObject.bFrequency =
+            (int8_t)(FIRST_MAP_PLACED_FREQUENCY + (eInfo.sSelItemIndex - 4) / 2);
       usFlags |= WORLD_ITEM_ARMED_BOMB;
       break;
     case ACTION_ITEM:

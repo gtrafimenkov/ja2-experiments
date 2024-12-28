@@ -9,7 +9,7 @@
 #include "GameSettings.h"
 #include "Laptop/Finances.h"
 #include "Laptop/History.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/CreatureSpreading.h"
@@ -26,6 +26,7 @@
 #include "Town.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
+#include "rust_fileman.h"
 
 // this .c file will handle the strategic level of mines and income from them
 
@@ -369,7 +370,7 @@ uint32_t ExtractOreFromMine(int8_t bMineIndex, uint32_t uiAmount) {
     StrategicHandleMineThatRanOut((uint8_t)GetSectorID8(sSectorX, sSectorY));
 
     AddHistoryToPlayersLog(HISTORY_MINE_RAN_OUT, gMineLocation[bMineIndex].bAssociatedTown,
-                           GetWorldTotalMin(), gMineLocation[bMineIndex].sSectorX,
+                           GetGameTimeInMin(), gMineLocation[bMineIndex].sSectorX,
                            gMineLocation[bMineIndex].sSectorY);
   } else  // still some left after this extraction
   {
@@ -386,8 +387,8 @@ uint32_t ExtractOreFromMine(int8_t bMineIndex, uint32_t uiAmount) {
       // round all fractions UP to the next REMOVAL_RATE_INCREMENT
       gMineStatus[bMineIndex].uiMaxRemovalRate =
           (uint32_t)(((float)gMineStatus[bMineIndex].uiRemainingOreSupply / 10) /
-                       REMOVAL_RATE_INCREMENT +
-                   0.9999) *
+                         REMOVAL_RATE_INCREMENT +
+                     0.9999) *
           REMOVAL_RATE_INCREMENT;
 
       // if we control it
@@ -398,7 +399,7 @@ uint32_t ExtractOreFromMine(int8_t bMineIndex, uint32_t uiAmount) {
           IssueHeadMinerQuote(bMineIndex, HEAD_MINER_STRATEGIC_QUOTE_RUNNING_OUT);
           gMineStatus[bMineIndex].fWarnedOfRunningOut = TRUE;
           AddHistoryToPlayersLog(HISTORY_MINE_RUNNING_OUT,
-                                 gMineLocation[bMineIndex].bAssociatedTown, GetWorldTotalMin(),
+                                 gMineLocation[bMineIndex].bAssociatedTown, GetGameTimeInMin(),
                                  gMineLocation[bMineIndex].sSectorX,
                                  gMineLocation[bMineIndex].sSectorY);
         }
@@ -433,13 +434,7 @@ int32_t GetAvailableWorkForceForMineForPlayer(int8_t bMineIndex) {
   Assert(GetTownSectorSize(bTownId) != 0);
 
   // get workforce size (is 0-100 based on local town's loyalty)
-  iWorkForceSize = gTownLoyalty[bTownId].ubRating;
-
-  /*
-          // adjust for monster infestation
-          iWorkForceSize *= gubMonsterMineInfestation[ gMineStatus[ bMineIndex ].bMonsters ];
-          iWorkForceSize /= 100;
-  */
+  iWorkForceSize = GetTownLoyaltyRating(bTownId);
 
   // now adjust for town size.. the number of sectors you control
   iWorkForceSize *= GetTownSectorsUnderControl(bTownId);
@@ -469,7 +464,7 @@ int32_t GetAvailableWorkForceForMineForEnemy(int8_t bMineIndex) {
   }
 
   // get workforce size (is 0-100 based on REVERSE of local town's loyalty)
-  iWorkForceSize = 100 - gTownLoyalty[bTownId].ubRating;
+  iWorkForceSize = 100 - GetTownLoyaltyRating(bTownId);
 
   /*
           // adjust for monster infestation
@@ -532,14 +527,15 @@ int32_t MineAMine(int8_t bMineIndex) {
     if (iAmtExtracted > 0) {
       // debug message
       //			ScreenMsg( MSG_FONT_RED, MSG_DEBUG, L"%s - Mine income from %s =
-      //$%d", WORLDTIMESTR, pTownNames[ GetTownAssociatedWithMine( bMineIndex ) ], iAmtExtracted );
+      //$%d", gswzWorldTimeStr, pTownNames[ GetTownAssociatedWithMine( bMineIndex ) ], iAmtExtracted
+      //);
 
       // if this is the first time this mine has produced income for the player in the game
       if (!gMineStatus[bMineIndex].fMineHasProducedForPlayer) {
         // remember that we've earned income from this mine during the game
         gMineStatus[bMineIndex].fMineHasProducedForPlayer = TRUE;
         // and when we started to do so...
-        gMineStatus[bMineIndex].uiTimePlayerProductionStarted = GetWorldTotalMin();
+        gMineStatus[bMineIndex].uiTimePlayerProductionStarted = GetGameTimeInMin();
       }
     }
   } else  // queen controlled
@@ -560,10 +556,10 @@ void PostEventsForMineProduction(void) {
   uint8_t ubShift;
 
   for (ubShift = 0; ubShift < MINE_PRODUCTION_NUMBER_OF_PERIODS; ubShift++) {
-    AddStrategicEvent(
-        EVENT_HANDLE_MINE_INCOME,
-        GetWorldDayInMinutes() + MINE_PRODUCTION_START_TIME + (ubShift * MINE_PRODUCTION_PERIOD),
-        0);
+    AddStrategicEvent(EVENT_HANDLE_MINE_INCOME,
+                      GetGameTimeInDays() * 24 * 60 + MINE_PRODUCTION_START_TIME +
+                          (ubShift * MINE_PRODUCTION_PERIOD),
+                      0);
   }
 }
 
@@ -697,9 +693,8 @@ BOOLEAN IsThereAMineInThisSector(int16_t sX, int16_t sY) {
 
 BOOLEAN PlayerControlsMine(int8_t bMineIndex) {
   // a value of TRUE is from the enemy's point of view
-  if (StrategicMap[(gMineLocation[bMineIndex].sSectorX) +
-                   (MAP_WORLD_X * (gMineLocation[bMineIndex].sSectorY))]
-          .fEnemyControlled == TRUE)
+  if (IsSectorEnemyControlled(gMineLocation[bMineIndex].sSectorX,
+                              gMineLocation[bMineIndex].sSectorY))
     return (FALSE);
   else {
     // player only controls the actual mine after he has made arrangements to do so with the head
@@ -712,12 +707,12 @@ BOOLEAN PlayerControlsMine(int8_t bMineIndex) {
   }
 }
 
-BOOLEAN SaveMineStatusToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveMineStatusToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
 
   // Save the MineStatus
-  FileMan_Write(hFile, gMineStatus, sizeof(MINE_STATUS_TYPE) * MAX_NUMBER_OF_MINES,
-                &uiNumBytesWritten);
+  File_Write(hFile, gMineStatus, sizeof(MINE_STATUS_TYPE) * MAX_NUMBER_OF_MINES,
+             &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(MINE_STATUS_TYPE) * MAX_NUMBER_OF_MINES) {
     return (FALSE);
   }
@@ -725,11 +720,11 @@ BOOLEAN SaveMineStatusToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadMineStatusFromSavedGameFile(HWFILE hFile) {
+BOOLEAN LoadMineStatusFromSavedGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
 
   // Load the MineStatus
-  FileMan_Read(hFile, gMineStatus, sizeof(MINE_STATUS_TYPE) * MAX_NUMBER_OF_MINES, &uiNumBytesRead);
+  File_Read(hFile, gMineStatus, sizeof(MINE_STATUS_TYPE) * MAX_NUMBER_OF_MINES, &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(MINE_STATUS_TYPE) * MAX_NUMBER_OF_MINES) {
     return (FALSE);
   }
@@ -743,7 +738,7 @@ void ShutOffMineProduction(int8_t bMineIndex) {
   if (!gMineStatus[bMineIndex].fShutDown) {
     gMineStatus[bMineIndex].fShutDown = TRUE;
     AddHistoryToPlayersLog(HISTORY_MINE_SHUTDOWN, gMineLocation[bMineIndex].bAssociatedTown,
-                           GetWorldTotalMin(), gMineLocation[bMineIndex].sSectorX,
+                           GetGameTimeInMin(), gMineLocation[bMineIndex].sSectorX,
                            gMineLocation[bMineIndex].sSectorY);
   }
 }
@@ -755,7 +750,7 @@ void RestartMineProduction(int8_t bMineIndex) {
     if (gMineStatus[bMineIndex].fShutDown) {
       gMineStatus[bMineIndex].fShutDown = FALSE;
       AddHistoryToPlayersLog(HISTORY_MINE_REOPENED, gMineLocation[bMineIndex].bAssociatedTown,
-                             GetWorldTotalMin(), gMineLocation[bMineIndex].sSectorX,
+                             GetGameTimeInMin(), gMineLocation[bMineIndex].sSectorX,
                              gMineLocation[bMineIndex].sSectorY);
     }
   }
@@ -890,7 +885,7 @@ void PlayerSpokeToHeadMiner(uint8_t ubMinerProfileId) {
   // if this is our first time set a history fact
   if (gMineStatus[ubMineIndex].fSpokeToHeadMiner == FALSE) {
     AddHistoryToPlayersLog(HISTORY_TALKED_TO_MINER, gMineLocation[ubMineIndex].bAssociatedTown,
-                           GetWorldTotalMin(), gMineLocation[ubMineIndex].sSectorX,
+                           GetGameTimeInMin(), gMineLocation[ubMineIndex].sSectorX,
                            gMineLocation[ubMineIndex].sSectorY);
     gMineStatus[ubMineIndex].fSpokeToHeadMiner = TRUE;
   }
@@ -915,7 +910,7 @@ BOOLEAN IsHisMineDisloyal(uint8_t ubMinerProfileId) {
 
   ubMineIndex = GetHeadMinersMineIndex(ubMinerProfileId);
 
-  if (gTownLoyalty[gMineLocation[ubMineIndex].bAssociatedTown].ubRating <
+  if (GetTownLoyaltyRating(gMineLocation[ubMineIndex].bAssociatedTown) <
       LOW_MINE_LOYALTY_THRESHOLD) {
     // pretty disloyal
     return (TRUE);
@@ -1016,7 +1011,7 @@ BOOLEAN HasHisMineBeenProducingForPlayerForSomeTime(uint8_t ubMinerProfileId) {
   ubMineIndex = GetHeadMinersMineIndex(ubMinerProfileId);
 
   if (gMineStatus[ubMineIndex].fMineHasProducedForPlayer &&
-      ((GetWorldTotalMin() - gMineStatus[ubMineIndex].uiTimePlayerProductionStarted) >=
+      ((GetGameTimeInMin() - gMineStatus[ubMineIndex].uiTimePlayerProductionStarted) >=
        (24 * 60))) {
     return (TRUE);
   }
@@ -1101,9 +1096,8 @@ BOOLEAN PlayerForgotToTakeOverMine(uint8_t ubMineIndex) {
   // mine not empty
   // player hasn't spoken to the head miner, but hasn't attacked him either
   // miner is alive
-  if ((StrategicMap[(gMineLocation[ubMineIndex].sSectorX) +
-                    (MAP_WORLD_X * (gMineLocation[ubMineIndex].sSectorY))]
-           .fEnemyControlled == FALSE) &&
+  if ((!IsSectorEnemyControlled(gMineLocation[ubMineIndex].sSectorX,
+                                gMineLocation[ubMineIndex].sSectorY)) &&
       (!pMineStatus->fEmpty) && (!pMineStatus->fSpokeToHeadMiner) &&
       (!pMineStatus->fAttackedHeadMiner) &&
       (gMercProfiles[GetHeadMinerProfileIdForMine(ubMineIndex)].bLife > 0)) {

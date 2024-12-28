@@ -376,8 +376,8 @@ void HandleMoraleEventForSoldier(struct SOLDIERTYPE *pSoldier, int8_t bMoraleEve
                       gbMoraleEvent[bMoraleEvent].bChange);
 }
 
-void HandleMoraleEvent(struct SOLDIERTYPE *pSoldier, int8_t bMoraleEvent, uint8_t sMapX, uint8_t sMapY,
-                       int8_t bMapZ) {
+void HandleMoraleEvent(struct SOLDIERTYPE *pSoldier, int8_t bMoraleEvent, uint8_t sMapX,
+                       uint8_t sMapY, int8_t bMapZ) {
   uint8_t ubLoop;
   struct SOLDIERTYPE *pTeamSoldier;
   MERCPROFILESTRUCT *pProfile;
@@ -388,10 +388,10 @@ void HandleMoraleEvent(struct SOLDIERTYPE *pSoldier, int8_t bMoraleEvent, uint8_
   // Those that do need it have Asserts on a case by case basis below
   if (pSoldier == NULL) {
     DebugMsg(
-        TOPIC_JA2, DBG_LEVEL_3,
+        TOPIC_JA2, DBG_INFO,
         String("Handling morale event %d at X=%d, Y=%d,Z=%d", bMoraleEvent, sMapX, sMapY, bMapZ));
   } else {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("Handling morale event %d for %S at X=%d, Y=%d, Z=%d", bMoraleEvent,
                     pSoldier->name, sMapX, sMapY, bMapZ));
   }

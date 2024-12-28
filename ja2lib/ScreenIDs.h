@@ -20,7 +20,6 @@ enum ScreenTypes {
   MAP_SCREEN,
   LAPTOP_SCREEN,
   LOADSAVE_SCREEN,
-  MAPUTILITY_SCREEN,
   FADE_SCREEN,
   MSG_BOX_SCREEN,
   MAINMENU_SCREEN,
@@ -38,9 +37,9 @@ enum ScreenTypes {
   AIVIEWER_SCREEN,
 #endif
 
-  //#ifdef JA2BETAVERSION
+  // #ifdef JA2BETAVERSION
   QUEST_DEBUG_SCREEN,
-  //#endif
+  // #endif
 
   MAX_SCREENS
 };

@@ -13,6 +13,7 @@
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
+#include "SGP/Input.h"
 #include "SGP/Types.h"
 #include "SGP/VObjectBlitters.h"
 #include "SGP/VSurface.h"
@@ -23,9 +24,9 @@
 #include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
 #include "SysGlobals.h"
+#include "Tactical/Interface.h"
 #include "TileEngine/OverheadMap.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
@@ -46,7 +47,7 @@ typedef void (*MSGBOX_CALLBACK)(uint8_t bExitValue);
 
 // old mouse x and y positions
 SGPPoint pOldMousePosition;
-SGPRect MessageBoxRestrictedCursorRegion;
+struct GRect MessageBoxRestrictedCursorRegion;
 
 // if the cursor was locked to a region
 BOOLEAN fCursorLockedToArea = FALSE;
@@ -66,7 +67,7 @@ void MsgBoxClickCallback(struct MOUSE_REGION *pRegion, int32_t iReason);
 uint32_t ExitMsgBox(int8_t ubExitCode);
 uint16_t GetMSgBoxButtonWidth(int32_t iButtonImage);
 
-SGPRect gOldCursorLimitRectangle;
+struct GRect gOldCursorLimitRectangle;
 
 MESSAGE_BOX_STRUCT gMsgBox;
 BOOLEAN gfNewMessageBox = FALSE;
@@ -76,22 +77,21 @@ BOOLEAN fRestoreBackgroundForMessageBox = FALSE;
 BOOLEAN gfDontOverRideSaveBuffer = TRUE;  // this variable can be unset if ur in a non gamescreen
                                           // and DONT want the msg box to use the save buffer
 extern void HandleTacticalUILoseCursorFromOtherScreen();
-extern wchar_t* pUpdatePanelButtons[];
+extern wchar_t *pUpdatePanelButtons[];
 
 wchar_t gzUserDefinedButton1[128];
 wchar_t gzUserDefinedButton2[128];
 
 int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, const SGPRect *pCenteringRect) {
-  VSURFACE_DESC vs_desc;
+                     MSGBOX_CALLBACK ReturnCallback, const struct GRect *pCenteringRect) {
   uint16_t usTextBoxWidth;
   uint16_t usTextBoxHeight;
-  SGPRect aRect;
+  struct GRect aRect;
   uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;
   int16_t sButtonX, sButtonY, sBlankSpace;
   uint8_t ubMercBoxBackground = BASIC_MERC_POPUP_BACKGROUND,
-        ubMercBoxBorder = BASIC_MERC_POPUP_BORDER;
+          ubMercBoxBorder = BASIC_MERC_POPUP_BORDER;
   uint8_t ubFontColor, ubFontShadowColor;
   uint16_t usCursor;
   int32_t iId = -1;
@@ -243,31 +243,29 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   if ((fInMapMode == TRUE)) {
     //		fMapExitDueToMessageBox = TRUE;
     gfStartedFromMapScreen = TRUE;
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
   }
 
   // Set pending screen
   SetPendingNewScreen(MSG_BOX_SCREEN);
 
   // Init save buffer
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+  VSURFACE_DESC vs_desc;
   vs_desc.usWidth = usTextBoxWidth;
   vs_desc.usHeight = usTextBoxHeight;
-  vs_desc.ubBitDepth = 16;
-
   if (AddVideoSurface(&vs_desc, &gMsgBox.uiSaveBuffer) == FALSE) {
     return (-1);
   }
 
   // Save what we have under here...
-  pDestBuf = LockVideoSurface(gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(FRAME_BUFFER, &uiSrcPitchBYTES);
+  pDestBuf = VSurfaceLockOld(GetVSByID(gMsgBox.uiSaveBuffer), &uiDestPitchBYTES);
+  pSrcBuf = VSurfaceLockOld(vsFB, &uiSrcPitchBYTES);
 
-  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0, 0,
-                  gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight);
+  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
+                  0, NewGRect(gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight));
 
-  UnLockVideoSurface(gMsgBox.uiSaveBuffer);
-  UnLockVideoSurface(FRAME_BUFFER);
+  VSurfaceUnlock(GetVSByID(gMsgBox.uiSaveBuffer));
+  VSurfaceUnlock(vsFB);
 
   // Create top-level mouse region
   MSYS_DefineRegion(&(gMsgBox.BackRegion), 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST, usCursor,
@@ -303,8 +301,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[0] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"1", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[0], 0, 1);
     SetButtonCursor(gMsgBox.uiButton[0], usCursor);
 
@@ -312,8 +310,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[1] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"2", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[1], 0, 2);
     SetButtonCursor(gMsgBox.uiButton[1], usCursor);
 
@@ -321,8 +319,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[2] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"3", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[2], 0, 3);
     SetButtonCursor(gMsgBox.uiButton[2], usCursor);
 
@@ -330,8 +328,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[3] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"4", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[3], 0, 4);
     SetButtonCursor(gMsgBox.uiButton[3], usCursor);
     ForceButtonUnDirty(gMsgBox.uiButton[3]);
@@ -588,7 +586,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
 
   InterruptTime();
   PauseGame();
-  LockPauseState(1);
+  LockPause();
   // Pause timers as well....
   PauseTime(TRUE);
 
@@ -770,7 +768,7 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
   UnloadButtonImage(gMsgBox.iButtonImages);
 
   // Unpause game....
-  UnLockPauseState();
+  UnlockPause();
   UnPauseGame();
   // UnPause timers as well....
   PauseTime(FALSE);
@@ -790,14 +788,14 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
   if (((gMsgBox.uiExitScreen != GAME_SCREEN) || (fRestoreBackgroundForMessageBox == TRUE)) &&
       gfDontOverRideSaveBuffer) {
     // restore what we have under here...
-    pSrcBuf = LockVideoSurface(gMsgBox.uiSaveBuffer, &uiSrcPitchBYTES);
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pSrcBuf = VSurfaceLockOld(GetVSByID(gMsgBox.uiSaveBuffer), &uiSrcPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
-                    gMsgBox.sX, gMsgBox.sY, 0, 0, gMsgBox.usWidth, gMsgBox.usHeight);
+                    gMsgBox.sX, gMsgBox.sY, NewGRect(0, 0, gMsgBox.usWidth, gMsgBox.usHeight));
 
-    UnLockVideoSurface(gMsgBox.uiSaveBuffer);
-    UnLockVideoSurface(FRAME_BUFFER);
+    VSurfaceUnlock(GetVSByID(gMsgBox.uiSaveBuffer));
+    VSurfaceUnlock(vsFB);
 
     InvalidateRegion(gMsgBox.sX, gMsgBox.sY, (int16_t)(gMsgBox.sX + gMsgBox.usWidth),
                      (int16_t)(gMsgBox.sY + gMsgBox.usHeight));
@@ -836,7 +834,7 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
       }
       break;
     case MAP_SCREEN:
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       break;
   }
 
@@ -867,20 +865,6 @@ uint32_t MessageBoxScreenHandle() {
 
       gfStartedFromGameScreen = FALSE;
       gfStartedFromMapScreen = FALSE;
-      /*
-                              // Save what we have under here...
-                              pDestBuf = LockVideoSurface( gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
-                              pSrcBuf = LockVideoSurface( FRAME_BUFFER, &uiSrcPitchBYTES);
-
-                              Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                      (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
-                                                      0 , 0,
-                                                      gMsgBox.sX , gMsgBox.sY,
-                                                      gMsgBox.usWidth, gMsgBox.usHeight );
-
-                              UnLockVideoSurface( gMsgBox.uiSaveBuffer );
-                              UnLockVideoSurface( FRAME_BUFFER );
-      */
     }
 
     gfNewMessageBox = FALSE;
@@ -1042,20 +1026,20 @@ void DoScreenIndependantMessageBox(wchar_t *zString, uint16_t usFlags,
 // a basic box that don't care what screen we came from
 void DoUpperScreenIndependantMessageBox(wchar_t *zString, uint16_t usFlags,
                                         MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y / 2};
+  struct GRect CenteringRect = {0, 0, 640, INV_INTERFACE_START_Y / 2};
   DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
 }
 
 // a basic box that don't care what screen we came from
 void DoLowerScreenIndependantMessageBox(wchar_t *zString, uint16_t usFlags,
                                         MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, INV_INTERFACE_START_Y / 2, 640, INV_INTERFACE_START_Y};
+  struct GRect CenteringRect = {0, INV_INTERFACE_START_Y / 2, 640, INV_INTERFACE_START_Y};
   DoScreenIndependantMessageBoxWithRect(zString, usFlags, ReturnCallback, &CenteringRect);
 }
 
 void DoScreenIndependantMessageBoxWithRect(wchar_t *zString, uint16_t usFlags,
                                            MSGBOX_CALLBACK ReturnCallback,
-                                           const SGPRect *pCenteringRect) {
+                                           const struct GRect *pCenteringRect) {
   /// which screen are we in?
 
   // Map Screen (excluding AI Viewer)

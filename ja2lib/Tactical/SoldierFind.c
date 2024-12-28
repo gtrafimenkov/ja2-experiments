@@ -11,7 +11,6 @@
 
 #include "Editor/EditorMercs.h"
 #include "GameSettings.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"
@@ -47,7 +46,6 @@
 #include "TileEngine/RenderFun.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/Structure.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/EventPump.h"
 #include "Utils/FontControl.h"
@@ -55,9 +53,9 @@
 #include "Utils/SoundControl.h"
 #include "Utils/TimerControl.h"
 
-BOOLEAN IsGridNoInScreenRect(int16_t sGridNo, SGPRect *pRect);
-BOOLEAN IsPointInScreenRect(int16_t sXPos, int16_t sYPos, SGPRect *pRect);
-void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, SGPRect *pRect);
+BOOLEAN IsGridNoInScreenRect(int16_t sGridNo, struct GRect *pRect);
+BOOLEAN IsPointInScreenRect(int16_t sXPos, int16_t sYPos, struct GRect *pRect);
+void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, struct GRect *pRect);
 
 // This value is used to keep a small static array of uBID's which are stacked
 #define MAX_STACKED_MERCS 10
@@ -168,10 +166,11 @@ extern BOOLEAN CheckVideoObjectScreenCoordinateInData(struct VObject *hSrcVObjec
                                                       int32_t iTextX, int32_t iTestY);
 
 // THIS FUNCTION IS CALLED FAIRLY REGULARLY
-BOOLEAN FindSoldier(int16_t sGridNo, uint16_t *pusSoldierIndex, uint32_t *pMercFlags, uint32_t uiFlags) {
+BOOLEAN FindSoldier(int16_t sGridNo, uint16_t *pusSoldierIndex, uint32_t *pMercFlags,
+                    uint32_t uiFlags) {
   uint32_t cnt;
   struct SOLDIERTYPE *pSoldier;
-  SGPRect aRect;
+  struct GRect aRect;
   BOOLEAN fSoldierFound = FALSE;
   int16_t sXMapPos, sYMapPos, sScreenX, sScreenY;
   int16_t sMaxScreenMercY, sHeighestMercScreenY = -32000;
@@ -465,7 +464,7 @@ BOOLEAN IsValidTargetMerc(uint8_t ubSoldierID) {
   return (TRUE);
 }
 
-BOOLEAN IsGridNoInScreenRect(int16_t sGridNo, SGPRect *pRect) {
+BOOLEAN IsGridNoInScreenRect(int16_t sGridNo, struct GRect *pRect) {
   int32_t iXTrav, iYTrav;
   int16_t sMapPos;
 
@@ -493,10 +492,10 @@ BOOLEAN IsGridNoInScreenRect(int16_t sGridNo, SGPRect *pRect) {
   return (FALSE);
 }
 
-void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, SGPRect *pRect) {
+void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, struct GRect *pRect) {
   int16_t sMercScreenX, sMercScreenY;
   uint16_t usAnimSurface;
-  //		ETRLEObject *pTrav;
+  //		struct Subimage *pTrav;
   //		uint32_t usHeight, usWidth;
 
   GetSoldierScreenPos(pSoldier, &sMercScreenX, &sMercScreenY);
@@ -511,9 +510,9 @@ void GetSoldierScreenRect(struct SOLDIERTYPE *pSoldier, SGPRect *pRect) {
     return;
   }
 
-  // pTrav = &(gAnimSurfaceDatabase[ usAnimSurface ].hVideoObject->pETRLEObject[
-  // pSoldier->usAniFrame ] ); usHeight				= (uint32_t)pTrav->usHeight; usWidth
-  // = (uint32_t)pTrav->usWidth;
+  // pTrav = &(gAnimSurfaceDatabase[ usAnimSurface ].hVideoObject->subimages[
+  // pSoldier->usAniFrame ] ); usHeight				= (uint32_t)pTrav->height; usWidth
+  // = (uint32_t)pTrav->width;
 
   pRect->iLeft = sMercScreenX;
   pRect->iTop = sMercScreenY;
@@ -562,7 +561,7 @@ void GetSoldierScreenPos(struct SOLDIERTYPE *pSoldier, int16_t *psScreenX, int16
   float dOffsetX, dOffsetY;
   float dTempX_S, dTempY_S;
   uint16_t usAnimSurface;
-  //		ETRLEObject *pTrav;
+  //		struct Subimage *pTrav;
 
   usAnimSurface = GetSoldierAnimationSurface(pSoldier, pSoldier->usAnimState);
 
@@ -578,7 +577,7 @@ void GetSoldierScreenPos(struct SOLDIERTYPE *pSoldier, int16_t *psScreenX, int16
 
   FloatFromCellToScreenCoordinates(dOffsetX, dOffsetY, &dTempX_S, &dTempY_S);
 
-  // pTrav = &(gAnimSurfaceDatabase[ usAnimSurface ].hVideoObject->pETRLEObject[
+  // pTrav = &(gAnimSurfaceDatabase[ usAnimSurface ].hVideoObject->subimages[
   // pSoldier->usAniFrame ] );
 
   sMercScreenX = ((gsVIEWPORT_END_X - gsVIEWPORT_START_X) / 2) + (int16_t)dTempX_S;
@@ -593,8 +592,8 @@ void GetSoldierScreenPos(struct SOLDIERTYPE *pSoldier, int16_t *psScreenX, int16
   sMercScreenY += gsRenderHeight;
 
   // Add to start position of dest buffer
-  // sMercScreenX += pTrav->sOffsetX;
-  // sMercScreenY += pTrav->sOffsetY;
+  // sMercScreenX += pTrav->x_offset;
+  // sMercScreenY += pTrav->y_offset;
   sMercScreenX += pSoldier->sBoundingBoxOffsetX;
   sMercScreenY += pSoldier->sBoundingBoxOffsetY;
 
@@ -746,7 +745,7 @@ BOOLEAN SoldierLocationRelativeToScreen(int16_t sGridNo, uint16_t usReasonID, in
 }
 
 BOOLEAN IsPointInSoldierBoundingBox(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY) {
-  SGPRect aRect;
+  struct GRect aRect;
 
   // Get Rect contained in the soldier
   GetSoldierScreenRect(pSoldier, &aRect);
@@ -760,7 +759,7 @@ BOOLEAN IsPointInSoldierBoundingBox(struct SOLDIERTYPE *pSoldier, int16_t sX, in
 
 BOOLEAN FindRelativeSoldierPosition(struct SOLDIERTYPE *pSoldier, uint16_t *usFlags, int16_t sX,
                                     int16_t sY) {
-  SGPRect aRect;
+  struct GRect aRect;
   int16_t sRelX, sRelY;
   float dRelPer;
 

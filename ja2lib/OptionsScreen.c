@@ -10,7 +10,6 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
@@ -29,8 +28,8 @@
 #include "TileEngine/ExitGrids.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/SmokeEffects.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldDat.h"
+#include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "UI.h"
 #include "Utils/Cursors.h"
@@ -45,6 +44,7 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_fileman.h"
 
 /////////////////////////////////
 //
@@ -226,8 +226,8 @@ void SetOptionsExitScreen(uint32_t uiExitScreen);
 void SoundFXSliderChangeCallBack(int32_t iNewValue);
 void SpeechSliderChangeCallBack(int32_t iNewValue);
 void MusicSliderChangeCallBack(int32_t iNewValue);
-// BOOLEAN		DoOptionsMessageBox( uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
-// uint8_t ubFlags, MSGBOX_CALLBACK ReturnCallback );
+// BOOLEAN		DoOptionsMessageBox( uint8_t ubStyle, wchar_t *zString, uint32_t
+// uiExitScreen, uint8_t ubFlags, MSGBOX_CALLBACK ReturnCallback );
 void ConfirmQuitToMainMenuMessageBoxCallBack(uint8_t bExitValue);
 void HandleSliderBarMovementSounds();
 void HandleOptionToggle(uint8_t ubButton, BOOLEAN fState, BOOLEAN fDown, BOOLEAN fPlaySound);
@@ -262,7 +262,7 @@ uint32_t OptionsScreenHandle() {
     RenderOptionsScreen();
 
     // Blit the background to the save buffer
-    BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, 0, 0, 640, 480);
+    VSurfaceBlitBufToBuf(vsFB, vsSB, 0, 0, 640, 480);
     InvalidateRegion(0, 0, 640, 480);
   }
 
@@ -307,7 +307,6 @@ uint32_t OptionsScreenHandle() {
 uint32_t OptionsScreenShutdown() { return (TRUE); }
 
 BOOLEAN EnterOptionsScreen() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosY;
   uint8_t cnt;
   uint16_t usTextWidth, usTextHeight;
@@ -321,7 +320,7 @@ BOOLEAN EnterOptionsScreen() {
 
   /*
   Uncomment this to enable the check for files to activate the blood and gore option for the german
-  build if( !FileMan_Exists( "Germany.dat" ) && FileMan_Exists( "Lecken.dat" ) )
+  build if( !File_Exists( "Germany.dat" ) && File_Exists( "Lecken.dat" ) )
           {
                   gfHideBloodAndGoreOption = FALSE;
           }
@@ -353,14 +352,16 @@ BOOLEAN EnterOptionsScreen() {
   gfExitOptionsDueToMessageBox = FALSE;
 
   // load the options screen background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\OptionScreenBase.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiOptionBackGroundImage));
+  if (!AddVObjectFromFile("INTERFACE\\OptionScreenBase.sti", &guiOptionBackGroundImage)) {
+    return FALSE;
+  }
 
   // load button, title graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_OPTIONHEADER);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiOptionsAddOnImages));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_OPTIONHEADER);
+  if (!AddVObjectFromFile(ImageFile, &guiOptionsAddOnImages)) {
+    return FALSE;
+  }
 
   // Save game button
   giOptionsButtonImages = LoadButtonImage("INTERFACE\\OptionScreenAddons.sti", -1, 2, -1, 3, -1);
@@ -655,12 +656,12 @@ void RenderOptionsScreen() {
 
   // Get and display the background image
   GetVideoObject(&hPixHandle, guiOptionBackGroundImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, 0, 0);
 
   // Get and display the titla image
   GetVideoObject(&hPixHandle, guiOptionsAddOnImages);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 1, 0, 434, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, 0, 0);
+  BltVObject(vsFB, hPixHandle, 1, 0, 434);
 
   //
   // Text for the toggle boxes
@@ -746,20 +747,20 @@ void GetOptionsScreenUserInput() {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
 
@@ -999,7 +1000,7 @@ void MusicSliderChangeCallBack(int32_t iNewValue) { MusicSetVolume(iNewValue); }
 
 BOOLEAN DoOptionsMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
                                     uint16_t usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                    const SGPRect *pCenteringRect) {
+                                    const struct GRect *pCenteringRect) {
   // reset exit mode
   gfExitOptionsDueToMessageBox = TRUE;
 
@@ -1012,9 +1013,9 @@ BOOLEAN DoOptionsMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t 
   return ((giOptionsMessageBox != -1));
 }
 
-BOOLEAN DoOptionsMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
-                            MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, 0, 639, 479};
+BOOLEAN DoOptionsMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
+                            uint16_t usFlags, MSGBOX_CALLBACK ReturnCallback) {
+  struct GRect CenteringRect = {0, 0, 639, 479};
 
   // reset exit mode
   gfExitOptionsDueToMessageBox = TRUE;

@@ -5,8 +5,6 @@
 #include "Tactical/WorldItems.h"
 
 #include "GameSettings.h"
-#include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "Strategic/CampaignTypes.h"
 #include "Strategic/Quests.h"
@@ -30,6 +28,7 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
+#include "rust_fileman.h"
 
 // Global dynamic array of all of the items in a loaded map.
 WORLDITEM *gWorldItems = NULL;
@@ -240,8 +239,8 @@ uint32_t GetNumUsedWorldItems(void) {
   return (uiNumItems);
 }
 
-int32_t AddItemToWorld(int16_t sGridNo, struct OBJECTTYPE *pObject, uint8_t ubLevel, uint16_t usFlags,
-                     int8_t bRenderZHeightAboveLevel, int8_t bVisible) {
+int32_t AddItemToWorld(int16_t sGridNo, struct OBJECTTYPE *pObject, uint8_t ubLevel,
+                       uint16_t usFlags, int8_t bRenderZHeightAboveLevel, int8_t bVisible) {
   uint32_t iItemIndex;
   int32_t iReturn;
 
@@ -309,17 +308,16 @@ void TrashWorldItems() {
   }
 }
 
-void SaveWorldItemsToMap(HWFILE fp) {
+void SaveWorldItemsToMap(FileID fp) {
   uint32_t i, uiBytesWritten;
   uint32_t uiActualNumWorldItems;
 
   uiActualNumWorldItems = GetNumUsedWorldItems();
 
-  FileMan_Write(fp, &uiActualNumWorldItems, 4, &uiBytesWritten);
+  File_Write(fp, &uiActualNumWorldItems, 4, &uiBytesWritten);
 
   for (i = 0; i < guiNumWorldItems; i++) {
-    if (gWorldItems[i].fExists)
-      FileMan_Write(fp, &gWorldItems[i], sizeof(WORLDITEM), &uiBytesWritten);
+    if (gWorldItems[i].fExists) File_Write(fp, &gWorldItems[i], sizeof(WORLDITEM), &uiBytesWritten);
   }
 }
 

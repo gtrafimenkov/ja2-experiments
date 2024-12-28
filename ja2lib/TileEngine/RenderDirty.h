@@ -7,6 +7,7 @@
 
 #include "SGP/Types.h"
 
+struct VSurface;
 struct _VIDEO_OVERLAY;
 
 // DEFINES
@@ -91,7 +92,7 @@ typedef struct {
 } VIDEO_OVERLAY_DESC;
 
 // GLOBAL VARIABLES
-extern SGPRect gDirtyClipRect;
+extern struct GRect gDirtyClipRect;
 
 // FUNCTIONS
 ////////////
@@ -108,7 +109,7 @@ void DisableBackgroundRect(int32_t iIndex, BOOLEAN fDisabled);
 BOOLEAN InitializeBackgroundRects(void);
 BOOLEAN ShutdownBackgroundRects(void);
 int32_t RegisterBackgroundRect(uint32_t uiFlags, int16_t *pSaveArea, int16_t sLeft, int16_t sTop,
-                             int16_t sRight, int16_t sBottom);
+                               int16_t sRight, int16_t sBottom);
 BOOLEAN FreeBackgroundRect(int32_t iIndex);
 BOOLEAN FreeBackgroundRectPending(int32_t iIndex);
 BOOLEAN FreeBackgroundRectType(uint32_t uiFlags);
@@ -121,9 +122,9 @@ void SetBackgroundRectFilled(uint32_t uiBackgroundID);
 BOOLEAN EmptyBackgroundRects(void);
 
 // GPRINTF DIRTY STUFF
-uint16_t gprintfdirty(int16_t x, int16_t y, wchar_t* pFontString, ...);
-uint16_t gprintfinvalidate(int16_t x, int16_t y, wchar_t* pFontString, ...);
-uint16_t gprintfRestore(int16_t x, int16_t y, wchar_t* pFontString, ...);
+uint16_t gprintfdirty(int16_t x, int16_t y, wchar_t *pFontString, ...);
+uint16_t gprintfinvalidate(int16_t x, int16_t y, wchar_t *pFontString, ...);
+uint16_t gprintfRestore(int16_t x, int16_t y, wchar_t *pFontString, ...);
 
 // VIDEO OVERLAY STUFF
 int32_t GetFreeVideoOverlay(void);
@@ -132,7 +133,7 @@ int32_t RegisterVideoOverlay(uint32_t uiFlags, VIDEO_OVERLAY_DESC *pTopmostDesc)
 void ExecuteVideoOverlays();
 BOOLEAN UpdateVideoOverlay(VIDEO_OVERLAY_DESC *pTopmostDesc, uint32_t iBlitterIndex,
                            BOOLEAN fForceAll);
-void SaveVideoOverlaysArea(uint32_t uiSrcBuffer);
+void SaveVideoOverlaysArea(struct VSurface *src);
 void DeleteVideoOverlaysArea();
 void AllocateVideoOverlaysArea();
 void ExecuteVideoOverlaysToAlternateBuffer(uint32_t uiNewDestBuffer);
@@ -143,7 +144,6 @@ void EnableVideoOverlay(BOOLEAN fEnable, int32_t iOverlayIndex);
 
 void BlitMFont(VIDEO_OVERLAY *pBlitter);
 
-BOOLEAN BlitBufferToBuffer(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t usSrcX, uint16_t usSrcY,
-                           uint16_t usWidth, uint16_t usHeight);
-
+bool VSurfaceBlitBufToBuf(struct VSurface *src, struct VSurface *dest, uint16_t x, uint16_t y,
+                          uint16_t width, uint16_t height);
 #endif

@@ -59,15 +59,14 @@ void GameInitFloristCards() {}
 
 BOOLEAN EnterFloristCards() {
   uint16_t i, j, usPosX, usPosY;
-  VOBJECT_DESC VObjectDesc;
   uint8_t ubCount;
 
   InitFloristDefaults();
 
   // load the Flower Account Box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\CardBlank.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiCardBackground));
+  if (!AddVObjectFromFile("LAPTOP\\CardBlank.sti", &guiCardBackground)) {
+    return FALSE;
+  }
 
   ubCount = 0;
   usPosY = FLORIST_CARD_FIRST_POS_Y;
@@ -76,8 +75,8 @@ BOOLEAN EnterFloristCards() {
     for (i = 0; i < 3; i++) {
       MSYS_DefineRegion(&gSelectedFloristCardsRegion[ubCount], usPosX, usPosY,
                         (uint16_t)(usPosX + FLORIST_CARD_CARD_WIDTH),
-                        (uint16_t)(usPosY + FLORIST_CARD_CARD_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_WWW,
-                        MSYS_NO_CALLBACK, SelectFloristCardsRegionCallBack);
+                        (uint16_t)(usPosY + FLORIST_CARD_CARD_HEIGHT), MSYS_PRIORITY_HIGH,
+                        CURSOR_WWW, MSYS_NO_CALLBACK, SelectFloristCardsRegionCallBack);
       MSYS_AddRegion(&gSelectedFloristCardsRegion[ubCount]);
       MSYS_SetRegionUserData(&gSelectedFloristCardsRegion[ubCount], 0, ubCount);
       ubCount++;
@@ -139,7 +138,7 @@ void RenderFloristCards() {
     usPosX = FLORIST_CARD_FIRST_POS_X;
     for (i = 0; i < 3; i++) {
       // The flowe account box
-      BltVideoObject(FRAME_BUFFER, hPixHandle, 0, usPosX, usPosY, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hPixHandle, 0, usPosX, usPosY);
 
       // Get and display the card saying
       uiStartLoc = FLOR_CARD_TEXT_TITLE_SIZE * ubCount;

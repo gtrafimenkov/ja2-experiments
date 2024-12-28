@@ -16,6 +16,7 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -31,6 +32,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_images.h"
 
 #define BOBBYR_DEFAULT_MENU_COLOR 255
 
@@ -159,8 +161,8 @@ uint32_t guiBrTitle;
 uint16_t gusCurWeaponIndex;
 uint8_t gubCurPage;
 uint8_t ubCatalogueButtonValues[] = {LAPTOP_MODE_BOBBY_R_GUNS, LAPTOP_MODE_BOBBY_R_AMMO,
-                                   LAPTOP_MODE_BOBBY_R_ARMOR, LAPTOP_MODE_BOBBY_R_MISC,
-                                   LAPTOP_MODE_BOBBY_R_USED};
+                                     LAPTOP_MODE_BOBBY_R_ARMOR, LAPTOP_MODE_BOBBY_R_MISC,
+                                     LAPTOP_MODE_BOBBY_R_USED};
 
 uint16_t gusLastItemIndex = 0;
 uint16_t gusFirstItemIndex = 0;
@@ -211,19 +213,23 @@ BOOLEAN DisplayNonGunWeaponInfo(uint16_t usItemIndex, uint16_t usTextPosY, BOOLE
                                 uint16_t usBobbyIndex);
 BOOLEAN DisplayArmourInfo(uint16_t usItemIndex, uint16_t usTextPosY, BOOLEAN fUsed,
                           uint16_t usBobbyIndex);
-BOOLEAN DisplayMiscInfo(uint16_t usItemIndex, uint16_t usTextPosY, BOOLEAN fUsed, uint16_t usBobbyIndex);
-BOOLEAN DisplayGunInfo(uint16_t usItemIndex, uint16_t usTextPosY, BOOLEAN fUsed, uint16_t usBobbyIndex);
-BOOLEAN DisplayAmmoInfo(uint16_t usItemIndex, uint16_t usPosY, BOOLEAN fUsed, uint16_t usBobbyIndex);
+BOOLEAN DisplayMiscInfo(uint16_t usItemIndex, uint16_t usTextPosY, BOOLEAN fUsed,
+                        uint16_t usBobbyIndex);
+BOOLEAN DisplayGunInfo(uint16_t usItemIndex, uint16_t usTextPosY, BOOLEAN fUsed,
+                       uint16_t usBobbyIndex);
+BOOLEAN DisplayAmmoInfo(uint16_t usItemIndex, uint16_t usPosY, BOOLEAN fUsed,
+                        uint16_t usBobbyIndex);
 
 BOOLEAN DisplayBigItemImage(uint16_t ubIndex, uint16_t usPosY);
 // void InitFirstAndLastGlobalIndex(uint32_t ubItemClassMask);
-uint16_t DisplayCostAndQty(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight, uint16_t usBobbyIndex,
-                         BOOLEAN fUsed);
+uint16_t DisplayCostAndQty(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight,
+                           uint16_t usBobbyIndex, BOOLEAN fUsed);
 uint16_t DisplayRof(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight);
 uint16_t DisplayDamage(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight);
 uint16_t DisplayRange(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight);
 uint16_t DisplayMagazine(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight);
-void DisplayItemNameAndInfo(uint16_t usPosY, uint16_t usIndex, uint16_t usBobbyIndex, BOOLEAN fUsed);
+void DisplayItemNameAndInfo(uint16_t usPosY, uint16_t usIndex, uint16_t usBobbyIndex,
+                            BOOLEAN fUsed);
 uint16_t DisplayWeight(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight);
 uint16_t DisplayCaliber(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight);
 void CreateMouseRegionForBigImage(uint16_t usPosY, uint8_t ubCount, int16_t *pItemNumbers);
@@ -257,30 +263,21 @@ void EnterInitBobbyRGuns() {
 }
 
 BOOLEAN EnterBobbyRGuns() {
-  VOBJECT_DESC VObjectDesc;
-
   gfBigImageMouseRegionCreated = FALSE;
 
   // load the background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\gunbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiGunBackground));
+  if (!AddVObjectFromFile("LAPTOP\\gunbackground.sti", &guiGunBackground)) {
+    return FALSE;
+  }
 
   // load the gunsgrid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\gunsgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiGunsGrid));
+  if (!AddVObjectFromFile("LAPTOP\\gunsgrid.sti", &guiGunsGrid)) {
+    return FALSE;
+  }
 
   InitBobbyBrTitle();
 
   SetFirstLastPagesForNew(IC_BOBBY_GUN);
-  //	CalculateFirstAndLastIndexs();
-  /*
-          if(giCurrentSubPage == 0)
-                  gusCurWeaponIndex = gusFirstGunIndex;
-          else
-                  gusCurWeaponIndex = (uint8_t)giCurrentSubPage;
-  */
   // Draw menu bar
   InitBobbyMenuBar();
 
@@ -316,8 +313,7 @@ void RenderBobbyRGuns() {
 
   // GunForm
   GetVideoObject(&hPixHandle, guiGunsGrid);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y);
 
   //	DeleteMouseRegionForBigImage();
   DisplayItemInfo(IC_BOBBY_GUN);
@@ -332,8 +328,7 @@ BOOLEAN DisplayBobbyRBrTitle() {
 
   // BR title
   GetVideoObject(&hPixHandle, guiBrTitle);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_BRTITLE_X, BOBBYR_BRTITLE_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBYR_BRTITLE_X, BOBBYR_BRTITLE_Y);
 
   // To Order Text
   DrawTextToScreen(BobbyRText[BOBBYR_GUNS_TO_ORDER], BOBBYR_TO_ORDER_TITLE_X,
@@ -341,7 +336,7 @@ BOOLEAN DisplayBobbyRBrTitle() {
                    FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
 
   // First put a shadow behind the image
-  ShadowVideoSurfaceRect(FRAME_BUFFER, BOBBYR_TO_ORDER_TEXT_X - 2, BOBBYR_TO_ORDER_TEXT_Y - 2,
+  ShadowVideoSurfaceRect(vsFB, BOBBYR_TO_ORDER_TEXT_X - 2, BOBBYR_TO_ORDER_TEXT_Y - 2,
                          BOBBYR_TO_ORDER_TEXT_X + BOBBYR_TO_ORDER_TEXT_WIDTH,
                          BOBBYR_TO_ORDER_TEXT_Y + 31);
 
@@ -355,12 +350,10 @@ BOOLEAN DisplayBobbyRBrTitle() {
 }
 
 BOOLEAN InitBobbyBrTitle() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the br title graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\br.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBrTitle));
+  if (!AddVObjectFromFile("LAPTOP\\br.sti", &guiBrTitle)) {
+    return FALSE;
+  }
 
   // initialize the link to the homepage by clicking on the title
   MSYS_DefineRegion(&gSelectedTitleImageLinkRegion, BOBBYR_BRTITLE_X, BOBBYR_BRTITLE_Y,
@@ -719,7 +712,8 @@ BOOLEAN DisplayItemInfo(uint32_t uiItemClass) {
   return (TRUE);
 }
 
-BOOLEAN DisplayGunInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed, uint16_t usBobbyIndex) {
+BOOLEAN DisplayGunInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed,
+                       uint16_t usBobbyIndex) {
   uint16_t usHeight;
   uint16_t usFontHeight;
   usFontHeight = GetFontHeight(BOBBYR_ITEM_DESC_TEXT_FONT);
@@ -778,7 +772,8 @@ BOOLEAN DisplayNonGunWeaponInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN f
   return (TRUE);
 }  // DisplayNonGunWeaponInfo
 
-BOOLEAN DisplayAmmoInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed, uint16_t usBobbyIndex) {
+BOOLEAN DisplayAmmoInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed,
+                        uint16_t usBobbyIndex) {
   uint16_t usHeight;
   uint16_t usFontHeight;
   usFontHeight = GetFontHeight(BOBBYR_ITEM_DESC_TEXT_FONT);
@@ -804,7 +799,7 @@ BOOLEAN DisplayAmmoInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed, ui
 BOOLEAN DisplayBigItemImage(uint16_t usIndex, uint16_t PosY) {
   int16_t PosX, sCenX, sCenY;
   uint32_t usWidth;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   INVTYPE *pItem;
   uint32_t uiImage;
   struct VObject *hPixHandle;
@@ -815,26 +810,27 @@ BOOLEAN DisplayBigItemImage(uint16_t usIndex, uint16_t PosY) {
   LoadTileGraphicForItem(pItem, &uiImage);
 
   GetVideoObject(&hPixHandle, uiImage);
-  pTrav = &(hPixHandle->pETRLEObject[0]);
+  pTrav = &(hPixHandle->subimages[0]);
 
   // center picture in frame
-  usWidth = (uint32_t)pTrav->usWidth;
+  usWidth = (uint32_t)pTrav->width;
   //	sCenX = PosX + ( abs( BOBBYR_GRID_PIC_WIDTH - usWidth ) / 2 );
   //	sCenY = PosY + 8;
-  sCenX = PosX + (abs((int32_t)((int32_t)BOBBYR_GRID_PIC_WIDTH - usWidth)) / 2) - pTrav->sOffsetX;
+  sCenX = PosX + (abs((int32_t)((int32_t)BOBBYR_GRID_PIC_WIDTH - usWidth)) / 2) - pTrav->x_offset;
   sCenY = PosY + 8;
 
   // blt the shadow of the item
-  BltVideoObjectOutlineShadowFromIndex(FRAME_BUFFER, uiImage, 0, sCenX - 2,
+  BltVideoObjectOutlineShadowFromIndex(vsFB, uiImage, 0, sCenX - 2,
                                        sCenY + 2);  // pItem->ubGraphicNum
 
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, sCenX, sCenY, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, sCenX, sCenY);
   DeleteVideoObjectFromIndex(uiImage);
 
   return (TRUE);
 }
 
-BOOLEAN DisplayArmourInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed, uint16_t usBobbyIndex) {
+BOOLEAN DisplayArmourInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed,
+                          uint16_t usBobbyIndex) {
   uint16_t usHeight;
   uint16_t usFontHeight;
   usFontHeight = GetFontHeight(BOBBYR_ITEM_DESC_TEXT_FONT);
@@ -854,12 +850,13 @@ BOOLEAN DisplayArmourInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed, 
   return (TRUE);
 }  // DisplayArmourInfo
 
-BOOLEAN DisplayMiscInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed, uint16_t usBobbyIndex) {
+BOOLEAN DisplayMiscInfo(uint16_t usIndex, uint16_t usTextPosY, BOOLEAN fUsed,
+                        uint16_t usBobbyIndex) {
   return (TRUE);
 }
 
-uint16_t DisplayCostAndQty(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight, uint16_t usBobbyIndex,
-                         BOOLEAN fUsed) {
+uint16_t DisplayCostAndQty(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight,
+                           uint16_t usBobbyIndex, BOOLEAN fUsed) {
   wchar_t sTemp[20];
   //	uint8_t	ubPurchaseNumber;
 
@@ -1051,7 +1048,8 @@ uint16_t DisplayWeight(uint16_t usPosY, uint16_t usIndex, uint16_t usFontHeight)
   return (usPosY);
 }
 
-void DisplayItemNameAndInfo(uint16_t usPosY, uint16_t usIndex, uint16_t usBobbyIndex, BOOLEAN fUsed) {
+void DisplayItemNameAndInfo(uint16_t usPosY, uint16_t usIndex, uint16_t usBobbyIndex,
+                            BOOLEAN fUsed) {
   wchar_t sText[400];
   wchar_t sTemp[20];
   uint32_t uiStartLoc = 0;
@@ -1649,10 +1647,10 @@ void BobbyrRGunsHelpTextDoneCallBack(void) {
 #ifdef JA2BETAVERSION
 void ReportBobbyROrderError(uint16_t usItemNumber, uint8_t ubPurchaseNum, uint8_t ubQtyOnHand,
                             uint8_t ubNumPurchasing) {
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("**** Bobby Rays Ordering Error ****"));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("usItemNumber = %d", usItemNumber));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("ubPurchaseNum = %d", ubPurchaseNum));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("ubQtyOnHand = %d", ubQtyOnHand));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("ubNumPurchasing = %d", ubNumPurchasing));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("**** Bobby Rays Ordering Error ****"));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("usItemNumber = %d", usItemNumber));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("ubPurchaseNum = %d", ubPurchaseNum));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("ubQtyOnHand = %d", ubQtyOnHand));
+  DebugMsg(TOPIC_JA2, DBG_INFO, String("ubNumPurchasing = %d", ubNumPurchasing));
 }
 #endif

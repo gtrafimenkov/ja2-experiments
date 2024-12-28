@@ -13,6 +13,7 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/English.h"
+#include "SGP/Input.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
@@ -26,13 +27,14 @@
 #include "Strategic/Strategic.h"
 #include "Strategic/StrategicMap.h"
 #include "Strategic/TownMilitia.h"
+#include "Tactical/HandleUI.h"
+#include "Tactical/Interface.h"
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
 #include "Tactical/SoldierMacros.h"
 #include "Tactical/Squads.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/MercTextBox.h"
@@ -119,7 +121,7 @@ BOOLEAN InternalInitSectorExitMenu(uint8_t ubDirection, int16_t sAdditionalData)
   uint32_t uiTraverseTimeInMinutes;
   struct SOLDIERTYPE *pSoldier;
   int32_t i;
-  SGPRect aRect;
+  struct GRect aRect;
   uint16_t usTextBoxWidth, usTextBoxHeight;
   uint16_t usMapPos = 0;
   int8_t bExitCode = -1;
@@ -273,7 +275,8 @@ BOOLEAN InternalInitSectorExitMenu(uint8_t ubDirection, int16_t sAdditionalData)
                                                 // means that we can't load the adjacent sector.
       gExitDialog.fGotoSectorDisabled = TRUE;
       gExitDialog.fGotoSector = FALSE;
-    } else if (GetNumberOfMilitiaInSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ)) {
+    } else if (CountMilitiaInSector3D((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                      gbWorldSectorZ)) {
       // Leaving this sector will result in militia being forced to
       // fight the battle, can't load adjacent sector.
       gExitDialog.fGotoSectorDisabled = TRUE;
@@ -357,7 +360,7 @@ BOOLEAN InternalInitSectorExitMenu(uint8_t ubDirection, int16_t sAdditionalData)
 
   InterruptTime();
   PauseGame();
-  LockPauseState(21);
+  LockPause();
 
   return (TRUE);
 }
@@ -681,7 +684,7 @@ void RemoveSectorExitMenu(BOOLEAN fOk) {
 
     gfInSectorExitMenu = FALSE;
 
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
     EndModalTactical();
     gfIgnoreScrolling = FALSE;

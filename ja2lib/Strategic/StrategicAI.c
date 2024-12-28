@@ -10,7 +10,7 @@
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
@@ -38,6 +38,8 @@
 #include "TileEngine/ExplosionControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
+#include "rust_fileman.h"
+#include "rust_sam_sites.h"
 
 #define SAI_VERSION 29
 
@@ -157,12 +159,13 @@ BOOLEAN gfAutoAIAware = FALSE;
 
 // Saved vars
 int8_t gbPadding2[3] = {0, 0, 0};  // NOT USED
-BOOLEAN gfExtraElites = 0;       // Set when queen compositions are augmented with bonus elites.
+BOOLEAN gfExtraElites = 0;         // Set when queen compositions are augmented with bonus elites.
 int32_t giGarrisonArraySize = 0;
 int32_t giPatrolArraySize = 0;
-int32_t giForcePercentage = 0;     // Modifies the starting group sizes relative by percentage
-int32_t giArmyAlertness = 0;       // The chance the group will spot an adjacent player/militia
-int32_t giArmyAlertnessDecay = 0;  // How much the spotting chance decreases when spot check succeeds
+int32_t giForcePercentage = 0;  // Modifies the starting group sizes relative by percentage
+int32_t giArmyAlertness = 0;    // The chance the group will spot an adjacent player/militia
+int32_t giArmyAlertnessDecay =
+    0;  // How much the spotting chance decreases when spot check succeeds
 uint8_t gubNumAwareBattles =
     0;  // When non-zero, this means the queen is very aware and searching for players.  Every time
         // there is an enemy initiated battle, this counter decrements until zero.  Until that
@@ -173,13 +176,14 @@ BOOLEAN gfQueenAIAwake =
             //@@@Alex, this flag is ONLY set by the first meanwhile scene which calls an action.  If
             // this action isn't called, the AI will never turn on.  It is completely dependant on
             // this action.  It can be toggled at will in the AIViewer for testing purposes.
-int32_t giReinforcementPool = 0;  // How many troops the queen has in reserve in noman's land.  These
-                                // guys are spawned as needed in P3.
+int32_t giReinforcementPool = 0;  // How many troops the queen has in reserve in noman's land. These
+                                  // guys are spawned as needed in P3.
 int32_t giReinforcementPoints = 0;    // the entire army's capacity to provide reinforcements.
 int32_t giRequestPoints = 0;          // the entire army's need for reinforcements.
 uint8_t gubSAIVersion = SAI_VERSION;  // Used for adding new features to be saved.
-uint8_t gubQueenPriorityPhase = 0;  // Defines how far into defence the queen is -- abstractly related
-                                  // to defcon index ranging from 0-10. 10 is the most defensive
+uint8_t gubQueenPriorityPhase =
+    0;  // Defines how far into defence the queen is -- abstractly related
+        // to defcon index ranging from 0-10. 10 is the most defensive
 // Used for authorizing the use of the first battle meanwhile scene AFTER the battle is complete.
 // This is the case used when the player attacks a town, and is set once militia are sent to
 // investigate.
@@ -1396,7 +1400,8 @@ BOOLEAN AdjacentSectorIsImportantAndUndefended(uint8_t ubSectorID);
 BOOLEAN HandleEmptySectorNoticedByPatrolGroup(struct GROUP *pGroup, uint8_t ubEmptySectorID);
 void HandleEmptySectorNoticedByGarrison(uint8_t ubGarrisonSectorID, uint8_t ubEmptySectorID);
 
-BOOLEAN PlayerForceTooStrong(uint8_t ubSectorID, uint16_t usOffensePoints, uint16_t *pusDefencePoints);
+BOOLEAN PlayerForceTooStrong(uint8_t ubSectorID, uint16_t usOffensePoints,
+                             uint16_t *pusDefencePoints);
 void RequestAttackOnSector(uint8_t ubSectorID, uint16_t usDefencePoints);
 void RequestHighPriorityStagingGroupReinforcements(struct GROUP *pGroup);
 void RequestHighPriorityGarrisonReinforcements(int32_t iGarrisonID, uint8_t ubSoldiersRequested);
@@ -1453,8 +1458,6 @@ uint8_t RedirectEnemyGroupsMovingThroughSector(uint8_t ubSectorX, uint8_t ubSect
 // increase the numbers so she would send larger attack forces.  This is questionable.
 void EvolveQueenPriorityPhase(BOOLEAN fForceChange);
 
-extern int16_t sWorldSectorLocationOfFirstBattle;
-
 void ReassignAIGroup(struct GROUP **pGroup);
 void TransferGroupToPool(struct GROUP **pGroup);
 void SendGroupToPool(struct GROUP **pGroup);
@@ -1467,7 +1470,7 @@ void MassFortifyTowns();
 void UpgradeAdminsToTroops();
 
 #ifdef JA2BETAVERSION
-void SAIReportError(wchar_t* wErrorString);
+void SAIReportError(wchar_t *wErrorString);
 #else
 #define SAIReportError(a)  // define it out
 #endif
@@ -1494,8 +1497,8 @@ int32_t GarrisonReinforcementsRequested(int32_t iGarrisonID, uint8_t *pubExtraRe
 
   // Record how many of the reinforcements are additionally provided due to being denied in the
   // past.  This will grow until it is finally excepted or an absolute max is made.
-  *pubExtraReinforcements =
-      (uint8_t)(gubGarrisonReinforcementsDenied[iGarrisonID] / (6 - gGameOptions.ubDifficultyLevel));
+  *pubExtraReinforcements = (uint8_t)(gubGarrisonReinforcementsDenied[iGarrisonID] /
+                                      (6 - gGameOptions.ubDifficultyLevel));
   // Make sure the number of extra reinforcements don't bump the force size past the max of
   // MAX_STRATEGIC_TEAM_SIZE.
   *pubExtraReinforcements = (uint8_t)min(
@@ -1547,14 +1550,12 @@ int32_t ReinforcementsAvailable(int32_t iGarrisonID) {
   return iReinforcementsAvailable;
 }
 
-//
-BOOLEAN PlayerForceTooStrong(uint8_t ubSectorID, uint16_t usOffensePoints, uint16_t *pusDefencePoints) {
-  uint8_t ubSectorX, ubSectorY;
+BOOLEAN PlayerForceTooStrong(uint8_t ubSectorID, uint16_t usOffensePoints,
+                             uint16_t *pusDefencePoints) {
+  uint8_t ubSectorX = SectorID8_X(ubSectorID);
+  uint8_t ubSectorY = SectorID8_Y(ubSectorID);
 
-  ubSectorX = SectorID8_X(ubSectorID);
-  ubSectorY = SectorID8_Y(ubSectorID);
-
-  struct MilitiaCount milCount = GetMilitiaInSectorID8(ubSectorID);
+  struct MilitiaCount milCount = GetMilitiaInSector(ubSectorX, ubSectorY);
   *pusDefencePoints = milCount.green * 1 + milCount.regular * 2 + milCount.elite * 3 +
                       PlayerMercsInSector(ubSectorX, ubSectorY, 0) * 5;
   if (*pusDefencePoints > usOffensePoints) {
@@ -1961,7 +1962,7 @@ void ValidatePlayersAreInOneGroupOnly() {
 #endif
 
 #ifdef JA2BETAVERSION
-void SAIReportError(wchar_t* wErrorString) {
+void SAIReportError(wchar_t *wErrorString) {
 // runtime static only, don't save
 #ifdef JA2TESTVERSION
   static BOOLEAN fReportedAlready = FALSE;
@@ -1981,7 +1982,7 @@ void SAIReportError(wchar_t* wErrorString) {
     if (guiCurrentScreen == AIVIEWER_SCREEN) {
       char str[512];
       sprintf(str, "%S\n", wErrorString);
-      DebugPrint(str);
+      PrintToDebuggerConsole(str);
     }
 
     // this should keep it from repeating endlessly and allow player to save/bail
@@ -2239,9 +2240,9 @@ void InitStrategicAI() {
     {  // Add this patrol group now.
       ubNumTroops = (uint8_t)(gPatrolGroup[i].bSize + Random(3) - 1);
       ubNumTroops = (uint8_t)max(gubMinEnemyGroupSize, min(MAX_STRATEGIC_TEAM_SIZE, ubNumTroops));
-      // ubNumTroops = (uint8_t)max( gubMinEnemyGroupSize, min( MAX_STRATEGIC_TEAM_SIZE, gPatrolGroup[
-      // i ].bSize + Random( 3 ) - 1 ) ); Note on adding patrol groups... The patrol group can't
-      // actually start on the first waypoint, so we set it to the second way point for
+      // ubNumTroops = (uint8_t)max( gubMinEnemyGroupSize, min( MAX_STRATEGIC_TEAM_SIZE,
+      // gPatrolGroup[ i ].bSize + Random( 3 ) - 1 ) ); Note on adding patrol groups... The patrol
+      // group can't actually start on the first waypoint, so we set it to the second way point for
       // initialization, and then add the waypoints from 0 up
       pGroup =
           CreateNewEnemyGroupDepartingFromSector(gPatrolGroup[i].ubSectorID[1], 0, ubNumTroops, 0);
@@ -2332,7 +2333,7 @@ BOOLEAN OkayForEnemyToMoveThroughSector(uint8_t ubSectorID) {
   SECTORINFO *pSector;
   pSector = &SectorInfo[ubSectorID];
   if (pSector->uiTimeLastPlayerLiberated &&
-      pSector->uiTimeLastPlayerLiberated + (gubHoursGracePeriod * 3600) > GetWorldTotalSeconds()) {
+      pSector->uiTimeLastPlayerLiberated + (gubHoursGracePeriod * 3600) > GetGameTimeInSec()) {
     return FALSE;
   }
   return TRUE;
@@ -2372,13 +2373,13 @@ BOOLEAN EnemyPermittedToAttackSector(struct GROUP **pGroup, uint8_t ubSectorID) 
     case SEC_A9:
     case SEC_A10:
       // Omerta -- not until Day 2 at 7:45AM.
-      if (GetWorldTotalMin() < 3345) return FALSE;
+      if (GetGameTimeInMin() < 3345) return FALSE;
       break;
     case SEC_B13:
     case SEC_C13:
     case SEC_D13:
       // Drassen -- not until Day 3 at 6:30AM.
-      if (GetWorldTotalMin() < 4710) return FALSE;
+      if (GetGameTimeInMin() < 4710) return FALSE;
       break;
     case SEC_C5:
     case SEC_C6:
@@ -2418,8 +2419,8 @@ BOOLEAN HandlePlayerGroupNoticedByPatrolGroup(struct GROUP *pPlayerGroup,
   // For now, automatically attack.
   if (pPlayerGroup->ubNextX) {
     MoveSAIGroupToSector(&pEnemyGroup,
-                         (uint8_t)GetSectorID8(pPlayerGroup->ubNextX, pPlayerGroup->ubNextY), DIRECT,
-                         PURSUIT);
+                         (uint8_t)GetSectorID8(pPlayerGroup->ubNextX, pPlayerGroup->ubNextY),
+                         DIRECT, PURSUIT);
 
 #ifdef JA2BETAVERSION
     LogStrategicEvent(
@@ -2471,8 +2472,8 @@ void HandlePlayerGroupNoticedByGarrison(struct GROUP *pPlayerGroup, uint8_t ubSe
         iReinforcementsApproved >
             gubMinEnemyGroupSize) {  // Then enemy's available outnumber the
                                      // player by at least 3:2, so attack them.
-      pGroup =
-          CreateNewEnemyGroupDepartingFromSector(ubSectorID, 0, (uint8_t)iReinforcementsApproved, 0);
+      pGroup = CreateNewEnemyGroupDepartingFromSector(ubSectorID, 0,
+                                                      (uint8_t)iReinforcementsApproved, 0);
 
       ConvertGroupTroopsToComposition(pGroup, gGarrisonGroup[pSector->ubGarrisonID].ubComposition);
 
@@ -2536,7 +2537,7 @@ BOOLEAN AttemptToNoticeEmptySectorSucceeds() {
                         // checks will automatically succeed.
     return TRUE;
   }
-  if (DayTime()) {  // Day time chances are normal
+  if (IsDayTime()) {  // Day time chances are normal
     if (Chance(giArmyAlertness)) {
       giArmyAlertness -= giArmyAlertnessDecay;
       // Minimum alertness should always be at least 0.
@@ -2569,7 +2570,7 @@ BOOLEAN AttemptToNoticeAdjacentGroupSucceeds() {
                         // checks will automatically succeed.
     return TRUE;
   }
-  if (DayTime()) {  // Day time chances are normal
+  if (IsDayTime()) {  // Day time chances are normal
     if (Chance(giArmyAlertness)) {
       giArmyAlertness -= giArmyAlertnessDecay;
       // Minimum alertness should always be at least 0.
@@ -2610,7 +2611,8 @@ BOOLEAN HandleEmptySectorNoticedByPatrolGroup(struct GROUP *pGroup, uint8_t ubEm
   ClearPreviousAIGroupAssignment(pGroup);
 
   gGarrisonGroup[ubGarrisonID].ubPendingGroupID = pGroup->ubGroupID;
-  MoveSAIGroupToSector(&pGroup, (uint8_t)GetSectorID8(ubSectorX, ubSectorY), DIRECT, REINFORCEMENTS);
+  MoveSAIGroupToSector(&pGroup, (uint8_t)GetSectorID8(ubSectorX, ubSectorY), DIRECT,
+                       REINFORCEMENTS);
 
 #ifdef JA2BETAVERSION
   LogStrategicEvent(
@@ -2717,9 +2719,9 @@ BOOLEAN EvaluateGroupSituation(struct GROUP *pGroup) {
                                                       // attack.  Return to original position.
     ReassignAIGroup(&pGroup);
     return TRUE;
-  } else if (pGroup->pEnemyGroup->ubIntention ==
-             REINFORCEMENTS) {  // The group has arrived at the location where he is supposed to
-                                // reinforce.
+  } else if (pGroup->pEnemyGroup->ubIntention == REINFORCEMENTS) {
+    // The group has arrived at the location where he is supposed to
+    // reinforce.
     // Step 1 -- Check for matching garrison location
     for (i = 0; i < giGarrisonArraySize; i++) {
       if (gGarrisonGroup[i].ubSectorID == GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY) &&
@@ -2738,19 +2740,21 @@ BOOLEAN EvaluateGroupSituation(struct GROUP *pGroup) {
                                 pGroup->pEnemyGroup->ubNumElites,
                             pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX);
 #endif
-          if (IsThisSectorASAMSector(pGroup->ubSectorX, pGroup->ubSectorY, 0)) {
-            StrategicMap[pGroup->ubSectorX + pGroup->ubSectorY * MAP_WORLD_X].bSAMCondition = 100;
+          struct OptionalSamSite samID = GetSamAtSector(pGroup->ubSectorX, pGroup->ubSectorY, 0);
+          if (samID.tag == Some) {
+            SetSamCondition(samID.some, 100);
             UpdateSAMDoneRepair(pGroup->ubSectorX, pGroup->ubSectorY, 0);
           }
-        } else {  // The group was sent back to the queen's palace (probably because they couldn't
-                  // be reassigned
+        } else {
+          // The group was sent back to the queen's palace (probably because they couldn't
+          // be reassigned
           // anywhere else, but it is possible that the queen's sector is requesting the
           // reinforcements.  In any case, if the queen's sector is less than full strength, fill it
           // up first, then simply add the rest to the global pool.
           if (pSector->ubNumElites < MAX_STRATEGIC_TEAM_SIZE) {
-            if (pSector->ubNumElites + pGroup->ubGroupSize >=
-                MAX_STRATEGIC_TEAM_SIZE) {  // Fill up the queen's guards, then apply the rest to
-                                            // the reinforcement pool
+            if (pSector->ubNumElites + pGroup->ubGroupSize >= MAX_STRATEGIC_TEAM_SIZE) {
+              // Fill up the queen's guards, then apply the rest to
+              // the reinforcement pool
               giReinforcementPool += MAX_STRATEGIC_TEAM_SIZE - pSector->ubNumElites;
               pSector->ubNumElites = MAX_STRATEGIC_TEAM_SIZE;
 #ifdef JA2BETAVERSION
@@ -2767,8 +2771,9 @@ BOOLEAN EvaluateGroupSituation(struct GROUP *pGroup) {
                                 pGroup->ubSectorX);
 #endif
             }
-          } else {  // Add all the troops to the reinforcement pool as the queen's guard is at full
-                    // strength.
+          } else {
+            // Add all the troops to the reinforcement pool as the queen's guard is at full
+            // strength.
             giReinforcementPool += pGroup->ubGroupSize;
 #ifdef JA2BETAVERSION
             LogStrategicEvent(
@@ -2800,7 +2805,7 @@ BOOLEAN EvaluateGroupSituation(struct GROUP *pGroup) {
           pPatrolGroup->pEnemyGroup->ubNumAdmins += pGroup->pEnemyGroup->ubNumAdmins;
           pPatrolGroup->ubGroupSize +=
               (uint8_t)(pGroup->pEnemyGroup->ubNumTroops + pGroup->pEnemyGroup->ubNumElites +
-                      pGroup->pEnemyGroup->ubNumAdmins);
+                        pGroup->pEnemyGroup->ubNumAdmins);
 #ifdef JA2BETAVERSION
           LogStrategicEvent(
               "%d reinforcements have joined patrol group at sector %c%d (new size: %d)",
@@ -2929,8 +2934,8 @@ BOOLEAN StrategicAILookForAdjacentGroups(struct GROUP *pGroup) {
                                                (uint8_t)(pEnemyGroup->ubSectorY - 1), TRUE);
       if (pPlayerGroup && AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandlePlayerGroupNoticedByPatrolGroup(pPlayerGroup, pEnemyGroup);
-      } else if (CountAllMilitiaInSector(pEnemyGroup->ubSectorX,
-                                         (uint8_t)(pEnemyGroup->ubSectorY - 1)) &&
+      } else if (CountMilitiaInSector(pEnemyGroup->ubSectorX,
+                                      (uint8_t)(pEnemyGroup->ubSectorY - 1)) &&
                  AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandleMilitiaNoticedByPatrolGroup(
             (uint8_t)GetSectorID8(pEnemyGroup->ubSectorX, pEnemyGroup->ubSectorY - 1), pEnemyGroup);
@@ -2945,8 +2950,8 @@ BOOLEAN StrategicAILookForAdjacentGroups(struct GROUP *pGroup) {
                                                pEnemyGroup->ubSectorY, TRUE);
       if (pPlayerGroup && AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandlePlayerGroupNoticedByPatrolGroup(pPlayerGroup, pEnemyGroup);
-      } else if (CountAllMilitiaInSector((uint8_t)(pEnemyGroup->ubSectorX - 1),
-                                         pEnemyGroup->ubSectorY) &&
+      } else if (CountMilitiaInSector((uint8_t)(pEnemyGroup->ubSectorX - 1),
+                                      pEnemyGroup->ubSectorY) &&
                  AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandleMilitiaNoticedByPatrolGroup(
             (uint8_t)GetSectorID8(pEnemyGroup->ubSectorX - 1, pEnemyGroup->ubSectorY), pEnemyGroup);
@@ -2961,8 +2966,8 @@ BOOLEAN StrategicAILookForAdjacentGroups(struct GROUP *pGroup) {
                                                (uint8_t)(pEnemyGroup->ubSectorY + 1), TRUE);
       if (pPlayerGroup && AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandlePlayerGroupNoticedByPatrolGroup(pPlayerGroup, pEnemyGroup);
-      } else if (CountAllMilitiaInSector(pEnemyGroup->ubSectorX,
-                                         (uint8_t)(pEnemyGroup->ubSectorY + 1)) &&
+      } else if (CountMilitiaInSector(pEnemyGroup->ubSectorX,
+                                      (uint8_t)(pEnemyGroup->ubSectorY + 1)) &&
                  AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandleMilitiaNoticedByPatrolGroup(
             (uint8_t)GetSectorID8(pEnemyGroup->ubSectorX, pEnemyGroup->ubSectorY + 1), pEnemyGroup);
@@ -2977,8 +2982,8 @@ BOOLEAN StrategicAILookForAdjacentGroups(struct GROUP *pGroup) {
                                                pEnemyGroup->ubSectorY, TRUE);
       if (pPlayerGroup && AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandlePlayerGroupNoticedByPatrolGroup(pPlayerGroup, pEnemyGroup);
-      } else if (CountAllMilitiaInSector((uint8_t)(pEnemyGroup->ubSectorX + 1),
-                                         pEnemyGroup->ubSectorY) &&
+      } else if (CountMilitiaInSector((uint8_t)(pEnemyGroup->ubSectorX + 1),
+                                      pEnemyGroup->ubSectorY) &&
                  AttemptToNoticeAdjacentGroupSucceeds()) {
         return HandleMilitiaNoticedByPatrolGroup(
             (uint8_t)GetSectorID8(pEnemyGroup->ubSectorX + 1, pEnemyGroup->ubSectorY), pEnemyGroup);
@@ -3302,7 +3307,7 @@ void RecalculateGroupWeight(struct GROUP *pGroup) {
 }
 
 int32_t ChooseSuitableGarrisonToProvideReinforcements(int32_t iDstGarrisonID,
-                                                    int32_t iReinforcementsRequested) {
+                                                      int32_t iReinforcementsRequested) {
   int32_t iSrcGarrisonID, iBestGarrisonID = NO_GARRISON;
   int32_t iReinforcementsAvailable;
   int32_t i, iRandom, iWeight;
@@ -3474,16 +3479,17 @@ void SendReinforcementsForGarrison(int32_t iDstGarrisonID, uint16_t usDefencePoi
     return;
   }
   iRandom = Random(giReinforcementPoints + giReinforcementPool);
-  if (iRandom < giReinforcementPool) {  // use the pool and send the requested amount from
-                                        // GetSectorID8 P3 (queen's palace)
+  if (iRandom < giReinforcementPool) {
+    // use the pool and send the requested amount from
+    // GetSectorID8 P3 (queen's palace)
   QUEEN_POOL:
 
     // KM : Sep 9, 1999
     // If the player owns sector P3, any troops that spawned there were causing serious problems,
     // seeing battle checks were not performed!
-    if (!StrategicMap[GetSectorID16(3, 16)]
-             .fEnemyControlled) {  // Queen can no longer send reinforcements from the palace if she
-                                   // doesn't control it!
+    if (!IsSectorEnemyControlled(3, 16)) {
+      // Queen can no longer send reinforcements from the palace if she
+      // doesn't control it!
       return;
     }
 
@@ -3743,12 +3749,12 @@ void EvaluateQueenSituation() {
                                // training new troops
     uiOffset *= 10;
     giReinforcementPool += 30;
-    AddStrategicEvent(EVENT_EVALUATE_QUEEN_SITUATION, GetWorldTotalMin() + uiOffset, 0);
+    AddStrategicEvent(EVENT_EVALUATE_QUEEN_SITUATION, GetGameTimeInMin() + uiOffset, 0);
     return;
   }
 
   // Re-post the event
-  AddStrategicEvent(EVENT_EVALUATE_QUEEN_SITUATION, GetWorldTotalMin() + uiOffset, 0);
+  AddStrategicEvent(EVENT_EVALUATE_QUEEN_SITUATION, GetGameTimeInMin() + uiOffset, 0);
 
   // if the queen hasn't been alerted to player's presence yet
   if (!gfQueenAIAwake) {  // no decisions can be made yet.
@@ -3821,7 +3827,7 @@ void EvaluateQueenSituation() {
   ValidateWeights(27);
 }
 
-BOOLEAN SaveStrategicAI(HWFILE hFile) {
+BOOLEAN SaveStrategicAI(FileID hFile) {
   GARRISON_GROUP gTempGarrisonGroup;
   PATROL_GROUP gTempPatrolGroup;
   ARMY_COMPOSITION gTempArmyComp;
@@ -3831,82 +3837,82 @@ BOOLEAN SaveStrategicAI(HWFILE hFile) {
   memset(&gTempPatrolGroup, 0, sizeof(PATROL_GROUP));
   memset(&gTempArmyComp, 0, sizeof(ARMY_COMPOSITION));
 
-  FileMan_Write(hFile, gbPadding2, 3, &uiNumBytesWritten);
+  File_Write(hFile, gbPadding2, 3, &uiNumBytesWritten);
   if (uiNumBytesWritten != 3) return FALSE;
-  FileMan_Write(hFile, &gfExtraElites, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gfExtraElites, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &giGarrisonArraySize, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giGarrisonArraySize, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &giPatrolArraySize, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giPatrolArraySize, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &giReinforcementPool, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giReinforcementPool, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &giForcePercentage, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giForcePercentage, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &giArmyAlertness, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giArmyAlertness, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &giArmyAlertnessDecay, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giArmyAlertnessDecay, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &gfQueenAIAwake, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gfQueenAIAwake, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &giReinforcementPoints, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giReinforcementPoints, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &giRequestPoints, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giRequestPoints, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != 4) return FALSE;
-  FileMan_Write(hFile, &gubNumAwareBattles, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gubNumAwareBattles, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &gubSAIVersion, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gubSAIVersion, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &gubQueenPriorityPhase, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gubQueenPriorityPhase, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &gfFirstBattleMeanwhileScenePending, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gfFirstBattleMeanwhileScenePending, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &gfMassFortificationOrdered, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gfMassFortificationOrdered, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &gubMinEnemyGroupSize, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gubMinEnemyGroupSize, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &gubHoursGracePeriod, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gubHoursGracePeriod, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, &gusPlayerBattleVictories, 2, &uiNumBytesWritten);
+  File_Write(hFile, &gusPlayerBattleVictories, 2, &uiNumBytesWritten);
   if (uiNumBytesWritten != 2) return FALSE;
-  FileMan_Write(hFile, &gfUseAlternateQueenPosition, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gfUseAlternateQueenPosition, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) return FALSE;
-  FileMan_Write(hFile, gbPadding, SAI_PADDING_BYTES, &uiNumBytesWritten);
+  File_Write(hFile, gbPadding, SAI_PADDING_BYTES, &uiNumBytesWritten);
   if (uiNumBytesWritten != SAI_PADDING_BYTES) return FALSE;
   // Save the army composition (which does get modified)
-  FileMan_Write(hFile, gArmyComp, NUM_ARMY_COMPOSITIONS * sizeof(ARMY_COMPOSITION),
-                &uiNumBytesWritten);
+  File_Write(hFile, gArmyComp, NUM_ARMY_COMPOSITIONS * sizeof(ARMY_COMPOSITION),
+             &uiNumBytesWritten);
   if (uiNumBytesWritten != NUM_ARMY_COMPOSITIONS * sizeof(ARMY_COMPOSITION)) return FALSE;
   i = SAVED_ARMY_COMPOSITIONS - NUM_ARMY_COMPOSITIONS;
   while (i--) {
-    FileMan_Write(hFile, &gTempArmyComp, sizeof(ARMY_COMPOSITION), &uiNumBytesWritten);
+    File_Write(hFile, &gTempArmyComp, sizeof(ARMY_COMPOSITION), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(ARMY_COMPOSITION)) return FALSE;
   }
   // Save the patrol group definitions
-  FileMan_Write(hFile, gPatrolGroup, giPatrolArraySize * sizeof(PATROL_GROUP), &uiNumBytesWritten);
+  File_Write(hFile, gPatrolGroup, giPatrolArraySize * sizeof(PATROL_GROUP), &uiNumBytesWritten);
   if (uiNumBytesWritten != giPatrolArraySize * sizeof(PATROL_GROUP)) return FALSE;
   i = SAVED_PATROL_GROUPS - giPatrolArraySize;
   while (i--) {
-    FileMan_Write(hFile, &gTempPatrolGroup, sizeof(PATROL_GROUP), &uiNumBytesWritten);
+    File_Write(hFile, &gTempPatrolGroup, sizeof(PATROL_GROUP), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(PATROL_GROUP)) return FALSE;
   }
   // Save the garrison information!
   memset(&gTempGarrisonGroup, 0, sizeof(GARRISON_GROUP));
-  FileMan_Write(hFile, gGarrisonGroup, giGarrisonArraySize * sizeof(GARRISON_GROUP),
-                &uiNumBytesWritten);
+  File_Write(hFile, gGarrisonGroup, giGarrisonArraySize * sizeof(GARRISON_GROUP),
+             &uiNumBytesWritten);
   if (uiNumBytesWritten != giGarrisonArraySize * sizeof(GARRISON_GROUP)) return FALSE;
   i = SAVED_GARRISON_GROUPS - giGarrisonArraySize;
   while (i--) {
-    FileMan_Write(hFile, &gTempGarrisonGroup, sizeof(GARRISON_GROUP), &uiNumBytesWritten);
+    File_Write(hFile, &gTempGarrisonGroup, sizeof(GARRISON_GROUP), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(GARRISON_GROUP)) return FALSE;
   }
 
-  FileMan_Write(hFile, gubPatrolReinforcementsDenied, giPatrolArraySize, &uiNumBytesWritten);
+  File_Write(hFile, gubPatrolReinforcementsDenied, giPatrolArraySize, &uiNumBytesWritten);
   if (uiNumBytesWritten != (uint32_t)giPatrolArraySize) {
     return FALSE;
   }
 
-  FileMan_Write(hFile, gubGarrisonReinforcementsDenied, giGarrisonArraySize, &uiNumBytesWritten);
+  File_Write(hFile, gubGarrisonReinforcementsDenied, giGarrisonArraySize, &uiNumBytesWritten);
   if (uiNumBytesWritten != (uint32_t)giGarrisonArraySize) {
     return FALSE;
   }
@@ -3918,7 +3924,7 @@ BOOLEAN SaveStrategicAI(HWFILE hFile) {
   return TRUE;
 }
 
-BOOLEAN LoadStrategicAI(HWFILE hFile) {
+BOOLEAN LoadStrategicAI(FileID hFile) {
   struct GROUP *pGroup, *next;
   GARRISON_GROUP gTempGarrisonGroup;
   PATROL_GROUP gTempPatrolGroup;
@@ -3927,54 +3933,54 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
   int32_t i;
   uint8_t ubSAIVersion;
 
-  FileMan_Read(hFile, gbPadding2, 3, &uiNumBytesRead);
+  File_Read(hFile, gbPadding2, 3, &uiNumBytesRead);
   if (uiNumBytesRead != 3) return FALSE;
-  FileMan_Read(hFile, &gfExtraElites, 1, &uiNumBytesRead);
+  File_Read(hFile, &gfExtraElites, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &giGarrisonArraySize, 4, &uiNumBytesRead);
+  File_Read(hFile, &giGarrisonArraySize, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &giPatrolArraySize, 4, &uiNumBytesRead);
+  File_Read(hFile, &giPatrolArraySize, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &giReinforcementPool, 4, &uiNumBytesRead);
+  File_Read(hFile, &giReinforcementPool, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &giForcePercentage, 4, &uiNumBytesRead);
+  File_Read(hFile, &giForcePercentage, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &giArmyAlertness, 4, &uiNumBytesRead);
+  File_Read(hFile, &giArmyAlertness, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &giArmyAlertnessDecay, 4, &uiNumBytesRead);
+  File_Read(hFile, &giArmyAlertnessDecay, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &gfQueenAIAwake, 1, &uiNumBytesRead);
+  File_Read(hFile, &gfQueenAIAwake, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &giReinforcementPoints, 4, &uiNumBytesRead);
+  File_Read(hFile, &giReinforcementPoints, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &giRequestPoints, 4, &uiNumBytesRead);
+  File_Read(hFile, &giRequestPoints, 4, &uiNumBytesRead);
   if (uiNumBytesRead != 4) return FALSE;
-  FileMan_Read(hFile, &gubNumAwareBattles, 1, &uiNumBytesRead);
+  File_Read(hFile, &gubNumAwareBattles, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &ubSAIVersion, 1, &uiNumBytesRead);
+  File_Read(hFile, &ubSAIVersion, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &gubQueenPriorityPhase, 1, &uiNumBytesRead);
+  File_Read(hFile, &gubQueenPriorityPhase, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &gfFirstBattleMeanwhileScenePending, 1, &uiNumBytesRead);
+  File_Read(hFile, &gfFirstBattleMeanwhileScenePending, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &gfMassFortificationOrdered, 1, &uiNumBytesRead);
+  File_Read(hFile, &gfMassFortificationOrdered, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &gubMinEnemyGroupSize, 1, &uiNumBytesRead);
+  File_Read(hFile, &gubMinEnemyGroupSize, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &gubHoursGracePeriod, 1, &uiNumBytesRead);
+  File_Read(hFile, &gubHoursGracePeriod, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, &gusPlayerBattleVictories, 2, &uiNumBytesRead);
+  File_Read(hFile, &gusPlayerBattleVictories, 2, &uiNumBytesRead);
   if (uiNumBytesRead != 2) return FALSE;
-  FileMan_Read(hFile, &gfUseAlternateQueenPosition, 1, &uiNumBytesRead);
+  File_Read(hFile, &gfUseAlternateQueenPosition, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) return FALSE;
-  FileMan_Read(hFile, gbPadding, SAI_PADDING_BYTES, &uiNumBytesRead);
+  File_Read(hFile, gbPadding, SAI_PADDING_BYTES, &uiNumBytesRead);
   if (uiNumBytesRead != SAI_PADDING_BYTES) return FALSE;
   // Restore the army composition
-  FileMan_Read(hFile, gArmyComp, NUM_ARMY_COMPOSITIONS * sizeof(ARMY_COMPOSITION), &uiNumBytesRead);
+  File_Read(hFile, gArmyComp, NUM_ARMY_COMPOSITIONS * sizeof(ARMY_COMPOSITION), &uiNumBytesRead);
   if (uiNumBytesRead != NUM_ARMY_COMPOSITIONS * sizeof(ARMY_COMPOSITION)) return FALSE;
   i = SAVED_ARMY_COMPOSITIONS - NUM_ARMY_COMPOSITIONS;
   while (i--) {
-    FileMan_Read(hFile, &gTempArmyComp, sizeof(ARMY_COMPOSITION), &uiNumBytesRead);
+    File_Read(hFile, &gTempArmyComp, sizeof(ARMY_COMPOSITION), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(ARMY_COMPOSITION)) return FALSE;
   }
 
@@ -3983,11 +3989,11 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
     MemFree(gPatrolGroup);
   }
   gPatrolGroup = (PATROL_GROUP *)MemAlloc(giPatrolArraySize * sizeof(PATROL_GROUP));
-  FileMan_Read(hFile, gPatrolGroup, giPatrolArraySize * sizeof(PATROL_GROUP), &uiNumBytesRead);
+  File_Read(hFile, gPatrolGroup, giPatrolArraySize * sizeof(PATROL_GROUP), &uiNumBytesRead);
   if (uiNumBytesRead != giPatrolArraySize * sizeof(PATROL_GROUP)) return FALSE;
   i = SAVED_PATROL_GROUPS - giPatrolArraySize;
   while (i--) {
-    FileMan_Read(hFile, &gTempPatrolGroup, sizeof(PATROL_GROUP), &uiNumBytesRead);
+    File_Read(hFile, &gTempPatrolGroup, sizeof(PATROL_GROUP), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(PATROL_GROUP)) return FALSE;
   }
 
@@ -3997,14 +4003,13 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
     MemFree(gGarrisonGroup);
   }
   gGarrisonGroup = (GARRISON_GROUP *)MemAlloc(giGarrisonArraySize * sizeof(GARRISON_GROUP));
-  FileMan_Read(hFile, gGarrisonGroup, giGarrisonArraySize * sizeof(GARRISON_GROUP),
-               &uiNumBytesRead);
+  File_Read(hFile, gGarrisonGroup, giGarrisonArraySize * sizeof(GARRISON_GROUP), &uiNumBytesRead);
   if (uiNumBytesRead != giGarrisonArraySize * sizeof(GARRISON_GROUP)) {
     return FALSE;
   }
   i = SAVED_GARRISON_GROUPS - giGarrisonArraySize;
   while (i--) {
-    FileMan_Read(hFile, &gTempGarrisonGroup, sizeof(GARRISON_GROUP), &uiNumBytesRead);
+    File_Read(hFile, &gTempGarrisonGroup, sizeof(GARRISON_GROUP), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(GARRISON_GROUP)) {
       return FALSE;
     }
@@ -4016,7 +4021,7 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
     gubPatrolReinforcementsDenied = NULL;
   }
   gubPatrolReinforcementsDenied = (uint8_t *)MemAlloc(giPatrolArraySize);
-  FileMan_Read(hFile, gubPatrolReinforcementsDenied, giPatrolArraySize, &uiNumBytesRead);
+  File_Read(hFile, gubPatrolReinforcementsDenied, giPatrolArraySize, &uiNumBytesRead);
   if (uiNumBytesRead != (uint32_t)giPatrolArraySize) {
     return FALSE;
   }
@@ -4027,7 +4032,7 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
     gubGarrisonReinforcementsDenied = NULL;
   }
   gubGarrisonReinforcementsDenied = (uint8_t *)MemAlloc(giGarrisonArraySize);
-  FileMan_Read(hFile, gubGarrisonReinforcementsDenied, giGarrisonArraySize, &uiNumBytesRead);
+  File_Read(hFile, gubGarrisonReinforcementsDenied, giGarrisonArraySize, &uiNumBytesRead);
   if (uiNumBytesRead != (uint32_t)giGarrisonArraySize) {
     return FALSE;
   }
@@ -4036,9 +4041,7 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
   InitStrategicMovementCosts();
 #endif
 
-  // KM : Aug 11, 1999 -- Patch fix:  Blindly update the airspace control.  There is a bug somewhere
-  //		 that is failing to keep this information up to date, and I failed to find it.  At
-  // least this 		 will patch saves.
+  // Recalculating airspace control
   UpdateAirspaceControl();
 
   EvolveQueenPriorityPhase(TRUE);
@@ -4062,8 +4065,8 @@ BOOLEAN LoadStrategicAI(HWFILE hFile) {
 #ifdef JA2BETAVERSION
   LogStrategicMsg("");
   LogStrategicMsg("-------------------------------------------------");
-  LogStrategicMsg("Restoring saved game at Day %02d, %02d:%02d ", GetWorldDay(), GetWorldHour(),
-                  GetWorldMinutesInDay() % 60);
+  LogStrategicMsg("Restoring saved game at Day %02d, %02d:%02d ", GetGameTimeInDays(),
+                  GetGameClockHour(), GetMinutesSinceDayStart() % 60);
   LogStrategicMsg("-------------------------------------------------");
   LogStrategicMsg("");
 #endif
@@ -4125,7 +4128,9 @@ void EvolveQueenPriorityPhase(BOOLEAN fForceChange) {
   // controls.
   for (i = 0; i < giGarrisonArraySize; i++) {
     index = gGarrisonGroup[i].ubComposition;
-    if (StrategicMap[SectorID8To16(gGarrisonGroup[i].ubSectorID)].fEnemyControlled) {
+    uint8_t sX = SectorID8_X(gGarrisonGroup[i].ubSectorID);
+    uint8_t sY = SectorID8_Y(gGarrisonGroup[i].ubSectorID);
+    if (IsSectorEnemyControlled(sX, sY)) {
       ubOwned[index]++;
     }
     ubTotal[index]++;
@@ -4245,6 +4250,8 @@ void EvolveQueenPriorityPhase(BOOLEAN fForceChange) {
   }
 }
 
+extern struct SectorPoint locationOfFirstBattle;
+
 void ExecuteStrategicAIAction(uint16_t usActionCode, uint8_t sSectorX, uint8_t sSectorY) {
   struct GROUP *pGroup, *pPendingGroup = NULL;
   SECTORINFO *pSector;
@@ -4260,23 +4267,6 @@ void ExecuteStrategicAIAction(uint16_t usActionCode, uint8_t sSectorX, uint8_t s
       break;
 
     case STRATEGIC_AI_ACTION_KINGPIN_DEAD:
-      // Immediate send a small garrison to C5 (to discourage access to Tony the dealer)
-      /*
-      for( i = 0; i < giGarrisonArraySize; i++ )
-      {
-              if( gGarrisonGroup[ i ].ubComposition == SANMONA_SMALL )
-              {
-                      //Setup the composition so from now on the queen will consider this an
-      important sector
-                      //to hold.
-                      gArmyComp[ gGarrisonGroup[ i ].ubComposition ].bPriority = 65;
-                      gArmyComp[ gGarrisonGroup[ i ].ubComposition ].bTroopPercentage = 100;
-                      gArmyComp[ gGarrisonGroup[ i ].ubComposition ].bDesiredPopulation = 5;
-                      RequestHighPriorityGarrisonReinforcements( i, (uint8_t)(2 + Random( 4 )) );
-      //send 2-5 soldiers now. break;
-              }
-      }
-      */
       break;
     case NPC_ACTION_SEND_SOLDIERS_TO_DRASSEN:
       // Send 6, 9, or 12 troops (based on difficulty) one of the Drassen sectors.  If nobody is
@@ -4309,7 +4299,7 @@ void ExecuteStrategicAIAction(uint16_t usActionCode, uint8_t sSectorX, uint8_t s
 
       // Send 4, 8, or 12 troops (based on difficulty) to the location of the first battle.  If
       // nobody is there when they arrive, those troops will get reassigned.
-      ubSectorID = (uint8_t)SectorID16To8(sWorldSectorLocationOfFirstBattle);
+      ubSectorID = GetSectorID8(locationOfFirstBattle.x, locationOfFirstBattle.y);
       pSector = &SectorInfo[ubSectorID];
       ubNumSoldiers = (uint8_t)(gGameOptions.ubDifficultyLevel * 4);
       pGroup = CreateNewEnemyGroupDepartingFromSector(SEC_P3, 0, ubNumSoldiers, 0);
@@ -4320,13 +4310,13 @@ void ExecuteStrategicAIAction(uint16_t usActionCode, uint8_t sSectorX, uint8_t s
       // following checks succeed, the enemies will be sent to attack and reinforce that sector.
       // Otherwise, the enemies will simply check it out, then leave.
       if (pSector->ubGarrisonID != NO_GARRISON) {  // sector has a garrison
-        if (!NumEnemiesInSector(SectorID8_X(ubSectorID),
-                                SectorID8_Y(ubSectorID))) {  // no enemies are here
-          if (gArmyComp[!gGarrisonGroup[pSector->ubGarrisonID].ubComposition]
-                  .bPriority) {  // the garrison is important
-            if (!gGarrisonGroup[pSector->ubGarrisonID]
-                     .ubPendingGroupID) {  // the garrison doesn't have reinforcements already on
-                                           // route.
+        if (!NumEnemiesInSector(SectorID8_X(ubSectorID), SectorID8_Y(ubSectorID))) {
+          // no enemies are here
+          if (gArmyComp[!gGarrisonGroup[pSector->ubGarrisonID].ubComposition].bPriority) {
+            // the garrison is important
+            if (!gGarrisonGroup[pSector->ubGarrisonID].ubPendingGroupID) {
+              // the garrison doesn't have reinforcements already on
+              // route.
               gGarrisonGroup[pSector->ubGarrisonID].ubPendingGroupID = pGroup->ubGroupID;
               MoveSAIGroupToSector(&pGroup, ubSectorID, STAGE, REINFORCEMENTS);
               break;
@@ -4429,7 +4419,7 @@ void LogStrategicMsg(char *str, ...) {
     ScreenMsg(FONT_LTKHAKI, MSG_DIALOG, L"%S", string);
   }
   if (guiCurrentScreen == AIVIEWER_SCREEN) {
-    DebugPrint(String("%s\n", string));
+    PrintToDebuggerConsole(String("%s\n", string));
   }
 
   fclose(fp);
@@ -4448,14 +4438,14 @@ void LogStrategicEvent(char *str, ...) {
   vsprintf(string, str, argptr);
   va_end(argptr);
 
-  fprintf(fp, "\n%S:\n", WORLDTIMESTR);
+  fprintf(fp, "\n%S:\n", gswzWorldTimeStr);
   fprintf(fp, "%s\n", string);
 
   if (gfDisplayStrategicAILogs) {
     ScreenMsg(FONT_LTKHAKI, MSG_DIALOG, L"%S", string);
   }
   if (guiCurrentScreen == AIVIEWER_SCREEN) {
-    DebugPrint(String("%s\n", string));
+    PrintToDebuggerConsole(String("%s\n", string));
   }
 
   fclose(fp);
@@ -4472,132 +4462,17 @@ void ClearStrategicLog() {
 }
 #endif
 
-void InvestigateSector(uint8_t ubSectorID) {
-  /*
-          int32_t i;
-          SECTORINFO *pSector;
-          int16_t sSectorX, sSectorY;
-          uint8_t ubAdmins[4], ubTroops[4], ubElites[4], ubNumToSend, ubTotal;
-
-          //@@@ Disabled!  Also commented out the posting of the event
-          return;
-
-          sSectorX = (int16_t)SectorID8_X( ubSectorID );
-          sSectorY = (int16_t)SectorID8_Y( ubSectorID );
-
-          if( guiCurrentScreen != GAME_SCREEN )
-          { //If we aren't in tactical, then don't do this.  It is strictly added flavour and would
-     be irritating if
-                  //you got the prebattle interface in mapscreen while compressing time (right after
-     clearing it...) return;
-          }
-
-          if( sSectorX != gWorldSectorX || sSectorY != gWorldSectorY || gbWorldSectorZ )
-          { //The sector isn't loaded, so don't bother...
-                  return;
-          }
-
-          //Now, we will investigate this sector if there are forces in adjacent towns.  For each
-          //sector that applies, we will add 1-2 soldiers.
-
-          ubTotal = 0;
-          for( i = 0; i < 4; i++ )
-          {
-                  ubAdmins[i] = ubTroops[i] = ubElites[i] = 0;
-                  switch( i )
-                  {
-                          case 0: //NORTH
-                                  if( sSectorY == 1 )
-                                          continue;
-                                  pSector = &SectorInfo[ ubSectorID - 16 ];
-                                  break;
-                          case 1: //EAST
-                                  if( sSectorX == 16 )
-                                          continue;
-                                  pSector = &SectorInfo[ ubSectorID + 1 ];
-                                  break;
-                          case 2: //SOUTH
-                                  if( sSectorY == 16 )
-                                          continue;
-                                  pSector = &SectorInfo[ ubSectorID + 16 ];
-                                  break;
-                          case 3: //WEST
-                                  if( sSectorX == 1 )
-                                          continue;
-                                  pSector = &SectorInfo[ ubSectorID - 1 ];
-                                  break;
-                  }
-                  if( pSector->ubNumAdmins + pSector->ubNumTroops + pSector->ubNumElites > 4 )
-                  {
-                          ubNumToSend = (uint8_t)(Random( 2 ) + 1);
-                          while( ubNumToSend )
-                          {
-                                  if( pSector->ubNumAdmins )
-                                  {
-                                          pSector->ubNumAdmins--;
-                                          ubNumToSend--;
-                                          ubAdmins[i]++;
-                                          ubTotal++;
-                                  }
-                                  else if( pSector->ubNumTroops )
-                                  {
-                                          pSector->ubNumTroops--;
-                                          ubNumToSend--;
-                                          ubTroops[i]++;
-                                          ubTotal++;
-                                  }
-                                  else if( pSector->ubNumElites )
-                                  {
-                                          pSector->ubNumTroops--;
-                                          ubNumToSend--;
-                                          ubTroops[i]++;
-                                          ubTotal++;
-                                  }
-                                  else
-                                  {
-                                          break; //???
-                                  }
-                          }
-                  }
-          }
-          if( !ubTotal )
-          { //Nobody is available to investigate
-                  return;
-          }
-          //Now we have decided who to send, so send them.
-          for( i = 0; i < 4; i++ )
-          {
-                  if( ubAdmins[i] + ubTroops[i] + ubElites[i] )
-                  {
-                          switch( i )
-                          {
-                                  case 0: //NORTH
-                                          AddEnemiesToBattle( NULL, INSERTION_CODE_NORTH,
-     ubAdmins[i], ubTroops[i], ubElites[i], TRUE ); break; case 1: //EAST AddEnemiesToBattle( NULL,
-     INSERTION_CODE_EAST, ubAdmins[i], ubTroops[i], ubElites[i], TRUE ); break; case 2: //SOUTH
-                                          AddEnemiesToBattle( NULL, INSERTION_CODE_SOUTH,
-     ubAdmins[i], ubTroops[i], ubElites[i], TRUE ); break; case 3: //WEST AddEnemiesToBattle( NULL,
-     INSERTION_CODE_WEST, ubAdmins[i], ubTroops[i], ubElites[i], TRUE ); break;
-                          }
-                  }
-          }
-          if( !gfQueenAIAwake )
-          {
-                  gfFirstBattleMeanwhileScenePending = TRUE;
-          }
-  */
-}
-
-void StrategicHandleQueenLosingControlOfSector(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ) {
+void StrategicHandleQueenLosingControlOfSector(uint8_t sSectorX, uint8_t sSectorY,
+                                               int8_t sSectorZ) {
   SECTORINFO *pSector;
   uint8_t ubSectorID;
   if (sSectorZ) {  // The queen doesn't care about anything happening under the ground.
     return;
   }
 
-  if (StrategicMap[GetSectorID16(sSectorX, sSectorY)]
-          .fEnemyControlled) {  // If the sector doesn't belong to the player, then we shouldn't be
-                                // calling this function!
+  if (IsSectorEnemyControlled(sSectorX, sSectorY)) {
+    // If the sector doesn't belong to the player, then we shouldn't be
+    // calling this function!
     SAIReportError(
         L"StrategicHandleQueenLosingControlOfSector() was called for a sector that is internally "
         L"considered to be enemy controlled.");
@@ -4622,11 +4497,10 @@ void StrategicHandleQueenLosingControlOfSector(uint8_t sSectorX, uint8_t sSector
     // reassigned, so the player doesn't get pestered.  This is a feature that *dumbs* down the AI,
     // and is done for the sake of gameplay.  We don't want the game to be tedious.
     if (!pSector->uiTimeLastPlayerLiberated) {
-      pSector->uiTimeLastPlayerLiberated = GetWorldTotalSeconds();
+      pSector->uiTimeLastPlayerLiberated = GetGameTimeInSec();
     } else {  // convert hours to seconds and subtract up to half of it randomly "seconds -
               // (hours*3600 / 2)"
-      pSector->uiTimeLastPlayerLiberated =
-          GetWorldTotalSeconds() - Random(gubHoursGracePeriod * 1800);
+      pSector->uiTimeLastPlayerLiberated = GetGameTimeInSec() - Random(gubHoursGracePeriod * 1800);
     }
     if (gGarrisonGroup[pSector->ubGarrisonID].ubPendingGroupID) {
       struct GROUP *pGroup;
@@ -4728,7 +4602,7 @@ void StrategicHandleQueenLosingControlOfSector(uint8_t sSectorX, uint8_t sSector
     return;
   }
   //@@@ disabled
-  // AddStrategicEventUsingSeconds( EVENT_INVESTIGATE_SECTOR, GetWorldTotalSeconds() + 45 *
+  // AddStrategicEventUsingSeconds( EVENT_INVESTIGATE_SECTOR, GetGameTimeInSec() + 45 *
   // pSector->ubInvestigativeState + Random( 60 ), GetSectorID8( sSectorX, sSectorY ) );
 }
 
@@ -4967,7 +4841,7 @@ BOOLEAN GarrisonCanProvideMinimumReinforcements(int32_t iGarrisonID) {
     ubSectorX = SectorID8_X(gGarrisonGroup[iGarrisonID].ubSectorID);
     ubSectorY = SectorID8_Y(gGarrisonGroup[iGarrisonID].ubSectorID);
     if (PlayerMercsInSector(ubSectorX, ubSectorY, 0) ||
-        CountAllMilitiaInSector(ubSectorX, ubSectorY)) {
+        CountMilitiaInSector(ubSectorX, ubSectorY)) {
       return FALSE;
     }
     return TRUE;
@@ -5093,7 +4967,8 @@ void UpgradeAdminsToTroops() {
   // check all garrisons for administrators
   for (i = 0; i < giGarrisonArraySize; i++) {
     // skip sector if it's currently loaded, we'll never upgrade guys in those
-    if (GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY) == gGarrisonGroup[i].ubSectorID) {
+    if (GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY) ==
+        gGarrisonGroup[i].ubSectorID) {
       continue;
     }
 
@@ -5357,15 +5232,15 @@ void TagSAIGroupWithGracePeriod(struct GROUP *pGroup) {
       switch (gGameOptions.ubDifficultyLevel) {
         case DIF_LEVEL_EASY:
           gPatrolGroup[iPatrolID].bFillPermittedAfterDayMod100 =
-              (uint8_t)((GetWorldDay() + EASY_PATROL_GRACE_PERIOD_IN_DAYS) % 100);
+              (uint8_t)((GetGameTimeInDays() + EASY_PATROL_GRACE_PERIOD_IN_DAYS) % 100);
           break;
         case DIF_LEVEL_MEDIUM:
           gPatrolGroup[iPatrolID].bFillPermittedAfterDayMod100 =
-              (uint8_t)((GetWorldDay() + NORMAL_PATROL_GRACE_PERIOD_IN_DAYS) % 100);
+              (uint8_t)((GetGameTimeInDays() + NORMAL_PATROL_GRACE_PERIOD_IN_DAYS) % 100);
           break;
         case DIF_LEVEL_HARD:
           gPatrolGroup[iPatrolID].bFillPermittedAfterDayMod100 =
-              (uint8_t)((GetWorldDay() + HARD_PATROL_GRACE_PERIOD_IN_DAYS) % 100);
+              (uint8_t)((GetGameTimeInDays() + HARD_PATROL_GRACE_PERIOD_IN_DAYS) % 100);
           break;
       }
     }
@@ -5375,7 +5250,7 @@ void TagSAIGroupWithGracePeriod(struct GROUP *pGroup) {
 BOOLEAN PermittedToFillPatrolGroup(int32_t iPatrolID) {
   int32_t iDay;
   int32_t iDayAllowed;
-  iDay = GetWorldDay();
+  iDay = GetGameTimeInDays();
   iDayAllowed = gPatrolGroup[iPatrolID].bFillPermittedAfterDayMod100 + (iDay / 100) * 100;
   return iDay >= iDayAllowed;
 }

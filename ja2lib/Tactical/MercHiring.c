@@ -49,7 +49,6 @@
 #include "TileEngine/InteractiveTiles.h"
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/RenderFun.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
 #include "UI.h"
 #include "Utils/EventPump.h"
@@ -73,7 +72,7 @@ extern BOOLEAN gfFirstHeliRun;
 uint8_t gsMercArriveSectorX = 9;
 uint8_t gsMercArriveSectorY = 1;
 
-void CheckForValidArrivalSector();
+static void CheckForValidArrivalSector();
 
 int8_t HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
   struct SOLDIERTYPE *pSoldier;
@@ -114,7 +113,7 @@ int8_t HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
   MercCreateStruct.fCopyProfileItemsOver = pHireMerc->fCopyProfileItemsOver;
 
   if (!TacticalCreateSoldier(&MercCreateStruct, &iNewIndex)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "TacticalCreateSoldier in HireMerc():  Failed to Add Merc");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "TacticalCreateSoldier in HireMerc():  Failed to Add Merc");
     return (MERC_HIRE_FAILED);
   }
 
@@ -175,19 +174,19 @@ int8_t HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
 
   if (DidGameJustStart()) {
     // Set time of initial merc arrival in minutes
-    pHireMerc->uiTimeTillMercArrives = (STARTING_TIME + FIRST_ARRIVAL_DELAY) / NUM_SEC_IN_MIN;
+    pHireMerc->uiTimeTillMercArrives =
+        (GetGameStartingTime() + FIRST_ARRIVAL_DELAY) / NUM_SEC_IN_MIN;
 
     // Set insertion for first time in chopper
     pHireMerc->ubInsertionCode = INSERTION_CODE_CHOPPER;
 
     // set when the merc's contract is finished
-    pSoldier->iEndofContractTime = GetMidnightOfFutureDayInMinutes(pSoldier->iTotalContractLength) +
+    pSoldier->iEndofContractTime = GetFutureMidnightInMinutes(pSoldier->iTotalContractLength) +
                                    (GetHourWhenContractDone(pSoldier) * 60);
   } else {
     // set when the merc's contract is finished ( + 1 cause it takes a day for the merc to arrive )
-    pSoldier->iEndofContractTime =
-        GetMidnightOfFutureDayInMinutes(1 + pSoldier->iTotalContractLength) +
-        (GetHourWhenContractDone(pSoldier) * 60);
+    pSoldier->iEndofContractTime = GetFutureMidnightInMinutes(1 + pSoldier->iTotalContractLength) +
+                                   (GetHourWhenContractDone(pSoldier) * 60);
   }
 
   // Set the time and ID of the last hired merc will arrive
@@ -210,11 +209,11 @@ int8_t HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
     if (pHireMerc->iTotalContractLength == 1) {
       // pSoldier->iTotalContractCharge = gMercProfiles[ GetSolProfile(pSoldier) ].sSalary;
       pSoldier->bTypeOfLastContract = CONTRACT_EXTEND_1_DAY;
-      pSoldier->iTimeCanSignElsewhere = GetWorldTotalMin();
+      pSoldier->iTimeCanSignElsewhere = GetGameTimeInMin();
     } else if (pHireMerc->iTotalContractLength == 7) {
       // pSoldier->iTotalContractCharge = gMercProfiles[ GetSolProfile(pSoldier) ].uiWeeklySalary;
       pSoldier->bTypeOfLastContract = CONTRACT_EXTEND_1_WEEK;
-      pSoldier->iTimeCanSignElsewhere = GetWorldTotalMin();
+      pSoldier->iTimeCanSignElsewhere = GetGameTimeInMin();
     } else if (pHireMerc->iTotalContractLength == 14) {
       // pSoldier->iTotalContractCharge = gMercProfiles[ GetSolProfile(pSoldier) ].uiBiWeeklySalary;
       pSoldier->bTypeOfLastContract = CONTRACT_EXTEND_2_WEEK;
@@ -233,9 +232,9 @@ int8_t HireMerc(MERC_HIRE_STRUCT *pHireMerc) {
     gMercProfiles[GetSolProfile(pSoldier)].iMercMercContractLength = 1;
 
     // Set starting conditions for the merc
-    pSoldier->iStartContractTime = GetWorldDay();
+    pSoldier->iStartContractTime = GetGameTimeInDays();
 
-    AddHistoryToPlayersLog(HISTORY_HIRED_MERC_FROM_MERC, ubCurrentSoldier, GetWorldTotalMin(), -1,
+    AddHistoryToPlayersLog(HISTORY_HIRED_MERC_FROM_MERC, ubCurrentSoldier, GetGameTimeInMin(), -1,
                            -1);
   }
   // If the merc is from IMP, (ie a player character)
@@ -345,10 +344,10 @@ void MercArrivesCallback(uint8_t ubSoldierID) {
   pMerc->bMercStatus = (uint8_t)pSoldier->iTotalContractLength;
 
   // remember when excatly he ARRIVED in Arulco, in case he gets fired early
-  pSoldier->uiTimeOfLastContractUpdate = GetWorldTotalMin();
+  pSoldier->uiTimeOfLastContractUpdate = GetGameTimeInMin();
 
   // set when the merc's contract is finished
-  pSoldier->iEndofContractTime = GetMidnightOfFutureDayInMinutes(pSoldier->iTotalContractLength) +
+  pSoldier->iEndofContractTime = GetFutureMidnightInMinutes(pSoldier->iTotalContractLength) +
                                  (GetHourWhenContractDone(pSoldier) * 60);
 
   // Do initial check for bad items
@@ -358,7 +357,7 @@ void MercArrivesCallback(uint8_t ubSoldierID) {
       // Randomly anytime between 9:00, and 10:00
       uiTimeOfPost = 540 + Random(660);
 
-      if (GetWorldMinutesInDay() < uiTimeOfPost) {
+      if (GetMinutesSinceDayStart() < uiTimeOfPost) {
         AddSameDayStrategicEvent(EVENT_MERC_COMPLAIN_EQUIPMENT, uiTimeOfPost,
                                  GetSolProfile(pSoldier));
       }
@@ -478,7 +477,7 @@ uint32_t GetMercArrivalTimeOfDay() {
   // Pick a time...
 
   // First get the current time of day.....
-  uiCurrHour = GetWorldHour();
+  uiCurrHour = GetGameClockHour();
 
   // Subtract the min time for any arrival....
   uiMinHour = uiCurrHour + MIN_FLIGHT_PREP_TIME;
@@ -488,17 +487,17 @@ uint32_t GetMercArrivalTimeOfDay() {
   if ((uiCurrHour) > 13)  // ( > 1:00 pm - too bad )
   {
     // 7:30 flight....
-    return (GetMidnightOfFutureDayInMinutes(1) + MERC_ARRIVE_TIME_SLOT_1);
+    return (GetFutureMidnightInMinutes(1) + MERC_ARRIVE_TIME_SLOT_1);
   }
 
   // Well, now we can handle flights all in one day....
   // Find next possible flight
   if (uiMinHour <= 7) {
-    return (GetWorldDayInMinutes() + MERC_ARRIVE_TIME_SLOT_1);  // 7:30 am
+    return (GetGameTimeInDays() * 24 * 60 + MERC_ARRIVE_TIME_SLOT_1);  // 7:30 am
   } else if (uiMinHour <= 13) {
-    return (GetWorldDayInMinutes() + MERC_ARRIVE_TIME_SLOT_2);  // 1:30 pm
+    return (GetGameTimeInDays() * 24 * 60 + MERC_ARRIVE_TIME_SLOT_2);  // 1:30 pm
   } else {
-    return (GetWorldDayInMinutes() + MERC_ARRIVE_TIME_SLOT_3);  // 7:30 pm
+    return (GetGameTimeInDays() * 24 * 60 + MERC_ARRIVE_TIME_SLOT_3);  // 7:30 pm
   }
 }
 
@@ -540,23 +539,23 @@ int16_t StrategicPythSpacesAway(int16_t sOrigin, int16_t sDest) {
 // is valid
 // if there are enemies present, it's invalid
 // if so, search around for nearest non-occupied sector.
-void CheckForValidArrivalSector() {
+static void CheckForValidArrivalSector() {
   int16_t sTop, sBottom;
   int16_t sLeft, sRight;
   int16_t cnt1, cnt2, sGoodX, sGoodY;
   uint8_t ubRadius = 4;
   int32_t leftmost;
-  int16_t sSectorGridNo, sSectorGridNo2;
+  int16_t sSector, sSector2;
   int32_t uiRange, uiLowestRange = 999999;
   BOOLEAN fFound = FALSE;
   wchar_t sString[1024];
   wchar_t zShortTownIDString1[50];
   wchar_t zShortTownIDString2[50];
 
-  sSectorGridNo = gsMercArriveSectorX + (MAP_WORLD_X * gsMercArriveSectorY);
+  sSector = GetSectorID16(gsMercArriveSectorX, gsMercArriveSectorY);
 
   // Check if valid...
-  if (!StrategicMap[sSectorGridNo].fEnemyControlled) {
+  if (!IsSectorEnemyControlled(gsMercArriveSectorX, gsMercArriveSectorY)) {
     return;
   }
 
@@ -570,16 +569,16 @@ void CheckForValidArrivalSector() {
   sRight = ubRadius;
 
   for (cnt1 = sBottom; cnt1 <= sTop; cnt1++) {
-    leftmost = ((sSectorGridNo + (MAP_WORLD_X * cnt1)) / MAP_WORLD_X) * MAP_WORLD_X;
+    leftmost = ((GetSectorID16((uint8_t)sSector, (uint8_t)cnt1)) / MAP_WORLD_X) * MAP_WORLD_X;
 
     for (cnt2 = sLeft; cnt2 <= sRight; cnt2++) {
-      sSectorGridNo2 = sSectorGridNo + (MAP_WORLD_X * cnt1) + cnt2;
+      sSector2 = GetSectorID16((uint8_t)sSector, (uint8_t)cnt1) + cnt2;
 
-      if (sSectorGridNo2 >= 1 && sSectorGridNo2 < ((MAP_WORLD_X - 1) * (MAP_WORLD_X - 1)) &&
-          sSectorGridNo2 >= leftmost && sSectorGridNo2 < (leftmost + MAP_WORLD_X)) {
-        if (!StrategicMap[sSectorGridNo2].fEnemyControlled &&
-            !StrategicMap[sSectorGridNo2].fEnemyAirControlled) {
-          uiRange = StrategicPythSpacesAway(sSectorGridNo2, sSectorGridNo);
+      if (sSector2 >= 1 && sSector2 < ((MAP_WORLD_X - 1) * (MAP_WORLD_X - 1)) &&
+          sSector2 >= leftmost && sSector2 < (leftmost + MAP_WORLD_X)) {
+        if (!IsSectorEnemyControlled(SectorID16_X(sSector2), SectorID16_Y(sSector2)) &&
+            !IsSectorEnemyAirControlled(SectorID16_X(sSector2), SectorID16_Y(sSector2))) {
+          uiRange = StrategicPythSpacesAway(sSector2, sSector);
 
           if (uiRange < uiLowestRange) {
             sGoodY = cnt1;

@@ -9,10 +9,9 @@
 #include <string.h>
 
 #include "JAScreens.h"
-#include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/HImage.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/WCheck.h"
 #include "SysGlobals.h"
 #include "Tactical/AnimationControl.h"
@@ -22,6 +21,7 @@
 #include "TileEngine/WorldMan.h"
 #include "Utils/DebugControl.h"
 #include "Utils/Utilities.h"
+#include "rust_fileman.h"
 
 #ifdef __GCC
 #pragma GCC diagnostic push
@@ -4173,7 +4173,9 @@ BOOLEAN InitAnimationSystem() {
   char sFilename[50];
   struct STRUCTURE_FILE_REF *pStructureFileRef;
 
-  CHECKF(LoadAnimationStateInstructions());
+  if (!(LoadAnimationStateInstructions())) {
+    return FALSE;
+  }
 
   InitAnimationSurfacesPerBodytype();
 
@@ -4186,7 +4188,7 @@ BOOLEAN InitAnimationSystem() {
     for (cnt2 = 0; cnt2 < NUM_STRUCT_IDS; cnt2++) {
       strcpy(sFilename, gAnimStructureDatabase[cnt1][cnt2].Filename);
 
-      if (FileMan_Exists(sFilename)) {
+      if (File_Exists(sFilename)) {
         pStructureFileRef = LoadStructureFile(sFilename);
         if (pStructureFileRef == NULL) {
           SET_ERROR("Animation structure file load failed - %s", sFilename);
@@ -4269,7 +4271,9 @@ BOOLEAN LoadAnimationSurface(uint16_t usSoldierID, uint16_t usSurfaceIndex, uint
   struct AuxObjectData *pAuxData;
 
   // Check for valid surface
-  CHECKF(usSurfaceIndex < NUMANIMATIONSURFACETYPES);
+  if (!(usSurfaceIndex < NUMANIMATIONSURFACETYPES)) {
+    return FALSE;
+  }
 
   // Check if surface is loaded
   if (gAnimSurfaceDatabase[usSurfaceIndex].hVideoObject != NULL) {
@@ -4278,9 +4282,8 @@ BOOLEAN LoadAnimationSurface(uint16_t usSoldierID, uint16_t usSurfaceIndex, uint
 
   } else {
     // Load into memory
-    VOBJECT_DESC VObjectDesc;
     struct VObject *hVObject;
-    HIMAGE hImage;
+    struct Image *hImage;
     char sFilename[48];
     struct STRUCTURE_FILE_REF *pStructureFileRef;
 
@@ -4289,18 +4292,14 @@ BOOLEAN LoadAnimationSurface(uint16_t usSoldierID, uint16_t usSurfaceIndex, uint
     sprintf(gSystemDebugStr, "Cache Load");
 
     // Create video object
-    FilenameForBPP(gAnimSurfaceDatabase[usSurfaceIndex].Filename, sFilename);
-    hImage =
-        CreateImage(/*gAnimSurfaceDatabase[ usSurfaceIndex ].Filename*/ sFilename, IMAGE_ALLDATA);
+    CopyFilename(gAnimSurfaceDatabase[usSurfaceIndex].Filename, sFilename);
+    hImage = CreateImage(sFilename, true);
 
     if (hImage == NULL) {
       return (SET_ERROR("Error: Could not load animation file %s", sFilename));
     }
 
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMHIMAGE;
-    VObjectDesc.hImage = hImage;
-
-    hVObject = CreateVideoObject(&VObjectDesc);
+    hVObject = CreateVObjectFromImage(hImage);
 
     if (hVObject == NULL) {
       // Report error
@@ -4311,9 +4310,9 @@ BOOLEAN LoadAnimationSurface(uint16_t usSoldierID, uint16_t usSurfaceIndex, uint
     }
 
     // Get aux data
-    if (hImage->uiAppDataSize == hVObject->usNumberOfObjects * sizeof(struct AuxObjectData)) {
+    if (hImage->app_data_size == hVObject->number_of_subimages * sizeof(struct AuxObjectData)) {
       // Valid auxiliary data, so get # od frames from data
-      pAuxData = (struct AuxObjectData *)hImage->pAppData;
+      pAuxData = (struct AuxObjectData *)hImage->app_data;
 
       gAnimSurfaceDatabase[usSurfaceIndex].uiNumFramesPerDir = pAuxData->ubNumberOfFrames;
 
@@ -4354,7 +4353,7 @@ BOOLEAN LoadAnimationSurface(uint16_t usSoldierID, uint16_t usSurfaceIndex, uint
     // Determine if we have a problem with #frames + directions ( ie mismatch )
     if ((gAnimSurfaceDatabase[usSurfaceIndex].uiNumDirections *
          gAnimSurfaceDatabase[usSurfaceIndex].uiNumFramesPerDir) !=
-        gAnimSurfaceDatabase[usSurfaceIndex].hVideoObject->usNumberOfObjects) {
+        gAnimSurfaceDatabase[usSurfaceIndex].hVideoObject->number_of_subimages) {
       AnimDebugMsg(
           String("Surface Database: WARNING!!! Surface %d has #frames mismatch.", usSurfaceIndex));
     }
@@ -4423,13 +4422,13 @@ void ClearAnimationSurfacesUsageHistory(uint16_t usSoldierID) {
 
 BOOLEAN LoadAnimationProfiles() {
   //	FILE *			pInput;
-  HWFILE pInput;
+  FileID pInput = FILE_ID_ERR;
   int32_t iProfileCount, iDirectionCount, iTileCount;
   struct ANIM_PROF_DIR *pProfileDirs;
   uint32_t uiBytesRead;
 
   //	pInput = fopen( ANIMPROFILEFILENAME, "rb" );
-  pInput = FileMan_Open(ANIMPROFILEFILENAME, FILE_ACCESS_READ, FALSE);
+  pInput = File_OpenForReading(ANIMPROFILEFILENAME);
 
   if (!pInput) {
     return (FALSE);
@@ -4437,7 +4436,7 @@ BOOLEAN LoadAnimationProfiles() {
 
   // Writeout profile data!
   //	if ( fread( &gubNumAnimProfiles, sizeof( gubNumAnimProfiles ), 1, pInput ) != 1 )
-  if (FileMan_Read(pInput, &gubNumAnimProfiles, sizeof(gubNumAnimProfiles), &uiBytesRead) != 1) {
+  if (File_Read(pInput, &gubNumAnimProfiles, sizeof(gubNumAnimProfiles), &uiBytesRead) != 1) {
     return (FALSE);
   }
 
@@ -4452,9 +4451,10 @@ BOOLEAN LoadAnimationProfiles() {
       pProfileDirs = &(gpAnimProfiles[iProfileCount].Dirs[iDirectionCount]);
 
       // Read # tiles
-      //			if ( fread( &pProfileDirs->ubNumTiles, sizeof( uint8_t ), 1, pInput )
+      //			if ( fread( &pProfileDirs->ubNumTiles, sizeof( uint8_t ), 1, pInput
+      //)
       //!= 1 )
-      if (FileMan_Read(pInput, &pProfileDirs->ubNumTiles, sizeof(uint8_t), &uiBytesRead) != 1) {
+      if (File_Read(pInput, &pProfileDirs->ubNumTiles, sizeof(uint8_t), &uiBytesRead) != 1) {
         return (FALSE);
       }
 
@@ -4466,22 +4466,22 @@ BOOLEAN LoadAnimationProfiles() {
       for (iTileCount = 0; iTileCount < pProfileDirs->ubNumTiles; iTileCount++) {
         //				if ( fread( &pProfileDirs->pTiles[ iTileCount ].usTileFlags,
         // sizeof( uint16_t ), 1, pInput ) != 1 )
-        if (FileMan_Read(pInput, &pProfileDirs->pTiles[iTileCount].usTileFlags, sizeof(uint16_t),
-                         &uiBytesRead) != 1) {
+        if (File_Read(pInput, &pProfileDirs->pTiles[iTileCount].usTileFlags, sizeof(uint16_t),
+                      &uiBytesRead) != 1) {
           return (FALSE);
         }
 
         //				if ( fread( &pProfileDirs->pTiles[ iTileCount ].bTileX,
         // sizeof( int8_t ), 1, pInput ) != 1 )
-        if (FileMan_Read(pInput, &pProfileDirs->pTiles[iTileCount].bTileX, sizeof(int8_t),
-                         &uiBytesRead) != 1) {
+        if (File_Read(pInput, &pProfileDirs->pTiles[iTileCount].bTileX, sizeof(int8_t),
+                      &uiBytesRead) != 1) {
           return (FALSE);
         }
 
         //				if ( fread( &pProfileDirs->pTiles[ iTileCount ].bTileY,
         // sizeof( int8_t ), 1, pInput ) != 1 )
-        if (FileMan_Read(pInput, &pProfileDirs->pTiles[iTileCount].bTileY, sizeof(int8_t),
-                         &uiBytesRead) != 1) {
+        if (File_Read(pInput, &pProfileDirs->pTiles[iTileCount].bTileY, sizeof(int8_t),
+                      &uiBytesRead) != 1) {
           return (FALSE);
         }
       }
@@ -4489,7 +4489,7 @@ BOOLEAN LoadAnimationProfiles() {
   }
 
   //	fclose( pInput );
-  FileMan_Close(pInput);
+  File_Close(pInput);
 
   return (TRUE);
 }

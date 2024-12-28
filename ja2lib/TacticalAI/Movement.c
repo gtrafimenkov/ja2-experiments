@@ -2,6 +2,7 @@
 // This file contains code derived from the code released under the terms
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
+#include "SGP/Debug.h"
 #include "Soldier.h"
 #include "Strategic/MapScreen.h"
 #include "Strategic/Strategic.h"
@@ -357,7 +358,7 @@ int8_t RandomPointPatrolAI(struct SOLDIERTYPE *pSoldier) {
 }
 
 int16_t InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, int16_t sDesGrid,
-                                       int8_t bReserveAPs, int8_t bAction, int8_t fFlags) {
+                                         int8_t bReserveAPs, int8_t bAction, int8_t fFlags) {
   int16_t sLoop, sAPCost;
   int16_t sTempDest, sGoToGrid;
   uint16_t sOrigin;
@@ -491,7 +492,8 @@ int16_t InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, int16_t s
   for (sLoop = 0; sLoop < (pSoldier->usPathDataSize - pSoldier->usPathIndex); sLoop++) {
     // what is the next gridno in the path?
 
-    // sTempDest = NewGridNo( sGoToGrid,DirectionInc( (int16_t) (pSoldier->usPathingData[sLoop] + 1) )
+    // sTempDest = NewGridNo( sGoToGrid,DirectionInc( (int16_t) (pSoldier->usPathingData[sLoop] + 1)
+    // )
     // );
     sTempDest = NewGridNo(sGoToGrid, DirectionInc((int16_t)(pSoldier->usPathingData[sLoop])));
     // NumMessage("sTempDest = ",sTempDest);
@@ -551,9 +553,9 @@ int16_t InternalGoAsFarAsPossibleTowards(struct SOLDIERTYPE *pSoldier, int16_t s
       }
 
       // ATE: Direction here?
-      sAPCost += EstimateActionPointCost(pSoldier, sTempDest, (int8_t)pSoldier->usPathingData[sLoop],
-                                         pSoldier->usUIMovementMode, (int8_t)sLoop,
-                                         (int8_t)pSoldier->usPathDataSize);
+      sAPCost += EstimateActionPointCost(
+          pSoldier, sTempDest, (int8_t)pSoldier->usPathingData[sLoop], pSoldier->usUIMovementMode,
+          (int8_t)sLoop, (int8_t)pSoldier->usPathDataSize);
 
       bAPsLeft = pSoldier->bActionPoints - sAPCost;
     }
@@ -642,7 +644,7 @@ void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier) {
   } else {
     CancelAIAction(pSoldier, DONTFORCE);
 #ifdef TESTAI
-    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2AI, DBG_INFO,
              String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", GetSolID(pSoldier)));
 #endif
   }
@@ -661,13 +663,13 @@ void SoldierTriesToContinueAlongPath(struct SOLDIERTYPE *pSoldier) {
     // maybe we didn't actually start the action last turn...
     pSoldier->bActionInProgress = TRUE;
 #ifdef TESTAI
-    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2AI, DBG_INFO,
              String("Soldier (%d) continues along path", GetSolID(pSoldier)));
 #endif
   } else {
     CancelAIAction(pSoldier, DONTFORCE);
 #ifdef TESTAI
-    DebugMsg(TOPIC_JA2AI, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2AI, DBG_INFO,
              String("Soldier (%d) HAS NOT ENOUGH AP to continue along path", GetSolID(pSoldier)));
 #endif
   }

@@ -49,14 +49,12 @@ uint32_t guiCancelBoxButton;
 void GameInitMercsNoAccount() {}
 
 BOOLEAN EnterMercsNoAccount() {
-  VOBJECT_DESC VObjectDesc;
-
   InitMercBackGround();
 
   // load the Account box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\NoAccountBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiNoAccountImage));
+  if (!AddVObjectFromFile("LAPTOP\\NoAccountBox.sti", &guiNoAccountImage)) {
+    return FALSE;
+  }
 
   // Open Accouint button
   guiOpenAccountBoxButtonImage = LoadButtonImage("LAPTOP\\BigButtons.sti", -1, 0, -1, 1, -1);
@@ -101,8 +99,7 @@ void RenderMercsNoAccount() {
 
   // Title
   GetVideoObject(&hPixHandle, guiNoAccountImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, MERC_NO_ACCOUNT_IMAGE_X, MERC_NO_ACCOUNT_IMAGE_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, MERC_NO_ACCOUNT_IMAGE_X, MERC_NO_ACCOUNT_IMAGE_Y);
 
   // Display the sentence
   DisplayWrappedString(MERC_NA_SENTENCE_X, MERC_NA_SENTENCE_Y, MERC_NA_SENTENCE_WIDTH, 2,

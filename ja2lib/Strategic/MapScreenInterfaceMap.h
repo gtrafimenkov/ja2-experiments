@@ -18,7 +18,6 @@ void DrawMapIndexBigMap(BOOLEAN fSelectedCursorIsYellow);
 uint32_t DrawMap(void);
 
 void GetScreenXYFromMapXY(uint8_t sMapX, uint8_t sMapY, int16_t *psX, int16_t *psY);
-void GetScreenXYFromMapXYStationary(uint8_t sMapX, uint8_t sMapY, int16_t *psX, int16_t *psY);
 
 BOOLEAN InitializePalettesForMap(void);
 void ShutDownPalettesForMap(void);
@@ -36,10 +35,12 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
 void DisplayPathArrows(uint16_t usCharNum, struct VObject *hMapHandle);
 
 // restore backgrounds for arrows
-void RestoreArrowBackgroundsForTrace(int32_t iArrow, int32_t iArrowX, int32_t iArrowY, BOOLEAN fZoom);
+void RestoreArrowBackgroundsForTrace(int32_t iArrow, int32_t iArrowX, int32_t iArrowY,
+                                     BOOLEAN fZoom);
 
 // build path for character
-void PlotPathForCharacter(struct SOLDIERTYPE *pCharacter, uint8_t sX, uint8_t sY, BOOLEAN fTacticalTraversal);
+void PlotPathForCharacter(struct SOLDIERTYPE *pCharacter, uint8_t sX, uint8_t sY,
+                          BOOLEAN fTacticalTraversal);
 
 // build temp path for character
 void PlotATemporaryPathForCharacter(struct SOLDIERTYPE *pCharacter, uint8_t sX, uint8_t sY);
@@ -51,7 +52,8 @@ void DisplayHelicopterPath(void);
 void DisplayHelicopterTempPath(void);
 
 // clear path after this sector
-uint32_t ClearPathAfterThisSectorForCharacter(struct SOLDIERTYPE *pCharacter, uint8_t sX, uint8_t sY);
+uint32_t ClearPathAfterThisSectorForCharacter(struct SOLDIERTYPE *pCharacter, uint8_t sX,
+                                              uint8_t sY);
 
 // cancel path : clear the path completely and gives player feedback message that the route was
 // canceled
@@ -102,7 +104,8 @@ BOOLEAN LoadMilitiaPopUpBox(void);
 void RemoveMilitiaPopUpBox(void);
 
 // check if anyone left behind, if not, move selected cursor along with movement group
-// void CheckIfAnyoneLeftInSector( int16_t sX, int16_t sY, int16_t sNewX, int16_t sNewY, int8_t bZ );
+// void CheckIfAnyoneLeftInSector( int16_t sX, int16_t sY, int16_t sNewX, int16_t sNewY, int8_t bZ
+// );
 
 // create destroy
 void CreateDestroyMilitiaPopUPRegions(void);
@@ -157,9 +160,6 @@ enum {
 #define MAP_GRID_ZOOM_X MAP_GRID_X * 2
 #define MAP_GRID_ZOOM_Y MAP_GRID_Y * 2
 
-// number of units wide
-#define WORLD_MAP_X 18
-
 // dirty regions for the map
 #define DMAP_GRID_X (MAP_GRID_X + 1)
 #define DMAP_GRID_Y (MAP_GRID_Y + 1)
@@ -194,9 +194,6 @@ extern int16_t sElitesOnCursor;
 extern uint8_t gsHighlightSectorX;
 extern uint8_t gsHighlightSectorY;
 
-// the big map
-extern uint32_t guiBIGMAP;
-
 // the orta icon
 extern uint32_t guiORTAICON;
 
@@ -213,7 +210,7 @@ extern uint32_t guiCHARBETWEENSECTORICONS;
 extern uint32_t guiCHARBETWEENSECTORICONSCLOSE;
 
 // the viewable map bound region
-extern SGPRect MapScreenRect;
+extern struct GRect MapScreenRect;
 
 // draw temp path
 extern BOOLEAN fDrawTempHeliPath;
@@ -237,7 +234,7 @@ extern uint32_t guiMAPCURSORS;
 extern BOOLEAN fTempPathAlreadyDrawn;
 
 // map view region clipping rect
-extern SGPRect MapScreenRect;
+extern struct GRect MapScreenRect;
 
 // the map border eta pop up
 extern uint32_t guiMapBorderEtaPopUp;

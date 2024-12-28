@@ -6,6 +6,7 @@
 #define __CIV_QUOTES_H
 
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 struct SOLDIERTYPE;
 
@@ -82,8 +83,8 @@ int8_t GetCivType(struct SOLDIERTYPE *pCiv);
 
 void HandleCivQuote();
 
-BOOLEAN SaveCivQuotesToSaveGameFile(HWFILE hFile);
-BOOLEAN LoadCivQuotesFromLoadGameFile(HWFILE hFile);
+BOOLEAN SaveCivQuotesToSaveGameFile(FileID hFile);
+BOOLEAN LoadCivQuotesFromLoadGameFile(FileID hFile);
 
 BOOLEAN ShutDownQuoteBoxIfActive();
 

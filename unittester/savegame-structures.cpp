@@ -16,4 +16,3 @@ extern "C" {
 // used for saving and loading the state have not changed.
 
 TEST(SaveGameStructures, SectorInfo) { EXPECT_EQ(sizeof(SECTORINFO), 116); }
-TEST(SaveGameStructures, StrategicMap) { EXPECT_EQ(sizeof(StrategicMap), 41 * 18 * 18); }

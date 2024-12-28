@@ -8,6 +8,7 @@
 #include "Laptop/StoreInventory.h"
 #include "SGP/Types.h"
 #include "Tactical/ItemTypes.h"
+#include "rust_fileman.h"
 
 #define MAX_BOOKMARKS 20
 
@@ -58,7 +59,7 @@ typedef struct {
   BOOLEAN fVisitedBookmarkAlready[20];  // have we visitied this site already?
   int32_t iBookMarkList[MAX_BOOKMARKS];
 
-  int32_t iCurrentBalance;  // current players balance
+  int32_t __moved_to_rust_iCurrentBalance;  // current players balance
 
   // IMP Information
   BOOLEAN fIMPCompletedFlag;       // Has the player Completed the IMP process
@@ -101,10 +102,6 @@ typedef struct {
   BOOLEAN fSpeckSaidFloMarriedCousinQuote;
   BOOLEAN fHasAMercDiedAtMercSite;
 
-#ifdef CRIPPLED_VERSION
-  uint8_t ubCrippleFiller[20];
-#endif
-
   int8_t gbNumDaysTillFirstMercArrives;
   int8_t gbNumDaysTillSecondMercArrives;
   int8_t gbNumDaysTillThirdMercArrives;
@@ -144,7 +141,7 @@ extern LaptopSaveInfoStruct LaptopSaveInfo;
 extern BobbyRayPurchaseStruct BobbyRayPurchases[MAX_PURCHASE_AMOUNT];
 
 void LaptopSaveVariablesInit();
-BOOLEAN LoadLaptopInfoFromSavedGame(HWFILE hFile);
-BOOLEAN SaveLaptopInfoToSavedGame(HWFILE hFile);
+BOOLEAN LoadLaptopInfoFromSavedGame(FileID hFile);
+BOOLEAN SaveLaptopInfoToSavedGame(FileID hFile);
 
 #endif

@@ -2,6 +2,7 @@
 // This file contains code derived from the code released under the terms
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
+#include "SGP/Debug.h"
 #include "SGP/Types.h"
 #include "Soldier.h"
 #include "Tactical/Items.h"
@@ -824,8 +825,8 @@ int8_t CreatureDecideActionRed(struct SOLDIERTYPE *pSoldier, uint8_t ubUnconscio
 
           if (pSoldier->bAttitude == DEFENSIVE) iChance += 25;
 
-          // if ( (int16_t)PreRandom(100) < iChance && InternalIsValidStance( pSoldier, ubOpponentDir,
-          // ANIM_STAND ) )
+          // if ( (int16_t)PreRandom(100) < iChance && InternalIsValidStance( pSoldier,
+          // ubOpponentDir, ANIM_STAND ) )
           if ((int16_t)PreRandom(100) < iChance && ValidCreatureTurn(pSoldier, ubOpponentDir)) {
             pSoldier->usActionData = ubOpponentDir;
 

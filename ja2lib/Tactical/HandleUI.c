@@ -18,7 +18,6 @@
 #include "SGP/CursorControl.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/Input.h"
 #include "SGP/Line.h"
 #include "SGP/MouseSystem.h"
@@ -86,6 +85,8 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
+#include "rust_fileman.h"
+#include "rust_geometry.h"
 
 #define MAX_ON_DUTY_SOLDIERS 6
 
@@ -226,8 +227,8 @@ void SetConfirmMovementModeCursor(struct SOLDIERTYPE *pSoldier, BOOLEAN fFromMov
 void SetUIbasedOnStance(struct SOLDIERTYPE *pSoldier, int8_t bNewStance);
 int8_t DrawUIMovementPath(struct SOLDIERTYPE *pSoldier, uint16_t usMapPos, uint32_t uiFlags);
 int8_t UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, int16_t usMapPos,
-                                               BOOLEAN fUseOKCursor,
-                                               BOOLEAN fItemsOnlyIfOnIntTiles);
+                                                 BOOLEAN fUseOKCursor,
+                                                 BOOLEAN fItemsOnlyIfOnIntTiles);
 
 extern void EVENT_InternalSetSoldierDesiredDirection(struct SOLDIERTYPE *pSoldier,
                                                      uint16_t usNewDirection, BOOLEAN fInitalMove,
@@ -534,7 +535,7 @@ BOOLEAN gUITargetShotWaiting = FALSE;
 uint16_t gsUITargetShotGridNo = NOWHERE;
 BOOLEAN gUIUseReverse = FALSE;
 
-SGPRect gRubberBandRect = {0, 0, 0, 0};
+struct GRect gRubberBandRect = {0, 0, 0, 0};
 BOOLEAN gRubberBandActive = FALSE;
 BOOLEAN gfIgnoreOnSelectedGuy = FALSE;
 BOOLEAN gfViewPortAdjustedForSouth = FALSE;
@@ -657,8 +658,7 @@ uint32_t HandleTacticalUI(void) {
 
       // Decrease global busy  counter...
       gTacticalStatus.ubAttackBusyCount = 0;
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-               String("Setting attack busy count to 0 due to ending AI lock"));
+      DebugMsg(TOPIC_JA2, DBG_INFO, String("Setting attack busy count to 0 due to ending AI lock"));
 
       guiPendingOverrideEvent = LU_ENDUILOCK;
       UIHandleLUIEndLock(NULL);
@@ -1128,7 +1128,8 @@ uint32_t UIHandleNewBadMerc(UI_EVENT *pUIEvent) {
     // Add soldier strategic info, so it doesn't break the counters!
     if (pSoldier) {
       if (!gbWorldSectorZ) {
-        SECTORINFO *pSector = &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
+        SECTORINFO *pSector =
+            &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
         switch (pSoldier->ubSoldierClass) {
           case SOLDIER_CLASS_ADMINISTRATOR:
             pSector->ubNumAdmins++;
@@ -1263,8 +1264,8 @@ uint32_t UIHandleChangeLevel(UI_EVENT *pUIEvent) {
   return (GAME_SCREEN);
 }
 
-extern void InternalSelectSoldier(uint16_t usSoldierID, BOOLEAN fAcknowledge, BOOLEAN fForceReselect,
-                                  BOOLEAN fFromUI);
+extern void InternalSelectSoldier(uint16_t usSoldierID, BOOLEAN fAcknowledge,
+                                  BOOLEAN fForceReselect, BOOLEAN fFromUI);
 
 uint32_t UIHandleSelectMerc(UI_EVENT *pUIEvent) {
   int32_t iCurrentSquad;
@@ -1319,7 +1320,8 @@ uint32_t UIHandleMOnTerrain(UI_EVENT *pUIEvent) {
   // CHECK IF WE'RE ON A GUY ( EITHER SELECTED, OURS, OR THEIRS
   if (!UIHandleOnMerc(TRUE)) {
     // Are we over items...
-    if (GetItemPool(usMapPos, &pItemPool, (uint8_t)gsInterfaceLevel) && ITEMPOOL_VISIBLE(pItemPool)) {
+    if (GetItemPool(usMapPos, &pItemPool, (uint8_t)gsInterfaceLevel) &&
+        ITEMPOOL_VISIBLE(pItemPool)) {
       // Are we already in...
       if (fOverItems) {
         // Is this the same level & gridno...
@@ -3009,8 +3011,8 @@ void GetCursorMovementFlags(uint32_t *puiCursorFlags) {
   uiSameFrameCursorFlags = (*puiCursorFlags);
 }
 
-BOOLEAN HandleUIMovementCursor(struct SOLDIERTYPE *pSoldier, uint32_t uiCursorFlags, uint16_t usMapPos,
-                               uint32_t uiFlags) {
+BOOLEAN HandleUIMovementCursor(struct SOLDIERTYPE *pSoldier, uint32_t uiCursorFlags,
+                               uint16_t usMapPos, uint32_t uiFlags) {
   BOOLEAN fSetCursor = FALSE;
   static uint16_t usTargetID = NOBODY;
   static BOOLEAN fTargetFound = FALSE;
@@ -4035,7 +4037,7 @@ uint32_t UIHandleLUIBeginLock(UI_EVENT *pUIEvent) {
 
     // UnPause time!
     PauseGame();
-    LockPauseState(16);
+    LockPause();
   }
 
   return (GAME_SCREEN);
@@ -4064,7 +4066,7 @@ uint32_t UIHandleLUIEndLock(UI_EVENT *pUIEvent) {
     // ATE: Only if NOT in conversation!
     if (!(gTacticalStatus.uiFlags & ENGAGED_IN_CONV)) {
       // UnPause time!
-      UnLockPauseState();
+      UnlockPause();
       UnPauseGame();
     }
   }
@@ -4079,7 +4081,7 @@ void CheckForDisabledRegionRemove() {
     // Remove region
     MSYS_RemoveRegion(&gDisableRegion);
 
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
   }
 
@@ -4091,7 +4093,7 @@ void CheckForDisabledRegionRemove() {
     // Remove region
     MSYS_RemoveRegion(&gUserTurnRegion);
 
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
   }
 }
@@ -4308,7 +4310,7 @@ uint32_t UIHandleRubberBandOnTerrain(UI_EVENT *pUIEvent) {
   int32_t cnt;
   int16_t sScreenX, sScreenY;
   int32_t iTemp;
-  SGPRect aRect;
+  struct GRect aRect;
   BOOLEAN fAtLeastOne = FALSE;
 
   guiNewUICursor = NO_UICURSOR;
@@ -4477,7 +4479,7 @@ uint32_t UIHandleLABeginLockOurTurn(UI_EVENT *pUIEvent) {
 
     // Pause time!
     PauseGame();
-    LockPauseState(17);
+    LockPause();
   }
 
   return (GAME_SCREEN);
@@ -4508,7 +4510,7 @@ uint32_t UIHandleLAEndLockOurTurn(UI_EVENT *pUIEvent) {
     TurnOffTeamsMuzzleFlashes(gbPlayerNum);
 
     // UnPause time!
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
   }
 
@@ -4832,8 +4834,8 @@ void BeginDisplayTimedCursor(uint32_t uiCursorID, uint32_t uiDelay) {
 }
 
 int8_t UIHandleInteractiveTilesAndItemsOnTerrain(struct SOLDIERTYPE *pSoldier, int16_t usMapPos,
-                                               BOOLEAN fUseOKCursor,
-                                               BOOLEAN fItemsOnlyIfOnIntTiles) {
+                                                 BOOLEAN fUseOKCursor,
+                                                 BOOLEAN fItemsOnlyIfOnIntTiles) {
   struct ITEM_POOL *pItemPool;
   uint32_t uiCursorFlags;
   struct LEVELNODE *pIntTile;

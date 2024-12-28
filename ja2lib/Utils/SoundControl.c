@@ -168,52 +168,79 @@ char szSoundEffects[NUM_SAMPLES][255] = {
     "SOUNDS\\WEAPONS\\MORTAR FIRE 01.WAV",
 
     // FIREARMS
-    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_GLOCK17				9mm
-    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_GLOCK18				9mm
-    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_BERETTA92			9mm
-    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_BERETTA93			9mm
+    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_GLOCK17
+                                                    // 9mm
+    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_GLOCK18
+                                                    // 9mm
+    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_BERETTA92
+                                                    // 9mm
+    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_BERETTA93
+                                                    // 9mm
     "SOUNDS\\WEAPONS\\38 CALIBER.WAV",              //	S_SWSPECIAL			.38
-    "SOUNDS\\WEAPONS\\357 SINGLE SHOT.WAV",         //	S_BARRACUDA			.357
+    "SOUNDS\\WEAPONS\\357 SINGLE SHOT.WAV",         //	S_BARRACUDA
+                                                    //.357
     "SOUNDS\\WEAPONS\\357 SINGLE SHOT.WAV",         //	S_DESERTEAGLE		.357
-    "SOUNDS\\WEAPONS\\45 CALIBER SINGLE SHOT.WAV",  //	S_M1911					.45
-    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_MP5K					9mm
-    "SOUNDS\\WEAPONS\\45 CALIBER SINGLE SHOT.WAV",  //	S_MAC10					.45
-    "SOUNDS\\WEAPONS\\45 CALIBER SINGLE SHOT.WAV",  //	S_THOMPSON			.45
+    "SOUNDS\\WEAPONS\\45 CALIBER SINGLE SHOT.WAV",  //	S_M1911
+                                                    //.45
+    "SOUNDS\\WEAPONS\\9mm SINGLE SHOT.WAV",         //	S_MP5K
+                                                    // 9mm
+    "SOUNDS\\WEAPONS\\45 CALIBER SINGLE SHOT.WAV",  //	S_MAC10
+                                                    //.45
+    "SOUNDS\\WEAPONS\\45 CALIBER SINGLE SHOT.WAV",  //	S_THOMPSON
+                                                    //.45
     "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_COMMANDO			5.56
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_MP53					5.56?
-    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",        //	S_AKSU74				5.45
-    "SOUNDS\\WEAPONS\\5,7 SINGLE SHOT.WAV",         //	S_P90						5.7
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_TYPE85				7.62
-                                                    // WP
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_SKS						7.62
-                                                    // WP
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_DRAGUNOV			7.62 WP
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_M24						7.62
-                                                    // NATO
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_AUG
-                                                    // 5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_G41
-                                                    // 5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_RUGERMINI			5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_C7						5.56mm
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_FAMAS					5.56mm
-    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",        //	S_AK74					5.45mm
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_AKM						7.62mm
-                                                    // WP
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_M14						7.62mm
-                                                    // NATO
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_FNFAL					7.62mm
-                                                    // NATO
-    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",   //	S_G3A3					7.62mm
-                                                    // NATO
-    "SOUNDS\\WEAPONS\\4,7 SINGLE SHOT.WAV",         //	S_G11						4.7mm
-    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",     //	S_M870 SHOTGUN
-    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",     //	S_SPAS SHOTGUN
-    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",     //	S_CAWS SHOTGUN
-    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_FNMINI				5.56mm
-    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",        //	S_RPK74					5.45mm
-    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_21E						7.62mm
-    "SOUNDS\\WEAPONS\\KNIFE THROW SWOOSH.WAV",      //	KNIFE THROW
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",        //	S_MP53
+                                                    // 5.56?
+    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",        //	S_AKSU74
+                                                    // 5.45
+    "SOUNDS\\WEAPONS\\5,7 SINGLE SHOT.WAV",         //	S_P90
+                                                    // 5.7
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",     //	S_TYPE85
+                                                    // 7.62
+                                                 // WP
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",  //	S_SKS
+                                                 // 7.62
+                                                 // WP
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",    //	S_DRAGUNOV			7.62
+                                                   // WP
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_M24
+                                                   // 7.62
+                                                   // NATO
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_AUG
+                                                 // 5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_G41
+                                                 // 5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_RUGERMINI			5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_C7
+                                                 // 5.56mm
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_FAMAS
+                                                 // 5.56mm
+    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",     //	S_AK74
+                                                 // 5.45mm
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",  //	S_AKM
+                                                 // 7.62mm
+                                                 // WP
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_M14
+                                                   // 7.62mm
+                                                   // NATO
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_FNFAL
+                                                   // 7.62mm
+                                                   // NATO
+    "SOUNDS\\WEAPONS\\7,62 NATO SINGLE SHOT.WAV",  //	S_G3A3
+                                                   // 7.62mm
+                                                   // NATO
+    "SOUNDS\\WEAPONS\\4,7 SINGLE SHOT.WAV",      //	S_G11
+                                                 // 4.7mm
+    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",  //	S_M870 SHOTGUN
+    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",  //	S_SPAS SHOTGUN
+    "SOUNDS\\WEAPONS\\SHOTGUN SINGLE SHOT.WAV",  //	S_CAWS SHOTGUN
+    "SOUNDS\\WEAPONS\\5,56 SINGLE SHOT.WAV",     //	S_FNMINI
+                                                 // 5.56mm
+    "SOUNDS\\WEAPONS\\5,45 SINGLE SHOT.WAV",     //	S_RPK74
+                                                 // 5.45mm
+    "SOUNDS\\WEAPONS\\7,62 WP SINGLE SHOT.WAV",  //	S_21E
+                                                 // 7.62mm
+    "SOUNDS\\WEAPONS\\KNIFE THROW SWOOSH.WAV",   //	KNIFE THROW
     "SOUNDS\\WEAPONS\\TANK_CANNON.WAV",
     "SOUNDS\\WEAPONS\\BURSTTYPE1.WAV",
     "SOUNDS\\WEAPONS\\AUTOMAG SINGLE.WAV",
@@ -268,7 +295,8 @@ char szSoundEffects[NUM_SAMPLES][255] = {
     "SOUNDS\\ARMPIT.WAV",
     "SOUNDS\\CRACKING BACK.WAV",
 
-    "SOUNDS\\WEAPONS\\Auto Resolve Composite 02 (8-22).wav",  //  The FF sound in autoresolve
+    "SOUNDS\\WEAPONS\\Auto Resolve Composite 02 (8-22).wav",  //  The FF sound in
+                                                              //  autoresolve
                                                               //  interface
 
     "SOUNDS\\Email Alert 01.wav",
@@ -424,7 +452,8 @@ BOOLEAN ShutdownJA2Sound() {
   return (TRUE);
 }
 
-uint32_t PlayJA2Sample(uint32_t usNum, uint32_t usRate, uint32_t ubVolume, uint32_t ubLoops, uint32_t uiPan) {
+uint32_t PlayJA2Sample(uint32_t usNum, uint32_t usRate, uint32_t ubVolume, uint32_t ubLoops,
+                       uint32_t uiPan) {
   SOUNDPARMS spParms;
 
   memset(&spParms, 0xff, sizeof(SOUNDPARMS));
@@ -438,8 +467,8 @@ uint32_t PlayJA2Sample(uint32_t usNum, uint32_t usRate, uint32_t ubVolume, uint3
   return (SoundPlay(szSoundEffects[usNum], &spParms));
 }
 
-uint32_t PlayJA2StreamingSample(uint32_t usNum, uint32_t usRate, uint32_t ubVolume, uint32_t ubLoops,
-                              uint32_t uiPan) {
+uint32_t PlayJA2StreamingSample(uint32_t usNum, uint32_t usRate, uint32_t ubVolume,
+                                uint32_t ubLoops, uint32_t uiPan) {
   SOUNDPARMS spParms;
 
   memset(&spParms, 0xff, sizeof(SOUNDPARMS));
@@ -453,8 +482,8 @@ uint32_t PlayJA2StreamingSample(uint32_t usNum, uint32_t usRate, uint32_t ubVolu
   return (SoundPlayStreamedFile(szSoundEffects[usNum], &spParms));
 }
 
-uint32_t PlayJA2SampleFromFile(char* szFileName, uint32_t usRate, uint32_t ubVolume, uint32_t ubLoops,
-                             uint32_t uiPan) {
+uint32_t PlayJA2SampleFromFile(char *szFileName, uint32_t usRate, uint32_t ubVolume,
+                               uint32_t ubLoops, uint32_t uiPan) {
   // does the same thing as PlayJA2Sound, but one only has to pass the filename, not the index of
   // the sound array
 
@@ -471,9 +500,9 @@ uint32_t PlayJA2SampleFromFile(char* szFileName, uint32_t usRate, uint32_t ubVol
   return (SoundPlay(szFileName, &spParms));
 }
 
-uint32_t PlayJA2StreamingSampleFromFile(char* szFileName, uint32_t usRate, uint32_t ubVolume,
-                                      uint32_t ubLoops, uint32_t uiPan,
-                                      SOUND_STOP_CALLBACK EndsCallback) {
+uint32_t PlayJA2StreamingSampleFromFile(char *szFileName, uint32_t usRate, uint32_t ubVolume,
+                                        uint32_t ubLoops, uint32_t uiPan,
+                                        SOUND_STOP_CALLBACK EndsCallback) {
   // does the same thing as PlayJA2Sound, but one only has to pass the filename, not the index of
   // the sound array
 
@@ -518,7 +547,7 @@ uint32_t PlayJA2AmbientRandom(uint32_t usNum, uint32_t uiTimeMin, uint32_t uiTim
 }
 
 uint32_t PlaySoldierJA2Sample(uint16_t usID, uint32_t usNum, uint32_t usRate, uint32_t ubVolume,
-                            uint32_t ubLoops, uint32_t uiPan, BOOLEAN fCheck) {
+                              uint32_t ubLoops, uint32_t uiPan, BOOLEAN fCheck) {
   if (!(gTacticalStatus.uiFlags & LOADING_SAVED_GAME)) {
     // CHECK IF GUY IS ON SCREEN BEFORE PLAYING!
     if ((MercPtrs[usID]->bVisible != -1) || !fCheck) {

@@ -33,6 +33,7 @@
 #include "TileEngine/StructureInternals.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Message.h"
+#include "rust_civ_groups.h"
 
 extern BOOLEAN InternalIsValidStance(struct SOLDIERTYPE *pSoldier, int8_t bDirection,
                                      int8_t bNewStance);
@@ -1524,11 +1525,10 @@ int8_t DecideActionRed(struct SOLDIERTYPE *pSoldier, uint8_t ubUnconsciousOK) {
 #endif
   BOOLEAN fClimb;
   BOOLEAN fCivilian =
-      (PTR_CIVILIAN &&
-       (pSoldier->ubCivilianGroup == NON_CIV_GROUP ||
-        (pSoldier->bNeutral &&
-         gTacticalStatus.fCivGroupHostile[pSoldier->ubCivilianGroup] == CIV_GROUP_NEUTRAL) ||
-        (pSoldier->ubBodyType >= FATCIV && pSoldier->ubBodyType <= CRIPPLECIV)));
+      (PTR_CIVILIAN && (pSoldier->ubCivilianGroup == NON_CIV_GROUP ||
+                        (pSoldier->bNeutral &&
+                         GetCivGroupHostility(pSoldier->ubCivilianGroup) == CIV_GROUP_NEUTRAL) ||
+                        (pSoldier->ubBodyType >= FATCIV && pSoldier->ubBodyType <= CRIPPLECIV)));
 
   // if we have absolutely no action points, we can't do a thing under RED!
   if (!pSoldier->bActionPoints) {
@@ -1731,7 +1731,8 @@ int8_t DecideActionRed(struct SOLDIERTYPE *pSoldier, uint8_t ubUnconsciousOK) {
         ubOpponentDir = (uint8_t)GetDirectionFromGridNo(BestThrow.sTarget, pSoldier);
 
         // Get new gridno!
-        sCheckGridNo = NewGridNo((uint16_t)pSoldier->sGridNo, (uint16_t)DirectionInc(ubOpponentDir));
+        sCheckGridNo =
+            NewGridNo((uint16_t)pSoldier->sGridNo, (uint16_t)DirectionInc(ubOpponentDir));
 
         if (!OKFallDirection(pSoldier, sCheckGridNo, pSoldier->bLevel, ubOpponentDir,
                              pSoldier->usAnimState)) {
@@ -2167,7 +2168,7 @@ int8_t DecideActionRed(struct SOLDIERTYPE *pSoldier, uint8_t ubUnconsciousOK) {
                     pSoldier->usActionData = InternalGoAsFarAsPossibleTowards(
                         pSoldier, sClosestDisturbance,
                         (int8_t)(MinAPsToAttack(pSoldier, sClosestDisturbance, ADDTURNCOST) +
-                               AP_CROUCH),
+                                 AP_CROUCH),
                         AI_ACTION_SEEK_OPPONENT, FLAG_CAUTIOUS);
                     if (pSoldier->usActionData != NOWHERE) {
                       pSoldier->fAIFlags |= AI_CAUTIOUS;
@@ -2315,7 +2316,8 @@ int8_t DecideActionRed(struct SOLDIERTYPE *pSoldier, uint8_t ubUnconsciousOK) {
                 // ensure will we have enough APs for a possible crouch plus a shot
                 if (InternalGoAsFarAsPossibleTowards(
                         pSoldier, pSoldier->usActionData,
-                        (int8_t)(MinAPsToAttack(pSoldier, sClosestOpponent, ADDTURNCOST) + AP_CROUCH),
+                        (int8_t)(MinAPsToAttack(pSoldier, sClosestOpponent, ADDTURNCOST) +
+                                 AP_CROUCH),
                         AI_ACTION_TAKE_COVER, 0) == pSoldier->usActionData) {
                   return (AI_ACTION_TAKE_COVER);
                 }
@@ -2789,8 +2791,8 @@ int8_t DecideActionBlack(struct SOLDIERTYPE *pSoldier) {
       pSoldier->bLife >= pSoldier->bLifeMax / 2) {
     if (gTacticalStatus.Team[MILITIA_TEAM].bMenInSector == 0 && NumPCsInSector() < 4 &&
         gTacticalStatus.Team[ENEMY_TEAM].bMenInSector >= NumPCsInSector() * 3) {
-      // if( GetWorldDay() > STARTDAY_ALLOW_PLAYER_CAPTURE_FOR_RESCUE && !( gStrategicStatus.uiFlags
-      // & STRATEGIC_PLAYER_CAPTURED_FOR_RESCUE ) )
+      // if( GetGameTimeInDays() > STARTDAY_ALLOW_PLAYER_CAPTURE_FOR_RESCUE && !(
+      // gStrategicStatus.uiFlags & STRATEGIC_PLAYER_CAPTURED_FOR_RESCUE ) )
       {
         if (gubQuest[QUEST_HELD_IN_ALMA] == QUESTNOTSTARTED ||
             (gubQuest[QUEST_HELD_IN_ALMA] == QUESTDONE &&
@@ -2986,7 +2988,8 @@ int8_t DecideActionBlack(struct SOLDIERTYPE *pSoldier) {
           ubOpponentDir = (uint8_t)GetDirectionFromGridNo(BestThrow.sTarget, pSoldier);
 
           // Get new gridno!
-          sCheckGridNo = NewGridNo((uint16_t)pSoldier->sGridNo, (uint16_t)DirectionInc(ubOpponentDir));
+          sCheckGridNo =
+              NewGridNo((uint16_t)pSoldier->sGridNo, (uint16_t)DirectionInc(ubOpponentDir));
 
           if (!OKFallDirection(pSoldier, sCheckGridNo, pSoldier->bLevel, ubOpponentDir,
                                pSoldier->usAnimState)) {

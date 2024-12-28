@@ -23,7 +23,7 @@ struct finance {
   uint32_t uiDate;       // time in the world in global time
   int32_t iAmount;       // the amount of the transaction
   int32_t iBalanceToDate;
-  struct finance *Next;  // next unit in the list
+  struct finance* Next;  // next unit in the list
 };
 
 enum {
@@ -58,10 +58,7 @@ enum {
 
 };
 
-typedef struct finance FinanceUnit;
-typedef struct finance *FinanceUnitPtr;
-
-extern FinanceUnitPtr pFinanceListHead;
+extern struct finance* pFinanceListHead;
 uint32_t AddTransactionToPlayersBook(uint8_t ubCode, uint8_t ubSecondCode, int32_t iAmount);
 void InsertDollarSignInToString(wchar_t* pString);
 void InsertCommasForDollarFigure(wchar_t* pString);

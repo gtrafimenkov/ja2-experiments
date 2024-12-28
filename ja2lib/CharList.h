@@ -6,6 +6,7 @@
 #define __CHAR_LIST_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 struct SOLDIERTYPE;
 

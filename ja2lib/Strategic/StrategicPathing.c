@@ -10,6 +10,8 @@
 #include <time.h>
 
 #include "SGP/Debug.h"
+
+// #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
 #include "SGP/MemMan.h"
@@ -155,7 +157,7 @@ short trailStratTreedxB = 0;
 
 #define QUESEARCH(ndx, NDX)                                                               \
   {                                                                                       \
-    int32_t k = TOTALCOST(ndx);                                                             \
+    int32_t k = TOTALCOST(ndx);                                                           \
     NDX = pathQB[QHEADNDX].nextLink;                                                      \
     while (NDX && (k > TOTALCOST(NDX))) NDX = pathQB[NDX].nextLink;                       \
     while (NDX && (k == TOTALCOST(NDX)) && FARTHER(ndx, NDX)) NDX = pathQB[NDX].nextLink; \
@@ -178,8 +180,8 @@ extern uint8_t GetTraversability(int16_t sStartSector, int16_t sEndSector);
 
 // this will find if a shortest strategic path
 
-int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNumber,
-                    BOOLEAN fTacticalTraversal) {
+int32_t FindStratPath(uint8_t startX, uint8_t startY, uint8_t destX, uint8_t destY,
+                      int16_t sMvtGroupNumber, BOOLEAN fTacticalTraversal) {
   int32_t iCnt, ndx, insertNdx, qNewNdx;
   int32_t iDestX, iDestY, locX, locY, dx, dy;
   uint8_t sSectorX, sSectorY;
@@ -203,7 +205,7 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
 
     if (fPlotDirectPath != fPreviousPlotDirectPath) {
       // must redraw map to erase the previous path...
-      MarkForRedrawalStrategicMap();
+      SetMapPanelDirty(true);
       fPreviousPlotDirectPath = fPlotDirectPath;
     }
   }
@@ -216,6 +218,9 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
 
   // memset(trailCostB,255*PATHFACTOR,MAP_LENGTH);
   memset(pathQB, 0, sizeof(pathQB));
+
+  SectorID16 sStart = GetSectorID16(startX, startY);
+  SectorID16 sDestination = GetSectorID16(destX, destY);
 
   // FOLLOWING LINE COMMENTED OUT ON MARCH 7/97 BY IC
   memset(gusMapPathingData, ((uint16_t)sStart), sizeof(gusMapPathingData));
@@ -281,7 +286,7 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
         if (IsThereASoldierInThisSector(sSectorX, sSectorY, 0)) {
           continue;
         }
-        if (GetNumberOfMilitiaInSector(sSectorX, sSectorY, 0)) {
+        if (CountMilitiaInSector3D(sSectorX, sSectorY, 0)) {
           continue;
         }
         if (!OkayForEnemyToMoveThroughSector((uint8_t)GetSectorID8(sSectorX, sSectorY))) {
@@ -299,7 +304,7 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
               sMvtGroupNumber == pVehicleList[iHelicopterVehicleId].ubMovementGroup) {
             // is a heli, its pathing is determined not by time (it's always the same) but by total
             // cost Skyrider will avoid uncontrolled airspace as much as possible...
-            if (StrategicMap[curLoc].fEnemyAirControlled == TRUE) {
+            if (IsSectorEnemyAirControlled(SectorID16_X(curLoc), SectorID16_Y(curLoc))) {
               nextCost = COST_AIRSPACE_UNSAFE;
             } else {
               nextCost = COST_AIRSPACE_SAFE;
@@ -312,7 +317,8 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
         }
       } else {
         nextCost = GetTravelTimeForFootTeam(
-            (uint8_t)(GetSectorID8(SectorID16_X(curLoc), SectorID16_Y(curLoc))), (uint8_t)(iCnt / 2));
+            (uint8_t)(GetSectorID8(SectorID16_X(curLoc), SectorID16_Y(curLoc))),
+            (uint8_t)(iCnt / 2));
       }
 
       if (nextCost == 0xffffffff) {
@@ -327,7 +333,8 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
         // if it's the first sector only (no cost yet)
         if (curCost == 0 && (newLoc == sDestination)) {
           if (GetTraversability((int16_t)(GetSectorID8(curLoc % 18, curLoc / 18)),
-                                (int16_t)(GetSectorID8(newLoc % 18, newLoc / 18))) != GROUNDBARRIER) {
+                                (int16_t)(GetSectorID8(newLoc % 18, newLoc / 18))) !=
+              GROUNDBARRIER) {
             nextCost = 0;
           }
         }
@@ -338,20 +345,6 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
         }
       }
 
-      /*
-      // Commented out by CJC Feb 4 1999... causing errors!
-
-      //make the destination look very attractive
-      if( ( newLoc == sDestination ) )
-      {
-              if( GetTraversability( ( int16_t )( GetSectorID8( curLoc % 18, curLoc / 18 ) ), ( int16_t
-      ) ( GetSectorID8( newLoc %18,  newLoc / 18 ) ) ) != GROUNDBARRIER )
-              {
-                      nextCost = 0;
-              }
-      }
-      */
-      // if (_KeyDown(CTRL_DOWN) && nextCost < TRAVELCOST_VEINEND)
       newTotCost = curCost + nextCost;
       if (newTotCost < trailCostB[newLoc]) {
         NEWQUENODE;
@@ -438,14 +431,15 @@ struct path* BuildAStrategicPath(struct path* pPath, int16_t iStartSectorNum, in
     pNode->uiSectorId = iStartSectorNum;
     pNode->pNext = NULL;
     pNode->pPrev = NULL;
-    pNode->uiEta = GetWorldTotalMin();
+    pNode->uiEta = GetGameTimeInMin();
     pHeadOfPathList = pNode;
   }
 
   if (iEndSectorNum < MAP_WORLD_X - 1) return NULL;
 
-  iPathLength = ((int32_t)FindStratPath(((int16_t)iStartSectorNum), ((int16_t)iEndSectorNum),
-                                      sMvtGroupNumber, fTacticalTraversal));
+  iPathLength = ((int32_t)FindStratPath(
+      SectorID16_X(iStartSectorNum), SectorID16_Y(iStartSectorNum), SectorID16_X(iEndSectorNum),
+      SectorID16_Y(iEndSectorNum), sMvtGroupNumber, fTacticalTraversal));
   while (iPathLength > iCount) {
     switch (gusMapPathingData[iCount]) {
       case (NORTH):
@@ -502,8 +496,8 @@ struct path* BuildAStrategicPath(struct path* pPath, int16_t iStartSectorNum, in
   if( fTempPath == FALSE )
   {
           // change in direction..add waypoint
-          AddWaypointToGroup( ( uint8_t )sMvtGroupNumber, ( uint8_t )( iCurrentSectorNum% MAP_WORLD_X ),
-( uint8_t )( SectorID16_Y(iCurrentSectorNum) ) );
+          AddWaypointToGroup( ( uint8_t )sMvtGroupNumber, ( uint8_t )( iCurrentSectorNum%
+MAP_WORLD_X ), ( uint8_t )( SectorID16_Y(iCurrentSectorNum) ) );
 }
   */
 
@@ -525,7 +519,7 @@ BOOLEAN AddSectorToPathList(struct path* pPath, uint16_t uiSectorNum) {
     // Implement EtaCost Array as base EtaCosts of sectors
     // pNode->uiEtaCost=EtaCost[uiSectorNum];
     pNode->uiSectorId = uiSectorNum;
-    pNode->uiEta = GetWorldTotalMin();
+    pNode->uiEta = GetGameTimeInMin();
     pNode->pNext = NULL;
     pNode->pPrev = NULL;
     /*
@@ -562,140 +556,6 @@ BOOLEAN AddSectorToPathList(struct path* pPath, uint16_t uiSectorNum) {
   pPath = pHeadOfList;
   return TRUE;
 }
-
-/*
-BOOLEAN TravelBetweenSectorsIsBlockedFromVehicle( uint16_t sSourceSector, uint16_t sDestSector )
-{
-        int16_t sDelta;
-
-        sDelta = sDestSector - sSourceSector;
-
-        switch( sDelta )
-        {
-                case( 0 ):
-                        return( TRUE );
-                break;
-                case( - MAP_WORLD_Y ):
-                  return( StrategicMap[ sSourceSector ].uiBadVehicleSector[ 0 ] );
-                break;
-                case( MAP_WORLD_Y):
-        return( StrategicMap[ sSourceSector ].uiBadVehicleSector[ 2 ] );
-    break;
-                case( 1 ):
-                        return ( StrategicMap[ sSourceSector ].uiBadVehicleSector[ 1 ] );
-                break;
-                case( -1 ):
-                        return ( StrategicMap[ sSourceSector ].uiBadVehicleSector[ 3 ] );
-                break;
-        }
-
-        return( FALSE );
-}
-
-
-
-BOOLEAN SectorIsBlockedFromVehicleExit( uint16_t sSourceSector, int8_t bToDirection  )
-{
-
-        if( StrategicMap[ sSourceSector ].uiBadVehicleSector[ bToDirection ] )
-        {
-                return ( TRUE );
-        }
-        else
-        {
-                return ( FALSE );
-        }
-
-}
-
-
-
-BOOLEAN TravelBetweenSectorsIsBlockedFromFoot( uint16_t sSourceSector, uint16_t sDestSector )
-{
-        int16_t sDelta;
-
-        sDelta = sDestSector - sSourceSector;
-
-        switch( sDelta )
-        {
-                case( 0 ):
-                        return( TRUE );
-                break;
-                case( - MAP_WORLD_Y ):
-                  return( StrategicMap[ sSourceSector ].uiBadFootSector[ 0 ] );
-                break;
-                case( MAP_WORLD_Y):
-        return( StrategicMap[ sSourceSector ].uiBadFootSector[ 2 ] );
-    break;
-                case( 1 ):
-                        return ( StrategicMap[ sSourceSector ].uiBadFootSector[ 1 ] );
-                break;
-                case( -1 ):
-                        return ( StrategicMap[ sSourceSector ].uiBadFootSector[ 3 ] );
-                break;
-        }
-
-        return( FALSE );
-}
-
-
-BOOLEAN SectorIsBlockedFromFootExit( uint16_t sSourceSector, int8_t bToDirection )
-{
-        if( StrategicMap[ sSourceSector ].uiBadFootSector[ bToDirection ]  )
-        {
-                return ( TRUE );
-        }
-        else
-        {
-                return ( FALSE );
-        }
-
-}
-
-
-
-BOOLEAN CanThisMercMoveToThisSector( struct SOLDIERTYPE *pSoldier ,int16_t sX, int16_t sY )
-{
-        // this fucntion will return if this merc ( pSoldier ), can move to sector sX, sY
-  BOOLEAN fOkToMoveFlag = FALSE;
-
-
-        return fOkToMoveFlag;
-}
-
-
-
-void SetThisMercsSectorXYToTheseValues( struct SOLDIERTYPE *pSoldier ,int16_t sX, int16_t sY, uint8_t
-ubFromDirection )
-{
-  // will move a merc ( pSoldier )to a sector sX, sY
-
-        // Ok, update soldier control pointer values
-        pSoldier->sSectorX = sX;
-        pSoldier->sSectorY = sY;
-
-        // Set insertion code....
-        pSoldier->ubStrategicInsertionCode = ubFromMapDirToInsertionCode[ ubFromDirection ];
-
-        // Are we the same as our current sector
-        if ( gWorldSectorX == sX && gWorldSectorY == sY && !gbWorldSectorZ )
-        {
-                // Add this poor bastard!
-                UpdateMercInSector( pSoldier, sX, sY, 0 );
-        }
-        // Were we in sector?
-        else if ( pSoldier->bInSector )
-        {
-                RemoveSoldierFromTacticalSector( pSoldier, TRUE );
-
-                // Remove from tactical team UI
-                RemovePlayerFromTeamSlotGivenMercID( GetSolID(pSoldier) );
-
-        }
-
-        return;
-}
-*/
 
 struct path* AppendStrategicPath(struct path* pNewSection, struct path* pHeadOfPathList) {
   // will append a new section onto the end of the head of list, then return the head of the new
@@ -1108,220 +968,6 @@ int32_t GetStrategicMvtSpeed(struct SOLDIERTYPE* pCharacter) {
   return (iSpeed);
 }
 
-/*
-void CalculateEtaForCharacterPath( struct SOLDIERTYPE *pCharacter )
-{
-        struct path* pNode = NULL;
-        uint32_t uiDeltaEta =0;
-        int32_t iMveDelta = 0;
-        BOOLEAN fInVehicle;
-
-        // valid character
-        if( pCharacter == NULL )
-        {
-                return;
-        }
-
-        // the rules change a little for people in vehicles
-        if( pCharacter -> bAssignment == VEHICLE )
-        {
-                fInVehicle = TRUE;
-        }
-
-        if( ( pCharacter -> pMercPath == NULL ) && ( fInVehicle == FALSE ) )
-        {
-                return;
-        }
-
-        if( ( fInVehicle == TRUE ) && ( VehicleIdIsValid( pCharacter -> iVehicleId ) ) )
-        {
-                // valid vehicle, is there a path for it?
-                if( pVehicleList[ iId ].pMercPath == NULL )
-                {
-                        // nope
-                        return;
-                }
-        }
-
-
-        // go through path list, calculating eta's based on previous sector eta, speed of mvt
-through sector, and eta cost of sector pNode = GetSoldierMercPathPtr( pCharacter );
-
-        // while there are nodes, calculate eta
-        while( pNode )
-        {
-                // first node, set eta to current time
-                if( pNode -> pPrev == NULL )
-                {
-                        pNode -> uiEta = GetWorldTotalMin( );
-                }
-                else
-                {
-                        // get delta in sectors
-                        switch( pNode -> uiSectorId - pNode -> pPrev -> uiSectorId )
-                        {
-                        case( NORTH_MOVE ):
-                                iMveDelta = 0;
-                                break;
-                        case( SOUTH_MOVE ):
-                                iMveDelta = 2;
-                                break;
-                        case( EAST_MOVE ):
-                                iMveDelta = 1;
-                                break;
-                        case( WEST_MOVE ):
-                                iMveDelta = 3;
-                                break;
-                        }
-
-                        if( fInVehicle == TRUE )
-                        {
-                                // which type
-
-                        }
-                        else
-                        {
-                                // get delta..is the  sector ( mvt cost * modifier ) / ( character
-strategic speed * mvt speed ) uiDeltaEta = ( ( StrategicMap[ pNode -> uiSectorId ].uiFootEta[
-iMveDelta ] * FOOT_MVT_MODIFIER ) / ( GetStrategicMvtSpeed( pCharacter ) * ( pNode -> fSpeed + 1 ) )
-);
-                        }
-
-
-                        // next sector eta
-                        pNode -> uiEta = pNode -> pPrev -> uiEta + ( uiDeltaEta );
-                }
-                pNode = pNode -> pNext;
-        }
-        return;
-}
-*/
-
-/*
-void MoveCharacterOnPath( struct SOLDIERTYPE *pCharacter )
-{
-        // will move a character along a merc path
-        struct path* pNode = NULL;
-        struct path* pDeleteNode = NULL;
-
-
-        // error check
-        if( pCharacter == NULL )
-        {
-                return;
-        }
-
-        if( pCharacter -> pMercPath == NULL )
-        {
-                return;
-        }
-
-        if( pCharacter -> pMercPath -> pNext == NULL )
-        {
-                // simply set eta to current time
-                pCharacter -> pMercPath -> uiEta = GetWorldTotalMin( );
-                return;
-        }
-
-        // set up node to beginning of path list
-        pNode = pCharacter -> pMercPath;
-
-
-        // while there are nodes left with eta less than current time
-        while( pNode -> pNext -> uiEta < GetWorldTotalMin( ) )
-        {
-                // delete node, move on
-                pDeleteNode = pNode;
-
-                // next node
-                pNode = pNode -> pNext;
-
-                // delete delete node
-                MemFree( pDeleteNode );
-
-                // set up merc path to this sector
-                pCharacter -> pMercPath = pNode;
-
-                // no where left to go
-                if( pNode == NULL )
-                {
-                        return;
-                }
-
-
-                // null out prev to beginning of merc path list
-                pNode -> pPrev = NULL;
-
-                // set up new location
-                pCharacter -> sSectorX = ( int16_t )( pNode -> uiSectorId ) % MAP_WORLD_X ;
-                pCharacter -> sSectorY = ( int16_t )( pNode -> uiSectorId ) / MAP_WORLD_X;
-
-                // dirty map panel
-                MarkForRedrawalStrategicMap();
-
-                if( pNode -> pNext == NULL )
-                {
-                        return;
-                }
-        }
-}
-
-
-void MoveTeamOnFoot( void )
-{
-        // run through list of characters on player team, if on foot, move them
-        struct SOLDIERTYPE *pSoldier, *pTeamSoldier;
-  int32_t cnt=0;
-
-        // set psoldier as first in merc ptrs
-        pSoldier = MercPtrs[0];
-
-        // go through list of characters, move characters
-        for ( pTeamSoldier = MercPtrs[ cnt ]; cnt <= gTacticalStatus.Team[ pSoldier->bTeam
-].bLastID; cnt++,pTeamSoldier++)
-        {
-                if ( pTeamSoldier->bActive )
-                {
-                        MoveCharacterOnPath( pTeamSoldier );
-                }
-        }
-
-        return;
-}
-*/
-
-/*
-uint32_t GetEtaGivenRoute( struct path* pPath )
-{
-        // will return the eta of a passed path in global time units, in minutes
-        struct path* pNode = pPath;
-
-        if( pPath == NULL )
-        {
-                return( GetWorldTotalMin( ) );
-        }
-        else if( pPath -> pNext == NULL )
-        {
-                return( GetWorldTotalMin( ) );
-        }
-        else
-        {
-                // there is a path
-                while( pNode -> pNext )
-                {
-                        // run through list
-                        pNode = pNode -> pNext;
-                }
-
-                // have last sector, therefore the eta of the path
-                return( pNode -> uiEta );
-        }
-
-        // error
-        return( 0 );
-}
-*/
-
 #ifdef BETA_VERSION
 void VerifyAllMercsInGroupAreOnSameSquad(struct GROUP* pGroup) {
   PLAYERGROUP* pPlayer;
@@ -1443,7 +1089,7 @@ void RebuildWayPointsForGroupPath(struct path* pHeadOfPath, int16_t sMvtGroup) {
 
   // see if we've already reached the first sector in the path (we never actually left the sector
   // and reversed back to it)
-  if (pGroup->uiArrivalTime == GetWorldTotalMin()) {
+  if (pGroup->uiArrivalTime == GetGameTimeInMin()) {
     // never really left.  Must set check for battle TRUE in order for HandleNonCombatGroupArrival()
     // to run!
     GroupArrivedAtSector(pGroup->ubGroupID, TRUE, TRUE);
@@ -1465,7 +1111,8 @@ void ClearMvtForThisSoldierAndGang(struct SOLDIERTYPE* pSoldier) {
   ClearMercPathsAndWaypointsForAllInGroup(pGroup);
 }
 
-BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY, uint8_t sDestX, uint8_t sDestY) {
+BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY,
+                                    uint8_t sDestX, uint8_t sDestY) {
   struct path* pNode = NULL;
 
   // build the path
@@ -1487,8 +1134,9 @@ BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t 
   return (TRUE);
 }
 
-BOOLEAN MoveGroupFromSectorToSectorButAvoidLastSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY,
-                                                      uint8_t sDestX, uint8_t sDestY) {
+BOOLEAN MoveGroupFromSectorToSectorButAvoidLastSector(uint8_t ubGroupID, uint8_t sStartX,
+                                                      uint8_t sStartY, uint8_t sDestX,
+                                                      uint8_t sDestY) {
   struct path* pNode = NULL;
 
   // build the path
@@ -1513,9 +1161,9 @@ BOOLEAN MoveGroupFromSectorToSectorButAvoidLastSector(uint8_t ubGroupID, uint8_t
   return (TRUE);
 }
 
-BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectors(uint8_t ubGroupID, uint8_t sStartX,
-                                                                   uint8_t sStartY, uint8_t sDestX,
-                                                                   uint8_t sDestY) {
+BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectors(uint8_t ubGroupID,
+                                                                   uint8_t sStartX, uint8_t sStartY,
+                                                                   uint8_t sDestX, uint8_t sDestY) {
   struct path* pNode = NULL;
 
   // init sectors with soldiers in them
@@ -1809,7 +1457,7 @@ void AddSectorToFrontOfMercPath(struct path** ppMercPath, uint8_t ubSectorX, uin
   pNode->uiSectorId = GetSectorID16(ubSectorX, ubSectorY);
   pNode->pNext = *ppMercPath;
   pNode->pPrev = NULL;
-  pNode->uiEta = GetWorldTotalMin();
+  pNode->uiEta = GetGameTimeInMin();
   pNode->fSpeed = NORMAL_MVT;
 
   // if path wasn't null

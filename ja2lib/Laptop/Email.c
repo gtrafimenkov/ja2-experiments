@@ -297,7 +297,7 @@ void BtnPreviousEmailPageCallback(GUI_BUTTON *btn, int32_t reason);
 void BtnNextEmailPageCallback(GUI_BUTTON *btn, int32_t reason);
 void DisplayEmailList();
 void ClearOutEmailMessageRecordsList(void);
-void AddEmailRecordToList(wchar_t* pString);
+void AddEmailRecordToList(wchar_t *pString);
 void UpDateMessageRecordList(void);
 void HandleAnySpecialEmailMessageEvents(int32_t iMessageId);
 BOOLEAN HandleMailSpecialMessages(uint16_t usMessageId, int32_t *iResults, EmailPtr pMail);
@@ -362,39 +362,35 @@ void GameInitEmail() {
 }
 
 BOOLEAN EnterEmail() {
-  VOBJECT_DESC VObjectDesc;
   // load graphics
 
   iCurrentPage = LaptopSaveInfo.iCurrentEmailPage;
 
   // title bar
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailTitle));
+  if (!AddVObjectFromFile("LAPTOP\\programtitlebar.sti", &guiEmailTitle)) {
+    return FALSE;
+  }
 
   // the list background
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Mailwindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailBackground));
+  if (!AddVObjectFromFile("LAPTOP\\Mailwindow.sti", &guiEmailBackground)) {
+    return FALSE;
+  }
 
   // the indication/notification box
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\MailIndicator.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailIndicator));
+  if (!AddVObjectFromFile("LAPTOP\\MailIndicator.sti", &guiEmailIndicator)) {
+    return FALSE;
+  }
 
   // the message background
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\emailviewer.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailMessage));
+  if (!AddVObjectFromFile("LAPTOP\\emailviewer.sti", &guiEmailMessage)) {
+    return FALSE;
+  }
 
   // the message background
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\maillistdivider.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMAILDIVIDER));
+  if (!AddVObjectFromFile("LAPTOP\\maillistdivider.sti", &guiMAILDIVIDER)) {
+    return FALSE;
+  }
 
-  // AddEmail(IMP_EMAIL_PROFILE_RESULTS, IMP_EMAIL_PROFILE_RESULTS_LENGTH, IMP_PROFILE_RESULTS,
-  // GetWorldTotalMin( ) );
-  // initialize mouse regions
   InitializeMouseRegions();
 
   // just started email
@@ -415,7 +411,7 @@ BOOLEAN EnterEmail() {
   // render email background and text
   RenderEmail();
 
-  // AddEmail( MERC_REPLY_GRIZZLY, MERC_REPLY_LENGTH_GRIZZLY, GRIZZLY_MAIL, GetWorldTotalMin() );
+  // AddEmail( MERC_REPLY_GRIZZLY, MERC_REPLY_LENGTH_GRIZZLY, GRIZZLY_MAIL, GetGameTimeInMin() );
   // RenderButtons( );
 
   return (TRUE);
@@ -564,13 +560,11 @@ void RenderEmail(void) {
 
   // get and blt the email list background
   GetVideoObject(&hHandle, guiEmailBackground);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X,
-                 EMAIL_LIST_WINDOW_Y + LAPTOP_SCREEN_UL_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, EMAIL_LIST_WINDOW_Y + LAPTOP_SCREEN_UL_Y);
 
   // get and blt the email title bar
   GetVideoObject(&hHandle, guiEmailTitle);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2);
 
   // show text on titlebar
   DisplayTextOnTitleBar();
@@ -592,7 +586,7 @@ void RenderEmail(void) {
 
   // display border
   GetVideoObject(&hHandle, guiLaptopBACKGROUND);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, 108, 23, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, 108, 23);
 
   ReDisplayBoxes();
 
@@ -654,7 +648,8 @@ void AddEmail(int32_t iMessageOffset, int32_t iMessageLength, uint8_t ubSender, 
   return;
 }
 
-void AddPreReadEmail(int32_t iMessageOffset, int32_t iMessageLength, uint8_t ubSender, int32_t iDate) {
+void AddPreReadEmail(int32_t iMessageOffset, int32_t iMessageLength, uint8_t ubSender,
+                     int32_t iDate) {
   wchar_t pSubject[320];
 
   // starts at iSubjectOffset amd goes iSubjectLength, reading in string
@@ -673,8 +668,9 @@ void AddPreReadEmail(int32_t iMessageOffset, int32_t iMessageLength, uint8_t ubS
   return;
 }
 
-void AddEmailMessage(int32_t iMessageOffset, int32_t iMessageLength, wchar_t* pSubject, int32_t iDate,
-                     uint8_t ubSender, BOOLEAN fAlreadyRead, int32_t iFirstData, uint32_t uiSecondData) {
+void AddEmailMessage(int32_t iMessageOffset, int32_t iMessageLength, wchar_t *pSubject,
+                     int32_t iDate, uint8_t ubSender, BOOLEAN fAlreadyRead, int32_t iFirstData,
+                     uint32_t uiSecondData) {
   // will add a message to the list of messages
   EmailPtr pEmail = pEmailList;
   EmailPtr pTempEmail = NULL;
@@ -709,7 +705,7 @@ void AddEmailMessage(int32_t iMessageOffset, int32_t iMessageLength, wchar_t* pS
   // pTempEmail->pText[iCounter]=NULL;
 
   // copy subject
-  pTempEmail->pSubject = (wchar_t*)MemAlloc(128 * 2);
+  pTempEmail->pSubject = (wchar_t *)MemAlloc(128 * 2);
   memset(pTempEmail->pSubject, 0, sizeof(wchar_t) * 128);
   wcscpy(pTempEmail->pSubject, pSubject);
 
@@ -1056,7 +1052,7 @@ void SwapMessages(int32_t iIdA, int32_t iIdB) {
   EmailPtr pA = pEmailList;
   EmailPtr pB = pEmailList;
   EmailPtr pTemp = (EmailPtr)MemAlloc(sizeof(Email));
-  pTemp->pSubject = (wchar_t*)MemAlloc(128 * 2);
+  pTemp->pSubject = (wchar_t *)MemAlloc(128 * 2);
 
   memset(pTemp->pSubject, 0, sizeof(wchar_t) * 128);
 
@@ -1156,23 +1152,21 @@ void DrawLetterIcon(int32_t iCounter, BOOLEAN fRead) {
 
   // is it read or not?
   if (fRead)
-    BltVideoObject(FRAME_BUFFER, hHandle, 0, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 0, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2));
   else
-    BltVideoObject(FRAME_BUFFER, hHandle, 1, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 1, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2));
   return;
 }
 
-void DrawSubject(int32_t iCounter, wchar_t* pSubject, BOOLEAN fRead) {
+void DrawSubject(int32_t iCounter, wchar_t *pSubject, BOOLEAN fRead) {
   wchar_t pTempSubject[320];
 
   // draw subject line of mail being viewed in viewer
 
   // lock buffer to prevent overwrite
-  SetFontDestBuffer(FRAME_BUFFER, SUBJECT_X, ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)),
-                    SUBJECT_X + SUBJECT_WIDTH,
-                    ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)) + MIDDLE_WIDTH, FALSE);
+  SetFontDest(vsFB, SUBJECT_X, ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)),
+              SUBJECT_X + SUBJECT_WIDTH,
+              ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)) + MIDDLE_WIDTH, FALSE);
   SetFontShadow(NO_SHADOW);
   SetFontForeground(FONT_BLACK);
   SetFontBackground(FONT_BLACK);
@@ -1202,7 +1196,7 @@ void DrawSubject(int32_t iCounter, wchar_t* pSubject, BOOLEAN fRead) {
   }
   SetFontShadow(DEFAULT_SHADOW);
   // reset font dest buffer
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
   return;
 }
@@ -1221,7 +1215,8 @@ void DrawSender(int32_t iCounter, uint8_t ubSender, BOOLEAN fRead) {
     SetFont(FONT10ARIALBOLD);
   }
 
-  mprintf(SENDER_X, ((uint16_t)(4 + MIDDLE_Y + iCounter * MIDDLE_WIDTH)), pSenderNameList[ubSender]);
+  mprintf(SENDER_X, ((uint16_t)(4 + MIDDLE_Y + iCounter * MIDDLE_WIDTH)),
+          pSenderNameList[ubSender]);
 
   SetFont(MESSAGE_FONT);
   SetFontShadow(DEFAULT_SHADOW);
@@ -1498,11 +1493,9 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
   GetVideoObject(&hHandle, guiEmailMessage);
 
   // place the graphic on the frame buffer
-  BltVideoObject(FRAME_BUFFER, hHandle, 1, VIEWER_X, VIEWER_MESSAGE_BODY_START_Y + iViewerPositionY,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hHandle, 1, VIEWER_X,
-                 VIEWER_MESSAGE_BODY_START_Y + GetFontHeight(MESSAGE_FONT) + iViewerPositionY,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 1, VIEWER_X, VIEWER_MESSAGE_BODY_START_Y + iViewerPositionY);
+  BltVObject(vsFB, hHandle, 1, VIEWER_X,
+             VIEWER_MESSAGE_BODY_START_Y + GetFontHeight(MESSAGE_FONT) + iViewerPositionY);
 
   // set shadow
   SetFontShadow(NO_SHADOW);
@@ -1511,13 +1504,11 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
   GetVideoObject(&hHandle, guiEmailMessage);
 
   // place the graphic on the frame buffer
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, VIEWER_X, VIEWER_Y + iViewerPositionY,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, VIEWER_X, VIEWER_Y + iViewerPositionY);
 
   // the icon for the title of this box
   GetVideoObject(&hHandle, guiTITLEBARICONS);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, VIEWER_X + 5, VIEWER_Y + iViewerPositionY + 2,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, VIEWER_X + 5, VIEWER_Y + iViewerPositionY + 2);
 
   // display header text
   DisplayEmailMessageSubjectDateFromLines(pMail, iViewerPositionY);
@@ -1532,10 +1523,9 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
     GetVideoObject(&hHandle, guiEmailMessage);
 
     // place the graphic on the frame buffer
-    BltVideoObject(FRAME_BUFFER, hHandle, 1, VIEWER_X,
-                   iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
-                       ((GetFontHeight(MESSAGE_FONT)) * (iCounter)),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 1, VIEWER_X,
+               iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
+                   ((GetFontHeight(MESSAGE_FONT)) * (iCounter)));
   }
 
   // now the bottom piece to the message viewer
@@ -1543,16 +1533,14 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
 
   if (giNumberOfPagesToCurrentEmail <= 2) {
     // place the graphic on the frame buffer
-    BltVideoObject(FRAME_BUFFER, hHandle, 2, VIEWER_X,
-                   iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
-                       ((GetFontHeight(MESSAGE_FONT)) * (iCounter)),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 2, VIEWER_X,
+               iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
+                   ((GetFontHeight(MESSAGE_FONT)) * (iCounter)));
   } else {
     // place the graphic on the frame buffer
-    BltVideoObject(FRAME_BUFFER, hHandle, 3, VIEWER_X,
-                   iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
-                       ((GetFontHeight(MESSAGE_FONT)) * (iCounter)),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 3, VIEWER_X,
+               iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
+                   ((GetFontHeight(MESSAGE_FONT)) * (iCounter)));
   }
 
   // reset iCounter and iHeight
@@ -1720,16 +1708,17 @@ void AddDeleteRegionsToMessageRegion(int32_t iViewerY) {
           LoadButtonImage("LAPTOP\\NewMailButtons.sti", -1, 0, -1, 3, -1);
       giMailMessageButtons[0] = QuickCreateButton(
           giMailMessageButtonsImage[0], PREVIOUS_PAGE_BUTTON_X,
-          (int16_t)(LOWER_BUTTON_Y + (int16_t)iViewerY + 2), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-          (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
+          (int16_t)(LOWER_BUTTON_Y + (int16_t)iViewerY + 2), BUTTON_TOGGLE,
+          MSYS_PRIORITY_HIGHEST - 1, (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
           (GUI_CALLBACK)BtnPreviousEmailPageCallback);
 
       giMailMessageButtonsImage[1] =
           LoadButtonImage("LAPTOP\\NewMailButtons.sti", -1, 1, -1, 4, -1);
-      giMailMessageButtons[1] = QuickCreateButton(
-          giMailMessageButtonsImage[1], NEXT_PAGE_BUTTON_X,
-          (int16_t)(LOWER_BUTTON_Y + (int16_t)iViewerY + 2), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-          (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback, (GUI_CALLBACK)BtnNextEmailPageCallback);
+      giMailMessageButtons[1] = QuickCreateButton(giMailMessageButtonsImage[1], NEXT_PAGE_BUTTON_X,
+                                                  (int16_t)(LOWER_BUTTON_Y + (int16_t)iViewerY + 2),
+                                                  BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
+                                                  (GUI_CALLBACK)BtnGenericMouseMoveButtonCallback,
+                                                  (GUI_CALLBACK)BtnNextEmailPageCallback);
 
       gfPageButtonsWereCreated = TRUE;
     }
@@ -1846,13 +1835,11 @@ BOOLEAN DisplayNewMailBox(void) {
   //	return ( FALSE );
 
   GetVideoObject(&hHandle, guiEmailWarning);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y);
 
   // the icon for the title of this box
   GetVideoObject(&hHandle, guiTITLEBARICONS);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2);
 
   // font stuff
   SetFont(EMAIL_HEADER_FONT);
@@ -2202,8 +2189,7 @@ BOOLEAN DisplayDeleteNotice(EmailPtr pMail) {
   // load graphics
 
   GetVideoObject(&hHandle, guiEmailWarning);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y);
 
   // font stuff
   SetFont(EMAIL_HEADER_FONT);
@@ -2213,8 +2199,7 @@ BOOLEAN DisplayDeleteNotice(EmailPtr pMail) {
 
   // the icon for the title of this box
   GetVideoObject(&hHandle, guiTITLEBARICONS);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2);
 
   // title
   mprintf(EMAIL_WARNING_X + 30, EMAIL_WARNING_Y + 8, pEmailTitleText[0]);
@@ -2495,8 +2480,8 @@ void DisplayEmailMessageSubjectDateFromLines(EmailPtr pMail, int32_t iViewerY) {
   // print from
   FindFontRightCoordinates(MESSAGE_HEADER_X - 20, (int16_t)(MESSAGE_FROM_Y + (int16_t)iViewerY),
                            MESSAGE_HEADER_WIDTH,
-                           (int16_t)(MESSAGE_FROM_Y + GetFontHeight(MESSAGE_FONT)), pEmailHeaders[0],
-                           MESSAGE_FONT, &usX, &usY);
+                           (int16_t)(MESSAGE_FROM_Y + GetFontHeight(MESSAGE_FONT)),
+                           pEmailHeaders[0], MESSAGE_FONT, &usX, &usY);
   mprintf(usX, MESSAGE_FROM_Y + (uint16_t)iViewerY, pEmailHeaders[0]);
 
   // the actual from info
@@ -2506,8 +2491,8 @@ void DisplayEmailMessageSubjectDateFromLines(EmailPtr pMail, int32_t iViewerY) {
   // print date
   FindFontRightCoordinates(MESSAGE_HEADER_X + 168, (int16_t)(MESSAGE_DATE_Y + (uint16_t)iViewerY),
                            MESSAGE_HEADER_WIDTH,
-                           (int16_t)(MESSAGE_DATE_Y + GetFontHeight(MESSAGE_FONT)), pEmailHeaders[2],
-                           MESSAGE_FONT, &usX, &usY);
+                           (int16_t)(MESSAGE_DATE_Y + GetFontHeight(MESSAGE_FONT)),
+                           pEmailHeaders[2], MESSAGE_FONT, &usX, &usY);
   mprintf(usX, MESSAGE_DATE_Y + (uint16_t)iViewerY, pEmailHeaders[2]);
 
   // the actual date info
@@ -2552,8 +2537,7 @@ void DrawLineDividers(void) {
 
   for (iCounter = 1; iCounter < 19; iCounter++) {
     GetVideoObject(&hHandle, guiMAILDIVIDER);
-    BltVideoObject(FRAME_BUFFER, hHandle, 0, INDIC_X - 10, (MIDDLE_Y + iCounter * MIDDLE_WIDTH - 1),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 0, INDIC_X - 10, (MIDDLE_Y + iCounter * MIDDLE_WIDTH - 1));
   }
 
   return;
@@ -2586,7 +2570,7 @@ void ClearOutEmailMessageRecordsList(void) {
   return;
 }
 
-void AddEmailRecordToList(wchar_t* pString) {
+void AddEmailRecordToList(wchar_t *pString) {
   RecordPtr pTempRecord;
 
   // set to head of list
@@ -4149,16 +4133,6 @@ BOOLEAN DisplayNumberOfPagesToThisEmail(int32_t iViewerY) {
   int16_t sX = 0, sY = 0;
   wchar_t sString[32];
 
-  // get and blt the email list background
-  // load, blt and delete graphics
-  // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-  //	FilenameForBPP( "LAPTOP\\mailindent.sti", VObjectDesc.ImageFile );
-  // CHECKF( AddVideoObject( &VObjectDesc, &uiMailIndent ) );
-  // GetVideoObject( &hHandle, uiMailIndent );
-  // BltVideoObject( FRAME_BUFFER, hHandle, 0,VIEWER_X + INDENT_X_OFFSET, VIEWER_Y + iViewerY +
-  // INDENT_Y_OFFSET - 10, VO_BLT_SRCTRANSPARENCY,NULL ); DeleteVideoObjectFromIndex( uiMailIndent
-  // );
-
   giNumberOfPagesToCurrentEmail = (giNumberOfPagesToCurrentEmail);
 
   // parse current page and max number of pages to email
@@ -4172,7 +4146,7 @@ BOOLEAN DisplayNumberOfPagesToThisEmail(int32_t iViewerY) {
   // turn off the shadows
   SetFontShadow(NO_SHADOW);
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
   FindFontCenterCoordinates(VIEWER_X + INDENT_X_OFFSET, 0, INDENT_X_WIDTH, 0, sString, FONT12ARIAL,
                             &sX, &sY);
@@ -4471,9 +4445,9 @@ BOOLEAN ReplaceMercNameAndAmountWithProperData(wchar_t *pFinishedString, EmailPt
   BOOLEAN fReplacingMercName = TRUE;
 
   wchar_t sMercName[32] = L"$MERCNAME$";  // Doesnt need to be translated, inside Email.txt and will
-                                         // be replaced by the mercs name
+                                          // be replaced by the mercs name
   wchar_t sAmount[32] = L"$AMOUN$";  // Doesnt need to be translated, inside Email.txt and will be
-                                    // replaced by a dollar amount
+                                     // replaced by a dollar amount
   wchar_t sSearchString[32];
 
   // Copy the original string over to the temp string
@@ -4555,81 +4529,78 @@ void AddAllEmails() {
   uint32_t uiCnt;
   uint32_t uiOffset;
 
-  AddEmail(IMP_EMAIL_INTRO, IMP_EMAIL_INTRO_LENGTH, CHAR_PROFILE_SITE, GetWorldTotalMin());
-  AddEmail(ENRICO_CONGRATS, ENRICO_CONGRATS_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(IMP_EMAIL_AGAIN, IMP_EMAIL_AGAIN_LENGTH, 1, GetWorldTotalMin());
-  AddEmail(MERC_INTRO, MERC_INTRO_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
+  AddEmail(IMP_EMAIL_INTRO, IMP_EMAIL_INTRO_LENGTH, CHAR_PROFILE_SITE, GetGameTimeInMin());
+  AddEmail(ENRICO_CONGRATS, ENRICO_CONGRATS_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(IMP_EMAIL_AGAIN, IMP_EMAIL_AGAIN_LENGTH, 1, GetGameTimeInMin());
+  AddEmail(MERC_INTRO, MERC_INTRO_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
   AddEmail(MERC_NEW_SITE_ADDRESS, MERC_NEW_SITE_ADDRESS_LENGTH, SPECK_FROM_MERC,
-           GetWorldTotalMin());
+           GetGameTimeInMin());
 
   AddEmail(IMP_EMAIL_PROFILE_RESULTS, IMP_EMAIL_PROFILE_RESULTS_LENGTH, IMP_PROFILE_RESULTS,
-           GetWorldTotalMin());
+           GetGameTimeInMin());
 
-  AddEmail(MERC_WARNING, MERC_WARNING_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
-  AddEmail(MERC_INVALID, MERC_INVALID_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
-  AddEmail(NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
-  AddEmail(MERC_FIRST_WARNING, MERC_FIRST_WARNING_LENGTH, SPECK_FROM_MERC, GetWorldTotalMin());
+  AddEmail(MERC_WARNING, MERC_WARNING_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
+  AddEmail(MERC_INVALID, MERC_INVALID_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
+  AddEmail(NEW_MERCS_AT_MERC, NEW_MERCS_AT_MERC_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
+  AddEmail(MERC_FIRST_WARNING, MERC_FIRST_WARNING_LENGTH, SPECK_FROM_MERC, GetGameTimeInMin());
 
   uiOffset = MERC_UP_LEVEL_BIFF;
   for (uiCnt = 0; uiCnt < 10; uiCnt++) {
-    AddEmail(uiOffset, MERC_UP_LEVEL_LENGTH_BIFF, SPECK_FROM_MERC, GetWorldTotalMin());
+    AddEmail(uiOffset, MERC_UP_LEVEL_LENGTH_BIFF, SPECK_FROM_MERC, GetGameTimeInMin());
     uiOffset += MERC_UP_LEVEL_LENGTH_BIFF;
   }
-
-  //	AddEmail( ( uint8_t )( AIM_REPLY_BARRY + ( AIM_REPLY_LENGTH_BARRY ) ), AIM_REPLY_LENGTH_BARRY,
-  // AIM_REPLY_BARRY, GetWorldTotalMin() );
 
   uiOffset = AIM_REPLY_BARRY;
   for (uiCnt = 0; uiCnt < 40; uiCnt++) {
     AddEmail((uint8_t)(uiOffset + (uiCnt * AIM_REPLY_LENGTH_BARRY)), AIM_REPLY_LENGTH_BARRY,
-             (uint8_t)(6 + uiCnt), GetWorldTotalMin());
+             (uint8_t)(6 + uiCnt), GetGameTimeInMin());
   }
 
-  AddEmail(OLD_ENRICO_1, OLD_ENRICO_1_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(OLD_ENRICO_2, OLD_ENRICO_2_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(OLD_ENRICO_3, OLD_ENRICO_3_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(RIS_REPORT, RIS_REPORT_LENGTH, RIS_EMAIL, GetWorldTotalMin());
+  AddEmail(OLD_ENRICO_1, OLD_ENRICO_1_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(OLD_ENRICO_2, OLD_ENRICO_2_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(OLD_ENRICO_3, OLD_ENRICO_3_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(RIS_REPORT, RIS_REPORT_LENGTH, RIS_EMAIL, GetGameTimeInMin());
 
-  AddEmail(ENRICO_MIGUEL, ENRICO_MIGUEL_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(ENRICO_PROG_20, ENRICO_PROG_20_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(ENRICO_PROG_55, ENRICO_PROG_55_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(ENRICO_PROG_80, ENRICO_PROG_80_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(ENRICO_SETBACK, ENRICO_SETBACK_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(ENRICO_SETBACK_2, ENRICO_SETBACK_2_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(LACK_PLAYER_PROGRESS_1, LACK_PLAYER_PROGRESS_1_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(LACK_PLAYER_PROGRESS_2, LACK_PLAYER_PROGRESS_2_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(LACK_PLAYER_PROGRESS_3, LACK_PLAYER_PROGRESS_3_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-  AddEmail(ENRICO_CREATURES, ENRICO_CREATURES_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
+  AddEmail(ENRICO_MIGUEL, ENRICO_MIGUEL_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(ENRICO_PROG_20, ENRICO_PROG_20_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(ENRICO_PROG_55, ENRICO_PROG_55_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(ENRICO_PROG_80, ENRICO_PROG_80_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(ENRICO_SETBACK, ENRICO_SETBACK_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(ENRICO_SETBACK_2, ENRICO_SETBACK_2_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(LACK_PLAYER_PROGRESS_1, LACK_PLAYER_PROGRESS_1_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(LACK_PLAYER_PROGRESS_2, LACK_PLAYER_PROGRESS_2_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(LACK_PLAYER_PROGRESS_3, LACK_PLAYER_PROGRESS_3_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+  AddEmail(ENRICO_CREATURES, ENRICO_CREATURES_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
 
   // Add an email telling the user that he received an insurance payment
   AddEmailWithSpecialData(INSUR_PAYMENT, INSUR_PAYMENT_LENGTH, INSURANCE_COMPANY,
-                          GetWorldTotalMin(), 20, 0);
-  AddEmailWithSpecialData(INSUR_SUSPIC, INSUR_SUSPIC_LENGTH, INSURANCE_COMPANY, GetWorldTotalMin(),
+                          GetGameTimeInMin(), 20, 0);
+  AddEmailWithSpecialData(INSUR_SUSPIC, INSUR_SUSPIC_LENGTH, INSURANCE_COMPANY, GetGameTimeInMin(),
                           20, 0);
   AddEmailWithSpecialData(INSUR_SUSPIC_2, INSUR_SUSPIC_2_LENGTH, INSURANCE_COMPANY,
-                          GetWorldTotalMin(), 20, 0);
-  AddEmail(BOBBYR_NOW_OPEN, BOBBYR_NOW_OPEN_LENGTH, BOBBY_R, GetWorldTotalMin());
-  AddEmail(KING_PIN_LETTER, KING_PIN_LETTER_LENGTH, KING_PIN, GetWorldTotalMin());
-  AddEmail(BOBBYR_SHIPMENT_ARRIVED, BOBBYR_SHIPMENT_ARRIVED_LENGTH, BOBBY_R, GetWorldTotalMin());
+                          GetGameTimeInMin(), 20, 0);
+  AddEmail(BOBBYR_NOW_OPEN, BOBBYR_NOW_OPEN_LENGTH, BOBBY_R, GetGameTimeInMin());
+  AddEmail(KING_PIN_LETTER, KING_PIN_LETTER_LENGTH, KING_PIN, GetGameTimeInMin());
+  AddEmail(BOBBYR_SHIPMENT_ARRIVED, BOBBYR_SHIPMENT_ARRIVED_LENGTH, BOBBY_R, GetGameTimeInMin());
 
   AddEmail(JOHN_KULBA_GIFT_IN_DRASSEN, JOHN_KULBA_GIFT_IN_DRASSEN_LENGTH, JOHN_KULBA,
-           GetWorldTotalMin());
+           GetGameTimeInMin());
 
   AddEmailWithSpecialData(MERC_DIED_ON_OTHER_ASSIGNMENT, MERC_DIED_ON_OTHER_ASSIGNMENT_LENGTH,
-                          AIM_SITE, GetWorldTotalMin(), 0, 0);
+                          AIM_SITE, GetGameTimeInMin(), 0, 0);
 
   AddEmailWithSpecialData(INSUR_1HOUR_FRAUD, INSUR_1HOUR_FRAUD_LENGTH, INSURANCE_COMPANY,
-                          GetWorldTotalMin(), 20, 0);
+                          GetGameTimeInMin(), 20, 0);
 
   // add an email
   AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_REFUND, AIM_MEDICAL_DEPOSIT_REFUND_LENGTH, AIM_SITE,
-                          GetWorldTotalMin(), 20, 0);
+                          GetGameTimeInMin(), 20, 0);
 
   AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_PARTIAL_REFUND,
-                          AIM_MEDICAL_DEPOSIT_PARTIAL_REFUND_LENGTH, AIM_SITE, GetWorldTotalMin(),
+                          AIM_MEDICAL_DEPOSIT_PARTIAL_REFUND_LENGTH, AIM_SITE, GetGameTimeInMin(),
                           20, 0);
 
   AddEmailWithSpecialData(AIM_MEDICAL_DEPOSIT_NO_REFUND, AIM_MEDICAL_DEPOSIT_NO_REFUND_LENGTH,
-                          AIM_SITE, GetWorldTotalMin(), 20, 0);
+                          AIM_SITE, GetGameTimeInMin(), 20, 0);
 }
 #endif

@@ -16,7 +16,6 @@
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/Debug.h"
 #include "SGP/SoundMan.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -397,7 +396,6 @@ void BtnIMPFinishVoiceCallback(GUI_BUTTON *btn, int32_t reason) {
 
 BOOLEAN RenderCharProfileFinishFace(void) {
   // render the portrait of the current picture
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hHandle;
   uint32_t uiGraphicHandle;
 
@@ -407,14 +405,13 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-        FilenameForBPP("Faces\\SmallFaces\\00.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+        if (!AddVObjectFromFile("Faces\\SmallFaces\\00.sti", &uiGraphicHandle)) {
+          return FALSE;
+        }
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
-        BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX,
-                       LAPTOP_SCREEN_WEB_UL_Y + sFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX, LAPTOP_SCREEN_WEB_UL_Y + sFaceY);
 
         // and kick it's sorry ..umm never mind, outta here
         DeleteVideoObjectFromIndex(uiGraphicHandle);
@@ -424,14 +421,13 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-        FilenameForBPP("Faces\\SmallFaces\\01.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+        if (!AddVObjectFromFile("Faces\\SmallFaces\\01.sti", &uiGraphicHandle)) {
+          return FALSE;
+        }
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
-        BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX,
-                       LAPTOP_SCREEN_WEB_UL_Y + sFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX, LAPTOP_SCREEN_WEB_UL_Y + sFaceY);
 
         // and kick it's sorry ..umm never mind, outta here
         DeleteVideoObjectFromIndex(uiGraphicHandle);
@@ -441,14 +437,13 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-        FilenameForBPP("Faces\\SmallFaces\\02.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+        if (!AddVObjectFromFile("Faces\\SmallFaces\\02.sti", &uiGraphicHandle)) {
+          return FALSE;
+        }
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
-        BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX,
-                       LAPTOP_SCREEN_WEB_UL_Y + sFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX, LAPTOP_SCREEN_WEB_UL_Y + sFaceY);
 
         // and kick it's sorry ..umm never mind, outta here
         DeleteVideoObjectFromIndex(uiGraphicHandle);
@@ -462,14 +457,13 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-        FilenameForBPP("Faces\\SmallFaces\\03.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+        if (!AddVObjectFromFile("Faces\\SmallFaces\\03.sti", &uiGraphicHandle)) {
+          return FALSE;
+        }
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
-        BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX,
-                       LAPTOP_SCREEN_WEB_UL_Y + sFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX, LAPTOP_SCREEN_WEB_UL_Y + sFaceY);
 
         // and kick it's sorry ..umm never mind, outta here
         DeleteVideoObjectFromIndex(uiGraphicHandle);
@@ -479,14 +473,13 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-        FilenameForBPP("Faces\\SmallFaces\\04.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+        if (!AddVObjectFromFile("Faces\\SmallFaces\\04.sti", &uiGraphicHandle)) {
+          return FALSE;
+        }
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
-        BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX,
-                       LAPTOP_SCREEN_WEB_UL_Y + sFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX, LAPTOP_SCREEN_WEB_UL_Y + sFaceY);
 
         // and kick it's sorry ..umm never mind, outta here
         DeleteVideoObjectFromIndex(uiGraphicHandle);
@@ -496,14 +489,13 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-        FilenameForBPP("Faces\\SmallFaces\\05.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+        if (!AddVObjectFromFile("Faces\\SmallFaces\\05.sti", &uiGraphicHandle)) {
+          return FALSE;
+        }
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
-        BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX,
-                       LAPTOP_SCREEN_WEB_UL_Y + sFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X + sFaceX, LAPTOP_SCREEN_WEB_UL_Y + sFaceY);
 
         // and kick it's sorry ..umm never mind, outta here
         DeleteVideoObjectFromIndex(uiGraphicHandle);
@@ -541,12 +533,11 @@ void RenderCharFullName(void) {
 
 BOOLEAN LoadCharacterPortrait(void) {
   // this function will load the character's portrait, to be used on portrait button
-  VOBJECT_DESC VObjectDesc;
 
   // load it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP(pPlayerSelectedFaceFileNames[iPortraitNumber], VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiCHARACTERPORTRAIT));
+  if (!AddVObjectFromFile(pPlayerSelectedFaceFileNames[iPortraitNumber], &guiCHARACTERPORTRAIT)) {
+    return FALSE;
+  }
 
   return (TRUE);
 }

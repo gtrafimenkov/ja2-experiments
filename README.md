@@ -1,18 +1,18 @@
-# Experimenting with JA2 sources
+# Jagged Alliance 2 in Rust
 
-## Overview
+Project goals:
+- get experience using Rust programming language
+- understand strong and week points of the language
 
-The main branch is based on [gtrafimenkov/ja2-vanilla](https://github.com/gtrafimenkov/ja2-vanilla)
-with following changes:
-- the code is split into platform-independent (`ja2lib`) and platform-specific parts (`platfrom-*`)
-  for following reasons:
-  - make it easier to port to other platforms
-  - make it easier to develop on Linux
-- small C++ parts of the code were converted to C so that the whole codebase is C now.  That should
-  make it easier to integrate this code with other programming languages
-- CMake build system is used
+Non-goals:
+- support various game mods
+- full rewrite in Rust
 
-Other branches contain different experiments.
+Optional goals:
+- add Linux support by using [SDL](https://www.libsdl.org) library
+
+This project is based on [ja2-experiments](https://github.com/gtrafimenkov/ja2-experiments),
+which in turn based on [ja2-vanilla](https://github.com/gtrafimenkov/ja2-vanilla).
 
 ## Project structure
 
@@ -23,8 +23,19 @@ platform-linux     - platform code for Linux
 platform-win32     - platform code for win32
 bin-win32          - project to build the game binary for Windows
 bin-linux          - project to build Linux binary of the game (not implemented)
+rustlib            - Rust code compiled to a dynamic shared library
 unittester         - an application to run unit tests
 ```
+
+## Build requirements
+
+On Windows:
+- Visual Studio Community 2022
+- Rust v1.67.0 or later
+
+On Linux:
+- GCC
+- Rust v1.67.0 or later
 
 ## How to build
 
@@ -41,9 +52,9 @@ python xx.py build test copy-data run
 ## How to play the game
 
 - install the original version of the game (from the original game CDs, Steam, gog.com, etc.)
-- copy the builded exe file (`build/bin-win32/RelWithDebInfo/ja2v.exe`) to the game directory alongside the original ja2.exe
-- (for Windows 10) copy Windows 10 compatibility files from `tools/dxwrapper` to the game directory
-- launch the builded exe file
+- `python xx.py build`
+- copy content of `build\bin-win32\RelWithDebInfo` folder to the game directory alongside the original ja2.exe
+- run `ja2v.exe`
 
 The game is tested on Windows 10.
 

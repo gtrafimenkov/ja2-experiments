@@ -9,7 +9,6 @@
 #include "JAScreens.h"
 #include "Laptop/Finances.h"
 #include "MapScreenInterfaceMapInventory.h"
-#include "Money.h"
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
@@ -45,7 +44,6 @@
 #include "TileEngine/ExplosionControl.h"
 #include "TileEngine/RadarScreen.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/JA25EnglishText.h"
@@ -54,6 +52,8 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
+#include "rust_ui.h"
 
 #define MAP_BOTTOM_X 0
 #define MAP_BOTTOM_Y 359
@@ -97,9 +97,6 @@ enum {
 };
 
 // GLOBALS
-
-// the dirty state of the mapscreen interface bottom
-BOOLEAN fMapScreenBottomDirty = TRUE;
 
 BOOLEAN fMapBottomDirtied = FALSE;
 
@@ -202,12 +199,9 @@ void MapScreenMessageScrollBarCallBack(struct MOUSE_REGION *pRegion, int32_t iRe
 
 void HandleLoadOfMapBottomGraphics(void) {
   // will load the graphics needed for the mapscreen interface bottom
-  VOBJECT_DESC VObjectDesc;
 
   // will create buttons for interface bottom
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\map_screen_bottom.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &guiMAPBOTTOMPANEL)) return;
+  if (!AddVObjectFromFile("INTERFACE\\map_screen_bottom.sti", &guiMAPBOTTOMPANEL)) return;
 
   // load slider bar icon
   LoadMessageSliderBar();
@@ -252,11 +246,10 @@ void RenderMapScreenInterfaceBottom(void) {
   char bFilename[32];
 
   // render whole panel
-  if (fMapScreenBottomDirty == TRUE) {
+  if (GetMapScreenBottomDirty()) {
     // get and blt panel
     GetVideoObject(&hHandle, guiMAPBOTTOMPANEL);
-    BltVideoObject(guiSAVEBUFFER, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVObject(vsSB, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y);
 
     if (GetSectorFlagStatus(sSelMapX, sSelMapY, (uint8_t)iCurrentMapSectorZ, SF_ALREADY_VISITED) ==
         TRUE) {
@@ -281,7 +274,7 @@ void RenderMapScreenInterfaceBottom(void) {
     RenderRadarScreen();
 
     // reset dirty flag
-    fMapScreenBottomDirty = FALSE;
+    SetMapScreenBottomDirty(false);
     fMapBottomDirtied = TRUE;
   }
 
@@ -408,7 +401,7 @@ void DestroyButtonsForMapScreenInterfaceBottom(void) {
   UnloadButtonImage(guiMapBottomTimeButtonsImage[1]);
 
   // reset dirty flag
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 
   return;
 }
@@ -422,7 +415,7 @@ void BtnLaptopCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->Area.uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
@@ -456,7 +449,7 @@ void BtnTacticalCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->Area.uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
@@ -485,14 +478,14 @@ void BtnOptionsFromMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (btn->uiFlags & BUTTON_CLICKED_ON) {
       btn->uiFlags &= ~(BUTTON_CLICKED_ON);
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
 
       RequestTriggerExitFromMapscreen(MAP_EXIT_TO_OPTIONS);
     }
@@ -509,7 +502,7 @@ void DrawNameOfLoadedSector(void) {
   wchar_t sString[128];
   int16_t sFontX, sFontY;
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
   SetFont(COMPFONT);
   SetFontForeground(183);
@@ -537,14 +530,14 @@ void BtnTimeCompressMoreMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (btn->uiFlags & BUTTON_CLICKED_ON) {
       btn->uiFlags &= ~(BUTTON_CLICKED_ON);
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
 
       RequestIncreaseInTimeCompression();
     }
@@ -559,14 +552,14 @@ void BtnTimeCompressLessMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
   } else if (reason & MSYS_CALLBACK_REASON_LBUTTON_UP) {
     if (btn->uiFlags & BUTTON_CLICKED_ON) {
       btn->uiFlags &= ~(BUTTON_CLICKED_ON);
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
 
       RequestDecreaseInTimeCompression();
     }
@@ -587,7 +580,7 @@ void BtnMessageDownMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
@@ -599,7 +592,7 @@ void BtnMessageDownMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
       // redraw region
       if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
       }
 
       // down a line
@@ -621,7 +614,7 @@ void BtnMessageDownMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
@@ -633,7 +626,7 @@ void BtnMessageDownMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
       // redraw region
       if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
       }
 
       // down a page
@@ -663,7 +656,7 @@ void BtnMessageUpMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->Area.uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     iLastRepeatScrollTime = 0;
@@ -675,7 +668,7 @@ void BtnMessageUpMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
       // redraw region
       if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
       }
 
       // up a line
@@ -697,7 +690,7 @@ void BtnMessageUpMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
     // redraw region
     if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-      fMapScreenBottomDirty = TRUE;
+      SetMapScreenBottomDirty(true);
     }
 
     btn->uiFlags |= (BUTTON_CLICKED_ON);
@@ -709,7 +702,7 @@ void BtnMessageUpMapScreenCallback(GUI_BUTTON *btn, int32_t reason) {
 
       // redraw region
       if (btn->uiFlags & MSYS_HAS_BACKRECT) {
-        fMapScreenBottomDirty = TRUE;
+        SetMapScreenBottomDirty(true);
       }
 
       // up a page
@@ -761,16 +754,14 @@ void DisplayCompressMode(void) {
   static uint8_t usColor = FONT_LTGREEN;
 
   // get compress speed
-  if (giTimeCompressMode != NOT_USING_TIME_COMPRESSION) {
-    if (IsTimeBeingCompressed()) {
-      swprintf(sString, ARR_SIZE(sString), L"%s", sTimeStrings[giTimeCompressMode]);
-    } else {
-      swprintf(sString, ARR_SIZE(sString), L"%s", sTimeStrings[0]);
-    }
+  if (IsTimeBeingCompressed()) {
+    swprintf(sString, ARR_SIZE(sString), L"%s", sTimeStrings[GetTimeCompressMode()]);
+  } else {
+    swprintf(sString, ARR_SIZE(sString), L"%s", sTimeStrings[0]);
   }
 
   RestoreExternBackgroundRect(489, 456, 522 - 489, 467 - 454);
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
   SetFont(COMPFONT);
 
   if (GetJA2Clock() - guiCompressionStringBaseTime >= PAUSE_GAME_TIMER) {
@@ -783,7 +774,7 @@ void DisplayCompressMode(void) {
     guiCompressionStringBaseTime = GetJA2Clock();
   }
 
-  if ((giTimeCompressMode != 0) && (GamePaused() == FALSE)) {
+  if ((GetTimeCompressMode() != TIME_COMPRESS_X0) && (IsGamePaused() == FALSE)) {
     usColor = FONT_LTGREEN;
   }
 
@@ -806,11 +797,8 @@ void RemoveCompressModePause(void) { MSYS_RemoveRegion(&gMapPauseRegion); }
 
 void LoadMessageSliderBar(void) {
   // this function will load the message slider bar
-  VOBJECT_DESC VObjectDesc;
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\map_screen_bottom_arrows.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &guiSliderBar)) return;
+  if (!AddVObjectFromFile("INTERFACE\\map_screen_bottom_arrows.sti", &guiSliderBar)) return;
 }
 
 void DeleteMessageSliderBar(void) {
@@ -897,8 +885,8 @@ void DisplayScrollBarSlider() {
                      (ubNumMessages - MAX_MESSAGES_ON_MAP_BOTTOM);
 
     GetVideoObject(&hHandle, guiSliderBar);
-    BltVideoObject(FRAME_BUFFER, hHandle, 8, MESSAGE_SCROLL_AREA_START_X + 2,
-                   MESSAGE_SCROLL_AREA_START_Y + ubSliderOffset, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 8, MESSAGE_SCROLL_AREA_START_X + 2,
+               MESSAGE_SCROLL_AREA_START_Y + ubSliderOffset);
   }
 }
 
@@ -956,7 +944,7 @@ void CheckForAndHandleAutoMessageScroll( void )
                         MoveCurrentMessagePointerDownList( );
 
                         // dirty region
-                        fMapScreenBottomDirty = TRUE;
+                        SetMapScreenBottomDirty(true);
 
                         // reset delay timer
                         iBaseScrollDelay = GetJA2Clock( );
@@ -1009,7 +997,7 @@ void EnableDisableTimeCompressButtons(void) {
     DisableButton(guiMapBottomTimeButtons[MAP_TIME_COMPRESS_LESS]);
   } else {
     // disable LESS if time compression is at minimum or OFF
-    if (!IsTimeCompressionOn() || giTimeCompressMode == TIME_COMPRESS_X0) {
+    if (!GetTimeCompressionOn() || GetTimeCompressMode() == TIME_COMPRESS_X0) {
       DisableButton(guiMapBottomTimeButtons[MAP_TIME_COMPRESS_LESS]);
     } else {
       EnableButton(guiMapBottomTimeButtons[MAP_TIME_COMPRESS_LESS]);
@@ -1017,7 +1005,7 @@ void EnableDisableTimeCompressButtons(void) {
 
     // disable MORE if we're not paused and time compression is at maximum
     // only disable MORE if we're not paused and time compression is at maximum
-    if (IsTimeCompressionOn() && (giTimeCompressMode == TIME_COMPRESS_60MINS)) {
+    if (GetTimeCompressionOn() && (GetTimeCompressMode() == TIME_COMPRESS_60MINS)) {
       DisableButton(guiMapBottomTimeButtons[MAP_TIME_COMPRESS_MORE]);
     } else {
       EnableButton(guiMapBottomTimeButtons[MAP_TIME_COMPRESS_MORE]);
@@ -1045,7 +1033,7 @@ BOOLEAN AllowedToTimeCompress(void) {
   }
 
   // if we're locked into paused time compression by some event that enforces that
-  if (PauseStateLocked()) {
+  if (IsPauseLocked()) {
     return (FALSE);
   }
 
@@ -1135,7 +1123,7 @@ void DisplayCurrentBalanceTitleForMapBottom(void) {
   int16_t sFontX, sFontY;
 
   // ste the font buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsSB, 0, 0, 640, 480, FALSE);
 
   SetFont(COMPFONT);
   SetFontForeground(MAP_BOTTOM_FONT_COLOR);
@@ -1158,7 +1146,7 @@ void DisplayCurrentBalanceTitleForMapBottom(void) {
   mprintf(sFontX, sFontY, L"%s", sString);
 
   // ste the font buffer
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
   return;
 }
 
@@ -1168,14 +1156,14 @@ void DisplayCurrentBalanceForMapBottom(void) {
   int16_t sFontX, sFontY;
 
   // ste the font buffer
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
   // set up the font
   SetFont(COMPFONT);
   SetFontForeground(183);
   SetFontBackground(FONT_BLACK);
 
-  swprintf(sString, ARR_SIZE(sString), L"%d", MoneyGetBalance());
+  swprintf(sString, ARR_SIZE(sString), L"%d", LaptopMoneyGetBalance());
 
   // insert
 
@@ -1248,7 +1236,7 @@ void DisplayProjectedDailyMineIncome(void) {
 
   if (iRate != iOldRate) {
     iOldRate = iRate;
-    fMapScreenBottomDirty = TRUE;
+    SetMapScreenBottomDirty(true);
 
     // if screen was not dirtied, leave
     if (fMapBottomDirtied == FALSE) {
@@ -1256,7 +1244,7 @@ void DisplayProjectedDailyMineIncome(void) {
     }
   }
   // ste the font buffer
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
   // set up the font
   SetFont(COMPFONT);
@@ -1364,7 +1352,7 @@ BOOLEAN AllowedToExitFromMapscreenTo(int8_t bExitToWhere) {
   }
 
   // if we're locked into paused time compression by some event that enforces that
-  if (PauseStateLocked()) {
+  if (IsPauseLocked()) {
     return (FALSE);
   }
 
@@ -1438,12 +1426,10 @@ void HandleExitsFromMapScreen(void) {
         case MAP_EXIT_TO_LAPTOP:
           fLapTop = TRUE;
           SetPendingNewScreen(LAPTOP_SCREEN);
-
-          if (gfExtraBuffer) {  // Then initiate the transition animation from the mapscreen to
-                                // laptop...
-            BlitBufferToBuffer(FRAME_BUFFER, guiEXTRABUFFER, 0, 0, 640, 480);
-            gfStartMapScreenToLaptopTransition = TRUE;
-          }
+          // Then initiate the transition animation from the mapscreen to
+          // laptop...
+          VSurfaceBlitBufToBuf(vsFB, vsExtraBuffer, 0, 0, 640, 480);
+          gfStartMapScreenToLaptopTransition = TRUE;
           break;
 
         case MAP_EXIT_TO_TACTICAL:
@@ -1529,5 +1515,5 @@ void ChangeCurrentMapscreenMessageIndex(uint8_t ubNewMessageIndex) {
   //	gfNewScrollMessage = TRUE;
 
   // refresh screen
-  fMapScreenBottomDirty = TRUE;
+  SetMapScreenBottomDirty(true);
 }

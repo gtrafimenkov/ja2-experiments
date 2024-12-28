@@ -7,6 +7,7 @@
 
 #include "GameSettings.h"
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 struct SOLDIERTYPE;
 
@@ -27,10 +28,6 @@ typedef struct {
   wchar_t sSavedGameDesc[SIZE_OF_SAVE_GAME_DESC];
 
   uint32_t uiFlags;
-
-#ifdef CRIPPLED_VERSION
-  uint8_t ubCrippleFiller[20];
-#endif
 
   // The following will be used to quickly access info to display in the save/load screen
   uint32_t uiDay;
@@ -62,22 +59,21 @@ typedef struct {
 extern uint32_t guiScreenToGotoAfterLoadingSavedGame;
 extern uint32_t guiSaveGameVersion;
 
-void CreateSavedGameFileNameFromNumber(uint8_t ubSaveGameID, char* pzNewFileName);
+void CreateSavedGameFileNameFromNumber(uint8_t ubSaveGameID, char *pzNewFileName);
 
-BOOLEAN SaveGame(uint8_t ubSaveGameID, wchar_t* pGameDesc, size_t bufSize);
+BOOLEAN SaveGame(uint8_t ubSaveGameID, wchar_t *pGameDesc, size_t bufSize);
 BOOLEAN LoadSavedGame(uint8_t ubSavedGameID);
 
 BOOLEAN CopySavedSoldierInfoToNewSoldier(struct SOLDIERTYPE *pDestSourceInfo,
                                          struct SOLDIERTYPE *pSourceInfo);
 
-BOOLEAN SaveFilesToSavedGame(char* pSrcFileName, HWFILE hFile);
-BOOLEAN LoadFilesFromSavedGame(char* pSrcFileName, HWFILE hFile);
+BOOLEAN SaveFilesToSavedGame(char *pSrcFileName, FileID hFile);
+BOOLEAN LoadFilesFromSavedGame(char *pSrcFileName, FileID hFile);
 
 BOOLEAN DoesUserHaveEnoughHardDriveSpace();
 
 void GetBestPossibleSectorXYZValues(uint8_t *psSectorX, uint8_t *psSectorY, int8_t *pbSectorZ);
 
 extern uint32_t guiLastSaveGameNum;
-int8_t GetNumberForAutoSave(BOOLEAN fLatestAutoSave);
 
 #endif

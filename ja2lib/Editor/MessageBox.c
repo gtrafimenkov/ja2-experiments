@@ -18,7 +18,7 @@
 int32_t iMsgBoxNum;
 int32_t iMsgBoxOkImg, iMsgBoxCancelImg;
 int32_t iMsgBoxBgrnd, iMsgBoxOk, iMsgBoxCancel;
-SGPRect MsgBoxRect;
+struct GRect MsgBoxRect;
 
 BOOLEAN gfMessageBoxResult = FALSE;
 uint8_t gubMessageBoxStatus = MESSAGEBOX_NONE;
@@ -49,9 +49,10 @@ void CreateMessageBox(wchar_t *wzString) {
   iMsgBoxOkImg = LoadButtonImage("EDITOR//ok.sti", 0, 1, 2, 3, 4);
   iMsgBoxCancelImg = LoadButtonImage("EDITOR//cancel.sti", 0, 1, 2, 3, 4);
 
-  iMsgBoxOk = QuickCreateButton(iMsgBoxOkImg, (int16_t)(sStartX + (sPixLen / 2) - 35),
-                                (int16_t)(sStartY + 58), BUTTON_NO_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-                                BUTTON_NO_CALLBACK, (GUI_CALLBACK)MsgBoxOkClkCallback);
+  iMsgBoxOk =
+      QuickCreateButton(iMsgBoxOkImg, (int16_t)(sStartX + (sPixLen / 2) - 35),
+                        (int16_t)(sStartY + 58), BUTTON_NO_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
+                        BUTTON_NO_CALLBACK, (GUI_CALLBACK)MsgBoxOkClkCallback);
 
   iMsgBoxCancel =
       QuickCreateButton(iMsgBoxCancelImg, (int16_t)(sStartX + (sPixLen / 2) + 5),

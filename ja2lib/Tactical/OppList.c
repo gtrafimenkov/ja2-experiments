@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "GameSettings.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Soldier.h"
@@ -54,20 +55,22 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
+#include "rust_civ_groups.h"
 
 #define WE_SEE_WHAT_MILITIA_SEES_AND_VICE_VERSA
 
 extern void SetSoldierAniSpeed(struct SOLDIERTYPE *pSoldier);
 void MakeBloodcatsHostile(void);
 
-void OurNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType, uint8_t ubVolume,
-              uint8_t ubNoiseType);
-void TheirNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType, uint8_t ubVolume,
-                uint8_t ubNoiseType);
+void OurNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType,
+              uint8_t ubVolume, uint8_t ubNoiseType);
+void TheirNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType,
+                uint8_t ubVolume, uint8_t ubNoiseType);
 void ProcessNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType,
                   uint8_t ubBaseVolume, uint8_t ubNoiseType);
-uint8_t CalcEffVolume(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t bLevel, uint8_t ubNoiseType,
-                    uint8_t ubBaseVolume, uint8_t bCheckTerrain, uint8_t ubTerrType1, uint8_t ubTerrType2);
+uint8_t CalcEffVolume(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t bLevel,
+                      uint8_t ubNoiseType, uint8_t ubBaseVolume, uint8_t bCheckTerrain,
+                      uint8_t ubTerrType1, uint8_t ubTerrType2);
 void HearNoise(struct SOLDIERTYPE *pSoldier, uint8_t ubNoiseMaker, uint16_t sGridNo, int8_t bLevel,
                uint8_t ubVolume, uint8_t ubNoiseType, uint8_t *ubSeen);
 void TellPlayerAboutNoise(struct SOLDIERTYPE *pSoldier, uint8_t ubNoiseMaker, int16_t sGridNo,
@@ -283,14 +286,14 @@ uint16_t gsWhoThrewRock = NOBODY;
 // % values of sighting distance at various light levels
 
 int8_t gbLightSighting[1][16] = {{     // human
-                                80,  // brightest
-                                86, 93,
-                                100,  // normal daylight, 3
-                                94, 88, 82, 76,
-                                70,  // mid-dawn, 8
-                                64, 58, 51,
-                                43,  // normal nighttime, 12 (11 tiles)
-                                30, 17, 9}};
+                                  80,  // brightest
+                                  86, 93,
+                                  100,  // normal daylight, 3
+                                  94, 88, 82, 76,
+                                  70,  // mid-dawn, 8
+                                  64, 58, 51,
+                                  43,  // normal nighttime, 12 (11 tiles)
+                                  30, 17, 9}};
 /*
 {
 { // human
@@ -334,7 +337,7 @@ uint8_t gubSightFlags = 0;
   }
 
 int16_t AdjustMaxSightRangeForEnvEffects(struct SOLDIERTYPE *pSoldier, int8_t bLightLevel,
-                                       int16_t sDistVisible) {
+                                         int16_t sDistVisible) {
   int16_t sNewDist = 0;
 
   sNewDist = sDistVisible * gbLightSighting[0][bLightLevel] / 100;
@@ -385,7 +388,7 @@ void ReevaluateBestSightingPosition(struct SOLDIERTYPE *pSoldier, int8_t bInterr
     // this guy has fewer interrupt pts vs another enemy!  reduce position unless in last place
     if (fFound) {
       // set new points
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("RBSP: reducing points for %d to %d", GetSolID(pSoldier), bInterruptDuelPts));
       pSoldier->bInterruptDuelPts = bInterruptDuelPts;
 
@@ -401,7 +404,7 @@ void ReevaluateBestSightingPosition(struct SOLDIERTYPE *pSoldier, int8_t bInterr
       }
     } else if (pSoldier->ubID == gubBestToMakeSighting[gubBestToMakeSightingSize - 1]) {
       // in list but can't be bumped down... set his new points
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("RBSP: reduced points for last individual %d to %d", GetSolID(pSoldier),
                       bInterruptDuelPts));
       pSoldier->bInterruptDuelPts = bInterruptDuelPts;
@@ -422,13 +425,13 @@ void ReevaluateBestSightingPosition(struct SOLDIERTYPE *pSoldier, int8_t bInterr
           if (gubBestToMakeSighting[gubBestToMakeSightingSize - 1] != NOBODY) {
             MercPtrs[gubBestToMakeSighting[gubBestToMakeSightingSize - 1]]->bInterruptDuelPts =
                 NO_INTERRUPT;
-            DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+            DebugMsg(TOPIC_JA2, DBG_INFO,
                      String("RBSP: resetting points for %d to zilch", GetSolID(pSoldier)));
           }
 
           // set new points
           DebugMsg(
-              TOPIC_JA2, DBG_LEVEL_3,
+              TOPIC_JA2, DBG_INFO,
               String("RBSP: setting points for %d to %d", GetSolID(pSoldier), bInterruptDuelPts));
           pSoldier->bInterruptDuelPts = bInterruptDuelPts;
 
@@ -447,7 +450,7 @@ void ReevaluateBestSightingPosition(struct SOLDIERTYPE *pSoldier, int8_t bInterr
 
   for (ubLoop = 0; ubLoop < BEST_SIGHTING_ARRAY_SIZE; ubLoop++) {
     if ((gubBestToMakeSighting[ubLoop] != NOBODY)) {
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("RBSP entry %d: %d (%d pts)", ubLoop, gubBestToMakeSighting[ubLoop],
                       MercPtrs[gubBestToMakeSighting[ubLoop]]->bInterruptDuelPts));
     }
@@ -461,12 +464,12 @@ void HandleBestSightingPositionInRealtime(void) {
   uint8_t ubLoop;
 
   if (gfDelayResolvingBestSightingDueToDoor) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "HBSPIR: skipping due to door flag");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "HBSPIR: skipping due to door flag");
     return;
   }
 
   if (gubBestToMakeSighting[0] != NOBODY) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "HBSPIR called and there is someone in the list");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "HBSPIR called and there is someone in the list");
 
     // if (gfHumanSawSomeoneInRealtime)
     {
@@ -483,7 +486,7 @@ void HandleBestSightingPositionInRealtime(void) {
           EnterCombatMode(MercPtrs[gubBestToMakeSighting[0]]->bTeam);
         } else  // give turn to 2nd best but interrupt to 1st
         {
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Entering combat mode: turn for 2nd best, int for best");
+          DebugMsg(TOPIC_JA2, DBG_INFO, "Entering combat mode: turn for 2nd best, int for best");
 
           EnterCombatMode(MercPtrs[gubBestToMakeSighting[1]]->bTeam);
           // 2nd guy loses control
@@ -499,7 +502,7 @@ void HandleBestSightingPositionInRealtime(void) {
     for (ubLoop = 0; ubLoop < BEST_SIGHTING_ARRAY_SIZE; ubLoop++) {
       if (gubBestToMakeSighting[ubLoop] != NOBODY) {
         MercPtrs[gubBestToMakeSighting[ubLoop]]->bInterruptDuelPts = NO_INTERRUPT;
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("RBSP: done, resetting points for %d to zilch",
                         MercPtrs[gubBestToMakeSighting[ubLoop]]->ubID));
       }
@@ -556,7 +559,7 @@ void HandleBestSightingPositionInTurnbased(void) {
     for (ubLoop = 0; ubLoop < BEST_SIGHTING_ARRAY_SIZE; ubLoop++) {
       if (gubBestToMakeSighting[ubLoop] != NOBODY) {
         MercPtrs[gubBestToMakeSighting[ubLoop]]->bInterruptDuelPts = NO_INTERRUPT;
-        DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+        DebugMsg(TOPIC_JA2, DBG_INFO,
                  String("RBSP (TB): done, resetting points for %d to zilch",
                         MercPtrs[gubBestToMakeSighting[ubLoop]]->ubID));
       }
@@ -650,9 +653,8 @@ void CheckHostileOrSayQuoteList(void) {
           MakeCivHostile(pSoldier, 2);
           // make civ group, if any, hostile
           if (pSoldier->bTeam == CIV_TEAM && pSoldier->ubCivilianGroup != NON_CIV_GROUP &&
-              gTacticalStatus.fCivGroupHostile[pSoldier->ubCivilianGroup] ==
-                  CIV_GROUP_WILL_BECOME_HOSTILE) {
-            gTacticalStatus.fCivGroupHostile[pSoldier->ubCivilianGroup] = CIV_GROUP_HOSTILE;
+              GetCivGroupHostility(pSoldier->ubCivilianGroup) == CIV_GROUP_WILL_BECOME_HOSTILE) {
+            SetCivGroupHostility(pSoldier->ubCivilianGroup, CIV_GROUP_HOSTILE);
           }
         }
       }
@@ -888,7 +890,7 @@ void OurTeamRadiosRandomlyAbout(uint8_t ubAbout) {
 }
 
 int16_t TeamNoLongerSeesMan(uint8_t ubTeam, struct SOLDIERTYPE *pOpponent, uint8_t ubExcludeID,
-                          int8_t bIteration) {
+                            int8_t bIteration) {
   uint16_t bLoop;
   struct SOLDIERTYPE *pMate;
 
@@ -957,7 +959,7 @@ int16_t DistanceSmellable(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pSub
 int16_t MaxDistanceVisible(void) { return (STRAIGHT * 2); }
 
 int16_t DistanceVisible(struct SOLDIERTYPE *pSoldier, int8_t bFacingDir, int8_t bSubjectDir,
-                      int16_t sSubjectGridNo, int8_t bLevel) {
+                        int16_t sSubjectGridNo, int8_t bLevel) {
   int16_t sDistVisible;
   int8_t bLightLevel;
   struct SOLDIERTYPE *pSubject;
@@ -1219,7 +1221,7 @@ void InitOpplistForDoorOpening(void) {
   // the results of hearing the noise are lumped in with the results from AllTeamsLookForAll
   gubBestToMakeSightingSize = BEST_SIGHTING_ARRAY_SIZE_ALL_TEAMS_LOOK_FOR_ALL;
   gfDelayResolvingBestSightingDueToDoor = TRUE;  // will be turned off in allteamslookforall
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "HBSPIR: setting door flag on");
+  DebugMsg(TOPIC_JA2, DBG_INFO, "HBSPIR: setting door flag on");
   // must init sight arrays here
   InitSightArrays();
 }
@@ -1236,7 +1238,7 @@ void AllTeamsLookForAll(uint8_t ubAllowInterrupts) {
     gubBestToMakeSightingSize = BEST_SIGHTING_ARRAY_SIZE_ALL_TEAMS_LOOK_FOR_ALL;
     if (gfDelayResolvingBestSightingDueToDoor) {
       // turn off flag now, and skip init of sight arrays
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "HBSPIR: turning door flag off");
+      DebugMsg(TOPIC_JA2, DBG_INFO, "HBSPIR: turning door flag off");
       gfDelayResolvingBestSightingDueToDoor = FALSE;
     } else {
       InitSightArrays();
@@ -1326,7 +1328,7 @@ void ManLooksForOtherTeams(struct SOLDIERTYPE *pSoldier) {
   struct SOLDIERTYPE *pOpponent;
 
 #ifdef TESTOPPLIST
-  DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
            String("MANLOOKSFOROTHERTEAMS ID %d(%S) team %d side %d", GetSolID(pSoldier),
                   pSoldier->name, pSoldier->bTeam, pSoldier->bSide));
 #endif
@@ -1397,7 +1399,7 @@ fprintf(OpplistFile,"ManLooksForMan: changing personalOpplist to %d for guynum %
     // THIS MUST HAPPEN EVEN FOR ENEMIES, TO MAKE THEIR PUBLIC opplist DECAY!
     if (TeamNoLongerSeesMan(pSoldier->bTeam, pOpponent, GetSolID(pSoldier), 0)) {
 #ifdef TESTOPPLIST
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
                String("TeamNoLongerSeesMan: ID %d(%S) to ID %d", GetSolID(pSoldier), pSoldier->name,
                       pOpponent->ubID));
 #endif
@@ -1428,7 +1430,7 @@ fprintf(OpplistFile,"ManLooksForMan: changing personalOpplist to %d for guynum %
   }
 #ifdef TESTOPPLIST
   else
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
              String("ManLooksForMan: ID %d(%S) to ID %d Personally seen, public %d",
                     GetSolID(pSoldier), pSoldier->name, pOpponent->ubID, *pbPublOL));
 #endif
@@ -1441,7 +1443,8 @@ fprintf(OpplistFile,"ManLooksForMan: changing personalOpplist to %d for guynum %
     gbSeenOpponents[pSoldier->ubID][pOpponent->ubID] = TRUE;
 }
 
-int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOpponent, uint8_t ubCaller) {
+int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOpponent,
+                       uint8_t ubCaller) {
   int8_t bDir, bAware = FALSE, bSuccess = FALSE;
   int16_t sDistVisible, sDistAway;
   int8_t *pPersOL, *pbPublOL;
@@ -1481,7 +1484,7 @@ int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOppone
     */
 
 #ifdef TESTOPPLIST
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
              String("ERROR: ManLooksForMan - WE are inactive/dead etc ID %d(%S)to ID %d",
                     GetSolID(pSoldier), pSoldier->name, pOpponent->ubID));
 #endif
@@ -1506,7 +1509,7 @@ int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOppone
     */
 
 #ifdef TESTOPPLIST
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
              String("ERROR: ManLooksForMan - TARGET is inactive etc ID %d(%S)to ID %d",
                     GetSolID(pSoldier), pSoldier->name, pOpponent->ubID));
 #endif
@@ -1527,7 +1530,7 @@ int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOppone
     */
 
 #ifdef TESTOPPLIST
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
              String("ERROR: ManLooksForMan - SAME TEAM ID %d(%S)to ID %d", GetSolID(pSoldier),
                     pSoldier->name, pOpponent->ubID));
 #endif
@@ -1618,7 +1621,7 @@ int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOppone
   sDistAway = PythSpacesAway(pSoldier->sGridNo, pOpponent->sGridNo);
 
 #ifdef TESTOPPLIST
-  DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
            String("MANLOOKSFORMAN: ID %d(%S) to ID %d: sDistAway %d sDistVisible %d",
                   GetSolID(pSoldier), pSoldier->name, pOpponent->ubID, sDistAway, sDistVisible));
 #endif
@@ -1634,7 +1637,7 @@ int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOppone
     }
 #ifdef TESTOPPLIST
     else
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
                String("FAILED LINEOFSIGHT: ID %d (%S)to ID %d Personally %d, public %d",
                       GetSolID(pSoldier), pSoldier->name, pOpponent->ubID, *pPersOL, *pbPublOL));
 #endif
@@ -1666,7 +1669,7 @@ int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOppone
   } else {
     if (!bSuccess) {
 #ifdef TESTOPPLIST
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
                String("NO LONGER VISIBLE ID %d (%S)to ID %d Personally %d, public %d success: %d",
                       GetSolID(pSoldier), pSoldier->name, pOpponent->ubID, *pPersOL, *pbPublOL,
                       bSuccess));
@@ -1678,7 +1681,7 @@ int16_t ManLooksForMan(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pOppone
     }
 #ifdef TESTOPPLIST
     else
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
                String("COOL. STILL VISIBLE ID %d (%S)to ID %d Personally %d, public %d success: %d",
                       GetSolID(pSoldier), pSoldier->name, pOpponent->ubID, *pPersOL, *pbPublOL,
                       bSuccess));
@@ -1756,8 +1759,7 @@ PopMessage(tempstr);
           // "I hate you" quote
           if (pSoldier->bNeutral) {
             if (pSoldier->ubCivilianGroup != NON_CIV_GROUP &&
-                gTacticalStatus.fCivGroupHostile[pSoldier->ubCivilianGroup] >=
-                    CIV_GROUP_WILL_BECOME_HOSTILE) {
+                GetCivGroupHostility(pSoldier->ubCivilianGroup) >= CIV_GROUP_WILL_BECOME_HOSTILE) {
               AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
               fNotAddedToList = FALSE;
             }
@@ -1866,8 +1868,7 @@ PopMessage(tempstr);
       } else {
         if (pSoldier->bTeam == CIV_TEAM) {
           if (pSoldier->ubCivilianGroup != NON_CIV_GROUP &&
-              gTacticalStatus.fCivGroupHostile[pSoldier->ubCivilianGroup] >=
-                  CIV_GROUP_WILL_BECOME_HOSTILE &&
+              GetCivGroupHostility(pSoldier->ubCivilianGroup) >= CIV_GROUP_WILL_BECOME_HOSTILE &&
               pSoldier->bNeutral) {
             AddToShouldBecomeHostileOrSayQuoteList(pSoldier->ubID);
           } else if (pSoldier->ubCivilianGroup == KINGPIN_CIV_GROUP) {
@@ -1900,7 +1901,7 @@ PopMessage(tempstr);
             int16_t sX, sY;
 
             // if before 6:05 or after 22:00, make hostile and enter combat
-            uiTime = GetWorldMinutesInDay();
+            uiTime = GetMinutesSinceDayStart();
             if (uiTime < 365 || uiTime > 1320) {
               // get off our farm!
               MakeCivHostile(pSoldier, 2);
@@ -1973,7 +1974,7 @@ PopMessage(tempstr);
       AddOneOpponent(pSoldier);
 
 #ifdef TESTOPPLIST
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
                String("ManSeesMan: ID %d(%S) to ID %d NEW TO ME", GetSolID(pSoldier),
                       pSoldier->name, pOpponent->ubID));
 #endif
@@ -2029,7 +2030,7 @@ PopMessage(tempstr);
   }
 #ifdef TESTOPPLIST
   else
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
              String("ManSeesMan: ID %d(%S) to ID %d ALREADYSEENCURRENTLY", GetSolID(pSoldier),
                     pSoldier->name, pOpponent->ubID));
 #endif
@@ -2104,7 +2105,7 @@ PopMessage(tempstr);
     }
 
 #ifdef TESTOPPLIST
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
              String("!!! ID %d (%S) MAKING %d VISIBLE", GetSolID(pSoldier), pSoldier->name,
                     pOpponent->ubID));
 #endif
@@ -2207,7 +2208,7 @@ void OtherTeamsLookForMan(struct SOLDIERTYPE *pOpponent) {
   }
 
 #ifdef TESTOPPLIST
-  DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
            String("OTHERTEAMSLOOKFORMAN ID %d(%S) team %d side %d", pOpponent->ubID,
                   pOpponent->name, pOpponent->bTeam, pOpponent->bSide));
 #endif
@@ -2243,7 +2244,7 @@ void OtherTeamsLookForMan(struct SOLDIERTYPE *pOpponent) {
                 StandardInterruptConditionsMet(pSoldier, pOpponent->ubID, bOldOppList)) {
               // calculate the interrupt duel points
               pSoldier->bInterruptDuelPts = CalcInterruptDuelPts(pSoldier, pOpponent->ubID, TRUE);
-              DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+              DebugMsg(TOPIC_JA2, DBG_INFO,
                        String("Calculating int duel pts in OtherTeamsLookForMan, %d has %d points",
                               GetSolID(pSoldier), pSoldier->bInterruptDuelPts));
             } else {
@@ -2300,7 +2301,7 @@ void RemoveOneOpponent(struct SOLDIERTYPE *pSoldier) {
   pSoldier->bOppCnt--;
 
   if (pSoldier->bOppCnt < 0) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("Oppcnt for %d (%s) tried to go below 0", GetSolID(pSoldier), pSoldier->name));
 #ifdef JA2BETAVERSION
     ScreenMsg(MSG_FONT_YELLOW, MSG_UI_FEEDBACK,
@@ -2362,7 +2363,8 @@ void RemoveManAsTarget(struct SOLDIERTYPE *pSoldier) {
     gTacticalStatus.Team[pSoldier->bTeam].ubLastMercToRadio = NOBODY;
 }
 
-void UpdatePublic(uint8_t ubTeam, uint8_t ubID, int8_t bNewOpplist, int16_t sGridno, int8_t bLevel) {
+void UpdatePublic(uint8_t ubTeam, uint8_t ubID, int8_t bNewOpplist, int16_t sGridno,
+                  int8_t bLevel) {
   int32_t cnt;
   int8_t *pbPublOL;
   uint8_t ubTeamMustLookAgain = FALSE;
@@ -2727,7 +2729,8 @@ void SaySeenQuote(struct SOLDIERTYPE *pSoldier, BOOLEAN fSeenCreature, BOOLEAN f
   }
 }
 
-void OurTeamSeesSomeone(struct SOLDIERTYPE *pSoldier, int8_t bNumReRevealed, int8_t bNumNewEnemies) {
+void OurTeamSeesSomeone(struct SOLDIERTYPE *pSoldier, int8_t bNumReRevealed,
+                        int8_t bNumNewEnemies) {
   if (gTacticalStatus.fVirginSector) {
     // If we are in NPC dialogue now... stop!
     DeleteTalkingMenu();
@@ -2787,7 +2790,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, uint8_t ubAbout, uint8_t ubTea
   BOOLEAN fSawCreatureForFirstTime = FALSE;
 
 #ifdef TESTOPPLIST
-  DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+  DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
            String("RADIO SIGHTINGS: for %d about %d", GetSolID(pSoldier), ubAbout));
 #endif
 
@@ -2821,13 +2824,13 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, uint8_t ubAbout, uint8_t ubTea
     fContactSeen = FALSE;
 
 #ifdef TESTOPPLIST
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3, String("RS: checking %d", pOpponent->ubID));
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO, String("RS: checking %d", pOpponent->ubID));
 #endif
 
     // make sure this merc is active, here & still alive (unconscious OK)
     if (!pOpponent->bActive || !pOpponent->bInSector || !pOpponent->bLife) {
 #ifdef TESTOPPLIST
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
                String("RS: inactive/notInSector/life %d", pOpponent->ubID));
 #endif
 
@@ -2838,7 +2841,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, uint8_t ubAbout, uint8_t ubTea
     // NEW: Apr. 21 '96: must allow ALL non-humans to get radioed about
     if ((pSoldier->bSide == pOpponent->bSide) && (pOpponent->uiStatusFlags & SOLDIER_PC)) {
 #ifdef TESTOPPLIST
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3, String("RS: same side %d", pSoldier->bSide));
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO, String("RS: same side %d", pSoldier->bSide));
 #endif
 
       continue;  // skip to the next merc
@@ -2857,7 +2860,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, uint8_t ubAbout, uint8_t ubTea
 #endif
 
 #ifdef TESTOPPLIST
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3, String("RS: not heard or seen"));
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO, String("RS: not heard or seen"));
 #endif
 
       continue;  // skip to the next opponent
@@ -2871,7 +2874,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, uint8_t ubAbout, uint8_t ubTea
 #endif
 
 #ifdef TESTOPPLIST
-      DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
                String("RS: no new knowledge per %d pub %d", *pPersOL, *pbPublOL));
 #endif
 
@@ -2883,7 +2886,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, uint8_t ubAbout, uint8_t ubTea
 #endif
 
 #ifdef TESTOPPLIST
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3, String("RS: made it!"));
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO, String("RS: made it!"));
 #endif
 
     // if it's our merc, and he currently sees this opponent
@@ -2979,7 +2982,7 @@ void RadioSightings(struct SOLDIERTYPE *pSoldier, uint8_t ubAbout, uint8_t ubTea
 #endif
 
 #ifdef TESTOPPLIST
-    DebugMsg(TOPIC_JA2OPPLIST, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2OPPLIST, DBG_INFO,
              String("...............UPDATE PUBLIC: soldier %d SEEING soldier %d",
                     GetSolID(pSoldier), pOpponent->ubID));
 #endif
@@ -4245,8 +4248,8 @@ uint8_t DoorOpeningNoise(struct SOLDIERTYPE *pSoldier) {
   }
 }
 
-void MakeNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType, uint8_t ubVolume,
-               uint8_t ubNoiseType) {
+void MakeNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType,
+               uint8_t ubVolume, uint8_t ubNoiseType) {
   EV_S_NOISE SNoise;
 
   SNoise.ubNoiseMaker = ubNoiseMaker;
@@ -4338,8 +4341,8 @@ void MakeNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubT
   */
 }
 
-void OurNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType, uint8_t ubVolume,
-              uint8_t ubNoiseType) {
+void OurNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType,
+              uint8_t ubVolume, uint8_t ubNoiseType) {
   struct SOLDIERTYPE *pSoldier;
 
 #ifdef BYPASSNOISE
@@ -4373,8 +4376,8 @@ void OurNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTe
   }
 }
 
-void TheirNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType, uint8_t ubVolume,
-                uint8_t ubNoiseType) {
+void TheirNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t ubTerrType,
+                uint8_t ubVolume, uint8_t ubNoiseType) {
   //	struct SOLDIERTYPE *pSoldier;
 
 #ifdef BYPASSNOISE
@@ -4813,8 +4816,9 @@ void ProcessNoise(uint8_t ubNoiseMaker, int16_t sGridNo, int8_t bLevel, uint8_t 
   gsWhoThrewRock = NOBODY;
 }
 
-uint8_t CalcEffVolume(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t bLevel, uint8_t ubNoiseType,
-                    uint8_t ubBaseVolume, uint8_t bCheckTerrain, uint8_t ubTerrType1, uint8_t ubTerrType2) {
+uint8_t CalcEffVolume(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t bLevel,
+                      uint8_t ubNoiseType, uint8_t ubBaseVolume, uint8_t bCheckTerrain,
+                      uint8_t ubTerrType1, uint8_t ubTerrType2) {
   int32_t iEffVolume, iDistance;
 
   if (pSoldier->inv[HEAD1POS].usItem == WALKMAN || pSoldier->inv[HEAD2POS].usItem == WALKMAN) {
@@ -4942,7 +4946,7 @@ void HearNoise(struct SOLDIERTYPE *pSoldier, uint8_t ubNoiseMaker, uint16_t sGri
   int8_t bDirection;
   BOOLEAN fMuzzleFlash = FALSE;
 
-  //	DebugMsg( TOPIC_JA2, DBG_LEVEL_3, String( "%d hears noise from %d (%d/%d) volume %d",
+  //	DebugMsg( TOPIC_JA2, DBG_INFO, String( "%d hears noise from %d (%d/%d) volume %d",
   // GetSolID(pSoldier), ubNoiseMaker, sGridNo, bLevel, ubVolume ) );
 
   if (pSoldier->ubBodyType == CROW) {
@@ -5138,7 +5142,7 @@ void HearNoise(struct SOLDIERTYPE *pSoldier, uint8_t ubNoiseMaker, uint16_t sGri
           if (StandardInterruptConditionsMet(pSoldier, ubNoiseMaker, bOldOpplist)) {
             // he gets a chance to interrupt the noisemaker
             pSoldier->bInterruptDuelPts = CalcInterruptDuelPts(pSoldier, ubNoiseMaker, TRUE);
-            DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+            DebugMsg(TOPIC_JA2, DBG_INFO,
                      String("Calculating int duel pts in noise code, %d has %d points",
                             GetSolID(pSoldier), pSoldier->bInterruptDuelPts));
           } else {
@@ -5210,7 +5214,7 @@ void HearNoise(struct SOLDIERTYPE *pSoldier, uint8_t ubNoiseMaker, uint16_t sGri
         // reasonable to assume the guy throwing wants to wait for their reaction!
         if (StandardInterruptConditionsMet(pSoldier, NOBODY, FALSE)) {
           pSoldier->bInterruptDuelPts = AUTOMATIC_INTERRUPT;  // force automatic interrupt
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+          DebugMsg(TOPIC_JA2, DBG_INFO,
                    String("Calculating int duel pts in noise code, %d has %d points",
                           GetSolID(pSoldier), pSoldier->bInterruptDuelPts));
         } else {
@@ -5222,7 +5226,8 @@ void HearNoise(struct SOLDIERTYPE *pSoldier, uint8_t ubNoiseMaker, uint16_t sGri
 }
 
 void TellPlayerAboutNoise(struct SOLDIERTYPE *pSoldier, uint8_t ubNoiseMaker, int16_t sGridNo,
-                          int8_t bLevel, uint8_t ubVolume, uint8_t ubNoiseType, uint8_t ubNoiseDir) {
+                          int8_t bLevel, uint8_t ubVolume, uint8_t ubNoiseType,
+                          uint8_t ubNoiseDir) {
   uint8_t ubVolumeIndex;
 
   // CJC: tweaked the noise categories upwards a bit because our movement noises can be louder now.
@@ -5699,7 +5704,7 @@ void NoticeUnseenAttacker(struct SOLDIERTYPE *pAttacker, struct SOLDIERTYPE *pDe
     }
 
     ubTileSightLimit = (uint8_t)DistanceVisible(pDefender, DIRECTION_IRRELEVANT, 0,
-                                              pAttacker->sGridNo, pAttacker->bLevel);
+                                                pAttacker->sGridNo, pAttacker->bLevel);
     if (SoldierToSoldierLineOfSightTest(pDefender, pAttacker, ubTileSightLimit, TRUE) != 0) {
       fSeesAttacker = TRUE;
     }
@@ -5752,13 +5757,13 @@ void NoticeUnseenAttacker(struct SOLDIERTYPE *pAttacker, struct SOLDIERTYPE *pDe
   }
 
   if (StandardInterruptConditionsMet(pDefender, pAttacker->ubID, bOldOppList)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("INTERRUPT: NoticeUnseenAttacker, standard conditions are met; defender %d, "
                     "attacker %d",
                     pDefender->ubID, pAttacker->ubID));
 
     // calculate the interrupt duel points
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Calculating int duel pts for defender in NUA");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Calculating int duel pts for defender in NUA");
     pDefender->bInterruptDuelPts = CalcInterruptDuelPts(pDefender, pAttacker->ubID, FALSE);
   } else {
     pDefender->bInterruptDuelPts = NO_INTERRUPT;
@@ -5771,10 +5776,10 @@ void NoticeUnseenAttacker(struct SOLDIERTYPE *pAttacker, struct SOLDIERTYPE *pDe
     // this code is basically ResolveInterruptsVs for 1 man only...
 
     // calculate active soldier's dueling pts for the upcoming interrupt duel
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Calculating int duel pts for attacker in NUA");
+    DebugMsg(TOPIC_JA2, DBG_INFO, "Calculating int duel pts for attacker in NUA");
     pAttacker->bInterruptDuelPts = CalcInterruptDuelPts(pAttacker, pDefender->ubID, FALSE);
     if (InterruptDuel(pDefender, pAttacker)) {
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+      DebugMsg(TOPIC_JA2, DBG_INFO,
                String("INTERRUPT: NoticeUnseenAttacker, defender pts %d, attacker pts %d, defender "
                       "gets interrupt",
                       pDefender->bInterruptDuelPts, pAttacker->bInterruptDuelPts));
@@ -5785,11 +5790,11 @@ void NoticeUnseenAttacker(struct SOLDIERTYPE *pAttacker, struct SOLDIERTYPE *pDe
     // either way, clear out both sides' duelPts fields to prepare next duel
     pDefender->bInterruptDuelPts = NO_INTERRUPT;
 #ifdef DEBUG_INTERRUPTS
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Resetting int pts for %d in NUA", pDefender->ubID));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("Resetting int pts for %d in NUA", pDefender->ubID));
 #endif
     pAttacker->bInterruptDuelPts = NO_INTERRUPT;
 #ifdef DEBUG_INTERRUPTS
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Resetting int pts for %d in NUA", pAttacker->ubID));
+    DebugMsg(TOPIC_JA2, DBG_INFO, String("Resetting int pts for %d in NUA", pAttacker->ubID));
 #endif
   }
 }
@@ -5934,8 +5939,8 @@ int8_t GetHighestVisibleWatchedLoc(uint8_t ubID) {
                                      gsWatchedLoc[ubID][bLoop], gbWatchedLocLevel[ubID][bLoop]);
       // look at standing height
       if (SoldierTo3DLocationLineOfSightTest(MercPtrs[ubID], gsWatchedLoc[ubID][bLoop],
-                                             gbWatchedLocLevel[ubID][bLoop], 3, (uint8_t)sDistVisible,
-                                             TRUE)) {
+                                             gbWatchedLocLevel[ubID][bLoop], 3,
+                                             (uint8_t)sDistVisible, TRUE)) {
         bHighestLoc = bLoop;
         bHighestPoints = gubWatchedLocPoints[ubID][bLoop];
       }

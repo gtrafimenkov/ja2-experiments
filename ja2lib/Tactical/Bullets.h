@@ -8,6 +8,7 @@
 #include "SGP/Types.h"
 #include "Tactical/LOS.h"
 #include "TileEngine/TileAnimation.h"
+#include "rust_fileman.h"
 
 struct SOLDIERTYPE;
 
@@ -82,9 +83,9 @@ void HandleBulletSpecialFlags(int32_t iBulletIndex);
 void AddMissileTrail(BULLET *pBullet, FIXEDPT qCurrX, FIXEDPT qCurrY, FIXEDPT qCurrZ);
 
 // Save the bullet table to the saved game file
-BOOLEAN SaveBulletStructureToSaveGameFile(HWFILE hFile);
+BOOLEAN SaveBulletStructureToSaveGameFile(FileID hFile);
 
 // Load the bullet table from the saved game file
-BOOLEAN LoadBulletStructureFromSavedGameFile(HWFILE hFile);
+BOOLEAN LoadBulletStructureFromSavedGameFile(FileID hFile);
 
 #endif

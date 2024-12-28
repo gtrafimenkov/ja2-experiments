@@ -8,7 +8,6 @@
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/Debug.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
@@ -24,11 +23,11 @@
 uint8_t AimMercArray[MAX_NUMBER_MERCS];
 
 uint8_t gCurrentAimPage[NUM_AIM_SCREENS] = {LAPTOP_MODE_AIM,
-                                          LAPTOP_MODE_AIM_MEMBERS_SORTED_FILES,
-                                          LAPTOP_MODE_AIM_MEMBERS_ARCHIVES,
-                                          LAPTOP_MODE_AIM_POLICIES,
-                                          LAPTOP_MODE_AIM_HISTORY,
-                                          LAPTOP_MODE_AIM_LINKS};
+                                            LAPTOP_MODE_AIM_MEMBERS_SORTED_FILES,
+                                            LAPTOP_MODE_AIM_MEMBERS_ARCHIVES,
+                                            LAPTOP_MODE_AIM_POLICIES,
+                                            LAPTOP_MODE_AIM_HISTORY,
+                                            LAPTOP_MODE_AIM_LINKS};
 
 //
 //***  Defines **
@@ -197,8 +196,6 @@ BOOLEAN fFirstTimeIn = TRUE;
 void GameInitAIM() { LaptopInitAim(); }
 
 BOOLEAN EnterAIM() {
-  VOBJECT_DESC VObjectDesc;
-
   gubWarningTimer = 0;
   gubCurrentAdvertisment = AIM_AD_WARNING_BOX;
   LaptopInitAim();
@@ -206,54 +203,61 @@ BOOLEAN EnterAIM() {
   InitAimDefaults();
 
   // load the MemberShipcard graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\membercard.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMemberCard));
+  if (!AddVObjectFromFile("LAPTOP\\membercard.sti", &guiMemberCard)) {
+    return FALSE;
+  }
 
   // load the Policies graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Policies.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiPolicies));
+  if (!AddVObjectFromFile("LAPTOP\\Policies.sti", &guiPolicies)) {
+    return FALSE;
+  }
 
   // load the Links graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Links.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLinks));
+  if (!AddVObjectFromFile("LAPTOP\\Links.sti", &guiLinks)) {
+    return FALSE;
+  }
 
   // load the History graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_HISTORY);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiHistory));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_HISTORY);
+  if (!AddVObjectFromFile(ImageFile, &guiHistory)) {
+    return FALSE;
+  }
 
   // load the Wanring graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_WARNING);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiWarning));
+  GetMLGFilename(ImageFile, MLG_WARNING);
+  if (!AddVObjectFromFile(ImageFile, &guiWarning)) {
+    return FALSE;
+  }
 
   // load the flower advertisment and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\flowerad_16.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFlowerAdvertisement));
+  if (!AddVObjectFromFile("LAPTOP\\flowerad_16.sti", &guiFlowerAdvertisement)) {
+    return FALSE;
+  }
 
   // load the your ad advertisment and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_YOURAD13);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiAdForAdsImages));
+  GetMLGFilename(ImageFile, MLG_YOURAD13);
+  if (!AddVObjectFromFile(ImageFile, &guiAdForAdsImages)) {
+    return FALSE;
+  }
 
   // load the insurance advertisment and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_INSURANCEAD10);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsuranceAdImages));
+  GetMLGFilename(ImageFile, MLG_INSURANCEAD10);
+  if (!AddVObjectFromFile(ImageFile, &guiInsuranceAdImages)) {
+    return FALSE;
+  }
 
   // load the funeral advertisment and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_FUNERALAD9);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFuneralAdImages));
+  GetMLGFilename(ImageFile, MLG_FUNERALAD9);
+  if (!AddVObjectFromFile(ImageFile, &guiFuneralAdImages)) {
+    return FALSE;
+  }
 
   // load the funeral advertisment and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYRAYAD21);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBobbyRAdImages));
+  GetMLGFilename(ImageFile, MLG_BOBBYRAYAD21);
+  if (!AddVObjectFromFile(ImageFile, &guiBobbyRAdImages)) {
+    return FALSE;
+  }
 
   //** Mouse Regions **
 
@@ -338,22 +342,19 @@ void RenderAIM() {
 
   // MemberCard
   GetVideoObject(&hMemberCardHandle, guiMemberCard);
-  BltVideoObject(FRAME_BUFFER, hMemberCardHandle, 0, MEMBERCARD_X, MEMBERCARD_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hMemberCardHandle, 0, MEMBERCARD_X, MEMBERCARD_Y);
 
   // Policies
   GetVideoObject(&hPoliciesHandle, guiPolicies);
-  BltVideoObject(FRAME_BUFFER, hPoliciesHandle, 0, POLICIES_X, POLICIES_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hPoliciesHandle, 0, POLICIES_X, POLICIES_Y);
 
   // Links
   GetVideoObject(&hLinksHandle, guiLinks);
-  BltVideoObject(FRAME_BUFFER, hLinksHandle, 0, LINKS_X, LINKS_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hLinksHandle, 0, LINKS_X, LINKS_Y);
 
   // History
   GetVideoObject(&hHistoryHandle, guiHistory);
-  BltVideoObject(FRAME_BUFFER, hHistoryHandle, 0, HISTORY_X, HISTORY_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hHistoryHandle, 0, HISTORY_X, HISTORY_Y);
 
   // Draw the aim slogan under the symbol
   DisplayAimSlogan();
@@ -415,17 +416,17 @@ void SelectLinksRegionCallBack(struct MOUSE_REGION *pRegion, int32_t iReason) {
 }
 
 BOOLEAN InitAimDefaults() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Rust bacground graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\rustbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiRustBackGround));
+  if (!AddVObjectFromFile("LAPTOP\\rustbackground.sti", &guiRustBackGround)) {
+    return FALSE;
+  }
 
   // load the Aim Symbol graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_AIMSYMBOL);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiAimSymbol));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_AIMSYMBOL);
+  if (!AddVObjectFromFile(ImageFile, &guiAimSymbol)) {
+    return FALSE;
+  }
 
   // Mouse region for the Links
   MSYS_DefineRegion(&gSelectedAimLogo, AIM_SYMBOL_X, AIM_SYMBOL_Y, AIM_SYMBOL_X + AIM_SYMBOL_WIDTH,
@@ -456,8 +457,7 @@ BOOLEAN DrawAimDefaults() {
   for (y = 0; y < 4; y++) {
     uiPosX = RUSTBACKGROUND_1_X;
     for (x = 0; x < 4; x++) {
-      BltVideoObject(FRAME_BUFFER, hRustBackGroundHandle, 0, uiPosX, uiPosY, VO_BLT_SRCTRANSPARENCY,
-                     NULL);
+      BltVObject(vsFB, hRustBackGroundHandle, 0, uiPosX, uiPosY);
       uiPosX += RUSTBACKGROUND_SIZE_X;
     }
     uiPosY += RUSTBACKGROUND_SIZE_Y;
@@ -465,8 +465,7 @@ BOOLEAN DrawAimDefaults() {
 
   // Aim Symbol
   GetVideoObject(&hAimSymbolHandle, guiAimSymbol);
-  BltVideoObject(FRAME_BUFFER, hAimSymbolHandle, 0, AIM_SYMBOL_X, AIM_SYMBOL_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hAimSymbolHandle, 0, AIM_SYMBOL_X, AIM_SYMBOL_Y);
 
   return (TRUE);
 }
@@ -603,56 +602,7 @@ void HandleAdAndWarningArea(BOOLEAN fInit, BOOLEAN fRedraw) {
   else {
     if (ubPreviousAdvertisment == AIM_AD_DONE) {
       gubCurrentAdvertisment = GetNextAimAd(gubCurrentAdvertisment);
-
       fInit = TRUE;
-
-      /*
-                              uint32_t	uiDay = GetWorldDay();
-                              BOOLEAN	fSkip=FALSE;
-                              gubCurrentAdvertisment++;
-
-                              //if the add should be for Bobby rays
-                              if( gubCurrentAdvertisment == AIM_AD_BOBBY_RAY_AD )
-                              {
-                                      //if the player has NOT ever been to drassen
-                                      if( !LaptopSaveInfo.fBobbyRSiteCanBeAccessed )
-                                      {
-                                              //advance to the next add
-                                              gubCurrentAdvertisment++;
-                                      }
-                                      else
-                                      {
-                                              fSkip = TRUE;
-                                              fInit = TRUE;
-                                      }
-                              }
-                              else
-                                      fSkip = FALSE;
-
-
-                              if( !fSkip )
-                              {
-                                      //if the current ad is not supposed to be available, loop back
-         to the first ad switch( gubCurrentAdvertisment )
-                                      {
-                                              case AIM_AD_FUNERAL_ADS:
-                                                      if( uiDay < AIM_AD_DAY_FUNERAL_AD_STARTS )
-                                                              gubCurrentAdvertisment =
-         AIM_AD_WARNING_BOX; break;
-
-                                              case AIM_AD_FLOWER_SHOP:
-                                                      if( uiDay < AIM_AD_DAY_FLOWER_AD_STARTS )
-                                                              gubCurrentAdvertisment =
-         AIM_AD_WARNING_BOX; break;
-
-                                              case AIM_AD_INSURANCE_AD:
-                                                      if( uiDay < AIM_AD_DAY_INSURANCE_AD_STARTS )
-                                                              gubCurrentAdvertisment =
-         AIM_AD_WARNING_BOX; break;
-                                      }
-                                      fInit = TRUE;
-                              }
-      */
     }
 
     if (gubCurrentAdvertisment >= AIM_AD_LAST_AD) {
@@ -718,8 +668,7 @@ BOOLEAN DisplayFlowerAd(BOOLEAN fInit, BOOLEAN fRedraw) {
       if (ubCount == 0 || fRedraw) {
         // Blit the blue sky frame with text on top
         GetVideoObject(&hAdHandle, guiFlowerAdvertisement);
-        BltVideoObject(FRAME_BUFFER, hAdHandle, 0, WARNING_X, WARNING_Y, VO_BLT_SRCTRANSPARENCY,
-                       NULL);
+        BltVObject(vsFB, hAdHandle, 0, WARNING_X, WARNING_Y);
 
         // redraw new mail warning, and create new mail button, if nessacary
         fReDrawNewMailFlag = TRUE;
@@ -750,8 +699,7 @@ BOOLEAN DisplayFlowerAd(BOOLEAN fInit, BOOLEAN fRedraw) {
 
     } else {
       GetVideoObject(&hAdHandle, guiFlowerAdvertisement);
-      BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage, WARNING_X, WARNING_Y,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hAdHandle, ubSubImage, WARNING_X, WARNING_Y);
 
       // redraw new mail warning, and create new mail button, if nessacary
       fReDrawNewMailFlag = TRUE;
@@ -777,8 +725,7 @@ BOOLEAN DrawWarningBox(BOOLEAN fInit, BOOLEAN fRedraw) {
 
     // Warning
     GetVideoObject(&hWarningHandle, guiWarning);
-    BltVideoObject(FRAME_BUFFER, hWarningHandle, 0, WARNING_X, WARNING_Y, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVObject(vsFB, hWarningHandle, 0, WARNING_X, WARNING_Y);
 
     uiStartLoc = AIM_HISTORY_LINE_SIZE * AIM_WARNING_1;
     LoadEncryptedDataFromFile(AIMHISTORYFILE, sText, uiStartLoc, AIM_HISTORY_LINE_SIZE);
@@ -841,8 +788,7 @@ BOOLEAN DisplayAd(BOOLEAN fInit, BOOLEAN fRedraw, uint16_t usDelay, uint16_t usN
       if (ubCount == 0 || fRedraw) {
         // Blit the ad
         GetVideoObject(&hAdHandle, uiAdImageIdentifier);
-        BltVideoObject(FRAME_BUFFER, hAdHandle, 0, WARNING_X, WARNING_Y, VO_BLT_SRCTRANSPARENCY,
-                       NULL);
+        BltVObject(vsFB, hAdHandle, 0, WARNING_X, WARNING_Y);
 
         // redraw new mail warning, and create new mail button, if nessacary
         fReDrawNewMailFlag = TRUE;
@@ -866,8 +812,7 @@ BOOLEAN DisplayAd(BOOLEAN fInit, BOOLEAN fRedraw, uint16_t usDelay, uint16_t usN
       if (ubCount == 0 || fRedraw) {
         // Blit the ad
         GetVideoObject(&hAdHandle, uiAdImageIdentifier);
-        BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage, WARNING_X, WARNING_Y,
-                       VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObject(vsFB, hAdHandle, ubSubImage, WARNING_X, WARNING_Y);
 
         // redraw new mail warning, and create new mail button, if nessacary
         fReDrawNewMailFlag = TRUE;
@@ -885,8 +830,7 @@ BOOLEAN DisplayAd(BOOLEAN fInit, BOOLEAN fRedraw, uint16_t usDelay, uint16_t usN
       }
     } else {
       GetVideoObject(&hAdHandle, uiAdImageIdentifier);
-      BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage, WARNING_X, WARNING_Y,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hAdHandle, ubSubImage, WARNING_X, WARNING_Y);
 
       // redraw new mail warning, and create new mail button, if nessacary
       fReDrawNewMailFlag = TRUE;
@@ -982,8 +926,7 @@ BOOLEAN DisplayBobbyRAd(BOOLEAN fInit, BOOLEAN fRedraw) {
 
     // if we are still looping through the first 6 animations
     if (ubDuckCount < 2) {
-      BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage, WARNING_X, WARNING_Y,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hAdHandle, ubSubImage, WARNING_X, WARNING_Y);
 
       ubSubImage++;
 
@@ -1004,8 +947,7 @@ BOOLEAN DisplayBobbyRAd(BOOLEAN fInit, BOOLEAN fRedraw) {
 
     else {
       // Blit the ad
-      BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage, WARNING_X, WARNING_Y,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hAdHandle, ubSubImage, WARNING_X, WARNING_Y);
 
       ubSubImage++;
 
@@ -1034,94 +976,12 @@ BOOLEAN DisplayBobbyRAd(BOOLEAN fInit, BOOLEAN fRedraw) {
                      AIM_AD_BOTTOM_RIGHT_Y);
   }
 
-  /*
-
-                  if( ubDuckImage < AIM_AD_BOBBYR_AD_NUM_DUCK_SUBIMAGES )
-                  {
-                          ubDuckImage++;
-                  }
-
-                  GetVideoObject(&hAdHandle, guiBobbyRAdImages);
-
-                  if( ubDuckImage < AIM_AD_BOBBYR_AD_NUM_DUCK_SUBIMAGES * 2 )
-                  {
-                          if( ubDuckImage >= AIM_AD_BOBBYR_AD_NUM_DUCK_SUBIMAGES )
-                                  BltVideoObject(FRAME_BUFFER, hAdHandle,
-     (uint16_t)(ubDuckImage-AIM_AD_BOBBYR_AD_NUM_DUCK_SUBIMAGES), WARNING_X, WARNING_Y,
-     VO_BLT_SRCTRANSPARENCY,NULL); else BltVideoObject(FRAME_BUFFER, hAdHandle,
-     ubDuckImage,WARNING_X, WARNING_Y, VO_BLT_SRCTRANSPARENCY,NULL);
-
-                          ubDuckImage++;
-                  }
-                  else
-                          ubSubImage = 5;
-
-
-                  if( ubSubImage == 5 )
-                  {
-                          if(ubCount == 0 || fRedraw)
-                          {
-                                  //Blit the ad
-                                  BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage,WARNING_X,
-     WARNING_Y, VO_BLT_SRCTRANSPARENCY,NULL);
-
-                                  // redraw new mail warning, and create new mail button, if
-     nessacary fReDrawNewMailFlag = TRUE;
-
-                                  InvalidateRegion(AIM_AD_TOP_LEFT_X,AIM_AD_TOP_LEFT_Y,
-     AIM_AD_BOTTOM_RIGHT_X	,AIM_AD_BOTTOM_RIGHT_Y);
-                          }
-
-                          uiLastTime = GetJA2Clock();
-
-
-                          ubRetVal = AIM_AD_NOT_DONE;
-
-                  }
-                  else if( ubSubImage == AIM_AD_BOBBYR_AD__NUM_SUBIMAGES-1 )
-                  {
-                          if(ubCount == 0 || fRedraw)
-                          {
-                                  //Blit the ad
-                                  GetVideoObject(&hAdHandle, guiBobbyRAdImages);
-                                  BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage,WARNING_X,
-     WARNING_Y, VO_BLT_SRCTRANSPARENCY,NULL);
-
-                                  // redraw new mail warning, and create new mail button, if
-     nessacary fReDrawNewMailFlag = TRUE;
-
-                                  InvalidateRegion(AIM_AD_TOP_LEFT_X,AIM_AD_TOP_LEFT_Y,
-     AIM_AD_BOTTOM_RIGHT_X	,AIM_AD_BOTTOM_RIGHT_Y);
-                          }
-
-                          uiLastTime = GetJA2Clock();
-
-                          //display last frame longer then rest
-                          ubCount++;
-                          if( ubCount > 12 )
-                          {
-                                  ubRetVal = AIM_AD_DONE;
-                          }
-                  }
-                  else
-                  {
-                          GetVideoObject(&hAdHandle, guiBobbyRAdImages);
-                          BltVideoObject(FRAME_BUFFER, hAdHandle, ubSubImage,WARNING_X, WARNING_Y,
-     VO_BLT_SRCTRANSPARENCY,NULL);
-
-                          // redraw new mail warning, and create new mail button, if nessacary
-                          fReDrawNewMailFlag = TRUE;
-
-                          ubSubImage++;
-                  }
-  */
-
   return (ubRetVal);
 }
 
 uint8_t GetNextAimAd(uint8_t ubCurrentAd) {
   uint8_t ubNextAd;
-  uint32_t uiDay = GetWorldDay();
+  uint32_t uiDay = GetGameTimeInDays();
 
   if (ubCurrentAd == AIM_AD_WARNING_BOX) {
     if (uiDay < AIM_AD_BOBBYR_AD_STARTS) {

@@ -26,6 +26,7 @@
 #include "SGP/MouseSystem.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "Tactical/InterfaceItems.h"
@@ -39,7 +40,6 @@
 #include "TileEngine/OverheadMap.h"
 #include "TileEngine/Pits.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldDat.h"
 #include "TileEngine/WorldDef.h"
 #include "Utils/FontControl.h"
@@ -47,6 +47,8 @@
 #include "Utils/TextInput.h"
 #include "Utils/TimerControl.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
+#include "rust_images.h"
 
 void RenderEditorInfo();
 
@@ -153,16 +155,11 @@ void InitEditorRegions() {
 }
 
 void LoadEditorImages() {
-  VOBJECT_DESC VObjectDesc;
-
   // Set up the merc inventory panel
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  sprintf(VObjectDesc.ImageFile, "EDITOR\\InvPanel.sti");
-  if (!AddVideoObject(&VObjectDesc, &guiMercInventoryPanel))
+  if (!AddVObjectFromFile("EDITOR\\InvPanel.sti", &guiMercInventoryPanel))
     AssertMsg(0, "Failed to load data\\editor\\InvPanel.sti");
   // Set up small omerta map
-  sprintf(VObjectDesc.ImageFile, "EDITOR\\omerta.sti");
-  if (!AddVideoObject(&VObjectDesc, &guiOmertaMap))
+  if (!AddVObjectFromFile("EDITOR\\omerta.sti", &guiOmertaMap))
     AssertMsg(0, "Failed to load data\\editor\\omerta.sti");
   // Set up the merc directional buttons.
   giEditMercDirectionIcons[0] = LoadGenericButtonIcon("EDITOR//arrowsoff.sti");
@@ -171,11 +168,9 @@ void LoadEditorImages() {
   giEditMercImage[0] = LoadButtonImage("EDITOR\\leftarrow.sti", 0, 1, 2, 3, 4);
   giEditMercImage[1] = LoadButtonImage("EDITOR\\rightarrow.sti", 0, 1, 2, 3, 4);
 
-  sprintf(VObjectDesc.ImageFile, "EDITOR\\Exclamation.sti");
-  if (!AddVideoObject(&VObjectDesc, &guiExclamation))
+  if (!AddVObjectFromFile("EDITOR\\Exclamation.sti", &guiExclamation))
     AssertMsg(0, "Failed to load data\\editor\\Exclamation.sti");
-  sprintf(VObjectDesc.ImageFile, "EDITOR\\KeyImage.sti");
-  if (!AddVideoObject(&VObjectDesc, &guiKeyImage))
+  if (!AddVObjectFromFile("EDITOR\\KeyImage.sti", &guiKeyImage))
     AssertMsg(0, "Failed to load data\\editor\\KeyImage.sti");
 }
 
@@ -194,17 +189,8 @@ void DeleteEditorImages() {
 void CreateEditorBuffers() {
   int32_t i;
   VSURFACE_DESC vs_desc;
-  uint16_t usUselessWidth, usUselessHeight;
-  uint8_t ubBitDepth;
-
-  // create buffer for the transition slot for merc items.  This slot contains the newly
-  // selected item graphic in it's inventory size version.  This buffer is then scaled down
-  // into the associated merc inventory panel slot buffer which is approximately 20% smaller.
-  GetCurrentVideoSettings(&usUselessWidth, &usUselessHeight, &ubBitDepth);
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
   vs_desc.usWidth = 60;
   vs_desc.usHeight = 25;
-  vs_desc.ubBitDepth = ubBitDepth;
   if (!AddVideoSurface(&vs_desc, &guiMercTempBuffer))
     AssertMsg(0, "Failed to allocate memory for merc tempitem buffer.");
 
@@ -434,7 +420,7 @@ void EnableEditorTaskbar(void) {
 // A specialized mprint function that'll restore the editor panel underneath the
 // string before rendering the string.  This is obviously only useful for drawing text
 // in the editor taskbar.
-void mprintfEditor(int16_t x, int16_t y, wchar_t* pFontString, ...) {
+void mprintfEditor(int16_t x, int16_t y, wchar_t *pFontString, ...) {
   va_list argptr;
   wchar_t string[512];
   uint16_t uiStringLength, uiStringHeight;
@@ -454,20 +440,18 @@ void mprintfEditor(int16_t x, int16_t y, wchar_t* pFontString, ...) {
 }
 
 void ClearTaskbarRegion(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom) {
-  ColorFillVideoSurfaceArea(ButtonDestBuffer, sLeft, sTop, sRight, sBottom, gusEditorTaskbarColor);
+  VSurfaceColorFill(vsFB, sLeft, sTop, sRight, sBottom, gusEditorTaskbarColor);
 
   if (!sLeft) {
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, 0, sTop, 1, sBottom, gusEditorTaskbarHiColor);
+    VSurfaceColorFill(vsFB, 0, sTop, 1, sBottom, gusEditorTaskbarHiColor);
     sLeft++;
   }
   if (sTop == 360) {
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, sLeft, 360, sRight, 361, gusEditorTaskbarHiColor);
+    VSurfaceColorFill(vsFB, sLeft, 360, sRight, 361, gusEditorTaskbarHiColor);
     sTop++;
   }
-  if (sBottom == 480)
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, sLeft, 479, sRight, 480, gusEditorTaskbarLoColor);
-  if (sRight == 640)
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, 639, sTop, 640, sBottom, gusEditorTaskbarLoColor);
+  if (sBottom == 480) VSurfaceColorFill(vsFB, sLeft, 479, sRight, 480, gusEditorTaskbarLoColor);
+  if (sRight == 640) VSurfaceColorFill(vsFB, 639, sTop, 640, sBottom, gusEditorTaskbarLoColor);
 
   InvalidateRegion(sLeft, sTop, sRight, sBottom);
 }
@@ -476,7 +460,8 @@ void ClearTaskbarRegion(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBo
 // This is a new function which duplicates the older "yellow info boxes" that
 // are common throughout the editor.  This draws the yellow box with the indentation
 // look.
-void DrawEditorInfoBox(wchar_t* str, uint32_t uiFont, uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+void DrawEditorInfoBox(wchar_t *str, uint32_t uiFont, uint16_t x, uint16_t y, uint16_t w,
+                       uint16_t h) {
   uint16_t usFillColorDark, usFillColorLight, usFillColorBack;
   uint16_t x2, y2;
   uint16_t usStrWidth;
@@ -484,13 +469,13 @@ void DrawEditorInfoBox(wchar_t* str, uint32_t uiFont, uint16_t x, uint16_t y, ui
   x2 = x + w;
   y2 = y + h;
 
-  usFillColorDark = Get16BPPColor(FROMRGB(24, 61, 81));
-  usFillColorLight = Get16BPPColor(FROMRGB(136, 138, 135));
-  usFillColorBack = Get16BPPColor(FROMRGB(250, 240, 188));
+  usFillColorDark = rgb32_to_rgb565(FROMRGB(24, 61, 81));
+  usFillColorLight = rgb32_to_rgb565(FROMRGB(136, 138, 135));
+  usFillColorBack = rgb32_to_rgb565(FROMRGB(250, 240, 188));
 
-  ColorFillVideoSurfaceArea(ButtonDestBuffer, x, y, x2, y2, usFillColorDark);
-  ColorFillVideoSurfaceArea(ButtonDestBuffer, x + 1, y + 1, x2, y2, usFillColorLight);
-  ColorFillVideoSurfaceArea(ButtonDestBuffer, x + 1, y + 1, x2 - 1, y2 - 1, usFillColorBack);
+  VSurfaceColorFill(vsFB, x, y, x2, y2, usFillColorDark);
+  VSurfaceColorFill(vsFB, x + 1, y + 1, x2, y2, usFillColorLight);
+  VSurfaceColorFill(vsFB, x + 1, y + 1, x2 - 1, y2 - 1, usFillColorBack);
 
   usStrWidth = StringPixLength(str, uiFont);
   if (usStrWidth > w) {  // the string is too long, so use the wrapped method
@@ -652,7 +637,7 @@ void RenderMapEntryPointsAndLights() {
   }
 }
 
-void BuildTriggerName(struct OBJECTTYPE *pItem, wchar_t* szItemName, int bufSize) {
+void BuildTriggerName(struct OBJECTTYPE *pItem, wchar_t *szItemName, int bufSize) {
   if (pItem->usItem == SWITCH) {
     if (pItem->bFrequency == PANIC_FREQUENCY)
       swprintf(szItemName, bufSize, L"Panic Trigger1");
@@ -739,17 +724,16 @@ void RenderSelectedItemBlownUp() {
   uiVideoObjectIndex = GetInterfaceGraphicForItem(&Item[gpItem->usItem]);
   GetVideoObject(&hVObject, uiVideoObjectIndex);
 
-  sWidth = hVObject->pETRLEObject[Item[gpItem->usItem].ubGraphicNum].usWidth;
-  sOffsetX = hVObject->pETRLEObject[Item[gpItem->usItem].ubGraphicNum].sOffsetX;
+  sWidth = hVObject->subimages[Item[gpItem->usItem].ubGraphicNum].width;
+  sOffsetX = hVObject->subimages[Item[gpItem->usItem].ubGraphicNum].x_offset;
   xp = sScreenX + (40 - sWidth - sOffsetX * 2) / 2;
 
-  sHeight = hVObject->pETRLEObject[Item[gpItem->usItem].ubGraphicNum].usHeight;
-  sOffsetY = hVObject->pETRLEObject[Item[gpItem->usItem].ubGraphicNum].sOffsetY;
+  sHeight = hVObject->subimages[Item[gpItem->usItem].ubGraphicNum].height;
+  sOffsetY = hVObject->subimages[Item[gpItem->usItem].ubGraphicNum].y_offset;
   yp = sScreenY + (20 - sHeight - sOffsetY * 2) / 2;
 
-  BltVideoObjectOutlineFromIndex(FRAME_BUFFER, uiVideoObjectIndex,
-                                 Item[gpItem->usItem].ubGraphicNum, xp, yp,
-                                 Get16BPPColor(FROMRGB(0, 140, 170)), TRUE);
+  BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, Item[gpItem->usItem].ubGraphicNum, xp,
+                                 yp, rgb32_to_rgb565(FROMRGB(0, 140, 170)), TRUE);
 
   // Display the item name above it
   SetFont(FONT10ARIAL);
@@ -902,7 +886,7 @@ void ProcessEditorRendering() {
       RenderDoorLockInfo();
   }
 
-  if (fSaveBuffer) BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, 0, 360, 640, 120);
+  if (fSaveBuffer) VSurfaceBlitBufToBuf(vsFB, vsSB, 0, 360, 640, 120);
 
   // Make sure this is TRUE at all times.
   // It is set to false when before we save the buffer, so the buttons don't get

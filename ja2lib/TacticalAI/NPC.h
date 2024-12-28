@@ -7,6 +7,7 @@
 
 #include "SGP/Types.h"
 #include "Strategic/MapScreen.h"
+#include "rust_fileman.h"
 
 #define NUM_NPC_QUOTE_RECORDS 50
 
@@ -40,7 +41,7 @@ struct OBJECTTYPE;
 #define ANY_RIFLE 1001
 
 typedef struct {
-#if defined(CRIPPLED_VERSION) || defined(RUSSIAN)
+#if defined(RUSSIAN)
   uint8_t ubIdentifier[4];
 #endif
 
@@ -74,7 +75,7 @@ typedef struct {
   uint16_t usGoToGridno;
   int16_t sActionData;  // special action value
 
-#if !defined(CRIPPLED_VERSION) && !defined(RUSSIAN)
+#if !defined(RUSSIAN)
   uint8_t ubUnused[4];
 #endif
 
@@ -164,12 +165,13 @@ extern BOOLEAN ReloadQuoteFile(uint8_t ubNPC);
 extern BOOLEAN ReloadAllQuoteFiles(void);
 
 // Save and loads the npc info to a saved game file
-extern BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile);
-BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion);
+extern BOOLEAN SaveNPCInfoToSaveGameFile(FileID hFile);
+BOOLEAN LoadNPCInfoFromSavedGameFile(FileID hFile, uint32_t uiSaveGameVersion);
 
 extern void TriggerFriendWithHostileQuote(uint8_t ubNPC);
 
-extern void ReplaceLocationInNPCDataFromProfileID(uint8_t ubNPC, int16_t sOldGridNo, int16_t sNewGridNo);
+extern void ReplaceLocationInNPCDataFromProfileID(uint8_t ubNPC, int16_t sOldGridNo,
+                                                  int16_t sNewGridNo);
 
 extern uint8_t ActionIDForMovementRecord(uint8_t ubNPC, uint8_t ubRecord);
 
@@ -189,8 +191,8 @@ BOOLEAN HandleShopKeepHasBeenShutDown(uint8_t ubCharNum);
 BOOLEAN NPCHasUnusedRecordWithGivenApproach(uint8_t ubNPC, uint8_t ubApproach);
 BOOLEAN NPCWillingToAcceptItem(uint8_t ubNPC, uint8_t ubMerc, struct OBJECTTYPE *pObj);
 
-BOOLEAN SaveBackupNPCInfoToSaveGameFile(HWFILE hFile);
-BOOLEAN LoadBackupNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion);
+BOOLEAN SaveBackupNPCInfoToSaveGameFile(FileID hFile);
+BOOLEAN LoadBackupNPCInfoFromSavedGameFile(FileID hFile, uint32_t uiSaveGameVersion);
 
 #ifdef JA2BETAVERSION
 void ToggleNPCRecordDisplay(void);
@@ -204,7 +206,8 @@ BOOLEAN GetInfoForAbandoningEPC(uint8_t ubNPC, uint16_t *pusQuoteNum, uint16_t *
 
 BOOLEAN RecordHasDialogue(uint8_t ubNPC, uint8_t ubRecord);
 
-int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ, BOOLEAN fSetAsUsed);
+int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ,
+                              BOOLEAN fSetAsUsed);
 
 void ResetOncePerConvoRecordsForNPC(uint8_t ubNPC);
 

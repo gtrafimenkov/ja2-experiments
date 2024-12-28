@@ -5,7 +5,7 @@
 #include "TacticalAI/NPC.h"
 
 #include "Laptop/Finances.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "SGP/WCheck.h"
@@ -43,6 +43,8 @@
 #include "Utils/Message.h"
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
+#include "rust_civ_groups.h"
+#include "rust_fileman.h"
 
 #ifdef JA2TESTVERSION
 #include "Strategic/QuestDebugSystem.h"
@@ -83,10 +85,10 @@ uint8_t gubTeamPenalty;
 BOOLEAN EnsureQuoteFileLoaded(uint8_t ubNPC);
 NPCQuoteInfo *LoadQuoteFile(uint8_t ubNPC);
 uint8_t NPCConsiderQuote(uint8_t ubNPC, uint8_t ubMerc, uint8_t ubApproach, uint8_t ubQuoteNum,
-                       uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray);
+                         uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray);
 uint8_t NPCConsiderReceivingItemFromMerc(uint8_t ubNPC, uint8_t ubMerc, struct OBJECTTYPE *pObj,
-                                       NPCQuoteInfo *pNPCQuoteInfoArray,
-                                       NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum);
+                                         NPCQuoteInfo *pNPCQuoteInfoArray,
+                                         NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum);
 void PCsNearNPC(uint8_t ubNPC);
 void TriggerClosestMercWhoCanSeeNPC(uint8_t ubNPC, NPCQuoteInfo *pQuotePtr);
 BOOLEAN NPCHasUnusedRecordWithGivenApproach(uint8_t ubNPC, uint8_t ubApproach);
@@ -94,9 +96,9 @@ BOOLEAN NPCHasUnusedRecordWithGivenApproach(uint8_t ubNPC, uint8_t ubApproach);
 int8_t gbFirstApproachFlags[4] = {0x01, 0x02, 0x04, 0x08};
 
 uint8_t gubAlternateNPCFileNumsForQueenMeanwhiles[] = {160, 161, 162, 163, 164, 165, 166, 167, 168,
-                                                     169, 170, 171, 172, 173, 174, 175, 176};
+                                                       169, 170, 171, 172, 173, 174, 175, 176};
 uint8_t gubAlternateNPCFileNumsForElliotMeanwhiles[] = {180, 181, 182, 183, 184, 185, 186, 187, 188,
-                                                      189, 190, 191, 192, 193, 194, 195, 196};
+                                                        189, 190, 191, 192, 193, 194, 195, 196};
 
 #ifdef JA2BETAVERSION
 BOOLEAN gfDisplayScreenMsgOnRecordUsage = FALSE;
@@ -110,7 +112,7 @@ extern void PayOffSkyriderDebtIfAny();
 
 NPCQuoteInfo *LoadQuoteFile(uint8_t ubNPC) {
   char zFileName[255];
-  HWFILE hFile;
+  FileID hFile = FILE_ID_ERR;
   NPCQuoteInfo *pFileData;
   uint32_t uiBytesRead;
   uint32_t uiFileSize;
@@ -140,21 +142,21 @@ NPCQuoteInfo *LoadQuoteFile(uint8_t ubNPC) {
     }
   }
 
-  CHECKN(FileMan_Exists(zFileName));
+  CHECKN(File_Exists(zFileName));
 
-  hFile = FileMan_Open(zFileName, FILE_ACCESS_READ, FALSE);
+  hFile = File_OpenForReading(zFileName);
   CHECKN(hFile);
 
   uiFileSize = sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS;
   pFileData = (NPCQuoteInfo *)MemAlloc(uiFileSize);
   if (pFileData) {
-    if (!FileMan_Read(hFile, pFileData, uiFileSize, &uiBytesRead) || uiBytesRead != uiFileSize) {
+    if (!File_Read(hFile, pFileData, uiFileSize, &uiBytesRead) || uiBytesRead != uiFileSize) {
       MemFree(pFileData);
       pFileData = NULL;
     }
   }
 
-  FileMan_Close(hFile);
+  File_Close(hFile);
 
   return (pFileData);
 }
@@ -206,14 +208,6 @@ BOOLEAN EnsureQuoteFileLoaded(uint8_t ubNPC) {
   if (fLoadFile) {
     gpNPCQuoteInfoArray[ubNPC] = LoadQuoteFile(ubNPC);
     if (gpNPCQuoteInfoArray[ubNPC] == NULL) {
-#ifdef CRIPPLED_VERSION
-      // make sure we're not trying to load NOPROFILE for some stupid reason
-      if (ubNPC != NO_PROFILE) {
-        struct SOLDIERTYPE *pNull = NULL;
-        pNull->bLife = 0;  // crash!
-      }
-#else
-
 #ifdef JA2TESTVERSION
       if (!gfTriedToLoadQuoteInfoArray[ubNPC])  // don't report the error a second time
       {
@@ -221,21 +215,9 @@ BOOLEAN EnsureQuoteFileLoaded(uint8_t ubNPC) {
         gfTriedToLoadQuoteInfoArray[ubNPC] = TRUE;
       }
 #endif
-#endif
       // error message at this point!
       return (FALSE);
     }
-#ifdef CRIPPLED_VERSION
-    // check a random record to make sure the bytes are set right in the header
-    if (gpNPCQuoteInfoArray[ubNPC][0].ubIdentifier[0] != '9') {
-      if (gpNPCQuoteInfoArray[ubNPC][0].ubIdentifier[2] != '5') {
-        // crash!
-        struct SOLDIERTYPE *pNull = NULL;
-        pNull->bLife = 0;
-      }
-    }
-
-#endif
   }
 
   return (TRUE);
@@ -305,7 +287,7 @@ BOOLEAN RefreshNPCScriptRecord(uint8_t ubNPC, uint8_t ubRecord) {
 
 NPCQuoteInfo *LoadCivQuoteFile(uint8_t ubIndex) {
   char zFileName[255];
-  HWFILE hFile;
+  FileID hFile = FILE_ID_ERR;
   NPCQuoteInfo *pFileData;
   uint32_t uiBytesRead;
   uint32_t uiFileSize;
@@ -317,21 +299,21 @@ NPCQuoteInfo *LoadCivQuoteFile(uint8_t ubIndex) {
             gsCivQuoteSector[ubIndex][0]);
   }
 
-  CHECKN(FileMan_Exists(zFileName));
+  CHECKN(File_Exists(zFileName));
 
-  hFile = FileMan_Open(zFileName, FILE_ACCESS_READ, FALSE);
+  hFile = File_OpenForReading(zFileName);
   CHECKN(hFile);
 
   uiFileSize = sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS;
   pFileData = (NPCQuoteInfo *)MemAlloc(uiFileSize);
   if (pFileData) {
-    if (!FileMan_Read(hFile, pFileData, uiFileSize, &uiBytesRead) || uiBytesRead != uiFileSize) {
+    if (!File_Read(hFile, pFileData, uiFileSize, &uiBytesRead) || uiBytesRead != uiFileSize) {
       MemFree(pFileData);
       pFileData = NULL;
     }
   }
 
-  FileMan_Close(hFile);
+  File_Close(hFile);
 
   return (pFileData);
 }
@@ -473,7 +455,7 @@ uint8_t CalcDesireToTalk(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach) {
 
   // ARM: NOTE - for towns which don't use loyalty (San Mona, Estoni, Tixa, Orta )
   // loyalty will always remain 0 (this was OKed by Ian)
-  iTownVal = gTownLoyalty[pNPCProfile->bTown].ubRating;
+  iTownVal = GetTownLoyaltyRating(pNPCProfile->bTown);
   iTownVal = iTownVal * pNPCProfile->bTownAttachment / 100;
 
   if (bApproach == NPC_INITIATING_CONV || bApproach == APPROACH_GIVINGITEM) {
@@ -521,8 +503,8 @@ void ApproachedForFirstTime(MERCPROFILESTRUCT *pNPCProfile, int8_t bApproach) {
 }
 
 uint8_t NPCConsiderTalking(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uint8_t ubRecord,
-                         NPCQuoteInfo *pNPCQuoteInfoArray, NPCQuoteInfo **ppResultQuoteInfo,
-                         uint8_t *pubQuoteNum) {
+                           NPCQuoteInfo *pNPCQuoteInfoArray, NPCQuoteInfo **ppResultQuoteInfo,
+                           uint8_t *pubQuoteNum) {
   // This function returns the opinion level required of the "most difficult" quote
   // that the NPC is willing to say to the merc.  It can also provide the quote #.
   MERCPROFILESTRUCT *pNPCProfile = NULL;
@@ -642,8 +624,8 @@ uint8_t NPCConsiderTalking(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uint
 }
 
 uint8_t NPCConsiderReceivingItemFromMerc(uint8_t ubNPC, uint8_t ubMerc, struct OBJECTTYPE *pObj,
-                                       NPCQuoteInfo *pNPCQuoteInfoArray,
-                                       NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum) {
+                                         NPCQuoteInfo *pNPCQuoteInfoArray,
+                                         NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum) {
   // This function returns the opinion level required of the "most difficult" quote
   // that the NPC is willing to say to the merc.  It can also provide the quote #.
   NPCQuoteInfo *pNPCQuoteInfo;
@@ -961,7 +943,8 @@ uint8_t NPCConsiderReceivingItemFromMerc(uint8_t ubNPC, uint8_t ubMerc, struct O
   return (0);
 }
 
-BOOLEAN HandleNPCBeingGivenMoneyByPlayer(uint8_t ubNPC, uint32_t uiMoneyAmount, uint8_t *pQuoteValue) {
+BOOLEAN HandleNPCBeingGivenMoneyByPlayer(uint8_t ubNPC, uint32_t uiMoneyAmount,
+                                         uint8_t *pQuoteValue) {
   switch (ubNPC) {
     // handle for STEVE and VINCE
     case STEVE:
@@ -1038,7 +1021,7 @@ BOOLEAN HandleNPCBeingGivenMoneyByPlayer(uint8_t ubNPC, uint32_t uiMoneyAmount, 
 }
 
 uint8_t NPCConsiderQuote(uint8_t ubNPC, uint8_t ubMerc, uint8_t ubApproach, uint8_t ubQuoteNum,
-                       uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray) {
+                         uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray) {
   // This function looks at a quote and determines if conditions for it have been met.
   // Returns 0 if none , 1 if one is found
   MERCPROFILESTRUCT *pNPCProfile;
@@ -1053,7 +1036,7 @@ uint8_t NPCConsiderQuote(uint8_t ubNPC, uint8_t ubMerc, uint8_t ubApproach, uint
   }
 
   // How much do we want to talk with this merc?
-  uiDay = GetWorldDay();
+  uiDay = GetGameTimeInDays();
 
   pNPCQuoteInfo = &(pNPCQuoteInfoArray[ubQuoteNum]);
 
@@ -1366,7 +1349,7 @@ void Converse(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uintptr_t uiAppro
       NPCDoAction(ubNPC, NPC_ACTION_TURN_TO_FACE_NEAREST_MERC, 1);
 
       if (pProfile->ubLastDateSpokenTo > 0) {
-        uiDay = GetWorldDay();
+        uiDay = GetGameTimeInDays();
         if (uiDay > pProfile->ubLastDateSpokenTo) {
           NPCConsiderTalking(ubNPC, ubMerc, APPROACH_SPECIAL_INITIAL_QUOTE, 0, pNPCQuoteInfoArray,
                              &pQuotePtr, &ubRecordNum);
@@ -1445,7 +1428,7 @@ void Converse(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uintptr_t uiAppro
         case APPROACH_GIVINGITEM:
           // first start by triggering any introduction quote if there is one...
           if (pProfile->ubLastDateSpokenTo > 0) {
-            uiDay = GetWorldDay();
+            uiDay = GetGameTimeInDays();
             if (uiDay > pProfile->ubLastDateSpokenTo) {
               NPCConsiderTalking(ubNPC, ubMerc, APPROACH_SPECIAL_INITIAL_QUOTE, 0,
                                  pNPCQuoteInfoArray, &pQuotePtr, &ubRecordNum);
@@ -1476,7 +1459,7 @@ void Converse(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uintptr_t uiAppro
           break;
         case TRIGGER_NPC:
           // if triggering, pass in the approach data as the record to consider
-          DebugMsg(TOPIC_JA2, DBG_LEVEL_0,
+          DebugMsg(TOPIC_JA2, DBG_ERROR,
                    String("Handling trigger %S/%d at %ld", gMercProfiles[ubNPC].zNickname,
                           (uint8_t)uiApproachData, GetJA2Clock()));
           NPCConsiderTalking(ubNPC, ubMerc, bApproach, (uint8_t)uiApproachData, pNPCQuoteInfoArray,
@@ -1806,7 +1789,7 @@ void Converse(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uintptr_t uiAppro
     case APPROACH_DECLARATION_OF_HOSTILITY:
     case APPROACH_INITIAL_QUOTE:
     case APPROACH_GIVINGITEM:
-      pProfile->ubLastDateSpokenTo = (uint8_t)GetWorldDay();
+      pProfile->ubLastDateSpokenTo = (uint8_t)GetGameTimeInDays();
       break;
     default:
       break;
@@ -1826,7 +1809,9 @@ int16_t NPCConsiderInitiatingConv(struct SOLDIERTYPE *pNPC, uint8_t *pubDesiredM
   struct SOLDIERTYPE *pDesiredMerc;
   NPCQuoteInfo *pNPCQuoteInfoArray;
 
-  CHECKF(pubDesiredMerc);
+  if (!(pubDesiredMerc)) {
+    return FALSE;
+  }
   sMyGridNo = pNPC->sGridNo;
 
   ubNPC = pNPC->ubProfile;
@@ -2009,7 +1994,7 @@ void TriggerNPCRecord(uint8_t ubTriggerNPC, uint8_t ubTriggerNPCRec) {
     NPCTriggerNPC(ubTriggerNPC, ubTriggerNPCRec, TRIGGER_NPC, fDisplayDialogue);
   } else {
     // don't do anything
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("WARNING: trigger of %d, record %d cannot proceed, possible error",
                     ubTriggerNPC, ubTriggerNPCRec));
   }
@@ -2035,7 +2020,7 @@ void TriggerNPCRecordImmediately(uint8_t ubTriggerNPC, uint8_t ubTriggerNPCRec) 
     HandleNPCTriggerNPC(ubTriggerNPC, ubTriggerNPCRec, fDisplayDialogue, TRIGGER_NPC);
   } else {
     // don't do anything
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("WARNING: trigger of %d, record %d cannot proceed, possible error",
                     ubTriggerNPC, ubTriggerNPCRec));
   }
@@ -2311,7 +2296,7 @@ BOOLEAN TriggerNPCWithGivenApproach(uint8_t ubTriggerNPC, uint8_t ubApproach, BO
   return (FALSE);
 }
 
-BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveNPCInfoToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten = 0;
   uint32_t cnt;
   uint8_t ubOne = 1;
@@ -2322,20 +2307,20 @@ BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile) {
     // if there is a npc qutoe
     if (gpNPCQuoteInfoArray[cnt]) {
       // save a byte specify that there is an npc quote saved
-      FileMan_Write(hFile, &ubOne, sizeof(uint8_t), &uiNumBytesWritten);
+      File_Write(hFile, &ubOne, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
       }
 
       // Save the NPC quote entry
-      FileMan_Write(hFile, gpNPCQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                    &uiNumBytesWritten);
+      File_Write(hFile, gpNPCQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
+                 &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
         return (FALSE);
       }
     } else {
       // save a byte specify that there is an npc quote saved
-      FileMan_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
+      File_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
       }
@@ -2346,20 +2331,20 @@ BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile) {
     // if there is a civ quote
     if (gpCivQuoteInfoArray[cnt]) {
       // save a byte specify that there is an npc quote saved
-      FileMan_Write(hFile, &ubOne, sizeof(uint8_t), &uiNumBytesWritten);
+      File_Write(hFile, &ubOne, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
       }
 
       // Save the NPC quote entry
-      FileMan_Write(hFile, gpCivQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                    &uiNumBytesWritten);
+      File_Write(hFile, gpCivQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
+                 &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
         return (FALSE);
       }
     } else {
       // save a byte specify that there is an npc quote saved
-      FileMan_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
+      File_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
       }
@@ -2369,7 +2354,7 @@ BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
+BOOLEAN LoadNPCInfoFromSavedGameFile(FileID hFile, uint32_t uiSaveGameVersion) {
   uint32_t uiNumBytesRead = 0;
   uint32_t cnt;
   uint8_t ubLoadQuote = 0;
@@ -2385,7 +2370,7 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
   // Loop through all the NPC quotes
   for (cnt = 0; cnt < uiNumberToLoad; cnt++) {
     // Load a byte specify that there is an npc quote Loadd
-    FileMan_Read(hFile, &ubLoadQuote, sizeof(uint8_t), &uiNumBytesRead);
+    File_Read(hFile, &ubLoadQuote, sizeof(uint8_t), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(uint8_t)) {
       return (FALSE);
     }
@@ -2409,8 +2394,8 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
       }
 
       // Load the NPC quote entry
-      FileMan_Read(hFile, gpNPCQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                   &uiNumBytesRead);
+      File_Read(hFile, gpNPCQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
+                &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
         return (FALSE);
       }
@@ -2420,7 +2405,7 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
 
   if (uiSaveGameVersion >= 56) {
     for (cnt = 0; cnt < NUM_CIVQUOTE_SECTORS; cnt++) {
-      FileMan_Read(hFile, &ubLoadQuote, sizeof(uint8_t), &uiNumBytesRead);
+      File_Read(hFile, &ubLoadQuote, sizeof(uint8_t), &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(uint8_t)) {
         return (FALSE);
       }
@@ -2444,8 +2429,8 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
         }
 
         // Load the civ quote entry
-        FileMan_Read(hFile, gpCivQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                     &uiNumBytesRead);
+        File_Read(hFile, gpCivQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
+                  &uiNumBytesRead);
         if (uiNumBytesRead != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
           return (FALSE);
         }
@@ -2514,7 +2499,7 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
   return (TRUE);
 }
 
-BOOLEAN SaveBackupNPCInfoToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveBackupNPCInfoToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten = 0;
   uint32_t cnt;
   uint8_t ubOne = 1;
@@ -2525,20 +2510,20 @@ BOOLEAN SaveBackupNPCInfoToSaveGameFile(HWFILE hFile) {
     // if there is a npc qutoe
     if (gpBackupNPCQuoteInfoArray[cnt]) {
       // save a byte specify that there is an npc quote saved
-      FileMan_Write(hFile, &ubOne, sizeof(uint8_t), &uiNumBytesWritten);
+      File_Write(hFile, &ubOne, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
       }
 
       // Save the NPC quote entry
-      FileMan_Write(hFile, gpBackupNPCQuoteInfoArray[cnt],
-                    sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS, &uiNumBytesWritten);
+      File_Write(hFile, gpBackupNPCQuoteInfoArray[cnt],
+                 sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS, &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
         return (FALSE);
       }
     } else {
       // save a byte specify that there is an npc quote saved
-      FileMan_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
+      File_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
       }
@@ -2548,7 +2533,7 @@ BOOLEAN SaveBackupNPCInfoToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadBackupNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
+BOOLEAN LoadBackupNPCInfoFromSavedGameFile(FileID hFile, uint32_t uiSaveGameVersion) {
   uint32_t uiNumBytesRead = 0;
   uint32_t cnt;
   uint8_t ubLoadQuote = 0;
@@ -2559,7 +2544,7 @@ BOOLEAN LoadBackupNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVers
   // Loop through all the NPC quotes
   for (cnt = 0; cnt < uiNumberOfProfilesToLoad; cnt++) {
     // Load a byte specify that there is an npc quote Loadd
-    FileMan_Read(hFile, &ubLoadQuote, sizeof(uint8_t), &uiNumBytesRead);
+    File_Read(hFile, &ubLoadQuote, sizeof(uint8_t), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(uint8_t)) {
       return (FALSE);
     }
@@ -2583,8 +2568,8 @@ BOOLEAN LoadBackupNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVers
       }
 
       // Load the NPC quote entry
-      FileMan_Read(hFile, gpBackupNPCQuoteInfoArray[cnt],
-                   sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS, &uiNumBytesRead);
+      File_Read(hFile, gpBackupNPCQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
+                &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
         return (FALSE);
       }
@@ -2636,7 +2621,7 @@ void TriggerFriendWithHostileQuote(uint8_t ubNPC) {
   }
 
   if (bTeam == CIV_TEAM && pSoldier->ubCivilianGroup != NON_CIV_GROUP &&
-      gTacticalStatus.fCivGroupHostile[pSoldier->ubCivilianGroup] == CIV_GROUP_NEUTRAL) {
+      GetCivGroupHostility(pSoldier->ubCivilianGroup) == CIV_GROUP_NEUTRAL) {
     CivilianGroupMemberChangesSides(pSoldier);
   }
 
@@ -2854,7 +2839,8 @@ int8_t FindCivQuoteFileIndex(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ
   return (-1);
 }
 
-int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ, BOOLEAN fSetAsUsed) {
+int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ,
+                              BOOLEAN fSetAsUsed) {
   int8_t bLoop, bCivQuoteSectorIndex;
   NPCQuoteInfo *pCivQuoteInfoArray;
 
@@ -2878,7 +2864,8 @@ int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSector
       }
 
       if (pCivQuoteInfoArray[bLoop].ubStartQuest != NO_QUEST) {
-        StartQuest(pCivQuoteInfoArray[bLoop].ubStartQuest, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
+        StartQuest(pCivQuoteInfoArray[bLoop].ubStartQuest, (uint8_t)gWorldSectorX,
+                   (uint8_t)gWorldSectorY);
       }
 
       // return quote #

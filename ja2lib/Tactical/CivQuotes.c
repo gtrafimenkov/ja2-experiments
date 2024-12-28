@@ -5,7 +5,6 @@
 #include "Tactical/CivQuotes.h"
 
 #include "MessageBoxScreen.h"
-#include "SGP/FileMan.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -34,6 +33,8 @@
 #include "Utils/MercTextBox.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
+#include "rust_civ_groups.h"
+#include "rust_fileman.h"
 
 #define DIALOGUE_DEFAULT_WIDTH 200
 #define EXTREAMLY_LOW_TOWN_LOYALTY 20
@@ -54,13 +55,13 @@ CIV_QUOTE gCivQuotes[NUM_CIV_QUOTES];
 
 uint8_t gubNumEntries[NUM_CIV_QUOTES] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 
-                                       15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+                                         15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 
-                                       5,  5,  15, 15, 15, 15, 15, 15, 15, 15,
+                                         5,  5,  15, 15, 15, 15, 15, 15, 15, 15,
 
-                                       15, 15, 2,  15, 15, 10, 10, 5,  3,  10,
+                                         15, 15, 2,  15, 15, 10, 10, 5,  3,  10,
 
-                                       3,  3,  3,  3,  3,  3,  3,  3,  3,  3};
+                                         3,  3,  3,  3,  3,  3,  3,  3,  3,  3};
 
 typedef struct {
   BOOLEAN bActive;
@@ -101,7 +102,9 @@ BOOLEAN GetCivQuoteText(uint8_t ubCivQuoteID, uint8_t ubEntryID, wchar_t *zQuote
     sprintf(zFileName, "NPCDATA\\CIV%02d.edt", ubCivQuoteID);
   }
 
-  CHECKF(FileMan_Exists(zFileName));
+  if (!(File_Exists(zFileName))) {
+    return FALSE;
+  }
 
   // Get data...
   LoadEncryptedDataFromFile(zFileName, zQuote, ubEntryID * 320, 320);
@@ -298,12 +301,9 @@ void BeginCivQuote(struct SOLDIERTYPE *pCiv, uint8_t ubCivQuoteID, uint8_t ubEnt
   memset(&VideoOverlayDesc, 0, sizeof(VIDEO_OVERLAY_DESC));
 
   // Prepare text box
-  SET_USE_WINFONTS(TRUE);
-  SET_WINFONT(giSubTitleWinFont);
   gCivQuoteData.iDialogueBox = PrepareMercPopupBox(
       gCivQuoteData.iDialogueBox, BASIC_MERC_POPUP_BACKGROUND, BASIC_MERC_POPUP_BORDER, gzCivQuote,
       DIALOGUE_DEFAULT_WIDTH, 0, 0, 0, &gusCivQuoteBoxWidth, &gusCivQuoteBoxHeight);
-  SET_USE_WINFONTS(FALSE);
 
   // OK, find center for box......
   sX = sX - (gusCivQuoteBoxWidth / 2);
@@ -358,7 +358,7 @@ void BeginCivQuote(struct SOLDIERTYPE *pCiv, uint8_t ubCivQuoteID, uint8_t ubEnt
 }
 
 uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUse,
-                             BOOLEAN fCanUseHints) {
+                               BOOLEAN fCanUseHints) {
   uint8_t ubCivType;
   TownID bTownId;
   BOOLEAN bCivLowLoyalty = FALSE;
@@ -406,7 +406,6 @@ uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUs
   // Hicks.....
   if (pCiv->ubCivilianGroup == HICKS_CIV_GROUP) {
     // Are they friendly?
-    // if ( gTacticalStatus.fCivGroupHostile[ HICKS_CIV_GROUP ] < CIV_GROUP_WILL_BECOME_HOSTILE )
     if (pCiv->bNeutral) {
       return (CIV_QUOTE_HICKS_FRIENDLY);
     } else {
@@ -417,7 +416,6 @@ uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUs
   // Goons.....
   if (pCiv->ubCivilianGroup == KINGPIN_CIV_GROUP) {
     // Are they friendly?
-    // if ( gTacticalStatus.fCivGroupHostile[ KINGPIN_CIV_GROUP ] < CIV_GROUP_WILL_BECOME_HOSTILE )
     if (pCiv->bNeutral) {
       return (CIV_QUOTE_GOONS_FRIENDLY);
     } else {
@@ -492,22 +490,23 @@ uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUs
   }
 
   // if in a town
-  if ((bTownId != BLANK_SECTOR) && (gbWorldSectorZ == 0) && gfTownUsesLoyalty[bTownId]) {
+  if ((bTownId != BLANK_SECTOR) && (gbWorldSectorZ == 0) && DoesTownUseLoyalty(bTownId)) {
     // Check loyalty special quotes.....
     // EXTREMELY LOW TOWN LOYALTY...
-    if (gTownLoyalty[bTownId].ubRating < EXTREAMLY_LOW_TOWN_LOYALTY) {
+    if (GetTownLoyaltyRating(bTownId) < EXTREAMLY_LOW_TOWN_LOYALTY) {
       bCivLowLoyalty = TRUE;
     }
 
     // HIGH TOWN LOYALTY...
-    if (gTownLoyalty[bTownId].ubRating >= HIGH_TOWN_LOYALTY) {
+    if (GetTownLoyaltyRating(bTownId) >= HIGH_TOWN_LOYALTY) {
       bCivHighLoyalty = TRUE;
     }
   }
 
   // ATE: OK, check if we should look for a civ hint....
   if (fCanUseHints) {
-    bCivHint = ConsiderCivilianQuotes((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ, FALSE);
+    bCivHint = ConsiderCivilianQuotes((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                      gbWorldSectorZ, FALSE);
   } else {
     bCivHint = -1;
   }
@@ -524,7 +523,8 @@ uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUs
       // Not done yet.
 
       // Are they working for us?
-      bMineId = GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+      bMineId =
+          GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
       if (PlayerControlsMine(bMineId)) {
         return (CIV_QUOTE_MINERS_FOR_PLAYER);
@@ -657,10 +657,10 @@ void InitCivQuoteSystem() {
   gCivQuoteData.iDialogueBox = -1;
 }
 
-BOOLEAN SaveCivQuotesToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveCivQuotesToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
 
-  FileMan_Write(hFile, &gCivQuotes, sizeof(gCivQuotes), &uiNumBytesWritten);
+  File_Write(hFile, &gCivQuotes, sizeof(gCivQuotes), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(gCivQuotes)) {
     return (FALSE);
   }
@@ -668,10 +668,10 @@ BOOLEAN SaveCivQuotesToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadCivQuotesFromLoadGameFile(HWFILE hFile) {
+BOOLEAN LoadCivQuotesFromLoadGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
 
-  FileMan_Read(hFile, &gCivQuotes, sizeof(gCivQuotes), &uiNumBytesRead);
+  File_Read(hFile, &gCivQuotes, sizeof(gCivQuotes), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(gCivQuotes)) {
     return (FALSE);
   }

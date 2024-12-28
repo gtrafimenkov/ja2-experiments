@@ -17,7 +17,7 @@
 #include "Local.h"
 #include "Res/Resource.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Font.h"
 #include "SGP/Input.h"
 #include "SGP/Random.h"
@@ -38,6 +38,7 @@
 #include "platform.h"
 #include "platform_strings.h"
 #include "platform_win.h"
+#include "rust_cmdline.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -56,8 +57,6 @@ int PASCAL HandledWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pC
 
 HINSTANCE ghInstance;
 
-void ProcessJa2CommandLineBeforeInitialization(char *pCommandLine);
-
 // Global Variable Declarations
 #ifdef WINDOWED_MODE
 RECT rcWindow;
@@ -68,10 +67,6 @@ uint32_t guiMouseWheelMsg;  // For mouse wheel messages
 BOOLEAN gfApplicationActive;
 BOOLEAN gfProgramIsRunning;
 BOOLEAN gfGameInitialized = FALSE;
-
-// There were TWO of them??!?! -- DB
-// char		gzCommandLine[ 100 ];
-char gzCommandLine[100];  // Command line given
 
 BOOLEAN gfIgnoreMessages = FALSE;
 
@@ -106,7 +101,6 @@ int32_t FAR PASCAL WindowProcedure(HWND hWindow, uint16_t Message, WPARAM wParam
         case TRUE:  // We are restarting DirectDraw
           if (fRestore == TRUE) {
             RestoreVideoManager();
-            RestoreVideoSurfaces();  // Restore any video surfaces
 
             // unpause the JA2 Global clock
             if (!gfPauseDueToPlayerGamePause) {
@@ -171,24 +165,14 @@ void ShutdownStandardGamingPlatform(void) {
 
   ShutdownClockManager();  // must shutdown before VideoManager, 'cause it uses ghWindow
 
-#ifdef SGP_VIDEO_DEBUGGING
-  PerformVideoInfoDumpIntoFile("SGPVideoShutdownDump.txt", FALSE);
-#endif
-
   ShutdownVideoSurfaceManager();
   ShutdownVideoObjectManager();
   ShutdownVideoManager();
 
   ShutdownInputManager();
   ShutdownContainers();
-  FileMan_Shutdown();
 
   ShutdownMemoryManager();  // must go last (except for Debug), for MemDebugCounter to work right...
-
-  //
-  // Make sure we unregister the last remaining debug topic before shutting
-  // down the debugging layer
-  UnRegisterDebugTopic(TOPIC_SGP, "Standard Gaming Platform");
 
 #ifdef SGP_DEBUG
   ShutdownDebugManager();
@@ -213,11 +197,10 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
 
   ghInstance = hInstance;
 
-  // Copy commandline!
-  strcopy(gzCommandLine, ARR_SIZE(gzCommandLine), pCommandLine);
-
-  // Process the command line BEFORE initialization
-  ProcessJa2CommandLineBeforeInitialization(pCommandLine);
+  struct ParsedCommandLine cmdline = ParseCommandLine();
+  if (cmdline.no_sound) {
+    SoundEnableSound(FALSE);
+  }
 
   ShowCursor(FALSE);
 
@@ -275,30 +258,4 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
 
   // return wParam of the last message received
   return Message.wParam;
-}
-
-void ProcessJa2CommandLineBeforeInitialization(char *pCommandLine) {
-  char cSeparators[] = "\t =";
-  char *pCopy = NULL, *pToken;
-
-  pCopy = (char *)MemAlloc(strlen(pCommandLine) + 1);
-
-  Assert(pCopy);
-  if (!pCopy) return;
-
-  memcpy(pCopy, pCommandLine, strlen(pCommandLine) + 1);
-
-  pToken = strtok(pCopy, cSeparators);
-  while (pToken) {
-    // if its the NO SOUND option
-    if (!strncasecmp(pToken, "/NOSOUND", 8)) {
-      // disable the sound
-      SoundEnableSound(FALSE);
-    }
-
-    // get the next token
-    pToken = strtok(NULL, cSeparators);
-  }
-
-  MemFree(pCopy);
 }

@@ -19,6 +19,7 @@
 #include "LanguageDefines.h"
 #include "MainMenuScreen.h"
 #include "SGP/CursorControl.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Font.h"
 #include "SGP/HImage.h"
@@ -28,6 +29,7 @@
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -42,9 +44,9 @@
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
 #include "TileEngine/Environment.h"
+#include "TileEngine/IsometricUtils.h"
 #include "TileEngine/Lighting.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "Utils/Cursors.h"
 #include "Utils/EventPump.h"
@@ -56,6 +58,8 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
+#include "rust_images.h"
 
 #define _UNICODE
 
@@ -114,7 +118,7 @@ void DisplayFrameRate() {
   // Create string
   SetFont(SMALLFONT1);
 
-  // DebugMsg(TOPIC_JA2, DBG_LEVEL_0, String( "FPS: %d ", min( uiFPS, 1000 ) ) );
+  // DebugMsg(TOPIC_JA2, DBG_ERROR, String( "FPS: %d ", min( uiFPS, 1000 ) ) );
 
   if (uiFPS < 20) {
     SetFontBackground(FONT_MCOLOR_BLACK);
@@ -229,7 +233,7 @@ uint32_t ErrorScreenHandle(void) {
 #endif
 
   if (!fFirstTime) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_0, String("Runtime Error: %s ", gubErrorText));
+    DebugMsg(TOPIC_JA2, DBG_ERROR, String("Runtime Error: %s ", gubErrorText));
     fFirstTime = TRUE;
   }
 
@@ -242,7 +246,7 @@ uint32_t ErrorScreenHandle(void) {
     if (InputEvent.usEvent == KEY_DOWN) {
       if (InputEvent.usParam == ESC ||
           (InputEvent.usParam == 'x' && InputEvent.usKeyState & ALT_DOWN)) {  // Exit the program
-        DebugMsg(TOPIC_GAME, DBG_LEVEL_0, "GameLoop: User pressed ESCape, TERMINATING");
+        DebugMsg(TOPIC_GAME, DBG_ERROR, "GameLoop: User pressed ESCape, TERMINATING");
 
         // handle shortcut exit
         HandleShortCutExitState();
@@ -258,8 +262,6 @@ uint32_t ErrorScreenShutdown(void) { return (TRUE); }
 uint32_t InitScreenInitialize(void) { return (TRUE); }
 
 uint32_t InitScreenHandle(void) {
-  VSURFACE_DESC vs_desc;
-  static struct VSurface *hVSurface;
   static uint8_t ubCurrentScreen = 255;
 
   if (ubCurrentScreen == 255) {
@@ -276,38 +278,15 @@ uint32_t InitScreenHandle(void) {
   }
 
   if (ubCurrentScreen == 0) {
-    // Load init screen and blit!
-    vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
-
-    strcpy(vs_desc.ImageFile, "ja2_logo.STI");
-
-    hVSurface = CreateVideoSurface(&vs_desc);
-    if (!hVSurface) AssertMsg(0, "Failed to load ja2_logo.sti!");
-
-    // BltVideoSurfaceToVideoSurface( ghFrameBuffer, hVSurface, 0, 0, 0, VS_BLT_FAST, NULL );
     ubCurrentScreen = 1;
-
-    // Init screen
 
     // Set Font
     SetFont(TINYFONT1);
     SetFontBackground(FONT_MCOLOR_BLACK);
     SetFontForeground(FONT_MCOLOR_WHITE);
-
     mprintf(10, 430, L"%s", zBuildInfo);
-
-#ifdef _DEBUG
-    mprintf(10, 440, L"struct SOLDIERTYPE: %d bytes", sizeof(struct SOLDIERTYPE));
-#endif
-
     InvalidateScreen();
-
-    // Delete video Surface
-    DeleteVideoSurface(hVSurface);
-    // ATE: Set to true to reset before going into main screen!
-
     SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
-
     return (INIT_SCREEN);
   }
 
@@ -405,7 +384,9 @@ BOOLEAN PalEditKeyboardHook(InputAtom *pInputEvent) {
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
     // Get index of current
-    CHECKF(GetPaletteRepIndexFromID(pSoldier->HeadPal, &ubPaletteRep));
+    if (!(GetPaletteRepIndexFromID(pSoldier->HeadPal, &ubPaletteRep))) {
+      return FALSE;
+    }
     ubType = gpPalRep[ubPaletteRep].ubType;
 
     ubPaletteRep++;
@@ -432,7 +413,9 @@ BOOLEAN PalEditKeyboardHook(InputAtom *pInputEvent) {
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
     // Get index of current
-    CHECKF(GetPaletteRepIndexFromID(pSoldier->VestPal, &ubPaletteRep));
+    if (!(GetPaletteRepIndexFromID(pSoldier->VestPal, &ubPaletteRep))) {
+      return FALSE;
+    }
     ubType = gpPalRep[ubPaletteRep].ubType;
 
     ubPaletteRep++;
@@ -459,7 +442,9 @@ BOOLEAN PalEditKeyboardHook(InputAtom *pInputEvent) {
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
     // Get index of current
-    CHECKF(GetPaletteRepIndexFromID(pSoldier->PantsPal, &ubPaletteRep));
+    if (!(GetPaletteRepIndexFromID(pSoldier->PantsPal, &ubPaletteRep))) {
+      return FALSE;
+    }
     ubType = gpPalRep[ubPaletteRep].ubType;
 
     ubPaletteRep++;
@@ -486,7 +471,9 @@ BOOLEAN PalEditKeyboardHook(InputAtom *pInputEvent) {
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
     // Get index of current
-    CHECKF(GetPaletteRepIndexFromID(pSoldier->SkinPal, &ubPaletteRep));
+    if (!(GetPaletteRepIndexFromID(pSoldier->SkinPal, &ubPaletteRep))) {
+      return FALSE;
+    }
     ubType = gpPalRep[ubPaletteRep].ubType;
 
     ubPaletteRep++;
@@ -627,25 +614,23 @@ uint32_t SexScreenInit(void) { return (TRUE); }
 
 uint32_t SexScreenHandle(void) {
   static uint8_t ubCurrentScreen = 0;
-  VOBJECT_DESC VObjectDesc;
   static uint32_t guiSMILY;
   static int8_t bCurFrame = 0;
   static uint32_t uiTimeOfLastUpdate = 0, uiTime;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   struct VObject *hVObject;
   int16_t sX, sY;
 
   // OK, Clear screen and show smily face....
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  VSurfaceColorFill(vsFB, 0, 0, 640, 480, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   // Remove cursor....
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
 
   if (ubCurrentScreen == 0) {
     // Load face....
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    FilenameForBPP("INTERFACE\\luckysmile.sti", VObjectDesc.ImageFile);
-    if (!AddVideoObject(&VObjectDesc, &guiSMILY)) AssertMsg(0, "Missing INTERFACE\\luckysmile.sti");
+    if (!AddVObjectFromFile("INTERFACE\\luckysmile.sti", &guiSMILY))
+      AssertMsg(0, "Missing INTERFACE\\luckysmile.sti");
 
     // Init screen
     bCurFrame = 0;
@@ -696,19 +681,18 @@ uint32_t SexScreenHandle(void) {
 
   // Calculate smily face positions...
   GetVideoObject(&hVObject, guiSMILY);
-  pTrav = &(hVObject->pETRLEObject[0]);
+  pTrav = &(hVObject->subimages[0]);
 
-  sX = (int16_t)((640 - pTrav->usWidth) / 2);
-  sY = (int16_t)((480 - pTrav->usHeight) / 2);
+  sX = (int16_t)((640 - pTrav->width) / 2);
+  sY = (int16_t)((480 - pTrav->height) / 2);
 
   if (bCurFrame < 24) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiSMILY, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiSMILY, 0, sX, sY);
   } else {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY);
   }
 
-  InvalidateRegion(sX, sY, (int16_t)(sX + pTrav->usWidth), (int16_t)(sY + pTrav->usHeight));
+  InvalidateRegion(sX, sY, (int16_t)(sX + pTrav->width), (int16_t)(sY + pTrav->height));
 
   return (SEX_SCREEN);
 }
@@ -720,41 +704,6 @@ uint32_t DemoExitScreenInit(void) { return (TRUE); }
 void DoneFadeOutForDemoExitScreen(void) { gfProgramIsRunning = FALSE; }
 
 extern int8_t gbFadeSpeed;
-
-#ifdef GERMAN
-void DisplayTopwareGermanyAddress() {
-  VOBJECT_DESC vo_desc;
-  uint32_t uiTempID;
-  uint8_t *pDestBuf;
-  uint32_t uiDestPitchBYTES;
-  SGPRect ClipRect;
-
-  // bring up the Topware address screen
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  sprintf(vo_desc.ImageFile, "German\\topware_germany.sti");
-  if (!AddVideoObject(&vo_desc, &uiTempID)) {
-    AssertMsg(0, "Failed to load German\\topware_germany.sti");
-    return;
-  }
-
-  // Shade out a background piece to emphasize the German address.
-  ClipRect.iLeft = 208;
-  ClipRect.iRight = 431;
-  ClipRect.iTop = 390;
-  ClipRect.iBottom = 475;
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
-  Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnLockVideoSurface(FRAME_BUFFER);
-
-  // Draw the anti-aliased address now.
-  BltVideoObjectFromIndex(FRAME_BUFFER, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObjectFromIndex(FRAME_BUFFER, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
-  InvalidateRegion(208, 390, 431, 475);
-  DeleteVideoObjectFromIndex(uiTempID);
-  ExecuteBaseDirtyRectQueue();
-  EndFrameBufferRender();
-}
-#endif
 
 uint32_t DemoExitScreenHandle(void) {
   gfProgramIsRunning = FALSE;

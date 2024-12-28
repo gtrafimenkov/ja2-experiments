@@ -11,6 +11,7 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/CursorControl.h"
 #include "SGP/English.h"
+#include "SGP/Input.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -20,7 +21,6 @@
 #include "Tactical/SoldierProfile.h"
 #include "Tactical/SoldierProfileType.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
 #include "Utils/JA25EnglishText.h"
@@ -276,7 +276,6 @@ uint32_t GameInitOptionsScreenHandle(void) {
 uint32_t GameInitOptionsScreenShutdown(void) { return (1); }
 
 BOOLEAN EnterGIOScreen() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t cnt;
   uint16_t usPosY;
 
@@ -285,9 +284,9 @@ BOOLEAN EnterGIOScreen() {
   SetCurrentCursorFromDatabase(CURSOR_NORMAL);
 
   // load the Main trade screen backgroiund image
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("InterFace\\OptionsScreenBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiGIOMainBackGroundImage));
+  if (!AddVObjectFromFile("InterFace\\OptionsScreenBackGround.sti", &guiGIOMainBackGroundImage)) {
+    return FALSE;
+  }
 
   // Ok button
   giGIODoneBtnImage = LoadButtonImage("INTERFACE\\PreferencesButtons.sti", -1, 0, -1, 2, -1);
@@ -411,7 +410,7 @@ BOOLEAN EnterGIOScreen() {
   // REnder the screen once so we can blt ot to ths save buffer
   RenderGIOScreen();
 
-  BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, 0, 0, 639, 439);
+  VSurfaceBlitBufToBuf(vsFB, vsSB, 0, 0, 639, 439);
 
   gfGIOButtonsAllocated = TRUE;
 
@@ -504,10 +503,10 @@ BOOLEAN RenderGIOScreen() {
 
   // Get the main background screen graphic and blt it
   GetVideoObject(&hPixHandle, guiGIOMainBackGroundImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, 0, 0);
 
   // Shade the background
-  ShadowVideoSurfaceRect(FRAME_BUFFER, 48, 55, 592, 378);  // 358
+  ShadowVideoSurfaceRect(vsFB, 48, 55, 592, 378);  // 358
 
   // Display the title
   DrawTextToScreen(gzGIOScreenText[GIO_INITIAL_GAME_SETTINGS], GIO_MAIN_TITLE_X, GIO_MAIN_TITLE_Y,
@@ -516,8 +515,8 @@ BOOLEAN RenderGIOScreen() {
 
   // Display the Dif Settings Title Text
   // DrawTextToScreen( gzGIOScreenText[ GIO_DIF_LEVEL_TEXT ], GIO_DIF_SETTINGS_X,
-  // (uint16_t)(GIO_DIF_SETTINGS_Y-GIO_GAP_BN_SETTINGS), GIO_DIF_SETTINGS_WIDTH, GIO_TOGGLE_TEXT_FONT,
-  // GIO_TOGGLE_TEXT_COLOR, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED );
+  // (uint16_t)(GIO_DIF_SETTINGS_Y-GIO_GAP_BN_SETTINGS), GIO_DIF_SETTINGS_WIDTH,
+  // GIO_TOGGLE_TEXT_FONT, GIO_TOGGLE_TEXT_COLOR, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED );
   DisplayWrappedString(GIO_DIF_SETTINGS_X, (uint16_t)(GIO_DIF_SETTINGS_Y - GIO_GAP_BN_SETTINGS),
                        GIO_DIF_SETTINGS_WIDTH, 2, GIO_TOGGLE_TEXT_FONT, GIO_TOGGLE_TEXT_COLOR,
                        gzGIOScreenText[GIO_DIF_LEVEL_TEXT], FONT_MCOLOR_BLACK, FALSE,
@@ -575,7 +574,8 @@ BOOLEAN RenderGIOScreen() {
 
   // Display the Gun Settings Title Text
   //	DrawTextToScreen( gzGIOScreenText[ GIO_GUN_OPTIONS_TEXT ], GIO_GUN_SETTINGS_X,
-  //(uint16_t)(GIO_GUN_SETTINGS_Y-GIO_GAP_BN_SETTINGS), GIO_GUN_SETTINGS_WIDTH, GIO_TOGGLE_TEXT_FONT,
+  //(uint16_t)(GIO_GUN_SETTINGS_Y-GIO_GAP_BN_SETTINGS), GIO_GUN_SETTINGS_WIDTH,
+  // GIO_TOGGLE_TEXT_FONT,
   // GIO_TOGGLE_TEXT_COLOR, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED );
   DisplayWrappedString(GIO_GUN_SETTINGS_X, (uint16_t)(GIO_GUN_SETTINGS_Y - GIO_GAP_BN_SETTINGS),
                        GIO_GUN_SETTINGS_WIDTH, 2, GIO_TOGGLE_TEXT_FONT, GIO_TOGGLE_TEXT_COLOR,
@@ -1008,7 +1008,7 @@ void DoneFadeInForExitGameInitOptionScreen(void) { SetCurrentCursorFromDatabase(
 
 BOOLEAN DoGioMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
                         MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, 0, 639, 479};
+  struct GRect CenteringRect = {0, 0, 639, 479};
 
   // reset exit mode
   //	gfExitGioDueToMessageBox = TRUE;

@@ -9,7 +9,6 @@
 #include <string.h>
 
 #include "SGP/CursorControl.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/SoundMan.h"
 #include "SGP/WCheck.h"
@@ -400,7 +399,7 @@ void StartHelicopterRun(int16_t sGridNoSweetSpot) {
 
   InterruptTime();
   PauseGame();
-  LockPauseState(20);
+  LockPause();
 
   ConvertGridNoToCenterCellXY(sGridNoSweetSpot, &sX, &sY);
 
@@ -468,7 +467,7 @@ void HandleHeliDrop() {
       gfHandleHeli = FALSE;
       gfIgnoreScrolling = FALSE;
       gbNumHeliSeatsOccupied = 0;
-      UnLockPauseState();
+      UnlockPause();
       UnPauseGame();
 
       // Select our first guy
@@ -514,7 +513,7 @@ void HandleHeliDrop() {
             gfIgnoreScrolling = FALSE;
             gbNumHeliSeatsOccupied = 0;
             guiPendingOverrideEvent = LU_ENDUILOCK;
-            UnLockPauseState();
+            UnlockPause();
             UnPauseGame();
 
             RebuildCurrentSquad();
@@ -527,7 +526,7 @@ void HandleHeliDrop() {
           gfIgnoreScrolling = FALSE;
           gbNumHeliSeatsOccupied = 0;
           guiPendingOverrideEvent = LU_ENDUILOCK;
-          UnLockPauseState();
+          UnlockPause();
           UnPauseGame();
 
           RebuildCurrentSquad();

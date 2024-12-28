@@ -190,8 +190,6 @@ void GameInitAimPolicies() {}
 void EnterInitAimPolicies() { memset(&AimPoliciesSubPagesVisitedFlag, 0, NUM_AIM_POLICY_PAGES); }
 
 BOOLEAN EnterAimPolicies() {
-  VOBJECT_DESC VObjectDesc;
-
   InitAimDefaults();
 
   gubCurPageNum = (uint8_t)giCurrentSubPage;
@@ -207,18 +205,18 @@ BOOLEAN EnterAimPolicies() {
   gfInPolicyToc = FALSE;
 
   // load the Bottom Buttons graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BottomButton.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBottomButton));
+  if (!AddVObjectFromFile("LAPTOP\\BottomButton.sti", &guiBottomButton)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BottomButton2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBottomButton2));
+  if (!AddVObjectFromFile("LAPTOP\\BottomButton2.sti", &guiBottomButton2)) {
+    return FALSE;
+  }
 
   // load the Content Buttons graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\ContentButton.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiContentButton));
+  if (!AddVObjectFromFile("LAPTOP\\ContentButton.sti", &guiContentButton)) {
+    return FALSE;
+  }
 
   RenderAimPolicies();
   return (TRUE);
@@ -471,8 +469,7 @@ BOOLEAN DrawAimPolicyMenu() {
 
   usPosY = AIM_POLICY_TOC_Y;
   for (i = 0; i < NUM_AIM_POLICY_TOC_BUTTONS; i++) {
-    BltVideoObject(FRAME_BUFFER, hContentButtonHandle, 0, AIM_POLICY_TOC_X, usPosY,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hContentButtonHandle, 0, AIM_POLICY_TOC_X, usPosY);
 
     uiStartLoc = AIM_POLICY_LINE_SIZE * ubLocInFile[i];
     LoadEncryptedDataFromFile(AIMPOLICYFILE, sText, uiStartLoc, AIM_HISTORY_LINE_SIZE);

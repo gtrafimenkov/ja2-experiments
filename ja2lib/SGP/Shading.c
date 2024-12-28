@@ -13,6 +13,8 @@
 #include "SGP/VObjectBlitters.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "rust_colors.h"
+#include "rust_images.h"
 
 // since some of the code is not complied on Linux
 #ifdef __GCC
@@ -23,8 +25,8 @@
 
 BOOLEAN ShadesCalculateTables(struct SGPPaletteEntry *p8BPPPalette);
 BOOLEAN ShadesCalculatePalette(struct SGPPaletteEntry *pSrcPalette,
-                               struct SGPPaletteEntry *pDestPalette, uint16_t usRed, uint16_t usGreen,
-                               uint16_t usBlue, BOOLEAN fMono);
+                               struct SGPPaletteEntry *pDestPalette, uint16_t usRed,
+                               uint16_t usGreen, uint16_t usBlue, BOOLEAN fMono);
 void FindIndecies(struct SGPPaletteEntry *pSrcPalette, struct SGPPaletteEntry *pMapPalette,
                   uint8_t *pTable);
 void FindMaskIndecies(uint8_t *, uint8_t *, uint8_t *);
@@ -83,8 +85,8 @@ BOOLEAN ShadesCalculateTables(struct SGPPaletteEntry *p8BPPPalette) {
 }
 
 BOOLEAN ShadesCalculatePalette(struct SGPPaletteEntry *pSrcPalette,
-                               struct SGPPaletteEntry *pDestPalette, uint16_t usRed, uint16_t usGreen,
-                               uint16_t usBlue, BOOLEAN fMono) {
+                               struct SGPPaletteEntry *pDestPalette, uint16_t usRed,
+                               uint16_t usGreen, uint16_t usBlue, BOOLEAN fMono) {
   uint32_t cnt, lumin;
   uint32_t rmod, gmod, bmod;
 
@@ -93,20 +95,20 @@ BOOLEAN ShadesCalculatePalette(struct SGPPaletteEntry *pSrcPalette,
 
   for (cnt = 0; cnt < 256; cnt++) {
     if (fMono) {
-      lumin = (pSrcPalette[cnt].peRed * 299 / 1000) + (pSrcPalette[cnt].peGreen * 587 / 1000) +
-              (pSrcPalette[cnt].peBlue * 114 / 1000);
+      lumin = (pSrcPalette[cnt].red * 299 / 1000) + (pSrcPalette[cnt].green * 587 / 1000) +
+              (pSrcPalette[cnt].blue * 114 / 1000);
       rmod = usRed * lumin / 255;
       gmod = usGreen * lumin / 255;
       bmod = usBlue * lumin / 255;
     } else {
-      rmod = (usRed * pSrcPalette[cnt].peRed / 255);
-      gmod = (usGreen * pSrcPalette[cnt].peGreen / 255);
-      bmod = (usBlue * pSrcPalette[cnt].peBlue / 255);
+      rmod = (usRed * pSrcPalette[cnt].red / 255);
+      gmod = (usGreen * pSrcPalette[cnt].green / 255);
+      bmod = (usBlue * pSrcPalette[cnt].blue / 255);
     }
 
-    pDestPalette[cnt].peRed = (uint8_t)min(rmod, 255);
-    pDestPalette[cnt].peGreen = (uint8_t)min(gmod, 255);
-    pDestPalette[cnt].peBlue = (uint8_t)min(bmod, 255);
+    pDestPalette[cnt].red = (uint8_t)min(rmod, 255);
+    pDestPalette[cnt].green = (uint8_t)min(gmod, 255);
+    pDestPalette[cnt].blue = (uint8_t)min(bmod, 255);
   }
 
   return (TRUE);
@@ -217,8 +219,8 @@ void BuildShadeTable(void) {
   for (red = 0; red < 256; red += 4)
     for (green = 0; green < 256; green += 4)
       for (blue = 0; blue < 256; blue += 4) {
-        index = Get16BPPColor(FROMRGB(red, green, blue));
-        ShadeTable[index] = Get16BPPColor(
+        index = rgb32_to_rgb565(FROMRGB(red, green, blue));
+        ShadeTable[index] = rgb32_to_rgb565(
             FROMRGB(red * guiShadePercent, green * guiShadePercent, blue * guiShadePercent));
       }
 
@@ -250,7 +252,7 @@ void BuildIntensityTable(void) {
 		for(green=0; green < 256; green+=4)
 			for(blue=0; blue < 256; blue+=4)
 			{
-				index=Get16BPPColor(FROMRGB(red, green, blue));
+				index=rgb32_to_rgb565(FROMRGB(red, green, blue));
 
 				lumin=( red*299/1000)+ ( green*587/1000 ) + ( blue*114/1000 );
 
@@ -261,15 +263,15 @@ void BuildIntensityTable(void) {
 
 				//rmod = __m( 255, rmod );
 
-				IntensityTable[index]=Get16BPPColor( FROMRGB( rmod, gmod , bmod ) );
+				IntensityTable[index]=rgb32_to_rgb565( FROMRGB( rmod, gmod , bmod ) );
 			}
 #endif
 
   for (red = 0; red < 256; red += 4)
     for (green = 0; green < 256; green += 4)
       for (blue = 0; blue < 256; blue += 4) {
-        index = Get16BPPColor(FROMRGB(red, green, blue));
-        IntensityTable[index] = Get16BPPColor(
+        index = rgb32_to_rgb565(FROMRGB(red, green, blue));
+        IntensityTable[index] = rgb32_to_rgb565(
             FROMRGB(red * dShadedPercent, green * dShadedPercent, blue * dShadedPercent));
       }
 }
@@ -285,14 +287,14 @@ void Init8BitTables(void) {
 
   // calculate a grey-scale table for the default palette
   for (uiCount = 0; uiCount < 256; uiCount++) {
-    Pal[uiCount].peRed = (uint8_t)(uiCount % 128) + 128;
-    Pal[uiCount].peGreen = (uint8_t)(uiCount % 128) + 128;
-    Pal[uiCount].peBlue = (uint8_t)(uiCount % 128) + 128;
+    Pal[uiCount].red = (uint8_t)(uiCount % 128) + 128;
+    Pal[uiCount].green = (uint8_t)(uiCount % 128) + 128;
+    Pal[uiCount].blue = (uint8_t)(uiCount % 128) + 128;
   }
 
-  Pal[0].peRed = 0;
-  Pal[0].peGreen = 0;
-  Pal[0].peBlue = 0;
+  Pal[0].red = 0;
+  Pal[0].green = 0;
+  Pal[0].blue = 0;
 
   Set8BPPPalette(Shaded8BPPPalettes[4]);
 }

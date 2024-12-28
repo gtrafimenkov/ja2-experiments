@@ -13,9 +13,7 @@
 #include "Laptop/IMPTextSystem.h"
 #include "Laptop/IMPVideoObjects.h"
 #include "Laptop/Laptop.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/Debug.h"
 #include "SGP/MouseSystem.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -27,6 +25,7 @@
 #include "Utils/EncryptedFile.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
 
 #define MAIN_PAGE_BUTTON_TEXT_WIDTH 95
 
@@ -321,7 +320,7 @@ void BtnIMPMainPageBeginCallback(GUI_BUTTON *btn, int32_t reason) {
                            MSG_BOX_FLAG_YESNO, BeginMessageBoxCallBack);
 
       } else {
-        if (MoneyGetBalance() < COST_OF_PROFILE) {
+        if (LaptopMoneyGetBalance() < COST_OF_PROFILE) {
           DoLapTopMessageBox(MSG_BOX_IMP_STYLE, pImpPopUpStrings[3], LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
                              BeginMessageBoxCallBack);
 
@@ -451,9 +450,9 @@ void ShadeUnSelectableButtons(void) {
   // should be shaded ( unselectable )
 
   for (iCounter = iCurrentProfileMode; iCounter < 5; iCounter++) {
-    ShadowVideoSurfaceRect(FRAME_BUFFER, 13 + (iCounter)*120 + 114, 245,
-                           13 + (iCounter + 1) * 120 + 90, 245 + 92);
-    InvalidateRegion(13 + (iCounter)*120 + 114, 245, 13 + (iCounter)*120 + 114, 245 + 92);
+    ShadowVideoSurfaceRect(vsFB, 13 + (iCounter) * 120 + 114, 245, 13 + (iCounter + 1) * 120 + 90,
+                           245 + 92);
+    InvalidateRegion(13 + (iCounter) * 120 + 114, 245, 13 + (iCounter) * 120 + 114, 245 + 92);
   }
 
   fMarkButtonsDirtyFlag = FALSE;
@@ -584,13 +583,13 @@ void IMPMainPageNotSelectableBtnCallback(struct MOUSE_REGION *pRegion, int32_t i
 
 BOOLEAN LoadCharacterPortraitForMainPage(void) {
   // this function will load the character's portrait, to be used on portrait button
-  VOBJECT_DESC VObjectDesc;
 
   if (iCurrentProfileMode >= 4) {
     // load it
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    FilenameForBPP(pPlayerSelectedFaceFileNames[iPortraitNumber], VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &guiCHARACTERPORTRAITFORMAINPAGE));
+    if (!AddVObjectFromFile(pPlayerSelectedFaceFileNames[iPortraitNumber],
+                            &guiCHARACTERPORTRAITFORMAINPAGE)) {
+      return FALSE;
+    }
 
     // now specify
     SpecifyButtonIcon(giIMPMainPageButton[4], guiCHARACTERPORTRAITFORMAINPAGE, 0, 33, 23, FALSE);

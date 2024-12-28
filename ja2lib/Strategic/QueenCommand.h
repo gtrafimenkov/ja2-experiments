@@ -7,6 +7,7 @@
 
 #include "SGP/Types.h"
 #include "Strategic/CampaignTypes.h"
+#include "rust_fileman.h"
 
 struct GROUP;
 struct SOLDIERTYPE;
@@ -24,8 +25,8 @@ void GetNumberOfMobileEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_
                                       uint8_t *pubNumTroops, uint8_t *pubNumElites);
 void GetNumberOfStationaryEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins,
                                           uint8_t *pubNumTroops, uint8_t *pubNumElites);
-void GetNumberOfEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins, uint8_t *pubNumTroops,
-                                uint8_t *pubNumElites);
+void GetNumberOfEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins,
+                                uint8_t *pubNumTroops, uint8_t *pubNumElites);
 
 // Called when entering a sector so the campaign AI can automatically insert the
 // correct number of troops of each type based on the current number in the sector
@@ -41,8 +42,8 @@ void EndTacticalBattleForEnemy();
 void ProcessQueenCmdImplicationsOfDeath(struct SOLDIERTYPE *pSoldier);
 
 void HandleEnemyStatusInCurrentMapBeforeLoadingNewMap();
-BOOLEAN SaveUnderGroundSectorInfoToSaveGame(HWFILE hFile);
-BOOLEAN LoadUnderGroundSectorInfoFromSavedGame(HWFILE hFile);
+BOOLEAN SaveUnderGroundSectorInfoToSaveGame(FileID hFile);
+BOOLEAN LoadUnderGroundSectorInfoFromSavedGame(FileID hFile);
 
 // Finds and returns the specified underground structure ( DONT MODIFY IT ).  Else returns NULL
 UNDERGROUND_SECTORINFO *FindUnderGroundSector(uint8_t sMapX, uint8_t sMapY, uint8_t bMapZ);

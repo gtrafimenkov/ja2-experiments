@@ -10,6 +10,7 @@
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
 #include "Laptop/StoreInventory.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -144,33 +145,11 @@ uint32_t guiHandle;
 uint32_t guiWoodBackground;
 uint32_t guiUnderConstructionImage;
 
-/*
-uint16_t	gusFirstGunIndex;
-uint16_t	gusLastGunIndex;
-uint8_t		gubNumGunPages;
-
-uint16_t	gusFirstAmmoIndex;
-uint16_t	gusLastAmmoIndex;
-uint8_t		gubNumAmmoPages;
-
-uint16_t	gusFirstMiscIndex;
-uint16_t	gusLastMiscIndex;
-uint8_t		gubNumMiscPages;
-
-uint16_t  gusFirstArmourIndex;
-uint16_t  gusLastArmourIndex;
-uint8_t		gubNumArmourPages;
-
-uint16_t  gusFirstUsedIndex;
-uint16_t  gusLastUsedIndex;
-uint8_t		gubNumUsedPages;
-*/
-
 uint32_t guiLastBobbyRayPage;
 
 uint8_t gubBobbyRPages[] = {LAPTOP_MODE_BOBBY_R_USED, LAPTOP_MODE_BOBBY_R_MISC,
-                          LAPTOP_MODE_BOBBY_R_GUNS, LAPTOP_MODE_BOBBY_R_AMMO,
-                          LAPTOP_MODE_BOBBY_R_ARMOR};
+                            LAPTOP_MODE_BOBBY_R_GUNS, LAPTOP_MODE_BOBBY_R_AMMO,
+                            LAPTOP_MODE_BOBBY_R_ARMOR};
 
 // Bobby's Sign menu mouse regions
 struct MOUSE_REGION gSelectedBobbiesSignMenuRegion[BOBBIES_NUMBER_SIGNS];
@@ -186,71 +165,73 @@ void SimulateBobbyRayCustomer(STORE_INVENTORY *pInventoryArray, BOOLEAN fUsed);
 void GameInitBobbyR() {}
 
 BOOLEAN EnterBobbyR() {
-  VOBJECT_DESC VObjectDesc;
   uint8_t i;
 
   // an array of mouse regions for the bobbies signs.  Top Left corner, bottom right corner
   uint16_t usMouseRegionPosArray[] = {BOBBIES_USED_SIGN_X,
-                                    BOBBIES_USED_SIGN_Y,
-                                    BOBBIES_USED_SIGN_X + BOBBIES_USED_SIGN_WIDTH,
-                                    BOBBIES_USED_SIGN_Y + BOBBIES_USED_SIGN_HEIGHT,
-                                    BOBBIES_MISC_SIGN_X,
-                                    BOBBIES_MISC_SIGN_Y,
-                                    BOBBIES_MISC_SIGN_X + BOBBIES_MISC_SIGN_WIDTH,
-                                    BOBBIES_MISC_SIGN_Y + BOBBIES_MISC_SIGN_HEIGHT,
-                                    BOBBIES_GUNS_SIGN_X,
-                                    BOBBIES_GUNS_SIGN_Y,
-                                    BOBBIES_GUNS_SIGN_X + BOBBIES_GUNS_SIGN_WIDTH,
-                                    BOBBIES_GUNS_SIGN_Y + BOBBIES_GUNS_SIGN_HEIGHT,
-                                    BOBBIES_AMMO_SIGN_X,
-                                    BOBBIES_AMMO_SIGN_Y,
-                                    BOBBIES_AMMO_SIGN_X + BOBBIES_AMMO_SIGN_WIDTH,
-                                    BOBBIES_AMMO_SIGN_Y + BOBBIES_AMMO_SIGN_HEIGHT,
-                                    BOBBIES_ARMOUR_SIGN_X,
-                                    BOBBIES_ARMOUR_SIGN_Y,
-                                    BOBBIES_ARMOUR_SIGN_X + BOBBIES_ARMOUR_SIGN_WIDTH,
-                                    BOBBIES_ARMOUR_SIGN_Y + BOBBIES_ARMOUR_SIGN_HEIGHT};
+                                      BOBBIES_USED_SIGN_Y,
+                                      BOBBIES_USED_SIGN_X + BOBBIES_USED_SIGN_WIDTH,
+                                      BOBBIES_USED_SIGN_Y + BOBBIES_USED_SIGN_HEIGHT,
+                                      BOBBIES_MISC_SIGN_X,
+                                      BOBBIES_MISC_SIGN_Y,
+                                      BOBBIES_MISC_SIGN_X + BOBBIES_MISC_SIGN_WIDTH,
+                                      BOBBIES_MISC_SIGN_Y + BOBBIES_MISC_SIGN_HEIGHT,
+                                      BOBBIES_GUNS_SIGN_X,
+                                      BOBBIES_GUNS_SIGN_Y,
+                                      BOBBIES_GUNS_SIGN_X + BOBBIES_GUNS_SIGN_WIDTH,
+                                      BOBBIES_GUNS_SIGN_Y + BOBBIES_GUNS_SIGN_HEIGHT,
+                                      BOBBIES_AMMO_SIGN_X,
+                                      BOBBIES_AMMO_SIGN_Y,
+                                      BOBBIES_AMMO_SIGN_X + BOBBIES_AMMO_SIGN_WIDTH,
+                                      BOBBIES_AMMO_SIGN_Y + BOBBIES_AMMO_SIGN_HEIGHT,
+                                      BOBBIES_ARMOUR_SIGN_X,
+                                      BOBBIES_ARMOUR_SIGN_Y,
+                                      BOBBIES_ARMOUR_SIGN_X + BOBBIES_ARMOUR_SIGN_WIDTH,
+                                      BOBBIES_ARMOUR_SIGN_Y + BOBBIES_ARMOUR_SIGN_HEIGHT};
 
   InitBobbyRWoodBackground();
 
   // load the Bobbyname graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYNAME);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBobbyName));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_BOBBYNAME);
+  if (!AddVObjectFromFile(ImageFile, &guiBobbyName)) {
+    return FALSE;
+  }
 
   // load the plaque graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BobbyPlaques.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiPlaque));
+  if (!AddVObjectFromFile("LAPTOP\\BobbyPlaques.sti", &guiPlaque)) {
+    return FALSE;
+  }
 
   // load the TopHinge graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BobbyTopHinge.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTopHinge));
+  if (!AddVObjectFromFile("LAPTOP\\BobbyTopHinge.sti", &guiTopHinge)) {
+    return FALSE;
+  }
 
   // load the BottomHinge graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BobbyBottomHinge.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBottomHinge));
+  if (!AddVObjectFromFile("LAPTOP\\BobbyBottomHinge.sti", &guiBottomHinge)) {
+    return FALSE;
+  }
 
   // load the Store Plaque graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_STOREPLAQUE);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiStorePlaque));
+  GetMLGFilename(ImageFile, MLG_STOREPLAQUE);
+  if (!AddVObjectFromFile(ImageFile, &guiStorePlaque)) {
+    return FALSE;
+  }
 
   // load the Handle graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BobbyHandle.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiHandle));
+  if (!AddVObjectFromFile("LAPTOP\\BobbyHandle.sti", &guiHandle)) {
+    return FALSE;
+  }
 
   InitBobbiesMouseRegion(BOBBIES_NUMBER_SIGNS, usMouseRegionPosArray,
                          gSelectedBobbiesSignMenuRegion);
 
   if (!LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
     // load the Handle graphic and add it
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    FilenameForBPP("LAPTOP\\UnderConstruction.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &guiUnderConstructionImage));
+    if (!AddVObjectFromFile("LAPTOP\\UnderConstruction.sti", &guiUnderConstructionImage)) {
+      return FALSE;
+    }
 
     for (i = 0; i < BOBBIES_NUMBER_SIGNS; i++) {
       MSYS_DisableRegion(&gSelectedBobbiesSignMenuRegion[i]);
@@ -297,44 +278,27 @@ void RenderBobbyR() {
 
   // Bobby's Name
   GetVideoObject(&hPixHandle, guiBobbyName);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBY_RAYS_NAME_X, BOBBY_RAYS_NAME_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBY_RAYS_NAME_X, BOBBY_RAYS_NAME_Y);
 
   // Plaque
   GetVideoObject(&hPixHandle, guiPlaque);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYS_PLAQUES_X, BOBBYS_PLAQUES_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBYS_PLAQUES_X, BOBBYS_PLAQUES_Y);
 
   // Top Hinge
   GetVideoObject(&hPixHandle, guiTopHinge);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBIES_TOPHINGE_X, BOBBIES_TOPHINGE_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBIES_TOPHINGE_X, BOBBIES_TOPHINGE_Y);
 
   // Bottom Hinge
   GetVideoObject(&hPixHandle, guiBottomHinge);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBIES_BOTTOMHINGE_X, BOBBIES_BOTTOMHINGE_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, BOBBIES_BOTTOMHINGE_X, BOBBIES_BOTTOMHINGE_Y);
 
   // StorePlaque
   GetVideoObject(&hStorePlaqueHandle, guiStorePlaque);
-  BltVideoObject(FRAME_BUFFER, hStorePlaqueHandle, 0, BOBBIES_STORE_PLAQUE_X,
-                 BOBBIES_STORE_PLAQUE_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hStorePlaqueHandle, 0, BOBBIES_STORE_PLAQUE_X, BOBBIES_STORE_PLAQUE_Y);
 
   // Handle
   GetVideoObject(&hPixHandle, guiHandle);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBIES_HANDLE_X, BOBBIES_HANDLE_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
-
-  /*
-          if( !LaptopSaveInfo.fBobbyRSiteCanBeAccessed )
-          {
-                  // The undercontsruction graphic
-                  GetVideoObject(&hPixHandle, guiUnderConstructionImage );
-                  BltVideoObject(FRAME_BUFFER, hPixHandle, 0,BOBBIES_FIRST_SENTENCE_X,
-     BOBBIES_FIRST_SENTENCE_Y, VO_BLT_SRCTRANSPARENCY,NULL); BltVideoObject(FRAME_BUFFER,
-     hPixHandle, 0,BOBBIES_3RD_SENTENCE_X, BOBBIES_3RD_SENTENCE_Y, VO_BLT_SRCTRANSPARENCY,NULL);
-          }
-  */
+  BltVObject(vsFB, hPixHandle, 0, BOBBIES_HANDLE_X, BOBBIES_HANDLE_Y);
 
   SetFontShadow(BOBBIES_SENTENCE_BACKGROUNDCOLOR);
 
@@ -392,8 +356,8 @@ void RenderBobbyR() {
 
   // if we cant go to any sub pages, darken the page out
   if (!LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
-    ShadowVideoSurfaceRect(FRAME_BUFFER, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y,
-                           LAPTOP_SCREEN_LR_X, LAPTOP_SCREEN_WEB_LR_Y);
+    ShadowVideoSurfaceRect(vsFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
+                           LAPTOP_SCREEN_WEB_LR_Y);
   }
 
   RenderWWWProgramTitleBar();
@@ -402,12 +366,10 @@ void RenderBobbyR() {
 }
 
 BOOLEAN InitBobbyRWoodBackground() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Wood bacground graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\BobbyWood.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiWoodBackground));
+  if (!AddVObjectFromFile("LAPTOP\\BobbyWood.sti", &guiWoodBackground)) {
+    return FALSE;
+  }
 
   return (TRUE);
 }
@@ -428,8 +390,7 @@ BOOLEAN DrawBobbyRWoodBackground() {
   for (y = 0; y < 4; y++) {
     uiPosX = BOBBY_WOOD_BACKGROUND_X;
     for (x = 0; x < 4; x++) {
-      BltVideoObject(FRAME_BUFFER, hWoodBackGroundHandle, 0, uiPosX, uiPosY, VO_BLT_SRCTRANSPARENCY,
-                     NULL);
+      BltVObject(vsFB, hWoodBackGroundHandle, 0, uiPosX, uiPosY);
       uiPosX += BOBBY_WOOD_BACKGROUND_WIDTH;
     }
     uiPosY += BOBBY_WOOD_BACKGROUND_HEIGHT;
@@ -476,31 +437,6 @@ void SelectBobbiesSignMenuRegionCallBack(struct MOUSE_REGION *pRegion, int32_t i
   }
 }
 
-/*
-BOOLEAN WebPageTileBackground(uint8_t ubNumX, uint8_t ubNumY, uint16_t usWidth, uint16_t usHeight, uint32_t
-uiBackground)
-{
-  struct VObject* hBackGroundHandle;
-        uint16_t	x,y, uiPosX, uiPosY;
-
-        // Blt the Wood background
-        GetVideoObject(&hBackGroundHandle, uiBackground);
-
-        uiPosY = LAPTOP_SCREEN_WEB_UL_Y;
-        for(y=0; y<ubNumY; y++)
-        {
-                uiPosX = LAPTOP_SCREEN_UL_X;
-                for(x=0; x<ubNumX; x++)
-                {
-                  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 0,uiPosX, uiPosY,
-VO_BLT_SRCTRANSPARENCY,NULL); uiPosX += usWidth;
-                }
-                uiPosY += usHeight;
-        }
-        return(TRUE);
-}
-*/
-
 void HandleBobbyRUnderConstructionAni(BOOLEAN fReset) {
   struct VObject *hPixHandle;
   static uint32_t uiLastTime = 1;
@@ -518,11 +454,9 @@ void HandleBobbyRUnderConstructionAni(BOOLEAN fReset) {
   if (((uiCurTime - uiLastTime) > BOBBYR_UNDERCONSTRUCTION_ANI_DELAY) || (fReDrawScreenFlag)) {
     // The undercontsruction graphic
     GetVideoObject(&hPixHandle, guiUnderConstructionImage);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
-                   BOBBYR_UNDERCONSTRUCTION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X, BOBBYR_UNDERCONSTRUCTION_Y);
 
-    BltVideoObject(FRAME_BUFFER, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
-                   BOBBYR_UNDERCONSTRUCTION1_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X, BOBBYR_UNDERCONSTRUCTION1_Y);
 
     DrawTextToScreen(BobbyRaysFrontText[BOBBYR_UNDER_CONSTRUCTION],
                      BOBBYR_UNDER_CONSTRUCTION_TEXT_X, BOBBYR_UNDER_CONSTRUCTION_TEXT_Y,
@@ -673,7 +607,7 @@ void DailyUpdateOfBobbyRaysNewInventory() {
 
 #ifdef BR_INVENTORY_TURNOVER_DEBUG
             if (usItemIndex == ROCKET_LAUNCHER)
-              MapScreenMessage(0, MSG_DEBUG, L"%s: BR Ordered %d, Has %d", WORLDTIMESTR,
+              MapScreenMessage(0, MSG_DEBUG, L"%s: BR Ordered %d, Has %d", gswzWorldTimeStr,
                                LaptopSaveInfo.BobbyRayInventory[i].ubQtyOnOrder,
                                LaptopSaveInfo.BobbyRayInventory[i].ubQtyOnHand);
 #endif
@@ -731,7 +665,8 @@ void DailyUpdateOfBobbyRaysUsedInventory() {
 }
 
 // returns the number of items to order
-uint8_t HowManyBRItemsToOrder(uint16_t usItemIndex, uint8_t ubCurrentlyOnHand, uint8_t ubBobbyRayNewUsed) {
+uint8_t HowManyBRItemsToOrder(uint16_t usItemIndex, uint8_t ubCurrentlyOnHand,
+                              uint8_t ubBobbyRayNewUsed) {
   uint8_t ubItemsOrdered = 0;
 
   Assert(usItemIndex < MAXITEMS);
@@ -761,7 +696,7 @@ void OrderBobbyRItem(uint16_t usItemIndex) {
 
   // add the new item to the queue.  The new item will arrive in 'uiArrivalTime' minutes.
   uiArrivalTime = BOBBY_R_NEW_PURCHASE_ARRIVAL_TIME + Random(BOBBY_R_NEW_PURCHASE_ARRIVAL_TIME / 2);
-  uiArrivalTime += GetWorldTotalMin();
+  uiArrivalTime += GetGameTimeInMin();
   AddStrategicEvent(EVENT_UPDATE_BOBBY_RAY_INVENTORY, uiArrivalTime, usItemIndex);
 }
 
@@ -794,7 +729,7 @@ void AddFreshBobbyRayInventory(uint16_t usItemIndex) {
 
 #ifdef BR_INVENTORY_TURNOVER_DEBUG
   if (usItemIndex == ROCKET_LAUNCHER && !fUsed)
-    MapScreenMessage(0, MSG_DEBUG, L"%s: BR Bought %d, Has %d", WORLDTIMESTR,
+    MapScreenMessage(0, MSG_DEBUG, L"%s: BR Bought %d, Has %d", gswzWorldTimeStr,
                      pInventoryArray[sInventorySlot].ubQtyOnOrder,
                      pInventoryArray[sInventorySlot].ubQtyOnHand);
 #endif
@@ -803,7 +738,8 @@ void AddFreshBobbyRayInventory(uint16_t usItemIndex) {
   pInventoryArray[sInventorySlot].ubQtyOnOrder = 0;
 }
 
-int16_t GetInventorySlotForItem(STORE_INVENTORY *pInventoryArray, uint16_t usItemIndex, BOOLEAN fUsed) {
+int16_t GetInventorySlotForItem(STORE_INVENTORY *pInventoryArray, uint16_t usItemIndex,
+                                BOOLEAN fUsed) {
   int16_t i;
 
   for (i = 0; i < LaptopSaveInfo.usInventoryListLength[fUsed]; i++) {
@@ -832,7 +768,7 @@ void SimulateBobbyRayCustomer(STORE_INVENTORY *pInventoryArray, BOOLEAN fUsed) {
 #ifdef BR_INVENTORY_TURNOVER_DEBUG
       if (ubItemsSold > 0) {
         if (i == ROCKET_LAUNCHER && !fUsed)
-          MapScreenMessage(0, MSG_DEBUG, L"%s: BR Sold %d, Has %d", WORLDTIMESTR, ubItemsSold,
+          MapScreenMessage(0, MSG_DEBUG, L"%s: BR Sold %d, Has %d", gswzWorldTimeStr, ubItemsSold,
                            pInventoryArray[i].ubQtyOnHand);
       }
 #endif

@@ -10,7 +10,7 @@
 
 #include "GameSettings.h"
 #include "SGP/Container.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/VObjectBlitters.h"
 #include "SGP/VSurface.h"
@@ -23,10 +23,11 @@
 #include "Tactical/Overhead.h"
 #include "Tactical/SoldierControl.h"
 #include "Tactical/SoldierProfile.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
+#include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Utilities.h"
+#include "rust_fileman.h"
 
 // Defines
 #define NUM_BULLET_SLOTS 50
@@ -147,7 +148,7 @@ void RemoveBullet(int32_t iBullet) {
     // decrement reference to bullet in the firer
     gBullets[iBullet].pFirer->bBulletsLeft--;
     DebugMsg(
-        TOPIC_JA2, DBG_LEVEL_3,
+        TOPIC_JA2, DBG_INFO,
         String("!!!!!!! Ending bullet, bullets left %d", gBullets[iBullet].pFirer->bBulletsLeft));
 
     if (gBullets[iBullet].usFlags & (BULLET_FLAG_KNIFE)) {
@@ -242,7 +243,8 @@ void UpdateBullets() {
               gBullets[uiCount].pAniTile->sRelativeY =
                   (int16_t)FIXEDPT_TO_INT32(gBullets[uiCount].qCurrY);
               gBullets[uiCount].pAniTile->pLevelNode->sRelativeZ =
-                  (int16_t)CONVERT_HEIGHTUNITS_TO_PIXELS(FIXEDPT_TO_INT32(gBullets[uiCount].qCurrZ));
+                  (int16_t)CONVERT_HEIGHTUNITS_TO_PIXELS(
+                      FIXEDPT_TO_INT32(gBullets[uiCount].qCurrZ));
 
               if (gBullets[uiCount].usFlags & (BULLET_FLAG_KNIFE)) {
                 gBullets[uiCount].pShadowAniTile->sRelativeX =
@@ -343,7 +345,7 @@ void AddMissileTrail(BULLET *pBullet, FIXEDPT qCurrX, FIXEDPT qCurrY, FIXEDPT qC
   CreateAnimationTile(&AniParams);
 }
 
-BOOLEAN SaveBulletStructureToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveBulletStructureToSaveGameFile(FileID hFile) {
   uint32_t uiNumBytesWritten;
   uint16_t usCnt;
   uint32_t uiBulletCount = 0;
@@ -357,7 +359,7 @@ BOOLEAN SaveBulletStructureToSaveGameFile(HWFILE hFile) {
   }
 
   // Save the number of Bullets in the array
-  FileMan_Write(hFile, &uiBulletCount, sizeof(uint32_t), &uiNumBytesWritten);
+  File_Write(hFile, &uiBulletCount, sizeof(uint32_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint32_t)) {
     return (FALSE);
   }
@@ -367,7 +369,7 @@ BOOLEAN SaveBulletStructureToSaveGameFile(HWFILE hFile) {
       // if the bullet is active, save it
       if (gBullets[usCnt].fAllocated) {
         // Save the the Bullet structure
-        FileMan_Write(hFile, &gBullets[usCnt], sizeof(BULLET), &uiNumBytesWritten);
+        File_Write(hFile, &gBullets[usCnt], sizeof(BULLET), &uiNumBytesWritten);
         if (uiNumBytesWritten != sizeof(BULLET)) {
           return (FALSE);
         }
@@ -378,7 +380,7 @@ BOOLEAN SaveBulletStructureToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadBulletStructureFromSavedGameFile(HWFILE hFile) {
+BOOLEAN LoadBulletStructureFromSavedGameFile(FileID hFile) {
   uint32_t uiNumBytesRead;
   uint16_t usCnt;
 
@@ -386,14 +388,14 @@ BOOLEAN LoadBulletStructureFromSavedGameFile(HWFILE hFile) {
   memset(gBullets, 0, NUM_BULLET_SLOTS * sizeof(BULLET));
 
   // Load the number of Bullets in the array
-  FileMan_Read(hFile, &guiNumBullets, sizeof(uint32_t), &uiNumBytesRead);
+  File_Read(hFile, &guiNumBullets, sizeof(uint32_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint32_t)) {
     return (FALSE);
   }
 
   for (usCnt = 0; usCnt < guiNumBullets; usCnt++) {
     // Load the the Bullet structure
-    FileMan_Read(hFile, &gBullets[usCnt], sizeof(BULLET), &uiNumBytesRead);
+    File_Read(hFile, &gBullets[usCnt], sizeof(BULLET), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(BULLET)) {
       return (FALSE);
     }

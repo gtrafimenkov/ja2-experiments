@@ -17,10 +17,7 @@
 #include "Laptop/IMPVoices.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/WCheck.h"
 #include "Strategic/GameClock.h"
@@ -34,6 +31,8 @@
 #include "Utils/EncryptedFile.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_fileman.h"
+#include "rust_laptop.h"
 
 #define IMP_MERC_FILE "IMP.dat"
 
@@ -220,7 +219,7 @@ void BtnIMPConfirmYes(GUI_BUTTON *btn, int32_t reason) {
         return;
       }
 
-      if (MoneyGetBalance() < COST_OF_PROFILE) {
+      if (LaptopMoneyGetBalance() < COST_OF_PROFILE) {
         // not enough
         return;
       }
@@ -229,23 +228,21 @@ void BtnIMPConfirmYes(GUI_BUTTON *btn, int32_t reason) {
       LaptopSaveInfo.fIMPCompletedFlag = TRUE;
 
       // charge the player
-      AddTransactionToPlayersBook(IMP_PROFILE,
-                                  (uint8_t)(PLAYER_GENERATED_CHARACTER_ID + LaptopSaveInfo.iVoiceId),
-                                  -(COST_OF_PROFILE));
-      AddHistoryToPlayersLog(HISTORY_CHARACTER_GENERATED, 0, GetWorldTotalMin(), -1, -1);
+      AddTransactionToPlayersBook(
+          IMP_PROFILE, (uint8_t)(PLAYER_GENERATED_CHARACTER_ID + LaptopSaveInfo.iVoiceId),
+          -(COST_OF_PROFILE));
+      AddHistoryToPlayersLog(HISTORY_CHARACTER_GENERATED, 0, GetGameTimeInMin(), -1, -1);
       AddCharacterToPlayersTeam();
 
       // write the created imp merc
-      WriteOutCurrentImpCharacter((uint8_t)(PLAYER_GENERATED_CHARACTER_ID + LaptopSaveInfo.iVoiceId));
+      WriteOutCurrentImpCharacter(
+          (uint8_t)(PLAYER_GENERATED_CHARACTER_ID + LaptopSaveInfo.iVoiceId));
 
       fButtonPendingFlag = TRUE;
       iCurrentImpPage = IMP_HOME_PAGE;
 
       // send email notice
-      // AddEmail(IMP_EMAIL_PROFILE_RESULTS, IMP_EMAIL_PROFILE_RESULTS_LENGTH, IMP_PROFILE_RESULTS,
-      // GetWorldTotalMin( ) );
       AddFutureDayStrategicEvent(EVENT_DAY2_ADD_EMAIL_FROM_IMP, 60 * 7, 0, 2);
-      // RenderCharProfile( );
 
       ResetCharacterStats();
 
@@ -458,41 +455,40 @@ int32_t FirstFreeBigEnoughPocket(MERCPROFILESTRUCT *pProfile, uint16_t usItem) {
 
 void WriteOutCurrentImpCharacter(int32_t iProfileId) {
   // grab the profile number and write out what is contained there in
-  HWFILE hFile;
+  FileID hFile = FILE_ID_ERR;
   uint32_t uiBytesWritten = 0;
 
   // open the file for writing
-  hFile = FileMan_Open(IMP_MERC_FILE, FILE_ACCESS_WRITE | FILE_CREATE_ALWAYS, FALSE);
+  hFile = File_OpenForWriting(IMP_MERC_FILE);
 
   // write out the profile id
-  if (!FileMan_Write(hFile, &iProfileId, sizeof(int32_t), &uiBytesWritten)) {
+  if (!File_Write(hFile, &iProfileId, sizeof(int32_t), &uiBytesWritten)) {
     return;
   }
 
   // write out the portrait id
-  if (!FileMan_Write(hFile, &iPortraitNumber, sizeof(int32_t), &uiBytesWritten)) {
+  if (!File_Write(hFile, &iPortraitNumber, sizeof(int32_t), &uiBytesWritten)) {
     return;
   }
 
   // write out the profile itself
-  if (!FileMan_Write(hFile, &gMercProfiles[iProfileId], sizeof(MERCPROFILESTRUCT),
-                     &uiBytesWritten)) {
+  if (!File_Write(hFile, &gMercProfiles[iProfileId], sizeof(MERCPROFILESTRUCT), &uiBytesWritten)) {
     return;
   }
 
   // close file
-  FileMan_Close(hFile);
+  File_Close(hFile);
 
   return;
 }
 
 void LoadInCurrentImpCharacter(void) {
   int32_t iProfileId = 0;
-  HWFILE hFile;
+  FileID hFile = FILE_ID_ERR;
   uint32_t uiBytesRead = 0;
 
   // open the file for writing
-  hFile = FileMan_Open(IMP_MERC_FILE, FILE_ACCESS_READ, FALSE);
+  hFile = File_OpenForReading(IMP_MERC_FILE);
 
   // valid file?
   if (hFile == -1) {
@@ -500,24 +496,24 @@ void LoadInCurrentImpCharacter(void) {
   }
 
   // read in the profile
-  if (!FileMan_Read(hFile, &iProfileId, sizeof(int32_t), &uiBytesRead)) {
+  if (!File_Read(hFile, &iProfileId, sizeof(int32_t), &uiBytesRead)) {
     return;
   }
 
   // read in the portrait
-  if (!FileMan_Read(hFile, &iPortraitNumber, sizeof(int32_t), &uiBytesRead)) {
+  if (!File_Read(hFile, &iPortraitNumber, sizeof(int32_t), &uiBytesRead)) {
     return;
   }
 
   // read in the profile
-  if (!FileMan_Read(hFile, &gMercProfiles[iProfileId], sizeof(MERCPROFILESTRUCT), &uiBytesRead)) {
+  if (!File_Read(hFile, &gMercProfiles[iProfileId], sizeof(MERCPROFILESTRUCT), &uiBytesRead)) {
     return;
   }
 
   // close file
-  FileMan_Close(hFile);
+  File_Close(hFile);
 
-  if (MoneyGetBalance() < COST_OF_PROFILE) {
+  if (LaptopMoneyGetBalance() < COST_OF_PROFILE) {
     // not enough
     return;
   }
@@ -527,7 +523,7 @@ void LoadInCurrentImpCharacter(void) {
   fCharacterIsMale = (gMercProfiles[iProfileId].bSex == MALE);
   fLoadingCharacterForPreviousImpProfile = TRUE;
   AddTransactionToPlayersBook(IMP_PROFILE, 0, -(COST_OF_PROFILE));
-  AddHistoryToPlayersLog(HISTORY_CHARACTER_GENERATED, 0, GetWorldTotalMin(), -1, -1);
+  AddHistoryToPlayersLog(HISTORY_CHARACTER_GENERATED, 0, GetGameTimeInMin(), -1, -1);
   LaptopSaveInfo.iVoiceId = iProfileId - PLAYER_GENERATED_CHARACTER_ID;
   AddCharacterToPlayersTeam();
   AddFutureDayStrategicEvent(EVENT_DAY2_ADD_EMAIL_FROM_IMP, 60 * 7, 0, 2);

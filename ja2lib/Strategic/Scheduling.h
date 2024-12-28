@@ -8,6 +8,7 @@
 #include "BuildDefines.h"
 #include "SGP/Types.h"
 #include "Tactical/SoldierInitList.h"
+#include "rust_fileman.h"
 
 // Merc scheduling actions
 // NOTE:  Any modifications to this enumeration also require updating the text in EditorMercs.c used
@@ -71,8 +72,8 @@ void ProcessTacticalSchedule(uint8_t ubScheduleID);
 void DeleteSchedule(uint8_t ubScheduleID);
 
 void LoadSchedules(int8_t **hBuffer);
-BOOLEAN LoadSchedulesFromSave(HWFILE hFile);
-BOOLEAN SaveSchedules(HWFILE hFile);
+BOOLEAN LoadSchedulesFromSave(FileID hFile);
+BOOLEAN SaveSchedules(FileID hFile);
 
 void PostSchedule(struct SOLDIERTYPE *pSoldier);
 void PostDefaultSchedule(struct SOLDIERTYPE *pSoldier);

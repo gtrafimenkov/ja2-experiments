@@ -13,11 +13,12 @@
 #include "Laptop/InsuranceText.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
-#include "Money.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
@@ -37,6 +38,7 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_laptop.h"
 
 #define INS_CTRCT_ORDER_GRID_WIDTH 132
 #define INS_CTRCT_ORDER_GRID_HEIGHT 216
@@ -197,7 +199,6 @@ void EnterLaptopInitInsuranceContract() {
 }
 
 BOOLEAN EnterInsuranceContract() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX, i;
 
   // build the list of mercs that are can be displayed
@@ -210,14 +211,14 @@ BOOLEAN EnterInsuranceContract() {
   InitInsuranceDefaults();
 
   // load the Insurance title graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\InsOrderGrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsOrderGridImage));
+  if (!AddVObjectFromFile("LAPTOP\\InsOrderGrid.sti", &guiInsOrderGridImage)) {
+    return FALSE;
+  }
 
   // load the Insurance bullet graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsOrderBulletImage));
+  if (!AddVObjectFromFile("LAPTOP\\bullet.sti", &guiInsOrderBulletImage)) {
+    return FALSE;
+  }
 
   usPosX = INS_CTRCT_BOTTOM_LINK_RED_BAR_X;
   for (i = 0; i < 2; i++) {
@@ -352,8 +353,7 @@ void RenderInsuranceContract() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiInsOrderBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_CTRCT_FIRST_BULLET_TEXT_X,
-                 INS_CTRCT_FIRST_BULLET_TEXT_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INS_CTRCT_FIRST_BULLET_TEXT_X, INS_CTRCT_FIRST_BULLET_TEXT_Y);
 
   // Display the first instruction sentence
   GetInsuranceText(INS_MLTI_TO_PURCHASE_INSURANCE, sText);
@@ -364,8 +364,7 @@ void RenderInsuranceContract() {
 
   // Get and display the insurance bullet
   GetVideoObject(&hPixHandle, guiInsOrderBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INS_CTRCT_FIRST_BULLET_TEXT_X,
-                 INS_CTRCT_SECOND_BULLET_TEXT_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, INS_CTRCT_FIRST_BULLET_TEXT_X, INS_CTRCT_SECOND_BULLET_TEXT_Y);
 
   // Display the second instruction sentence
   GetInsuranceText(INS_MLTI_ONCE_SATISFIED_CLICK_ACCEPT, sText);
@@ -471,7 +470,6 @@ void BtnInsContractNextButtonCallBack(GUI_BUTTON *btn, int32_t reason) {
 }
 
 BOOLEAN DisplayOrderGrid(uint8_t ubGridNumber, uint8_t ubMercID) {
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hPixHandle;
   uint16_t usPosX, usPosY;
   uint32_t uiInsMercFaceImage;
@@ -513,14 +511,13 @@ BOOLEAN DisplayOrderGrid(uint8_t ubGridNumber, uint8_t ubMercID) {
 
   // Get and display the insurance order grid #1
   GetVideoObject(&hPixHandle, guiInsOrderGridImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, usPosX, INS_CTRCT_ORDER_GRID1_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, usPosX, INS_CTRCT_ORDER_GRID1_Y);
 
   // load the mercs face graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(sTemp, "FACES\\%02d.sti", ubMercID);
-  FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &uiInsMercFaceImage));
+  if (!AddVObjectFromFile(sTemp, &uiInsMercFaceImage)) {
+    return FALSE;
+  }
 
   // Get the merc's face
   GetVideoObject(&hPixHandle, uiInsMercFaceImage);
@@ -538,9 +535,8 @@ BOOLEAN DisplayOrderGrid(uint8_t ubGridNumber, uint8_t ubMercID) {
   }
 
   // Get and display the mercs face
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, usPosX + INS_CTRCT_OG_FACE_OFFSET_X,
-                 INS_CTRCT_ORDER_GRID1_Y + INS_CTRCT_OG_FACE_OFFSET_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hPixHandle, 0, usPosX + INS_CTRCT_OG_FACE_OFFSET_X,
+             INS_CTRCT_ORDER_GRID1_Y + INS_CTRCT_OG_FACE_OFFSET_Y);
 
   // the face images isn't needed anymore so delete it
   DeleteVideoObjectFromIndex(uiInsMercFaceImage);
@@ -1032,7 +1028,7 @@ void DailyUpdateOfInsuredMercs() {
       // if the merc has life insurance
       if (pSoldier->usLifeInsurance) {
         // if the merc wasn't just hired
-        if ((int16_t)GetWorldDay() != pSoldier->iStartOfInsuranceContract) {
+        if ((int16_t)GetGameTimeInDays() != pSoldier->iStartOfInsuranceContract) {
           // if the contract has run out of time
           if (GetTimeRemainingOnSoldiersInsuranceContract(pSoldier) <= 0) {
             // if the soldier isn't dead
@@ -1227,13 +1223,13 @@ BOOLEAN AddLifeInsurancePayout(struct SOLDIERTYPE *pSoldier) {
 
   // calculate how many full, insured days of work the merc is going to miss
   uiDaysToPay = pSoldier->iTotalLengthOfInsuranceContract -
-                (GetWorldDay() + 1 - pSoldier->iStartOfInsuranceContract);
+                (GetGameTimeInDays() + 1 - pSoldier->iStartOfInsuranceContract);
 
   // calculate & store how much is to be paid out
   LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice = uiDaysToPay * uiCostPerDay;
 
   // 4pm next day
-  uiTimeInMinutes = GetMidnightOfFutureDayInMinutes(1) + 16 * 60;
+  uiTimeInMinutes = GetFutureMidnightInMinutes(1) + 16 * 60;
 
   // if the death was suspicious, or he's already been investigated twice or more
   if (pProfile->ubSuspiciousDeath || (gStrategicStatus.ubInsuranceInvestigationsCnt >= 2)) {
@@ -1256,13 +1252,13 @@ void StartInsuranceInvestigation(uint8_t ubPayoutID) {
   if (gStrategicStatus.ubInsuranceInvestigationsCnt == 0) {
     // first offense
     AddEmailWithSpecialData(INSUR_SUSPIC, INSUR_SUSPIC_LENGTH, INSURANCE_COMPANY,
-                            GetWorldTotalMin(),
+                            GetGameTimeInMin(),
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice,
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID);
   } else {
     // subsequent offense
     AddEmailWithSpecialData(INSUR_SUSPIC_2, INSUR_SUSPIC_2_LENGTH, INSURANCE_COMPANY,
-                            GetWorldTotalMin(),
+                            GetGameTimeInMin(),
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice,
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID);
   }
@@ -1274,12 +1270,12 @@ void StartInsuranceInvestigation(uint8_t ubPayoutID) {
   } else {
     // calculate how many days the investigation will take
     ubDays = (uint8_t)(2 + gStrategicStatus.ubInsuranceInvestigationsCnt +
-                     Random(3));  // 2-4 days, +1 for every previous investigation
+                       Random(3));  // 2-4 days, +1 for every previous investigation
   }
 
   // post an event to end the investigation that many days in the future (at 4pm)
   AddStrategicEvent(EVENT_INSURANCE_INVESTIGATION_OVER,
-                    GetMidnightOfFutureDayInMinutes(ubDays) + 16 * 60, ubPayoutID);
+                    GetFutureMidnightInMinutes(ubDays) + 16 * 60, ubPayoutID);
 
   // increment counter of all investigations
   gStrategicStatus.ubInsuranceInvestigationsCnt++;
@@ -1291,12 +1287,12 @@ void EndInsuranceInvestigation(uint8_t ubPayoutID) {
       VERY_SUSPICIOUS_DEATH) {
     // fraud, no payout!
     AddEmailWithSpecialData(INSUR_1HOUR_FRAUD, INSUR_1HOUR_FRAUD_LENGTH, INSURANCE_COMPANY,
-                            GetWorldTotalMin(),
+                            GetGameTimeInMin(),
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice,
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID);
   } else {
     AddEmailWithSpecialData(INSUR_INVEST_OVER, INSUR_INVEST_OVER_LENGTH, INSURANCE_COMPANY,
-                            GetWorldTotalMin(),
+                            GetGameTimeInMin(),
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice,
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID);
 
@@ -1324,14 +1320,14 @@ void InsuranceContractPayLifeInsuranceForDeadMerc(uint8_t ubPayoutID) {
   // add to the history log the fact that the we paid the insurance claim
   AddHistoryToPlayersLog(HISTORY_INSURANCE_CLAIM_PAYOUT,
                          LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID,
-                         GetWorldTotalMin(), -1, -1);
+                         GetGameTimeInMin(), -1, -1);
 
   // if there WASNT an investigation
   if (gMercProfiles[LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID].ubSuspiciousDeath ==
       0) {
     // Add an email telling the user that he received an insurance payment
     AddEmailWithSpecialData(INSUR_PAYMENT, INSUR_PAYMENT_LENGTH, INSURANCE_COMPANY,
-                            GetWorldTotalMin(),
+                            GetGameTimeInMin(),
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].iPayOutPrice,
                             LaptopSaveInfo.pLifeInsurancePayouts[ubPayoutID].ubMercID);
   }
@@ -1356,7 +1352,7 @@ BOOLEAN MercIsInsurable(struct SOLDIERTYPE *pSoldier) {
     // with more than one day left on their employment contract are eligible for insurance
     // the second part is because the insurance doesn't pay for any working day already started at
     // time of death
-    //		if( ( (pSoldier->iEndofContractTime - GetWorldTotalMin()) > 24 * 60) ||
+    //		if( ( (pSoldier->iEndofContractTime - GetGameTimeInMin()) > 24 * 60) ||
     // pSoldier->usLifeInsurance )
     if (CanSoldierExtendInsuranceContract(pSoldier) || pSoldier->usLifeInsurance) {
       // who aren't currently being held POW
@@ -1442,11 +1438,11 @@ uint32_t GetTimeRemainingOnSoldiersInsuranceContract(struct SOLDIERTYPE *pSoldie
   // if the soldier has life insurance
   if (pSoldier->usLifeInsurance) {
     // if the insurance contract hasnt started yet
-    if ((int32_t)GetWorldDay() < pSoldier->iStartOfInsuranceContract)
+    if ((int32_t)GetGameTimeInDays() < pSoldier->iStartOfInsuranceContract)
       return (pSoldier->iTotalLengthOfInsuranceContract);
     else
       return ((pSoldier->iTotalLengthOfInsuranceContract -
-               (GetWorldDay() - pSoldier->iStartOfInsuranceContract)));
+               (GetGameTimeInDays() - pSoldier->iStartOfInsuranceContract)));
   } else
     return (0);
 }
@@ -1459,13 +1455,13 @@ uint32_t GetTimeRemainingOnSoldiersContract(struct SOLDIERTYPE *pSoldier) {
   if (pSoldier->iEndofContractTime % 1440) iDayMercLeaves++;
 
   // Subtract todays day number
-  iDayMercLeaves = iDayMercLeaves - GetWorldDay();
+  iDayMercLeaves = iDayMercLeaves - GetGameTimeInDays();
 
   if (iDayMercLeaves > pSoldier->iTotalContractLength)
     iDayMercLeaves = pSoldier->iTotalContractLength;
 
   return (iDayMercLeaves);
-  //	return( ( pSoldier->iEndofContractTime - (int32_t)GetWorldTotalMin( ) ) / 1440 );
+  //	return( ( pSoldier->iEndofContractTime - (int32_t)GetGameTimeInMin( ) ) / 1440 );
 }
 
 void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, uint32_t uiInsuranceLength) {
@@ -1477,7 +1473,7 @@ void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, uint32_t 
   if (!(pSoldier->usLifeInsurance)) {
     // specify the start date of the contract
     pSoldier->iStartOfInsuranceContract = CalcStartDayOfInsurance(pSoldier);
-    pSoldier->uiStartTimeOfInsuranceContract = GetWorldTotalMin();
+    pSoldier->uiStartTimeOfInsuranceContract = GetGameTimeInMin();
   }
 
   // transfer money
@@ -1501,7 +1497,7 @@ void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, uint32_t 
       Assert(0);
   } else {
     // if the player doesnt have enough money, tell him
-    if (MoneyGetBalance() < iAmountOfMoneyTransfer) {
+    if (LaptopMoneyGetBalance() < iAmountOfMoneyTransfer) {
       wchar_t sText[800];
 
       GetInsuranceText(INS_MLTI_NOT_ENOUGH_FUNDS, sText);
@@ -1518,7 +1514,7 @@ void PurchaseOrExtendInsuranceForSoldier(struct SOLDIERTYPE *pSoldier, uint32_t 
 
       // add an entry in the history page for the purchasing of life insurance
       AddHistoryToPlayersLog(HISTORY_PURCHASED_INSURANCE, GetSolProfile(pSoldier),
-                             GetWorldTotalMin(), -1, -1);
+                             GetGameTimeInMin(), -1, -1);
 
       // Set that we have life insurance
       pSoldier->usLifeInsurance = 1;
@@ -1581,7 +1577,8 @@ int32_t CalculateSoldiersInsuranceContractLength(struct SOLDIERTYPE *pSoldier) {
   // Is the mercs insurace contract is less then a day, set it to 0
   if (iInsuranceContractLength < 0) iInsuranceContractLength = 0;
 
-  if (pSoldier->usLifeInsurance && pSoldier->iStartOfInsuranceContract >= (int32_t)GetWorldDay() &&
+  if (pSoldier->usLifeInsurance &&
+      pSoldier->iStartOfInsuranceContract >= (int32_t)GetGameTimeInDays() &&
       iInsuranceContractLength < 2)
     iInsuranceContractLength = 0;
 
@@ -1593,10 +1590,10 @@ int32_t CalcStartDayOfInsurance(struct SOLDIERTYPE *pSoldier) {
 
   // if the soldier was just hired ( in transit ), and the game didnt just start
   if (GetSolAssignment(pSoldier) == IN_TRANSIT && !DidGameJustStart()) {
-    uiDayToStartInsurance = GetWorldDay();
+    uiDayToStartInsurance = GetGameTimeInDays();
   } else {
     // Get tomorows date ( and convert it to days )
-    uiDayToStartInsurance = GetMidnightOfFutureDayInMinutes(1) / 1440;
+    uiDayToStartInsurance = GetFutureMidnightInMinutes(1) / 1440;
   }
 
   return (uiDayToStartInsurance);

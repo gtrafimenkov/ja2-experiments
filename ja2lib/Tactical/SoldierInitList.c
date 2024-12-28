@@ -10,7 +10,6 @@
 #include "Editor/EditorMercs.h"
 #include "MessageBoxScreen.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "SaveLoadScreen.h"
@@ -41,6 +40,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
+#include "rust_fileman.h"
 
 BOOLEAN gfOriginalList = TRUE;
 
@@ -166,7 +166,7 @@ void RemoveSoldierNodeFromInitList(SOLDIERINITNODE *pNode) {
 // These serialization functions are assuming the passing of a valid file
 // pointer to the beginning of the save/load area, which is not necessarily at
 // the beginning of the file.  This is just a part of the whole map serialization.
-BOOLEAN SaveSoldiersToMap(HWFILE fp) {
+BOOLEAN SaveSoldiersToMap(FileID fp) {
   uint32_t i;
   uint32_t uiBytesWritten;
   SOLDIERINITNODE *curr;
@@ -190,11 +190,11 @@ BOOLEAN SaveSoldiersToMap(HWFILE fp) {
   for (i = 0; i < gMapInformation.ubNumIndividuals; i++) {
     if (!curr) return FALSE;
     curr->ubNodeID = (uint8_t)i;
-    FileMan_Write(fp, curr->pBasicPlacement, sizeof(BASIC_SOLDIERCREATE_STRUCT), &uiBytesWritten);
+    File_Write(fp, curr->pBasicPlacement, sizeof(BASIC_SOLDIERCREATE_STRUCT), &uiBytesWritten);
 
     if (curr->pBasicPlacement->fDetailedPlacement) {
       if (!curr->pDetailedPlacement) return FALSE;
-      FileMan_Write(fp, curr->pDetailedPlacement, sizeof(SOLDIERCREATE_STRUCT), &uiBytesWritten);
+      File_Write(fp, curr->pDetailedPlacement, sizeof(SOLDIERCREATE_STRUCT), &uiBytesWritten);
     }
     curr = curr->next;
   }
@@ -491,14 +491,14 @@ BOOLEAN AddPlacementToWorld(SOLDIERINITNODE *curr) {
 
         // Kinpin guys might be guarding Tony
         if (tempDetailedPlacement.ubCivilianGroup == KINGPIN_CIV_GROUP &&
-            (gTacticalStatus.fCivGroupHostile[KINGPIN_CIV_GROUP] == CIV_GROUP_WILL_BECOME_HOSTILE ||
+            (GetCivGroupHostility(KINGPIN_CIV_GROUP) == CIV_GROUP_WILL_BECOME_HOSTILE ||
              ((gubQuest[QUEST_KINGPIN_MONEY] == QUESTINPROGRESS) &&
               (CheckFact(FACT_KINGPIN_CAN_SEND_ASSASSINS, KINGPIN))))) {
           if (tempDetailedPlacement.ubProfile == NO_PROFILE) {
             // these guys should be guarding Tony!
             tempDetailedPlacement.sInsertionGridNo =
                 13531 + (int16_t)(PreRandom(8) * (PreRandom(1) ? -1 : 1) +
-                                PreRandom(8) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
+                                  PreRandom(8) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
 
             switch (PreRandom(3)) {
               case 0:
@@ -515,7 +515,7 @@ BOOLEAN AddPlacementToWorld(SOLDIERINITNODE *curr) {
             // billy should now be able to roam around
             tempDetailedPlacement.sInsertionGridNo =
                 13531 + (int16_t)(PreRandom(30) * (PreRandom(1) ? -1 : 1) +
-                                PreRandom(30) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
+                                  PreRandom(30) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
             tempDetailedPlacement.bOrders = SEEKENEMY;
           } else if (tempDetailedPlacement.ubProfile == MADAME) {
             // she shouldn't be here!
@@ -547,7 +547,7 @@ BOOLEAN AddPlacementToWorld(SOLDIERINITNODE *curr) {
                  gbWorldSectorZ == 0) {
         // Tixa prison, once liberated, should not have any civs without profiles unless
         // they are kids
-        if (!StrategicMap[GetSectorID16(TIXA_SECTOR_X, TIXA_SECTOR_Y)].fEnemyControlled &&
+        if (!IsSectorEnemyControlled(TIXA_SECTOR_X, TIXA_SECTOR_Y) &&
             tempDetailedPlacement.ubProfile == NO_PROFILE &&
             tempDetailedPlacement.bBodyType != HATKIDCIV &&
             tempDetailedPlacement.bBodyType != KIDCIV) {
@@ -1273,7 +1273,7 @@ void AddSoldierInitListCreatures(BOOLEAN fQueen, uint8_t ubNumLarvae, uint8_t ub
   // Okay, if we have a queen, place her first.  She MUST have a special placement, else
   // we can't use anything.
   ubNumCreatures = (uint8_t)(ubNumLarvae + ubNumInfants + ubNumYoungMales + ubNumYoungFemales +
-                           ubNumAdultMales + ubNumAdultFemales);
+                             ubNumAdultMales + ubNumAdultFemales);
   if (fQueen) {
     curr = gSoldierInitHead;
     while (curr) {
@@ -1476,7 +1476,7 @@ void RemoveDetailedPlacementInfo(uint8_t ubNodeID) {
 // For the purpose of keeping track of which soldier belongs to which placement within the game,
 // the only way we can do this properly is to save the soldier ID from the list and reconnect the
 // soldier pointer whenever we load the game.
-BOOLEAN SaveSoldierInitListLinks(HWFILE hfile) {
+BOOLEAN SaveSoldierInitListLinks(FileID hfile) {
   SOLDIERINITNODE *curr;
   uint32_t uiNumBytesWritten;
   uint8_t ubSlots = 0;
@@ -1488,7 +1488,7 @@ BOOLEAN SaveSoldierInitListLinks(HWFILE hfile) {
     curr = curr->next;
   }
   //...and save it.
-  FileMan_Write(hfile, &ubSlots, 1, &uiNumBytesWritten);
+  File_Write(hfile, &ubSlots, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != 1) {
     return FALSE;
   }
@@ -1498,11 +1498,11 @@ BOOLEAN SaveSoldierInitListLinks(HWFILE hfile) {
     if (curr->pSoldier && !IsSolActive(curr->pSoldier)) {
       curr->ubSoldierID = 0;
     }
-    FileMan_Write(hfile, &curr->ubNodeID, 1, &uiNumBytesWritten);
+    File_Write(hfile, &curr->ubNodeID, 1, &uiNumBytesWritten);
     if (uiNumBytesWritten != 1) {
       return FALSE;
     }
-    FileMan_Write(hfile, &curr->ubSoldierID, 1, &uiNumBytesWritten);
+    File_Write(hfile, &curr->ubSoldierID, 1, &uiNumBytesWritten);
     if (uiNumBytesWritten != 1) {
       return FALSE;
     }
@@ -1511,21 +1511,21 @@ BOOLEAN SaveSoldierInitListLinks(HWFILE hfile) {
   return TRUE;
 }
 
-BOOLEAN LoadSoldierInitListLinks(HWFILE hfile) {
+BOOLEAN LoadSoldierInitListLinks(FileID hfile) {
   uint32_t uiNumBytesRead;
   SOLDIERINITNODE *curr;
   uint8_t ubSlots, ubSoldierID, ubNodeID;
 
-  FileMan_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
+  File_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) {
     return FALSE;
   }
   while (ubSlots--) {
-    FileMan_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }
-    FileMan_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }
@@ -1831,21 +1831,21 @@ BOOLEAN ValidateSoldierInitLinks(uint8_t ubCode) {
 }
 #endif  // betaversion error checking functions
 
-BOOLEAN NewWayOfLoadingEnemySoldierInitListLinks(HWFILE hfile) {
+BOOLEAN NewWayOfLoadingEnemySoldierInitListLinks(FileID hfile) {
   uint32_t uiNumBytesRead;
   SOLDIERINITNODE *curr;
   uint8_t ubSlots, ubSoldierID, ubNodeID;
 
-  FileMan_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
+  File_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) {
     return FALSE;
   }
   while (ubSlots--) {
-    FileMan_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }
-    FileMan_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }
@@ -1868,21 +1868,21 @@ BOOLEAN NewWayOfLoadingEnemySoldierInitListLinks(HWFILE hfile) {
   return TRUE;
 }
 
-BOOLEAN NewWayOfLoadingCivilianInitListLinks(HWFILE hfile) {
+BOOLEAN NewWayOfLoadingCivilianInitListLinks(FileID hfile) {
   uint32_t uiNumBytesRead;
   SOLDIERINITNODE *curr;
   uint8_t ubSlots, ubSoldierID, ubNodeID;
 
-  FileMan_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
+  File_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) {
     return FALSE;
   }
   while (ubSlots--) {
-    FileMan_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }
-    FileMan_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }
@@ -1905,21 +1905,21 @@ BOOLEAN NewWayOfLoadingCivilianInitListLinks(HWFILE hfile) {
   return (TRUE);
 }
 
-BOOLEAN LookAtButDontProcessEnemySoldierInitListLinks(HWFILE hfile) {
+BOOLEAN LookAtButDontProcessEnemySoldierInitListLinks(FileID hfile) {
   uint32_t uiNumBytesRead;
   SOLDIERINITNODE *curr;
   uint8_t ubSlots, ubSoldierID, ubNodeID;
 
-  FileMan_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
+  File_Read(hfile, &ubSlots, 1, &uiNumBytesRead);
   if (uiNumBytesRead != 1) {
     return FALSE;
   }
   while (ubSlots--) {
-    FileMan_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubNodeID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }
-    FileMan_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
+    File_Read(hfile, &ubSoldierID, 1, &uiNumBytesRead);
     if (uiNumBytesRead != 1) {
       return FALSE;
     }

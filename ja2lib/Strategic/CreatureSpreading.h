@@ -6,6 +6,7 @@
 #define __CREATURE_SPREADING_H
 
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 void InitCreatureQuest();
 void SpreadCreatures();
@@ -14,8 +15,8 @@ void ChooseCreatureQuestStartDay();
 void ClearCreatureQuest();
 void DeleteCreatureDirectives();
 
-BOOLEAN SaveCreatureDirectives(HWFILE hFile);
-BOOLEAN LoadCreatureDirectives(HWFILE hFile, uint32_t uiSavedGameVersion);
+BOOLEAN SaveCreatureDirectives(FileID hFile);
+BOOLEAN LoadCreatureDirectives(FileID hFile, uint32_t uiSavedGameVersion);
 
 uint8_t CreaturesInUndergroundSector(uint8_t ubSectorID, uint8_t ubSectorZ);
 BOOLEAN PrepareCreaturesForBattle();

@@ -10,7 +10,6 @@
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/MemMan.h"
 #include "SGP/Random.h"
 #include "SGP/Video.h"
@@ -55,6 +54,8 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
+#include "rust_fileman.h"
+#include "rust_sam_sites.h"
 
 // the delay for a group about to arrive
 #define ABOUT_TO_ARRIVE_DELAY 5
@@ -63,14 +64,7 @@ struct GROUP *gpGroupList;
 
 struct GROUP *gpPendingSimultaneousGroup = NULL;
 
-// is the bottom of the map panel dirty?
-extern BOOLEAN fMapScreenBottomDirty;
 extern BOOLEAN gfUsePersistantPBI;
-
-#ifdef JA2BETAVERSION
-extern BOOLEAN gfExitViewer;
-void ValidateGroups(struct GROUP *pGroup);
-#endif
 
 extern BOOLEAN gubNumAwareBattles;
 extern int8_t SquadMovementGroups[];
@@ -99,7 +93,8 @@ uint32_t uniqueIDMask[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 uint8_t AddGroupToList(struct GROUP *pGroup);
 
-void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY, uint8_t ubSectorZ);
+void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY,
+                                             uint8_t ubSectorZ);
 BOOLEAN PossibleToCoordinateSimultaneousGroupArrivals(struct GROUP *pGroup);
 
 void HandleNonCombatGroupArrival(struct GROUP *pGroup, BOOLEAN fMainGroup, BOOLEAN fNeverLeft);
@@ -108,16 +103,16 @@ struct GROUP *gpInitPrebattleGroup = NULL;
 void TriggerPrebattleInterface(uint8_t ubResult);
 
 // Save the L.L. for the playerlist into the save game file
-BOOLEAN SavePlayerGroupList(HWFILE hFile, struct GROUP *pGroup);
+BOOLEAN SavePlayerGroupList(FileID hFile, struct GROUP *pGroup);
 
 // Loads the LL for the playerlist from the savegame file
-BOOLEAN LoadPlayerGroupList(HWFILE hFile, struct GROUP **pGroup);
+BOOLEAN LoadPlayerGroupList(FileID hFile, struct GROUP **pGroup);
 
-BOOLEAN SaveEnemyGroupStruct(HWFILE hFile, struct GROUP *pGroup);
-BOOLEAN LoadEnemyGroupStructFromSavedGame(HWFILE hFile, struct GROUP *pGroup);
+BOOLEAN SaveEnemyGroupStruct(FileID hFile, struct GROUP *pGroup);
+BOOLEAN LoadEnemyGroupStructFromSavedGame(FileID hFile, struct GROUP *pGroup);
 
-BOOLEAN LoadWayPointList(HWFILE hFile, struct GROUP *pGroup);
-BOOLEAN SaveWayPointList(HWFILE hFile, struct GROUP *pGroup);
+BOOLEAN LoadWayPointList(FileID hFile, struct GROUP *pGroup);
+BOOLEAN SaveWayPointList(FileID hFile, struct GROUP *pGroup);
 
 extern void RandomMercInGroupSaysQuote(struct GROUP *pGroup, uint16_t usQuoteNum);
 
@@ -128,13 +123,14 @@ void SetLocationOfAllPlayerSoldiersInGroup(struct GROUP *pGroup, uint8_t sSector
 BOOLEAN TestForBloodcatAmbush(struct GROUP *pGroup);
 void NotifyPlayerOfBloodcatBattle(uint8_t ubSectorX, uint8_t ubSectorY);
 
-BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup, uint8_t ubSectorX,
-                                                             uint8_t ubSectorY);
+BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup,
+                                                             uint8_t ubSectorX, uint8_t ubSectorY);
 
 void CancelEmptyPersistentGroupMovement(struct GROUP *pGroup);
 
 BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup);
-BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
+BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY,
+                                                         int8_t bSectorZ);
 void HandlePlayerGroupEnteringSectorToCheckForNPCsOfNoteCallback(uint8_t ubExitValue);
 void DelayEnemyGroupsIfPathsCross(struct GROUP *pPlayerGroup);
 
@@ -175,7 +171,7 @@ uint8_t CreateNewPlayerGroupDepartingFromSector(uint8_t ubSectorX, uint8_t ubSec
 }
 
 uint8_t CreateNewVehicleGroupDepartingFromSector(uint8_t ubSectorX, uint8_t ubSectorY,
-                                               uint32_t uiUNISEDVehicleId) {
+                                                 uint32_t uiUNISEDVehicleId) {
   struct GROUP *pNew;
   AssertMsg(ubSectorX >= 1 && ubSectorX <= 16,
             String("CreateNewVehicleGroup with out of range sectorX value of %d", ubSectorX));
@@ -406,15 +402,15 @@ BOOLEAN GroupReversingDirectionsBetweenSectors(struct GROUP *pGroup, uint8_t ubS
   // The time it takes to arrive there will be exactly the amount of time we have been moving away
   // from it.
   SetGroupArrivalTime(pGroup,
-                      pGroup->uiTraverseTime - pGroup->uiArrivalTime + GetWorldTotalMin() * 2);
+                      pGroup->uiTraverseTime - pGroup->uiArrivalTime + GetGameTimeInMin() * 2);
 
   // if they're not already there
-  if (pGroup->uiArrivalTime > GetWorldTotalMin()) {
+  if (pGroup->uiArrivalTime > GetGameTimeInMin()) {
     // Post the replacement event to move back to the previous sector!
     AddStrategicEvent(EVENT_GROUP_ARRIVAL, pGroup->uiArrivalTime, pGroup->ubGroupID);
 
     if (pGroup->fPlayer) {
-      if ((pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY) > GetWorldTotalMin()) {
+      if ((pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY) > GetGameTimeInMin()) {
         // Post the about to arrive event
         AddStrategicEvent(EVENT_GROUP_ABOUT_TO_ARRIVE,
                           pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY, pGroup->ubGroupID);
@@ -435,8 +431,8 @@ BOOLEAN GroupReversingDirectionsBetweenSectors(struct GROUP *pGroup, uint8_t ubS
   return TRUE;
 }
 
-BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup, uint8_t ubSectorX,
-                                                             uint8_t ubSectorY) {
+BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup,
+                                                             uint8_t ubSectorX, uint8_t ubSectorY) {
   int32_t currDX, currDY, newDX, newDY;
   uint8_t ubNumUnalignedAxes = 0;
 
@@ -656,7 +652,7 @@ struct GROUP *CreateNewEnemyGroupDepartingFromSector(uint32_t uiSector, uint8_t 
   {
     wchar_t str[512];
     if (PlayerMercsInSector(pNew->ubSectorX, pNew->ubSectorY, 0) ||
-        CountAllMilitiaInSector(pNew->ubSectorX, pNew->ubSectorY)) {
+        CountMilitiaInSector(pNew->ubSectorX, pNew->ubSectorY)) {
       swprintf(str, ARR_SIZE(str),
                L"Attempting to send enemy troops from player occupied location.  "
                L"Please ALT+TAB out of the game before doing anything else and send 'Strategic "
@@ -863,7 +859,7 @@ void PrepareForPreBattleInterface(struct GROUP *pPlayerDialogGroup,
 
       InterruptTime();
       PauseGame();
-      LockPauseState(11);
+      LockPause();
 
       if (!gfTacticalTraversal) fDisableMapInterfaceDueToBattle = TRUE;
     }
@@ -883,7 +879,7 @@ void PrepareForPreBattleInterface(struct GROUP *pPlayerDialogGroup,
     HandleImportantPBIQuote(pSoldier, pInitiatingBattleGroup);
     InterruptTime();
     PauseGame();
-    LockPauseState(12);
+    LockPause();
 
     // disable exit from mapscreen and what not until face done talking
     fDisableMapInterfaceDueToBattle = TRUE;
@@ -916,11 +912,6 @@ BOOLEAN CheckConditionsForBattle(struct GROUP *pGroup) {
         PlayerMercsInSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ) &&
         pGroup->ubSectorX == gWorldSectorX && pGroup->ubSectorY == gWorldSectorY &&
         curr) {  // Reinforcements have arrived!
-#ifdef JA2BETAVERSION
-      if (guiCurrentScreen == AIVIEWER_SCREEN) {
-        gfExitViewer = TRUE;
-      }
-#endif
       if (gTacticalStatus.fEnemyInSector) {
         HandleArrivalOfReinforcements(pGroup);
         return (TRUE);
@@ -999,7 +990,7 @@ BOOLEAN CheckConditionsForBattle(struct GROUP *pGroup) {
       }
     }
   } else {
-    if (CountAllMilitiaInSector(pGroup->ubSectorX, pGroup->ubSectorY)) {
+    if (CountMilitiaInSector(pGroup->ubSectorX, pGroup->ubSectorY)) {
       fMilitiaPresent = TRUE;
       fBattlePending = TRUE;
     }
@@ -1013,18 +1004,16 @@ BOOLEAN CheckConditionsForBattle(struct GROUP *pGroup) {
     return FALSE;
   }
 
-  if (fBattlePending) {  // A battle is pending, but the player's could be all unconcious or dead.
-// Go through every group until we find at least one concious merc.  The looping will determine
-// if there are any live mercs and/or concious ones.  If there are no concious mercs, but alive
-// ones, then we will go straight to autoresolve, where the enemy will likely annihilate them or
-// capture them. If there are no alive mercs, then there is nothing anybody can do.  The enemy will
-// completely ignore this, and continue on.
-#ifdef JA2BETAVERSION
-    ValidateGroups(pGroup);
-#endif
-
-    if (gubNumGroupsArrivedSimultaneously) {  // Because this is a battle case, clear all the group
-                                              // flags
+  if (fBattlePending) {
+    // A battle is pending, but the player's could be all unconcious or dead.
+    // Go through every group until we find at least one concious merc.  The looping will determine
+    // if there are any live mercs and/or concious ones.  If there are no concious mercs, but alive
+    // ones, then we will go straight to autoresolve, where the enemy will likely annihilate them or
+    // capture them. If there are no alive mercs, then there is nothing anybody can do.  The enemy
+    // will completely ignore this, and continue on.
+    if (gubNumGroupsArrivedSimultaneously) {
+      // Because this is a battle case, clear all the group
+      // flags
       curr = gpGroupList;
       while (curr && gubNumGroupsArrivedSimultaneously) {
         if (curr->uiFlags & GROUPFLAG_GROUP_ARRIVED_SIMULTANEOUSLY) {
@@ -1059,10 +1048,6 @@ BOOLEAN CheckConditionsForBattle(struct GROUP *pGroup) {
         DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, TriggerPrebattleInterface);
       }
     }
-
-#ifdef JA2BETAVERSION
-    if (guiCurrentScreen == AIVIEWER_SCREEN) gfExitViewer = TRUE;
-#endif
 
     if (pPlayerDialogGroup) {
       PrepareForPreBattleInterface(pPlayerDialogGroup, pGroup);
@@ -1233,7 +1218,7 @@ void AddCorpsesToBloodcatLair(uint8_t sSectorX, uint8_t sSectorY) {
 
   // Set time of death
   // Make sure they will be rotting!
-  Corpse.uiTimeOfDeath = GetWorldTotalMin() - (2 * NUM_SEC_IN_DAY / 60);
+  Corpse.uiTimeOfDeath = GetGameTimeInMin() - (2 * NUM_SEC_IN_DAY / 60);
   // Set type
   Corpse.ubType = (uint8_t)SMERC_JFK;
   Corpse.usFlags = ROTTING_CORPSE_FIND_SWEETSPOT_FROM_GRIDNO;
@@ -1359,7 +1344,7 @@ void GroupArrivedAtSector(uint8_t ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fN
       AssertMsg(0, "Failed to add movement event.");
 
     if (pGroup->fPlayer) {
-      if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetWorldTotalMin()) {
+      if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetGameTimeInMin()) {
         AddStrategicEvent(EVENT_GROUP_ABOUT_TO_ARRIVE,
                           pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY, pGroup->ubGroupID);
       }
@@ -1409,8 +1394,8 @@ void GroupArrivedAtSector(uint8_t ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fN
   SetGroupArrivalTime(pGroup, 0);
   pGroup->fBetweenSectors = FALSE;
 
-  MarkForRedrawalStrategicMap();
-  fMapScreenBottomDirty = TRUE;
+  SetMapPanelDirty(true);
+  SetMapScreenBottomDirty(true);
 
   // if a player group
   if (pGroup->fPlayer) {
@@ -1429,8 +1414,12 @@ void GroupArrivedAtSector(uint8_t ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fN
         SetTixaAsFound();
       else if (bTownId == ORTA)
         SetOrtaAsFound();
-      else if (IsThisSectorASAMSector(pGroup->ubSectorX, pGroup->ubSectorY, 0))
-        SetSAMSiteAsFound(GetSAMIdFromSector(pGroup->ubSectorX, pGroup->ubSectorY, 0));
+      else {
+        struct OptionalSamSite samID = GetSamAtSector(pGroup->ubSectorX, pGroup->ubSectorY, 0);
+        if (samID.tag == Some) {
+          SetSAMSiteAsFound(samID.some);
+        }
+      }
     }
 
     if (pGroup->ubSectorX < pGroup->ubPrevX) {
@@ -1477,7 +1466,8 @@ void GroupArrivedAtSector(uint8_t ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fN
         // add them to the tactical engine!
         if (pGroup->ubSectorX == gWorldSectorX && pGroup->ubSectorY == gWorldSectorY &&
             pGroup->ubSectorZ == gbWorldSectorZ) {
-          UpdateMercInSector(curr->pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+          UpdateMercInSector(curr->pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                             gbWorldSectorZ);
         }
         curr = curr->next;
       }
@@ -1540,7 +1530,8 @@ void GroupArrivedAtSector(uint8_t ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fN
         if (pGroup->ubSectorX == gWorldSectorX && pGroup->ubSectorY == gWorldSectorY &&
             pGroup->ubSectorZ == gbWorldSectorZ) {
           // add vehicle to the tactical engine!
-          UpdateMercInSector(pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+          UpdateMercInSector(pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                             gbWorldSectorZ);
         }
 
         // set directions of insertion
@@ -1662,7 +1653,8 @@ void HandleNonCombatGroupArrival(struct GROUP *pGroup, BOOLEAN fMainGroup, BOOLE
     // if this is the last sector along their movement path (no more waypoints)
     if (GroupAtFinalDestination(pGroup)) {
       // if currently selected sector has nobody in it
-      if (PlayerMercsInSector((uint8_t)sSelMapX, (uint8_t)sSelMapY, (uint8_t)iCurrentMapSectorZ) == 0) {
+      if (PlayerMercsInSector((uint8_t)sSelMapX, (uint8_t)sSelMapY, (uint8_t)iCurrentMapSectorZ) ==
+          0) {
         // make this sector strategically selected
         ChangeSelectedMapSector(pGroup->ubSectorX, pGroup->ubSectorY, pGroup->ubSectorZ);
       }
@@ -1693,14 +1685,15 @@ void HandleNonCombatGroupArrival(struct GROUP *pGroup, BOOLEAN fMainGroup, BOOLE
 }
 
 // Because a battle is about to start, we need to go through the event list and look for other
-// groups that may arrive at the same time -- enemies or players, and blindly add them to the sector
-// without checking for battle conditions, as it has already determined that a new battle is about
-// to start.
-void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY, uint8_t ubSectorZ) {
+// groups that may arrive at the same time -- enemies or players, and blindly add them to the
+// sector without checking for battle conditions, as it has already determined that a new battle
+// is about to start.
+void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY,
+                                             uint8_t ubSectorZ) {
   STRATEGICEVENT *pEvent;
   uint32_t uiCurrTimeStamp;
   struct GROUP *pGroup;
-  uiCurrTimeStamp = GetWorldTotalSeconds();
+  uiCurrTimeStamp = GetGameTimeInSec();
   pEvent = gpEventList;
   gubNumGroupsArrivedSimultaneously = 0;
   while (pEvent && pEvent->uiTimeStamp <= uiCurrTimeStamp) {
@@ -1733,8 +1726,8 @@ void PrepareGroupsForSimultaneousArrival() {
   int32_t iVehId = 0;
 
   pGroup = gpGroupList;
-  while (pGroup) {  // For all of the groups that haven't arrived yet, determine which one is going
-                    // to take the longest.
+  while (pGroup) {  // For all of the groups that haven't arrived yet, determine which one is
+                    // going to take the longest.
     if (pGroup != gpPendingSimultaneousGroup && pGroup->fPlayer && pGroup->fBetweenSectors &&
         pGroup->ubNextX == gpPendingSimultaneousGroup->ubSectorX &&
         pGroup->ubNextY == gpPendingSimultaneousGroup->ubSectorY &&
@@ -1750,14 +1743,14 @@ void PrepareGroupsForSimultaneousArrival() {
     if (pGroup->uiFlags & GROUPFLAG_MARKER) {
       DeleteStrategicEvent(EVENT_GROUP_ARRIVAL, pGroup->ubGroupID);
 
-      // NOTE: This can cause the arrival time to be > GetWorldTotalMin() + TraverseTime, so keep
-      // that in mind if you have any code that uses these 3 values to figure out how far along its
-      // route a group is!
+      // NOTE: This can cause the arrival time to be > GetGameTimeInMin() + TraverseTime, so keep
+      // that in mind if you have any code that uses these 3 values to figure out how far along
+      // its route a group is!
       SetGroupArrivalTime(pGroup, uiLatestArrivalTime);
       AddStrategicEvent(EVENT_GROUP_ARRIVAL, pGroup->uiArrivalTime, pGroup->ubGroupID);
 
       if (pGroup->fPlayer) {
-        if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetWorldTotalMin()) {
+        if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetGameTimeInMin()) {
           AddStrategicEvent(EVENT_GROUP_ABOUT_TO_ARRIVE,
                             pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY, pGroup->ubGroupID);
         }
@@ -1796,7 +1789,7 @@ void PrepareGroupsForSimultaneousArrival() {
   AddStrategicEvent(EVENT_GROUP_ARRIVAL, pGroup->uiArrivalTime, pGroup->ubGroupID);
 
   if (pGroup->fPlayer) {
-    if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetWorldTotalMin()) {
+    if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetGameTimeInMin()) {
       AddStrategicEvent(EVENT_GROUP_ABOUT_TO_ARRIVE, pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY,
                         pGroup->ubGroupID);
     }
@@ -1818,10 +1811,10 @@ BOOLEAN PossibleToCoordinateSimultaneousGroupArrivals(struct GROUP *pFirstGroup)
     return FALSE;
   }
 
-  // We can't coordinate simultaneous attacks on a sector without any stationary forces!  Otherwise,
-  // it is possible that they will be gone when you finally arrive. if(
-  // !NumStationaryEnemiesInSector( pFirstGroup->ubSectorX, pFirstGroup->ubSectorY ) ) 	return
-  // FALSE;
+  // We can't coordinate simultaneous attacks on a sector without any stationary forces!
+  // Otherwise, it is possible that they will be gone when you finally arrive. if(
+  // !NumStationaryEnemiesInSector( pFirstGroup->ubSectorX, pFirstGroup->ubSectorY ) )
+  // return FALSE;
 
   // Count the number of groups that are scheduled to arrive in the same sector and are currently
   // adjacent to the sector in question.
@@ -1842,7 +1835,7 @@ BOOLEAN PossibleToCoordinateSimultaneousGroupArrivals(struct GROUP *pFirstGroup)
     wchar_t *pStr, *pEnemyType;
     InterruptTime();
     PauseGame();
-    LockPauseState(13);
+    LockPause();
     gpPendingSimultaneousGroup = pFirstGroup;
     // Build the string
     if (ubNumNearbyGroups == 1) {
@@ -1884,7 +1877,7 @@ void PlanSimultaneousGroupArrivalCallback(uint8_t bMessageValue) {
   } else {
     PrepareForPreBattleInterface(gpPendingSimultaneousGroup, gpPendingSimultaneousGroup);
   }
-  UnLockPauseState();
+  UnlockPause();
   UnPauseGame();
 }
 
@@ -1895,18 +1888,18 @@ void DelayEnemyGroupsIfPathsCross(struct GROUP *pPlayerGroup) {
     if (!pGroup->fPlayer) {  // then check to see if this group will arrive in next sector before
                              // the player group.
       if (pGroup->uiArrivalTime <
-          pPlayerGroup
-              ->uiArrivalTime) {  // check to see if enemy group will cross paths with player group.
+          pPlayerGroup->uiArrivalTime) {  // check to see if enemy group will cross paths with
+                                          // player group.
         if (pGroup->ubNextX == pPlayerGroup->ubSectorX &&
             pGroup->ubNextY == pPlayerGroup->ubSectorY &&
             pGroup->ubSectorX == pPlayerGroup->ubNextX &&
             pGroup->ubSectorY ==
-                pPlayerGroup->ubNextY) {  // Okay, the enemy group will cross paths with the player,
-                                          // so find and delete the arrival event
+                pPlayerGroup->ubNextY) {  // Okay, the enemy group will cross paths with the
+                                          // player, so find and delete the arrival event
           // and repost it in the future (like a minute or so after the player arrives)
           DeleteStrategicEvent(EVENT_GROUP_ARRIVAL, pGroup->ubGroupID);
 
-          // NOTE: This can cause the arrival time to be > GetWorldTotalMin() + TraverseTime, so
+          // NOTE: This can cause the arrival time to be > GetGameTimeInMin() + TraverseTime, so
           // keep that in mind if you have any code that uses these 3 values to figure out how far
           // along its route a group is!
           SetGroupArrivalTime(pGroup, pPlayerGroup->uiArrivalTime + 1 + Random(10));
@@ -1976,8 +1969,8 @@ void InitiateGroupMovementToNextSector(struct GROUP *pGroup) {
     if (!pGroup->fPlayer) {  // Determine if the enemy group is "sleeping".  If so, then simply
                              // delay their arrival time by the amount of time
       // they are going to be sleeping for.
-      if (GetWorldHour() >= 21 || GetWorldHour() <= 4) {  // It is definitely night time.
-        if (Chance(67)) {                                 // 2 in 3 chance of going to sleep.
+      if (GetGameClockHour() >= 21 || GetGameClockHour() <= 4) {  // It is definitely night time.
+        if (Chance(67)) {  // 2 in 3 chance of going to sleep.
           pGroup->uiTraverseTime = GetSectorMvtTimeForGroup(ubSector, ubDirection, pGroup);
           uiSleepMinutes = 360 + Random(121);  // 6-8 hours sleep
           fCalcRegularTime = FALSE;
@@ -2015,7 +2008,7 @@ void InitiateGroupMovementToNextSector(struct GROUP *pGroup) {
     // put group between sectors
     pGroup->fBetweenSectors = TRUE;
     // and set it's arrival time
-    SetGroupArrivalTime(pGroup, GetWorldTotalMin() + pGroup->uiTraverseTime);
+    SetGroupArrivalTime(pGroup, GetGameTimeInMin() + pGroup->uiTraverseTime);
   }
   // NOTE: if the group is already between sectors, DON'T MESS WITH ITS ARRIVAL TIME!  THAT'S NOT
   // OUR JOB HERE!!!
@@ -2025,7 +2018,7 @@ void InitiateGroupMovementToNextSector(struct GROUP *pGroup) {
                                    // groups to have extremely quick and varying
     // arrival times so that their initial positions aren't easily determined.
     pGroup->uiTraverseTime = 1 + Random(pGroup->uiTraverseTime - 1);
-    SetGroupArrivalTime(pGroup, GetWorldTotalMin() + pGroup->uiTraverseTime);
+    SetGroupArrivalTime(pGroup, GetGameTimeInMin() + pGroup->uiTraverseTime);
   }
 
   if (pGroup->fVehicle == TRUE) {
@@ -2051,7 +2044,7 @@ void InitiateGroupMovementToNextSector(struct GROUP *pGroup) {
   if (pGroup->fPlayer) {
     PLAYERGROUP *curr;
 
-    if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetWorldTotalMin()) {
+    if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetGameTimeInMin()) {
       AddStrategicEvent(EVENT_GROUP_ABOUT_TO_ARRIVE, pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY,
                         pGroup->ubGroupID);
     }
@@ -2307,7 +2300,7 @@ int32_t CalculateTravelTimeOfGroup(struct GROUP *pGroup) {
 
   // now get the delta in current sector and next sector
   iDelta = (int32_t)(GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY) -
-                   GetSectorID8(pGroup->ubNextX, pGroup->ubNextY));
+                     GetSectorID8(pGroup->ubNextX, pGroup->ubNextY));
 
   if (iDelta == 0) {
     // not going anywhere...return current time
@@ -2316,10 +2309,10 @@ int32_t CalculateTravelTimeOfGroup(struct GROUP *pGroup) {
 
   // if already on the road
   if (pGroup->fBetweenSectors) {
-    // to get travel time to the first sector, use the arrival time, this way it accounts for delays
-    // due to simul. arrival
-    if (pGroup->uiArrivalTime >= GetWorldTotalMin()) {
-      uiEtaTime += (pGroup->uiArrivalTime - GetWorldTotalMin());
+    // to get travel time to the first sector, use the arrival time, this way it accounts for
+    // delays due to simul. arrival
+    if (pGroup->uiArrivalTime >= GetGameTimeInMin()) {
+      uiEtaTime += (pGroup->uiArrivalTime - GetGameTimeInMin());
     }
 
     // first waypoint is NEXT sector
@@ -2443,11 +2436,12 @@ int32_t GetSectorMvtTimeForGroup(uint8_t ubSector, uint8_t ubDirection, struct G
 
   if (ubTraverseType == EDGEOFWORLD) return 0xffffffff;  // can't travel here!
 
-  // ARM: Made air-only travel take its normal time per sector even through towns.  Because Skyrider
-  // charges by the sector, not by flying time, it's annoying when his default route detours through
-  // a town to save time, but costs extra money. This isn't exactly unrealistic, since the chopper
-  // shouldn't be faster flying over a town anyway...  Not that other kinds of travel should be
-  // either - but the towns represents a kind of warping of our space-time scale as it is...
+  // ARM: Made air-only travel take its normal time per sector even through towns.  Because
+  // Skyrider charges by the sector, not by flying time, it's annoying when his default route
+  // detours through a town to save time, but costs extra money. This isn't exactly unrealistic,
+  // since the chopper shouldn't be faster flying over a town anyway...  Not that other kinds of
+  // travel should be either - but the towns represents a kind of warping of our space-time scale
+  // as it is...
   if ((ubTraverseType == TOWN) && (pGroup->ubTransportationMask != AIR))
     return 5;  // very fast, and vehicle types don't matter.
 
@@ -2691,8 +2685,8 @@ void HandleArrivalOfReinforcements(struct GROUP *pGroup) {
   int32_t iNumEnemiesInSector;
   int32_t cnt;
 
-  if (pGroup->fPlayer) {  // We don't have to worry about filling up the player slots, because it is
-                          // impossible
+  if (pGroup->fPlayer) {  // We don't have to worry about filling up the player slots, because it
+                          // is impossible
     // to have more player's in the game then the number of slots available for the player.
     PLAYERGROUP *pPlayer;
     uint8_t ubStrategicInsertionCode;
@@ -2770,8 +2764,8 @@ BOOLEAN PlayersBetweenTheseSectors(int16_t sSource, int16_t sDest, int32_t *iCou
   }
 
   // get number of characters entering/existing between these two sectors.  Special conditions
-  // during pre-battle interface to return where this function is used to show potential retreating
-  // directions instead!
+  // during pre-battle interface to return where this function is used to show potential
+  // retreating directions instead!
 
   //	check all groups
   while (curr) {
@@ -2819,7 +2813,7 @@ BOOLEAN PlayersBetweenTheseSectors(int16_t sSource, int16_t sDest, int32_t *iCou
 
             *iCountEnter += ubMercsInGroup;
 
-            if ((curr->uiArrivalTime - GetWorldTotalMin() <= ABOUT_TO_ARRIVE_DELAY) ||
+            if ((curr->uiArrivalTime - GetGameTimeInMin() <= ABOUT_TO_ARRIVE_DELAY) ||
                 (fMayRetreatFromBattle == TRUE)) {
               *fAboutToArriveEnter = TRUE;
             }
@@ -2947,7 +2941,7 @@ void SetGroupPosition(uint8_t ubNextX, uint8_t ubNextY, uint8_t ubPrevX, uint8_t
   return;
 }
 
-BOOLEAN SaveStrategicMovementGroupsToSaveGameFile(HWFILE hFile) {
+BOOLEAN SaveStrategicMovementGroupsToSaveGameFile(FileID hFile) {
   struct GROUP *pGroup = NULL;
   uint32_t uiNumberOfGroups = 0;
   uint32_t uiNumBytesWritten = 0;
@@ -2961,7 +2955,7 @@ BOOLEAN SaveStrategicMovementGroupsToSaveGameFile(HWFILE hFile) {
   }
 
   // Save the number of movement groups to the saved game file
-  FileMan_Write(hFile, &uiNumberOfGroups, sizeof(uint32_t), &uiNumBytesWritten);
+  File_Write(hFile, &uiNumberOfGroups, sizeof(uint32_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint32_t)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -2972,7 +2966,7 @@ BOOLEAN SaveStrategicMovementGroupsToSaveGameFile(HWFILE hFile) {
   // Loop through the linked lists and add each node
   while (pGroup) {
     // Save each node in the LL
-    FileMan_Write(hFile, pGroup, sizeof(struct GROUP), &uiNumBytesWritten);
+    File_Write(hFile, pGroup, sizeof(struct GROUP), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(struct GROUP)) {
       // Error Writing group node to disk
       return (FALSE);
@@ -3005,7 +2999,7 @@ BOOLEAN SaveStrategicMovementGroupsToSaveGameFile(HWFILE hFile) {
   }
 
   // Save the unique id mask
-  FileMan_Write(hFile, uniqueIDMask, sizeof(uint32_t) * 8, &uiNumBytesWritten);
+  File_Write(hFile, uniqueIDMask, sizeof(uint32_t) * 8, &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint32_t) * 8) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3014,7 +3008,7 @@ BOOLEAN SaveStrategicMovementGroupsToSaveGameFile(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadStrategicMovementGroupsFromSavedGameFile(HWFILE hFile) {
+BOOLEAN LoadStrategicMovementGroupsFromSavedGameFile(FileID hFile) {
   struct GROUP *pGroup = NULL;
   struct GROUP *pTemp = NULL;
   uint32_t uiNumberOfGroups = 0;
@@ -3031,7 +3025,7 @@ BOOLEAN LoadStrategicMovementGroupsFromSavedGameFile(HWFILE hFile) {
   while (gpGroupList) RemoveGroupFromList(gpGroupList);
 
   // load the number of nodes in the list
-  FileMan_Read(hFile, &uiNumberOfGroups, sizeof(uint32_t), &uiNumBytesRead);
+  File_Read(hFile, &uiNumberOfGroups, sizeof(uint32_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint32_t)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3047,7 +3041,7 @@ BOOLEAN LoadStrategicMovementGroupsFromSavedGameFile(HWFILE hFile) {
     memset(pTemp, 0, sizeof(struct GROUP));
 
     // Read in the node
-    FileMan_Read(hFile, pTemp, sizeof(struct GROUP), &uiNumBytesRead);
+    File_Read(hFile, pTemp, sizeof(struct GROUP), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(struct GROUP)) {
       // Error Writing size of L.L. to disk
       return (FALSE);
@@ -3086,7 +3080,7 @@ BOOLEAN LoadStrategicMovementGroupsFromSavedGameFile(HWFILE hFile) {
   }
 
   // Load the unique id mask
-  FileMan_Read(hFile, uniqueIDMask, sizeof(uint32_t) * 8, &uiNumBytesRead);
+  File_Read(hFile, uniqueIDMask, sizeof(uint32_t) * 8, &uiNumBytesRead);
 
   //@@@ TEMP!
   // Rebuild the uniqueIDMask as a very old bug broke the uniqueID assignments in extremely rare
@@ -3125,7 +3119,7 @@ BOOLEAN LoadStrategicMovementGroupsFromSavedGameFile(HWFILE hFile) {
 }
 
 // Saves the Player's group list to the saved game file
-BOOLEAN SavePlayerGroupList(HWFILE hFile, struct GROUP *pGroup) {
+BOOLEAN SavePlayerGroupList(FileID hFile, struct GROUP *pGroup) {
   uint32_t uiNumberOfNodesInList = 0;
   PLAYERGROUP *pTemp = NULL;
   uint32_t uiNumBytesWritten = 0;
@@ -3139,7 +3133,7 @@ BOOLEAN SavePlayerGroupList(HWFILE hFile, struct GROUP *pGroup) {
   }
 
   // Save the number of nodes in the list
-  FileMan_Write(hFile, &uiNumberOfNodesInList, sizeof(uint32_t), &uiNumBytesWritten);
+  File_Write(hFile, &uiNumberOfNodesInList, sizeof(uint32_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint32_t)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3151,7 +3145,7 @@ BOOLEAN SavePlayerGroupList(HWFILE hFile, struct GROUP *pGroup) {
   while (pTemp) {
     // Save the ubProfile ID for this node
     uiProfileID = pTemp->ubProfileID;
-    FileMan_Write(hFile, &uiProfileID, sizeof(uint32_t), &uiNumBytesWritten);
+    File_Write(hFile, &uiProfileID, sizeof(uint32_t), &uiNumBytesWritten);
     if (uiNumBytesWritten != sizeof(uint32_t)) {
       // Error Writing size of L.L. to disk
       return (FALSE);
@@ -3163,7 +3157,7 @@ BOOLEAN SavePlayerGroupList(HWFILE hFile, struct GROUP *pGroup) {
   return (TRUE);
 }
 
-BOOLEAN LoadPlayerGroupList(HWFILE hFile, struct GROUP **pGroup) {
+BOOLEAN LoadPlayerGroupList(FileID hFile, struct GROUP **pGroup) {
   PLAYERGROUP *pTemp = NULL;
   PLAYERGROUP *pHead = NULL;
   uint32_t uiNumberOfNodes = 0;
@@ -3178,7 +3172,7 @@ BOOLEAN LoadPlayerGroupList(HWFILE hFile, struct GROUP **pGroup) {
   //	pHead = *pGroup->pPlayerList;
 
   // Load the number of nodes in the player list
-  FileMan_Read(hFile, &uiNumberOfNodes, sizeof(uint32_t), &uiNumBytesRead);
+  File_Read(hFile, &uiNumberOfNodes, sizeof(uint32_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint32_t)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3191,7 +3185,7 @@ BOOLEAN LoadPlayerGroupList(HWFILE hFile, struct GROUP **pGroup) {
     if (pTemp == NULL) return (FALSE);
 
     // Load the ubProfile ID for this node
-    FileMan_Read(hFile, &uiProfileID, sizeof(uint32_t), &uiNumBytesRead);
+    File_Read(hFile, &uiProfileID, sizeof(uint32_t), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(uint32_t)) {
       // Error Writing size of L.L. to disk
       return (FALSE);
@@ -3225,11 +3219,11 @@ BOOLEAN LoadPlayerGroupList(HWFILE hFile, struct GROUP **pGroup) {
 }
 
 // Saves the enemy group struct to the saved game struct
-BOOLEAN SaveEnemyGroupStruct(HWFILE hFile, struct GROUP *pGroup) {
+BOOLEAN SaveEnemyGroupStruct(FileID hFile, struct GROUP *pGroup) {
   uint32_t uiNumBytesWritten = 0;
 
   // Save the enemy struct info to the saved game file
-  FileMan_Write(hFile, pGroup->pEnemyGroup, sizeof(ENEMYGROUP), &uiNumBytesWritten);
+  File_Write(hFile, pGroup->pEnemyGroup, sizeof(ENEMYGROUP), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(ENEMYGROUP)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3239,7 +3233,7 @@ BOOLEAN SaveEnemyGroupStruct(HWFILE hFile, struct GROUP *pGroup) {
 }
 
 // Loads the enemy group struct from the saved game file
-BOOLEAN LoadEnemyGroupStructFromSavedGame(HWFILE hFile, struct GROUP *pGroup) {
+BOOLEAN LoadEnemyGroupStructFromSavedGame(FileID hFile, struct GROUP *pGroup) {
   uint32_t uiNumBytesRead = 0;
   ENEMYGROUP *pEnemyGroup = NULL;
 
@@ -3249,7 +3243,7 @@ BOOLEAN LoadEnemyGroupStructFromSavedGame(HWFILE hFile, struct GROUP *pGroup) {
   memset(pEnemyGroup, 0, sizeof(ENEMYGROUP));
 
   // Load the enemy struct
-  FileMan_Read(hFile, pEnemyGroup, sizeof(ENEMYGROUP), &uiNumBytesRead);
+  File_Read(hFile, pEnemyGroup, sizeof(ENEMYGROUP), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(ENEMYGROUP)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3280,7 +3274,8 @@ void CheckMembersOfMvtGroupAndComplainAboutBleeding(struct SOLDIERTYPE *pSoldier
     return;
   }
 
-  // make sure there are members in the group..if so, then run through and make each bleeder compain
+  // make sure there are members in the group..if so, then run through and make each bleeder
+  // compain
   pPlayer = pGroup->pPlayerList;
 
   // is there a player list?
@@ -3303,7 +3298,7 @@ void CheckMembersOfMvtGroupAndComplainAboutBleeding(struct SOLDIERTYPE *pSoldier
   BeginLoggingForBleedMeToos(FALSE);
 }
 
-BOOLEAN SaveWayPointList(HWFILE hFile, struct GROUP *pGroup) {
+BOOLEAN SaveWayPointList(FileID hFile, struct GROUP *pGroup) {
   uint32_t cnt = 0;
   uint32_t uiNumberOfWayPoints = 0;
   uint32_t uiNumBytesWritten = 0;
@@ -3316,7 +3311,7 @@ BOOLEAN SaveWayPointList(HWFILE hFile, struct GROUP *pGroup) {
   }
 
   // Save the number of waypoints
-  FileMan_Write(hFile, &uiNumberOfWayPoints, sizeof(uint32_t), &uiNumBytesWritten);
+  File_Write(hFile, &uiNumberOfWayPoints, sizeof(uint32_t), &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(uint32_t)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3326,7 +3321,7 @@ BOOLEAN SaveWayPointList(HWFILE hFile, struct GROUP *pGroup) {
     pWayPoints = pGroup->pWaypoints;
     for (cnt = 0; cnt < uiNumberOfWayPoints; cnt++) {
       // Save the waypoint node
-      FileMan_Write(hFile, pWayPoints, sizeof(WAYPOINT), &uiNumBytesWritten);
+      File_Write(hFile, pWayPoints, sizeof(WAYPOINT), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(WAYPOINT)) {
         // Error Writing size of L.L. to disk
         return (FALSE);
@@ -3340,7 +3335,7 @@ BOOLEAN SaveWayPointList(HWFILE hFile, struct GROUP *pGroup) {
   return (TRUE);
 }
 
-BOOLEAN LoadWayPointList(HWFILE hFile, struct GROUP *pGroup) {
+BOOLEAN LoadWayPointList(FileID hFile, struct GROUP *pGroup) {
   uint32_t cnt = 0;
   uint32_t uiNumberOfWayPoints = 0;
   uint32_t uiNumBytesRead = 0;
@@ -3348,7 +3343,7 @@ BOOLEAN LoadWayPointList(HWFILE hFile, struct GROUP *pGroup) {
   WAYPOINT *pTemp = NULL;
 
   // Load the number of waypoints
-  FileMan_Read(hFile, &uiNumberOfWayPoints, sizeof(uint32_t), &uiNumBytesRead);
+  File_Read(hFile, &uiNumberOfWayPoints, sizeof(uint32_t), &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(uint32_t)) {
     // Error Writing size of L.L. to disk
     return (FALSE);
@@ -3363,7 +3358,7 @@ BOOLEAN LoadWayPointList(HWFILE hFile, struct GROUP *pGroup) {
       memset(pTemp, 0, sizeof(WAYPOINT));
 
       // Load the waypoint node
-      FileMan_Read(hFile, pTemp, sizeof(WAYPOINT), &uiNumBytesRead);
+      File_Read(hFile, pTemp, sizeof(WAYPOINT), &uiNumBytesRead);
       if (uiNumBytesRead != sizeof(WAYPOINT)) {
         // Error Writing size of L.L. to disk
         return (FALSE);
@@ -3426,8 +3421,8 @@ void CalculateGroupRetreatSector(struct GROUP *pGroup) {
   }
 }
 
-// Called when all checks have been made for the group (if possible to retreat, etc.)  This function
-// blindly determines where to move the group.
+// Called when all checks have been made for the group (if possible to retreat, etc.)  This
+// function blindly determines where to move the group.
 void RetreatGroupToPreviousSector(struct GROUP *pGroup) {
   uint8_t ubSector, ubDirection = 255;
   int32_t iVehId, dx, dy;
@@ -3475,7 +3470,7 @@ void RetreatGroupToPreviousSector(struct GROUP *pGroup) {
     pGroup->uiTraverseTime = 5;
   }
 
-  SetGroupArrivalTime(pGroup, GetWorldTotalMin() + pGroup->uiTraverseTime);
+  SetGroupArrivalTime(pGroup, GetGameTimeInMin() + pGroup->uiTraverseTime);
   pGroup->fBetweenSectors = TRUE;
   pGroup->uiFlags |= GROUPFLAG_JUST_RETREATED_FROM_BATTLE;
 
@@ -3495,7 +3490,7 @@ void RetreatGroupToPreviousSector(struct GROUP *pGroup) {
     PLAYERGROUP *curr;
     curr = pGroup->pPlayerList;
 
-    if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetWorldTotalMin()) {
+    if (pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY > GetGameTimeInMin()) {
       AddStrategicEvent(EVENT_GROUP_ABOUT_TO_ARRIVE, pGroup->uiArrivalTime - ABOUT_TO_ARRIVE_DELAY,
                         pGroup->ubGroupID);
     }
@@ -3619,7 +3614,7 @@ void ResetMovementForEnemyGroup(struct GROUP *pGroup) {
     // arbitrarily.  Doesn't really matter if this isn't accurate.
     pGroup->uiTraverseTime = 90;
   }
-  SetGroupArrivalTime(pGroup, GetWorldTotalMin() + pGroup->uiTraverseTime);
+  SetGroupArrivalTime(pGroup, GetGameTimeInMin() + pGroup->uiTraverseTime);
 
   // Add a new event
   AddStrategicEvent(EVENT_GROUP_ARRIVAL, pGroup->uiArrivalTime, pGroup->ubGroupID);
@@ -3759,7 +3754,8 @@ BOOLEAN GroupWillMoveThroughSector(struct GROUP *pGroup, uint8_t ubSectorX, uint
       // Advance the sector value
       pGroup->ubSectorX = (uint8_t)(dx + pGroup->ubSectorX);
       pGroup->ubSectorY = (uint8_t)(dy + pGroup->ubSectorY);
-      // Check to see if it the sector we are checking to see if this group will be moving through.
+      // Check to see if it the sector we are checking to see if this group will be moving
+      // through.
       if (pGroup->ubSectorX == ubSectorX && pGroup->ubSectorY == ubSectorY) {
         pGroup->ubSectorX = ubOrigX;
         pGroup->ubSectorY = ubOrigY;
@@ -3814,18 +3810,16 @@ void AddFuelToVehicle(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pVehicle
   if (pVehicle->sBreathRed == 10000) {  // Message for vehicle full?
     return;
   }
-  if (pItem->bStatus) {  // Fill 'er up.
-    sFuelNeeded = 10000 - pVehicle->sBreathRed;
-    sFuelAvailable = pItem->bStatus[0] * 50;
-    sFuelAdded = min(sFuelNeeded, sFuelAvailable);
-    // Add to vehicle
-    pVehicle->sBreathRed += sFuelAdded;
-    pVehicle->bBreath = (int8_t)(pVehicle->sBreathRed / 100);
-    // Subtract from item
-    pItem->bStatus[0] = (int8_t)(pItem->bStatus[0] - sFuelAdded / 50);
-    if (!pItem->bStatus[0]) {  // Gas can is empty, so toast the item.
-      DeleteObj(pItem);
-    }
+  sFuelNeeded = 10000 - pVehicle->sBreathRed;
+  sFuelAvailable = pItem->bStatus[0] * 50;
+  sFuelAdded = min(sFuelNeeded, sFuelAvailable);
+  // Add to vehicle
+  pVehicle->sBreathRed += sFuelAdded;
+  pVehicle->bBreath = (int8_t)(pVehicle->sBreathRed / 100);
+  // Subtract from item
+  pItem->bStatus[0] = (int8_t)(pItem->bStatus[0] - sFuelAdded / 50);
+  if (!pItem->bStatus[0]) {  // Gas can is empty, so toast the item.
+    DeleteObj(pItem);
   }
 }
 
@@ -3908,9 +3902,9 @@ void RandomizePatrolGroupLocation(
     }
     wp = wp->next;
   }
-  // double it (they go back and forth) -- it's using zero based indices, so you have to add one to
-  // get the number of actual waypoints in one direction.
-  ubTotalWaypoints = (uint8_t)((ubMaxWaypointID)*2);
+  // double it (they go back and forth) -- it's using zero based indices, so you have to add one
+  // to get the number of actual waypoints in one direction.
+  ubTotalWaypoints = (uint8_t)((ubMaxWaypointID) * 2);
 
   // pick the waypoint they start at
   ubChosen = (uint8_t)Random(ubTotalWaypoints);
@@ -3972,7 +3966,7 @@ BOOLEAN TestForBloodcatAmbush(struct GROUP *pGroup) {
 
   ubChance = 5 * gGameOptions.ubDifficultyLevel;
 
-  iHoursElapsed = (GetWorldTotalMin() - pSector->uiTimeCurrentSectorWasLastLoaded) / 60;
+  iHoursElapsed = (GetGameTimeInMin() - pSector->uiTimeCurrentSectorWasLastLoaded) / 60;
   if (ubSectorID == SEC_N5 ||
       ubSectorID == SEC_I16) {  // These are special maps -- we use all placements.
     if (pSector->bBloodCats == -1) {
@@ -3994,14 +3988,15 @@ BOOLEAN TestForBloodcatAmbush(struct GROUP *pGroup) {
       // respectively
       bDifficultyMaxCats = (int8_t)(Random(4) + gGameOptions.ubDifficultyLevel * 2 + 3);
 
-      // maximum of 3 bloodcats or 1 for every 6%, 5%, 4% progress based on easy, normal, and hard,
-      // respectively
+      // maximum of 3 bloodcats or 1 for every 6%, 5%, 4% progress based on easy, normal, and
+      // hard, respectively
       bProgressMaxCats =
           (int8_t)max(CurrentPlayerProgressPercentage() / (7 - gGameOptions.ubDifficultyLevel), 3);
 
       // make sure bloodcats don't outnumber mercs by a factor greater than 2
       bNumMercMaxCats =
-          (int8_t)(PlayerMercsInSector(pGroup->ubSectorX, pGroup->ubSectorY, pGroup->ubSectorZ) * 2);
+          (int8_t)(PlayerMercsInSector(pGroup->ubSectorX, pGroup->ubSectorY, pGroup->ubSectorZ) *
+                   2);
 
       // choose the lowest number of cats calculated by difficulty and progress.
       pSector->bBloodCats = (int8_t)min(bDifficultyMaxCats, bProgressMaxCats);
@@ -4049,18 +4044,18 @@ void NotifyPlayerOfBloodcatBattle(uint8_t ubSectorX, uint8_t ubSectorY) {
 
   if (IsMapScreen_2()) {  // Force render mapscreen (need to update the position of
                           // the group before the dialog appears.
-    MarkForRedrawalStrategicMap();
+    SetMapPanelDirty(true);
     MapScreenHandle();
     InvalidateScreen();
-    RefreshScreen(NULL);
+    RefreshScreen();
   }
 
   gfUsePersistantPBI = TRUE;
   DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, TriggerPrebattleInterface);
 }
 
-void PlaceGroupInSector(uint8_t ubGroupID, uint8_t sPrevX, uint8_t sPrevY, uint8_t sNextX, uint8_t sNextY, int8_t bZ,
-                        BOOLEAN fCheckForBattle) {
+void PlaceGroupInSector(uint8_t ubGroupID, uint8_t sPrevX, uint8_t sPrevY, uint8_t sNextX,
+                        uint8_t sNextY, int8_t bZ, BOOLEAN fCheckForBattle) {
   ClearMercPathsAndWaypointsForAllInGroup(GetGroup(ubGroupID));
 
   // change where they are and where they're going
@@ -4072,31 +4067,31 @@ void PlaceGroupInSector(uint8_t ubGroupID, uint8_t sPrevX, uint8_t sPrevY, uint8
   GroupArrivedAtSector(ubGroupID, fCheckForBattle, FALSE);
 }
 
-// ARM: centralized it so we can do a comprehensive Assert on it.  Causing problems with helicopter
-// group!
+// ARM: centralized it so we can do a comprehensive Assert on it.  Causing problems with
+// helicopter group!
 void SetGroupArrivalTime(struct GROUP *pGroup, uint32_t uiArrivalTime) {
   // PLEASE CENTRALIZE ALL CHANGES TO THE ARRIVAL TIMES OF GROUPS THROUGH HERE, ESPECIALLY THE
   // HELICOPTER struct GROUP!!!
 
   // if this group is the helicopter group, we have to make sure that its arrival time is never
-  // greater than the sum of the current time and its traverse time, 'cause those 3 values are used
-  // to plot its map position!  Because of this the chopper groups must NEVER be delayed for any
-  // reason - it gets excluded from simultaneous arrival logic
+  // greater than the sum of the current time and its traverse time, 'cause those 3 values are
+  // used to plot its map position!  Because of this the chopper groups must NEVER be delayed for
+  // any reason - it gets excluded from simultaneous arrival logic
 
-  // Also note that non-chopper groups can currently be delayed such that this assetion would fail -
-  // enemy groups by DelayEnemyGroupsIfPathsCross(), and player groups via
+  // Also note that non-chopper groups can currently be delayed such that this assetion would fail
+  // - enemy groups by DelayEnemyGroupsIfPathsCross(), and player groups via
   // PrepareGroupsForSimultaneousArrival().  So we skip the assert.
 
   if (IsGroupTheHelicopterGroup(pGroup)) {
     // make sure it's valid (NOTE: the correct traverse time must be set first!)
-    if (uiArrivalTime > (GetWorldTotalMin() + pGroup->uiTraverseTime)) {
+    if (uiArrivalTime > (GetGameTimeInMin() + pGroup->uiTraverseTime)) {
       AssertMsg(FALSE, String("SetGroupArrivalTime: Setting invalid arrival time %d for group %d, "
                               "WorldTime = %d, TraverseTime = %d",
-                              uiArrivalTime, pGroup->ubGroupID, GetWorldTotalMin(),
+                              uiArrivalTime, pGroup->ubGroupID, GetGameTimeInMin(),
                               pGroup->uiTraverseTime));
 
       // fix it if assertions are disabled
-      uiArrivalTime = GetWorldTotalMin() + pGroup->uiTraverseTime;
+      uiArrivalTime = GetGameTimeInMin() + pGroup->uiTraverseTime;
     }
   }
 
@@ -4155,12 +4150,12 @@ void PlayerGroupArrivedSafelyInSector(struct GROUP *pGroup, BOOLEAN fCheckForNPC
         // stop: clear their strategic movement (mercpaths and waypoints)
         ClearMercPathsAndWaypointsForAllInGroup(pGroup);
 
-        // NOTE: Of course, it would be better if they continued onwards once everyone was ready to
-        // go again, in which case we'd want to preserve the plotted path, but since the player can
-        // mess with the squads, etc. in the mean-time, that just seemed to risky to try to support.
-        // They could get into a fight and be too injured to move, etc.  Basically, we'd have run a
-        // complete CanCharacterMoveInStrategic(0 check on all of them. It's a wish list task for
-        // AM...
+        // NOTE: Of course, it would be better if they continued onwards once everyone was ready
+        // to go again, in which case we'd want to preserve the plotted path, but since the player
+        // can mess with the squads, etc. in the mean-time, that just seemed to risky to try to
+        // support. They could get into a fight and be too injured to move, etc.  Basically, we'd
+        // have run a complete CanCharacterMoveInStrategic(0 check on all of them. It's a wish
+        // list task for AM...
 
         // stop time so player can react if group was already on the move and suddenly halts
         StopTimeCompression();
@@ -4177,7 +4172,6 @@ BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup
   int8_t bSectorZ = 0;
   wchar_t sString[128];
   wchar_t wSectorName[128];
-  int16_t sStrategicSector;
 
   Assert(pGroup);
   Assert(pGroup->fPlayer);
@@ -4208,11 +4202,8 @@ BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup
     return (FALSE);
   }
 
-  // get the strategic sector value
-  sStrategicSector = GetSectorID16(sSectorX, sSectorY);
-
   // skip towns/pseudo-towns (anything that shows up on the map as being special)
-  if (StrategicMap[sStrategicSector].townID != BLANK_SECTOR) {
+  if (GetTownIdForSector(sSectorX, sSectorY) != BLANK_SECTOR) {
     return (FALSE);
   }
 
@@ -4248,7 +4239,8 @@ BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup
   return (TRUE);
 }
 
-BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
+BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY,
+                                                         int8_t bSectorZ) {
   uint8_t ubProfile;
   MERCPROFILESTRUCT *pProfile;
   BOOLEAN fFoundSomebody = FALSE;
@@ -4275,8 +4267,8 @@ BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8
         // then this is a guy we need to stop for...
         fFoundSomebody = TRUE;
       } else {
-        // already spoke to this guy, don't prompt about this sector again, regardless of status of
-        // other NPCs here (although Hamous wanders around, he never shares the same wilderness
+        // already spoke to this guy, don't prompt about this sector again, regardless of status
+        // of other NPCs here (although Hamous wanders around, he never shares the same wilderness
         // sector as other important NPCs)
         return (FALSE);
       }
@@ -4298,23 +4290,16 @@ void HandlePlayerGroupEnteringSectorToCheckForNPCsOfNoteCallback(uint8_t ubExitV
     // clear their strategic movement (mercpaths and waypoints)
     ClearMercPathsAndWaypointsForAllInGroup(gpGroupPrompting);
 
-    //		// if currently selected sector has nobody in it
-    //		if ( PlayerMercsInSector( ( uint8_t ) sSelMapX, ( uint8_t ) sSelMapY, ( uint8_t )
-    // iCurrentMapSectorZ ) == 0 )
-    // New: ALWAYS make this sector strategically selected, even if there were mercs in the
-    // previously selected one
-    {
-      ChangeSelectedMapSector(gpGroupPrompting->ubSectorX, gpGroupPrompting->ubSectorY,
-                              gpGroupPrompting->ubSectorZ);
-    }
+    ChangeSelectedMapSector(gpGroupPrompting->ubSectorX, gpGroupPrompting->ubSectorY,
+                            gpGroupPrompting->ubSectorZ);
 
     StopTimeCompression();
   }
 
   gpGroupPrompting = NULL;
 
-  MarkForRedrawalStrategicMap();
-  fMapScreenBottomDirty = TRUE;
+  SetMapPanelDirty(true);
+  SetMapScreenBottomDirty(true);
 
   return;
 }
@@ -4375,35 +4360,3 @@ uint8_t NumberMercsInVehicleGroup(struct GROUP *pGroup) {
   }
   return 0;
 }
-
-#ifdef JA2BETAVERSION
-void ValidateGroups(struct GROUP *pGroup) {
-  // Do error checking, and report group
-  ValidatePlayersAreInOneGroupOnly();
-  if (!pGroup->fPlayer && !pGroup->ubGroupSize) {
-    // report error
-    wchar_t str[512];
-    if (pGroup->ubSectorIDOfLastReassignment == 255) {
-      swprintf(str, ARR_SIZE(str),
-               L"Enemy group found with 0 troops in it.  This is illegal and group will be deleted."
-               L"  Group %d in sector %c%d originated from sector %c%d.",
-               pGroup->ubGroupID, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX,
-               SectorID8_Y(pGroup->ubCreatedSectorID) + 'A' - 1,
-               SectorID8_X(pGroup->ubCreatedSectorID));
-    } else {
-      swprintf(str, ARR_SIZE(str),
-               L"Enemy group found with 0 troops in it.  This is illegal and group will be deleted."
-               L"  Group %d in sector %c%d originated from sector %c%d and last reassignment "
-               L"location was %c%d.",
-               pGroup->ubGroupID, pGroup->ubSectorY + 'A' - 1, pGroup->ubSectorX,
-               SectorID8_Y(pGroup->ubCreatedSectorID) + 'A' - 1,
-               SectorID8_X(pGroup->ubCreatedSectorID),
-               SectorID8_Y(pGroup->ubSectorIDOfLastReassignment) + 'A' - 1,
-               SectorID8_X(pGroup->ubSectorIDOfLastReassignment));
-    }
-    // correct error
-
-    DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, NULL);
-  }
-}
-#endif

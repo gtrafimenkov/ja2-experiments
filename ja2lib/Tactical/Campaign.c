@@ -45,7 +45,7 @@ extern uint8_t gbPlayerNum;
 #endif
 
 #ifdef STAT_CHANGE_DEBUG
-wchar_t* wDebugStatStrings[] = {
+wchar_t *wDebugStatStrings[] = {
     L"",           L"Life (Max)", L"Agility",      L"Dexterity",        L"Wisdom",   L"Medical",
     L"Explosives", L"Mechanical", L"Marksmanship", L"Experience Level", L"Strength", L"Leadership",
 };
@@ -56,7 +56,8 @@ uint8_t CalcImportantSectorControl(void);
 
 // give pSoldier usNumChances to improve ubStat.  If it's from training, it doesn't count towards
 // experience level gain
-void StatChange(struct SOLDIERTYPE *pSoldier, uint8_t ubStat, uint16_t usNumChances, uint8_t ubReason) {
+void StatChange(struct SOLDIERTYPE *pSoldier, uint8_t ubStat, uint16_t usNumChances,
+                uint8_t ubReason) {
   Assert(pSoldier != NULL);
   Assert(IsSolActive(pSoldier));
 
@@ -648,9 +649,9 @@ void ChangeStat(MERCPROFILESTRUCT *pProfile, struct SOLDIERTYPE *pSoldier, uint8
             //						ubEmailOffset = MERC_UP_LEVEL_BIFF +
             // MERC_UP_LEVEL_LENGTH_BIFF
             //* ( ubMercMercIdValue ); 						AddEmail(
-            // ubEmailOffset, MERC_UP_LEVEL_LENGTH_BIFF, SPECK_FROM_MERC, GetWorldTotalMin() );
+            // ubEmailOffset, MERC_UP_LEVEL_LENGTH_BIFF, SPECK_FROM_MERC, GetGameTimeInMin() );
             AddStrategicEvent(EVENT_MERC_MERC_WENT_UP_LEVEL_EMAIL_DELAY,
-                              GetWorldTotalMin() + 60 + Random(60), ubMercMercIdValue);
+                              GetGameTimeInMin() + 60 + Random(60), ubMercMercIdValue);
 
             fChangeSalary = TRUE;
             break;
@@ -1065,7 +1066,7 @@ void HandleUnhiredMercDeaths(int32_t iProfileID) {
     if (iProfileID < BIFF) {
       // send an email to the player telling the player that a merc died
       AddEmailWithSpecialData(MERC_DIED_ON_OTHER_ASSIGNMENT, MERC_DIED_ON_OTHER_ASSIGNMENT_LENGTH,
-                              AIM_SITE, GetWorldTotalMin(), 0, iProfileID);
+                              AIM_SITE, GetGameTimeInMin(), 0, iProfileID);
     }
   }
 }
@@ -1308,7 +1309,7 @@ void AwardExperienceBonusToActiveSquad(uint8_t ubExpBonusType) {
   }
 }
 
-void BuildStatChangeString(wchar_t* wString, size_t bufSize, wchar_t* wName, BOOLEAN fIncrease,
+void BuildStatChangeString(wchar_t *wString, size_t bufSize, wchar_t *wName, BOOLEAN fIncrease,
                            int16_t sPtsChanged, uint8_t ubStat) {
   uint8_t ubStringIndex;
 
@@ -1342,7 +1343,7 @@ uint8_t CalcImportantSectorControl(void) {
   for (ubMapX = 1; ubMapX < MAP_WORLD_X - 1; ubMapX++) {
     for (ubMapY = 1; ubMapY < MAP_WORLD_Y - 1; ubMapY++) {
       // if player controlled
-      if (StrategicMap[GetSectorID16(ubMapX, ubMapY)].fEnemyControlled == FALSE) {
+      if (!IsSectorEnemyControlled(ubMapX, ubMapY)) {
         // towns where militia can be trained and SAM sites are important sectors
         if (MilitiaTrainingAllowedInSector(ubMapX, ubMapY, 0)) {
           ubSectorControlPts++;
@@ -1363,5 +1364,5 @@ void MERCMercWentUpALevelSendEmail(uint8_t ubMercMercIdValue) {
   uint8_t ubEmailOffset = 0;
 
   ubEmailOffset = MERC_UP_LEVEL_BIFF + MERC_UP_LEVEL_LENGTH_BIFF * (ubMercMercIdValue);
-  AddEmail(ubEmailOffset, MERC_UP_LEVEL_LENGTH_BIFF, SPECK_FROM_MERC, GetWorldTotalMin());
+  AddEmail(ubEmailOffset, MERC_UP_LEVEL_LENGTH_BIFF, SPECK_FROM_MERC, GetGameTimeInMin());
 }

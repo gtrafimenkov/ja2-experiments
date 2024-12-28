@@ -17,6 +17,7 @@
 #include "Laptop/Personnel.h"
 #include "MessageBoxScreen.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Debug.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
@@ -48,6 +49,8 @@
 #include "Tactical/Faces.h"
 #include "Tactical/HandleDoors.h"
 #include "Tactical/HandleItems.h"
+#include "Tactical/HandleUI.h"
+#include "Tactical/Interface.h"
 #include "Tactical/InterfaceControl.h"
 #include "Tactical/InterfaceDialogue.h"
 #include "Tactical/InterfacePanels.h"
@@ -72,7 +75,6 @@
 #include "TileEngine/SaveLoadMap.h"
 #include "TileEngine/Structure.h"
 #include "TileEngine/StructureInternals.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Cursors.h"
@@ -83,6 +85,7 @@
 #include "Utils/SoundControl.h"
 #include "Utils/Text.h"
 #include "Utils/WordWrap.h"
+#include "rust_civ_groups.h"
 
 int16_t sBasementEnterGridNos[] = {13362, 13363, 13364, 13365, 13525, 13524};
 int16_t sBasementExitGridNos[] = {8047, 8207, 8208, 8048, 7888, 7728, 7727, 7567};
@@ -165,7 +168,7 @@ extern int16_t FindNearestOpenableNonDoor(int16_t sStartGridNo);
 extern void RecalculateOppCntsDueToBecomingNeutral(struct SOLDIERTYPE *pSoldier);
 
 uint8_t ubTalkMenuApproachIDs[] = {APPROACH_REPEAT,   APPROACH_FRIENDLY, APPROACH_DIRECT,
-                                 APPROACH_THREATEN, APPROACH_BUYSELL,  APPROACH_RECRUIT};
+                                   APPROACH_THREATEN, APPROACH_BUYSELL,  APPROACH_RECRUIT};
 
 enum {
   DIALOG_DONE,
@@ -194,10 +197,10 @@ struct SOLDIERTYPE *gpPendingDestSoldier;
 struct SOLDIERTYPE *gpPendingSrcSoldier;
 int8_t gbPendingApproach;
 uintptr_t guiPendingApproachData;
-extern BOOLEAN fMapPanelDirty;
 
 int32_t giHospitalTempBalance;  // stores amount of money for current doctoring
-int32_t giHospitalRefund;  // stores amount of money given to hospital for doctoring that wasn't used
+int32_t
+    giHospitalRefund;  // stores amount of money given to hospital for doctoring that wasn't used
 int8_t gbHospitalPriceModifier;  // stores discount being offered
 
 enum {
@@ -345,11 +348,9 @@ BOOLEAN InitTalkingMenu(uint8_t ubCharacterNum, int16_t sGridNo) {
 
 BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) {
   int32_t iFaceIndex, cnt;
-  VSURFACE_DESC vs_desc;
   FACETYPE *pFace;
   uint16_t usWidth;
   uint16_t usHeight;
-  VOBJECT_DESC VObjectDesc;
   int16_t sCenterYVal, sCenterXVal;
   char ubString[48];
 
@@ -366,10 +367,7 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   gTalkPanel.fOnName = FALSE;
 
   // Load Video Object!
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  sprintf(VObjectDesc.ImageFile, "INTERFACE\\talkbox1.sti");
-  // Load
-  if (AddVideoObject(&VObjectDesc, &(gTalkPanel.uiPanelVO)) == FALSE) {
+  if (AddVObjectFromFile("INTERFACE\\talkbox1.sti", &(gTalkPanel.uiPanelVO)) == FALSE) {
     return (0);
   }
 
@@ -422,7 +420,9 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   // Create face ( a big face! )....
   iFaceIndex = InitFace(ubCharacterNum, NOBODY, FACE_BIGFACE | FACE_POTENTIAL_KEYWAIT);
 
-  CHECKF(iFaceIndex != -1);
+  if (!(iFaceIndex != -1)) {
+    return FALSE;
+  }
 
   // Set face
   gTalkPanel.iFaceIndex = iFaceIndex;
@@ -461,9 +461,9 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   for (cnt = 0; cnt < 6; cnt++) {
     // Build a mouse region here that is over any others.....
     MSYS_DefineRegion(&(gTalkPanel.Regions[cnt]), (int16_t)(sX), (int16_t)(sY),
-                      (int16_t)(sX + TALK_PANEL_REGION_WIDTH), (int16_t)(sY + TALK_PANEL_REGION_HEIGHT),
-                      MSYS_PRIORITY_HIGHEST, CURSOR_NORMAL, TalkPanelMoveCallback,
-                      TalkPanelClickCallback);
+                      (int16_t)(sX + TALK_PANEL_REGION_WIDTH),
+                      (int16_t)(sY + TALK_PANEL_REGION_HEIGHT), MSYS_PRIORITY_HIGHEST,
+                      CURSOR_NORMAL, TalkPanelMoveCallback, TalkPanelClickCallback);
     // Add region
     MSYS_AddRegion(&(gTalkPanel.Regions[cnt]));
     MSYS_SetRegionUserData(&(gTalkPanel.Regions[cnt]), 0, cnt);
@@ -474,11 +474,12 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   // Build save buffer
   // Create a buffer for him to go!
   // OK, ignore screen widths, height, only use BPP
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+  VSURFACE_DESC vs_desc;
   vs_desc.usWidth = pFace->usFaceWidth;
   vs_desc.usHeight = pFace->usFaceHeight;
-  vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(&vs_desc, &(gTalkPanel.uiSaveBuffer)));
+  if (!(AddVideoSurface(&vs_desc, &(gTalkPanel.uiSaveBuffer)))) {
+    return FALSE;
+  }
 
   // Set face to auto
   SetAutoFaceActive(gTalkPanel.uiSaveBuffer, FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0, 0);
@@ -647,8 +648,7 @@ void RenderTalkingMenu() {
     SetFont(MILITARYFONT1);
 
     // Render box!
-    BltVideoObjectFromIndex(FRAME_BUFFER, gTalkPanel.uiPanelVO, 0, gTalkPanel.sX, gTalkPanel.sY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, gTalkPanel.uiPanelVO, 0, gTalkPanel.sX, gTalkPanel.sY);
 
     // Render name
     if (gTalkPanel.fOnName) {
@@ -658,32 +658,32 @@ void RenderTalkingMenu() {
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(33);
     }
-    VarFindFontCenterCoordinates((int16_t)(gTalkPanel.sX + TALK_PANEL_NAME_X),
-                                 (int16_t)(gTalkPanel.sY + TALK_PANEL_NAME_Y), TALK_PANEL_NAME_WIDTH,
-                                 TALK_PANEL_NAME_HEIGHT, MILITARYFONT1, &sFontX, &sFontY, L"%s",
-                                 gMercProfiles[gTalkPanel.ubCharNum].zNickname);
+    VarFindFontCenterCoordinates(
+        (int16_t)(gTalkPanel.sX + TALK_PANEL_NAME_X), (int16_t)(gTalkPanel.sY + TALK_PANEL_NAME_Y),
+        TALK_PANEL_NAME_WIDTH, TALK_PANEL_NAME_HEIGHT, MILITARYFONT1, &sFontX, &sFontY, L"%s",
+        gMercProfiles[gTalkPanel.ubCharNum].zNickname);
     mprintf(sFontX, sFontY, L"%s", gMercProfiles[ubCharacterNum].zNickname);
 
     // Set font settings back
     SetFontShadow(DEFAULT_SHADOW);
 
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
-    pSrcBuf = LockVideoSurface(gTalkPanel.uiSaveBuffer, &uiSrcPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
+    pSrcBuf = VSurfaceLockOld(GetVSByID(gTalkPanel.uiSaveBuffer), &uiSrcPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                     (int16_t)(gTalkPanel.sX + TALK_PANEL_FACE_X),
-                    (int16_t)(gTalkPanel.sY + TALK_PANEL_FACE_Y), 0, 0, pFace->usFaceWidth,
-                    pFace->usFaceHeight);
+                    (int16_t)(gTalkPanel.sY + TALK_PANEL_FACE_Y),
+                    NewGRect(0, 0, pFace->usFaceWidth, pFace->usFaceHeight));
 
-    UnLockVideoSurface(FRAME_BUFFER);
-    UnLockVideoSurface(gTalkPanel.uiSaveBuffer);
+    VSurfaceUnlock(vsFB);
+    VSurfaceUnlock(GetVSByID(gTalkPanel.uiSaveBuffer));
 
     MarkButtonsDirty();
 
     // If guy is talking.... shadow area
     if (pFace->fTalking || !DialogueQueueIsEmpty()) {
       ShadowVideoSurfaceRect(
-          FRAME_BUFFER, (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X),
+          vsFB, (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X),
           (int16_t)(gTalkPanel.sY + TALK_PANEL_SHADOW_AREA_Y),
           (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X + TALK_PANEL_SHADOW_AREA_WIDTH),
           (int16_t)(gTalkPanel.sY + TALK_PANEL_SHADOW_AREA_Y + TALK_PANEL_SHADOW_AREA_HEIGHT));
@@ -718,13 +718,10 @@ void RenderTalkingMenu() {
         iInterfaceDialogueBox = -1;
       }
 
-      SET_USE_WINFONTS(TRUE);
-      SET_WINFONT(giSubTitleWinFont);
       iInterfaceDialogueBox = PrepareMercPopupBox(
           iInterfaceDialogueBox, BASIC_MERC_POPUP_BACKGROUND, BASIC_MERC_POPUP_BORDER,
           gTalkPanel.zQuoteStr, TALK_PANEL_DEFAULT_SUBTITLE_WIDTH, 0, 0, 0, &usTextBoxWidth,
           &usTextBoxHeight);
-      SET_USE_WINFONTS(FALSE);
 
       gTalkPanel.fSetupSubTitles = FALSE;
 
@@ -1538,8 +1535,8 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
   if (usActionCode > NPC_ACTION_TURN_TO_FACE_NEAREST_MERC &&
       usActionCode < NPC_ACTION_LAST_TURN_TO_FACE_PROFILE) {
     pSoldier = FindSoldierByProfileID(ubTargetNPC, FALSE);
-    pSoldier2 =
-        FindSoldierByProfileID((uint8_t)(usActionCode - NPC_ACTION_TURN_TO_FACE_NEAREST_MERC), FALSE);
+    pSoldier2 = FindSoldierByProfileID(
+        (uint8_t)(usActionCode - NPC_ACTION_TURN_TO_FACE_NEAREST_MERC), FALSE);
     if (pSoldier && pSoldier2) {
       // see if we are facing this person
       ubDesiredMercDir = atan8(CenterX(pSoldier->sGridNo), CenterY(pSoldier->sGridNo),
@@ -1719,8 +1716,8 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         pSoldier = FindSoldierByProfileID(ubTargetNPC, FALSE);
         if (pSoldier && pSoldier->inv[HANDPOS].usItem != NOTHING) {
           sGridNo = pSoldier->sGridNo + DirectionInc(pSoldier->bDirection);
-          SoldierReadyWeapon(pSoldier, (int16_t)(sGridNo % WORLD_COLS), (int16_t)(sGridNo / WORLD_COLS),
-                             FALSE);
+          SoldierReadyWeapon(pSoldier, (int16_t)(sGridNo % WORLD_COLS),
+                             (int16_t)(sGridNo / WORLD_COLS), FALSE);
         }
         break;
 
@@ -1957,8 +1954,8 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         if (bItemIn != NO_SLOT && bItemIn != HANDPOS) {
           SwapObjs(&(pSoldier->inv[HANDPOS]), &(pSoldier->inv[bItemIn]));
           sGridNo = pSoldier->sGridNo + DirectionInc(pSoldier->bDirection);
-          SoldierReadyWeapon(pSoldier, (int16_t)(sGridNo % WORLD_COLS), (int16_t)(sGridNo / WORLD_COLS),
-                             FALSE);
+          SoldierReadyWeapon(pSoldier, (int16_t)(sGridNo % WORLD_COLS),
+                             (int16_t)(sGridNo / WORLD_COLS), FALSE);
         }
         // fall through so that the person faces the nearest merc!
       case NPC_ACTION_TURN_TO_FACE_NEAREST_MERC:
@@ -2008,13 +2005,13 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         }
         break;
       case NPC_ACTION_SET_DELAYED_PACKAGE_TIMER:
-        AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(),
+        AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
                                    FACT_SHIPMENT_DELAYED_24_HOURS, 1);
         break;
 
       case NPC_ACTION_SET_RANDOM_PACKAGE_DAMAGE_TIMER:
         AddFutureDayStrategicEvent(
-            EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(),
+            EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
             NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_SET_RANDOM_PACKAGE_DAMAGE_TIMER, 1);
         break;
 
@@ -2022,14 +2019,14 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         // add event in a
         iRandom = Random(24);
         AddFutureDayStrategicEvent(
-            EVENT_SET_BY_NPC_SYSTEM, (GetWorldMinutesInDay() + ((24 + iRandom) * 60)),
+            EVENT_SET_BY_NPC_SYSTEM, (GetMinutesSinceDayStart() + ((24 + iRandom) * 60)),
             NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_ENABLE_CAMBRIA_DOCTOR_BONUS, 1);
         break;
       case NPC_ACTION_TRIGGER_END_OF_FOOD_QUEST:
-        AddHistoryToPlayersLog(HISTORY_TALKED_TO_FATHER_WALKER, 0, GetWorldTotalMin(),
+        AddHistoryToPlayersLog(HISTORY_TALKED_TO_FATHER_WALKER, 0, GetGameTimeInMin(),
                                (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         AddFutureDayStrategicEvent(
-            EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(),
+            EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
             NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_TRIGGER_END_OF_FOOD_QUEST, 1);
         break;
 
@@ -2075,7 +2072,7 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         // now
         DeleteTalkingMenu();
         AddSameDayStrategicEvent(
-            EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay() + 360,
+            EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart() + 360,
             NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_DELAYED_MAKE_BRENDA_LEAVE);
         break;
 
@@ -2144,13 +2141,13 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         gMercProfiles[JOEY].sSectorY = MAP_ROW_D;
         gMercProfiles[JOEY].bSectorZ = 1;
         AddFutureDayStrategicEvent(
-            EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(),
+            EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
             NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_ADD_JOEY_TO_WORLD, 3);
         break;
 
       case NPC_ACTION_MARK_KINGPIN_QUOTE_0_USED:
         // set Kingpin's quote 0 as used so he doesn't introduce himself
-        gMercProfiles[86].ubLastDateSpokenTo = (uint8_t)GetWorldDay();
+        gMercProfiles[86].ubLastDateSpokenTo = (uint8_t)GetGameTimeInDays();
         break;
 
       case NPC_ACTION_TRIGGER_LAYLA_13_14_OR_15:
@@ -2344,15 +2341,15 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         gMercProfiles[GetSolProfile(pSoldier)].ubMiscFlags2 |= PROFILE_MISC_FLAG2_MARRIED_TO_HICKS;
 
         AddHistoryToPlayersLog(HISTORY_MERC_MARRIED_OFF, GetSolProfile(pSoldier),
-                               GetWorldTotalMin(), (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
+                               GetGameTimeInMin(), (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
 
         // if Flo is going off with Daryl, then set that fact true
         if (GetSolProfile(pSoldier) == 44) {
           SetFactTrue(FACT_PC_MARRYING_DARYL_IS_FLO);
         }
 
-        HandleMoraleEvent(pSoldier, MORALE_MERC_MARRIED, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
-                          gbWorldSectorZ);
+        HandleMoraleEvent(pSoldier, MORALE_MERC_MARRIED, (uint8_t)gWorldSectorX,
+                          (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
         UpdateDarrelScriptToGoTo(pSoldier);
         TriggerNPCRecord(DARREL, 10);
@@ -2444,7 +2441,7 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
 
       case NPC_ACTION_SET_DELAY_TILL_GIRLS_AVAILABLE:
         AddSameDayStrategicEvent(
-            EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay() + 1 + Random(2),
+            EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart() + 1 + Random(2),
             NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_SET_DELAY_TILL_GIRLS_AVAILABLE);
         break;
 
@@ -2498,7 +2495,7 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         pSoldier = FindSoldierByProfileID(ubTargetNPC, FALSE);
         if (pSoldier) {
           if (pSoldier->ubCivilianGroup != NON_CIV_GROUP) {
-            if (gTacticalStatus.fCivGroupHostile[pSoldier->ubCivilianGroup] == CIV_GROUP_NEUTRAL) {
+            if (GetCivGroupHostility(pSoldier->ubCivilianGroup) == CIV_GROUP_NEUTRAL) {
               CivilianGroupMemberChangesSides(pSoldier);
             }
           } else {
@@ -2541,8 +2538,8 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
           TriggerNPCRecord(78, 21);
         }
         // CJC Nov 28 2002 - fixed history record which didn't have location specified
-        AddHistoryToPlayersLog(HISTORY_GAVE_CARMEN_HEAD, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_GAVE_CARMEN_HEAD, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
 
       case NPC_ACTION_CARMEN_LEAVES_FOR_GOOD:
@@ -2819,13 +2816,13 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         break;
       case NPC_ACTION_SHOW_TIXA:
         SetTixaAsFound();
-        AddHistoryToPlayersLog(HISTORY_DISCOVERED_TIXA, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_DISCOVERED_TIXA, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_SHOW_ORTA:
         SetOrtaAsFound();
-        AddHistoryToPlayersLog(HISTORY_DISCOVERED_ORTA, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_DISCOVERED_ORTA, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_SLAP:
 
@@ -3004,7 +3001,7 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         break;
       case NPC_ACTION_START_TIMER_ON_KEITH_GOING_OUT_OF_BUSINESS:
         // start timer to place keith out of business
-        AddStrategicEvent(EVENT_KEITH_GOING_OUT_OF_BUSINESS, GetWorldTotalMin() + (6 * 24 * 60), 0);
+        AddStrategicEvent(EVENT_KEITH_GOING_OUT_OF_BUSINESS, GetGameTimeInMin() + (6 * 24 * 60), 0);
         break;
 
       case NPC_ACTION_KEITH_GOING_BACK_IN_BUSINESS:
@@ -3067,8 +3064,8 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         break;
 
       case NPC_ACTION_TRIGGER_ELLIOT_BY_SAM_DISABLED:
-        if (IsThereAFunctionalSAMSiteInSector(gTacticalStatus.ubLastBattleSectorX,
-                                              gTacticalStatus.ubLastBattleSectorY, 0)) {
+        if (IsThereAFunctionalSamInSector(gTacticalStatus.ubLastBattleSectorX,
+                                          gTacticalStatus.ubLastBattleSectorY, 0)) {
           TriggerNPCRecord(QUEEN, 6);
         } else {
           TriggerNPCRecord(ELLIOT, 2);
@@ -3530,12 +3527,12 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         break;
 
       case NPC_ACTION_24_HOURS_SINCE_JOEY_RESCUED:
-        AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(),
+        AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
                                    FACT_24_HOURS_SINCE_JOEY_RESCUED, 1);
         break;
 
       case NPC_ACTION_24_HOURS_SINCE_DOCTORS_TALKED_TO:
-        AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(),
+        AddFutureDayStrategicEvent(EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
                                    FACT_24_HOURS_SINCE_DOCTOR_TALKED_TO, 1);
         break;
 
@@ -3554,7 +3551,7 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
 
       case NPC_ACTION_TIMER_FOR_VEHICLE:
         AddFutureDayStrategicEvent(
-            EVENT_SET_BY_NPC_SYSTEM, GetWorldMinutesInDay(),
+            EVENT_SET_BY_NPC_SYSTEM, GetMinutesSinceDayStart(),
             NPC_SYSTEM_EVENT_ACTION_PARAM_BONUS + NPC_ACTION_TIMER_FOR_VEHICLE, 1);
         break;
 
@@ -3581,111 +3578,111 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         break;
 
       case NPC_ACTION_HISTORY_GOT_ROCKET_RIFLES:
-        AddHistoryToPlayersLog(HISTORY_GOT_ROCKET_RIFLES, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_GOT_ROCKET_RIFLES, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_DEIDRANNA_DEAD_BODIES:
-        AddHistoryToPlayersLog(HISTORY_DEIDRANNA_DEAD_BODIES, 0, GetWorldTotalMin(),
+        AddHistoryToPlayersLog(HISTORY_DEIDRANNA_DEAD_BODIES, 0, GetGameTimeInMin(),
                                (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_BOXING_MATCHES:
-        AddHistoryToPlayersLog(HISTORY_BOXING_MATCHES, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_BOXING_MATCHES, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_SOMETHING_IN_MINES:
-        AddHistoryToPlayersLog(HISTORY_SOMETHING_IN_MINES, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_SOMETHING_IN_MINES, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_DEVIN:
-        AddHistoryToPlayersLog(HISTORY_DEVIN, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_DEVIN, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_MIKE:
-        AddHistoryToPlayersLog(HISTORY_MIKE, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_MIKE, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_TONY:
-        AddHistoryToPlayersLog(HISTORY_TONY, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_TONY, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_KROTT:
-        AddHistoryToPlayersLog(HISTORY_KROTT, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_KROTT, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_KYLE:
-        AddHistoryToPlayersLog(HISTORY_KYLE, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_KYLE, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_MADLAB:
-        AddHistoryToPlayersLog(HISTORY_MADLAB, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_MADLAB, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_GABBY:
-        AddHistoryToPlayersLog(HISTORY_GABBY, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_GABBY, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_KEITH_OUT_OF_BUSINESS:
-        AddHistoryToPlayersLog(HISTORY_KEITH_OUT_OF_BUSINESS, 0, GetWorldTotalMin(),
+        AddHistoryToPlayersLog(HISTORY_KEITH_OUT_OF_BUSINESS, 0, GetGameTimeInMin(),
                                (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_HOWARD_CYANIDE:
-        AddHistoryToPlayersLog(HISTORY_HOWARD_CYANIDE, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_HOWARD_CYANIDE, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_KEITH:
-        AddHistoryToPlayersLog(HISTORY_KEITH, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_KEITH, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_HOWARD:
-        AddHistoryToPlayersLog(HISTORY_HOWARD, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_HOWARD, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_PERKO:
-        AddHistoryToPlayersLog(HISTORY_PERKO, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_PERKO, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_SAM:
-        AddHistoryToPlayersLog(HISTORY_SAM, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_SAM, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_FRANZ:
-        AddHistoryToPlayersLog(HISTORY_FRANZ, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_FRANZ, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_ARNOLD:
-        AddHistoryToPlayersLog(HISTORY_ARNOLD, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_ARNOLD, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_FREDO:
-        AddHistoryToPlayersLog(HISTORY_FREDO, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_FREDO, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_RICHGUY_BALIME:
-        AddHistoryToPlayersLog(HISTORY_RICHGUY_BALIME, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
-                               (uint8_t)gWorldSectorY);
+        AddHistoryToPlayersLog(HISTORY_RICHGUY_BALIME, 0, GetGameTimeInMin(),
+                               (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_JAKE:
-        AddHistoryToPlayersLog(HISTORY_JAKE, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_JAKE, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_BUM_KEYCARD:
-        AddHistoryToPlayersLog(HISTORY_BUM_KEYCARD, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_BUM_KEYCARD, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_WALTER:
-        AddHistoryToPlayersLog(HISTORY_WALTER, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_WALTER, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_DAVE:
-        AddHistoryToPlayersLog(HISTORY_DAVE, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_DAVE, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_PABLO:
-        AddHistoryToPlayersLog(HISTORY_PABLO, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_PABLO, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_HISTORY_KINGPIN_MONEY:
-        AddHistoryToPlayersLog(HISTORY_KINGPIN_MONEY, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_KINGPIN_MONEY, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_SEND_TROOPS_TO_SAM:
@@ -3696,7 +3693,7 @@ void HandleNPCDoAction(uint8_t ubTargetNPC, uint16_t usActionCode, uint8_t ubQuo
         gMercProfiles[PACOS].bSectorZ = 0;
         break;
       case NPC_ACTION_HISTORY_ASSASSIN:
-        AddHistoryToPlayersLog(HISTORY_ASSASSIN, 0, GetWorldTotalMin(), (uint8_t)gWorldSectorX,
+        AddHistoryToPlayersLog(HISTORY_ASSASSIN, 0, GetGameTimeInMin(), (uint8_t)gWorldSectorX,
                                (uint8_t)gWorldSectorY);
         break;
       case NPC_ACTION_TRIGGER_HANS_BY_ROOM: {

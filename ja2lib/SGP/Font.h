@@ -45,22 +45,16 @@ typedef struct {
 } FontTranslationTable;
 
 extern int32_t FontDefault;
-extern uint32_t FontDestBuffer;
+extern struct VSurface *FontDestSurface;
 extern uint32_t FontDestPitch;
 extern uint32_t FontDestBPP;
-extern SGPRect FontDestRegion;
+extern struct GRect FontDestRegion;
 extern BOOLEAN FontDestWrap;
 
-#define SetFontDestObject(x)                                                           \
-  (SetFontDestBuffer(x, FontDestRegion.left, FontDestRegion.top, FontDestRegion.right, \
-                     FontDestRegion.bottom, FontDestWrap))
-
-#define SetFontDestClip(x1, y1, x2, y2) \
-  (SetFontDestBuffer(FontDestBuffer, x1, y1, x2, y2, FontDestWrap))
-#define SetFontDestWrap(x)                                                    \
-  (SetFontDestBuffer(FontDestBuffer, FontDestRegion.left, FontDestRegion.top, \
-                     FontDestRegion.right, FontDestRegion.bottom, x))
-// functions
+#define SetFontDestClip(x1, y1, x2, y2) (SetFontDest(FontDestSurface, x1, y1, x2, y2, FontDestWrap))
+#define SetFontDestWrap(x)                                                                     \
+  (SetFontDest(FontDestSurface, FontDestRegion.left, FontDestRegion.top, FontDestRegion.right, \
+               FontDestRegion.bottom, x))
 
 void SetFontColors(uint16_t usColors);
 void SetFontForeground(uint8_t ubForeground);
@@ -80,28 +74,28 @@ uint16_t *GetFontObjectPalette16BPP(int32_t iFont);
 void DestroyEnglishTransTable(void);
 
 extern struct VObject *GetFontObject(int32_t iFont);
-extern uint32_t gprintf(int32_t x, int32_t y, wchar_t* pFontString, ...);
-extern uint32_t gprintfDirty(int32_t x, int32_t y, wchar_t* pFontString, ...);
-extern uint32_t mprintf(int32_t x, int32_t y, wchar_t* pFontString, ...);
-extern uint32_t gprintf_buffer(uint8_t *pDestBuf, uint32_t uiDestPitchBYTES, uint32_t FontType, int32_t x,
-                             int32_t y, wchar_t* pFontString, ...);
-extern uint32_t mprintf_buffer(uint8_t *pDestBuf, uint32_t uiDestPitchBYTES, uint32_t FontType, int32_t x,
-                             int32_t y, wchar_t* pFontString, ...);
+extern uint32_t gprintf(int32_t x, int32_t y, wchar_t *pFontString, ...);
+extern uint32_t gprintfDirty(int32_t x, int32_t y, wchar_t *pFontString, ...);
+extern uint32_t mprintf(int32_t x, int32_t y, wchar_t *pFontString, ...);
+extern uint32_t gprintf_buffer(uint8_t *pDestBuf, uint32_t uiDestPitchBYTES, uint32_t FontType,
+                               int32_t x, int32_t y, wchar_t *pFontString, ...);
+extern uint32_t mprintf_buffer(uint8_t *pDestBuf, uint32_t uiDestPitchBYTES, uint32_t FontType,
+                               int32_t x, int32_t y, wchar_t *pFontString, ...);
 
 // Function for displaying coded test. Since it's slower to do this, it's separate from  the normal
 // fuctions
 #define FONT_CODE_BEGINCOLOR 180
 #define FONT_CODE_RESETCOLOR 181
 
-uint32_t mprintf_buffer_coded(uint8_t *pDestBuf, uint32_t uiDestPitchBYTES, uint32_t FontType, int32_t x,
-                            int32_t y, wchar_t* pFontString, ...);
-uint32_t mprintf_coded(int32_t x, int32_t y, wchar_t* pFontString, ...);
+uint32_t mprintf_buffer_coded(uint8_t *pDestBuf, uint32_t uiDestPitchBYTES, uint32_t FontType,
+                              int32_t x, int32_t y, wchar_t *pFontString, ...);
+uint32_t mprintf_coded(int32_t x, int32_t y, wchar_t *pFontString, ...);
 
-extern BOOLEAN SetFontDestBuffer(uint32_t DestBuffer, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
-                                 BOOLEAN wrap);
+BOOLEAN SetFontDest(struct VSurface *dest, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
+                    BOOLEAN wrap);
 extern BOOLEAN SetFont(int32_t iFontIndex);
 
-extern int32_t LoadFontFile(char* pFileName);
+extern int32_t LoadFontFile(char *pFileName);
 extern uint16_t GetFontHeight(int32_t FontNum);
 extern BOOLEAN InitializeFontManager(uint16_t usDefaultPixDepth, FontTranslationTable *pTransTable);
 extern void ShutdownFontManager(void);
@@ -112,9 +106,10 @@ extern FontTranslationTable *CreateEnglishTransTable();
 extern int16_t GetIndex(uint16_t siChar);
 extern uint32_t GetWidth(struct VObject *hSrcVObject, int16_t ssIndex);
 
-extern int16_t StringPixLengthArgFastHelp(int32_t usUseFont, int32_t usBoldFont, uint32_t uiCharCount,
-                                        wchar_t *pFontString);
-extern int16_t StringPixLengthArg(int32_t usUseFont, uint32_t uiCharCount, wchar_t *pFontString, ...);
+extern int16_t StringPixLengthArgFastHelp(int32_t usUseFont, int32_t usBoldFont,
+                                          uint32_t uiCharCount, wchar_t *pFontString);
+extern int16_t StringPixLengthArg(int32_t usUseFont, uint32_t uiCharCount, wchar_t *pFontString,
+                                  ...);
 extern int16_t StringPixLength(wchar_t *string, int32_t UseFont);
 extern int16_t StringNPixLength(wchar_t *string, uint32_t uiMaxCount, int32_t UseFont);
 extern void SaveFontSettings(void);
@@ -126,9 +121,9 @@ void VarFindFontRightCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, in
 void VarFindFontCenterCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, int16_t sHeight,
                                   int32_t iFontIndex, int16_t *psNewX, int16_t *psNewY,
                                   wchar_t *pFontString, ...);
-void FindFontRightCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, int16_t sHeight, wchar_t *pStr,
-                              int32_t iFontIndex, int16_t *psNewX, int16_t *psNewY);
-void FindFontCenterCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, int16_t sHeight, wchar_t *pStr,
-                               int32_t iFontIndex, int16_t *psNewX, int16_t *psNewY);
+void FindFontRightCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, int16_t sHeight,
+                              wchar_t *pStr, int32_t iFontIndex, int16_t *psNewX, int16_t *psNewY);
+void FindFontCenterCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, int16_t sHeight,
+                               wchar_t *pStr, int32_t iFontIndex, int16_t *psNewX, int16_t *psNewY);
 
 #endif

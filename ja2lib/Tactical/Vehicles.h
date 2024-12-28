@@ -6,6 +6,7 @@
 #define _VEHICLES_H
 
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 struct GROUP;
 struct SOLDIERTYPE;
@@ -52,18 +53,18 @@ enum {
 // NUMBER_OF_INTERNAL_HIT_LOCATIONS_IN_VEHICLE ];
 
 extern int16_t sVehicleOrigArmorValues[NUMBER_OF_TYPES_OF_VEHICLES]
-                                    [NUMBER_OF_INTERNAL_HIT_LOCATIONS_IN_VEHICLE];
+                                      [NUMBER_OF_INTERNAL_HIT_LOCATIONS_IN_VEHICLE];
 
 // struct for vehicles
 typedef struct {
-  struct path *pMercPath;  // vehicle's stategic path list
-  uint8_t ubMovementGroup;   // the movement group this vehicle belongs to
-  uint8_t ubVehicleType;     // type of vehicle
-  int16_t sSectorX;          // X position on the Stategic Map
-  int16_t sSectorY;          // Y position on the Stategic Map
+  struct path *pMercPath;   // vehicle's stategic path list
+  uint8_t ubMovementGroup;  // the movement group this vehicle belongs to
+  uint8_t ubVehicleType;    // type of vehicle
+  int16_t sSectorX;         // X position on the Stategic Map
+  int16_t sSectorY;         // Y position on the Stategic Map
   int16_t sSectorZ;
   BOOLEAN fBetweenSectors;  // between sectors?
-  int16_t sGridNo;            // location in tactical
+  int16_t sGridNo;          // location in tactical
   struct SOLDIERTYPE *pPassengers[10];
   uint8_t ubDriver;
   int16_t sInternalHitLocations[NUMBER_OF_EXTERNAL_HIT_LOCATIONS_ON_VEHICLE];
@@ -193,10 +194,10 @@ BOOLEAN DoesVehicleNeedAnyRepairs(int32_t iVehicleId);
 int8_t RepairVehicle(int32_t iVehicleId, int8_t bTotalPts, BOOLEAN *pfNothingToRepair);
 
 // Save all the vehicle information to the saved game file
-BOOLEAN SaveVehicleInformationToSaveGameFile(HWFILE hFile);
+BOOLEAN SaveVehicleInformationToSaveGameFile(FileID hFile);
 
 // Load all the vehicle information From the saved game file
-BOOLEAN LoadVehicleInformationFromSavedGameFile(HWFILE hFile, uint32_t uiSavedGameVersion);
+BOOLEAN LoadVehicleInformationFromSavedGameFile(FileID hFile, uint32_t uiSavedGameVersion);
 
 // take soldier out of vehicle
 BOOLEAN TakeSoldierOutOfVehicle(struct SOLDIERTYPE *pSoldier);
@@ -208,10 +209,10 @@ void SetVehicleSectorValues(int32_t iVehId, uint8_t ubSectorX, uint8_t ubSectorY
 
 void UpdateAllVehiclePassengersGridNo(struct SOLDIERTYPE *pSoldier);
 
-BOOLEAN SaveVehicleMovementInfoToSavedGameFile(HWFILE hFile);
-BOOLEAN LoadVehicleMovementInfoFromSavedGameFile(HWFILE hFile);
-BOOLEAN NewSaveVehicleMovementInfoToSavedGameFile(HWFILE hFile);
-BOOLEAN NewLoadVehicleMovementInfoFromSavedGameFile(HWFILE hFile);
+BOOLEAN SaveVehicleMovementInfoToSavedGameFile(FileID hFile);
+BOOLEAN LoadVehicleMovementInfoFromSavedGameFile(FileID hFile);
+BOOLEAN NewSaveVehicleMovementInfoToSavedGameFile(FileID hFile);
+BOOLEAN NewLoadVehicleMovementInfoFromSavedGameFile(FileID hFile);
 
 BOOLEAN OKUseVehicle(uint8_t ubProfile);
 

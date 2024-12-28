@@ -41,79 +41,79 @@ void BltJA2CursorData();
 void DrawMouseText();
 
 struct CursorFileData CursorFileDatabase[] = {
-    {"CURSORS\\cursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_targ.sti", FALSE, 0, ANIMATED_CURSOR, 7, NULL},
-    {"CURSORS\\cur_tagr.sti", FALSE, 0, ANIMATED_CURSOR, 7, NULL},
-    {"CURSORS\\targblak.sti", FALSE, 0, ANIMATED_CURSOR, 7, NULL},
-    {"CURSORS\\cur_bst.sti", FALSE, 0, ANIMATED_CURSOR, 7, NULL},
-    {"CURSORS\\cur_rbst.sti", FALSE, 0, ANIMATED_CURSOR, 7, NULL},
-    {"CURSORS\\burstblk.sti", FALSE, 0, ANIMATED_CURSOR, 7, NULL},
-    {"CURSORS\\cur_tr.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_trw.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_tb.sti", FALSE, 0, ANIMATED_CURSOR, 7, NULL},
+    {"CURSORS\\cursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_targ.sti", FALSE, ANIMATED_CURSOR, 7, NULL},
+    {"CURSORS\\cur_tagr.sti", FALSE, ANIMATED_CURSOR, 7, NULL},
+    {"CURSORS\\targblak.sti", FALSE, ANIMATED_CURSOR, 7, NULL},
+    {"CURSORS\\cur_bst.sti", FALSE, ANIMATED_CURSOR, 7, NULL},
+    {"CURSORS\\cur_rbst.sti", FALSE, ANIMATED_CURSOR, 7, NULL},
+    {"CURSORS\\burstblk.sti", FALSE, ANIMATED_CURSOR, 7, NULL},
+    {"CURSORS\\cur_tr.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_trw.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_tb.sti", FALSE, ANIMATED_CURSOR, 7, NULL},
 
-    {"CURSORS\\punch.sti", FALSE, 0, ANIMATED_CURSOR, 6, NULL},
-    {"CURSORS\\punchr.sti", FALSE, 0, ANIMATED_CURSOR, 6, NULL},
-    {"CURSORS\\cur_run.sti", FALSE, 0, ANIMATED_CURSOR, 10, NULL},
-    {"CURSORS\\cur_walk.sti", FALSE, 0, ANIMATED_CURSOR, 10, NULL},
-    {"CURSORS\\cur_swat.sti", FALSE, 0, ANIMATED_CURSOR, 10, NULL},
-    {"CURSORS\\cur_pron.sti", FALSE, 0, ANIMATED_CURSOR, 10, NULL},
-    {"CURSORS\\grabsr.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\grabs.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\stab.sti", FALSE, 0, ANIMATED_CURSOR, 6, NULL},
-    {"CURSORS\\stabr.sti", FALSE, 0, ANIMATED_CURSOR, 6, NULL},
+    {"CURSORS\\punch.sti", FALSE, ANIMATED_CURSOR, 6, NULL},
+    {"CURSORS\\punchr.sti", FALSE, ANIMATED_CURSOR, 6, NULL},
+    {"CURSORS\\cur_run.sti", FALSE, ANIMATED_CURSOR, 10, NULL},
+    {"CURSORS\\cur_walk.sti", FALSE, ANIMATED_CURSOR, 10, NULL},
+    {"CURSORS\\cur_swat.sti", FALSE, ANIMATED_CURSOR, 10, NULL},
+    {"CURSORS\\cur_pron.sti", FALSE, ANIMATED_CURSOR, 10, NULL},
+    {"CURSORS\\grabsr.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\grabs.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\stab.sti", FALSE, ANIMATED_CURSOR, 6, NULL},
+    {"CURSORS\\stabr.sti", FALSE, ANIMATED_CURSOR, 6, NULL},
 
-    {"CURSORS\\cross1.sti", FALSE, 0, ANIMATED_CURSOR, 6, NULL},
-    {"CURSORS\\cross2.sti", FALSE, 0, ANIMATED_CURSOR, 6, NULL},
-    {"LAPTOP\\FingerCursor.sti", FALSE, 0, 0, 0, NULL},
-    {"LAPTOP\\LapTopCursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\ibeam.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_look.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_talk.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_talkb.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_talkr.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_exit.sti", FALSE, 0, 0, 0, NULL},
+    {"CURSORS\\cross1.sti", FALSE, ANIMATED_CURSOR, 6, NULL},
+    {"CURSORS\\cross2.sti", FALSE, ANIMATED_CURSOR, 6, NULL},
+    {"LAPTOP\\FingerCursor.sti", FALSE, 0, 0, NULL},
+    {"LAPTOP\\LapTopCursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\ibeam.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_look.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_talk.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_talkb.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_talkr.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_exit.sti", FALSE, 0, 0, NULL},
 
-    {"CURSORS\\VehicleCursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\WalkingCursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\que.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\chopper.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\check.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_try.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\wirecut.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\wirecutr.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\bullet_g.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\bullet_d.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\ibeamWhite.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\throwg.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\throwb.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\throwr.sti", FALSE, 0, 0, 0, NULL},
-    {"", FALSE, 0, USE_EXTERN_VO_CURSOR | USE_OUTLINE_BLITTER, 0, NULL},
-    {"CURSORS\\bombg.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\bombr.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\remoteg.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\remoter.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\steering.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_car.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_wait.sti", FALSE, 0, 0, 0, NULL},
+    {"CURSORS\\VehicleCursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\WalkingCursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\que.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\chopper.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\check.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_try.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\wirecut.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\wirecutr.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\bullet_g.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\bullet_d.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\ibeamWhite.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\throwg.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\throwb.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\throwr.sti", FALSE, 0, 0, NULL},
+    {"", FALSE, USE_EXTERN_VO_CURSOR | USE_OUTLINE_BLITTER, 0, NULL},
+    {"CURSORS\\bombg.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\bombr.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\remoteg.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\remoter.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\steering.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_car.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_wait.sti", FALSE, 0, 0, NULL},
 
     // Tactical GUI cursors
-    {"CURSORS\\singlecursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\groupcursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\singledcursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\groupdcursor.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\repair.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\repairr.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\jar_cur.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\jar_cur_red.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_x.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\can_01.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\can_02.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\cur_swit.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\bullseye.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\deadleap.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\can_01.sti", FALSE, 0, 0, 0, NULL},
-    {"CURSORS\\can_02.sti", FALSE, 0, 0, 0, NULL},
+    {"CURSORS\\singlecursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\groupcursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\singledcursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\groupdcursor.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\repair.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\repairr.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\jar_cur.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\jar_cur_red.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_x.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\can_01.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\can_02.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\cur_swit.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\bullseye.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\deadleap.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\can_01.sti", FALSE, 0, 0, NULL},
+    {"CURSORS\\can_02.sti", FALSE, 0, 0, NULL},
 
 };
 
@@ -4711,7 +4711,7 @@ void DrawMouseText() {
 
   if (gfUIBodyHitLocation) {
     // Set dest for gprintf to be different
-    SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+    SetFontDest(vsMouseBuffer, 0, 0, 64, 64, FALSE);
 
     FindFontCenterCoordinates(0, 0, gsCurMouseWidth, gsCurMouseHeight, gzLocation, TINYFONT1, &sX,
                               &sY);
@@ -4722,12 +4722,12 @@ void DrawMouseText() {
 
     mprintf(sX, sY + 12, gzLocation);
     // reset
-    SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+    SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
   }
 
   if (gfUIIntTileLocation) {
     // Set dest for gprintf to be different
-    SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+    SetFontDest(vsMouseBuffer, 0, 0, 64, 64, FALSE);
 
     FindFontCenterCoordinates(0, 0, gsCurMouseWidth, gsCurMouseHeight, gzIntTileLocation, TINYFONT1,
                               &sX, &sY);
@@ -4738,12 +4738,12 @@ void DrawMouseText() {
 
     mprintf(sX, sY + 6, gzIntTileLocation);
     // reset
-    SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+    SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
   }
 
   if (gfUIIntTileLocation2) {
     // Set dest for gprintf to be different
-    SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+    SetFontDest(vsMouseBuffer, 0, 0, 64, 64, FALSE);
 
     FindFontCenterCoordinates(0, 0, gsCurMouseWidth, gsCurMouseHeight, gzIntTileLocation2,
                               TINYFONT1, &sX, &sY);
@@ -4754,7 +4754,7 @@ void DrawMouseText() {
 
     mprintf(sX, sY - 2, gzIntTileLocation2);
     // reset
-    SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+    SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
   }
 
   // if ( ( ( gTacticalStatus.uiFlags & TURNBASED ) && ( gTacticalStatus.uiFlags & INCOMBAT ) ) )
@@ -4785,7 +4785,7 @@ void DrawMouseText() {
       }
 
       // Set dest for gprintf to be different
-      SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+      SetFontDest(vsMouseBuffer, 0, 0, 64, 64, FALSE);
 
       swprintf(pStr, ARR_SIZE(pStr), L"%d", gsCurrentActionPoints);
 
@@ -4825,37 +4825,9 @@ void DrawMouseText() {
       SetFontShadow(DEFAULT_SHADOW);
 
       // reset
-      SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+      SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
     }
   }
-
-  // if ( gpItemPointer != NULL )
-#if 0
-	{
-		if ( gpItemPointer->ubNumberOfObjects > 1 )
-		{
-			SetFontDestBuffer( MOUSE_BUFFER , 0, 0, 64, 64, FALSE );
-
-			swprintf( pStr, L"x%d", gpItemPointer->ubNumberOfObjects );
-
-			FindFontCenterCoordinates( 0, 0, gsCurMouseWidth, gsCurMouseHeight, pStr, TINYFONT1, &sX, &sY );
-
-			SetFont( TINYFONT1 );
-
-			SetFontBackground( FONT_MCOLOR_BLACK );
-			SetFontForeground( FONT_MCOLOR_WHITE );
-			SetFontShadow( DEFAULT_SHADOW );
-
-			if ( !( gViewportRegion.uiFlags & MSYS_MOUSE_IN_AREA  ) )
-			{
-				mprintf( sX + 10, sY - 10, L"x%d", gpItemPointer->ubNumberOfObjects );
-			}
-
-			// reset
-			SetFontDestBuffer( FRAME_BUFFER, 0, 0, 640, 480, FALSE );
-		}
-	}
-#endif
 }
 
 void UpdateAnimatedCursorFrames(uint32_t uiCursorIndex) {
@@ -4904,7 +4876,9 @@ void SetCursorSpecialFrame(uint32_t uiCursor, uint8_t ubFrame) {
   CursorDatabase[uiCursor].bFlashIndex = ubFrame;
 }
 
-void SetCursorFlags(uint32_t uiCursor, uint8_t ubFlags) { CursorDatabase[uiCursor].bFlags |= ubFlags; }
+void SetCursorFlags(uint32_t uiCursor, uint8_t ubFlags) {
+  CursorDatabase[uiCursor].bFlags |= ubFlags;
+}
 
 void RemoveCursorFlags(uint32_t uiCursor, uint8_t ubFlags) {
   CursorDatabase[uiCursor].bFlags &= (~ubFlags);

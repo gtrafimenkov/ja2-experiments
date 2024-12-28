@@ -18,6 +18,7 @@
 #include "Laptop/Finances.h"
 #include "Laptop/History.h"
 #include "Laptop/Laptop.h"
+#include "SGP/Debug.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Types.h"
@@ -59,13 +60,13 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/SoundControl.h"
+#include "rust_game_state.h"
 
 // Temp function
 void QuickSetupOfMercProfileItems(uint32_t uiCount, uint8_t ubProfileIndex);
 BOOLEAN QuickGameMemberHireMerc(uint8_t ubCurrentSoldier);
 extern uint32_t guiExitScreen;
 extern uint32_t uiMeanWhileFlags;
-extern BOOLEAN gfGamePaused;
 
 extern UNDERGROUND_SECTORINFO *FindUnderGroundSector(uint8_t sMapX, uint8_t sMapY, uint8_t bMapZ);
 extern void InitVehicles();
@@ -377,12 +378,12 @@ BOOLEAN InitNewGame(BOOLEAN fReset) {
     ResetHeliSeats();
 
     // Setup two new messages!
-    AddPreReadEmail(OLD_ENRICO_1, OLD_ENRICO_1_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-    AddPreReadEmail(OLD_ENRICO_2, OLD_ENRICO_2_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-    AddPreReadEmail(RIS_REPORT, RIS_REPORT_LENGTH, RIS_EMAIL, GetWorldTotalMin());
-    AddPreReadEmail(OLD_ENRICO_3, OLD_ENRICO_3_LENGTH, MAIL_ENRICO, GetWorldTotalMin());
-    AddEmail(IMP_EMAIL_INTRO, IMP_EMAIL_INTRO_LENGTH, CHAR_PROFILE_SITE, GetWorldTotalMin());
-    // AddEmail(ENRICO_CONGRATS,ENRICO_CONGRATS_LENGTH,MAIL_ENRICO, GetWorldTotalMin() );
+    AddPreReadEmail(OLD_ENRICO_1, OLD_ENRICO_1_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+    AddPreReadEmail(OLD_ENRICO_2, OLD_ENRICO_2_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+    AddPreReadEmail(RIS_REPORT, RIS_REPORT_LENGTH, RIS_EMAIL, GetGameTimeInMin());
+    AddPreReadEmail(OLD_ENRICO_3, OLD_ENRICO_3_LENGTH, MAIL_ENRICO, GetGameTimeInMin());
+    AddEmail(IMP_EMAIL_INTRO, IMP_EMAIL_INTRO_LENGTH, CHAR_PROFILE_SITE, GetGameTimeInMin());
+    // AddEmail(ENRICO_CONGRATS,ENRICO_CONGRATS_LENGTH,MAIL_ENRICO, GetGameTimeInMin() );
 
     // ATE: Set starting cash....
     switch (gGameOptions.ubDifficultyLevel) {
@@ -416,22 +417,6 @@ BOOLEAN InitNewGame(BOOLEAN fReset) {
       AddFutureDayStrategicEvent(EVENT_DAY3_ADD_EMAIL_FROM_SPECK, 60 * 7, 0,
                                  uiDaysTimeMercSiteAvailable);
     }
-
-#ifdef CRIPPLED_VERSION
-    {
-      uint32_t cnt;
-
-      // loop through the first 20 AIM mercs and set them to be away
-      for (cnt = 0; cnt < 20; cnt++) {
-        gMercProfiles[cnt].bMercStatus = MERC_WORKING_ELSEWHERE;
-        gMercProfiles[cnt].uiDayBecomesAvailable =
-            14;  // 14 days should be ok considering crippled version only goes to day 7
-      }
-    }
-
-    // Add an event to check for the end of the crippled version
-    AddEveryDayStrategicEvent(EVENT_CRIPPLED_VERSION_END_GAME_CHECK, 0, 0);
-#endif
 
     SetLaptopExitScreen(INIT_SCREEN);
     SetPendingNewScreen(LAPTOP_SCREEN);
@@ -639,7 +624,7 @@ BOOLEAN QuickGameMemberHireMerc(uint8_t ubCurrentSoldier) {
   }
 
   // add an entry in the history page for the hiring of the merc
-  AddHistoryToPlayersLog(HISTORY_HIRED_MERC_FROM_AIM, ubCurrentSoldier, GetWorldTotalMin(), -1, -1);
+  AddHistoryToPlayersLog(HISTORY_HIRED_MERC_FROM_AIM, ubCurrentSoldier, GetGameTimeInMin(), -1, -1);
 
   return (TRUE);
 }
@@ -649,8 +634,7 @@ BOOLEAN QuickGameMemberHireMerc(uint8_t ubCurrentSoldier) {
 void ReStartingGame() {
   uint16_t cnt;
 
-  // Pause the game
-  gfGamePaused = TRUE;
+  PrepareGameRestart();
 
   // Reset the sectors
   gWorldSectorX = gWorldSectorY = 0;

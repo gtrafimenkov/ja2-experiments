@@ -107,43 +107,46 @@ void DisplayFuneralRipTombStone();
 void GameInitFuneral() {}
 
 BOOLEAN EnterFuneral() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX, i;
 
   // load the Closed graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_CLOSED);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiClosedSign));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_CLOSED);
+  if (!AddVObjectFromFile(ImageFile, &guiClosedSign)) {
+    return FALSE;
+  }
 
   // load the Left column graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\LeftColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLeftColumn));
+  if (!AddVObjectFromFile("LAPTOP\\LeftColumn.sti", &guiLeftColumn)) {
+    return FALSE;
+  }
 
   // load the Link carving graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\LinkCarving.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLinkCarving));
+  if (!AddVObjectFromFile("LAPTOP\\LinkCarving.sti", &guiLinkCarving)) {
+    return FALSE;
+  }
 
   // load the Marble graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\Marble.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMarbleBackground));
+  if (!AddVObjectFromFile("LAPTOP\\Marble.sti", &guiMarbleBackground)) {
+    return FALSE;
+  }
 
   // load the McGillicuttys sign graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_MCGILLICUTTYS);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMcGillicuttys));
+  GetMLGFilename(ImageFile, MLG_MCGILLICUTTYS);
+  if (!AddVObjectFromFile(ImageFile, &guiMcGillicuttys)) {
+    return FALSE;
+  }
 
   // load the Mortuary  graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_MORTUARY);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMortuary));
+  GetMLGFilename(ImageFile, MLG_MORTUARY);
+  if (!AddVObjectFromFile(ImageFile, &guiMortuary)) {
+    return FALSE;
+  }
 
   // load the right column graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\RightColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiRightColumn));
+  if (!AddVObjectFromFile("LAPTOP\\RightColumn.sti", &guiRightColumn)) {
+    return FALSE;
+  }
 
   usPosX = FUNERAL_LINK_1_X;
   for (i = 0; i < FUNERAL_NUMBER_OF_LINKS; i++) {
@@ -200,40 +203,35 @@ void RenderFuneral() {
 
   // LeftColumn
   GetVideoObject(&hPixHandle, guiLeftColumn);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, FUNERAL_LEFT_COLUMN_X, FUNERAL_LEFT_COLUMN_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, FUNERAL_LEFT_COLUMN_X, FUNERAL_LEFT_COLUMN_Y);
 
   // Mcgillicuttys
   GetVideoObject(&hPixHandle, guiMcGillicuttys);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, FUNERAL_MCGILICUTTYS_SIGN_X,
-                 FUNERAL_MCGILICUTTYS_SIGN_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, FUNERAL_MCGILICUTTYS_SIGN_X, FUNERAL_MCGILICUTTYS_SIGN_Y);
 
   // Mortuary
   GetVideoObject(&hPixHandle, guiMortuary);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, FUNERAL_MORTUARY_SIGN_X, FUNERAL_MORTUARY_SIGN_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, FUNERAL_MORTUARY_SIGN_X, FUNERAL_MORTUARY_SIGN_Y);
 
   // right column
   GetVideoObject(&hPixHandle, guiRightColumn);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, FUNERAL_RIGHT_COLUMN_X, FUNERAL_RIGHT_COLUMN_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, FUNERAL_RIGHT_COLUMN_X, FUNERAL_RIGHT_COLUMN_Y);
 
   // LinkCarving
   GetVideoObject(&hPixHandle, guiLinkCarving);
 
   usPosX = FUNERAL_LINK_1_X;
   for (i = 0; i < FUNERAL_NUMBER_OF_LINKS; i++) {
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, usPosX, FUNERAL_LINK_1_Y, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVObject(vsFB, hPixHandle, 0, usPosX, FUNERAL_LINK_1_Y);
 
     // Calculate the height of the string, as it needs to be vertically centered.
     usStringHeight = IanWrappedStringHeight(0, 0, FUNERAL_LINK_TEXT_WIDTH, 2, FUNERAL_SENTENCE_FONT,
                                             0, sFuneralString[i + FUNERAL_SEND_FLOWERS], 0, 0, 0);
-    DisplayWrappedString((uint16_t)(usPosX + FUNERAL_LINK_TEXT_OFFSET_X),
-                         (uint16_t)(FUNERAL_LINK_1_Y + (FUNERAL_LINK_1_HEIGHT - usStringHeight) / 2),
-                         FUNERAL_LINK_TEXT_WIDTH, 2, FUNERAL_SENTENCE_FONT, FUNERAL_TITLE_COLOR,
-                         sFuneralString[i + FUNERAL_SEND_FLOWERS], FONT_MCOLOR_BLACK, FALSE,
-                         CENTER_JUSTIFIED);
+    DisplayWrappedString(
+        (uint16_t)(usPosX + FUNERAL_LINK_TEXT_OFFSET_X),
+        (uint16_t)(FUNERAL_LINK_1_Y + (FUNERAL_LINK_1_HEIGHT - usStringHeight) / 2),
+        FUNERAL_LINK_TEXT_WIDTH, 2, FUNERAL_SENTENCE_FONT, FUNERAL_TITLE_COLOR,
+        sFuneralString[i + FUNERAL_SEND_FLOWERS], FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
 
     usPosX += FUNERAL_LINK_OFFSET_X;
   }
@@ -280,10 +278,9 @@ void DisplayFuneralRipTombStone() {
 
   // rip tombstone
   GetVideoObject(&hPixHandle, guiClosedSign);
-  BltVideoObjectOutlineShadowFromIndex(
-      FRAME_BUFFER, guiClosedSign, 0, FUNERAL_CLOSED_RIP_SIGN_X + 5, FUNERAL_CLOSED_RIP_SIGN_Y + 5);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, FUNERAL_CLOSED_RIP_SIGN_X, FUNERAL_CLOSED_RIP_SIGN_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObjectOutlineShadowFromIndex(vsFB, guiClosedSign, 0, FUNERAL_CLOSED_RIP_SIGN_X + 5,
+                                       FUNERAL_CLOSED_RIP_SIGN_Y + 5);
+  BltVObject(vsFB, hPixHandle, 0, FUNERAL_CLOSED_RIP_SIGN_X, FUNERAL_CLOSED_RIP_SIGN_Y);
 
   SetFontShadow(FUNERAL_RIP_SHADOW_COLOR);
 

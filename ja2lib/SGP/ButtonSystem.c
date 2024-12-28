@@ -26,12 +26,14 @@
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "TileEngine/RenderDirty.h"
 #include "Utils/FontControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_images.h"
 
 // ATE: Added to let Wiz default creating mouse regions with no cursor, JA2 default to a cursor (
 // first one )
@@ -109,7 +111,6 @@ BOOLEAN gfRenderHilights = TRUE;
 BUTTON_PICS ButtonPictures[MAX_BUTTON_PICS];
 int32_t ButtonPicsLoaded;
 
-uint32_t ButtonDestBuffer = BACKBUFFER;
 uint32_t ButtonDestPitch = 640 * 2;
 uint32_t ButtonDestBPP = 16;
 
@@ -118,7 +119,7 @@ GUI_BUTTON *ButtonList[MAX_BUTTONS];
 int32_t ButtonsInList = 0;
 
 uint16_t GetWidthOfButtonPic(uint16_t usButtonPicID, int32_t iSlot) {
-  return ButtonPictures[usButtonPicID].vobj->pETRLEObject[iSlot].usWidth;
+  return ButtonPictures[usButtonPicID].vobj->subimages[iSlot].width;
 }
 
 struct VObject *GenericButtonGrayed[MAX_GENERIC_PICS];
@@ -169,11 +170,10 @@ int32_t FindFreeButtonSlot(void) {
 //
 //	Load images for use with QuickButtons.
 //
-int32_t LoadButtonImage(char* filename, int32_t Grayed, int32_t OffNormal, int32_t OffHilite, int32_t OnNormal,
-                      int32_t OnHilite) {
-  VOBJECT_DESC vo_desc;
+int32_t LoadButtonImage(char *filename, int32_t Grayed, int32_t OffNormal, int32_t OffHilite,
+                        int32_t OnNormal, int32_t OnHilite) {
   uint32_t UseSlot;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t MaxHeight, MaxWidth, ThisHeight, ThisWidth;
 
   AssertMsg(filename != BUTTON_NO_FILENAME, "Attempting to LoadButtonImage() with null filename.");
@@ -183,25 +183,20 @@ int32_t LoadButtonImage(char* filename, int32_t Grayed, int32_t OffNormal, int32
   if ((Grayed == BUTTON_NO_IMAGE) && (OffNormal == BUTTON_NO_IMAGE) &&
       (OffHilite == BUTTON_NO_IMAGE) && (OnNormal == BUTTON_NO_IMAGE) &&
       (OnHilite == BUTTON_NO_IMAGE)) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("No button pictures selected for %s", filename));
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("No button pictures selected for %s", filename));
     return (-1);
   }
 
   // Get a button image slot
   if ((UseSlot = FindFreeButtonSlot()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("Out of button image slots for %s", filename));
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, String("Out of button image slots for %s", filename));
     return (-1);
   }
 
   // Load the image
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, filename);
-
-  if ((ButtonPictures[UseSlot].vobj = CreateVideoObject(&vo_desc)) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("Couldn't create VOBJECT for %s", filename));
+  if ((ButtonPictures[UseSlot].vobj = LoadVObjectFromFile(filename)) == NULL) {
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, String("Couldn't create VOBJECT for %s", filename));
     return (-1);
   }
 
@@ -216,45 +211,45 @@ int32_t LoadButtonImage(char* filename, int32_t Grayed, int32_t OffNormal, int32
   // Fit the button size to the largest image in the set
   MaxWidth = MaxHeight = 0;
   if (Grayed != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[Grayed]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[Grayed]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OffNormal != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OffNormal]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OffNormal]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OffHilite != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OffHilite]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OffHilite]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OnNormal != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OnNormal]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OnNormal]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OnHilite != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OnHilite]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OnHilite]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
@@ -275,24 +270,24 @@ int32_t LoadButtonImage(char* filename, int32_t Grayed, int32_t OffNormal, int32
 //	Uses a previously loaded quick button image for use with QuickButtons.
 //	The function simply duplicates the vobj!
 //
-int32_t UseLoadedButtonImage(int32_t LoadedImg, int32_t Grayed, int32_t OffNormal, int32_t OffHilite,
-                           int32_t OnNormal, int32_t OnHilite) {
+int32_t UseLoadedButtonImage(int32_t LoadedImg, int32_t Grayed, int32_t OffNormal,
+                             int32_t OffHilite, int32_t OnNormal, int32_t OnHilite) {
   uint32_t UseSlot;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t MaxHeight, MaxWidth, ThisHeight, ThisWidth;
 
   // Is button image index given valid?
   if (ButtonPictures[LoadedImg].vobj == NULL) {
-    DbgMessage(
-        TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
+    DebugMsg(
+        TOPIC_BUTTON_HANDLER, DBG_ERROR,
         String("Invalid button picture handle given for pre-loaded button image %d", LoadedImg));
     return (-1);
   }
 
   // Is button image an external vobject?
   if (ButtonPictures[LoadedImg].fFlags & GUI_BTN_EXTERNAL_VOBJ) {
-    DbgMessage(
-        TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
+    DebugMsg(
+        TOPIC_BUTTON_HANDLER, DBG_ERROR,
         String(
             "Invalid button picture handle given (%d), cannot use external images as duplicates.",
             LoadedImg));
@@ -303,15 +298,15 @@ int32_t UseLoadedButtonImage(int32_t LoadedImg, int32_t Grayed, int32_t OffNorma
   if ((Grayed == BUTTON_NO_IMAGE) && (OffNormal == BUTTON_NO_IMAGE) &&
       (OffHilite == BUTTON_NO_IMAGE) && (OnNormal == BUTTON_NO_IMAGE) &&
       (OnHilite == BUTTON_NO_IMAGE)) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("No button pictures selected for pre-loaded button image %d", LoadedImg));
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("No button pictures selected for pre-loaded button image %d", LoadedImg));
     return (-1);
   }
 
   // Get a button image slot
   if ((UseSlot = FindFreeButtonSlot()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("Out of button image slots for pre-loaded button image %d", LoadedImg));
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("Out of button image slots for pre-loaded button image %d", LoadedImg));
     return (-1);
   }
 
@@ -327,45 +322,45 @@ int32_t UseLoadedButtonImage(int32_t LoadedImg, int32_t Grayed, int32_t OffNorma
   // Fit the button size to the largest image in the set
   MaxWidth = MaxHeight = 0;
   if (Grayed != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[Grayed]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[Grayed]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OffNormal != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OffNormal]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OffNormal]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OffHilite != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OffHilite]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OffHilite]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OnNormal != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OnNormal]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OnNormal]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OnHilite != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OnHilite]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OnHilite]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
@@ -391,16 +386,16 @@ int32_t UseLoadedButtonImage(int32_t LoadedImg, int32_t Grayed, int32_t OffNorma
 //			structures are simply removed from the button image list. It's up to
 //			the user to actually unload the image.
 //
-int32_t UseVObjAsButtonImage(struct VObject *hVObject, int32_t Grayed, int32_t OffNormal, int32_t OffHilite,
-                           int32_t OnNormal, int32_t OnHilite) {
+int32_t UseVObjAsButtonImage(struct VObject *hVObject, int32_t Grayed, int32_t OffNormal,
+                             int32_t OffHilite, int32_t OnNormal, int32_t OnHilite) {
   uint32_t UseSlot;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   uint32_t MaxHeight, MaxWidth, ThisHeight, ThisWidth;
 
   // Is button image index given valid?
   if (hVObject == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("UseVObjAsButtonImage: Invalid VObject image given"));
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("UseVObjAsButtonImage: Invalid VObject image given"));
     return (-1);
   }
 
@@ -408,15 +403,15 @@ int32_t UseVObjAsButtonImage(struct VObject *hVObject, int32_t Grayed, int32_t O
   if ((Grayed == BUTTON_NO_IMAGE) && (OffNormal == BUTTON_NO_IMAGE) &&
       (OffHilite == BUTTON_NO_IMAGE) && (OnNormal == BUTTON_NO_IMAGE) &&
       (OnHilite == BUTTON_NO_IMAGE)) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("UseVObjAsButtonImage: No button pictures indexes selected for VObject"));
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("UseVObjAsButtonImage: No button pictures indexes selected for VObject"));
     return (-1);
   }
 
   // Get a button image slot
   if ((UseSlot = FindFreeButtonSlot()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("UseVObjAsButtonImage: Out of button image slots for VObject"));
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("UseVObjAsButtonImage: Out of button image slots for VObject"));
     return (-1);
   }
 
@@ -432,45 +427,45 @@ int32_t UseVObjAsButtonImage(struct VObject *hVObject, int32_t Grayed, int32_t O
   // Fit the button size to the largest image in the set
   MaxWidth = MaxHeight = 0;
   if (Grayed != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[Grayed]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[Grayed]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OffNormal != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OffNormal]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OffNormal]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OffHilite != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OffHilite]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OffHilite]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OnNormal != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OnNormal]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OnNormal]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
   }
 
   if (OnHilite != BUTTON_NO_IMAGE) {
-    pTrav = &(ButtonPictures[UseSlot].vobj->pETRLEObject[OnHilite]);
-    ThisHeight = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    ThisWidth = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    pTrav = &(ButtonPictures[UseSlot].vobj->subimages[OnHilite]);
+    ThisHeight = (uint32_t)(pTrav->height + pTrav->y_offset);
+    ThisWidth = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     if (MaxWidth < ThisWidth) MaxWidth = ThisWidth;
     if (MaxHeight < ThisHeight) MaxHeight = ThisHeight;
@@ -483,17 +478,6 @@ int32_t UseVObjAsButtonImage(struct VObject *hVObject, int32_t Grayed, int32_t O
   // return the image slot number
   ButtonPicsLoaded++;
   return (UseSlot);
-}
-
-//=============================================================================
-//	SetButtonDestBuffer
-//
-//	Sets the destination buffer for all button blits.
-//
-BOOLEAN SetButtonDestBuffer(uint32_t DestBuffer) {
-  if (DestBuffer != BUTTON_USE_DEFAULT) ButtonDestBuffer = DestBuffer;
-
-  return (TRUE);
 }
 
 // Removes a QuickButton image from the system.
@@ -608,32 +592,9 @@ BOOLEAN DisableButton(int32_t iButtonID) {
   return ((OldState == BUTTON_ENABLED) ? TRUE : FALSE);
 }
 
-//=============================================================================
-//	InitializeButtonImageManager
-//
-//	Initializes the button image sub-system. This function is called by
-//	InitButtonSystem.
-//
-BOOLEAN InitializeButtonImageManager(int32_t DefaultBuffer, int32_t DefaultPitch, int32_t DefaultBPP) {
-  VOBJECT_DESC vo_desc;
+static BOOLEAN InitializeButtonImageManager() {
   uint8_t Pix;
   int x;
-
-  // Set up the default settings
-  if (DefaultBuffer != BUTTON_USE_DEFAULT)
-    ButtonDestBuffer = (uint32_t)DefaultBuffer;
-  else
-    ButtonDestBuffer = FRAME_BUFFER;
-
-  if (DefaultPitch != BUTTON_USE_DEFAULT)
-    ButtonDestPitch = (uint32_t)DefaultPitch;
-  else
-    ButtonDestPitch = 640 * 2;
-
-  if (DefaultBPP != BUTTON_USE_DEFAULT)
-    ButtonDestBPP = (uint32_t)DefaultBPP;
-  else
-    ButtonDestBPP = 16;
 
   // Blank out all QuickButton images
   for (x = 0; x < MAX_BUTTON_PICS; x++) {
@@ -665,39 +626,29 @@ BOOLEAN InitializeButtonImageManager(int32_t DefaultBuffer, int32_t DefaultPitch
   for (x = 0; x < MAX_BUTTON_ICONS; x++) GenericButtonIcons[x] = NULL;
 
   // Load the default generic button images
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_OFF);
-
-  if ((GenericButtonOffNormal[0] = CreateVideoObject(&vo_desc)) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "Couldn't create VOBJECT for " DEFAULT_GENERIC_BUTTON_OFF);
+  if ((GenericButtonOffNormal[0] = LoadVObjectFromFile(DEFAULT_GENERIC_BUTTON_OFF)) == NULL) {
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "Couldn't create VOBJECT for " DEFAULT_GENERIC_BUTTON_OFF);
     return (FALSE);
   }
 
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_ON);
-
-  if ((GenericButtonOnNormal[0] = CreateVideoObject(&vo_desc)) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "Couldn't create VOBJECT for " DEFAULT_GENERIC_BUTTON_ON);
+  if ((GenericButtonOnNormal[0] = LoadVObjectFromFile(DEFAULT_GENERIC_BUTTON_ON)) == NULL) {
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "Couldn't create VOBJECT for " DEFAULT_GENERIC_BUTTON_ON);
     return (FALSE);
   }
 
   // Load up the off hilite and on hilite images. We won't check for errors because if the file
   // doesn't exists, the system simply ignores that file. These are only here as extra images, they
   // aren't required for operation (only OFF Normal and ON Normal are required).
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_OFF_HI);
-  GenericButtonOffHilite[0] = CreateVideoObject(&vo_desc);
+  GenericButtonOffHilite[0] = LoadVObjectFromFile(DEFAULT_GENERIC_BUTTON_OFF_HI);
 
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_ON_HI);
-  GenericButtonOnHilite[0] = CreateVideoObject(&vo_desc);
+  GenericButtonOnHilite[0] = LoadVObjectFromFile(DEFAULT_GENERIC_BUTTON_ON_HI);
 
   Pix = 0;
   if (!GetETRLEPixelValue(&Pix, GenericButtonOffNormal[0], 8, 0, 0)) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "Couldn't get generic button's background pixel value");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "Couldn't get generic button's background pixel value");
     return (FALSE);
   }
 
@@ -743,27 +694,23 @@ int16_t FindFreeIconSlot(void) {
 //
 //	Loads an image file for use as a button icon.
 //
-int16_t LoadGenericButtonIcon(char* filename) {
+int16_t LoadGenericButtonIcon(char *filename) {
   int16_t ImgSlot;
-  VOBJECT_DESC vo_desc;
 
   AssertMsg(filename != BUTTON_NO_FILENAME,
             "Attempting to LoadGenericButtonIcon() with null filename.");
 
   // Get slot for icon image
   if ((ImgSlot = FindFreeIconSlot()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "LoadGenericButtonIcon: Out of generic button icon slots");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "LoadGenericButtonIcon: Out of generic button icon slots");
     return (-1);
   }
 
   // Load the icon
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, filename);
-
-  if ((GenericButtonIcons[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("LoadGenericButtonIcon: Couldn't create VOBJECT for %s", filename));
+  if ((GenericButtonIcons[ImgSlot] = LoadVObjectFromFile(filename)) == NULL) {
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("LoadGenericButtonIcon: Couldn't create VOBJECT for %s", filename));
     return (-1);
   }
 
@@ -853,44 +800,37 @@ BOOLEAN UnloadGenericButtonImage(int16_t GenImg) {
 //
 //	Loads the image files required for displaying a generic button.
 //
-int16_t LoadGenericButtonImages(char* GrayName, char* OffNormName, char* OffHiliteName, char* OnNormName,
-                              char* OnHiliteName, char* BkGrndName, int16_t Index, int16_t OffsetX,
-                              int16_t OffsetY) {
+int16_t LoadGenericButtonImages(char *GrayName, char *OffNormName, char *OffHiliteName,
+                                char *OnNormName, char *OnHiliteName, char *BkGrndName,
+                                int16_t Index, int16_t OffsetX, int16_t OffsetY) {
   int16_t ImgSlot;
-  VOBJECT_DESC vo_desc;
   uint8_t Pix;
 
   // if the images for Off-Normal and On-Normal don't exist, abort call
   if ((OffNormName == BUTTON_NO_FILENAME) || (OnNormName == BUTTON_NO_FILENAME)) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "LoadGenericButtonImages: No filenames for OFFNORMAL and/or ONNORMAL images");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "LoadGenericButtonImages: No filenames for OFFNORMAL and/or ONNORMAL images");
     return (-1);
   }
 
   // Get a slot number for these images
   if ((ImgSlot = FindFreeGenericSlot()) == -1) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "LoadGenericButtonImages: Out of generic button slots");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "LoadGenericButtonImages: Out of generic button slots");
     return (-1);
   }
 
   // Load the image for the Off-Normal button state (required)
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, OffNormName);
-
-  if ((GenericButtonOffNormal[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OffNormName));
+  if ((GenericButtonOffNormal[ImgSlot] = LoadVObjectFromFile(OffNormName)) == NULL) {
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OffNormName));
     return (-1);
   }
 
   // Load the image for the On-Normal button state (required)
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  strcpy(vo_desc.ImageFile, OnNormName);
-
-  if ((GenericButtonOnNormal[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OnNormName));
+  if ((GenericButtonOnNormal[ImgSlot] = LoadVObjectFromFile(OnNormName)) == NULL) {
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OnNormName));
     return (-1);
   }
 
@@ -898,48 +838,36 @@ int16_t LoadGenericButtonImages(char* GrayName, char* OffNormName, char* OffHili
   // if so, load it.
 
   if (GrayName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    strcpy(vo_desc.ImageFile, GrayName);
-
-    if ((GenericButtonGrayed[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
-      DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-                 String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", GrayName));
+    if ((GenericButtonGrayed[ImgSlot] = LoadVObjectFromFile(GrayName)) == NULL) {
+      DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+               String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", GrayName));
       return (-1);
     }
   } else
     GenericButtonGrayed[ImgSlot] = NULL;
 
   if (OffHiliteName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    strcpy(vo_desc.ImageFile, OffHiliteName);
-
-    if ((GenericButtonOffHilite[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
-      DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-                 String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OffHiliteName));
+    if ((GenericButtonOffHilite[ImgSlot] = LoadVObjectFromFile(OffHiliteName)) == NULL) {
+      DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+               String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OffHiliteName));
       return (-1);
     }
   } else
     GenericButtonOffHilite[ImgSlot] = NULL;
 
   if (OnHiliteName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    strcpy(vo_desc.ImageFile, OnHiliteName);
-
-    if ((GenericButtonOnHilite[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
-      DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-                 String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OnHiliteName));
+    if ((GenericButtonOnHilite[ImgSlot] = LoadVObjectFromFile(OnHiliteName)) == NULL) {
+      DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+               String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", OnHiliteName));
       return (-1);
     }
   } else
     GenericButtonOnHilite[ImgSlot] = NULL;
 
   if (BkGrndName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    strcpy(vo_desc.ImageFile, BkGrndName);
-
-    if ((GenericButtonBackground[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
-      DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-                 String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", BkGrndName));
+    if ((GenericButtonBackground[ImgSlot] = LoadVObjectFromFile(BkGrndName)) == NULL) {
+      DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+               String("LoadGenericButtonImages: Couldn't create VOBJECT for %s", BkGrndName));
       return (-1);
     }
   } else
@@ -951,8 +879,8 @@ int16_t LoadGenericButtonImages(char* GrayName, char* OffNormName, char* OffHili
   // Off-Normal image.
   Pix = 0;
   if (!GetETRLEPixelValue(&Pix, GenericButtonOffNormal[ImgSlot], 8, 0, 0)) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "LoadGenericButtonImages: Couldn't get generic button's background pixel value");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "LoadGenericButtonImages: Couldn't get generic button's background pixel value");
     return (-1);
   }
 
@@ -1040,16 +968,14 @@ BOOLEAN InitButtonSystem(void) {
   gfIgnoreShutdownAssertions = FALSE;
 #endif
 
-  RegisterDebugTopic(TOPIC_BUTTON_HANDLER, "Button System & Button Image Manager");
-
   // Clear out button list
   for (x = 0; x < MAX_BUTTONS; x++) {
     ButtonList[x] = NULL;
   }
 
   // Initialize the button image manager sub-system
-  if (InitializeButtonImageManager(-1, -1, -1) == FALSE) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "Failed button image manager init\n");
+  if (InitializeButtonImageManager() == FALSE) {
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "Failed button image manager init\n");
     return (FALSE);
   }
 
@@ -1074,8 +1000,6 @@ void ShutdownButtonSystem(void) {
   }
   // Shutdown the button image manager sub-system
   ShutdownButtonImageManager();
-
-  UnRegisterDebugTopic(TOPIC_BUTTON_HANDLER, "Button System & Button Image Manager");
 }
 
 void RemoveButtonsMarkedForDeletion() {
@@ -1309,9 +1233,9 @@ int32_t SetButtonIcon(int32_t iButtonID, int16_t Icon, int16_t IconIndex) {
 //
 //	Creates an Iconic type button.
 //
-int32_t CreateIconButton(int16_t Icon, int16_t IconIndex, int16_t GenImg, int16_t xloc, int16_t yloc, int16_t w,
-                       int16_t h, int32_t Type, int16_t Priority, GUI_CALLBACK MoveCallback,
-                       GUI_CALLBACK ClickCallback) {
+int32_t CreateIconButton(int16_t Icon, int16_t IconIndex, int16_t GenImg, int16_t xloc,
+                         int16_t yloc, int16_t w, int16_t h, int32_t Type, int16_t Priority,
+                         GUI_CALLBACK MoveCallback, GUI_CALLBACK ClickCallback) {
   GUI_BUTTON *b;
   int32_t ButtonNum;
   int32_t BType, x;
@@ -1334,14 +1258,14 @@ int32_t CreateIconButton(int16_t Icon, int16_t IconIndex, int16_t GenImg, int16_
 
   // Get a button number (slot) for this new button
   if ((ButtonNum = GetNextButtonNumber()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "CreateIconButton: No more button slots");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "CreateIconButton: No more button slots");
     return (-1);
   }
 
   // Allocate memory for the GUI_BUTTON structure
   if ((b = (GUI_BUTTON *)MemAlloc(sizeof(GUI_BUTTON))) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "CreateIconButton: Can't alloc mem for button struct");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "CreateIconButton: Can't alloc mem for button struct");
     return (-1);
   }
 
@@ -1401,8 +1325,8 @@ int32_t CreateIconButton(int16_t Icon, int16_t IconIndex, int16_t GenImg, int16_
     b->MoveCallback = BUTTON_NO_CALLBACK;
 
   // Define a mouse region for this button
-  MSYS_DefineRegion(&b->Area, (uint16_t)xloc, (uint16_t)yloc, (uint16_t)(xloc + w), (uint16_t)(yloc + h),
-                    (int8_t)Priority, MSYS_STARTING_CURSORVAL,
+  MSYS_DefineRegion(&b->Area, (uint16_t)xloc, (uint16_t)yloc, (uint16_t)(xloc + w),
+                    (uint16_t)(yloc + h), (int8_t)Priority, MSYS_STARTING_CURSORVAL,
                     (MOUSE_CALLBACK)QuickButtonCallbackMMove,
                     (MOUSE_CALLBACK)QuickButtonCallbackMButn);
 
@@ -1427,9 +1351,10 @@ int32_t CreateIconButton(int16_t Icon, int16_t IconIndex, int16_t GenImg, int16_
 }
 
 // Creates a generic button with text on it.
-int32_t CreateTextButton(wchar_t* string, uint32_t uiFont, int16_t sForeColor, int16_t sShadowColor,
-                       int16_t GenImg, int16_t xloc, int16_t yloc, int16_t w, int16_t h, int32_t Type,
-                       int16_t Priority, GUI_CALLBACK MoveCallback, GUI_CALLBACK ClickCallback) {
+int32_t CreateTextButton(wchar_t *string, uint32_t uiFont, int16_t sForeColor, int16_t sShadowColor,
+                         int16_t GenImg, int16_t xloc, int16_t yloc, int16_t w, int16_t h,
+                         int32_t Type, int16_t Priority, GUI_CALLBACK MoveCallback,
+                         GUI_CALLBACK ClickCallback) {
   GUI_BUTTON *b;
   int32_t ButtonNum;
   int32_t BType, x;
@@ -1452,21 +1377,21 @@ int32_t CreateTextButton(wchar_t* string, uint32_t uiFont, int16_t sForeColor, i
 
   // Get a button number for this new button
   if ((ButtonNum = GetNextButtonNumber()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "CreateTextButton: No more button slots");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "CreateTextButton: No more button slots");
     return (-1);
   }
 
   // Allocate memory for a GUI_BUTTON structure
   if ((b = (GUI_BUTTON *)MemAlloc(sizeof(GUI_BUTTON))) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "CreateTextButton: Can't alloc mem for button struct");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "CreateTextButton: Can't alloc mem for button struct");
     return (-1);
   }
 
   // Allocate memory for the button's text string...
   b->string = NULL;
   if (string && wcslen(string)) {
-    b->string = (wchar_t*)MemAlloc((wcslen(string) + 1) * sizeof(wchar_t));
+    b->string = (wchar_t *)MemAlloc((wcslen(string) + 1) * sizeof(wchar_t));
     AssertMsg(b->string, "Out of memory error:  Couldn't allocate string in CreateTextButton.");
     wcscpy(b->string, string);
   }
@@ -1525,8 +1450,8 @@ int32_t CreateTextButton(wchar_t* string, uint32_t uiFont, int16_t sForeColor, i
     b->MoveCallback = BUTTON_NO_CALLBACK;
 
   // Define a struct MOUSE_REGION for this button
-  MSYS_DefineRegion(&b->Area, (uint16_t)xloc, (uint16_t)yloc, (uint16_t)(xloc + w), (uint16_t)(yloc + h),
-                    (int8_t)Priority, MSYS_STARTING_CURSORVAL,
+  MSYS_DefineRegion(&b->Area, (uint16_t)xloc, (uint16_t)yloc, (uint16_t)(xloc + w),
+                    (uint16_t)(yloc + h), (int8_t)Priority, MSYS_STARTING_CURSORVAL,
                     (MOUSE_CALLBACK)QuickButtonCallbackMMove,
                     (MOUSE_CALLBACK)QuickButtonCallbackMButn);
 
@@ -1557,7 +1482,7 @@ int32_t CreateTextButton(wchar_t* string, uint32_t uiFont, int16_t sForeColor, i
 //	them.
 //
 int32_t CreateHotSpot(int16_t xloc, int16_t yloc, int16_t Width, int16_t Height, int16_t Priority,
-                    GUI_CALLBACK MoveCallback, GUI_CALLBACK ClickCallback) {
+                      GUI_CALLBACK MoveCallback, GUI_CALLBACK ClickCallback) {
   GUI_BUTTON *b;
   int32_t ButtonNum;
   int16_t BType, x;
@@ -1574,14 +1499,13 @@ int32_t CreateHotSpot(int16_t xloc, int16_t yloc, int16_t Width, int16_t Height,
 
   // Get a button number for this hotspot
   if ((ButtonNum = GetNextButtonNumber()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "CreateHotSpot: No more button slots");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "CreateHotSpot: No more button slots");
     return (-1);
   }
 
   // Allocate memory for the GUI_BUTTON structure
   if ((b = (GUI_BUTTON *)MemAlloc(sizeof(GUI_BUTTON))) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "CreateHotSpot: Can't alloc mem for button struct");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "CreateHotSpot: Can't alloc mem for button struct");
     return (-1);
   }
 
@@ -1654,8 +1578,8 @@ BOOLEAN SetButtonCursor(int32_t iBtnId, uint16_t crsr) {
 //	Creates a QuickButton. QuickButtons only have graphics associated with
 //	them. They cannot be re-sized, nor can the graphic be changed.
 //
-int32_t QuickCreateButton(uint32_t Image, int16_t xloc, int16_t yloc, int32_t Type, int16_t Priority,
-                        GUI_CALLBACK MoveCallback, GUI_CALLBACK ClickCallback) {
+int32_t QuickCreateButton(uint32_t Image, int16_t xloc, int16_t yloc, int32_t Type,
+                          int16_t Priority, GUI_CALLBACK MoveCallback, GUI_CALLBACK ClickCallback) {
   GUI_BUTTON *b;
   int32_t ButtonNum;
   int32_t BType, x;
@@ -1674,20 +1598,20 @@ int32_t QuickCreateButton(uint32_t Image, int16_t xloc, int16_t yloc, int32_t Ty
 
   // Is there a QuickButton image in the given image slot?
   if (ButtonPictures[Image].vobj == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "QuickCreateButton: Invalid button image number");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "QuickCreateButton: Invalid button image number");
     return (-1);
   }
 
   // Get a new button number
   if ((ButtonNum = GetNextButtonNumber()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "QuickCreateButton: No more button slots");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "QuickCreateButton: No more button slots");
     return (-1);
   }
 
   // Allocate memory for a GUI_BUTTON structure
   if ((b = (GUI_BUTTON *)MemAlloc(sizeof(GUI_BUTTON))) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "QuickCreateButton: Can't alloc mem for button struct");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "QuickCreateButton: Can't alloc mem for button struct");
     return (-1);
   }
 
@@ -1785,38 +1709,40 @@ int32_t QuickCreateButton(uint32_t Image, int16_t xloc, int16_t yloc, int32_t Ty
 // button.  It also uses the default move callback which emulates Win95.  Finally, it sets the
 // priority to normal.  The function you choose also determines the type of button (toggle,
 // notoggle, or newtoggle)
-int32_t CreateEasyNoToggleButton(int32_t x, int32_t y, char* filename, GUI_CALLBACK ClickCallback) {
+int32_t CreateEasyNoToggleButton(int32_t x, int32_t y, char *filename, GUI_CALLBACK ClickCallback) {
   return CreateSimpleButton(x, y, filename, BUTTON_NO_TOGGLE, MSYS_PRIORITY_NORMAL, ClickCallback);
 }
 
-int32_t CreateEasyToggleButton(int32_t x, int32_t y, char* filename, GUI_CALLBACK ClickCallback) {
+int32_t CreateEasyToggleButton(int32_t x, int32_t y, char *filename, GUI_CALLBACK ClickCallback) {
   return CreateSimpleButton(x, y, filename, BUTTON_TOGGLE, MSYS_PRIORITY_NORMAL, ClickCallback);
 }
 
-int32_t CreateEasyNewToggleButton(int32_t x, int32_t y, char* filename, GUI_CALLBACK ClickCallback) {
+int32_t CreateEasyNewToggleButton(int32_t x, int32_t y, char *filename,
+                                  GUI_CALLBACK ClickCallback) {
   return CreateSimpleButton(x, y, filename, BUTTON_NEWTOGGLE, MSYS_PRIORITY_NORMAL, ClickCallback);
 }
 
 // Same as above, but accepts specify toggle type
-int32_t CreateEasyButton(int32_t x, int32_t y, char* filename, int32_t Type, GUI_CALLBACK ClickCallback) {
+int32_t CreateEasyButton(int32_t x, int32_t y, char *filename, int32_t Type,
+                         GUI_CALLBACK ClickCallback) {
   return CreateSimpleButton(x, y, filename, Type, MSYS_PRIORITY_NORMAL, ClickCallback);
 }
 
 // Same as above, but accepts priority specification.
-int32_t CreateSimpleButton(int32_t x, int32_t y, char* filename, int32_t Type, int16_t Priority,
-                         GUI_CALLBACK ClickCallback) {
+int32_t CreateSimpleButton(int32_t x, int32_t y, char *filename, int32_t Type, int16_t Priority,
+                           GUI_CALLBACK ClickCallback) {
   int32_t ButPic, ButNum;
 
   if (!filename || !strlen(filename))
     AssertMsg(0, "Attempting to CreateSimpleButton with null filename.");
 
   if ((ButPic = LoadButtonImage(filename, -1, 1, 2, 3, 4)) == -1) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "Can't load button image");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "Can't load button image");
     return (-1);
   }
 
   ButNum = (int16_t)QuickCreateButton(ButPic, (int16_t)x, (int16_t)y, Type, Priority,
-                                    DEFAULT_MOVE_CALLBACK, ClickCallback);
+                                      DEFAULT_MOVE_CALLBACK, ClickCallback);
 
   AssertMsg(ButNum != -1, "Failed to CreateSimpleButton.");
 
@@ -1827,11 +1753,11 @@ int32_t CreateSimpleButton(int32_t x, int32_t y, char* filename, int32_t Type, i
   return (ButNum);
 }
 
-int32_t CreateIconAndTextButton(int32_t Image, wchar_t* string, uint32_t uiFont, int16_t sForeColor,
-                              int16_t sShadowColor, int16_t sForeColorDown, int16_t sShadowColorDown,
-                              int8_t bJustification, int16_t xloc, int16_t yloc, int32_t Type,
-                              int16_t Priority, GUI_CALLBACK MoveCallback,
-                              GUI_CALLBACK ClickCallback) {
+int32_t CreateIconAndTextButton(int32_t Image, wchar_t *string, uint32_t uiFont, int16_t sForeColor,
+                                int16_t sShadowColor, int16_t sForeColorDown,
+                                int16_t sShadowColorDown, int8_t bJustification, int16_t xloc,
+                                int16_t yloc, int32_t Type, int16_t Priority,
+                                GUI_CALLBACK MoveCallback, GUI_CALLBACK ClickCallback) {
   GUI_BUTTON *b;
   int32_t iButtonID;
   int32_t BType, x;
@@ -1851,20 +1777,20 @@ int32_t CreateIconAndTextButton(int32_t Image, wchar_t* string, uint32_t uiFont,
 
   // Is there a QuickButton image in the given image slot?
   if (ButtonPictures[Image].vobj == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "QuickCreateButton: Invalid button image number");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "QuickCreateButton: Invalid button image number");
     return (-1);
   }
 
   // Get a new button number
   if ((iButtonID = GetNextButtonNumber()) == BUTTON_NO_SLOT) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "QuickCreateButton: No more button slots");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "QuickCreateButton: No more button slots");
     return (-1);
   }
 
   // Allocate memory for a GUI_BUTTON structure
   if ((b = (GUI_BUTTON *)MemAlloc(sizeof(GUI_BUTTON))) == NULL) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0,
-               "QuickCreateButton: Can't alloc mem for button struct");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR,
+             "QuickCreateButton: Can't alloc mem for button struct");
     return (-1);
   }
 
@@ -1883,7 +1809,7 @@ int32_t CreateIconAndTextButton(int32_t Image, wchar_t* string, uint32_t uiFont,
   // Allocate memory for the button's text string...
   b->string = NULL;
   if (string) {
-    b->string = (wchar_t*)MemAlloc((wcslen(string) + 1) * sizeof(wchar_t));
+    b->string = (wchar_t *)MemAlloc((wcslen(string) + 1) * sizeof(wchar_t));
     AssertMsg(b->string,
               "Out of memory error:  Couldn't allocate string in CreateIconAndTextButton.");
     wcscpy(b->string, string);
@@ -1950,7 +1876,7 @@ int32_t CreateIconAndTextButton(int32_t Image, wchar_t* string, uint32_t uiFont,
 }
 
 // New functions
-void SpecifyButtonText(int32_t iButtonID, wchar_t* string) {
+void SpecifyButtonText(int32_t iButtonID, wchar_t *string) {
   GUI_BUTTON *b;
 
   Assert(iButtonID >= 0);
@@ -1964,7 +1890,7 @@ void SpecifyButtonText(int32_t iButtonID, wchar_t* string) {
 
   if (string && wcslen(string)) {
     // allocate memory for the new string
-    b->string = (wchar_t*)MemAlloc((wcslen(string) + 1) * sizeof(wchar_t));
+    b->string = (wchar_t *)MemAlloc((wcslen(string) + 1) * sizeof(wchar_t));
     Assert(b->string);
     // copy the string to the button
     wcscpy(b->string, string);
@@ -2003,7 +1929,8 @@ void SpecifyButtonUpTextColors(int32_t iButtonID, int16_t sForeColor, int16_t sS
   b->uiFlags |= BUTTON_DIRTY;
 }
 
-void SpecifyButtonDownTextColors(int32_t iButtonID, int16_t sForeColorDown, int16_t sShadowColorDown) {
+void SpecifyButtonDownTextColors(int32_t iButtonID, int16_t sForeColorDown,
+                                 int16_t sShadowColorDown) {
   GUI_BUTTON *b;
   Assert(iButtonID >= 0);
   Assert(iButtonID < MAX_BUTTONS);
@@ -2039,9 +1966,10 @@ void SpecifyButtonTextJustification(int32_t iButtonID, int8_t bJustification) {
   b->uiFlags |= BUTTON_DIRTY;
 }
 
-void SpecifyFullButtonTextAttributes(int32_t iButtonID, wchar_t* string, int32_t uiFont, int16_t sForeColor,
-                                     int16_t sShadowColor, int16_t sForeColorDown,
-                                     int16_t sShadowColorDown, int8_t bJustification) {
+void SpecifyFullButtonTextAttributes(int32_t iButtonID, wchar_t *string, int32_t uiFont,
+                                     int16_t sForeColor, int16_t sShadowColor,
+                                     int16_t sForeColorDown, int16_t sShadowColorDown,
+                                     int8_t bJustification) {
   GUI_BUTTON *b;
   Assert(iButtonID >= 0);
   Assert(iButtonID < MAX_BUTTONS);
@@ -2061,7 +1989,7 @@ void SpecifyFullButtonTextAttributes(int32_t iButtonID, wchar_t* string, int32_t
   b->uiFlags |= BUTTON_DIRTY;
 }
 
-void SpecifyGeneralButtonTextAttributes(int32_t iButtonID, wchar_t* string, int32_t uiFont,
+void SpecifyGeneralButtonTextAttributes(int32_t iButtonID, wchar_t *string, int32_t uiFont,
                                         int16_t sForeColor, int16_t sShadowColor) {
   GUI_BUTTON *b;
   Assert(iButtonID >= 0);
@@ -2207,7 +2135,7 @@ void AllowDisabledButtonFastHelp(int32_t iButtonID, BOOLEAN fAllow) {
 //
 //	Set the text that will be displayed as the FastHelp
 //
-void SetButtonFastHelpText(int32_t iButton, wchar_t* Text) {
+void SetButtonFastHelpText(int32_t iButton, wchar_t *Text) {
   GUI_BUTTON *b;
   if (iButton < 0 || iButton > MAX_BUTTONS) return;
   b = ButtonList[iButton];
@@ -2682,40 +2610,39 @@ void DrawQuickButton(GUI_BUTTON *b) {
   }
 
   // Display the button image
-  BltVideoObject(ButtonDestBuffer, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc,
-                 b->YLoc, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc, b->YLoc);
 }
 
 void DrawHatchOnButton(GUI_BUTTON *b) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
-  SGPRect ClipRect;
+  struct GRect ClipRect;
   ClipRect.iLeft = b->Area.RegionTopLeftX;
   ClipRect.iRight = b->Area.RegionBottomRightX - 1;
   ClipRect.iTop = b->Area.RegionTopLeftY;
   ClipRect.iBottom = b->Area.RegionBottomRightY - 1;
-  pDestBuf = LockVideoSurface(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnLockVideoSurface(ButtonDestBuffer);
+  VSurfaceUnlock(vsFB);
 }
 
 void DrawShadeOnButton(GUI_BUTTON *b) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
-  SGPRect ClipRect;
+  struct GRect ClipRect;
   ClipRect.iLeft = b->Area.RegionTopLeftX;
   ClipRect.iRight = b->Area.RegionBottomRightX - 1;
   ClipRect.iTop = b->Area.RegionTopLeftY;
   ClipRect.iBottom = b->Area.RegionBottomRightY - 1;
-  pDestBuf = LockVideoSurface(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnLockVideoSurface(ButtonDestBuffer);
+  VSurfaceUnlock(vsFB);
 }
 
 void DrawDefaultOnButton(GUI_BUTTON *b) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
-  pDestBuf = LockVideoSurface(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   if (b->bDefaultStatus == DEFAULT_STATUS_DARKBORDER ||
       b->bDefaultStatus == DEFAULT_STATUS_WINDOWS95) {
@@ -2741,7 +2668,7 @@ void DrawDefaultOnButton(GUI_BUTTON *b) {
   if (b->bDefaultStatus == DEFAULT_STATUS_DOTTEDINTERIOR ||
       b->bDefaultStatus == DEFAULT_STATUS_WINDOWS95) {  // Draw an internal dotted rectangle.
   }
-  UnLockVideoSurface(ButtonDestBuffer);
+  VSurfaceUnlock(vsFB);
 }
 
 void DrawCheckBoxButtonOn(int32_t iButtonID) {
@@ -2821,15 +2748,14 @@ void DrawCheckBoxButton(GUI_BUTTON *b) {
   }
 
   // Display the button image
-  BltVideoObject(ButtonDestBuffer, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc,
-                 b->YLoc, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc, b->YLoc);
 }
 
 void DrawIconOnButton(GUI_BUTTON *b) {
   int32_t xp, yp, width, height, IconX, IconY;
   int32_t IconW, IconH;
-  SGPRect NewClip, OldClip;
-  ETRLEObject *pTrav;
+  struct GRect NewClip, OldClip;
+  struct Subimage *pTrav;
   struct VObject *hvObject;
 
   // If there's an actual icon on this button, try to show it.
@@ -2877,13 +2803,13 @@ void DrawIconOnButton(GUI_BUTTON *b) {
 
     // Get the width and height of the icon itself
     if (b->uiFlags & BUTTON_GENERIC)
-      pTrav = &(GenericButtonIcons[b->iIconID]->pETRLEObject[b->usIconIndex]);
+      pTrav = &(GenericButtonIcons[b->iIconID]->subimages[b->usIconIndex]);
     else {
       GetVideoObject(&hvObject, b->iIconID);
-      pTrav = &(hvObject->pETRLEObject[b->usIconIndex]);
+      pTrav = &(hvObject->subimages[b->usIconIndex]);
     }
-    IconH = (uint32_t)(pTrav->usHeight + pTrav->sOffsetY);
-    IconW = (uint32_t)(pTrav->usWidth + pTrav->sOffsetX);
+    IconH = (uint32_t)(pTrav->height + pTrav->y_offset);
+    IconW = (uint32_t)(pTrav->width + pTrav->x_offset);
 
     // Compute coordinates for centering the icon on the button or
     // use the offset system.
@@ -2907,11 +2833,9 @@ void DrawIconOnButton(GUI_BUTTON *b) {
     SetClippingRect(&NewClip);
     // Blit the icon
     if (b->uiFlags & BUTTON_GENERIC)
-      BltVideoObject(ButtonDestBuffer, GenericButtonIcons[b->iIconID], b->usIconIndex, (int16_t)xp,
-                     (int16_t)yp, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, GenericButtonIcons[b->iIconID], b->usIconIndex, (int16_t)xp, (int16_t)yp);
     else
-      BltVideoObject(ButtonDestBuffer, hvObject, b->usIconIndex, (int16_t)xp, (int16_t)yp,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hvObject, b->usIconIndex, (int16_t)xp, (int16_t)yp);
     // Restore previous clip region
     SetClippingRect(&OldClip);
   }
@@ -2920,7 +2844,7 @@ void DrawIconOnButton(GUI_BUTTON *b) {
 // If a button has text attached to it, then it'll draw it last.
 void DrawTextOnButton(GUI_BUTTON *b) {
   int32_t xp, yp, width, height, TextX, TextY;
-  SGPRect NewClip, OldClip;
+  struct GRect NewClip, OldClip;
   int16_t sForeColor;
 
   // If this button actually has a string to print
@@ -2967,8 +2891,7 @@ void DrawTextOnButton(GUI_BUTTON *b) {
     if ((NewClip.iRight <= NewClip.iLeft) || (NewClip.iBottom <= NewClip.iTop)) return;
 
     // Set the font printing settings to the buttons viewable area
-    SetFontDestBuffer(ButtonDestBuffer, NewClip.iLeft, NewClip.iTop, NewClip.iRight,
-                      NewClip.iBottom, FALSE);
+    SetFontDest(vsFB, NewClip.iLeft, NewClip.iTop, NewClip.iRight, NewClip.iBottom, FALSE);
 
     // Compute the coordinates to center the text
     if (b->bTextYOffset == -1)
@@ -3072,6 +2995,94 @@ void DrawTextOnButton(GUI_BUTTON *b) {
   }
 }
 
+static BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
+                                         int32_t iDestX2, int32_t iDestY2,
+                                         struct VObject *BkgrndImg, uint16_t Index, int16_t Ox,
+                                         int16_t Oy) {
+  int16_t xc, yc, hblits, wblits, aw, pw, ah, ph, w, h, xo, yo;
+  struct Subimage *pTrav;
+  struct GRect NewClip, OldClip;
+
+  pTrav = &(BkgrndImg->subimages[Index]);
+  ph = (int16_t)(pTrav->height + pTrav->y_offset);
+  pw = (int16_t)(pTrav->width + pTrav->x_offset);
+
+  ah = (int16_t)(iDestY2 - iDestY1);
+  aw = (int16_t)(iDestX2 - iDestX1);
+
+  Ox %= pw;
+  Oy %= ph;
+
+  if (Ox > 0) Ox -= pw;
+  xo = (-Ox) % pw;
+
+  if (Oy > 0) Oy -= ph;
+  yo = (-Oy) % ph;
+
+  if (Ox < 0)
+    xo = (-Ox) % pw;
+  else {
+    xo = pw - (Ox % pw);
+    Ox -= pw;
+  }
+
+  if (Oy < 0)
+    yo = (-Oy) % ph;
+  else {
+    yo = ph - (Oy % pw);
+    Oy -= ph;
+  }
+
+  hblits = ((ah + yo) / ph) + (((ah + yo) % ph) ? 1 : 0);
+  wblits = ((aw + xo) / pw) + (((aw + xo) % pw) ? 1 : 0);
+
+  if ((hblits == 0) || (wblits == 0)) return (FALSE);
+
+  //
+  // Clip fill region coords
+  //
+
+  GetClippingRect(&OldClip);
+
+  NewClip.iLeft = iDestX1;
+  NewClip.iTop = iDestY1;
+  NewClip.iRight = iDestX2;
+  NewClip.iBottom = iDestY2;
+
+  if (NewClip.iLeft < OldClip.iLeft) NewClip.iLeft = OldClip.iLeft;
+
+  if (NewClip.iLeft > OldClip.iRight) return (FALSE);
+
+  if (NewClip.iRight > OldClip.iRight) NewClip.iRight = OldClip.iRight;
+
+  if (NewClip.iRight < OldClip.iLeft) return (FALSE);
+
+  if (NewClip.iTop < OldClip.iTop) NewClip.iTop = OldClip.iTop;
+
+  if (NewClip.iTop > OldClip.iBottom) return (FALSE);
+
+  if (NewClip.iBottom > OldClip.iBottom) NewClip.iBottom = OldClip.iBottom;
+
+  if (NewClip.iBottom < OldClip.iTop) return (FALSE);
+
+  if ((NewClip.iRight <= NewClip.iLeft) || (NewClip.iBottom <= NewClip.iTop)) return (FALSE);
+
+  SetClippingRect(&NewClip);
+
+  yc = (int16_t)iDestY1;
+  for (h = 0; h < hblits; h++) {
+    xc = (int16_t)iDestX1;
+    for (w = 0; w < wblits; w++) {
+      BltVObject(dest, BkgrndImg, Index, xc + Ox, yc + Oy);
+      xc += pw;
+    }
+    yc += ph;
+  }
+
+  SetClippingRect(&OldClip);
+  return (TRUE);
+}
+
 //=============================================================================
 //	DrawGenericButton
 //
@@ -3085,7 +3096,7 @@ void DrawGenericButton(GUI_BUTTON *b) {
   struct VObject *BPic;
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
-  SGPRect ClipRect;
+  struct GRect ClipRect;
 
   // Select the graphics to use depending on the current state of the button
   if (b->uiFlags & BUTTON_ENABLED) {
@@ -3138,9 +3149,9 @@ void DrawGenericButton(GUI_BUTTON *b) {
   cy = (b->YLoc + ((NumChunksHigh - 1) * iBorderHeight) + hremain);
 
   // Fill the button's area with the button's background color
-  ColorFillVideoSurfaceArea(ButtonDestBuffer, b->Area.RegionTopLeftX, b->Area.RegionTopLeftY,
-                            b->Area.RegionBottomRightX, b->Area.RegionBottomRightY,
-                            GenericButtonFillColors[b->ImageNum]);
+  VSurfaceColorFill(vsFB, b->Area.RegionTopLeftX, b->Area.RegionTopLeftY,
+                    b->Area.RegionBottomRightX, b->Area.RegionBottomRightY,
+                    GenericButtonFillColors[b->ImageNum]);
 
   // If there is a background image, fill the button's area with it
   if (GenericButtonBackground[b->ImageNum] != NULL) {
@@ -3150,15 +3161,15 @@ void DrawGenericButton(GUI_BUTTON *b) {
     if (b->uiFlags & BUTTON_CLICKED_ON) ox = oy = 1;
 
     // Fill the area with the image, tilling it if need be.
-    ImageFillVideoSurfaceArea(ButtonDestBuffer, b->Area.RegionTopLeftX + ox,
-                              b->Area.RegionTopLeftY + oy, b->Area.RegionBottomRightX,
-                              b->Area.RegionBottomRightY, GenericButtonBackground[b->ImageNum],
+    ImageFillVideoSurfaceArea(vsFB, b->Area.RegionTopLeftX + ox, b->Area.RegionTopLeftY + oy,
+                              b->Area.RegionBottomRightX, b->Area.RegionBottomRightY,
+                              GenericButtonBackground[b->ImageNum],
                               GenericButtonBackgroundIndex[b->ImageNum],
                               GenericButtonOffsetX[b->ImageNum], GenericButtonOffsetY[b->ImageNum]);
   }
 
   // Lock the dest buffer
-  pDestBuf = LockVideoSurface(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
 
   GetClippingRect(&ClipRect);
 
@@ -3170,8 +3181,8 @@ void DrawGenericButton(GUI_BUTTON *b) {
       ImgNum = 1;
 
     Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf, uiDestPitchBYTES, BPic,
-                                            (int32_t)(b->XLoc + (q * iBorderWidth)), (int32_t)b->YLoc,
-                                            (uint16_t)ImgNum, &ClipRect);
+                                            (int32_t)(b->XLoc + (q * iBorderWidth)),
+                                            (int32_t)b->YLoc, (uint16_t)ImgNum, &ClipRect);
 
     if (q == 0)
       ImgNum = 5;
@@ -3203,14 +3214,14 @@ void DrawGenericButton(GUI_BUTTON *b) {
 
   for (q = 1; q < NumChunksHigh; q++) {
     Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf, uiDestPitchBYTES, BPic,
-                                            (int32_t)b->XLoc, (int32_t)(b->YLoc + (q * iBorderHeight)),
-                                            3, &ClipRect);
+                                            (int32_t)b->XLoc,
+                                            (int32_t)(b->YLoc + (q * iBorderHeight)), 3, &ClipRect);
     Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf, uiDestPitchBYTES, BPic, cx,
                                             (int32_t)(b->YLoc + (q * iBorderHeight)), 4, &ClipRect);
   }
 
   // Unlock buffer
-  UnLockVideoSurface(ButtonDestBuffer);
+  VSurfaceUnlock(vsFB);
 }
 
 //=======================================================================================================
@@ -3248,8 +3259,8 @@ typedef struct _CreateDlgInfo {
   int32_t iTextAreaHeight;
 
   struct VObject *hBackImg;  // Background pic for dialog box (if any)
-  int32_t iBackImgIndex;       // Sub-image index to use for image
-  int32_t iBackOffsetX;        // Offset on dialog box where to put image
+  int32_t iBackImgIndex;     // Sub-image index to use for image
+  int32_t iBackOffsetX;      // Offset on dialog box where to put image
   int32_t iBackOffsetY;
 
   struct VObject *hIconImg;  // Icon image pic and index.
@@ -3301,19 +3312,19 @@ typedef struct _CreateDlgInfo {
 //------------------------------------------------------------------------------------------------------
 
 int32_t CreateCheckBoxButton(int16_t x, int16_t y, char *filename, int16_t Priority,
-                           GUI_CALLBACK ClickCallback) {
+                             GUI_CALLBACK ClickCallback) {
   GUI_BUTTON *b;
   int32_t ButPic, iButtonID;
   Assert(filename != NULL);
   Assert(strlen(filename));
   if ((ButPic = LoadButtonImage(filename, -1, 0, 1, 2, 3)) == -1) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "CreateCheckBoxButton: Can't load button image");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "CreateCheckBoxButton: Can't load button image");
     return (-1);
   }
   iButtonID = (int16_t)QuickCreateButton((uint32_t)ButPic, x, y, BUTTON_CHECKBOX, Priority,
-                                       MSYS_NO_CALLBACK, ClickCallback);
+                                         MSYS_NO_CALLBACK, ClickCallback);
   if (iButtonID == -1) {
-    DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "CreateCheckBoxButton: Can't create button");
+    DebugMsg(TOPIC_BUTTON_HANDLER, DBG_ERROR, "CreateCheckBoxButton: Can't create button");
     return (-1);
   }
 
@@ -3490,7 +3501,7 @@ void RemoveButtonDefaultStatus(int32_t iButtonID) {
   }
 }
 
-BOOLEAN GetButtonArea(int32_t iButtonID, SGPRect *pRect) {
+BOOLEAN GetButtonArea(int32_t iButtonID, struct GRect *pRect) {
   GUI_BUTTON *b;
 
   Assert(iButtonID >= 0);

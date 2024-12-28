@@ -63,7 +63,6 @@
 #include "TileEngine/RadarScreen.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TacticalPlacementGUI.h"
 #include "UI.h"
 #include "Utils/Cursors.h"
@@ -160,10 +159,6 @@ uint32_t MainGameScreenInit(void) {
   giCounterPeriodOverlay =
       RegisterVideoOverlay((VOVERLAY_STARTDISABLED | VOVERLAY_DIRTYBYTEXT), &VideoOverlayDesc);
 
-  // register debug topics
-  RegisterJA2DebugTopic(TOPIC_JA2, "Reg JA2 Debug");
-  // MarkNote
-
   return TRUE;
 }
 
@@ -250,9 +245,6 @@ void EnterTacticalScreen() {
   // Make sure it gets re-created....
   DirtyTopMessage();
 
-  // Set compression to normal!
-  // SetGameTimeCompressionLevel( TIME_COMPRESS_X1 );
-
   // Select current guy...
   // gfGameScreenLocateToSoldier = TRUE;
 
@@ -329,7 +321,7 @@ void InternalLeaveTacticalScreen(uint32_t uiNewScreen) {
   CheckForDisabledRegionRemove();
 
   // ATE: Record last time we were in tactical....
-  gTacticalStatus.uiTimeSinceLastInTactical = GetWorldTotalMin();
+  gTacticalStatus.uiTimeSinceLastInTactical = GetGameTimeInMin();
 
   FinishAnySkullPanelAnimations();
 }
@@ -541,7 +533,7 @@ uint32_t MainGameScreenHandle(void) {
     }
 #ifdef JA2EDITOR
     else if (gfIntendOnEnteringEditor) {
-      DebugPrint("Aborting normal game mode and entering editor mode...\n");
+      PrintToDebuggerConsole("Aborting normal game mode and entering editor mode...\n");
       SetPendingNewScreen(0xffff);  // NO_SCREEN
       return EDIT_SCREEN;
     }
@@ -610,7 +602,7 @@ uint32_t MainGameScreenHandle(void) {
 
 #ifdef JA2BETAVERSION
 
-  if (GamePaused() == TRUE) {
+  if (IsGamePaused() == TRUE) {
     SetFont(MILITARYFONT1);
     SetFontBackground(FONT_MCOLOR_BLACK);
     SetFontForeground(FONT_MCOLOR_LTGREEN);
@@ -651,7 +643,7 @@ uint32_t MainGameScreenHandle(void) {
 
   if (gfScrollPending) {
     AllocateVideoOverlaysArea();
-    SaveVideoOverlaysArea(FRAME_BUFFER);
+    SaveVideoOverlaysArea(vsFB);
     ExecuteVideoOverlays();
   } else {
     ExecuteVideoOverlays();

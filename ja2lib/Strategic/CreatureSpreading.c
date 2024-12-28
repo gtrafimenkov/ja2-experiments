@@ -7,7 +7,7 @@
 #include "GameSettings.h"
 #include "JAScreens.h"
 #include "MessageBoxScreen.h"
-#include "SGP/FileMan.h"
+#include "SGP/Debug.h"
 #include "SGP/HImage.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -35,6 +35,8 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
+#include "rust_fileman.h"
+#include "rust_images.h"
 
 #ifdef JA2BETAVERSION
 BOOLEAN gfClearCreatureQuest = FALSE;
@@ -248,10 +250,6 @@ void InitLairGrumm() {
   curr->next = NewDirective(SEC_H3, 1, MINE_EXIT);
 }
 
-#ifdef JA2BETAVERSION
-extern BOOLEAN gfExitViewer;
-#endif
-
 void InitCreatureQuest() {
   UNDERGROUND_SECTORINFO *curr;
   BOOLEAN fPlayMeanwhile = FALSE;
@@ -304,28 +302,28 @@ void InitCreatureQuest() {
 
   if (gMineStatus[DRASSEN_MINE].fAttackedHeadMiner ||
       gMineStatus[DRASSEN_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SectorID8To16(SEC_D13)]
-          .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
-                                // controlled
+      IsSectorEnemyControlled(SectorID8_X(SEC_D13), SectorID8_Y(SEC_D13))) {
+    // If head miner was attacked, ore will/has run out, or enemy
+    // controlled
     fMineInfectible[0] = FALSE;
   }
   if (gMineStatus[CAMBRIA_MINE].fAttackedHeadMiner ||
       gMineStatus[CAMBRIA_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SectorID8To16(SEC_H8)]
-          .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
-                                // controlled
+      IsSectorEnemyControlled(SectorID8_X(SEC_H8), SectorID8_Y(SEC_H8))) {
+    // If head miner was attacked, ore will/has run out, or enemy
+    // controlled
     fMineInfectible[1] = FALSE;
   }
   if (gMineStatus[ALMA_MINE].fAttackedHeadMiner || gMineStatus[ALMA_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SectorID8To16(SEC_I14)]
-          .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
-                                // controlled
+      IsSectorEnemyControlled(SectorID8_X(SEC_I14), SectorID8_Y(SEC_I14))) {
+    // If head miner was attacked, ore will/has run out, or enemy
+    // controlled
     fMineInfectible[2] = FALSE;
   }
   if (gMineStatus[GRUMM_MINE].fAttackedHeadMiner || gMineStatus[GRUMM_MINE].uiOreRunningOutPoint ||
-      StrategicMap[SectorID8To16(SEC_H3)]
-          .fEnemyControlled) {  // If head miner was attacked, ore will/has run out, or enemy
-                                // controlled
+      IsSectorEnemyControlled(SectorID8_X(SEC_H3), SectorID8_Y(SEC_H3))) {
+    // If head miner was attacked, ore will/has run out, or enemy
+    // controlled
     fMineInfectible[3] = FALSE;
   }
 
@@ -573,8 +571,8 @@ void DecayCreatures() {  // when the queen dies, we need to kill off the creatur
                          // time.
 }
 
-void AddCreaturesToBattle(uint8_t ubNumYoungMales, uint8_t ubNumYoungFemales, uint8_t ubNumAdultMales,
-                          uint8_t ubNumAdultFemales) {
+void AddCreaturesToBattle(uint8_t ubNumYoungMales, uint8_t ubNumYoungFemales,
+                          uint8_t ubNumAdultMales, uint8_t ubNumAdultFemales) {
   int32_t iRandom;
   struct SOLDIERTYPE *pSoldier;
   MAPEDGEPOINTINFO MapEdgepointInfo;
@@ -625,7 +623,7 @@ void AddCreaturesToBattle(uint8_t ubNumYoungMales, uint8_t ubNumYoungFemales, ui
       ubNumAdultMales--;
       pSoldier = TacticalCreateCreature(AM_MONSTER);
     } else if (ubNumAdultFemales && iRandom < (int32_t)(ubNumYoungMales + ubNumYoungFemales +
-                                                      ubNumAdultMales + ubNumAdultFemales)) {
+                                                        ubNumAdultMales + ubNumAdultFemales)) {
       ubNumAdultFemales--;
       pSoldier = TacticalCreateCreature(ADULTFEMALEMONSTER);
     } else {
@@ -793,7 +791,7 @@ void CreatureAttackTown(
 
   if (gfWorldLoaded &&
       gTacticalStatus.fEnemyInSector) {  // Battle currently in progress, repost the event
-    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetWorldTotalMin() + Random(10), ubSectorID);
+    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetGameTimeInMin() + Random(10), ubSectorID);
     return;
   }
 
@@ -841,18 +839,18 @@ void CreatureAttackTown(
     } else {
       gubCreatureBattleCode = CREATURE_BATTLE_CODE_PREBATTLEINTERFACE;
     }
-  } else if (CountAllMilitiaInSector(ubSectorX, ubSectorY)) {  // we have militia in the sector
+  } else if (CountMilitiaInSector(ubSectorX, ubSectorY)) {  // we have militia in the sector
     gubCreatureBattleCode = CREATURE_BATTLE_CODE_AUTORESOLVE;
-  } else if (!StrategicMap[GetSectorID16(ubSectorX, ubSectorY)]
-                  .fEnemyControlled) {  // player controlled sector -- eat some civilians
+  } else if (!IsSectorEnemyControlled(ubSectorX, ubSectorY)) {
+    // player controlled sector -- eat some civilians
     AdjustLoyaltyForCivsEatenByMonsters(ubSectorX, ubSectorY, gubNumCreaturesAttackingTown);
-    SectorInfo[ubSectorID].ubDayOfLastCreatureAttack = (uint8_t)GetWorldDay();
+    SectorInfo[ubSectorID].ubDayOfLastCreatureAttack = (uint8_t)GetGameTimeInDays();
     return;
   } else {  // enemy controlled sectors don't get attacked.
     return;
   }
 
-  SectorInfo[ubSectorID].ubDayOfLastCreatureAttack = (uint8_t)GetWorldDay();
+  SectorInfo[ubSectorID].ubDayOfLastCreatureAttack = (uint8_t)GetGameTimeInDays();
   switch (gubCreatureBattleCode) {
     case CREATURE_BATTLE_CODE_PREBATTLEINTERFACE:
       InitPreBattleInterface(NULL, TRUE);
@@ -867,7 +865,7 @@ void CreatureAttackTown(
   }
   InterruptTime();
   PauseGame();
-  LockPauseState(2);
+  LockPause();
 }
 
 // Called by campaign init.
@@ -1101,7 +1099,7 @@ BOOLEAN PrepareCreaturesForBattle() {
     // By default, we only play creature music in the cave levels (the creature levels all
     // consistently have blue lights while human occupied mines have red lights.  We always play
     // creature music when creatures are in the level.
-    if (LColors->peBlue)
+    if (LColors->blue)
       gfUseCreatureMusic = TRUE;
     else
       gfUseCreatureMusic = FALSE;
@@ -1250,44 +1248,45 @@ void CreatureNightPlanning() {  // Check the populations of the mine exits, and 
   if (ubNumCreatures > 1 &&
       ubNumCreatures * 10 >
           (int32_t)PreRandom(100)) {  // 10% chance for each creature to decide it's time to attack.
-    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetWorldTotalMin() + 1 + PreRandom(429), SEC_H3);
+    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetGameTimeInMin() + 1 + PreRandom(429), SEC_H3);
   }
   ubNumCreatures = CreaturesInUndergroundSector(SEC_D13, 1);
   if (ubNumCreatures > 1 &&
       ubNumCreatures * 10 >
           (int32_t)PreRandom(100)) {  // 10% chance for each creature to decide it's time to attack.
-    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetWorldTotalMin() + 1 + PreRandom(429), SEC_D13);
+    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetGameTimeInMin() + 1 + PreRandom(429), SEC_D13);
   }
   ubNumCreatures = CreaturesInUndergroundSector(SEC_I14, 1);
   if (ubNumCreatures > 1 &&
       ubNumCreatures * 10 >
           (int32_t)PreRandom(100)) {  // 10% chance for each creature to decide it's time to attack.
-    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetWorldTotalMin() + 1 + PreRandom(429), SEC_I14);
+    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetGameTimeInMin() + 1 + PreRandom(429), SEC_I14);
   }
   ubNumCreatures = CreaturesInUndergroundSector(SEC_H8, 1);
   if (ubNumCreatures > 1 &&
       ubNumCreatures * 10 >
           (int32_t)PreRandom(100)) {  // 10% chance for each creature to decide it's time to attack.
-    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetWorldTotalMin() + 1 + PreRandom(429), SEC_H8);
+    AddStrategicEvent(EVENT_CREATURE_ATTACK, GetGameTimeInMin() + 1 + PreRandom(429), SEC_H8);
   }
 }
 
-void CheckConditionsForTriggeringCreatureQuest(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
+void CheckConditionsForTriggeringCreatureQuest(uint8_t sSectorX, uint8_t sSectorY,
+                                               int8_t bSectorZ) {
   uint8_t ubValidMines = 0;
   if (!gGameOptions.fSciFi) return;  // No scifi, no creatures...
   if (giLairID) return;              // Creature quest already begun
 
   // Count the number of "infectible mines" the player occupies
-  if (!StrategicMap[SectorID8To16(SEC_D13)].fEnemyControlled) {
+  if (!IsSectorEnemyControlled(SectorID8_X(SEC_D13), SectorID8_Y(SEC_D13))) {
     ubValidMines++;
   }
-  if (!StrategicMap[SectorID8To16(SEC_H8)].fEnemyControlled) {
+  if (!IsSectorEnemyControlled(SectorID8_X(SEC_H8), SectorID8_Y(SEC_H8))) {
     ubValidMines++;
   }
-  if (!StrategicMap[SectorID8To16(SEC_I14)].fEnemyControlled) {
+  if (!IsSectorEnemyControlled(SectorID8_X(SEC_I14), SectorID8_Y(SEC_I14))) {
     ubValidMines++;
   }
-  if (!StrategicMap[SectorID8To16(SEC_H3)].fEnemyControlled) {
+  if (!IsSectorEnemyControlled(SectorID8_X(SEC_H3), SectorID8_Y(SEC_H3))) {
     ubValidMines++;
   }
 
@@ -1296,27 +1295,27 @@ void CheckConditionsForTriggeringCreatureQuest(uint8_t sSectorX, uint8_t sSector
   }
 }
 
-BOOLEAN SaveCreatureDirectives(HWFILE hFile) {
+BOOLEAN SaveCreatureDirectives(FileID hFile) {
   uint32_t uiNumBytesWritten;
 
-  FileMan_Write(hFile, &giHabitatedDistance, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giHabitatedDistance, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(int32_t)) {
     return (FALSE);
   }
 
-  FileMan_Write(hFile, &giPopulationModifier, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giPopulationModifier, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(int32_t)) {
     return (FALSE);
   }
-  FileMan_Write(hFile, &giLairID, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giLairID, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(int32_t)) {
     return (FALSE);
   }
-  FileMan_Write(hFile, &gfUseCreatureMusic, 1, &uiNumBytesWritten);
+  File_Write(hFile, &gfUseCreatureMusic, 1, &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(BOOLEAN)) {
     return (FALSE);
   }
-  FileMan_Write(hFile, &giDestroyedLairID, 4, &uiNumBytesWritten);
+  File_Write(hFile, &giDestroyedLairID, 4, &uiNumBytesWritten);
   if (uiNumBytesWritten != sizeof(int32_t)) {
     return (FALSE);
   }
@@ -1324,29 +1323,29 @@ BOOLEAN SaveCreatureDirectives(HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadCreatureDirectives(HWFILE hFile, uint32_t uiSavedGameVersion) {
+BOOLEAN LoadCreatureDirectives(FileID hFile, uint32_t uiSavedGameVersion) {
   uint32_t uiNumBytesRead;
-  FileMan_Read(hFile, &giHabitatedDistance, 4, &uiNumBytesRead);
+  File_Read(hFile, &giHabitatedDistance, 4, &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(int32_t)) {
     return (FALSE);
   }
 
-  FileMan_Read(hFile, &giPopulationModifier, 4, &uiNumBytesRead);
+  File_Read(hFile, &giPopulationModifier, 4, &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(int32_t)) {
     return (FALSE);
   }
-  FileMan_Read(hFile, &giLairID, 4, &uiNumBytesRead);
+  File_Read(hFile, &giLairID, 4, &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(int32_t)) {
     return (FALSE);
   }
 
-  FileMan_Read(hFile, &gfUseCreatureMusic, 1, &uiNumBytesRead);
+  File_Read(hFile, &gfUseCreatureMusic, 1, &uiNumBytesRead);
   if (uiNumBytesRead != sizeof(BOOLEAN)) {
     return (FALSE);
   }
 
   if (uiSavedGameVersion >= 82) {
-    FileMan_Read(hFile, &giDestroyedLairID, 4, &uiNumBytesRead);
+    File_Read(hFile, &giDestroyedLairID, 4, &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(int32_t)) {
       return (FALSE);
     }
@@ -1393,7 +1392,7 @@ BOOLEAN LoadCreatureDirectives(HWFILE hFile, uint32_t uiSavedGameVersion) {
 }
 
 void ForceCreaturesToAvoidMineTemporarily(uint8_t ubMineIndex) {
-  gMineStatus[MINE_GRUMM].usValidDayCreaturesCanInfest = (uint16_t)(GetWorldDay() + 2);
+  gMineStatus[MINE_GRUMM].usValidDayCreaturesCanInfest = (uint16_t)(GetGameTimeInDays() + 2);
 }
 
 BOOLEAN PlayerGroupIsInACreatureInfestedMine() {

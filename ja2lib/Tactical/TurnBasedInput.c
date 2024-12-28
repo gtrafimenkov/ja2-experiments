@@ -20,7 +20,6 @@
 #include "MessageBoxScreen.h"
 #include "OptionsScreen.h"
 #include "SGP/CursorControl.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
@@ -129,7 +128,6 @@ extern BOOLEAN gfReportHitChances;
 BOOLEAN gfFirstCycleMovementStarted = FALSE;
 
 extern uint32_t guiVObjectSize;
-extern uint32_t guiVSurfaceSize;
 
 extern BOOLEAN gfNextShotKills;
 
@@ -1182,8 +1180,8 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
@@ -1836,7 +1834,7 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               gubCheatLevel++;
               // ATE; We're done.... start cheat mode....
               ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, pMessageStrings[MSG_CHEAT_LEVEL_TWO]);
-              SetHistoryFact(HISTORY_CHEAT_ENABLED, 0, GetWorldTotalMin(), -1, -1);
+              SetHistoryFact(HISTORY_CHEAT_ENABLED, 0, GetGameTimeInMin(), -1, -1);
             } else {
               RESET_CHEAT_LEVEL();
             }
@@ -1965,10 +1963,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               }
             }
           }
-#ifdef JA2TESTVERSION
-          else if (fCtrl)
-            AdvanceToNextDay();
-#endif
           break;
 
         case 'e':
@@ -2103,7 +2097,7 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               fGoodCheatLevelKey = TRUE;
               // ATE; We're done.... start cheat mode....
               ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, pMessageStrings[MSG_CHEAT_LEVEL_TWO]);
-              SetHistoryFact(HISTORY_CHEAT_ENABLED, 0, GetWorldTotalMin(), -1, -1);
+              SetHistoryFact(HISTORY_CHEAT_ENABLED, 0, GetGameTimeInMin(), -1, -1);
             } else {
               RESET_CHEAT_LEVEL();
             }
@@ -2338,8 +2332,8 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
 
           if (fAlt) {
             if (CHEATER_CHEAT_LEVEL()) {
-              gStrategicStatus.usPlayerKills +=
-                  NumEnemiesInAnySector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+              gStrategicStatus.usPlayerKills += NumEnemiesInAnySector(
+                  (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
               ObliterateSector();
             }
           } else if (fCtrl) {
@@ -2544,12 +2538,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"Video Scroll OFF");
 #endif
           } else if (fCtrl) {
-#ifdef SGP_VIDEO_DEBUGGING
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"VObjects:  %d", guiVObjectSize);
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"VSurfaces:  %d", guiVSurfaceSize);
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"SGPVideoDump.txt updated...");
-            PerformVideoInfoDumpIntoFile("SGPVideoDump.txt", TRUE);
-#endif
           } else
             DisplayGameSettings();
 
@@ -3445,8 +3433,8 @@ void CreatePlayerControlledMonster() {
   }
 }
 
-int8_t CheckForAndHandleHandleVehicleInteractiveClick(struct SOLDIERTYPE *pSoldier, uint16_t usMapPos,
-                                                    BOOLEAN fMovementMode) {
+int8_t CheckForAndHandleHandleVehicleInteractiveClick(struct SOLDIERTYPE *pSoldier,
+                                                      uint16_t usMapPos, BOOLEAN fMovementMode) {
   // Look for an item pool
   int16_t sActionGridNo;
   uint8_t ubDirection;

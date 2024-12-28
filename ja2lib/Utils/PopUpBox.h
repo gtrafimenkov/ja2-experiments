@@ -6,6 +6,7 @@
 #define __POPUP_BOX
 
 #include "SGP/Types.h"
+#include "rust_geometry.h"
 
 #define MAX_POPUP_BOX_COUNT 20
 #define MAX_POPUP_BOX_STRING_COUNT \
@@ -18,7 +19,7 @@
 #define POPUP_BOX_FLAG_CAN_HIGHLIGHT_SHADED_LINES 8
 
 struct popupstring {
-  wchar_t* pString;
+  wchar_t *pString;
   uint8_t ubForegroundColor;
   uint8_t ubBackgroundColor;
   uint8_t ubHighLight;
@@ -37,7 +38,7 @@ typedef struct popupstring POPUPSTRING;
 typedef POPUPSTRING *POPUPSTRINGPTR;
 
 struct popupbox {
-  SGPRect Dimensions;
+  struct GRect Dimensions;
   SGPPoint Position;
   uint32_t uiLeftMargin;
   uint32_t uiRightMargin;
@@ -45,7 +46,7 @@ struct popupbox {
   uint32_t uiTopMargin;
   uint32_t uiLineSpace;
   int32_t iBorderObjectIndex;
-  int32_t iBackGroundSurface;
+  struct Image *backgroundImage;
   uint32_t uiFlags;
   uint32_t uiBuffer;
   uint32_t uiSecondColumnMinimunOffset;
@@ -63,9 +64,11 @@ typedef PopUpBo *PopUpBoxPt;
 
 // functions
 void InitPopUpBoxList();
-BOOLEAN CreatePopUpBox(int32_t *hBoxHandle, SGPRect Dimensions, SGPPoint Position, uint32_t uiFlags);
+BOOLEAN CreatePopUpBox(int32_t *hBoxHandle, struct GRect Dimensions, SGPPoint Position,
+                       uint32_t uiFlags);
 
-void SetMargins(int32_t hBoxHandle, uint32_t uiLeft, uint32_t uiTop, uint32_t uiBottom, uint32_t uiRight);
+void SetMargins(int32_t hBoxHandle, uint32_t uiLeft, uint32_t uiTop, uint32_t uiBottom,
+                uint32_t uiRight);
 uint32_t GetTopMarginSize(int32_t hBoxHandle);
 void SetLineSpace(int32_t hBoxHandle, uint32_t uiLineSpace);
 uint32_t GetLineSpace(int32_t hBoxHandle);
@@ -73,13 +76,13 @@ void SetBoxBuffer(int32_t hBoxHandle, uint32_t uiBuffer);
 void SetBoxPosition(int32_t hBoxHandle, SGPPoint Position);
 void GetBoxPosition(int32_t hBoxHandle, SGPPoint *Position);
 uint32_t GetNumberOfLinesOfTextInBox(int32_t hBoxHandle);
-void SetBoxSize(int32_t hBoxHandle, SGPRect Dimensions);
-void GetBoxSize(int32_t hBoxHandle, SGPRect *Dimensions);
+void SetBoxSize(int32_t hBoxHandle, struct GRect Dimensions);
+void GetBoxSize(int32_t hBoxHandle, struct GRect *Dimensions);
 void SetBoxFlags(int32_t hBoxHandle, uint32_t uiFlags);
 void SetBorderType(int32_t hBoxHandle, int32_t BorderObjectIndex);
-void SetBackGroundSurface(int32_t hBoxHandle, int32_t BackGroundSurfaceIndex);
-void AddMonoString(uint32_t *hStringHandle, wchar_t* pString);
-void AddColorString(int32_t *hStringHandle, wchar_t* pString);
+void SetBackGroundSurface(int32_t hBoxHandle, struct Image *image);
+void AddMonoString(uint32_t *hStringHandle, wchar_t *pString);
+void AddColorString(int32_t *hStringHandle, wchar_t *pString);
 void SetPopUpStringFont(int32_t hStringHandle, uint32_t uiFont);
 void SetBoxFont(int32_t hBoxHandle, uint32_t uiFont);
 uint32_t GetBoxFont(int32_t hBoxHandle);
@@ -132,7 +135,7 @@ void SetBoxLineForeground(int32_t iBox, int32_t iStringValue, uint8_t ubColor);
 void HideAllBoxes(void);
 
 // add the second column monocrome string
-void AddSecondColumnMonoString(uint32_t *hStringHandle, wchar_t* pString);
+void AddSecondColumnMonoString(uint32_t *hStringHandle, wchar_t *pString);
 
 // set the 2nd column font for this box
 void SetBoxSecondColumnFont(int32_t hBoxHandle, uint32_t uiFont);

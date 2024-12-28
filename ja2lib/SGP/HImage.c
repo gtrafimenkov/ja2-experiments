@@ -9,28 +9,20 @@
 #include <string.h>
 
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
-#include "SGP/ImpTGA.h"
 #include "SGP/PCX.h"
-#include "SGP/STCI.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/WCheck.h"
 #include "StrUtils.h"
 #include "platform_strings.h"
+#include "rust_alloc.h"
+#include "rust_fileman.h"
+#include "rust_images.h"
 
 // This is the color substituted to keep a 24bpp -> 16bpp color
 // from going transparent (0x0000) -- DB
 
 #define BLACK_SUBSTITUTE 0x0001
-
-uint16_t gusAlphaMask = 0;
-uint16_t gusRedMask = 0;
-uint16_t gusGreenMask = 0;
-uint16_t gusBlueMask = 0;
-int16_t gusRedShift = 0;
-int16_t gusBlueShift = 0;
-int16_t gusGreenShift = 0;
 
 // this funky union is used for fast 16-bit pixel format conversions
 typedef union {
@@ -41,12 +33,10 @@ typedef union {
   uint32_t uiValue;
 } SplitUINT32;
 
-HIMAGE CreateImage(const char *ImageFile, uint16_t fContents) {
-  HIMAGE hImage = NULL;
+struct Image *CreateImage(const char *ImageFile, bool loadAppData) {
   SGPFILENAME Extension;
   char ExtensionSep[] = ".";
-  char* StrPtr;
-  uint32_t iFileLoader;
+  char *StrPtr;
   SGPFILENAME imageFileCopy;
 
   strcopy(imageFileCopy, ARR_SIZE(imageFileCopy), ImageFile);
@@ -57,174 +47,68 @@ HIMAGE CreateImage(const char *ImageFile, uint16_t fContents) {
 
   if (StrPtr == NULL) {
     // No extension given, use default internal loader extension
-    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2, "No extension given, using default");
+    DebugMsg(TOPIC_HIMAGE, DBG_NORMAL, "No extension given, using default");
     strcat(imageFileCopy, ".PCX");
     strcpy(Extension, ".PCX");
   } else {
     strcpy(Extension, StrPtr + 1);
   }
 
-  // Determine type from Extension
-  do {
-    iFileLoader = UNKNOWN_FILE_READER;
-
-    if (strcasecmp(Extension, "PCX") == 0) {
-      iFileLoader = PCX_FILE_READER;
-      break;
-    }
-
-    if (strcasecmp(Extension, "TGA") == 0) {
-      iFileLoader = TGA_FILE_READER;
-      break;
-    }
-
-    if (strcasecmp(Extension, "STI") == 0) {
-      iFileLoader = STCI_FILE_READER;
-      break;
-    }
-
-  } while (FALSE);
-
   // Determine if resource exists before creating image structure
-  if (!FileMan_Exists(imageFileCopy)) {
-    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2,
-               String("Resource file %s does not exist.", imageFileCopy));
+  if (!File_Exists(imageFileCopy)) {
+    DebugMsg(TOPIC_HIMAGE, DBG_NORMAL, String("Resource file %s does not exist.", imageFileCopy));
     return (NULL);
   }
 
-  // Create memory for image structure
-  hImage = (HIMAGE)MemAlloc(sizeof(image_type));
-
-  AssertMsg(hImage, "Failed to allocate memory for hImage in CreateImage");
-  // Initialize some values
-  memset(hImage, 0, sizeof(image_type));
-
-  // hImage->fFlags = 0;
-  // Set data pointers to NULL
-  // hImage->pImageData = NULL;
-  // hImage->pPalette   = NULL;
-  // hImage->pui16BPPPalette = NULL;
-
-  // Set filename and loader
-  strcpy(hImage->ImageFile, imageFileCopy);
-  hImage->iFileLoader = iFileLoader;
-
-  if (!LoadImageData(hImage, fContents)) {
-    return (NULL);
+  if (strcasecmp(Extension, "PCX") == 0) {
+    struct Image *hImage = (struct Image *)MemAlloc(sizeof(struct Image));
+    memset(hImage, 0, sizeof(struct Image));
+    if (!LoadPCXFileToImage(imageFileCopy, hImage)) {
+      DebugLogWrite("failed to load PCX image");
+      return NULL;
+    }
+    DebugLogWrite("PCX image loaded");
+    return (hImage);
+  } else if (strcasecmp(Extension, "STI") == 0) {
+    return LoadSTCIFileToImage(imageFileCopy, loadAppData);
+  } else {
+    DebugMsg(TOPIC_HIMAGE, DBG_NORMAL, "Unknown image loader was specified.");
+    return NULL;
   }
-
-  // All is fine, image is loaded and allocated, return pointer
-  return (hImage);
 }
 
-BOOLEAN DestroyImage(HIMAGE hImage) {
-  Assert(hImage != NULL);
+void DestroyImage(struct Image *image) {
+  if (!image) {
+    return;
+  }
 
-  // First delete contents
-  ReleaseImageData(hImage, IMAGE_ALLDATA);  // hImage->fFlags );
-
-  // Now free structure
-  MemFree(hImage);
-
-  return (TRUE);
+  MemFree(image->palette);
+  MemFree(image->palette16bpp);
+  MemFree(image->image_data);
+  MemFree(image->subimages);
+  MemFree(image->app_data);
+  MemFree(image);
 }
 
-BOOLEAN ReleaseImageData(HIMAGE hImage, uint16_t fContents) {
+BOOLEAN CopyImageToBuffer(struct Image *hImage, uint8_t bufferBitDepth, uint8_t *pDestBuf,
+                          uint16_t usDestWidth, uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                          struct GRect *srcRect) {
   Assert(hImage != NULL);
 
-  if ((fContents & IMAGE_PALETTE) && (hImage->fFlags & IMAGE_PALETTE)) {
-    // Destroy palette
-    if (hImage->pPalette != NULL) {
-      MemFree(hImage->pPalette);
-      hImage->pPalette = NULL;
-    }
-
-    if (hImage->pui16BPPPalette != NULL) {
-      MemFree(hImage->pui16BPPPalette);
-      hImage->pui16BPPPalette = NULL;
-    }
-
-    // Remove contents flag
-    hImage->fFlags = hImage->fFlags ^ IMAGE_PALETTE;
-  }
-
-  if ((fContents & IMAGE_BITMAPDATA) && (hImage->fFlags & IMAGE_BITMAPDATA)) {
-    // Destroy image data
-    Assert(hImage->pImageData != NULL);
-    MemFree(hImage->pImageData);
-    hImage->pImageData = NULL;
-    if (hImage->usNumberOfObjects > 0) {
-      MemFree(hImage->pETRLEObject);
-    }
-    // Remove contents flag
-    hImage->fFlags = hImage->fFlags ^ IMAGE_BITMAPDATA;
-  }
-
-  if ((fContents & IMAGE_APPDATA) && (hImage->fFlags & IMAGE_APPDATA)) {
-    // get rid of the APP DATA
-    if (hImage->pAppData != NULL) {
-      MemFree(hImage->pAppData);
-      hImage->fFlags &= (~IMAGE_APPDATA);
-    }
-  }
-
-  return (TRUE);
-}
-
-BOOLEAN LoadImageData(HIMAGE hImage, uint16_t fContents) {
-  BOOLEAN fReturnVal = FALSE;
-
-  Assert(hImage != NULL);
-
-  // Switch on file loader
-  switch (hImage->iFileLoader) {
-    case TGA_FILE_READER:
-
-      fReturnVal = LoadTGAFileToImage(hImage, fContents);
-      break;
-
-    case PCX_FILE_READER:
-
-      fReturnVal = LoadPCXFileToImage(hImage, fContents);
-      break;
-
-    case STCI_FILE_READER:
-      fReturnVal = LoadSTCIFileToImage(hImage, fContents);
-      break;
-
-    default:
-
-      DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2, "Unknown image loader was specified.");
-  }
-
-  if (!fReturnVal) {
-    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2, "Error occured while reading image data.");
-  }
-
-  return (fReturnVal);
-}
-
-BOOLEAN CopyImageToBuffer(HIMAGE hImage, uint32_t fBufferType, uint8_t *pDestBuf, uint16_t usDestWidth,
-                          uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
-  // Use blitter based on type of image
-  Assert(hImage != NULL);
-
-  if (hImage->ubBitDepth == 8 && fBufferType == BUFFER_8BPP) {
-    // Default do here
-    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_2, "Copying 8 BPP Imagery.");
+  if (hImage->bit_depth == 8 && bufferBitDepth == 8) {
+    DebugMsg(TOPIC_HIMAGE, DBG_NORMAL, "Copying 8 BPP Imagery.");
     return (
         Copy8BPPImageTo8BPPBuffer(hImage, pDestBuf, usDestWidth, usDestHeight, usX, usY, srcRect));
   }
 
-  if (hImage->ubBitDepth == 8 && fBufferType == BUFFER_16BPP) {
-    // Default do here
-    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_3, "Copying 8 BPP Imagery to 16BPP Buffer.");
+  if (hImage->bit_depth == 8 && bufferBitDepth == 16) {
+    DebugMsg(TOPIC_HIMAGE, DBG_INFO, "Copying 8 BPP Imagery to 16BPP Buffer.");
     return (
         Copy8BPPImageTo16BPPBuffer(hImage, pDestBuf, usDestWidth, usDestHeight, usX, usY, srcRect));
   }
 
-  if (hImage->ubBitDepth == 16 && fBufferType == BUFFER_16BPP) {
-    DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_3, "Automatically Copying 16 BPP Imagery.");
+  if (hImage->bit_depth == 16 && bufferBitDepth == 16) {
+    DebugMsg(TOPIC_HIMAGE, DBG_INFO, "Automatically Copying 16 BPP Imagery.");
     return (Copy16BPPImageTo16BPPBuffer(hImage, pDestBuf, usDestWidth, usDestHeight, usX, usY,
                                         srcRect));
   }
@@ -232,26 +116,39 @@ BOOLEAN CopyImageToBuffer(HIMAGE hImage, uint32_t fBufferType, uint8_t *pDestBuf
   return (FALSE);
 }
 
-BOOLEAN Copy8BPPImageTo8BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                  uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
+BOOLEAN Copy8BPPImageTo8BPPBuffer(struct Image *hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
+                                  uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                  struct GRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
   uint32_t cnt;
   uint8_t *pDest, *pSrc;
 
   // Assertions
   Assert(hImage != NULL);
-  Assert(hImage->p16BPPData != NULL);
+  Assert(hImage->image_data != NULL);
 
   // Validations
-  CHECKF(usX >= 0);
-  CHECKF(usX < usDestWidth);
-  CHECKF(usY >= 0);
-  CHECKF(usY < usDestHeight);
-  CHECKF(srcRect->iRight > srcRect->iLeft);
-  CHECKF(srcRect->iBottom > srcRect->iTop);
+  if (!(usX >= 0)) {
+    return FALSE;
+  }
+  if (!(usX < usDestWidth)) {
+    return FALSE;
+  }
+  if (!(usY >= 0)) {
+    return FALSE;
+  }
+  if (!(usY < usDestHeight)) {
+    return FALSE;
+  }
+  if (!(srcRect->iRight > srcRect->iLeft)) {
+    return FALSE;
+  }
+  if (!(srcRect->iBottom > srcRect->iTop)) {
+    return FALSE;
+  }
 
   // Determine memcopy coordinates
-  uiSrcStart = srcRect->iTop * hImage->usWidth + srcRect->iLeft;
+  uiSrcStart = srcRect->iTop * hImage->width + srcRect->iLeft;
   uiDestStart = usY * usDestWidth + usX;
   uiNumLines = (srcRect->iBottom - srcRect->iTop) + 1;
   uiLineSize = (srcRect->iRight - srcRect->iLeft) + 1;
@@ -261,12 +158,12 @@ BOOLEAN Copy8BPPImageTo8BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usD
 
   // Copy line by line
   pDest = (uint8_t *)pDestBuf + uiDestStart;
-  pSrc = hImage->p8BPPData + uiSrcStart;
+  pSrc = (uint8_t *)hImage->image_data + uiSrcStart;
 
   for (cnt = 0; cnt < uiNumLines - 1; cnt++) {
     memcpy(pDest, pSrc, uiLineSize);
     pDest += usDestWidth;
-    pSrc += hImage->usWidth;
+    pSrc += hImage->width;
   }
   // Do last line
   memcpy(pDest, pSrc, uiLineSize);
@@ -274,40 +171,57 @@ BOOLEAN Copy8BPPImageTo8BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usD
   return (TRUE);
 }
 
-BOOLEAN Copy16BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                    uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
+BOOLEAN Copy16BPPImageTo16BPPBuffer(struct Image *hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
+                                    uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                    struct GRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
   uint32_t cnt;
   uint16_t *pDest, *pSrc;
 
   Assert(hImage != NULL);
-  Assert(hImage->p16BPPData != NULL);
+  Assert(hImage->image_data != NULL);
 
   // Validations
-  CHECKF(usX >= 0);
-  CHECKF(usX < hImage->usWidth);
-  CHECKF(usY >= 0);
-  CHECKF(usY < hImage->usHeight);
-  CHECKF(srcRect->iRight > srcRect->iLeft);
-  CHECKF(srcRect->iBottom > srcRect->iTop);
+  if (!(usX >= 0)) {
+    return FALSE;
+  }
+  if (!(usX < hImage->width)) {
+    return FALSE;
+  }
+  if (!(usY >= 0)) {
+    return FALSE;
+  }
+  if (!(usY < hImage->height)) {
+    return FALSE;
+  }
+  if (!(srcRect->iRight > srcRect->iLeft)) {
+    return FALSE;
+  }
+  if (!(srcRect->iBottom > srcRect->iTop)) {
+    return FALSE;
+  }
 
   // Determine memcopy coordinates
-  uiSrcStart = srcRect->iTop * hImage->usWidth + srcRect->iLeft;
+  uiSrcStart = srcRect->iTop * hImage->width + srcRect->iLeft;
   uiDestStart = usY * usDestWidth + usX;
   uiNumLines = (srcRect->iBottom - srcRect->iTop) + 1;
   uiLineSize = (srcRect->iRight - srcRect->iLeft) + 1;
 
-  CHECKF(usDestWidth >= uiLineSize);
-  CHECKF(usDestHeight >= uiNumLines);
+  if (!(usDestWidth >= uiLineSize)) {
+    return FALSE;
+  }
+  if (!(usDestHeight >= uiNumLines)) {
+    return FALSE;
+  }
 
   // Copy line by line
   pDest = (uint16_t *)pDestBuf + uiDestStart;
-  pSrc = hImage->p16BPPData + uiSrcStart;
+  pSrc = (uint16_t *)hImage->image_data + uiSrcStart;
 
   for (cnt = 0; cnt < uiNumLines - 1; cnt++) {
     memcpy(pDest, pSrc, uiLineSize * 2);
     pDest += usDestWidth;
-    pSrc += hImage->usWidth;
+    pSrc += hImage->width;
   }
   // Do last line
   memcpy(pDest, pSrc, uiLineSize * 2);
@@ -315,46 +229,57 @@ BOOLEAN Copy16BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t u
   return (TRUE);
 }
 
-BOOLEAN Extract8BPPCompressedImageToBuffer(HIMAGE hImage, uint8_t *pDestBuf) { return (FALSE); }
-
-BOOLEAN Extract16BPPCompressedImageToBuffer(HIMAGE hImage, uint8_t *pDestBuf) { return (FALSE); }
-
-BOOLEAN Copy8BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                   uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
+BOOLEAN Copy8BPPImageTo16BPPBuffer(struct Image *hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
+                                   uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                   struct GRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
   uint32_t rows, cols;
   uint8_t *pSrc, *pSrcTemp;
   uint16_t *pDest, *pDestTemp;
-  uint16_t *p16BPPPalette;
 
-  p16BPPPalette = hImage->pui16BPPPalette;
-
-  // Assertions
-  Assert(p16BPPPalette != NULL);
+  Assert(hImage->palette16bpp != NULL);
   Assert(hImage != NULL);
 
   // Validations
-  CHECKF(hImage->p16BPPData != NULL);
-  CHECKF(usX >= 0);
-  CHECKF(usX < usDestWidth);
-  CHECKF(usY >= 0);
-  CHECKF(usY < usDestHeight);
-  CHECKF(srcRect->iRight > srcRect->iLeft);
-  CHECKF(srcRect->iBottom > srcRect->iTop);
+  if (!(hImage->image_data != NULL)) {
+    return FALSE;
+  }
+  if (!(usX >= 0)) {
+    return FALSE;
+  }
+  if (!(usX < usDestWidth)) {
+    return FALSE;
+  }
+  if (!(usY >= 0)) {
+    return FALSE;
+  }
+  if (!(usY < usDestHeight)) {
+    return FALSE;
+  }
+  if (!(srcRect->iRight > srcRect->iLeft)) {
+    return FALSE;
+  }
+  if (!(srcRect->iBottom > srcRect->iTop)) {
+    return FALSE;
+  }
 
   // Determine memcopy coordinates
-  uiSrcStart = srcRect->iTop * hImage->usWidth + srcRect->iLeft;
+  uiSrcStart = srcRect->iTop * hImage->width + srcRect->iLeft;
   uiDestStart = usY * usDestWidth + usX;
   uiNumLines = (srcRect->iBottom - srcRect->iTop);
   uiLineSize = (srcRect->iRight - srcRect->iLeft);
 
-  CHECKF(usDestWidth >= uiLineSize);
-  CHECKF(usDestHeight >= uiNumLines);
+  if (!(usDestWidth >= uiLineSize)) {
+    return FALSE;
+  }
+  if (!(usDestHeight >= uiNumLines)) {
+    return FALSE;
+  }
 
   // Convert to Pixel specification
   pDest = (uint16_t *)pDestBuf + uiDestStart;
-  pSrc = hImage->p8BPPData + uiSrcStart;
-  DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_3, String("Start Copying at %p", pDest));
+  pSrc = (uint8_t *)hImage->image_data + uiSrcStart;
+  DebugMsg(TOPIC_HIMAGE, DBG_INFO, String("Start Copying at %p", pDest));
 
   // For every entry, look up into 16BPP palette
   for (rows = 0; rows < uiNumLines - 1; rows++) {
@@ -362,16 +287,16 @@ BOOLEAN Copy8BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t us
     pSrcTemp = pSrc;
 
     for (cols = 0; cols < uiLineSize; cols++) {
-      *pDestTemp = p16BPPPalette[*pSrcTemp];
+      *pDestTemp = hImage->palette16bpp[*pSrcTemp];
       pDestTemp++;
       pSrcTemp++;
     }
 
     pDest += usDestWidth;
-    pSrc += hImage->usWidth;
+    pSrc += hImage->width;
   }
   // Do last line
-  DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_3, String("End Copying at %p", pDest));
+  DebugMsg(TOPIC_HIMAGE, DBG_INFO, String("End Copying at %p", pDest));
 
   return (TRUE);
 }
@@ -386,31 +311,19 @@ uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette) {
   p16BPPPalette = (uint16_t *)MemAlloc(sizeof(uint16_t) * 256);
 
   for (cnt = 0; cnt < 256; cnt++) {
-    r = pPalette[cnt].peRed;
-    g = pPalette[cnt].peGreen;
-    b = pPalette[cnt].peBlue;
+    r = pPalette[cnt].red;
+    g = pPalette[cnt].green;
+    b = pPalette[cnt].blue;
 
-    if (gusRedShift < 0)
-      r16 = ((uint16_t)r >> abs(gusRedShift));
-    else
-      r16 = ((uint16_t)r << gusRedShift);
+    r16 = ((uint16_t)r << 8);
+    g16 = ((uint16_t)g << 3);
+    b16 = ((uint16_t)b >> 3);
 
-    if (gusGreenShift < 0)
-      g16 = ((uint16_t)g >> abs(gusGreenShift));
-    else
-      g16 = ((uint16_t)g << gusGreenShift);
-
-    if (gusBlueShift < 0)
-      b16 = ((uint16_t)b >> abs(gusBlueShift));
-    else
-      b16 = ((uint16_t)b << gusBlueShift);
-
-    usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
+    usColor = (r16 & 0xf800) | (g16 & 0x07e0) | (b16 & 0x001f);
 
     if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-    } else
-      usColor |= gusAlphaMask;
+      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
+    }
 
     p16BPPPalette[cnt] = usColor;
   }
@@ -441,8 +354,8 @@ shaded according to each pixel's brightness.
         4) For gamma correction, pass in weighted values for each color.
 
 **********************************************************************************************/
-uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale, uint32_t gscale,
-                                 uint32_t bscale, BOOLEAN mono) {
+uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale,
+                                   uint32_t gscale, uint32_t bscale, BOOLEAN mono) {
   uint16_t *p16BPPPalette, r16, g16, b16, usColor;
   uint32_t cnt, lumin;
   uint32_t rmod, gmod, bmod;
@@ -454,118 +367,35 @@ uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rs
 
   for (cnt = 0; cnt < 256; cnt++) {
     if (mono) {
-      lumin = (pPalette[cnt].peRed * 299 / 1000) + (pPalette[cnt].peGreen * 587 / 1000) +
-              (pPalette[cnt].peBlue * 114 / 1000);
+      lumin = (pPalette[cnt].red * 299 / 1000) + (pPalette[cnt].green * 587 / 1000) +
+              (pPalette[cnt].blue * 114 / 1000);
       rmod = (rscale * lumin) / 256;
       gmod = (gscale * lumin) / 256;
       bmod = (bscale * lumin) / 256;
     } else {
-      rmod = (rscale * pPalette[cnt].peRed / 256);
-      gmod = (gscale * pPalette[cnt].peGreen / 256);
-      bmod = (bscale * pPalette[cnt].peBlue / 256);
+      rmod = (rscale * pPalette[cnt].red / 256);
+      gmod = (gscale * pPalette[cnt].green / 256);
+      bmod = (bscale * pPalette[cnt].blue / 256);
     }
 
     r = (uint8_t)min(rmod, 255);
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    if (gusRedShift < 0)
-      r16 = ((uint16_t)r >> (-gusRedShift));
-    else
-      r16 = ((uint16_t)r << gusRedShift);
-
-    if (gusGreenShift < 0)
-      g16 = ((uint16_t)g >> (-gusGreenShift));
-    else
-      g16 = ((uint16_t)g << gusGreenShift);
-
-    if (gusBlueShift < 0)
-      b16 = ((uint16_t)b >> (-gusBlueShift));
-    else
-      b16 = ((uint16_t)b << gusBlueShift);
+    r16 = ((uint16_t)r << 8);
+    g16 = ((uint16_t)g << 3);
+    b16 = ((uint16_t)b >> 3);
 
     // Prevent creation of pure black color
-    usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
+    usColor = (r16 & 0xf800) | (g16 & 0x07e0) | (b16 & 0x001f);
 
     if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-    } else
-      usColor |= gusAlphaMask;
+      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
+    }
 
     p16BPPPalette[cnt] = usColor;
   }
   return (p16BPPPalette);
-}
-
-// Convert from RGB to 16 bit value
-uint16_t Get16BPPColor(uint32_t RGBValue) {
-  uint16_t r16, g16, b16, usColor;
-  uint8_t r, g, b;
-
-  r = SGPGetRValue(RGBValue);
-  g = SGPGetGValue(RGBValue);
-  b = SGPGetBValue(RGBValue);
-
-  if (gusRedShift < 0)
-    r16 = ((uint16_t)r >> abs(gusRedShift));
-  else
-    r16 = ((uint16_t)r << gusRedShift);
-
-  if (gusGreenShift < 0)
-    g16 = ((uint16_t)g >> abs(gusGreenShift));
-  else
-    g16 = ((uint16_t)g << gusGreenShift);
-
-  if (gusBlueShift < 0)
-    b16 = ((uint16_t)b >> abs(gusBlueShift));
-  else
-    b16 = ((uint16_t)b << gusBlueShift);
-
-  usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
-
-  // if our color worked out to absolute black, and the original wasn't
-  // absolute black, convert it to a VERY dark grey to avoid transparency
-  // problems
-
-  if (usColor == 0) {
-    if (RGBValue != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-  } else
-    usColor |= gusAlphaMask;
-
-  return (usColor);
-}
-
-// Convert from 16 BPP to RGBvalue
-uint32_t GetRGBColor(uint16_t Value16BPP) {
-  uint16_t r16, g16, b16;
-  uint32_t r, g, b, val;
-
-  r16 = Value16BPP & gusRedMask;
-  g16 = Value16BPP & gusGreenMask;
-  b16 = Value16BPP & gusBlueMask;
-
-  if (gusRedShift < 0)
-    r = ((uint32_t)r16 << abs(gusRedShift));
-  else
-    r = ((uint32_t)r16 >> gusRedShift);
-
-  if (gusGreenShift < 0)
-    g = ((uint32_t)g16 << abs(gusGreenShift));
-  else
-    g = ((uint32_t)g16 >> gusGreenShift);
-
-  if (gusBlueShift < 0)
-    b = ((uint32_t)b16 << abs(gusBlueShift));
-  else
-    b = ((uint32_t)b16 >> gusBlueShift);
-
-  r &= 0x000000ff;
-  g &= 0x000000ff;
-  b &= 0x000000ff;
-
-  val = FROMRGB(r, g, b);
-
-  return (val);
 }
 
 //*****************************************************************************
@@ -581,139 +411,96 @@ uint32_t GetRGBColor(uint16_t Value16BPP) {
 //
 //*****************************************************************************
 
-struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd, uint8_t *pOldPalette) {
+struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd,
+                                                 uint8_t *pOldPalette) {
   uint16_t Index;
   struct SGPPaletteEntry *pPalEntry;
   struct SGPPaletteEntry *pInitEntry;
 
   pPalEntry = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
   pInitEntry = pPalEntry;
-  DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_0, "Converting RGB palette to struct SGPPaletteEntry");
+  DebugMsg(TOPIC_HIMAGE, DBG_ERROR, "Converting RGB palette to struct SGPPaletteEntry");
   for (Index = 0; Index <= (sbEnd - sbStart); Index++) {
-    pPalEntry->peRed = *(pOldPalette + (Index * 3));
-    pPalEntry->peGreen = *(pOldPalette + (Index * 3) + 1);
-    pPalEntry->peBlue = *(pOldPalette + (Index * 3) + 2);
-    pPalEntry->peFlags = 0;
+    pPalEntry->red = *(pOldPalette + (Index * 3));
+    pPalEntry->green = *(pOldPalette + (Index * 3) + 1);
+    pPalEntry->blue = *(pOldPalette + (Index * 3) + 2);
+    pPalEntry->_unused = 0;
     pPalEntry++;
   }
   return pInitEntry;
 }
 
-BOOLEAN GetETRLEImageData(HIMAGE hImage, ETRLEData *pBuffer) {
-  // Assertions
+BOOLEAN CopyImageData(struct Image *hImage, struct ImageData *pBuffer) {
   Assert(hImage != NULL);
   Assert(pBuffer != NULL);
 
   // Create memory for data
-  pBuffer->usNumberOfObjects = hImage->usNumberOfObjects;
+  pBuffer->number_of_subimages = hImage->number_of_subimages;
 
   // Create buffer for objects
-  pBuffer->pETRLEObject = (ETRLEObject *)MemAlloc(sizeof(ETRLEObject) * pBuffer->usNumberOfObjects);
-  CHECKF(pBuffer->pETRLEObject != NULL);
+  pBuffer->subimages =
+      (struct Subimage *)MemAlloc(sizeof(struct Subimage) * pBuffer->number_of_subimages);
+  if (!(pBuffer->subimages != NULL)) {
+    return FALSE;
+  }
 
   // Copy into buffer
-  memcpy(pBuffer->pETRLEObject, hImage->pETRLEObject,
-         sizeof(ETRLEObject) * pBuffer->usNumberOfObjects);
+  memcpy(pBuffer->subimages, hImage->subimages,
+         sizeof(struct Subimage) * pBuffer->number_of_subimages);
 
   // Allocate memory for pixel data
-  pBuffer->pPixData = MemAlloc(hImage->uiSizePixData);
-  CHECKF(pBuffer->pPixData != NULL);
+  pBuffer->image_data = MemAlloc(hImage->image_data_size);
+  if (!(pBuffer->image_data != NULL)) {
+    return FALSE;
+  }
 
-  pBuffer->uiSizePixData = hImage->uiSizePixData;
+  pBuffer->image_data_size = hImage->image_data_size;
 
   // Copy into buffer
-  memcpy(pBuffer->pPixData, hImage->pPixData8, pBuffer->uiSizePixData);
+  memcpy(pBuffer->image_data, hImage->image_data, pBuffer->image_data_size);
 
   return (TRUE);
 }
 
-void ConvertRGBDistribution565To555(uint16_t *p16BPPData, uint32_t uiNumberOfPixels) {
-  uint16_t *pPixel;
-  uint32_t uiLoop;
+// Create a scaled down copy of an image.
+struct Image *ScaleImageDown2x(struct Image *image) {
+  // not all image types are supported
+  bool supported =
+      image->bit_depth == 8 && image->app_data_size == 0 && image->number_of_subimages == 0;
+  if (!supported) {
+    return NULL;
+  }
+  struct Image *res = zmalloc(sizeof(struct Image));
+  if (!res) {
+    return NULL;
+  }
 
-  SplitUINT32 Pixel;
+  res->width = image->width / 2;
+  res->height = image->height / 2;
+  res->bit_depth = image->bit_depth;
 
-  pPixel = p16BPPData;
-  for (uiLoop = 0; uiLoop < uiNumberOfPixels; uiLoop++) {
-    // If the pixel is completely black, don't bother converting it -- DB
-    if (*pPixel != 0) {
-      // we put the 16 pixel bits in the UPPER word of uiPixel, so that we can
-      // right shift the blue value (at the bottom) into the LOWER word to protect it
-      Pixel.usHigher = *pPixel;
-      Pixel.uiValue >>= 5;
-      // get rid of the least significant bit of green
-      Pixel.usHigher >>= 1;
-      // now shift back into the upper word
-      Pixel.uiValue <<= 5;
-      // and copy back
-      *pPixel = Pixel.usHigher | gusAlphaMask;
+  uint32_t palette_size = sizeof(struct SGPPaletteEntry) * 256;
+  res->palette = zmalloc(palette_size);
+  if (!res->palette) {
+    MemFree(res);
+    return NULL;
+  }
+  memcpy(res->palette, image->palette, palette_size);
+
+  res->image_data_size = res->width * res->height;
+  res->image_data = zmalloc(res->image_data_size);
+  if (!res->image_data) {
+    MemFree(res->palette);
+    MemFree(res);
+    return NULL;
+  }
+
+  uint8_t *data = res->image_data;
+  for (uint16_t y = 0; y < image->height; y += 2) {
+    for (uint16_t x = 0; x < image->width; x += 2) {
+      *data++ = ((uint8_t *)image->image_data)[y * image->width + x];
     }
-    pPixel++;
   }
-}
 
-void ConvertRGBDistribution565To655(uint16_t *p16BPPData, uint32_t uiNumberOfPixels) {
-  uint16_t *pPixel;
-  uint32_t uiLoop;
-
-  SplitUINT32 Pixel;
-
-  pPixel = p16BPPData;
-  for (uiLoop = 0; uiLoop < uiNumberOfPixels; uiLoop++) {
-    // we put the 16 pixel bits in the UPPER word of uiPixel, so that we can
-    // right shift the blue value (at the bottom) into the LOWER word to protect it
-    Pixel.usHigher = *pPixel;
-    Pixel.uiValue >>= 5;
-    // get rid of the least significant bit of green
-    Pixel.usHigher >>= 1;
-    // shift to the right some more...
-    Pixel.uiValue >>= 5;
-    // so we can left-shift the red value alone to give it an extra bit
-    Pixel.usHigher <<= 1;
-    // now shift back and copy
-    Pixel.uiValue <<= 10;
-    *pPixel = Pixel.usHigher;
-    pPixel++;
-  }
-}
-
-void ConvertRGBDistribution565To556(uint16_t *p16BPPData, uint32_t uiNumberOfPixels) {
-  uint16_t *pPixel;
-  uint32_t uiLoop;
-
-  SplitUINT32 Pixel;
-
-  pPixel = p16BPPData;
-  for (uiLoop = 0; uiLoop < uiNumberOfPixels; uiLoop++) {
-    // we put the 16 pixel bits in the UPPER word of uiPixel, so that we can
-    // right shift the blue value (at the bottom) into the LOWER word to protect it
-    Pixel.usHigher = *pPixel;
-    Pixel.uiValue >>= 5;
-    // get rid of the least significant bit of green
-    Pixel.usHigher >>= 1;
-    // shift back into the upper word
-    Pixel.uiValue <<= 5;
-    // give blue an extra bit (blank in the least significant spot)
-    Pixel.usHigher <<= 1;
-    // copy back
-    *pPixel = Pixel.usHigher;
-    pPixel++;
-  }
-}
-
-void ConvertRGBDistribution565ToAny(uint16_t *p16BPPData, uint32_t uiNumberOfPixels) {
-  uint16_t *pPixel;
-  uint32_t uiRed, uiGreen, uiBlue, uiTemp, uiLoop;
-
-  pPixel = p16BPPData;
-  for (uiLoop = 0; uiLoop < uiNumberOfPixels; uiLoop++) {
-    // put the 565 RGB 16-bit value into a 32-bit RGB value
-    uiRed = (*pPixel) >> 11;
-    uiGreen = (*pPixel & 0x07E0) >> 5;
-    uiBlue = (*pPixel & 0x001F);
-    uiTemp = FROMRGB(uiRed, uiGreen, uiBlue);
-    // then convert the 32-bit RGB value to whatever 16 bit format is used
-    *pPixel = Get16BPPColor(uiTemp);
-    pPixel++;
-  }
+  return res;
 }

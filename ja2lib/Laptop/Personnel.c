@@ -9,15 +9,14 @@
 #include "Laptop/Finances.h"
 #include "Laptop/Laptop.h"
 #include "Laptop/LaptopSave.h"
-#include "Money.h"
 #include "Point.h"
 #include "SGP/ButtonSystem.h"
-#include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Input.h"
 #include "SGP/Line.h"
 #include "SGP/Random.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 #include "Soldier.h"
@@ -42,6 +41,9 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_colors.h"
+#include "rust_images.h"
+#include "rust_laptop.h"
 
 // struct POINT;
 
@@ -348,7 +350,8 @@ BOOLEAN LoadPersonnelGraphics(void);
 void RemovePersonnelGraphics(void);
 void RenderPersonnel(void);
 void RenderPersonnelStats(int32_t iId, int32_t iSlot);
-BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN fFired, BOOLEAN fOther);
+BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN fFired,
+                            BOOLEAN fOther);
 BOOLEAN RenderPersonnelPictures(void);
 void LeftButtonCallBack(GUI_BUTTON *btn, int32_t reason);
 void RightButtonCallBack(GUI_BUTTON *btn, int32_t reason);
@@ -588,23 +591,22 @@ void HandlePersonnel(void) {
 
 BOOLEAN LoadPersonnelGraphics(void) {
   // load graphics needed for personnel screen
-  VOBJECT_DESC VObjectDesc;
 
   // load graphics
 
   // title bar
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTITLE));
+  if (!AddVObjectFromFile("LAPTOP\\programtitlebar.sti", &guiTITLE)) {
+    return FALSE;
+  }
 
   // the background grpahics
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\personnelwindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSCREEN));
+  if (!AddVObjectFromFile("LAPTOP\\personnelwindow.sti", &guiSCREEN)) {
+    return FALSE;
+  }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\personnel_inventory.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiPersonnelInventory));
+  if (!AddVObjectFromFile("LAPTOP\\personnel_inventory.sti", &guiPersonnelInventory)) {
+    return FALSE;
+  }
 
   return (TRUE);
 }
@@ -626,29 +628,11 @@ void RenderPersonnel(void) {
 
   // blit title
   GetVideoObject(&hHandle, guiTITLE);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2);
 
   // blit screen
   GetVideoObject(&hHandle, guiSCREEN);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y + 22,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
-
-  // render pictures of mercs on scnree
-  // RenderPersonnelPictures( );
-
-  // display header for screen
-  // DisplayHeader( );
-
-  // what page are we on?..display it
-  // DrawPageNumber( );
-
-  // display border
-  // GetVideoObject(&hHandle, guiLaptopBACKGROUND);
-  // BltVideoObject(FRAME_BUFFER, hHandle, 0,108, 23, VO_BLT_SRCTRANSPARENCY,NULL);
-
-  // invalidte the region we blitted to
-  // InvalidateRegion(LAPTOP_SCREEN_UL_X,LAPTOP_SCREEN_UL_Y,LAPTOP_SCREEN_LR_X,LAPTOP_SCREEN_LR_Y);
+  BltVObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y + 22);
 
   // render personnel screen background
   RenderPersonnelScreenBackground();
@@ -774,10 +758,10 @@ void RenderPersonnelStats(int32_t iId, int32_t iSlot) {
   }
 }
 
-BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN fFired, BOOLEAN fOther) {
+BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN fFired,
+                            BOOLEAN fOther) {
   char sTemp[100];
   struct VObject *hFaceHandle;
-  VOBJECT_DESC VObjectDesc;
 
   // draw face to soldier iId in slot iSlot
 
@@ -807,9 +791,9 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
     }
   }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFACE));
+  if (!AddVObjectFromFile(sTemp, &guiFACE)) {
+    return FALSE;
+  }
 
   // Blt face to screen to
   GetVideoObject(&hFaceHandle, guiFACE);
@@ -834,8 +818,7 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
     }
   }
 
-  BltVideoObject(FRAME_BUFFER, hFaceHandle, 0, IMAGE_BOX_X + (iSlot * IMAGE_BOX_WIDTH), IMAGE_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hFaceHandle, 0, IMAGE_BOX_X + (iSlot * IMAGE_BOX_WIDTH), IMAGE_BOX_Y);
 
   // if the merc is dead, display it
   if (!fCurrentTeamMode) {
@@ -850,7 +833,8 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
     if ((iHeightOfText - 2) > GetFontHeight(PERS_FONT)) {
       // raise where we display it, and rap it
       DisplayWrappedString(
-          IMAGE_BOX_X, (uint16_t)(IMAGE_BOX_Y + IMAGE_FULL_NAME_OFFSET_Y - GetFontHeight(PERS_FONT)),
+          IMAGE_BOX_X,
+          (uint16_t)(IMAGE_BOX_Y + IMAGE_FULL_NAME_OFFSET_Y - GetFontHeight(PERS_FONT)),
           IMAGE_NAME_WIDTH, 1, PERS_FONT, PERS_FONT_COLOR, gMercProfiles[iId].zName, 0, FALSE,
           CENTER_JUSTIFIED);
     } else {
@@ -872,8 +856,8 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
                   {
                           //if the merc is dead, display it
                           DrawTextToScreen(pDepartedMercPortraitStrings[0], ( int16_t ) (
-  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ), IMAGE_BOX_WITH_NO_BORDERS,
-  FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
+  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ),
+  IMAGE_BOX_WITH_NO_BORDERS, FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
                   }
           }
           else
@@ -882,25 +866,25 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
                   {
                           //if the merc is dead, display it
                           DrawTextToScreen(pDepartedMercPortraitStrings[0], ( int16_t ) (
-  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ), IMAGE_BOX_WITH_NO_BORDERS,
-  FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
+  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ),
+  IMAGE_BOX_WITH_NO_BORDERS, FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
   //			DrawTextToScreen( AimPopUpText[ AIM_MEMBER_DEAD ], ( int16_t ) (
-  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ), IMAGE_BOX_WITH_NO_BORDERS,
-  FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
+  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ),
+  IMAGE_BOX_WITH_NO_BORDERS, FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
                   }
                   else if( fFired )
                   {
                           //if the merc is dead, display it
                           DrawTextToScreen(pDepartedMercPortraitStrings[1], ( int16_t ) (
-  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ), IMAGE_BOX_WITH_NO_BORDERS,
-  FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
+  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ),
+  IMAGE_BOX_WITH_NO_BORDERS, FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
                   }
                   else if( fOther )
                   {
                           //if the merc is dead, display it
                           DrawTextToScreen(pDepartedMercPortraitStrings[2], ( int16_t ) (
-  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ), IMAGE_BOX_WITH_NO_BORDERS,
-  FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
+  IMAGE_BOX_X+(iSlot*IMAGE_BOX_WIDTH) ), ( int16_t ) ( IMAGE_BOX_Y + 107 ),
+  IMAGE_BOX_WITH_NO_BORDERS, FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
                   }
           }
 
@@ -1220,8 +1204,8 @@ void DisplayCharName(int32_t iId, int32_t iSlot) {
 
   // first get height of text to be displayed
   iHeightOfText = DisplayWrappedString(
-      IMAGE_BOX_X, (uint16_t)(IMAGE_BOX_Y + IMAGE_FULL_NAME_OFFSET_Y), IMAGE_NAME_WIDTH, 1, PERS_FONT,
-      PERS_FONT_COLOR, gMercProfiles[Menptr[iId].ubProfile].zName, 0, FALSE,
+      IMAGE_BOX_X, (uint16_t)(IMAGE_BOX_Y + IMAGE_FULL_NAME_OFFSET_Y), IMAGE_NAME_WIDTH, 1,
+      PERS_FONT, PERS_FONT_COLOR, gMercProfiles[Menptr[iId].ubProfile].zName, 0, FALSE,
       CENTER_JUSTIFIED | DONT_DISPLAY_TEXT);
 
   // if the string will rap
@@ -1233,8 +1217,8 @@ void DisplayCharName(int32_t iId, int32_t iSlot) {
         0, FALSE, CENTER_JUSTIFIED);
   } else {
     DrawTextToScreen(gMercProfiles[Menptr[iId].ubProfile].zName, IMAGE_BOX_X,
-                     (uint16_t)(IMAGE_BOX_Y + IMAGE_FULL_NAME_OFFSET_Y), IMAGE_NAME_WIDTH, PERS_FONT,
-                     PERS_FONT_COLOR, 0, FALSE, CENTER_JUSTIFIED);
+                     (uint16_t)(IMAGE_BOX_Y + IMAGE_FULL_NAME_OFFSET_Y), IMAGE_NAME_WIDTH,
+                     PERS_FONT, PERS_FONT_COLOR, 0, FALSE, CENTER_JUSTIFIED);
   }
 
   /*
@@ -1292,7 +1276,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bLifeDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1320,7 +1304,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bAgilityDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1348,7 +1332,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bDexterityDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1376,7 +1360,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bStrengthDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1404,7 +1388,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bLeadershipDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1432,7 +1416,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bWisdomDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1460,7 +1444,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bExpLevelDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1488,7 +1472,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bMarksmanshipDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1516,7 +1500,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bMechanicDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1544,7 +1528,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bExplosivesDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1573,7 +1557,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                      gMercProfiles[Menptr[iId].ubProfile].bMedicalDelta);
             FindFontRightCoordinates(
                 (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                        TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                 0, 30, 0, sString, PERS_FONT, &sX, &sY);
             mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
           }
@@ -1691,7 +1675,7 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
             if (sX <= iMinimumX) {
               FindFontRightCoordinates(
                   (int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH) +
-                          TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
+                            TEXT_BOX_WIDTH - 20 + TEXT_DELTA_OFFSET),
                   0, 30, 0, sString, PERS_FONT, &sX, &sY);
               sX = (int16_t)max(sX, iMinimumX);
             }
@@ -1703,8 +1687,8 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
               swprintf(sString, ARR_SIZE(sString), L"%s", gzMercSkillText[bSkill1]);
 
               FindFontRightCoordinates(
-                  (int16_t)(pPersonnelScreenPoints[bScreenLocIndex].x + (iSlot * TEXT_BOX_WIDTH)), 0,
-                  TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
+                  (int16_t)(pPersonnelScreenPoints[bScreenLocIndex].x + (iSlot * TEXT_BOX_WIDTH)),
+                  0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
 
               // KM: April 16, 1999
               // Perform the potential overrun check
@@ -1720,8 +1704,8 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
               swprintf(sString, ARR_SIZE(sString), L"%s", gzMercSkillText[bSkill2]);
 
               FindFontRightCoordinates(
-                  (int16_t)(pPersonnelScreenPoints[bScreenLocIndex].x + (iSlot * TEXT_BOX_WIDTH)), 0,
-                  TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
+                  (int16_t)(pPersonnelScreenPoints[bScreenLocIndex].x + (iSlot * TEXT_BOX_WIDTH)),
+                  0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
 
               // KM: April 16, 1999
               // Perform the potential overrun check
@@ -1738,8 +1722,8 @@ void DisplayCharStats(int32_t iId, int32_t iSlot) {
                        pPersonnelScreenStrings[PRSNL_TXT_NOSKILLS]);
 
               FindFontRightCoordinates(
-                  (int16_t)(pPersonnelScreenPoints[bScreenLocIndex].x + (iSlot * TEXT_BOX_WIDTH)), 0,
-                  TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
+                  (int16_t)(pPersonnelScreenPoints[bScreenLocIndex].x + (iSlot * TEXT_BOX_WIDTH)),
+                  0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
               mprintf(sX, pPersonnelScreenPoints[bScreenLocIndex].y, sString);
             }
           }
@@ -1867,24 +1851,23 @@ void RenderPersonnelScreenBackground(void) {
     GetVideoObject(&hHandle, guiDEPARTEDTEAM);
   }
 
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, DEPARTED_X, DEPARTED_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hHandle, 0, DEPARTED_X, DEPARTED_Y);
 
   return;
 }
 
 BOOLEAN LoadPersonnelScreenBackgroundGraphics(void) {
   // will load the graphics for the personeel screen background
-  VOBJECT_DESC VObjectDesc;
 
   // departed bar
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\departed.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiDEPARTEDTEAM));
+  if (!AddVObjectFromFile("LAPTOP\\departed.sti", &guiDEPARTEDTEAM)) {
+    return FALSE;
+  }
 
   // current bar
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\CurrentTeam.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiCURRENTTEAM));
+  if (!AddVObjectFromFile("LAPTOP\\CurrentTeam.sti", &guiCURRENTTEAM)) {
+    return FALSE;
+  }
 
   return (TRUE);
 }
@@ -1958,19 +1941,19 @@ void CreateDestroyMouseRegionsForPersonnelPortraits(void) {
   if ((fCreated == FALSE) && (fCreatePersonnelPortraitMouseRegions == TRUE)) {
     // create regions
     for (sCounter = 0; sCounter < PERSONNEL_PORTRAIT_NUMBER; sCounter++) {
-      MSYS_DefineRegion(&gPortraitMouseRegions[sCounter],
-                        (int16_t)(SMALL_PORTRAIT_START_X +
-                                (sCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
-                        (int16_t)(SMALL_PORTRAIT_START_Y +
-                                (sCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT),
-                        (int16_t)((SMALL_PORTRAIT_START_X) +
-                                ((sCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH) +
-                                SMALL_PORTRAIT_WIDTH),
-                        (int16_t)(SMALL_PORTRAIT_START_Y +
-                                (sCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT +
-                                SMALL_PORTRAIT_HEIGHT),
-                        MSYS_PRIORITY_HIGHEST, CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK,
-                        PersonnelPortraitCallback);
+      MSYS_DefineRegion(
+          &gPortraitMouseRegions[sCounter],
+          (int16_t)(SMALL_PORTRAIT_START_X +
+                    (sCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
+          (int16_t)(SMALL_PORTRAIT_START_Y +
+                    (sCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT),
+          (int16_t)((SMALL_PORTRAIT_START_X) +
+                    ((sCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH) +
+                    SMALL_PORTRAIT_WIDTH),
+          (int16_t)(SMALL_PORTRAIT_START_Y +
+                    (sCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT +
+                    SMALL_PORTRAIT_HEIGHT),
+          MSYS_PRIORITY_HIGHEST, CURSOR_LAPTOP_SCREEN, MSYS_NO_CALLBACK, PersonnelPortraitCallback);
       MSYS_SetRegionUserData(&gPortraitMouseRegions[sCounter], 0, sCounter);
       MSYS_AddRegion(&gPortraitMouseRegions[sCounter]);
     }
@@ -1993,7 +1976,6 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
   int32_t iTotalOnTeam = 0;
   char sTemp[100];
   struct VObject *hFaceHandle;
-  VOBJECT_DESC VObjectDesc;
   struct SOLDIERTYPE *pSoldier;
   int32_t iId = 0;
   int32_t iCnt = 0;
@@ -2027,9 +2009,9 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
         }
       }
 
-      VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-      FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-      CHECKF(AddVideoObject(&VObjectDesc, &guiFACE));
+      if (!AddVObjectFromFile(sTemp, &guiFACE)) {
+        return FALSE;
+      }
 
       // Blt face to screen to
       GetVideoObject(&hFaceHandle, guiFACE);
@@ -2043,23 +2025,23 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
         SetObjectHandleShade(guiFACE, 0);
       }
 
-      BltVideoObject(FRAME_BUFFER, hFaceHandle, 0,
-                     (int16_t)(SMALL_PORTRAIT_START_X +
-                             (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
-                     (int16_t)(SMALL_PORTRAIT_START_Y +
-                             (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT),
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObject(vsFB, hFaceHandle, 0,
+                 (int16_t)(SMALL_PORTRAIT_START_X +
+                           (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
+                 (int16_t)(SMALL_PORTRAIT_START_Y +
+                           (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT));
 
       if (Menptr[iId + iCnt].bLife <= 0) {
         // if the merc is dead, display it
-        DrawTextToScreen(AimPopUpText[AIM_MEMBER_DEAD],
-                         (int16_t)(SMALL_PORTRAIT_START_X +
-                                 (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
-                         (int16_t)(SMALL_PORTRAIT_START_Y +
-                                 (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT +
-                                 SMALL_PORT_HEIGHT / 2),
-                         SMALL_PORTRAIT_WIDTH_NO_BORDERS, FONT10ARIAL, 145, FONT_MCOLOR_BLACK,
-                         FALSE, CENTER_JUSTIFIED);
+        DrawTextToScreen(
+            AimPopUpText[AIM_MEMBER_DEAD],
+            (int16_t)(SMALL_PORTRAIT_START_X +
+                      (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
+            (int16_t)(SMALL_PORTRAIT_START_Y +
+                      (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT +
+                      SMALL_PORT_HEIGHT / 2),
+            SMALL_PORTRAIT_WIDTH_NO_BORDERS, FONT10ARIAL, 145, FONT_MCOLOR_BLACK, FALSE,
+            CENTER_JUSTIFIED);
       }
 
       DeleteVideoObjectFromIndex(guiFACE);
@@ -2211,7 +2193,7 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
   struct SOLDIERTYPE *pSoldier;
   int16_t sIndex;
   struct VObject *hHandle;
-  ETRLEObject *pTrav;
+  struct Subimage *pTrav;
   INVTYPE *pItem;
   int16_t PosX, PosY, sCenX, sCenY;
   uint32_t usHeight, usWidth;
@@ -2223,8 +2205,7 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
   int32_t iTotalAmmo = 0;
 
   GetVideoObject(&hHandle, guiPersonnelInventory);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, (int16_t)(397), (int16_t)(200), VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hHandle, 0, (int16_t)(397), (int16_t)(200));
 
   if (fCurrentTeamMode == FALSE) {
     return;
@@ -2257,26 +2238,22 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
         pItem = &Item[sIndex];
 
         GetVideoObject(&hHandle, GetInterfaceGraphicForItem(pItem));
-        pTrav = &(hHandle->pETRLEObject[pItem->ubGraphicNum]);
+        pTrav = &(hHandle->subimages[pItem->ubGraphicNum]);
 
-        usHeight = (uint32_t)pTrav->usHeight;
-        usWidth = (uint32_t)pTrav->usWidth;
+        usHeight = (uint32_t)pTrav->height;
+        usWidth = (uint32_t)pTrav->width;
 
-        sCenX = PosX + (abs((int32_t)(57 - usWidth)) / 2) - pTrav->sOffsetX;
-        sCenY = PosY + (abs((int32_t)(22 - usHeight)) / 2) - pTrav->sOffsetY;
-
-        // shadow
-        // BltVideoObjectOutlineShadowFromIndex( FRAME_BUFFER, GetInterfaceGraphicForItem( pItem ),
-        // pItem->ubGraphicNum, sCenX-2, sCenY+2);
+        sCenX = PosX + (abs((int32_t)(57 - usWidth)) / 2) - pTrav->x_offset;
+        sCenY = PosY + (abs((int32_t)(22 - usHeight)) / 2) - pTrav->y_offset;
 
         // blt the item
-        BltVideoObjectOutlineFromIndex(FRAME_BUFFER, GetInterfaceGraphicForItem(pItem),
-                                       pItem->ubGraphicNum, sCenX, sCenY, 0, FALSE);
+        BltVideoObjectOutlineFromIndex(vsFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
+                                       sCenX, sCenY, 0, FALSE);
 
         SetFont(FONT10ARIAL);
         SetFontForeground(FONT_WHITE);
         SetFontBackground(FONT_BLACK);
-        SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+        SetFontDest(vsFB, 0, 0, 640, 480, FALSE);
 
         // grab item name
         LoadItemInfo(sIndex, sString, NULL);
@@ -4014,8 +3991,8 @@ void DisplayStateOfPastTeamMembers(void) {
     mprintf(PERS_CURR_TEAM_COST_X, PERS_CURR_TEAM_COST_Y, pPersonelTeamStrings[5]);
     swprintf(sString, ARR_SIZE(sString), L"%d", GetNumberOfDeadOnPastTeam());
 
-    FindFontRightCoordinates((int16_t)(PERS_CURR_TEAM_COST_X), 0, PERS_DEPART_TEAM_WIDTH, 0, sString,
-                             PERS_FONT, &sX, &sY);
+    FindFontRightCoordinates((int16_t)(PERS_CURR_TEAM_COST_X), 0, PERS_DEPART_TEAM_WIDTH, 0,
+                             sString, PERS_FONT, &sX, &sY);
 
     mprintf(sX, PERS_CURR_TEAM_COST_Y, sString);
 
@@ -4023,8 +4000,8 @@ void DisplayStateOfPastTeamMembers(void) {
     mprintf(PERS_CURR_TEAM_COST_X, PERS_CURR_TEAM_HIGHEST_Y, pPersonelTeamStrings[6]);
     swprintf(sString, ARR_SIZE(sString), L"%d", GetNumberOfLeftOnPastTeam());
 
-    FindFontRightCoordinates((int16_t)(PERS_CURR_TEAM_COST_X), 0, PERS_DEPART_TEAM_WIDTH, 0, sString,
-                             PERS_FONT, &sX, &sY);
+    FindFontRightCoordinates((int16_t)(PERS_CURR_TEAM_COST_X), 0, PERS_DEPART_TEAM_WIDTH, 0,
+                             sString, PERS_FONT, &sX, &sY);
 
     mprintf(sX, PERS_CURR_TEAM_HIGHEST_Y, sString);
 
@@ -4032,8 +4009,8 @@ void DisplayStateOfPastTeamMembers(void) {
     mprintf(PERS_CURR_TEAM_COST_X, PERS_CURR_TEAM_LOWEST_Y, pPersonelTeamStrings[7]);
     swprintf(sString, ARR_SIZE(sString), L"%d", GetNumberOfOtherOnPastTeam());
 
-    FindFontRightCoordinates((int16_t)(PERS_CURR_TEAM_COST_X), 0, PERS_DEPART_TEAM_WIDTH, 0, sString,
-                             PERS_FONT, &sX, &sY);
+    FindFontRightCoordinates((int16_t)(PERS_CURR_TEAM_COST_X), 0, PERS_DEPART_TEAM_WIDTH, 0,
+                             sString, PERS_FONT, &sX, &sY);
 
     mprintf(sX, PERS_CURR_TEAM_LOWEST_Y, sString);
   } else {
@@ -4348,7 +4325,6 @@ BOOLEAN DisplayPortraitOfPastMerc(int32_t iId, int32_t iCounter, BOOLEAN fDead, 
                                   BOOLEAN fOther) {
   char sTemp[100];
   struct VObject *hFaceHandle;
-  VOBJECT_DESC VObjectDesc;
 
   if ((50 < iId) && (57 > iId)) {
     sprintf(sTemp, "%s%03d.sti", SMALL_FACES_DIR, gMercProfiles[iId].ubFaceIndex);
@@ -4360,9 +4336,9 @@ BOOLEAN DisplayPortraitOfPastMerc(int32_t iId, int32_t iCounter, BOOLEAN fDead, 
     }
   }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFACE));
+  if (!AddVObjectFromFile(sTemp, &guiFACE)) {
+    return FALSE;
+  }
 
   // Blt face to screen to
   GetVideoObject(&hFaceHandle, guiFACE);
@@ -4376,12 +4352,11 @@ BOOLEAN DisplayPortraitOfPastMerc(int32_t iId, int32_t iCounter, BOOLEAN fDead, 
     SetObjectHandleShade(guiFACE, 0);
   }
 
-  BltVideoObject(FRAME_BUFFER, hFaceHandle, 0,
-                 (int16_t)(SMALL_PORTRAIT_START_X +
-                         (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
-                 (int16_t)(SMALL_PORTRAIT_START_Y +
-                         (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT),
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hFaceHandle, 0,
+             (int16_t)(SMALL_PORTRAIT_START_X +
+                       (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
+             (int16_t)(SMALL_PORTRAIT_START_Y +
+                       (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT));
 
   /*
    text on the Small portrait
@@ -4757,7 +4732,6 @@ void DisplayPersonnelTextOnTitleBar(void) {
 
 BOOLEAN DisplayHighLightBox(void) {
   // will display highlight box around selected merc
-  VOBJECT_DESC VObjectDesc;
   uint32_t uiBox = 0;
   struct VObject *hHandle;
 
@@ -4770,19 +4744,20 @@ BOOLEAN DisplayHighLightBox(void) {
   }
 
   // bounding
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("LAPTOP\\PicBorde.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &uiBox));
+  if (!AddVObjectFromFile("LAPTOP\\PicBorde.sti", &uiBox)) {
+    return FALSE;
+  }
 
   // blit it
   GetVideoObject(&hHandle, uiBox);
-  BltVideoObject(
-      FRAME_BUFFER, hHandle, 0,
+  BltVObject(
+      vsFB, hHandle, 0,
       (int16_t)(SMALL_PORTRAIT_START_X +
-              (iCurrentPersonSelectedId % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH - 2),
+                (iCurrentPersonSelectedId % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH -
+                2),
       (int16_t)(SMALL_PORTRAIT_START_Y +
-              (iCurrentPersonSelectedId / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT - 3),
-      VO_BLT_SRCTRANSPARENCY, NULL);
+                (iCurrentPersonSelectedId / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT -
+                3));
 
   // deleteit
   DeleteVideoObjectFromIndex(uiBox);
@@ -4937,20 +4912,18 @@ int32_t GetIdOfThisSlot(int32_t iSlot) {
 }
 
 BOOLEAN RenderAtmPanel(void) {
-  VOBJECT_DESC VObjectDesc;
   uint32_t uiBox = 0;
   struct VObject *hHandle;
 
   // render the ATM panel
   if (fShowAtmPanel) {
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    FilenameForBPP("LAPTOP\\AtmButtons.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiBox));
+    if (!AddVObjectFromFile("LAPTOP\\AtmButtons.sti", &uiBox)) {
+      return FALSE;
+    }
 
     // blit it
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(FRAME_BUFFER, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
 
     DeleteVideoObjectFromIndex(uiBox);
 
@@ -4972,18 +4945,16 @@ BOOLEAN RenderAtmPanel(void) {
   } else {
     // just show basic panel
     // bounding
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-    FilenameForBPP("LAPTOP\\AtmButtons.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiBox));
+    if (!AddVObjectFromFile("LAPTOP\\AtmButtons.sti", &uiBox)) {
+      return FALSE;
+    }
 
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(FRAME_BUFFER, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
 
     // blit it
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(FRAME_BUFFER, hHandle, 1, (int16_t)(ATM_UL_X + 1), (int16_t)(ATM_UL_Y + 18),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hHandle, 1, (int16_t)(ATM_UL_X + 1), (int16_t)(ATM_UL_Y + 18));
 
     DeleteVideoObjectFromIndex(uiBox);
 
@@ -5096,7 +5067,7 @@ void FindPositionOfPersInvSlider(void) {
   // get the subregion sizes
   sSizeOfEachSubRegion =
       (int16_t)((int32_t)(Y_SIZE_OF_PERSONNEL_SCROLL_REGION - SIZE_OF_PERSONNEL_CURSOR) /
-              (int32_t)(iNumberOfItems));
+                (int32_t)(iNumberOfItems));
 
   // get slider position
   guiSliderPosition = uiCurrentInventoryIndex * sSizeOfEachSubRegion;
@@ -5133,7 +5104,7 @@ void HandleSliderBarClickCallback(struct MOUSE_REGION *pRegion, int32_t iReason)
     // get the subregion sizes
     sSizeOfEachSubRegion =
         (int16_t)((int32_t)(Y_SIZE_OF_PERSONNEL_SCROLL_REGION - SIZE_OF_PERSONNEL_CURSOR) /
-                (int32_t)(iNumberOfItems));
+                  (int32_t)(iNumberOfItems));
 
     // get the cursor placement
     sYPositionOnBar = (int16_t)(MousePos.y - Y_OF_PERSONNEL_SCROLL_REGION);
@@ -5163,9 +5134,8 @@ void RenderSliderBarForPersonnelInventory(void) {
 
   // render slider bar for personnel
   GetVideoObject(&hHandle, guiPersonnelInventory);
-  BltVideoObject(FRAME_BUFFER, hHandle, 5, (int16_t)(X_OF_PERSONNEL_SCROLL_REGION),
-                 (int16_t)(guiSliderPosition + Y_OF_PERSONNEL_SCROLL_REGION), VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVObject(vsFB, hHandle, 5, (int16_t)(X_OF_PERSONNEL_SCROLL_REGION),
+             (int16_t)(guiSliderPosition + Y_OF_PERSONNEL_SCROLL_REGION));
 }
 
 void ATMStartButtonCallback(GUI_BUTTON *btn, int32_t reason) {
@@ -5312,7 +5282,7 @@ void ATMOtherButtonCallback(GUI_BUTTON *btn, int32_t reason) {
                 }
               } else if (fATMFlags == 3) {
                 // deposit from merc to account
-                if (MoneyGetBalance() >= wcstol(sTransferString, NULL, 10)) {
+                if (LaptopMoneyGetBalance() >= wcstol(sTransferString, NULL, 10)) {
                   if ((wcstol(sTransferString, NULL, 10) % 10) != 0) {
                     fOldATMFlags = fATMFlags;
                     fATMFlags = 5;
@@ -5330,7 +5300,7 @@ void ATMOtherButtonCallback(GUI_BUTTON *btn, int32_t reason) {
                 } else {
                   fOldATMFlags = fATMFlags;
                   fATMFlags = 4;
-                  iValue = MoneyGetBalance();
+                  iValue = LaptopMoneyGetBalance();
                   swprintf(sTransferString, ARR_SIZE(sTransferString), L"%d", iValue);
                   fReDrawScreenFlag = TRUE;
                 }
@@ -5391,8 +5361,7 @@ void ATMNumberButtonCallback(GUI_BUTTON *btn, int32_t reason) {
     if (btn->uiFlags & BUTTON_CLICKED_ON) {
       btn->uiFlags &= ~(BUTTON_CLICKED_ON);
       // find position in value string, append character at end
-      for (iCounter = 0; iCounter < (int32_t)wcslen(sTransferString); iCounter++)
-        ;
+      for (iCounter = 0; iCounter < (int32_t)wcslen(sTransferString); iCounter++);
       sTransferString[iCounter] = (sZero[0] + (uint16_t)iValue);
       sTransferString[iCounter + 1] = 0;
       fReDrawScreenFlag = TRUE;
@@ -5545,8 +5514,8 @@ BOOLEAN TransferFundsFromBankToMerc(struct SOLDIERTYPE *pSoldier, int32_t iCurre
   }
 
   // current balance
-  if (iCurrentBalance > MoneyGetBalance()) {
-    iCurrentBalance = MoneyGetBalance();
+  if (iCurrentBalance > LaptopMoneyGetBalance()) {
+    iCurrentBalance = LaptopMoneyGetBalance();
   }
 
   // set up object
@@ -5745,8 +5714,7 @@ void HandlePersonnelKeyboard(void) {
       if ((fShowAtmPanel) && (fATMFlags != 0)) {
         iValue = (int32_t)(InputEvent.usParam - '0');
 
-        for (iCounter = 0; iCounter < (int32_t)wcslen(sTransferString); iCounter++)
-          ;
+        for (iCounter = 0; iCounter < (int32_t)wcslen(sTransferString); iCounter++);
         sTransferString[iCounter] = (sZero[0] + (uint16_t)iValue);
         sTransferString[iCounter + 1] = 0;
         fPausedReDrawScreenFlag = TRUE;
@@ -5791,12 +5759,12 @@ void RenderRectangleForPersonnelTransactionAmount(void) {
   // grab total length
   iLength = StringPixLength(sTempString, ATM_FONT);
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
   RectangleDraw(TRUE, (ATM_DISPLAY_X + ATM_DISPLAY_WIDTH) - iLength - 2, ATM_DISPLAY_Y + 35,
                 ATM_DISPLAY_X + ATM_DISPLAY_WIDTH + 1, ATM_DISPLAY_Y + iHeight + 36,
-                Get16BPPColor(FROMRGB(255, 255, 255)), pDestBuf);
-  UnLockVideoSurface(FRAME_BUFFER);
+                rgb32_to_rgb565(FROMRGB(255, 255, 255)), pDestBuf);
+  VSurfaceUnlock(vsFB);
 }
 
 void HandleTimedAtmModes(void) {
@@ -5876,7 +5844,8 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
           // if the merc is in transit
           if (Menptr[iId].bAssignment == IN_TRANSIT) {
             // and if the ttime left on the cotract is greater then the contract time
-            if (iTimeLeftOnContract > (int32_t)(Menptr[iId].iTotalContractLength * uiMinutesInDay)) {
+            if (iTimeLeftOnContract >
+                (int32_t)(Menptr[iId].iTotalContractLength * uiMinutesInDay)) {
               iTimeLeftOnContract = (Menptr[iId].iTotalContractLength * uiMinutesInDay);
             }
           }
@@ -5906,11 +5875,6 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
           }
 
         } else if (Menptr[iId].ubWhatKindOfMercAmI == MERC_TYPE__MERC) {
-          //					swprintf(sString, ARR_SIZE(sString), L"%d%s /
-          //%d%s",Menptr[iId].iTotalContractLength, gpStrategicString[ STR_PB_DAYS_ABBREVIATION ], (
-          // GetWorldTotalMin( ) -Menptr[iId].iStartContractTime ) / ( 24 * 60 ), gpStrategicString[
-          // STR_PB_DAYS_ABBREVIATION ] );
-
           wcscpy(sString, gpStrategicString[STR_PB_NOTAPPLICABLE_ABBREVIATION]);
           mprintf((int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH)),
                   pPersonnelScreenPoints[iCounter].y,
@@ -5923,7 +5887,7 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
         }
 
         FindFontRightCoordinates((int16_t)(pPersonnelScreenPoints[iCounter].x +
-                                         (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
+                                           (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
                                  0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
         mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
       } break;
@@ -5944,7 +5908,7 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
                  gpStrategicString[STR_PB_DAYS_ABBREVIATION]);
 
         FindFontRightCoordinates((int16_t)(pPersonnelScreenPoints[iCounter].x +
-                                         (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
+                                           (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
                                  0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
         mprintf(sX, pPersonnelScreenPoints[iCounter].y, sString);
         break;
@@ -6020,7 +5984,7 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
         }
 
         FindFontRightCoordinates((int16_t)(pPersonnelScreenPoints[iCounter].x +
-                                         (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
+                                           (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
                                  0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
         mprintf((int16_t)(pPersonnelScreenPoints[iCounter].x + (iSlot * TEXT_BOX_WIDTH)),
                 pPersonnelScreenPoints[iCounter].y, sStringA);
@@ -6074,7 +6038,7 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
         }
 
         FindFontRightCoordinates((int16_t)(pPersonnelScreenPoints[iCounter].x +
-                                         (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
+                                           (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
                                  0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
 
         //			 iCounter++;
@@ -6104,7 +6068,7 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
           InsertDollarSignInToString(sString);
 
           FindFontRightCoordinates((int16_t)(pPersonnelScreenPoints[iCounter - 1].x +
-                                           (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
+                                             (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
                                    0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
           mprintf(sX, pPersonnelScreenPoints[iCounter - 1].y, sString);
         } else {
@@ -6120,7 +6084,7 @@ void DisplayEmploymentinformation(int32_t iId, int32_t iSlot) {
           InsertDollarSignInToString(sString);
 
           FindFontRightCoordinates((int16_t)(pPersonnelScreenPoints[iCounter - 1].x +
-                                           (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
+                                             (iSlot * TEXT_BOX_WIDTH) + Prsnl_DATA_OffSetX),
                                    0, TEXT_BOX_WIDTH - 20, 0, sString, PERS_FONT, &sX, &sY);
           mprintf(sX, pPersonnelScreenPoints[iCounter - 1].y, sString);
         }
@@ -6138,7 +6102,7 @@ int32_t CalcTimeLeftOnMercContract(struct SOLDIERTYPE *pSoldier) {
   int32_t iTimeLeftOnContract = -1;
 
   if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
-    iTimeLeftOnContract = pSoldier->iEndofContractTime - GetWorldTotalMin();
+    iTimeLeftOnContract = pSoldier->iEndofContractTime - GetGameTimeInMin();
 
     if (iTimeLeftOnContract < 0) iTimeLeftOnContract = 0;
   } else if (pSoldier->ubWhatKindOfMercAmI == MERC_TYPE__MERC) {

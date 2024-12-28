@@ -41,13 +41,14 @@
 #include "TileEngine/ExitGrids.h"
 #include "TileEngine/Lighting.h"
 #include "TileEngine/SimpleRenderUtils.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
+#include "TileEngine/WorldDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "rust_images.h"
 
 int8_t gbDefaultLightType = PRIMETIME_LIGHT;
 
@@ -63,11 +64,11 @@ void SetupTextInputForMapInfo() {
   AddUserInputField(NULL);  // just so we can use short cut keys while not typing.
 
   // light rgb fields
-  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.peRed);
+  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.red);
   AddTextInputField(10, 394, 25, 18, MSYS_PRIORITY_NORMAL, str, 3, INPUTTYPE_NUMERICSTRICT);
-  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.peGreen);
+  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.green);
   AddTextInputField(10, 414, 25, 18, MSYS_PRIORITY_NORMAL, str, 3, INPUTTYPE_NUMERICSTRICT);
-  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.peBlue);
+  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.blue);
   AddTextInputField(10, 434, 25, 18, MSYS_PRIORITY_NORMAL, str, 3, INPUTTYPE_NUMERICSTRICT);
 
   swprintf(str, ARR_SIZE(str), L"%d", gsLightRadius);
@@ -137,11 +138,11 @@ void UpdateMapInfoFields() {
   wchar_t str[10];
   // Update the text fields to reflect the validated values.
   // light rgb fields
-  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.peRed);
+  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.red);
   SetInputFieldStringWith16BitString(1, str);
-  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.peGreen);
+  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.green);
   SetInputFieldStringWith16BitString(2, str);
-  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.peBlue);
+  swprintf(str, ARR_SIZE(str), L"%d", gEditorLightColor.blue);
   SetInputFieldStringWith16BitString(3, str);
 
   swprintf(str, ARR_SIZE(str), L"%d", gsLightRadius);
@@ -164,19 +165,19 @@ void ExtractAndUpdateMapInfo() {
   BOOLEAN fUpdateLight1 = FALSE;
   // extract light1 colors
   temp = min(GetNumericStrictValueFromField(1), 255);
-  if (temp != -1 && temp != gEditorLightColor.peRed) {
+  if (temp != -1 && temp != gEditorLightColor.red) {
     fUpdateLight1 = TRUE;
-    gEditorLightColor.peRed = (uint8_t)temp;
+    gEditorLightColor.red = (uint8_t)temp;
   }
   temp = min(GetNumericStrictValueFromField(2), 255);
-  if (temp != -1 && temp != gEditorLightColor.peGreen) {
+  if (temp != -1 && temp != gEditorLightColor.green) {
     fUpdateLight1 = TRUE;
-    gEditorLightColor.peGreen = (uint8_t)temp;
+    gEditorLightColor.green = (uint8_t)temp;
   }
   temp = min(GetNumericStrictValueFromField(3), 255);
-  if (temp != -1 && temp != gEditorLightColor.peBlue) {
+  if (temp != -1 && temp != gEditorLightColor.blue) {
     fUpdateLight1 = TRUE;
-    gEditorLightColor.peBlue = (uint8_t)temp;
+    gEditorLightColor.blue = (uint8_t)temp;
   }
   if (fUpdateLight1) {
     gfEditorForceShadeTableRebuild = TRUE;

@@ -8,6 +8,7 @@
 #include "SGP/Font.h"
 #include "SGP/Types.h"
 #include "Utils/FontControl.h"
+#include "rust_fileman.h"
 
 struct stringstruct {
   wchar_t* pString16;
@@ -18,8 +19,8 @@ struct stringstruct {
   BOOLEAN fBeginningOfNewString;
   uint32_t uiTimeOfLastUpdate;
   uint32_t uiPadding[5];
-  struct stringstruct *pNext;
-  struct stringstruct *pPrev;
+  struct stringstruct* pNext;
+  struct stringstruct* pPrev;
 };
 
 #define MSG_INTERFACE 0
@@ -41,7 +42,7 @@ struct stringstruct {
 #define MSG_FONT_WHITE FONT_MCOLOR_WHITE
 
 typedef struct stringstruct ScrollStringSt;
-typedef ScrollStringSt *ScrollStringStPtr;
+typedef ScrollStringSt* ScrollStringStPtr;
 
 extern ScrollStringStPtr pStringS;
 extern uint32_t StringCount;
@@ -72,8 +73,8 @@ void ClearDisplayedListOfTacticalStrings(void);
 // clear ALL strings in the tactical Message Queue
 void ClearTacticalMessageQueue(void);
 
-BOOLEAN LoadMapScreenMessagesFromSaveGameFile(HWFILE hFile);
-BOOLEAN SaveMapScreenMessagesToSaveGameFile(HWFILE hFile);
+BOOLEAN LoadMapScreenMessagesFromSaveGameFile(FileID hFile);
+BOOLEAN SaveMapScreenMessagesToSaveGameFile(FileID hFile);
 
 // use these if you are not Kris
 void HideMessagesDuringNPCDialogue(void);

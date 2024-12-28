@@ -8,7 +8,6 @@
 
 #include "JAScreens.h"
 #include "SGP/Debug.h"
-#include "SGP/FileMan.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "ScreenIDs.h"
@@ -31,6 +30,8 @@
 #include "TileEngine/IsometricUtils.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/Message.h"
+#include "rust_civ_groups.h"
+#include "rust_fileman.h"
 
 #ifdef JA2EDITOR
 extern wchar_t gszScheduleActions[NUM_SCHEDULE_ACTIONS][20];
@@ -195,7 +196,7 @@ void ProcessTacticalSchedule(uint8_t ubScheduleID) {
     fAutoProcess = TRUE;
   } else {
     for (iScheduleIndex = 0; iScheduleIndex < MAX_SCHEDULE_ACTIONS; iScheduleIndex++) {
-      if (pSchedule->usTime[iScheduleIndex] == GetWorldMinutesInDay()) {
+      if (pSchedule->usTime[iScheduleIndex] == GetMinutesSinceDayStart()) {
 #ifdef JA2TESTVERSION
         // ScreenMsg( FONT_RED, MSG_TESTVERSION, L"Processing schedule on time -- AI processing!" );
 #endif
@@ -215,7 +216,7 @@ void ProcessTacticalSchedule(uint8_t ubScheduleID) {
     // Grab the last time the eventlist was queued.  This will tell us how much time has passed
     // since that moment, and how long we need to auto process this schedule.
     uiStartTime = (guiTimeOfLastEventQuery / 60) % NUM_MIN_IN_DAY;
-    uiEndTime = GetWorldMinutesInDay();
+    uiEndTime = GetMinutesSinceDayStart();
     if (uiStartTime != uiEndTime) {
       PrepareScheduleForAutoProcessing(pSchedule, uiStartTime, uiEndTime);
     }
@@ -357,8 +358,7 @@ void LoadSchedules(int8_t **hBuffer) {
   // Schedules are posted when the soldier is added...
 }
 
-extern BOOLEAN gfSchedulesHosed;
-BOOLEAN LoadSchedulesFromSave(HWFILE hFile) {
+BOOLEAN LoadSchedulesFromSave(FileID hFile) {
   SCHEDULENODE *pSchedule = NULL;
   SCHEDULENODE temp;
   uint8_t ubNum;
@@ -368,21 +368,20 @@ BOOLEAN LoadSchedulesFromSave(HWFILE hFile) {
 
   // LOADDATA( &ubNum, *hBuffer, sizeof( uint8_t ) );
   uiNumBytesToRead = sizeof(uint8_t);
-  FileMan_Read(hFile, &ubNum, uiNumBytesToRead, &uiNumBytesRead);
+  File_Read(hFile, &ubNum, uiNumBytesToRead, &uiNumBytesRead);
   if (uiNumBytesRead != uiNumBytesToRead) {
-    FileMan_Close(hFile);
+    File_Close(hFile);
     return (FALSE);
   }
 
-  // Hack problem with schedules getting misaligned.
-  ubRealNum = gfSchedulesHosed ? ubNum + 256 : ubNum;
+  ubRealNum = ubNum;
 
   gubScheduleID = 1;
   while (ubRealNum) {
     uiNumBytesToRead = sizeof(SCHEDULENODE);
-    FileMan_Read(hFile, &temp, uiNumBytesToRead, &uiNumBytesRead);
+    File_Read(hFile, &temp, uiNumBytesToRead, &uiNumBytesRead);
     if (uiNumBytesRead != uiNumBytesToRead) {
-      FileMan_Close(hFile);
+      File_Close(hFile);
       return (FALSE);
     }
     // LOADDATA( &temp, *hBuffer, sizeof( SCHEDULENODE ) );
@@ -456,7 +455,7 @@ void ClearAllSchedules() {
   }
 }
 
-BOOLEAN SaveSchedules(HWFILE hFile) {
+BOOLEAN SaveSchedules(FileID hFile) {
   SCHEDULENODE *curr;
   uint32_t uiBytesWritten;
   uint8_t ubNum, ubNumFucker;
@@ -473,7 +472,7 @@ BOOLEAN SaveSchedules(HWFILE hFile) {
   }
   ubNum = (uint8_t)((iNum >= 32) ? 32 : iNum);
 
-  FileMan_Write(hFile, &ubNum, sizeof(uint8_t), &uiBytesWritten);
+  File_Write(hFile, &ubNum, sizeof(uint8_t), &uiBytesWritten);
   if (uiBytesWritten != sizeof(uint8_t)) {
     return (FALSE);
   }
@@ -487,7 +486,7 @@ BOOLEAN SaveSchedules(HWFILE hFile) {
       if (ubNumFucker > ubNum) {
         return (TRUE);
       }
-      FileMan_Write(hFile, curr, sizeof(SCHEDULENODE), &uiBytesWritten);
+      File_Write(hFile, curr, sizeof(SCHEDULENODE), &uiBytesWritten);
       if (uiBytesWritten != sizeof(SCHEDULENODE)) {
         return (FALSE);
       }
@@ -592,18 +591,19 @@ void AutoProcessSchedule(SCHEDULENODE *pSchedule, int32_t index) {
 
 #ifdef JA2EDITOR
   if (GetSolProfile(pSoldier) != NO_PROFILE) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
-             String("Autoprocessing schedule action %S for %S (%d) at time %02ld:%02ld (set for "
-                    "%02d:%02d), data1 = %d",
-                    gszScheduleActions[pSchedule->ubAction[index]], pSoldier->name,
-                    GetSolID(pSoldier), GetWorldHour(), guiMin, pSchedule->usTime[index] / 60,
-                    pSchedule->usTime[index] % 60, pSchedule->usData1[index]));
+    DebugMsg(
+        TOPIC_JA2, DBG_INFO,
+        String("Autoprocessing schedule action %S for %S (%d) at time %02ld:%02ld (set for "
+               "%02d:%02d), data1 = %d",
+               gszScheduleActions[pSchedule->ubAction[index]], pSoldier->name, GetSolID(pSoldier),
+               GetGameClockHour(), GetGameClockMinutes(), pSchedule->usTime[index] / 60,
+               pSchedule->usTime[index] % 60, pSchedule->usData1[index]));
   } else {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3,
+    DebugMsg(TOPIC_JA2, DBG_INFO,
              String("Autoprocessing schedule action %S for civ (%d) at time %02ld:%02ld (set for "
                     "%02d:%02d), data1 = %d",
                     gszScheduleActions[pSchedule->ubAction[index]], GetSolID(pSoldier),
-                    GetWorldHour(), guiMin, pSchedule->usTime[index] / 60,
+                    GetGameClockHour(), GetGameClockMinutes(), pSchedule->usTime[index] / 60,
                     pSchedule->usTime[index] % 60, pSchedule->usData1[index]));
   }
 #endif
@@ -696,7 +696,7 @@ void PostSchedule(struct SOLDIERTYPE *pSoldier) {
   uint16_t usTemp;
 
   if ((pSoldier->ubCivilianGroup == KINGPIN_CIV_GROUP) &&
-      (gTacticalStatus.fCivGroupHostile[KINGPIN_CIV_GROUP] ||
+      (GetCivGroupHostility(KINGPIN_CIV_GROUP) ||
        ((gubQuest[QUEST_KINGPIN_MONEY] == QUESTINPROGRESS) &&
         (CheckFact(FACT_KINGPIN_CAN_SEND_ASSASSINS, KINGPIN)))) &&
       (gWorldSectorX == 5 && gWorldSectorY == MAP_ROW_C) &&
@@ -766,7 +766,7 @@ void PostSchedule(struct SOLDIERTYPE *pSoldier) {
   pSchedule->ubSoldierID = GetSolID(pSoldier);
 
   // always process previous 24 hours
-  uiEndTime = GetWorldTotalMin();
+  uiEndTime = GetGameTimeInMin();
   uiStartTime = uiEndTime - (NUM_MIN_IN_DAY - 1);
 
   /*
@@ -774,8 +774,8 @@ void PostSchedule(struct SOLDIERTYPE *pSoldier) {
   //then process only 24 hours.  If less, then process all the schedules that would have happened
   within
   //that period of time.
-  uiEndTime = GetWorldTotalMin();
-  if( GetWorldTotalMin() - guiTimeCurrentSectorWasLastLoaded > NUM_MIN_IN_DAY )
+  uiEndTime = GetGameTimeInMin();
+  if( GetGameTimeInMin() - guiTimeCurrentSectorWasLastLoaded > NUM_MIN_IN_DAY )
   { //Process the last 24 hours
           uiStartTime = uiEndTime - (NUM_MIN_IN_DAY - 1);
   }
@@ -814,7 +814,8 @@ void PrepareScheduleForAutoProcessing(SCHEDULENODE *pSchedule, uint32_t uiStartT
         // CJC: Note that end time is always passed in here as the current time so
         // GetWorldDayInMinutes will be for the correct day
         AddStrategicEvent(EVENT_PROCESS_TACTICAL_SCHEDULE,
-                          GetWorldDayInMinutes() + pSchedule->usTime[i], pSchedule->ubScheduleID);
+                          GetGameTimeInDays() * 24 * 60 + pSchedule->usTime[i],
+                          pSchedule->ubScheduleID);
         fPostedNextEvent = TRUE;
         break;
       }
@@ -828,7 +829,8 @@ void PrepareScheduleForAutoProcessing(SCHEDULENODE *pSchedule, uint32_t uiStartT
       } else if (pSchedule->usTime[i] >= uiEndTime) {
         fPostedNextEvent = TRUE;
         AddStrategicEvent(EVENT_PROCESS_TACTICAL_SCHEDULE,
-                          GetWorldDayInMinutes() + pSchedule->usTime[i], pSchedule->ubScheduleID);
+                          GetGameTimeInDays() * 24 * 60 + pSchedule->usTime[i],
+                          pSchedule->ubScheduleID);
         break;
       }
     }
@@ -840,7 +842,7 @@ void PrepareScheduleForAutoProcessing(SCHEDULENODE *pSchedule, uint32_t uiStartT
     // Feb 1:  ONLY IF THERE IS A VALID EVENT TO POST WITH A VALID TIME!
     if (pSchedule->usTime[0] != 0xffff) {
       AddStrategicEvent(EVENT_PROCESS_TACTICAL_SCHEDULE,
-                        GetWorldDayInMinutes() + NUM_MIN_IN_DAY + pSchedule->usTime[0],
+                        GetGameTimeInDays() * 24 * 60 + NUM_MIN_IN_DAY + pSchedule->usTime[0],
                         pSchedule->ubScheduleID);
     }
   }
@@ -965,7 +967,7 @@ void PostNextSchedule(struct SOLDIERTYPE *pSoldier) {
   if (!pSchedule) {  // post default?
     return;
   }
-  usTime = (uint16_t)GetWorldMinutesInDay();
+  usTime = (uint16_t)GetMinutesSinceDayStart();
   usBestTime = 0xffff;
   iBestIndex = -1;
   for (i = 0; i < MAX_SCHEDULE_ACTIONS; i++) {
@@ -984,7 +986,7 @@ void PostNextSchedule(struct SOLDIERTYPE *pSoldier) {
   Assert(iBestIndex >= 0);
 
   AddStrategicEvent(EVENT_PROCESS_TACTICAL_SCHEDULE,
-                    GetWorldDayInMinutes() + pSchedule->usTime[iBestIndex],
+                    GetGameTimeInDays() * 24 * 60 + pSchedule->usTime[iBestIndex],
                     pSchedule->ubScheduleID);
 }
 

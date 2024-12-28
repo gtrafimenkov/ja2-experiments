@@ -8,15 +8,19 @@
 #include "Editor/EditorDefines.h"
 #include "Editor/EditorTaskbarUtils.h"
 #include "SGP/ButtonSystem.h"
+#include "SGP/Input.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VObjectInternal.h"
 #include "SGP/VSurface.h"
-#include "TileEngine/SysUtil.h"
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldDat.h"
+#include "TileEngine/WorldDef.h"
 #include "Utils/FontControl.h"
+#include "rust_colors.h"
+#include "rust_images.h"
 
 extern BOOLEAN gfOverheadMapDirty;
 
@@ -354,7 +358,7 @@ void InitJA2SelectionWindow(void) {
   // Trees & bushes (The tree button in the "terrain" toolbar)
   for (iCount3 = 0, iCount = 0; iCount < (LASTOSTRUCT - FIRSTFULLSTRUCT + 1); iCount++) {
     hVObject = gTileDatabase[gTileTypeStartIndex[FIRSTFULLSTRUCT + iCount]].hTileSurface;
-    usETRLEObjects = hVObject->usNumberOfObjects;
+    usETRLEObjects = hVObject->number_of_subimages;
 
     for (iCount2 = 0; iCount2 < usETRLEObjects; iCount2 += 3, iCount3++) {
       OStructs[iCount3].ubType = DISPLAY_GRAPHIC;
@@ -814,7 +818,7 @@ void RenderSelectionWindow(void) {
 
   if (!fButtonsPresent) return;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 600, 400, GenericButtonFillColors[0]);
+  VSurfaceColorFill(vsFB, 0, 0, 600, 400, GenericButtonFillColors[0]);
   DrawSelections();
   MarkButtonsDirty();
   RenderButtons();
@@ -824,8 +828,8 @@ void RenderSelectionWindow(void) {
     if (button == NULL) return;
 
     if ((abs(iStartClickX - button->Area.MouseXPos) > 9) ||
-        (abs(iStartClickY - (button->Area.MouseYPos + iTopWinCutOff - (int16_t)SelWinStartPoint.iY)) >
-         9)) {
+        (abs(iStartClickY -
+             (button->Area.MouseYPos + iTopWinCutOff - (int16_t)SelWinStartPoint.iY)) > 9)) {
       //			iSX = (int32_t)iStartClickX;
       //			iEX = (int32_t)button->Area.MouseXPos;
       //			iSY = (int32_t)iStartClickY;
@@ -854,17 +858,17 @@ void RenderSelectionWindow(void) {
       iEY = min(359, iEY);
       iEY = max(SelWinStartPoint.iY, iEY);
 
-      usFillColor = Get16BPPColor(FROMRGB(255, usFillGreen, 0));
+      usFillColor = rgb32_to_rgb565(FROMRGB(255, usFillGreen, 0));
       usFillGreen += usDir;
       if (usFillGreen > 250)
         usDir = 251;
       else if (usFillGreen < 5)
         usDir = 5;
 
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, iSX, iSY, iEX, iSY + 1, usFillColor);
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, iSX, iEY, iEX, iEY + 1, usFillColor);
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, iSX, iSY, iSX + 1, iEY, usFillColor);
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, iEX, iSY, iEX + 1, iEY, usFillColor);
+      VSurfaceColorFill(vsFB, iSX, iSY, iEX, iSY + 1, usFillColor);
+      VSurfaceColorFill(vsFB, iSX, iEY, iEX, iEY + 1, usFillColor);
+      VSurfaceColorFill(vsFB, iSX, iSY, iSX + 1, iEY, usFillColor);
+      VSurfaceColorFill(vsFB, iEX, iSY, iEX + 1, iEY, usFillColor);
     }
   }
 }
@@ -1318,7 +1322,7 @@ void DwnClkCallback(GUI_BUTTON *button, int32_t reason) {
 //	Displays the objects in the display list to the selection window.
 //
 void DrawSelections(void) {
-  SGPRect ClipRect, NewRect;
+  struct GRect ClipRect, NewRect;
 
   NewRect.iLeft = SelWinStartPoint.iX;
   NewRect.iTop = SelWinStartPoint.iY;
@@ -1357,7 +1361,7 @@ BOOLEAN BuildDisplayWindow(DisplaySpec *pDisplaySpecs, uint16_t usNumSpecs,
   uint16_t usETRLEStart;
   uint16_t usETRLEEnd;
   DisplaySpec *pDisplaySpec;
-  ETRLEObject *pETRLEObject;
+  struct Subimage *subimages;
   DisplayList *pCurNode;
 
   SaveSelectionList();
@@ -1371,16 +1375,16 @@ BOOLEAN BuildDisplayWindow(DisplaySpec *pDisplaySpecs, uint16_t usNumSpecs,
 
       if (usETRLEStart == DISPLAY_ALL_OBJECTS) {
         usETRLEStart = 0;
-        usETRLEEnd = pDisplaySpec->hVObject->usNumberOfObjects - 1;
+        usETRLEEnd = pDisplaySpec->hVObject->number_of_subimages - 1;
       }
 
       if (usETRLEStart > usETRLEEnd) return FALSE;
-      if (usETRLEEnd >= pDisplaySpec->hVObject->usNumberOfObjects) return FALSE;
+      if (usETRLEEnd >= pDisplaySpec->hVObject->number_of_subimages) return FALSE;
 
       for (usETRLELoop = usETRLEStart; usETRLELoop <= usETRLEEnd; usETRLELoop++) {
-        pETRLEObject = &(pDisplaySpec->hVObject->pETRLEObject[usETRLELoop]);
+        subimages = &(pDisplaySpec->hVObject->subimages[usETRLELoop]);
 
-        if ((iCurrX + pETRLEObject->usWidth > pBottomRight->iX) || (fFlags & ONE_COLUMN)) {
+        if ((iCurrX + subimages->width > pBottomRight->iX) || (fFlags & ONE_COLUMN)) {
           if (fFlags & ONE_ROW) {
             break;
           }
@@ -1394,8 +1398,8 @@ BOOLEAN BuildDisplayWindow(DisplaySpec *pDisplaySpecs, uint16_t usNumSpecs,
           pCurNode->uiIndex = usETRLELoop;
           pCurNode->iX = (int16_t)iCurrX;
           pCurNode->iY = (int16_t)iCurrY;
-          pCurNode->iWidth = pETRLEObject->usWidth;
-          pCurNode->iHeight = pETRLEObject->usHeight;
+          pCurNode->iWidth = subimages->width;
+          pCurNode->iHeight = subimages->height;
           pCurNode->pNext = *pDisplayList;
           pCurNode->uiObjIndx = pDisplaySpec->uiObjIndx;
 
@@ -1408,11 +1412,11 @@ BOOLEAN BuildDisplayWindow(DisplaySpec *pDisplaySpecs, uint16_t usNumSpecs,
         } else
           return (FALSE);
 
-        if (pETRLEObject->usHeight > usGreatestHeightInRow) {
-          usGreatestHeightInRow = pETRLEObject->usHeight;
+        if (subimages->height > usGreatestHeightInRow) {
+          usGreatestHeightInRow = subimages->height;
         }
 
-        iCurrX += pETRLEObject->usWidth + pSpacing->iX;
+        iCurrX += subimages->width + pSpacing->iX;
       }
     }
   }
@@ -1433,7 +1437,7 @@ BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBotto
   int16_t sTempOffsetX;
   int16_t sTempOffsetY;
   BOOLEAN fReturnVal;
-  ETRLEObject *pETRLEObject;
+  struct Subimage *subimages;
   uint16_t usFillColor;
   int16_t sCount;
 
@@ -1447,37 +1451,37 @@ BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBotto
 
     if (iCurrY > iBottomCutOff) return (TRUE);
 
-    pETRLEObject = &(pNode->hObj->pETRLEObject[pNode->uiIndex]);
+    subimages = &(pNode->hObj->subimages[pNode->uiIndex]);
 
     // We have to store the offset data in temp variables before zeroing them and blitting
-    sTempOffsetX = pETRLEObject->sOffsetX;
-    sTempOffsetY = pETRLEObject->sOffsetY;
+    sTempOffsetX = subimages->x_offset;
+    sTempOffsetY = subimages->y_offset;
 
     // Set the offsets used for blitting to 0
-    pETRLEObject->sOffsetX = 0;
-    pETRLEObject->sOffsetY = 0;
+    subimages->x_offset = 0;
+    subimages->y_offset = 0;
 
     if (fFlags & CLEAR_BACKGROUND) {
       usFillColor = SelWinFillColor;
       if (pNode->fChosen) usFillColor = SelWinHilightFillColor;
 
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, pNode->iX, iCurrY, pNode->iX + pNode->iWidth,
-                                iCurrY + pNode->iHeight, usFillColor);
+      VSurfaceColorFill(vsFB, pNode->iX, iCurrY, pNode->iX + pNode->iWidth, iCurrY + pNode->iHeight,
+                        usFillColor);
     }
 
     sCount = 0;
     if (pNode->fChosen) sCount = pSelList[FindInSelectionList(pNode)].sCount;
 
     SetObjectShade(pNode->hObj, DEFAULT_SHADE_LEVEL);
-    fReturnVal = BltVideoObject(FRAME_BUFFER, pNode->hObj, pNode->uiIndex, (uint16_t)pNode->iX,
-                                (uint16_t)iCurrY, VO_BLT_SRCTRANSPARENCY, NULL);
+    fReturnVal =
+        BltVObject(vsFB, pNode->hObj, pNode->uiIndex, (uint16_t)pNode->iX, (uint16_t)iCurrY);
 
     if (sCount != 0) {
       gprintf(pNode->iX, iCurrY, L"%d", sCount);
     }
 
-    pETRLEObject->sOffsetX = sTempOffsetX;
-    pETRLEObject->sOffsetY = sTempOffsetY;
+    subimages->x_offset = sTempOffsetX;
+    subimages->y_offset = sTempOffsetY;
   }
 
   return (fReturnVal);

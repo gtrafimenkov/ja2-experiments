@@ -6,6 +6,7 @@
 #define __MAP_EDGEPOINTS_H
 
 #include "SGP/Types.h"
+#include "rust_fileman.h"
 
 typedef struct MAPEDGEPOINTINFO {
   uint8_t ubNumPoints;
@@ -17,7 +18,7 @@ uint16_t ChooseMapEdgepoint(uint8_t ubStrategicInsertionCode);
 void ChooseMapEdgepoints(MAPEDGEPOINTINFO *pMapEdgepointInfo, uint8_t ubStrategicInsertionCode,
                          uint8_t ubNumDesiredPoints);
 void GenerateMapEdgepoints();
-void SaveMapEdgepoints(HWFILE fp);
+void SaveMapEdgepoints(FileID fp);
 BOOLEAN LoadMapEdgepoints(int8_t **hBuffer);
 void TrashMapEdgepoints();
 

@@ -14,12 +14,10 @@
 #include "JAScreens.h"
 #include "Laptop/Finances.h"
 #include "Local.h"
-#include "Money.h"
 #include "OptionsScreen.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
-#include "SGP/FileMan.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
@@ -38,7 +36,6 @@
 #include "Tactical/Overhead.h"
 #include "Tactical/TacticalSave.h"
 #include "TileEngine/RenderDirty.h"
-#include "TileEngine/SysUtil.h"
 #include "UI.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
@@ -48,9 +45,10 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
-
-BOOLEAN gfSchedulesHosed = FALSE;
-extern uint32_t guiBrokenSaveGameVersion;
+#include "platform.h"
+#include "rust_colors.h"
+#include "rust_fileman.h"
+#include "rust_laptop.h"
 
 //////////////////////////////////////////////////////
 //
@@ -298,7 +296,7 @@ uint32_t SaveLoadScreenHandle() {
     PauseGame();
 
     // save the new rect
-    BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, 0, 0, 639, 439);
+    VSurfaceBlitBufToBuf(vsFB, vsSB, 0, 0, 639, 439);
   }
 
   RestoreBackgroundRects();
@@ -398,7 +396,6 @@ void SetSaveLoadExitScreen(uint32_t uiScreen) {
 
 BOOLEAN EnterSaveLoadScreen() {
   int8_t i;
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX = SLG_FIRST_SAVED_SPOT_X;
   uint16_t usPosY = SLG_FIRST_SAVED_SPOT_Y;
 
@@ -435,14 +432,16 @@ BOOLEAN EnterSaveLoadScreen() {
   }
 
   // load Main background  graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  FilenameForBPP("INTERFACE\\LoadScreen.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSlgBackGroundImage));
+  if (!AddVObjectFromFile("INTERFACE\\LoadScreen.sti", &guiSlgBackGroundImage)) {
+    return FALSE;
+  }
 
   // load Load Screen Add ons graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_LOADSAVEHEADER);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBackGroundAddOns));
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, MLG_LOADSAVEHEADER);
+  if (!AddVObjectFromFile(ImageFile, &guiBackGroundAddOns)) {
+    return FALSE;
+  }
 
   guiSlgButtonImage = LoadButtonImage("INTERFACE\\LoadScreenAddOns.sti", -1, 6, -1, 9, -1);
   //	guiSlgButtonImage = UseLoadedButtonImage( guiBackGroundAddOns, -1,9,-1,6,-1 );
@@ -491,10 +490,10 @@ BOOLEAN EnterSaveLoadScreen() {
   usPosX = SLG_FIRST_SAVED_SPOT_X;
   usPosY = SLG_FIRST_SAVED_SPOT_Y;
   for (i = 0; i < NUM_SAVE_GAMES; i++) {
-    MSYS_DefineRegion(&gSelectedSaveRegion[i], usPosX, usPosY,
-                      (uint16_t)(usPosX + SLG_SAVELOCATION_WIDTH),
-                      (uint16_t)(usPosY + SLG_SAVELOCATION_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                      SelectedSaveRegionMovementCallBack, SelectedSaveRegionCallBack);
+    MSYS_DefineRegion(
+        &gSelectedSaveRegion[i], usPosX, usPosY, (uint16_t)(usPosX + SLG_SAVELOCATION_WIDTH),
+        (uint16_t)(usPosY + SLG_SAVELOCATION_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
+        SelectedSaveRegionMovementCallBack, SelectedSaveRegionCallBack);
     MSYS_AddRegion(&gSelectedSaveRegion[i]);
     MSYS_SetRegionUserData(&gSelectedSaveRegion[i], 0, i);
 
@@ -613,14 +612,14 @@ BOOLEAN EnterSaveLoadScreen() {
     ButtonList[guiSlgSaveLoadBtn]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
     // CLEAR THE FRAME BUFFER
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnLockVideoSurface(FRAME_BUFFER);
+    VSurfaceUnlock(vsFB);
 
-    // CLEAR THE guiRENDERBUFFER
-    pDestBuf = LockVideoSurface(guiRENDERBUFFER, &uiDestPitchBYTES);
+    // CLEAR THE FRAME_BUFFER
+    pDestBuf = VSurfaceLockOld(vsFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnLockVideoSurface(guiRENDERBUFFER);
+    VSurfaceUnlock(vsFB);
   }
 
   gfGettingNameFromSaveLoadScreen = FALSE;
@@ -666,7 +665,7 @@ void ExitSaveLoadScreen() {
   gfSaveLoadScreenExit = FALSE;
 
   if (!gfLoadedGame) {
-    UnLockPauseState();
+    UnlockPause();
     UnPauseGame();
   }
 
@@ -689,7 +688,7 @@ void RenderSaveLoadScreen() {
   }
 
   GetVideoObject(&hPixHandle, guiSlgBackGroundImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, 0, 0, 0);
 
   if (gfSaveGame) {
     // If we are saving a game
@@ -698,15 +697,13 @@ void RenderSaveLoadScreen() {
     //		DrawTextToScreen( zSaveLoadText[SLG_SAVE_GAME], 0, 10, 639, SAVE_LOAD_TITLE_FONT,
     // SAVE_LOAD_TITLE_COLOR, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
   } else {
     // If we are Loading a game
 
     // Display the Title
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObject(vsFB, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
   }
 
   DisplaySaveGameList();
@@ -767,20 +764,20 @@ void GetSaveLoadScreenUserInput() {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
 
@@ -821,35 +818,6 @@ void GetSaveLoadScreenUserInput() {
 
     if (Event.usEvent == KEY_UP) {
       switch (Event.usParam) {
-        case 'a':
-          if (gfKeyState[ALT] && !gfSaveGame) {
-            int8_t iFile = GetNumberForAutoSave(TRUE);
-
-            if (iFile == -1) break;
-
-            guiLastSaveGameNum = iFile;
-
-            gbSelectedSaveLocation = SAVE__END_TURN_NUM;
-            StartFadeOutForSaveLoadScreen();
-          }
-          break;
-
-        case 'b':
-          if (gfKeyState[ALT] && !gfSaveGame) {
-            int8_t iFile = GetNumberForAutoSave(FALSE);
-
-            if (iFile == -1)
-              break;
-            else if (iFile == 0)
-              guiLastSaveGameNum = 1;
-            else if (iFile == 1)
-              guiLastSaveGameNum = 0;
-
-            gbSelectedSaveLocation = SAVE__END_TURN_NUM;
-            StartFadeOutForSaveLoadScreen();
-          }
-          break;
-
         case UPARROW:
           MoveSelectionUpOrDown(TRUE);
           break;
@@ -982,7 +950,7 @@ void SaveLoadGameNumber(int8_t bSaveGameID) {
 
 BOOLEAN DoSaveLoadMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
                                      uint16_t usFlags, MSGBOX_CALLBACK ReturnCallback,
-                                     const SGPRect *pCenteringRect) {
+                                     const struct GRect *pCenteringRect) {
   // do message box and return
   giSaveLoadMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
                                       (uint8_t)(usFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
@@ -992,9 +960,9 @@ BOOLEAN DoSaveLoadMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t
   return ((giSaveLoadMessageBox != -1));
 }
 
-BOOLEAN DoSaveLoadMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
-                             MSGBOX_CALLBACK ReturnCallback) {
-  SGPRect CenteringRect = {0, 0, 639, 479};
+BOOLEAN DoSaveLoadMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
+                             uint16_t usFlags, MSGBOX_CALLBACK ReturnCallback) {
+  struct GRect CenteringRect = {0, 0, 639, 479};
 
   // do message box and return
   giSaveLoadMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
@@ -1013,7 +981,7 @@ BOOLEAN InitSaveGameArray() {
   for (cnt = 0; cnt < NUM_SAVE_GAMES; cnt++) {
     CreateSavedGameFileNameFromNumber(cnt, zSaveGameName);
 
-    if (FileMan_Exists(zSaveGameName)) {
+    if (File_Exists(zSaveGameName)) {
       // Get the header for the saved game
       if (!LoadSavedGameHeader(cnt, &SaveGameHeader))
         gbSaveGameArray[cnt] = FALSE;
@@ -1066,8 +1034,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
   // background
   GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObject(vsFB, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY);
 
   //
   // Set the shadow color
@@ -1081,7 +1048,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
     // Shadow the slot
     //		if( !gbSaveGameArray[ bEntryID ] )
-    ShadowVideoSurfaceRect(FRAME_BUFFER, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+    ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                            usPosY + SLG_SAVELOCATION_HEIGHT);
   }
 
@@ -1108,7 +1075,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
       uiFont = SAVE_LOAD_QUICKSAVE_FONT;
 
       // Shadow the surface
-      ShadowVideoSurfaceRect(FRAME_BUFFER, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+      ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                              usPosY + SLG_SAVELOCATION_HEIGHT);
     } else {
       SetFontShadow(SAVE_LOAD_EMPTYSLOT_SHADOW_COLOR);
@@ -1130,9 +1097,9 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
     // if we are saving AND it is the currently selected slot
     if (gfSaveGame && gbSelectedSaveLocation == bEntryID) {
       // the user has selected a spot to save.  Fill out all the required information
-      SaveGameHeader.uiDay = GetWorldDay();
-      SaveGameHeader.ubHour = (uint8_t)GetWorldHour();
-      SaveGameHeader.ubMin = (uint8_t)guiMin;
+      SaveGameHeader.uiDay = GetGameTimeInDays();
+      SaveGameHeader.ubHour = (uint8_t)GetGameClockHour();
+      SaveGameHeader.ubMin = (uint8_t)GetGameClockMinutes();
 
       // Get the sector value to save.
       {
@@ -1146,7 +1113,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
       //			SaveGameHeader.sSectorY = gWorldSectorY;
       //			SaveGameHeader.bSectorZ = gbWorldSectorZ;
       SaveGameHeader.ubNumOfMercsOnPlayersTeam = NumberOfMercsOnPlayerTeam();
-      SaveGameHeader.iCurrentBalance = MoneyGetBalance();
+      SaveGameHeader.iCurrentBalance = LaptopMoneyGetBalance();
       wcscpy(SaveGameHeader.sSavedGameDesc, gzGameDescTextField);
 
       // copy over the initial game options
@@ -1206,7 +1173,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
       if ((SaveGameHeader.sSectorX == -1 && SaveGameHeader.sSectorY == -1) ||
           SaveGameHeader.bSectorZ < 0) {
         if ((SaveGameHeader.uiDay * NUM_SEC_IN_DAY + SaveGameHeader.ubHour * NUM_SEC_IN_HOUR +
-             SaveGameHeader.ubMin * NUM_SEC_IN_MIN) <= STARTING_TIME)
+             SaveGameHeader.ubMin * NUM_SEC_IN_MIN) <= GetGameStartingTime())
           swprintf(zLocationString, ARR_SIZE(zLocationString),
                    gpStrategicString[STR_PB_NOTAPPLICABLE_ABBREVIATION]);
         else
@@ -1285,8 +1252,9 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
                        FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
     } else {
       // display the empty spot
-      DrawTextToScreen(pMessageStrings[MSG_EMPTYSLOT], usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y),
-                       609, uiFont, ubFontColor, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
+      DrawTextToScreen(pMessageStrings[MSG_EMPTYSLOT], usPosX,
+                       (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 609, uiFont, ubFontColor,
+                       FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
     }
   }
 
@@ -1303,7 +1271,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 }
 
 BOOLEAN LoadSavedGameHeader(int8_t bEntry, SAVED_GAME_HEADER *pSaveGameHeader) {
-  HWFILE hFile;
+  FileID hFile = FILE_ID_ERR;
   char zSavedGameName[512];
   uint32_t uiNumBytesRead;
 
@@ -1316,24 +1284,24 @@ BOOLEAN LoadSavedGameHeader(int8_t bEntry, SAVED_GAME_HEADER *pSaveGameHeader) {
   // Get the name of the file
   CreateSavedGameFileNameFromNumber(bEntry, zSavedGameName);
 
-  if (FileMan_Exists(zSavedGameName)) {
+  if (File_Exists(zSavedGameName)) {
     // create the save game file
-    hFile = FileMan_Open(zSavedGameName, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
+    hFile = File_OpenForReading(zSavedGameName);
     if (!hFile) {
-      FileMan_Close(hFile);
+      File_Close(hFile);
       gbSaveGameArray[bEntry] = FALSE;
       return (FALSE);
     }
 
     // Load the Save Game header file
-    FileMan_Read(hFile, pSaveGameHeader, sizeof(SAVED_GAME_HEADER), &uiNumBytesRead);
+    File_Read(hFile, pSaveGameHeader, sizeof(SAVED_GAME_HEADER), &uiNumBytesRead);
     if (uiNumBytesRead != sizeof(SAVED_GAME_HEADER)) {
-      FileMan_Close(hFile);
+      File_Close(hFile);
       gbSaveGameArray[bEntry] = FALSE;
       return (FALSE);
     }
 
-    FileMan_Close(hFile);
+    File_Close(hFile);
 
     //
     // Do some Tests on the header to make sure it is valid
@@ -1626,11 +1594,11 @@ void InitSaveLoadScreenTextInputBoxes() {
 
   SetTextInputCursor(CUROSR_IBEAM_WHITE);
   SetTextInputFont((uint16_t)FONT12ARIALFIXEDWIDTH);  // FONT12ARIAL //FONT12ARIALFIXEDWIDTH
-  Set16BPPTextFieldColor(Get16BPPColor(FROMRGB(0, 0, 0)));
-  SetBevelColors(Get16BPPColor(FROMRGB(136, 138, 135)), Get16BPPColor(FROMRGB(24, 61, 81)));
+  Set16BPPTextFieldColor(rgb32_to_rgb565(FROMRGB(0, 0, 0)));
+  SetBevelColors(rgb32_to_rgb565(FROMRGB(136, 138, 135)), rgb32_to_rgb565(FROMRGB(24, 61, 81)));
   SetTextInputRegularColors(FONT_WHITE, 2);
   SetTextInputHilitedColors(2, FONT_WHITE, FONT_WHITE);
-  SetCursorColor(Get16BPPColor(FROMRGB(255, 255, 255)));
+  SetCursorColor(rgb32_to_rgb565(FROMRGB(255, 255, 255)));
 
   AddUserInputField(NULL);
 
@@ -1828,7 +1796,7 @@ void DeleteSaveGameNumber(uint8_t ubSaveGameSlotID) {
   CreateSavedGameFileNameFromNumber(ubSaveGameSlotID, zSaveGameName);
 
   // Delete the saved game file
-  FileMan_Delete(zSaveGameName);
+  Plat_DeleteFile(zSaveGameName);
 }
 
 void DisplayOnScreenNumber(BOOLEAN fErase) {
@@ -1847,8 +1815,7 @@ void DisplayOnScreenNumber(BOOLEAN fErase) {
       continue;
     }
 
-    BlitBufferToBuffer(guiSAVEBUFFER, guiRENDERBUFFER, usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y),
-                       10, 10);
+    VSurfaceBlitBufToBuf(vsSB, vsFB, usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 10, 10);
 
     if (bLoopNum != 10) {
       bNum = bLoopNum;
@@ -1879,55 +1846,22 @@ void DoneFadeOutForSaveLoadScreen(void) {
   gfHadToMakeBasementLevels = FALSE;
 
   if (!LoadSavedGame(gbSelectedSaveLocation)) {
-    if (guiBrokenSaveGameVersion < 95 &&
-        !gfSchedulesHosed) {  // Hack problem with schedules getting misaligned.
-      gfSchedulesHosed = TRUE;
-      if (!LoadSavedGame(gbSelectedSaveLocation)) {
-        DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                             SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallBack);
-        NextLoopCheckForEnoughFreeHardDriveSpace();
-      } else {
-        gfSchedulesHosed = FALSE;
-        goto SUCCESSFULLY_CORRECTED_SAVE;
-      }
-      gfSchedulesHosed = FALSE;
-    } else {
-      DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR],
-                           SAVE_LOAD_SCREEN, MSG_BOX_FLAG_OK, FailedLoadingGameCallBack);
-      NextLoopCheckForEnoughFreeHardDriveSpace();
-    }
+    DoSaveLoadMessageBox(MSG_BOX_BASIC_STYLE, zSaveLoadText[SLG_LOAD_GAME_ERROR], SAVE_LOAD_SCREEN,
+                         MSG_BOX_FLAG_OK, FailedLoadingGameCallBack);
+    NextLoopCheckForEnoughFreeHardDriveSpace();
   } else {
-  SUCCESSFULLY_CORRECTED_SAVE:
-#ifdef JA2BETAVERSION
-    //		if( ValidateSoldierInitLinks( 1 ) )
-    ValidateSoldierInitLinks(1);
-    {
-#endif
-      // If we are to go to map screen after loading the game
-      if (guiScreenToGotoAfterLoadingSavedGame == MAP_SCREEN) {
-        gFadeInDoneCallback = DoneFadeInForSaveLoadScreen;
-
-        SetSaveLoadExitScreen(guiScreenToGotoAfterLoadingSavedGame);
-
-        //			LeaveTacticalScreen( MAP_SCREEN );
-
-        FadeInNextFrame();
-      }
-
-      else {
-        // if we are to go to the Tactical screen after loading
-        gFadeInDoneCallback = DoneFadeInForSaveLoadScreen;
-
-        SetSaveLoadExitScreen(guiScreenToGotoAfterLoadingSavedGame);
-
-        PauseTime(FALSE);
-
-        //			EnterTacticalScreen( );
-        FadeInGameScreen();
-      }
-#ifdef JA2BETAVERSION
+    // If we are to go to map screen after loading the game
+    if (guiScreenToGotoAfterLoadingSavedGame == MAP_SCREEN) {
+      gFadeInDoneCallback = DoneFadeInForSaveLoadScreen;
+      SetSaveLoadExitScreen(guiScreenToGotoAfterLoadingSavedGame);
+      FadeInNextFrame();
+    } else {
+      // if we are to go to the Tactical screen after loading
+      gFadeInDoneCallback = DoneFadeInForSaveLoadScreen;
+      SetSaveLoadExitScreen(guiScreenToGotoAfterLoadingSavedGame);
+      PauseTime(FALSE);
+      FadeInGameScreen();
     }
-#endif
   }
   gfStartedFadingOut = FALSE;
 }
@@ -1939,20 +1873,20 @@ void DoneFadeInForSaveLoadScreen(void) {
 
   if (guiScreenToGotoAfterLoadingSavedGame == MAP_SCREEN) {
     if (!gfPauseDueToPlayerGamePause) {
-      UnLockPauseState();
+      UnlockPause();
       UnPauseGame();
     }
   }
 
   else {
     // if the game is currently paused
-    if (GamePaused()) {
+    if (IsGamePaused()) {
       // need to call it twice
       HandlePlayerPauseUnPauseOfGame();
       HandlePlayerPauseUnPauseOfGame();
     }
 
-    //		UnLockPauseState( );
+    //		UnlockPause( );
     //		UnPauseGame( );
   }
 }
@@ -2034,35 +1968,6 @@ void FailedLoadingGameCallBack(uint8_t bExitValue) {
 BOOLEAN DoQuickSave() {
   gzGameDescTextField[0] = '\0';
 
-  /*
-          // Make sure the user has enough hard drive space
-          if( !DoesUserHaveEnoughHardDriveSpace() )
-          {
-                  wchar_t	zText[512];
-                  wchar_t	zSpaceOnDrive[512];
-                  uint32_t	uiSpaceOnDrive;
-                  wchar_t	zSizeNeeded[512];
-
-                  swprintf( zSizeNeeded, L"%d", REQUIRED_FREE_SPACE / BYTESINMEGABYTE );
-                  InsertCommasForDollarFigure( zSizeNeeded );
-
-                  uiSpaceOnDrive = Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom( );
-
-                  swprintf( zSpaceOnDrive, L"%.2f", uiSpaceOnDrive / (float)BYTESINMEGABYTE );
-
-                  swprintf( zText, pMessageStrings[ MSG_LOWDISKSPACE_WARNING ], zSpaceOnDrive,
-     zSizeNeeded );
-
-                  if( guiPreviousOptionScreen == MAP_SCREEN )
-                          DoMapMessageBox( MSG_BOX_BASIC_STYLE, zText, MAP_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack ); else DoMessageBox(
-     MSG_BOX_BASIC_STYLE, zText, GAME_SCREEN, MSG_BOX_FLAG_OK,
-     NotEnoughHardDriveSpaceForQuickSaveMessageBoxCallBack, NULL );
-
-                  return( FALSE );
-          }
-  */
-
   if (!SaveGame(0, gzGameDescTextField, ARR_SIZE(gzGameDescTextField))) {
     // Unset the fact that we are saving a game
     gTacticalStatus.uiFlags &= ~LOADING_SAVED_GAME;
@@ -2110,7 +2015,7 @@ BOOLEAN IsThereAnySavedGameFiles() {
   for (cnt = 0; cnt < NUM_SAVE_GAMES; cnt++) {
     CreateSavedGameFileNameFromNumber(cnt, zSaveGameName);
 
-    if (FileMan_Exists(zSaveGameName)) return (TRUE);
+    if (File_Exists(zSaveGameName)) return (TRUE);
   }
 
   return (FALSE);
