@@ -43,6 +43,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 endif()
 
+add_subdirectory(jplatform)
 add_subdirectory(ja2lib)
 add_subdirectory(platform-dummy)
 
