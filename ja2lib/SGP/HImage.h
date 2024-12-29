@@ -170,23 +170,12 @@ BOOLEAN GetETRLEImageData(HIMAGE hImage, ETRLEData *pBuffer);
 uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale,
                                    uint32_t gscale, uint32_t bscale, BOOLEAN mono);
 uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette);
-uint16_t Get16BPPColor(uint32_t RGBValue);
-uint32_t GetRGBColor(uint16_t Value16BPP);
+// uint16_t Get16BPPColor(uint32_t RGBValue);
+// uint32_t GetRGBColor(uint16_t Value16BPP);
 struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd,
                                                  uint8_t *pOldPalette);
 
-extern uint16_t gusAlphaMask;
-extern uint16_t gusRedMask;
-extern uint16_t gusGreenMask;
-extern uint16_t gusBlueMask;
-extern int16_t gusRedShift;
-extern int16_t gusBlueShift;
-extern int16_t gusGreenShift;
-
 // used to convert 565 RGB data into different bit-formats
 void ConvertRGBDistribution565To555(uint16_t *p16BPPData, uint32_t uiNumberOfPixels);
-void ConvertRGBDistribution565To655(uint16_t *p16BPPData, uint32_t uiNumberOfPixels);
-void ConvertRGBDistribution565To556(uint16_t *p16BPPData, uint32_t uiNumberOfPixels);
-void ConvertRGBDistribution565ToAny(uint16_t *p16BPPData, uint32_t uiNumberOfPixels);
 
 #endif

@@ -30,7 +30,6 @@ void DetermineRGBDistributionSettings() {
   STRING512 DataDir;
   char ExecDir[256];
   STRING512 ShadeTableDir;
-  uint32_t uiRBitMask, uiGBitMask, uiBBitMask;
   uint32_t uiPrevRBitMask, uiPrevGBitMask, uiPrevBBitMask;
   uint32_t uiNumBytesRead;
   HWFILE hfile;
@@ -75,13 +74,14 @@ void DetermineRGBDistributionSettings() {
     }
   }
 
-  if (!GetPrimaryRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask)) {
-    AssertMsg(0, "Failed to extract the current RGB distribution masks.");
-  }
+  uint16_t uiRBitMask = 0xf800;
+  uint16_t uiGBitMask = 0x07e0;
+  uint16_t uiBBitMask = 0x001f;
   if (fLoadedPrevRGBDist) {
     if (uiRBitMask != uiPrevRBitMask || uiGBitMask != uiPrevGBitMask ||
-        uiBBitMask != uiPrevBBitMask) {  // The user has changed modes since the last time he has
-                                         // played JA2.  This essentially can only happen if:
+        uiBBitMask != uiPrevBBitMask) {
+      // The user has changed modes since the last time he has
+      // played JA2.  This essentially can only happen if:
       // 1)  The video card has been changed since the last run of JA2.
       // 2)  Certain video cards have different RGB distributions in different operating systems
       // such as 		the Millenium card using Windows NT or Windows 95 3)  The user has
