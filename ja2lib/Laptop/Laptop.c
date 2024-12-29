@@ -89,6 +89,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 #include "platform.h"
 
 // icons text id's
@@ -527,8 +528,8 @@ void ShouldNewMailBeDisplayed(void);
 void DisplayPlayersBalanceToDate(void);
 void CheckIfNewWWWW(void);
 void HandleLapTopESCKey(void);
-BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t* pTitle, uint32_t uiIconGraphic,
-                                     uint16_t usIconGraphicIndex);
+BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTitle,
+                                     uint32_t uiIconGraphic, uint16_t usIconGraphicIndex);
 void RemoveTitleBarMaximizeGraphics();
 BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t usTopLeftX,
                                        uint16_t usTopLeftY, uint16_t usTopRightX);
@@ -626,20 +627,20 @@ void GetLaptopKeyboardInput() {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
 
@@ -721,11 +722,9 @@ BOOLEAN InitLaptopAndLaptopScreens() {
   return (TRUE);
 }
 
-uint32_t
-DrawLapTopIcons() { return (TRUE); }
+uint32_t DrawLapTopIcons() { return (TRUE); }
 
-uint32_t
-DrawLapTopText() {
+uint32_t DrawLapTopText() {
   // show balance
   DisplayPlayersBalanceToDate();
 
@@ -800,7 +799,7 @@ int32_t EnterLaptop() {
   fCurrentlyInLaptop = TRUE;
 
   // clear guiSAVEBUFFER
-  // ColorFillVideoSurfaceArea(guiSAVEBUFFER,	0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)) );
+  // ColorFillVideoSurfaceArea(guiSAVEBUFFER,	0, 0, 640, 480, rgb32_to_rgb565(FROMRGB(0, 0, 0)) );
   // disable characters panel buttons
 
   // reset redraw flag and redraw new mail
@@ -2000,8 +1999,7 @@ uint32_t ExitLaptopMode(uint32_t uiMode) {
   return (TRUE);
 }
 
-uint32_t
-CreateLaptopButtons() {
+uint32_t CreateLaptopButtons() {
   memset(giLapTopButton, -1, sizeof(giLapTopButton));
 
   /*giLapTopButtonImage[ON_BUTTON]=  LoadButtonImage( "LAPTOP\\button.sti" ,-1,1,-1,0,-1 );
@@ -2259,8 +2257,9 @@ BOOLEAN LeaveLapTopScreen(void) {
         // pDestBuf = LockVideoSurface( FRAME_BUFFER, &uiDestPitchBYTES );
         // SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640, 480 );
         // RectangleDraw( TRUE, SrcRect1.iLeft, SrcRect1.iTop, SrcRect1.iRight, SrcRect1.iBottom,
-        // Get16BPPColor( FROMRGB( 255, 100, 0 ) ), pDestBuf ); RectangleDraw( TRUE, SrcRect2.iLeft,
-        // SrcRect2.iTop, SrcRect2.iRight, SrcRect2.iBottom, Get16BPPColor( FROMRGB( 100, 255, 0 )
+        // rgb32_to_rgb565( FROMRGB( 255, 100, 0 ) ), pDestBuf ); RectangleDraw( TRUE,
+        // SrcRect2.iLeft, SrcRect2.iTop, SrcRect2.iRight, SrcRect2.iBottom, rgb32_to_rgb565(
+        // FROMRGB( 100, 255, 0 )
         // ), pDestBuf ); UnLockVideoSurface( FRAME_BUFFER );
 
         BltStretchVideoSurface(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 0, &DstRect, &SrcRect2);
@@ -3481,9 +3480,9 @@ void DisplayErrorBox(void) {
   DisplayWrappedString(
       ERROR_X + ERROR_TEXT_X,
       (uint16_t)(ERROR_Y + ERROR_TEXT_Y +
-               DisplayWrappedString(ERROR_X + ERROR_TEXT_X, ERROR_Y + ERROR_TEXT_Y, BOOK_WIDTH, 2,
-                                    ERROR_FONT, FONT_BLACK, pErrorStrings[1], FONT_BLACK, FALSE,
-                                    CENTER_JUSTIFIED)),
+                 DisplayWrappedString(ERROR_X + ERROR_TEXT_X, ERROR_Y + ERROR_TEXT_Y, BOOK_WIDTH, 2,
+                                      ERROR_FONT, FONT_BLACK, pErrorStrings[1], FONT_BLACK, FALSE,
+                                      CENTER_JUSTIFIED)),
       BOOK_WIDTH, 2, ERROR_FONT, FONT_BLACK, pErrorStrings[2], FONT_BLACK, FALSE, CENTER_JUSTIFIED);
 
   SetFontShadow(DEFAULT_SHADOW);
@@ -3733,8 +3732,8 @@ void LapTopScreenCallBack(struct MOUSE_REGION *pRegion, int32_t iReason) {
   return;
 }
 
-BOOLEAN DoLapTopMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint8_t ubFlags,
-                           MSGBOX_CALLBACK ReturnCallback) {
+BOOLEAN DoLapTopMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
+                           uint8_t ubFlags, MSGBOX_CALLBACK ReturnCallback) {
   SGPRect pCenteringRect = {LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y, LAPTOP_SCREEN_LR_X,
                             LAPTOP_SCREEN_LR_Y};
 
@@ -3801,8 +3800,8 @@ BOOLEAN WebPageTileBackground(uint8_t ubNumX, uint8_t ubNumY, uint16_t usWidth, 
   return (TRUE);
 }
 
-BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t* pTitle, uint32_t uiIconGraphic,
-                                     uint16_t usIconGraphicIndex) {
+BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTitle,
+                                     uint32_t uiIconGraphic, uint16_t usIconGraphicIndex) {
   VSURFACE_DESC vs_desc;
   struct VObject *hImageHandle;
 
@@ -5156,7 +5155,8 @@ void DisplayWebBookMarkNotify(void) {
     BltVideoObject(FRAME_BUFFER, hLapTopIconHandle, 1, DOWNLOAD_X + 4, DOWNLOAD_Y + 1,
                    VO_BLT_SRCTRANSPARENCY, NULL);
 
-    //	MSYS_DefineRegion( &gLapTopScreenRegion, ( uint16_t )( LaptopScreenRect.iLeft ),( uint16_t )(
+    //	MSYS_DefineRegion( &gLapTopScreenRegion, ( uint16_t )( LaptopScreenRect.iLeft ),( uint16_t
+    //)(
     // LaptopScreenRect.iTop ),( uint16_t ) ( LaptopScreenRect.iRight ),( uint16_t )(
     // LaptopScreenRect.iBottom ), MSYS_PRIORITY_NORMAL+1,
     // CURSOR_LAPTOP_SCREEN, ScreenRegionMvtCallback, LapTopScreenCallBack );
@@ -5176,9 +5176,9 @@ void DisplayWebBookMarkNotify(void) {
     SetFontShadow(NO_SHADOW);
 
     // now draw the message
-    DisplayWrappedString((int16_t)(DOWN_STRING_X - 42), (uint16_t)(DOWN_STRING_Y + 20), BOOK_WIDTH + 45,
-                         2, BOOK_FONT, FONT_BLACK, pShowBookmarkString[1], FONT_BLACK, FALSE,
-                         CENTER_JUSTIFIED);
+    DisplayWrappedString((int16_t)(DOWN_STRING_X - 42), (uint16_t)(DOWN_STRING_Y + 20),
+                         BOOK_WIDTH + 45, 2, BOOK_FONT, FONT_BLACK, pShowBookmarkString[1],
+                         FONT_BLACK, FALSE, CENTER_JUSTIFIED);
 
     // invalidate region
     InvalidateRegion(DOWNLOAD_X, DOWNLOAD_Y, DOWNLOAD_X + 150, DOWNLOAD_Y + 100);

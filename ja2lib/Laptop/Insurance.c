@@ -19,6 +19,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 #define INSURANCE_BACKGROUND_WIDTH 125
 #define INSURANCE_BACKGROUND_HEIGHT 100
@@ -109,10 +110,11 @@ BOOLEAN EnterInsurance() {
 
   usPosX = INSURANCE_BOTTOM_LINK_RED_BAR_X;
   for (i = 0; i < 3; i++) {
-    MSYS_DefineRegion(
-        &gSelectedInsuranceLinkRegion[i], usPosX, INSURANCE_BOTTOM_LINK_RED_BAR_Y - 37,
-        (uint16_t)(usPosX + INSURANCE_BOTTOM_LINK_RED_BAR_WIDTH), INSURANCE_BOTTOM_LINK_RED_BAR_Y + 2,
-        MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK, SelectInsuranceRegionCallBack);
+    MSYS_DefineRegion(&gSelectedInsuranceLinkRegion[i], usPosX,
+                      INSURANCE_BOTTOM_LINK_RED_BAR_Y - 37,
+                      (uint16_t)(usPosX + INSURANCE_BOTTOM_LINK_RED_BAR_WIDTH),
+                      INSURANCE_BOTTOM_LINK_RED_BAR_Y + 2, MSYS_PRIORITY_HIGH, CURSOR_WWW,
+                      MSYS_NO_CALLBACK, SelectInsuranceRegionCallBack);
     MSYS_AddRegion(&gSelectedInsuranceLinkRegion[i]);
     MSYS_SetRegionUserData(&gSelectedInsuranceLinkRegion[i], 0, i);
 
@@ -334,7 +336,8 @@ void RemoveInsuranceDefaults() {
   }
 }
 
-void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_t EndY) {
+void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_t EndX,
+                                   uint16_t EndY) {
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
 
@@ -343,17 +346,17 @@ void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw the red line
-  LineDraw(FALSE, usStartX, usStartY, EndX, EndY, Get16BPPColor(FROMRGB(255, 0, 0)), pDestBuf);
+  LineDraw(FALSE, usStartX, usStartY, EndX, EndY, rgb32_to_rgb565(FROMRGB(255, 0, 0)), pDestBuf);
 
   // draw the black shadow line
-  LineDraw(FALSE, usStartX + 1, usStartY + 1, EndX + 1, EndY + 1, Get16BPPColor(FROMRGB(0, 0, 0)),
+  LineDraw(FALSE, usStartX + 1, usStartY + 1, EndX + 1, EndY + 1, rgb32_to_rgb565(FROMRGB(0, 0, 0)),
            pDestBuf);
 
   // unlock frame buffer
   UnLockVideoSurface(FRAME_BUFFER);
 }
 
-void GetInsuranceText(uint8_t ubNumber, wchar_t* pString) {
+void GetInsuranceText(uint8_t ubNumber, wchar_t *pString) {
   uint32_t uiStartLoc = 0;
 
   if (ubNumber < INS_MULTI_LINE_BEGINS) {

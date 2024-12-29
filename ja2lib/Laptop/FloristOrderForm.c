@@ -27,6 +27,7 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 #define FLOWER_ORDEER_TINY_FONT FONT10ARIAL
 #define FLOWER_ORDEER_SMALL_FONT FONT12ARIAL
@@ -231,7 +232,8 @@ void SelectFlowerDropDownMovementCallBack(struct MOUSE_REGION *pRegion, int32_t 
 
 // to select typing in the personal sentiment box
 // struct MOUSE_REGION    gSelectedFloristPersonalSentimentBoxRegion;
-// void SelectFloristPersonalSentimentBoxRegionCallBack(struct MOUSE_REGION * pRegion, int32_t iReason
+// void SelectFloristPersonalSentimentBoxRegionCallBack(struct MOUSE_REGION * pRegion, int32_t
+// iReason
 // );
 
 void DisplayFloristCheckBox();
@@ -423,8 +425,8 @@ BOOLEAN EnterFloristOrderForm() {
   //	MSYS_DefineRegion( &gSelectedFloristPersonalSentimentBoxRegion,
   // FLOWER_ORDER_SENTIMENT_BOX_X, FLOWER_ORDER_SENTIMENT_BOX_Y,
   //(uint16_t)(FLOWER_ORDER_SENTIMENT_BOX_X + FLOWER_ORDER_SENTIMENT_BOX_WIDTH),
-  //(uint16_t)(FLOWER_ORDER_SENTIMENT_BOX_Y + FLOWER_ORDER_SENTIMENT_BOX_HEIGHT), MSYS_PRIORITY_HIGH,
-  //					 CURSOR_WWW, MSYS_NO_CALLBACK,
+  //(uint16_t)(FLOWER_ORDER_SENTIMENT_BOX_Y + FLOWER_ORDER_SENTIMENT_BOX_HEIGHT),
+  // MSYS_PRIORITY_HIGH, 					 CURSOR_WWW, MSYS_NO_CALLBACK,
   // SelectFloristPersonalSentimentBoxRegionCallBack); 	MSYS_AddRegion(
   //&gSelectedFloristPersonalSentimentBoxRegion );
 
@@ -1085,7 +1087,7 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(uint8_t ubDropDownMode) {
           FRAME_BUFFER, FLOWER_ORDER_DROP_DOWN_LOCATION_X + 3, FLOWER_ORDER_DELIVERY_LOCATION_Y + 3,
           FLOWER_ORDER_DROP_DOWN_LOCATION_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH,
           FLOWER_ORDER_DELIVERY_LOCATION_Y + FLOWER_ORDER_DELIVERY_LOCATION_HEIGHT - 2,
-          Get16BPPColor(FROMRGB(0, 0, 0)));
+          rgb32_to_rgb565(FROMRGB(0, 0, 0)));
       DrawTextToScreen(pDeliveryLocationStrings[gubCurrentlySelectedFlowerLocation],
                        FLOWER_ORDER_DROP_DOWN_CITY_START_X + 6,
                        FLOWER_ORDER_DROP_DOWN_CITY_START_Y + 3, 0, FLOWER_ORDEER_DROP_DOWN_FONT,
@@ -1112,7 +1114,7 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(uint8_t ubDropDownMode) {
       ColorFillVideoSurfaceArea(
           FRAME_BUFFER, FLOWER_ORDER_DROP_DOWN_LOCATION_X, FLOWER_ORDER_DROP_DOWN_LOCATION_Y,
           FLOWER_ORDER_DROP_DOWN_LOCATION_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH,
-          FLOWER_ORDER_DROP_DOWN_LOCATION_Y + usHeight, Get16BPPColor(FROMRGB(0, 0, 0)));
+          FLOWER_ORDER_DROP_DOWN_LOCATION_Y + usHeight, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
       //
       // Place the border around the background
@@ -1190,7 +1192,7 @@ void FlowerOrderDrawSelectedCity(uint8_t ubNumber) {
   ColorFillVideoSurfaceArea(
       FRAME_BUFFER, FLOWER_ORDER_DROP_DOWN_CITY_START_X, usPosY + 2,
       FLOWER_ORDER_DROP_DOWN_CITY_START_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 9,
-      usPosY + usFontHeight + 4, Get16BPPColor(FROMRGB(255, 255, 255)));
+      usPosY + usFontHeight + 4, rgb32_to_rgb565(FROMRGB(255, 255, 255)));
 
   SetFontShadow(NO_SHADOW);
   DrawTextToScreen(pDeliveryLocationStrings[ubNumber], FLOWER_ORDER_DROP_DOWN_CITY_START_X + 6,
@@ -1208,7 +1210,7 @@ void FlowerOrderDisplayShippingLocationCity() {
       FRAME_BUFFER, FLOWER_ORDER_DROP_DOWN_LOCATION_X + 3, FLOWER_ORDER_DELIVERY_LOCATION_Y + 3,
       FLOWER_ORDER_DROP_DOWN_LOCATION_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH,
       FLOWER_ORDER_DELIVERY_LOCATION_Y + FLOWER_ORDER_DELIVERY_LOCATION_HEIGHT - 2,
-      Get16BPPColor(FROMRGB(0, 0, 0)));
+      rgb32_to_rgb565(FROMRGB(0, 0, 0)));
   DrawTextToScreen(pDeliveryLocationStrings[gubCurrentlySelectedFlowerLocation],
                    FLOWER_ORDER_DELIVERY_LOCATION_X + 5, FLOWER_ORDER_DELIVERY_LOCATION_Y + 5, 0,
                    FLOWER_ORDEER_SMALL_FONT, FLOWER_ORDEER_SMALL_COLOR, FONT_MCOLOR_BLACK, FALSE,
@@ -1222,11 +1224,11 @@ void InitFlowerOrderTextInputBoxes() {
 
   InitTextInputMode();
   SetTextInputFont((uint16_t)FONT12ARIAL);
-  Set16BPPTextFieldColor(Get16BPPColor(FROMRGB(255, 255, 255)));
-  SetBevelColors(Get16BPPColor(FROMRGB(136, 138, 135)), Get16BPPColor(FROMRGB(24, 61, 81)));
+  Set16BPPTextFieldColor(rgb32_to_rgb565(FROMRGB(255, 255, 255)));
+  SetBevelColors(rgb32_to_rgb565(FROMRGB(136, 138, 135)), rgb32_to_rgb565(FROMRGB(24, 61, 81)));
   SetTextInputRegularColors(2, FONT_WHITE);
   SetTextInputHilitedColors(FONT_WHITE, 2, 141);
-  SetCursorColor(Get16BPPColor(FROMRGB(0, 0, 0)));
+  SetCursorColor(rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
   AddUserInputField(FlowerOrderUserTextFieldCallBack);
 

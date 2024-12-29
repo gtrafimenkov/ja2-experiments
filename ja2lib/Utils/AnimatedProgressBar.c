@@ -15,6 +15,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/MusicControl.h"
 #include "Utils/TimerControl.h"
+#include "jplatform_video.h"
 
 double rStart, rEnd;
 double rActual;
@@ -40,8 +41,8 @@ void RemoveLoadingScreenProgressBar() {
 
 // This creates a single progress bar given the coordinates without a panel (containing a title and
 // background). A panel is automatically created if you specify a title using SetProgressBarTitle
-BOOLEAN CreateProgressBar(uint8_t ubProgressBarID, uint16_t usLeft, uint16_t usTop, uint16_t usRight,
-                          uint16_t usBottom) {
+BOOLEAN CreateProgressBar(uint8_t ubProgressBarID, uint16_t usLeft, uint16_t usTop,
+                          uint16_t usRight, uint16_t usBottom) {
   PROGRESSBAR *pNew;
   // Allocate new progress bar
   pNew = (PROGRESSBAR *)MemAlloc(sizeof(PROGRESSBAR));
@@ -78,8 +79,8 @@ BOOLEAN CreateProgressBar(uint8_t ubProgressBarID, uint16_t usLeft, uint16_t usT
 
 // You may also define a panel to go in behind the progress bar.  You can now assign a title to go
 // with the panel.
-void DefineProgressBarPanel(uint32_t ubID, uint8_t r, uint8_t g, uint8_t b, uint16_t usLeft, uint16_t usTop,
-                            uint16_t usRight, uint16_t usBottom) {
+void DefineProgressBarPanel(uint32_t ubID, uint8_t r, uint8_t g, uint8_t b, uint16_t usLeft,
+                            uint16_t usTop, uint16_t usRight, uint16_t usBottom) {
   PROGRESSBAR *pCurr;
   Assert(ubID < MAX_PROGRESSBARS);
   pCurr = pBar[ubID];
@@ -90,18 +91,18 @@ void DefineProgressBarPanel(uint32_t ubID, uint8_t r, uint8_t g, uint8_t b, uint
   pCurr->usPanelTop = usTop;
   pCurr->usPanelRight = usRight;
   pCurr->usPanelBottom = usBottom;
-  pCurr->usColor = Get16BPPColor(FROMRGB(r, g, b));
+  pCurr->usColor = rgb32_to_rgb565(FROMRGB(r, g, b));
   // Calculate the slightly lighter and darker versions of the same rgb color
-  pCurr->usLtColor = Get16BPPColor(FROMRGB((uint8_t)min(255, (uint16_t)(r * 1.33)),
-                                           (uint8_t)min(255, (uint16_t)(g * 1.33)),
-                                           (uint8_t)min(255, (uint16_t)(b * 1.33))));
+  pCurr->usLtColor = rgb32_to_rgb565(FROMRGB((uint8_t)min(255, (uint16_t)(r * 1.33)),
+                                             (uint8_t)min(255, (uint16_t)(g * 1.33)),
+                                             (uint8_t)min(255, (uint16_t)(b * 1.33))));
   pCurr->usDkColor =
-      Get16BPPColor(FROMRGB((uint8_t)(r * 0.75), (uint8_t)(g * 0.75), (uint8_t)(b * 0.75)));
+      rgb32_to_rgb565(FROMRGB((uint8_t)(r * 0.75), (uint8_t)(g * 0.75), (uint8_t)(b * 0.75)));
 }
 
 // Assigning a title for the panel will automatically position the text horizontally centered on the
 // panel and vertically centered from the top of the panel, to the top of the progress bar.
-void SetProgressBarTitle(uint32_t ubID, wchar_t* pString, uint32_t usFont, uint8_t ubForeColor,
+void SetProgressBarTitle(uint32_t ubID, wchar_t *pString, uint32_t usFont, uint8_t ubForeColor,
                          uint8_t ubShadowColor) {
   PROGRESSBAR *pCurr;
   Assert(ubID < MAX_PROGRESSBARS);
@@ -113,7 +114,7 @@ void SetProgressBarTitle(uint32_t ubID, wchar_t* pString, uint32_t usFont, uint8
   }
   if (pString && wcslen(pString)) {
     int bufSize = wcslen(pString) + 1;
-    pCurr->swzTitle = (wchar_t*)MemAlloc(sizeof(wchar_t) * bufSize);
+    pCurr->swzTitle = (wchar_t *)MemAlloc(sizeof(wchar_t) * bufSize);
     swprintf(pCurr->swzTitle, bufSize, pString);
   }
   pCurr->usTitleFont = (uint16_t)usFont;
@@ -154,7 +155,7 @@ void RemoveProgressBar(uint8_t ubID) {
 // you would go onto the next step, resetting the relative start and end percentage from 30 to
 // whatever, until your done.
 void SetRelativeStartAndEndPercentage(uint8_t ubID, uint32_t uiRelStartPerc, uint32_t uiRelEndPerc,
-                                      wchar_t* str) {
+                                      wchar_t *str) {
   PROGRESSBAR *pCurr;
   uint16_t usStartX, usStartY;
 
@@ -243,7 +244,7 @@ void RenderProgressBar(uint8_t ubID, uint32_t uiPercentage) {
     if (gfUseLoadScreenProgressBar) {
       ColorFillVideoSurfaceArea(
           FRAME_BUFFER, pCurr->usBarLeft, pCurr->usBarTop, end, pCurr->usBarBottom,
-          Get16BPPColor(
+          rgb32_to_rgb565(
               FROMRGB(pCurr->ubColorFillRed, pCurr->ubColorFillGreen, pCurr->ubColorFillBlue)));
       // if( pCurr->usBarRight > gusLeftmostShaded )
       //{
@@ -253,13 +254,13 @@ void RenderProgressBar(uint8_t ubID, uint32_t uiPercentage) {
     } else {
       // Border edge of the progress bar itself in gray
       ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight,
-                                pCurr->usBarBottom, Get16BPPColor(FROMRGB(160, 160, 160)));
+                                pCurr->usBarBottom, rgb32_to_rgb565(FROMRGB(160, 160, 160)));
       // Interior of progress bar in black
       ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usBarLeft + 2, pCurr->usBarTop + 2,
                                 pCurr->usBarRight - 2, pCurr->usBarBottom - 2,
-                                Get16BPPColor(FROMRGB(0, 0, 0)));
+                                rgb32_to_rgb565(FROMRGB(0, 0, 0)));
       ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usBarLeft + 2, pCurr->usBarTop + 2, end,
-                                pCurr->usBarBottom - 2, Get16BPPColor(FROMRGB(72, 155, 24)));
+                                pCurr->usBarBottom - 2, rgb32_to_rgb565(FROMRGB(72, 155, 24)));
     }
     InvalidateRegion(pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight, pCurr->usBarBottom);
     ExecuteBaseDirtyRectQueue();

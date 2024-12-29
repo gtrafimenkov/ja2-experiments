@@ -36,6 +36,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 #define NUMBER_TRIGGERS 27
 #define PRESSURE_ACTION_ID (NUMBER_TRIGGERS - 1)
@@ -44,7 +45,7 @@ extern struct ITEM_POOL *gpEditingItemPool;
 
 // Simply counts the number of items in the world.  This is used for display purposes.
 uint16_t CountNumberOfEditorPlacementsInWorld(uint16_t usEInfoIndex,
-                                            uint16_t *pusQuantity);  // wrapper for the next three
+                                              uint16_t *pusQuantity);  // wrapper for the next three
 uint16_t CountNumberOfItemPlacementsInWorld(uint16_t usItem, uint16_t *pusQuantity);
 uint16_t CountNumberOfItemsWithFrequency(uint16_t usItem, int8_t bFrequency);
 uint16_t CountNumberOfPressureActionsInWorld();
@@ -296,8 +297,8 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
 
   // copy a blank chunk of the editor interface to the new buffer.
   for (i = 0; i < eInfo.sWidth; i += 60) {
-    Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0 + i,
-                    0, 100, 360, 60, 80);
+    Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
+                    0 + i, 0, 100, 360, 60, 80);
   }
 
   UnLockVideoSurface(eInfo.uiBuffer);
@@ -327,8 +328,8 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
       SetFontDestBuffer(eInfo.uiBuffer, 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
 
       swprintf(pStr, ARR_SIZE(pStr), L"%S", LockTable[i].ubEditorName);
-      DisplayWrappedString(x, (uint16_t)(y + 25), 60, 2, SMALLCOMPFONT, FONT_WHITE, pStr, FONT_BLACK,
-                           TRUE, CENTER_JUSTIFIED);
+      DisplayWrappedString(x, (uint16_t)(y + 25), 60, 2, SMALLCOMPFONT, FONT_WHITE, pStr,
+                           FONT_BLACK, TRUE, CENTER_JUSTIFIED);
 
       // Calculate the center position of the graphic in a 60 pixel wide area.
       sWidth = hVObject->pETRLEObject[item->ubGraphicNum].usWidth;
@@ -531,7 +532,7 @@ void RenderEditorItemsInfo() {
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
         BltVideoObjectOutlineFromIndex(FRAME_BUFFER, uiVideoObjectIndex, item->ubGraphicNum, sStart,
-                                       y + 2, Get16BPPColor(FROMRGB(250, 250, 0)), TRUE);
+                                       y + 2, rgb32_to_rgb565(FROMRGB(250, 250, 0)), TRUE);
       }
     }
   }
@@ -548,7 +549,7 @@ void RenderEditorItemsInfo() {
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
         BltVideoObjectOutlineFromIndex(FRAME_BUFFER, uiVideoObjectIndex, item->ubGraphicNum, sStart,
-                                       y + 2, Get16BPPColor(FROMRGB(250, 0, 0)), TRUE);
+                                       y + 2, rgb32_to_rgb565(FROMRGB(250, 0, 0)), TRUE);
       }
     }
   }
@@ -751,7 +752,8 @@ void AddSelectedItemToWorld(int16_t sGridNo) {
       else if (eInfo.sSelItemIndex < 6)
         tempObject.bFrequency = PANIC_FREQUENCY_3;
       else
-        tempObject.bFrequency = (int8_t)(FIRST_MAP_PLACED_FREQUENCY + (eInfo.sSelItemIndex - 4) / 2);
+        tempObject.bFrequency =
+            (int8_t)(FIRST_MAP_PLACED_FREQUENCY + (eInfo.sSelItemIndex - 4) / 2);
       usFlags |= WORLD_ITEM_ARMED_BOMB;
       break;
     case ACTION_ITEM:

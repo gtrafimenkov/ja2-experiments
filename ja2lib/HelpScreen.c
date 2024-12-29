@@ -35,6 +35,7 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 extern int16_t gsVIEWPORT_END_Y;
 extern void PrintDate(void);
@@ -413,8 +414,9 @@ uint16_t RenderMapScreenSectorInventoryHelpScreen();
 
 void GetHelpScreenTextPositions(uint16_t *pusPosX, uint16_t *pusPosY, uint16_t *pusWidth);
 void DisplayCurrentScreenTitleAndFooter();
-void GetHelpScreenText(uint32_t uiRecordToGet, wchar_t* pText);
-uint16_t GetAndDisplayHelpScreenText(uint32_t uiRecord, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth);
+void GetHelpScreenText(uint32_t uiRecordToGet, wchar_t *pText);
+uint16_t GetAndDisplayHelpScreenText(uint32_t uiRecord, uint16_t usPosX, uint16_t usPosY,
+                                     uint16_t usWidth);
 void CreateHelpScreenButtons();
 void RefreshAllHelpScreenButtons();
 
@@ -568,8 +570,8 @@ void HelpScreenHandler() {
 BOOLEAN EnterHelpScreen() {
   VOBJECT_DESC VObjectDesc;
   uint16_t usPosX, usPosY;  //, usWidth, usHeight;
-                          //	int32_t	iStartLoc;
-                          //	wchar_t zText[1024];
+                            //	int32_t	iStartLoc;
+                            //	wchar_t zText[1024];
 
   // Clear out all the save background rects
   EmptyBackgroundRects();
@@ -962,20 +964,20 @@ void GetHelpScreenUserInput() {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
 
@@ -1263,10 +1265,10 @@ void DisplayCurrentScreenTitleAndFooter() {
     // HELP_SCREEN_TITLE_BODY_COLOR, HELP_SCREEN_TEXT_BACKGROUND, FALSE, CENTER_JUSTIFIED );
 
     // Display the Title
-    IanDisplayWrappedString(usPosX, (uint16_t)(gHelpScreen.usScreenLocY + HELP_SCREEN_TITLE_OFFSET_Y),
-                            usWidth, HELP_SCREEN_GAP_BTN_LINES, HELP_SCREEN_TITLE_BODY_FONT,
-                            HELP_SCREEN_TITLE_BODY_COLOR, zText, HELP_SCREEN_TEXT_BACKGROUND, FALSE,
-                            0);
+    IanDisplayWrappedString(
+        usPosX, (uint16_t)(gHelpScreen.usScreenLocY + HELP_SCREEN_TITLE_OFFSET_Y), usWidth,
+        HELP_SCREEN_GAP_BTN_LINES, HELP_SCREEN_TITLE_BODY_FONT, HELP_SCREEN_TITLE_BODY_COLOR, zText,
+        HELP_SCREEN_TEXT_BACKGROUND, FALSE, 0);
   }
 
   // Display the '( press H to get help... )'
@@ -1381,7 +1383,7 @@ void ChangeToHelpScreenSubPage(int8_t bNewPage) {
   ChangeHelpScreenSubPage();
 }
 
-void GetHelpScreenText(uint32_t uiRecordToGet, wchar_t* pText) {
+void GetHelpScreenText(uint32_t uiRecordToGet, wchar_t *pText) {
   int32_t iStartLoc = -1;
 
   iStartLoc = HELPSCREEN_RECORD_SIZE * uiRecordToGet;
@@ -1389,7 +1391,8 @@ void GetHelpScreenText(uint32_t uiRecordToGet, wchar_t* pText) {
 }
 
 // returns the number of vertical pixels printed
-uint16_t GetAndDisplayHelpScreenText(uint32_t uiRecord, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth) {
+uint16_t GetAndDisplayHelpScreenText(uint32_t uiRecord, uint16_t usPosX, uint16_t usPosY,
+                                     uint16_t usWidth) {
   wchar_t zText[1024];
   uint16_t usNumVertPixels = 0;
   uint32_t uiStartLoc;
@@ -2128,7 +2131,7 @@ void DisplayHelpScreenTextBufferScrollBox() {
         HLP_SCRN__MAX_NUMBER_DISPLAYED_LINES_IN_BUFFER)) {
     ColorFillVideoSurfaceArea(
         FRAME_BUFFER, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
-        iTopPosScrollBox + iSizeOfBox - 1, Get16BPPColor(FROMRGB(227, 198, 88)));
+        iTopPosScrollBox + iSizeOfBox - 1, rgb32_to_rgb565(FROMRGB(227, 198, 88)));
 
     // display the line
     pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
@@ -2136,17 +2139,17 @@ void DisplayHelpScreenTextBufferScrollBox() {
 
     // draw the gold highlite line on the top and left
     LineDraw(FALSE, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
-             iTopPosScrollBox, Get16BPPColor(FROMRGB(235, 222, 171)), pDestBuf);
+             iTopPosScrollBox, rgb32_to_rgb565(FROMRGB(235, 222, 171)), pDestBuf);
     LineDraw(FALSE, usPosX, iTopPosScrollBox, usPosX, iTopPosScrollBox + iSizeOfBox - 1,
-             Get16BPPColor(FROMRGB(235, 222, 171)), pDestBuf);
+             rgb32_to_rgb565(FROMRGB(235, 222, 171)), pDestBuf);
 
     // draw the shadow line on the bottom and right
     LineDraw(FALSE, usPosX, iTopPosScrollBox + iSizeOfBox - 1,
              usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA, iTopPosScrollBox + iSizeOfBox - 1,
-             Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
+             rgb32_to_rgb565(FROMRGB(65, 49, 6)), pDestBuf);
     LineDraw(FALSE, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA, iTopPosScrollBox,
              usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA, iTopPosScrollBox + iSizeOfBox - 1,
-             Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
+             rgb32_to_rgb565(FROMRGB(65, 49, 6)), pDestBuf);
 
     // unlock frame buffer
     UnLockVideoSurface(FRAME_BUFFER);

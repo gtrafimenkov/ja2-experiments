@@ -74,6 +74,7 @@
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/TextInput.h"
+#include "jplatform_video.h"
 
 extern void CopyMercPlacement(int32_t iMapIndex);
 extern void PasteMercPlacement(int32_t iMapIndex);
@@ -138,7 +139,7 @@ BOOLEAN gfFakeLights = FALSE;
 
 int16_t gsLightRadius = 5;
 
-BOOLEAN gfOldDoVideoScroll;    // Saved for returning to previous settings
+BOOLEAN gfOldDoVideoScroll;      // Saved for returning to previous settings
 uint8_t gubOldCurScrollSpeedID;  // Saved for returning to previous settings
 
 int32_t iOldTaskMode = TASK_OPTIONS;
@@ -231,13 +232,13 @@ uint32_t EditScreenInit(void) {
 
   // Set the editor colors.
   // gusEditorTaskbarColor = 9581;
-  // gusEditorTaskbarColor =		Get16BPPColor( FROMRGB(  72,  88, 104 ) );
-  // gusEditorTaskbarHiColor = Get16BPPColor( FROMRGB( 136, 138, 135 ) );
-  // gusEditorTaskbarLoColor = Get16BPPColor( FROMRGB(  24,  61,  81 ) );
+  // gusEditorTaskbarColor =		rgb32_to_rgb565( FROMRGB(  72,  88, 104 ) );
+  // gusEditorTaskbarHiColor = rgb32_to_rgb565( FROMRGB( 136, 138, 135 ) );
+  // gusEditorTaskbarLoColor = rgb32_to_rgb565( FROMRGB(  24,  61,  81 ) );
 
-  gusEditorTaskbarColor = Get16BPPColor(FROMRGB(65, 79, 94));
-  gusEditorTaskbarHiColor = Get16BPPColor(FROMRGB(122, 124, 121));
-  gusEditorTaskbarLoColor = Get16BPPColor(FROMRGB(22, 55, 73));
+  gusEditorTaskbarColor = rgb32_to_rgb565(FROMRGB(65, 79, 94));
+  gusEditorTaskbarHiColor = rgb32_to_rgb565(FROMRGB(122, 124, 121));
+  gusEditorTaskbarLoColor = rgb32_to_rgb565(FROMRGB(22, 55, 73));
 
   InitClipboard();
 
@@ -2204,8 +2205,9 @@ uint32_t WaitForHelpScreenResponse(void) {
   InputAtom DummyEvent;
   BOOLEAN fLeaveScreen;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 50, 50, 590, 310, Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 51, 51, 590, 310, Get16BPPColor(FROMRGB(24, 61, 81)));
+  ColorFillVideoSurfaceArea(FRAME_BUFFER, 50, 50, 590, 310,
+                            rgb32_to_rgb565(FROMRGB(136, 138, 135)));
+  ColorFillVideoSurfaceArea(FRAME_BUFFER, 51, 51, 590, 310, rgb32_to_rgb565(FROMRGB(24, 61, 81)));
   ColorFillVideoSurfaceArea(FRAME_BUFFER, 51, 51, 589, 309, GenericButtonFillColors[0]);
 
   SetFont(gp12PointFont1);
@@ -2394,7 +2396,7 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
   WinRect.iBottom = 399;
 
   ColorFillVideoSurfaceArea(FRAME_BUFFER, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
-                            WinRect.iBottom + 1, Get16BPPColor(FROMRGB(128, 0, 0)));
+                            WinRect.iBottom + 1, rgb32_to_rgb565(FROMRGB(128, 0, 0)));
 
   iWinWidth = WinRect.iRight - WinRect.iLeft;
   iWinHeight = WinRect.iBottom - WinRect.iTop;
@@ -2637,7 +2639,8 @@ void ShowLightPositionHandles(void) {
       }
 
       if (!fSoldierLight) {
-        iMapIndex = ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
+        iMapIndex =
+            ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
         if (!TypeExistsInObjectLayer(iMapIndex, GOODRING, &usTmpIndex)) {
           AddObjectToHead(iMapIndex, GOODRING1);
           gpWorldLevelData[iMapIndex].pObjectHead->ubShadeLevel = DEFAULT_SHADE_LEVEL;
@@ -2672,7 +2675,8 @@ void RemoveLightPositionHandles(void) {
       }
 
       if (!fSoldierLight) {
-        iMapIndex = ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
+        iMapIndex =
+            ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
         RemoveAllObjectsOfTypeRange(iMapIndex, GOODRING, GOODRING);
       }
     }

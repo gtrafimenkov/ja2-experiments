@@ -52,6 +52,7 @@
 #include "Utils/Text.h"
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
+#include "jplatform_video.h"
 #include "platform_strings.h"
 
 // The InitializeGame function is responsible for setting up all data and Gaming Engine
@@ -187,7 +188,7 @@ void ShutdownJA2(void) {
   uint32_t uiIndex;
 
   // Clear screen....
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   // Remove cursor....
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);

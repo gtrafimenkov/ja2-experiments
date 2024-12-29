@@ -28,6 +28,7 @@
 #include "TileEngine/WorldDef.h"
 #include "Utils/FontControl.h"
 #include "Utils/Utilities.h"
+#include "jplatform_video.h"
 
 BOOLEAN gfShowTerrainTileButtons;
 uint8_t ubTerrainTileButtonWeight[NUM_TERRAIN_TILE_REGIONS];
@@ -80,9 +81,9 @@ void RenderTerrainTileButtons() {
     uint16_t usFillColorDark, usFillColorLight, usFillColorRed;
     uint16_t x, usX, usX2, usY, usY2;
 
-    usFillColorDark = Get16BPPColor(FROMRGB(24, 61, 81));
-    usFillColorLight = Get16BPPColor(FROMRGB(136, 138, 135));
-    usFillColorRed = Get16BPPColor(FROMRGB(255, 0, 0));
+    usFillColorDark = rgb32_to_rgb565(FROMRGB(24, 61, 81));
+    usFillColorLight = rgb32_to_rgb565(FROMRGB(136, 138, 135));
+    usFillColorRed = rgb32_to_rgb565(FROMRGB(255, 0, 0));
 
     usY = 369;
     usY2 = 391;

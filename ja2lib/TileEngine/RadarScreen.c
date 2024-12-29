@@ -41,6 +41,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
+#include "jplatform_video.h"
 
 extern int32_t iCurrentMapSectorZ;
 
@@ -325,7 +326,7 @@ void RenderRadarScreen() {
                                  (gsRadarY + RADAR_WINDOW_HEIGHT - 1));
 
   if (!(IsMapScreen())) {
-    usLineColor = Get16BPPColor(FROMRGB(0, 255, 0));
+    usLineColor = rgb32_to_rgb565(FROMRGB(0, 255, 0));
     RectangleDraw(TRUE, sRadarTLX, sRadarTLY, sRadarBRX, sRadarBRY - 1, usLineColor, pDestBuf);
   }
 
@@ -359,11 +360,11 @@ void RenderRadarScreen() {
 
       // if we are in 16 bit mode....kind of redundant
       if ((fFlashHighLightInventoryItemOnradarMap)) {
-        usLineColor = Get16BPPColor(FROMRGB(0, 255, 0));
+        usLineColor = rgb32_to_rgb565(FROMRGB(0, 255, 0));
 
       } else {
         // DB Need to add a radar color for 8-bit
-        usLineColor = Get16BPPColor(FROMRGB(255, 255, 255));
+        usLineColor = rgb32_to_rgb565(FROMRGB(255, 255, 255));
       }
 
       if (iCurrentlyHighLightedItem == iCounter) {
@@ -420,28 +421,28 @@ void RenderRadarScreen() {
           } else {
             // If on roof, make darker....
             if (pSoldier->bLevel > 0) {
-              usLineColor = Get16BPPColor(FROMRGB(150, 150, 0));
+              usLineColor = rgb32_to_rgb565(FROMRGB(150, 150, 0));
             } else {
-              usLineColor = Get16BPPColor(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
+              usLineColor = rgb32_to_rgb565(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
             }
           }
         } else {
-          usLineColor = Get16BPPColor(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
+          usLineColor = rgb32_to_rgb565(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
 
           // Override civ team with red if hostile...
           if (pSoldier->bTeam == CIV_TEAM && !pSoldier->bNeutral &&
               (pSoldier->bSide != gbPlayerNum)) {
-            usLineColor = Get16BPPColor(FROMRGB(255, 0, 0));
+            usLineColor = rgb32_to_rgb565(FROMRGB(255, 0, 0));
           }
 
           // Render different color if an enemy and he's unconscious
           if (pSoldier->bTeam != gbPlayerNum && pSoldier->bLife < OKLIFE) {
-            usLineColor = Get16BPPColor(FROMRGB(128, 128, 128));
+            usLineColor = rgb32_to_rgb565(FROMRGB(128, 128, 128));
           }
 
           // If on roof, make darker....
           if (pSoldier->bTeam == gbPlayerNum && pSoldier->bLevel > 0) {
-            usLineColor = Get16BPPColor(FROMRGB(150, 150, 0));
+            usLineColor = rgb32_to_rgb565(FROMRGB(150, 150, 0));
           }
         }
 
@@ -545,24 +546,24 @@ BOOLEAN CreateDestroyMouseRegionsForSquadList(void) {
         MSYS_DefineRegion(
             &gRadarRegionSquadList[sCounter], RADAR_WINDOW_X,
             (int16_t)(SQUAD_WINDOW_TM_Y +
-                    (sCounter *
-                     ((SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / (NUMBER_OF_SQUADS / 2)))),
+                      (sCounter * ((SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) /
+                                   (NUMBER_OF_SQUADS / 2)))),
             RADAR_WINDOW_X + RADAR_WINDOW_WIDTH / 2 - 1,
             (int16_t)(SQUAD_WINDOW_TM_Y +
-                    ((sCounter + 1) *
-                     ((SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / (NUMBER_OF_SQUADS / 2)))),
+                      ((sCounter + 1) * ((SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) /
+                                         (NUMBER_OF_SQUADS / 2)))),
             MSYS_PRIORITY_HIGHEST, 0, TacticalSquadListMvtCallback, TacticalSquadListBtnCallBack);
       } else {
         // right half of list
         MSYS_DefineRegion(
             &gRadarRegionSquadList[sCounter], RADAR_WINDOW_X + RADAR_WINDOW_WIDTH / 2,
             (int16_t)(SQUAD_WINDOW_TM_Y +
-                    ((sCounter - (NUMBER_OF_SQUADS / 2)) *
-                     (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
+                      ((sCounter - (NUMBER_OF_SQUADS / 2)) *
+                       (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
             RADAR_WINDOW_X + RADAR_WINDOW_WIDTH - 1,
             (int16_t)(SQUAD_WINDOW_TM_Y +
-                    (((sCounter + 1) - (NUMBER_OF_SQUADS / 2)) *
-                     (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
+                      (((sCounter + 1) - (NUMBER_OF_SQUADS / 2)) *
+                       (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
             MSYS_PRIORITY_HIGHEST, 0, TacticalSquadListMvtCallback, TacticalSquadListBtnCallBack);
       }
 
@@ -617,7 +618,7 @@ void RenderSquadList(void) {
   // fill area
   ColorFillVideoSurfaceArea(
       FRAME_BUFFER, RADAR_WINDOW_X, RADAR_WINDOW_TM_Y, RADAR_WINDOW_X + RADAR_WINDOW_WIDTH,
-      RADAR_WINDOW_TM_Y + SQUAD_REGION_HEIGHT, Get16BPPColor(FROMRGB(0, 0, 0)));
+      RADAR_WINDOW_TM_Y + SQUAD_REGION_HEIGHT, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
   // set font
   SetFont(SQUAD_FONT);
@@ -628,8 +629,8 @@ void RenderSquadList(void) {
       FindFontCenterCoordinates(
           RADAR_WINDOW_X,
           (int16_t)(SQUAD_WINDOW_TM_Y +
-                  (sCounter *
-                   (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
+                    (sCounter *
+                     (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
           RADAR_WINDOW_WIDTH / 2 - 1,
           (int16_t)(((2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
           pSquadMenuStrings[sCounter], SQUAD_FONT, &sX, &sY);
@@ -637,8 +638,8 @@ void RenderSquadList(void) {
       FindFontCenterCoordinates(
           RADAR_WINDOW_X + RADAR_WINDOW_WIDTH / 2,
           (int16_t)(SQUAD_WINDOW_TM_Y +
-                  ((sCounter - (NUMBER_OF_SQUADS / 2)) *
-                   (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
+                    ((sCounter - (NUMBER_OF_SQUADS / 2)) *
+                     (2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
           RADAR_WINDOW_WIDTH / 2 - 1,
           (int16_t)(((2 * (SQUAD_REGION_HEIGHT - SUBTRACTOR_FOR_SQUAD_LIST) / NUMBER_OF_SQUADS))),
           pSquadMenuStrings[sCounter], SQUAD_FONT, &sX, &sY);

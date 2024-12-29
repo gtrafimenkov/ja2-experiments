@@ -45,6 +45,7 @@
 #include "Utils/TextInput.h"
 #include "Utils/TimerControl.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 #ifdef JA2BETAVERSION
 
@@ -213,10 +214,10 @@ extern ARMY_COMPOSITION gArmyComp[NUM_ARMY_COMPOSITIONS];
 extern GARRISON_GROUP *gGarrisonGroup;
 extern int32_t giGarrisonArraySize;
 
-wchar_t gwGroupTypeString[NUM_ENEMY_INTENTIONS][20] = {L"RETREAT", L"ASSAULT", L"STAGING", L"PATROL",
-                                                      L"REINFORCE"};
+wchar_t gwGroupTypeString[NUM_ENEMY_INTENTIONS][20] = {L"RETREAT", L"ASSAULT", L"STAGING",
+                                                       L"PATROL", L"REINFORCE"};
 
-void StringFromValue(wchar_t* str, int32_t iValue, uint32_t uiMax) {
+void StringFromValue(wchar_t *str, int32_t iValue, uint32_t uiMax) {
   if (iValue < 0)  // a blank string is determined by a negative value.
     str[0] = '\0';
   else if ((uint32_t)iValue > uiMax)  // higher than max attribute value, so convert it to the max.
@@ -660,7 +661,7 @@ void RenderInfoInSector() {
   if (!gbViewLevel) {
     struct GROUP *pGroup;
     uint8_t ubNumAdmins = 0, ubNumTroops = 0, ubNumElites = 0, ubAdminsInBattle = 0,
-          ubTroopsInBattle = 0, ubElitesInBattle = 0, ubNumGroups = 0;
+            ubTroopsInBattle = 0, ubElitesInBattle = 0, ubNumGroups = 0;
 
     SECTORINFO *pSector = &SectorInfo[GetSectorID8(ubSectorX, ubSectorY)];
 
@@ -830,13 +831,13 @@ void RenderViewer() {
   if (gsHiSectorX > 0) {
     x = VIEWER_LEFT + (gsHiSectorX - 1) * 26;
     y = VIEWER_TOP + (gsHiSectorY - 1) * 22;
-    RectangleDraw(TRUE, x, y, x + 26, y + 22, Get16BPPColor(FROMRGB(200, 200, 50)), pDestBuf);
+    RectangleDraw(TRUE, x, y, x + 26, y + 22, rgb32_to_rgb565(FROMRGB(200, 200, 50)), pDestBuf);
   }
   // Render the grid for the sector currently in focus (red).
   if (gsSelSectorX > 0) {
     x = VIEWER_LEFT + (gsSelSectorX - 1) * 26;
     y = VIEWER_TOP + (gsSelSectorY - 1) * 22;
-    RectangleDraw(TRUE, x, y, x + 26, y + 22, Get16BPPColor(FROMRGB(200, 50, 50)), pDestBuf);
+    RectangleDraw(TRUE, x, y, x + 26, y + 22, rgb32_to_rgb565(FROMRGB(200, 50, 50)), pDestBuf);
   }
   UnLockVideoSurface(FRAME_BUFFER);
 }
@@ -1005,9 +1006,9 @@ void ViewerMapClickCallback(struct MOUSE_REGION *reg, int32_t reason) {
 
 uint32_t AIViewerScreenInit() {
   gfViewerEntry = TRUE;
-  gusBlue = Get16BPPColor(FROMRGB(65, 79, 94));
-  gusLtBlue = Get16BPPColor(FROMRGB(122, 124, 121));
-  gusDkBlue = Get16BPPColor(FROMRGB(22, 55, 73));
+  gusBlue = rgb32_to_rgb565(FROMRGB(65, 79, 94));
+  gusLtBlue = rgb32_to_rgb565(FROMRGB(122, 124, 121));
+  gusDkBlue = rgb32_to_rgb565(FROMRGB(22, 55, 73));
   return TRUE;
 }
 
@@ -1198,7 +1199,8 @@ void CreatureAttackCallback(GUI_BUTTON *btn, int32_t reason) {
         AddStrategicEventUsingSeconds(EVENT_CREATURE_ATTACK, GetWorldTotalSeconds() + 4,
                                       GetSectorID8((uint8_t)gsSelSectorX, (uint8_t)gsSelSectorY));
       } else {
-        CreatureAttackTown((uint8_t)GetSectorID8((uint8_t)gsSelSectorX, (uint8_t)gsSelSectorY), TRUE);
+        CreatureAttackTown((uint8_t)GetSectorID8((uint8_t)gsSelSectorX, (uint8_t)gsSelSectorY),
+                           TRUE);
       }
     }
   }

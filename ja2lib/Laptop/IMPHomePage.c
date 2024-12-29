@@ -26,6 +26,7 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 void GetPlayerKeyBoardInputForIMPHomePage(void);
 void DisplayPlayerActivationString(void);
@@ -199,11 +200,12 @@ void DisplayActivationStringCursor(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
-  LineDraw(TRUE, (uint16_t)uiCursorPosition, CURSOR_Y, (uint16_t)uiCursorPosition,
-           CURSOR_Y + CURSOR_HEIGHT,
-           Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                                 GlowColorsList[iCurrentState][2])),
-           pDestBuf);
+  LineDraw(
+      TRUE, (uint16_t)uiCursorPosition, CURSOR_Y, (uint16_t)uiCursorPosition,
+      CURSOR_Y + CURSOR_HEIGHT,
+      rgb32_to_rgb565(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                              GlowColorsList[iCurrentState][2])),
+      pDestBuf);
 
   // unlock frame buffer
   UnLockVideoSurface(FRAME_BUFFER);

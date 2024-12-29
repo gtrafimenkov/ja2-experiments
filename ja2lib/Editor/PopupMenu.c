@@ -34,6 +34,7 @@
 #include "TileEngine/WorldDat.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
+#include "jplatform_video.h"
 
 CurrentPopupMenuInformation gPopup;
 
@@ -234,10 +235,10 @@ void RenderPopupMenu() {
 
   // Draw the menu
   ColorFillVideoSurfaceArea(FRAME_BUFFER, gPopup.usLeft, gPopup.usTop, gPopup.usRight,
-                            gPopup.usBottom, Get16BPPColor(FROMRGB(128, 128, 128)));
+                            gPopup.usBottom, rgb32_to_rgb565(FROMRGB(128, 128, 128)));
   pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
-  usLineColor = Get16BPPColor(FROMRGB(64, 64, 64));
+  usLineColor = rgb32_to_rgb565(FROMRGB(64, 64, 64));
   RectangleDraw(TRUE, gPopup.usLeft, gPopup.usTop, gPopup.usRight, gPopup.usBottom, usLineColor,
                 pDestBuf);
   if (gPopup.ubColumns > 1) {  // draw a vertical line between each column

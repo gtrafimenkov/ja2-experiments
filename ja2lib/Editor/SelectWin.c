@@ -17,6 +17,7 @@
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldDat.h"
 #include "Utils/FontControl.h"
+#include "jplatform_video.h"
 
 extern BOOLEAN gfOverheadMapDirty;
 
@@ -824,8 +825,8 @@ void RenderSelectionWindow(void) {
     if (button == NULL) return;
 
     if ((abs(iStartClickX - button->Area.MouseXPos) > 9) ||
-        (abs(iStartClickY - (button->Area.MouseYPos + iTopWinCutOff - (int16_t)SelWinStartPoint.iY)) >
-         9)) {
+        (abs(iStartClickY -
+             (button->Area.MouseYPos + iTopWinCutOff - (int16_t)SelWinStartPoint.iY)) > 9)) {
       //			iSX = (int32_t)iStartClickX;
       //			iEX = (int32_t)button->Area.MouseXPos;
       //			iSY = (int32_t)iStartClickY;
@@ -854,7 +855,7 @@ void RenderSelectionWindow(void) {
       iEY = min(359, iEY);
       iEY = max(SelWinStartPoint.iY, iEY);
 
-      usFillColor = Get16BPPColor(FROMRGB(255, usFillGreen, 0));
+      usFillColor = rgb32_to_rgb565(FROMRGB(255, usFillGreen, 0));
       usFillGreen += usDir;
       if (usFillGreen > 250)
         usDir = 251;

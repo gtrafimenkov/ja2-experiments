@@ -48,6 +48,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/TextInput.h"
+#include "jplatform_video.h"
 #include "platform.h"
 #include "platform_strings.h"
 
@@ -115,7 +116,7 @@ char gszCurrFilename[1024];
 
 enum { IOSTATUS_NONE, INITIATE_MAP_SAVE, SAVING_MAP, INITIATE_MAP_LOAD, LOADING_MAP };
 int8_t gbCurrentFileIOStatus;  // 1 init saving message, 2 save, 3 init loading message, 4 load, 0
-                             // none
+                               // none
 uint32_t ProcessFileIO();
 
 // BOOLEAN fSavingFile;
@@ -489,18 +490,18 @@ void RemoveFileDialog(void) {
 
 void DrawFileDialog(void) {
   ColorFillVideoSurfaceArea(FRAME_BUFFER, 179, 69, (179 + 281), 261,
-                            Get16BPPColor(FROMRGB(136, 138, 135)));
+                            rgb32_to_rgb565(FROMRGB(136, 138, 135)));
   ColorFillVideoSurfaceArea(FRAME_BUFFER, 180, 70, (179 + 281), 261,
-                            Get16BPPColor(FROMRGB(24, 61, 81)));
+                            rgb32_to_rgb565(FROMRGB(24, 61, 81)));
   ColorFillVideoSurfaceArea(FRAME_BUFFER, 180, 70, (179 + 280), 260,
-                            Get16BPPColor(FROMRGB(65, 79, 94)));
+                            rgb32_to_rgb565(FROMRGB(65, 79, 94)));
 
   ColorFillVideoSurfaceArea(FRAME_BUFFER, (179 + 4), (69 + 3), (179 + 4 + 240), (69 + 123),
-                            Get16BPPColor(FROMRGB(24, 61, 81)));
+                            rgb32_to_rgb565(FROMRGB(24, 61, 81)));
   ColorFillVideoSurfaceArea(FRAME_BUFFER, (179 + 5), (69 + 4), (179 + 4 + 240), (69 + 123),
-                            Get16BPPColor(FROMRGB(136, 138, 135)));
+                            rgb32_to_rgb565(FROMRGB(136, 138, 135)));
   ColorFillVideoSurfaceArea(FRAME_BUFFER, (179 + 5), (69 + 4), (179 + 3 + 240), (69 + 122),
-                            Get16BPPColor(FROMRGB(250, 240, 188)));
+                            rgb32_to_rgb565(FROMRGB(250, 240, 188)));
 
   MarkButtonsDirty();
   RenderButtons();
@@ -725,8 +726,8 @@ void HandleMainKeyEvents(InputAtom *pEvent) {
 }
 
 // editor doesn't care about the z value.  It uses it's own methods.
-void SetGlobalSectorValues(wchar_t* szFilename) {
-  wchar_t* pStr;
+void SetGlobalSectorValues(wchar_t *szFilename) {
+  wchar_t *pStr;
   if (ValidCoordinate()) {
     // convert the coordinate string into into the actual global sector coordinates.
     if (gzFilename[0] >= 'A' && gzFilename[0] <= 'P')
@@ -967,7 +968,7 @@ BOOLEAN ValidFilename() {
   return FALSE;
 }
 
-BOOLEAN ExternalLoadMap(wchar_t* szFilename) {
+BOOLEAN ExternalLoadMap(wchar_t *szFilename) {
   Assert(szFilename);
   if (!wcslen(szFilename)) return FALSE;
   wcscpy(gzFilename, szFilename);
@@ -981,7 +982,7 @@ BOOLEAN ExternalLoadMap(wchar_t* szFilename) {
   return FALSE;
 }
 
-BOOLEAN ExternalSaveMap(wchar_t* szFilename) {
+BOOLEAN ExternalSaveMap(wchar_t *szFilename) {
   Assert(szFilename);
   if (!wcslen(szFilename)) return FALSE;
   wcscpy(gzFilename, szFilename);

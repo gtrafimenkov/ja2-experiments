@@ -53,6 +53,7 @@
 #include "Utils/PopUpBox.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Utilities.h"
+#include "jplatform_video.h"
 
 #define CLOCK_X 554
 #define CLOCK_Y 459
@@ -343,9 +344,9 @@ void ResetInterface() {
 extern BOOLEAN AnyItemsVisibleOnLevel(struct ITEM_POOL *pItemPool, int8_t bZLevel);
 
 uint32_t guiColors[12] = {FROMRGB(198, 163, 0), FROMRGB(185, 150, 0), FROMRGB(172, 136, 0),
-                        FROMRGB(159, 123, 0), FROMRGB(146, 110, 0), FROMRGB(133, 96, 0),
-                        FROMRGB(120, 83, 0),  FROMRGB(133, 96, 0),  FROMRGB(146, 110, 0),
-                        FROMRGB(159, 123, 0), FROMRGB(172, 136, 0), FROMRGB(185, 150, 0)};
+                          FROMRGB(159, 123, 0), FROMRGB(146, 110, 0), FROMRGB(133, 96, 0),
+                          FROMRGB(120, 83, 0),  FROMRGB(133, 96, 0),  FROMRGB(146, 110, 0),
+                          FROMRGB(159, 123, 0), FROMRGB(172, 136, 0), FROMRGB(185, 150, 0)};
 
 void RenderRubberBanding() {
   uint16_t usLineColor;
@@ -380,7 +381,7 @@ void RenderRubberBanding() {
   pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, gsVIEWPORT_END_X, gsVIEWPORT_WINDOW_END_Y);
 
-  usLineColor = Get16BPPColor(guiColors[iFlashColor]);
+  usLineColor = rgb32_to_rgb565(guiColors[iFlashColor]);
 
   if ((iRight - iLeft) > 0) {
     LineDraw(TRUE, iLeft, iTop, iRight, iTop, usLineColor, pDestBuf);
@@ -432,12 +433,12 @@ void RenderRubberBanding() {
 
   if ((iBottom - iTop) > 0) {
     LineDraw(TRUE, iRight, iTop, iRight, iBottom, usLineColor, pDestBuf);
-    iBack =
-        RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iTop, (int16_t)(iRight + 1), iBottom);
+    iBack = RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iTop, (int16_t)(iRight + 1),
+                                   iBottom);
   } else if ((iBottom - iTop) < 0) {
     LineDraw(TRUE, iRight, iTop, iRight, iBottom, usLineColor, pDestBuf);
-    iBack =
-        RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iBottom, (int16_t)(iRight + 1), iTop);
+    iBack = RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, iRight, iBottom, (int16_t)(iRight + 1),
+                                   iTop);
   }
 
   if (iBack != -1) {
@@ -517,7 +518,7 @@ void RenderTopmostTacticalInterface() {
 
           if (GridNoOnScreen(
                   (int16_t)MAPROWCOLTOPOS((MercPtrs[cnt]->sPlannedTargetY / CELL_Y_SIZE),
-                                        (MercPtrs[cnt]->sPlannedTargetX / CELL_X_SIZE)))) {
+                                          (MercPtrs[cnt]->sPlannedTargetX / CELL_X_SIZE)))) {
             // GET SCREEN COORDINATES
             sOffsetX = (MercPtrs[cnt]->sPlannedTargetX - gsRenderCenterX);
             sOffsetY = (MercPtrs[cnt]->sPlannedTargetY - gsRenderCenterY);

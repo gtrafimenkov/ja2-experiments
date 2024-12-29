@@ -28,6 +28,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/SysUtil.h"
 #include "UI.h"
+#include "jplatform_video.h"
 
 #define LIFE_BAR_SHADOW FROMRGB(108, 12, 12)
 #define LIFE_BAR FROMRGB(200, 0, 0)
@@ -67,7 +68,7 @@ enum {
 int32_t giCarPortraits[4] = {-1, -1, -1, -1};
 
 // the car portrait file names
-char* pbCarPortraitFileNames[] = {
+char *pbCarPortraitFileNames[] = {
     "INTERFACE\\eldorado.sti",
     "INTERFACE\\Hummer.sti",
     "INTERFACE\\ice Cream Truck.sti",
@@ -133,14 +134,15 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   dEnd = dPercentage * sHeight;
   dStart = sYPos;
 
-  usLineColor = Get16BPPColor(LIFE_BAR_SHADOW);
-  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
+  usLineColor = rgb32_to_rgb565(LIFE_BAR_SHADOW);
+  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
+                pDestBuf);
 
-  usLineColor = Get16BPPColor(LIFE_BAR);
+  usLineColor = rgb32_to_rgb565(LIFE_BAR);
   RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  usLineColor = Get16BPPColor(LIFE_BAR_SHADOW);
+  usLineColor = rgb32_to_rgb565(LIFE_BAR_SHADOW);
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
@@ -154,16 +156,17 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
     dStart = (float)(sYPos - dEnd);
     dEnd = (dPercentage * sHeight);
 
-    usLineColor = Get16BPPColor(BANDAGE_BAR_SHADOW);
-    RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
-
-    usLineColor = Get16BPPColor(BANDAGE_BAR);
-    RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
+    usLineColor = rgb32_to_rgb565(BANDAGE_BAR_SHADOW);
+    RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
                   pDestBuf);
 
-    usLineColor = Get16BPPColor(BANDAGE_BAR_SHADOW);
-    RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
-                  pDestBuf);
+    usLineColor = rgb32_to_rgb565(BANDAGE_BAR);
+    RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd),
+                  usLineColor, pDestBuf);
+
+    usLineColor = rgb32_to_rgb565(BANDAGE_BAR_SHADOW);
+    RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd),
+                  usLineColor, pDestBuf);
   }
 
   // NOW DO BLEEDING
@@ -172,16 +175,17 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
     dStart = (float)(dStart - dEnd);
     dEnd = (dPercentage * sHeight);
 
-    usLineColor = Get16BPPColor(BLEEDING_BAR_SHADOW);
-    RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
-
-    usLineColor = Get16BPPColor(BLEEDING_BAR);
-    RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
+    usLineColor = rgb32_to_rgb565(BLEEDING_BAR_SHADOW);
+    RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
                   pDestBuf);
 
-    usLineColor = Get16BPPColor(BLEEDING_BAR_SHADOW);
-    RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
-                  pDestBuf);
+    usLineColor = rgb32_to_rgb565(BLEEDING_BAR);
+    RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd),
+                  usLineColor, pDestBuf);
+
+    usLineColor = rgb32_to_rgb565(BLEEDING_BAR_SHADOW);
+    RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd),
+                  usLineColor, pDestBuf);
   }
 
   UnLockVideoSurface(uiBuffer);
@@ -220,13 +224,13 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
     if (gusSelectedSoldier == GetSolID(pSoldier) && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
         OK_INTERRUPT_MERC(pSoldier)) {
       // gold, the second entry in the .sti
-      BltVideoObject(uiBuffer, hHandle, 1, sXPos, (int16_t)(sYPos - sHeight), VO_BLT_SRCTRANSPARENCY,
-                     NULL);
+      BltVideoObject(uiBuffer, hHandle, 1, sXPos, (int16_t)(sYPos - sHeight),
+                     VO_BLT_SRCTRANSPARENCY, NULL);
 
     } else {
       // brown, first entry
-      BltVideoObject(uiBuffer, hHandle, 0, sXPos, (int16_t)(sYPos - sHeight), VO_BLT_SRCTRANSPARENCY,
-                     NULL);
+      BltVideoObject(uiBuffer, hHandle, 0, sXPos, (int16_t)(sYPos - sHeight),
+                     VO_BLT_SRCTRANSPARENCY, NULL);
     }
   } else {
     // brown, first entry
@@ -243,30 +247,32 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
     dStart = sYPos;
 
     // the old background colors for breath max diff
-    usLineColor = Get16BPPColor(BREATH_BAR_SHAD_BACK);
-    RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
-
-    usLineColor = Get16BPPColor(BREATH_BAR_SHAD_BACK);
-    RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
+    usLineColor = rgb32_to_rgb565(BREATH_BAR_SHAD_BACK);
+    RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
                   pDestBuf);
 
-    usLineColor = Get16BPPColor(BREATH_BAR_SHAD_BACK);
-    RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
-                  pDestBuf);
+    usLineColor = rgb32_to_rgb565(BREATH_BAR_SHAD_BACK);
+    RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd),
+                  usLineColor, pDestBuf);
+
+    usLineColor = rgb32_to_rgb565(BREATH_BAR_SHAD_BACK);
+    RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd),
+                  usLineColor, pDestBuf);
   }
 
   dPercentage = (float)pSoldier->bBreathMax / (float)100;
   dEnd = dPercentage * sHeight;
   dStart = sYPos;
 
-  usLineColor = Get16BPPColor(CURR_MAX_BREATH_SHADOW);
-  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
+  usLineColor = rgb32_to_rgb565(CURR_MAX_BREATH_SHADOW);
+  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
+                pDestBuf);
 
-  usLineColor = Get16BPPColor(CURR_MAX_BREATH);
+  usLineColor = rgb32_to_rgb565(CURR_MAX_BREATH);
   RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  usLineColor = Get16BPPColor(CURR_MAX_BREATH_SHADOW);
+  usLineColor = rgb32_to_rgb565(CURR_MAX_BREATH_SHADOW);
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
@@ -275,14 +281,15 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
   dEnd = dPercentage * sHeight;
   dStart = sYPos;
 
-  usLineColor = Get16BPPColor(CURR_BREATH_BAR_SHADOW);
-  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
+  usLineColor = rgb32_to_rgb565(CURR_BREATH_BAR_SHADOW);
+  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
+                pDestBuf);
 
-  usLineColor = Get16BPPColor(CURR_BREATH_BAR);
+  usLineColor = rgb32_to_rgb565(CURR_BREATH_BAR);
   RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  usLineColor = Get16BPPColor(CURR_BREATH_BAR_SHADOW);
+  usLineColor = rgb32_to_rgb565(CURR_BREATH_BAR_SHADOW);
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
@@ -316,14 +323,15 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
   dEnd = dPercentage * sHeight;
   dStart = sYPos;
 
-  usLineColor = Get16BPPColor(MORALE_BAR_SHADOW);
-  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
+  usLineColor = rgb32_to_rgb565(MORALE_BAR_SHADOW);
+  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
+                pDestBuf);
 
-  usLineColor = Get16BPPColor(MORALE_BAR);
+  usLineColor = rgb32_to_rgb565(MORALE_BAR);
   RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  usLineColor = Get16BPPColor(MORALE_BAR_SHADOW);
+  usLineColor = rgb32_to_rgb565(MORALE_BAR_SHADOW);
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
@@ -331,8 +339,8 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
 }
 
 void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos, int16_t sYPos,
-                     int16_t sWidth, int16_t sHeight, int16_t sColor1, int16_t sColor2, BOOLEAN fErase,
-                     uint32_t uiBuffer) {
+                     int16_t sWidth, int16_t sHeight, int16_t sColor1, int16_t sColor2,
+                     BOOLEAN fErase, uint32_t uiBuffer) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -367,7 +375,8 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
 
   // Erase what was there
   if (fErase) {
-    // RestoreExternBackgroundRect( sXPos, (int16_t)(sYPos - sHeight), sWidth, (int16_t)(sHeight + 1 )
+    // RestoreExternBackgroundRect( sXPos, (int16_t)(sYPos - sHeight), sWidth, (int16_t)(sHeight + 1
+    // )
     // );
   }
 
@@ -379,9 +388,10 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
   dEnd = dPercentage * sHeight;
   dStart = sYPos;
 
-  // usLineColor = Get16BPPColor( STATUS_BAR );
+  // usLineColor = rgb32_to_rgb565( STATUS_BAR );
   usLineColor = sColor1;
-  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor, pDestBuf);
+  RectangleDraw(TRUE, sXPos, (int32_t)dStart, sXPos, (int32_t)(dStart - dEnd), usLineColor,
+                pDestBuf);
 
   usLineColor = sColor2;
   RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
@@ -423,7 +433,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
         SetAutoFaceActiveFromSoldier(FRAME_BUFFER, guiSAVEBUFFER, GetSolID(pSoldier), sFaceX,
                                      sFaceY);
         //	SetAutoFaceActiveFromSoldier( FRAME_BUFFER, FACE_AUTO_RESTORE_BUFFER,
-        //GetSolID(pSoldier) , sFaceX, sFaceY );
+        // GetSolID(pSoldier) , sFaceX, sFaceY );
       }
     }
 

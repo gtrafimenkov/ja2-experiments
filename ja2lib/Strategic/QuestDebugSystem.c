@@ -49,6 +49,7 @@
 #include "Utils/TextInput.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 // #ifdef JA2BETAVERSION
 
@@ -58,8 +59,8 @@
 //
 //*******************************
 
-typedef void (*DROP_DOWN_DISPLAY_CALLBACK)(wchar_t*);
-typedef void (*DROP_DOWN_SELECT_CALLBACK)(wchar_t*);
+typedef void (*DROP_DOWN_DISPLAY_CALLBACK)(wchar_t *);
+typedef void (*DROP_DOWN_SELECT_CALLBACK)(wchar_t *);
 
 #define QUEST_DEBUG_FILE "QuestDebugRecordLog.txt"
 
@@ -221,13 +222,13 @@ enum {
   QD_DROP_DOWN_CANCEL,
 };
 
-wchar_t* QuestStates[] = {
+wchar_t *QuestStates[] = {
     L"N.S.",
     L"In Prog.",
     L"Done",
 };
 
-wchar_t* QuestDebugText[] = {
+wchar_t *QuestDebugText[] = {
     L"Quest Debug System",
     L"Quests",
     L"Quest Number",
@@ -329,7 +330,7 @@ enum {
   QUEST_DBS_ESC_TOP_STOP_TALKING
 };
 
-wchar_t* PocketText[] = {
+wchar_t *PocketText[] = {
     L"Helmet",     L"Vest",        L"Leg",        L"Head1",      L"Head2",
     L"Hand",       L"Second Hand", L"Bigpock1",   L"Bigpock2",   L"Bigpock3",
     L"Bigpock4",   L"Smallpock1",  L"Smallpock2", L"Smallpock3", L"Smallpock4",
@@ -345,7 +346,7 @@ wchar_t* PocketText[] = {
 extern uint32_t guiGameClock;
 extern uint32_t guiBrownBackgroundForTeamPanel;
 
-typedef void (*LISTBOX_DISPLAY_FNCTN)();     // Define Display Callback function
+typedef void (*LISTBOX_DISPLAY_FNCTN)();       // Define Display Callback function
 typedef void (*TEXT_ENTRY_CALLBACK)(int32_t);  // Callback for when the text entry field is finished
 
 typedef struct {
@@ -370,7 +371,7 @@ typedef struct {
   uint16_t usMaxNumDisplayedItems;      //  Max number of Displayed items
 
   uint8_t ubCurScrollBoxAction;  //	Holds the status of the current action ( create; destroy...
-                               //)
+                                 //)
 
 } SCROLL_BOX;
 
@@ -561,8 +562,8 @@ void CalcPositionOfNewScrollBoxLocation();
 void DisplaySelectedListBox();
 void DisplaySelectedNPC();
 void DisplaySelectedItem();
-void TextEntryBox(wchar_t* pString, TEXT_ENTRY_CALLBACK TextEntryCallBack);
-BOOLEAN CreateDestroyDisplayTextEntryBox(uint8_t ubAction, wchar_t* pString,
+void TextEntryBox(wchar_t *pString, TEXT_ENTRY_CALLBACK TextEntryCallBack);
+BOOLEAN CreateDestroyDisplayTextEntryBox(uint8_t ubAction, wchar_t *pString,
                                          TEXT_ENTRY_CALLBACK TextEntryCallBack);
 void InitQuestDebugTextInputBoxes();
 void DestroyQuestDebugTextInputBoxes();
@@ -591,7 +592,7 @@ void EndMercTalking();
 void EnableFactMouseRegions();
 void DisableFactMouseRegions();
 int32_t GetMaxNumberOfQuotesToPlay();
-void GetDebugLocationString(uint16_t usProfileID, wchar_t* pzText, size_t bufSize);
+void GetDebugLocationString(uint16_t usProfileID, wchar_t *pzText, size_t bufSize);
 
 // ppp
 
@@ -607,7 +608,7 @@ uint32_t QuestDebugScreenInit() {
   // Set so next time we come in, we can set up
   gfQuestDebugEntry = TRUE;
 
-  gusQuestDebugBlue = Get16BPPColor(FROMRGB(65, 79, 94));
+  gusQuestDebugBlue = rgb32_to_rgb565(FROMRGB(65, 79, 94));
 
   // Initialize which facts are at the top of the list
   gusFactAtTopOfList = 0;
@@ -1344,19 +1345,19 @@ void DisplaySectionLine() {
 
   // draw the line in b/n the first and second section
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
-  LineDraw(FALSE, usStartX, usStartY, usEndX, usEndY, Get16BPPColor(FROMRGB(255, 255, 255)),
+  LineDraw(FALSE, usStartX, usStartY, usEndX, usEndY, rgb32_to_rgb565(FROMRGB(255, 255, 255)),
            pDestBuf);
 
   // draw the line in b/n the second and third section
   usStartX = usEndX = QUEST_DBS_FIRST_SECTION_WIDTH + QUEST_DBS_SECOND_SECTION_WIDTH;
-  LineDraw(FALSE, usStartX, usStartY, usEndX, usEndY, Get16BPPColor(FROMRGB(255, 255, 255)),
+  LineDraw(FALSE, usStartX, usStartY, usEndX, usEndY, rgb32_to_rgb565(FROMRGB(255, 255, 255)),
            pDestBuf);
 
   // draw the horizopntal line under the title
   usStartX = 0;
   usEndX = 639;
   usStartY = usEndY = 75;
-  LineDraw(FALSE, usStartX, usStartY, usEndX, usEndY, Get16BPPColor(FROMRGB(255, 255, 255)),
+  LineDraw(FALSE, usStartX, usStartY, usEndX, usEndY, rgb32_to_rgb565(FROMRGB(255, 255, 255)),
            pDestBuf);
 
   // unlock frame buffer
@@ -1743,7 +1744,8 @@ void DisplaySelectedListBox() {
       else
         gpActiveListBox->sCurSelectedItem = 0;
 
-      if ((int16_t)(gpActiveListBox->usMaxArrayIndex - gpActiveListBox->usNumDisplayedItems - 1) < 0)
+      if ((int16_t)(gpActiveListBox->usMaxArrayIndex - gpActiveListBox->usNumDisplayedItems - 1) <
+          0)
         gpActiveListBox->usItemDisplayedOnTopOfList = 0;
       else
         gpActiveListBox->usItemDisplayedOnTopOfList =
@@ -1762,7 +1764,7 @@ void DisplaySelectedListBox() {
   // clear the background
   ColorFillVideoSurfaceArea(
       FRAME_BUFFER, usPosX, usPosY - 1, usPosX + gpActiveListBox->usScrollWidth,
-      usPosY + gpActiveListBox->usScrollHeight, Get16BPPColor(FROMRGB(45, 59, 74)));
+      usPosY + gpActiveListBox->usScrollHeight, rgb32_to_rgb565(FROMRGB(45, 59, 74)));
 
   // Display the selected list box's display function
   (*(gpActiveListBox->DisplayFunction))();
@@ -1774,7 +1776,7 @@ void DisplaySelectedListBox() {
 
   ColorFillVideoSurfaceArea(
       FRAME_BUFFER, usPosX, usPosY - 1, usPosX + gpActiveListBox->usScrollBarWidth,
-      usPosY + gpActiveListBox->usScrollHeight, Get16BPPColor(FROMRGB(192, 192, 192)));
+      usPosY + gpActiveListBox->usScrollHeight, rgb32_to_rgb565(FROMRGB(192, 192, 192)));
 
   // get and display the up and down arrows
   GetVideoObject(&hImageHandle, guiQdScrollArrowImage);
@@ -1788,8 +1790,8 @@ void DisplaySelectedListBox() {
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   // display the scroll rectangle
-  DrawQdsScrollRectangle();  // gpActiveListBox->sCurSelectedItem, usPosX, usPosY, (uint16_t)(usPosY +
-                             // gpActiveListBox->usScrollHeight), NUM_PROFILES-FIRST_RPC );
+  DrawQdsScrollRectangle();  // gpActiveListBox->sCurSelectedItem, usPosX, usPosY, (uint16_t)(usPosY
+                             // + gpActiveListBox->usScrollHeight), NUM_PROFILES-FIRST_RPC );
 
   InvalidateRegion(0, 0, 640, 480);
 }
@@ -1827,8 +1829,9 @@ void DisplaySelectedNPC() {
                              &usLocationY);
 
     // the location value
-    DrawTextToScreen(sTempString, (uint16_t)(usLocationX - 2), usPosY, 0, QUEST_DBS_FONT_DYNAMIC_TEXT,
-                     QUEST_DBS_COLOR_DYNAMIC_TEXT, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
+    DrawTextToScreen(sTempString, (uint16_t)(usLocationX - 2), usPosY, 0,
+                     QUEST_DBS_FONT_DYNAMIC_TEXT, QUEST_DBS_COLOR_DYNAMIC_TEXT, FONT_MCOLOR_BLACK,
+                     FALSE, LEFT_JUSTIFIED);
 
     usPosY += usFontHeight;
   }
@@ -1844,7 +1847,7 @@ void DisplaySelectedNPC() {
     // display the name in the list
     ColorFillVideoSurfaceArea(FRAME_BUFFER, gpActiveListBox->usScrollPosX, usPosY - 1,
                               gpActiveListBox->usScrollPosX + gpActiveListBox->usScrollWidth,
-                              usPosY + usFontHeight - 1, Get16BPPColor(FROMRGB(255, 255, 255)));
+                              usPosY + usFontHeight - 1, rgb32_to_rgb565(FROMRGB(255, 255, 255)));
 
     SetFontShadow(NO_SHADOW);
 
@@ -1869,8 +1872,8 @@ void DisplaySelectedNPC() {
                              QUEST_DBS_FONT_LISTBOX_TEXT, &usLocationX, &usLocationY);
 
     // the location value
-    DrawTextToScreen(sTempString, usLocationX, (uint16_t)(usPosY), 0, QUEST_DBS_FONT_LISTBOX_TEXT, 2,
-                     FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
+    DrawTextToScreen(sTempString, usLocationX, (uint16_t)(usPosY), 0, QUEST_DBS_FONT_LISTBOX_TEXT,
+                     2, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
 
     SetFontShadow(DEFAULT_SHADOW);
 
@@ -1924,7 +1927,7 @@ void DisplaySelectedItem() {
     // display the name in the list
     ColorFillVideoSurfaceArea(FRAME_BUFFER, gpActiveListBox->usScrollPosX, usPosY - 1,
                               gpActiveListBox->usScrollPosX + gpActiveListBox->usScrollWidth,
-                              usPosY + usFontHeight - 1, Get16BPPColor(FROMRGB(255, 255, 255)));
+                              usPosY + usFontHeight - 1, rgb32_to_rgb565(FROMRGB(255, 255, 255)));
 
     SetFontShadow(NO_SHADOW);
 
@@ -1975,12 +1978,14 @@ void SelectNpcListMovementCallBack(struct MOUSE_REGION *pRegion, int32_t reason)
 
     // if we are at the top of the list
     //		if( sSelected == 0 )
-    //			IncrementActiveDropDownBox( (int16_t)(gpActiveListBox->sCurSelectedItem - 1 )
+    //			IncrementActiveDropDownBox( (int16_t)(gpActiveListBox->sCurSelectedItem - 1
+    //)
     //);
 
     // else we are at the bottom of the list
     //		else if( sSelected == gpActiveListBox->usMaxNumDisplayedItems - 1 )
-    //			IncrementActiveDropDownBox( (int16_t)(gpActiveListBox->sCurSelectedItem + 1 )
+    //			IncrementActiveDropDownBox( (int16_t)(gpActiveListBox->sCurSelectedItem + 1
+    //)
     //);
 
     DisplaySelectedListBox();
@@ -2004,8 +2009,8 @@ void SelectNpcListMovementCallBack(struct MOUSE_REGION *pRegion, int32_t reason)
   }
 }
 
-void DrawQdsScrollRectangle()  // int16_t sSelectedEntry, uint16_t usStartPosX, uint16_t usStartPosY,
-                               // uint16_t usScrollAreaHeight, uint16_t usNumEntries )
+void DrawQdsScrollRectangle()  // int16_t sSelectedEntry, uint16_t usStartPosX, uint16_t
+                               // usStartPosY, uint16_t usScrollAreaHeight, uint16_t usNumEntries )
 {
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
@@ -2020,12 +2025,13 @@ void DrawQdsScrollRectangle()  // int16_t sSelectedEntry, uint16_t usStartPosX, 
   usPosX = gpActiveListBox->usScrollPosX + gpActiveListBox->usScrollWidth;
   usWidth = gpActiveListBox->usScrollBarWidth;
 
-  usHeight = (uint16_t)(gpActiveListBox->usScrollBarHeight / (float)(usNumEntries) + .5);  // qq+ 1 );
+  usHeight =
+      (uint16_t)(gpActiveListBox->usScrollBarHeight / (float)(usNumEntries) + .5);  // qq+ 1 );
 
   if (usNumEntries > gpActiveListBox->usMaxNumDisplayedItems)
-    usPosY =
-        usTempPosY + (uint16_t)((gpActiveListBox->usScrollBarHeight / (float)(usNumEntries + 1)) *
-                              (gpActiveListBox->sCurSelectedItem - gpActiveListBox->usStartIndex));
+    usPosY = usTempPosY +
+             (uint16_t)((gpActiveListBox->usScrollBarHeight / (float)(usNumEntries + 1)) *
+                        (gpActiveListBox->sCurSelectedItem - gpActiveListBox->usStartIndex));
   else
     usPosY = usTempPosY;
 
@@ -2041,7 +2047,7 @@ void DrawQdsScrollRectangle()  // int16_t sSelectedEntry, uint16_t usStartPosX, 
   gpActiveListBox->usScrollBoxEndY = usPosY + usHeight;
 
   ColorFillVideoSurfaceArea(FRAME_BUFFER, usPosX, usPosY, usPosX + usWidth - 1, usPosY + usHeight,
-                            Get16BPPColor(FROMRGB(130, 132, 128)));
+                            rgb32_to_rgb565(FROMRGB(130, 132, 128)));
 
   // display the line
   pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
@@ -2049,15 +2055,15 @@ void DrawQdsScrollRectangle()  // int16_t sSelectedEntry, uint16_t usStartPosX, 
 
   // draw the gold highlite line on the top and left
   LineDraw(FALSE, usPosX, usPosY, usPosX + usWidth - 1, usPosY,
-           Get16BPPColor(FROMRGB(255, 255, 255)), pDestBuf);
-  LineDraw(FALSE, usPosX, usPosY, usPosX, usPosY + usHeight, Get16BPPColor(FROMRGB(255, 255, 255)),
-           pDestBuf);
+           rgb32_to_rgb565(FROMRGB(255, 255, 255)), pDestBuf);
+  LineDraw(FALSE, usPosX, usPosY, usPosX, usPosY + usHeight,
+           rgb32_to_rgb565(FROMRGB(255, 255, 255)), pDestBuf);
 
   // draw the shadow line on the bottom and right
   LineDraw(FALSE, usPosX, usPosY + usHeight, usPosX + usWidth - 1, usPosY + usHeight,
-           Get16BPPColor(FROMRGB(112, 110, 112)), pDestBuf);
+           rgb32_to_rgb565(FROMRGB(112, 110, 112)), pDestBuf);
   LineDraw(FALSE, usPosX + usWidth - 1, usPosY, usPosX + usWidth - 1, usPosY + usHeight,
-           Get16BPPColor(FROMRGB(112, 110, 112)), pDestBuf);
+           rgb32_to_rgb565(FROMRGB(112, 110, 112)), pDestBuf);
 
   // unlock frame buffer
   UnLockVideoSurface(FRAME_BUFFER);
@@ -2151,7 +2157,7 @@ void CalcPositionOfNewScrollBoxLocation() {
     dValue = sHeight / (float)(gpActiveListBox->usScrollBarHeight);
     sIncrementValue =
         (int16_t)((dValue) * (gpActiveListBox->usMaxArrayIndex - gpActiveListBox->usStartIndex) +
-                .5) +
+                  .5) +
         gpActiveListBox->usStartIndex;
 
     IncrementActiveDropDownBox(sIncrementValue);
@@ -2427,7 +2433,7 @@ void BtnQuestDebugStartMercTalkingButtonButtonCallback(GUI_BUTTON *btn, int32_t 
   }
 }
 
-BOOLEAN CreateDestroyDisplayTextEntryBox(uint8_t ubAction, wchar_t* pString,
+BOOLEAN CreateDestroyDisplayTextEntryBox(uint8_t ubAction, wchar_t *pString,
                                          TEXT_ENTRY_CALLBACK EntryCallBack) {
   static BOOLEAN fMouseRegionCreated = FALSE;
   static wchar_t zString[256];
@@ -2512,7 +2518,7 @@ BOOLEAN CreateDestroyDisplayTextEntryBox(uint8_t ubAction, wchar_t* pString,
       // Display the text entry box frame
       ColorFillVideoSurfaceArea(
           FRAME_BUFFER, QUEST_DBS_TEB_X, QUEST_DBS_TEB_Y, QUEST_DBS_TEB_X + QUEST_DBS_TEB_WIDTH,
-          QUEST_DBS_TEB_Y + QUEST_DBS_TEB_HEIGHT, Get16BPPColor(FROMRGB(45, 59, 74)));
+          QUEST_DBS_TEB_Y + QUEST_DBS_TEB_HEIGHT, rgb32_to_rgb565(FROMRGB(45, 59, 74)));
 
       // Display the text box caption
       DisplayWrappedString(QUEST_DBS_TEB_X + 10, QUEST_DBS_TEB_Y + 10, QUEST_DBS_TEB_WIDTH - 20, 2,
@@ -2561,7 +2567,7 @@ void BtnQuestDebugTextEntryOkBtnButtonCallback(GUI_BUTTON *btn, int32_t reason) 
   }
 }
 
-void TextEntryBox(wchar_t* pString, TEXT_ENTRY_CALLBACK TextEntryCallBack) {
+void TextEntryBox(wchar_t *pString, TEXT_ENTRY_CALLBACK TextEntryCallBack) {
   CreateDestroyDisplayTextEntryBox(QD_DROP_DOWN_CREATE, pString, TextEntryCallBack);
   gubTextEntryAction = QD_DROP_DOWN_DISPLAY;
 }
@@ -2614,11 +2620,11 @@ void InitQuestDebugTextInputBoxes() {
 
   InitTextInputMode();
   SetTextInputFont((uint16_t)FONT12ARIAL);
-  Set16BPPTextFieldColor(Get16BPPColor(FROMRGB(255, 255, 255)));
-  SetBevelColors(Get16BPPColor(FROMRGB(136, 138, 135)), Get16BPPColor(FROMRGB(24, 61, 81)));
+  Set16BPPTextFieldColor(rgb32_to_rgb565(FROMRGB(255, 255, 255)));
+  SetBevelColors(rgb32_to_rgb565(FROMRGB(136, 138, 135)), rgb32_to_rgb565(FROMRGB(24, 61, 81)));
   SetTextInputRegularColors(2, FONT_WHITE);
   SetTextInputHilitedColors(FONT_WHITE, 2, 141);
-  SetCursorColor(Get16BPPColor(FROMRGB(0, 0, 0)));
+  SetCursorColor(rgb32_to_rgb565(FROMRGB(0, 0, 0)));
   swprintf(sTemp, ARR_SIZE(sTemp), L"%d", gsQdsEnteringGridNo);
 
   // Text entry field
@@ -2669,8 +2675,8 @@ void AddItemToGridNo(int32_t iGridNo) {
     //		swprintf( zTemp, L"Please enter the Key ID" );
     //		TextEntryBox( zTemp, AddKeyToGridNo );
   } else {
-    CreateItem(gItemListBox.sCurSelectedItem, (uint8_t)(gfDropDamagedItems ? (20 + Random(60)) : 100),
-               &Object);
+    CreateItem(gItemListBox.sCurSelectedItem,
+               (uint8_t)(gfDropDamagedItems ? (20 + Random(60)) : 100), &Object);
 
     // add the item to the world
     AddItemToPool((uint16_t)iGridNo, &Object, -1, 0, 0, 0);
@@ -2787,7 +2793,7 @@ void CreateDestroyDisplayNPCInventoryPopup(uint8_t ubAction) {
                                   QUEST_DBS_NPC_INV_POPUP_Y,
                                   QUEST_DBS_NPC_INV_POPUP_X + QUEST_DBS_NPC_INV_POPUP_WIDTH,
                                   QUEST_DBS_NPC_INV_POPUP_Y + QUEST_DBS_NPC_INV_POPUP_HEIGHT,
-                                  Get16BPPColor(FROMRGB(45, 59, 74)));
+                                  rgb32_to_rgb565(FROMRGB(45, 59, 74)));
 
         // Dispaly the NPC inve title
         DrawTextToScreen(QuestDebugText[QUEST_DBS_NPC_INVENTORY], QUEST_DBS_NPC_INV_POPUP_X,
@@ -2988,7 +2994,8 @@ void BtnQDPgDownButtonButtonCallback(GUI_BUTTON *btn, int32_t reason) {
   }
 }
 
-void NpcRecordLoggingInit(uint8_t ubNpcID, uint8_t ubMercID, uint8_t ubQuoteNum, uint8_t ubApproach) {
+void NpcRecordLoggingInit(uint8_t ubNpcID, uint8_t ubMercID, uint8_t ubQuoteNum,
+                          uint8_t ubApproach) {
   static BOOLEAN fFirstTimeIn = TRUE;
 
   HWFILE hFile;
@@ -3059,7 +3066,7 @@ void NpcRecordLoggingInit(uint8_t ubNpcID, uint8_t ubMercID, uint8_t ubQuoteNum,
   FileMan_Close(hFile);
 }
 
-void NpcRecordLogging(uint8_t ubApproach, char* pStringA, ...) {
+void NpcRecordLogging(uint8_t ubApproach, char *pStringA, ...) {
   HWFILE hFile;
   uint32_t uiByteWritten;
   va_list argptr;
@@ -3170,8 +3177,8 @@ BOOLEAN DoQDSMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen
 
   // do message box and return
   giQdsMessageBox = DoMessageBox(ubStyle, zString, uiExitScreen,
-                                 (uint8_t)(ubFlags | MSG_BOX_FLAG_USE_CENTERING_RECT), ReturnCallback,
-                                 &pCenteringRect);
+                                 (uint8_t)(ubFlags | MSG_BOX_FLAG_USE_CENTERING_RECT),
+                                 ReturnCallback, &pCenteringRect);
 
   // send back return state
   return ((giQdsMessageBox != -1));
@@ -3438,7 +3445,7 @@ void DisplayQDSCurrentlyQuoteNum() {
   ColorFillVideoSurfaceArea(FRAME_BUFFER, QDS_CURRENT_QUOTE_NUM_BOX_X, QDS_CURRENT_QUOTE_NUM_BOX_Y,
                             QDS_CURRENT_QUOTE_NUM_BOX_X + QDS_CURRENT_QUOTE_NUM_BOX_WIDTH,
                             QDS_CURRENT_QUOTE_NUM_BOX_Y + QDS_CURRENT_QUOTE_NUM_BOX_HEIGHT,
-                            Get16BPPColor(FROMRGB(32, 41, 53)));
+                            rgb32_to_rgb565(FROMRGB(32, 41, 53)));
 
   swprintf(zTemp, ARR_SIZE(zTemp), L"'%s' is currently saying quote #%d",
            gMercProfiles[gTalkingMercSoldier->ubProfile].zNickname, giSelectedMercCurrentQuote - 1);
@@ -3557,7 +3564,7 @@ int32_t GetMaxNumberOfQuotesToPlay() {
   return (iNumberOfQuotes + 1);
 }
 
-void GetDebugLocationString(uint16_t usProfileID, wchar_t* pzText, size_t bufSize) {
+void GetDebugLocationString(uint16_t usProfileID, wchar_t *pzText, size_t bufSize) {
   struct SOLDIERTYPE *pSoldier;
 
   // Get a soldier pointer
@@ -3582,7 +3589,6 @@ void GetDebugLocationString(uint16_t usProfileID, wchar_t* pzText, size_t bufSiz
   // else the soldier is in a different map
   else {
     GetShortSectorString((uint8_t)gMercProfiles[usProfileID].sSectorX,
-                         (uint8_t)gMercProfiles[usProfileID].sSectorY,
-                         pzText, bufSize);
+                         (uint8_t)gMercProfiles[usProfileID].sSectorY, pzText, bufSize);
   }
 }

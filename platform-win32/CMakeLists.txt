@@ -6,3 +6,4 @@ target_include_directories(platform-win32 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # TODO: platform code should not depend on ja2lib
 target_include_directories(platform-win32 PRIVATE "../ja2lib")
+target_include_directories(platform-win32 PRIVATE "../jplatform")

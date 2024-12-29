@@ -47,6 +47,7 @@
 #include "Utils/TextInput.h"
 #include "Utils/TimerControl.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 void RenderEditorInfo();
 
@@ -434,7 +435,7 @@ void EnableEditorTaskbar(void) {
 // A specialized mprint function that'll restore the editor panel underneath the
 // string before rendering the string.  This is obviously only useful for drawing text
 // in the editor taskbar.
-void mprintfEditor(int16_t x, int16_t y, wchar_t* pFontString, ...) {
+void mprintfEditor(int16_t x, int16_t y, wchar_t *pFontString, ...) {
   va_list argptr;
   wchar_t string[512];
   uint16_t uiStringLength, uiStringHeight;
@@ -476,7 +477,8 @@ void ClearTaskbarRegion(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBo
 // This is a new function which duplicates the older "yellow info boxes" that
 // are common throughout the editor.  This draws the yellow box with the indentation
 // look.
-void DrawEditorInfoBox(wchar_t* str, uint32_t uiFont, uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+void DrawEditorInfoBox(wchar_t *str, uint32_t uiFont, uint16_t x, uint16_t y, uint16_t w,
+                       uint16_t h) {
   uint16_t usFillColorDark, usFillColorLight, usFillColorBack;
   uint16_t x2, y2;
   uint16_t usStrWidth;
@@ -484,9 +486,9 @@ void DrawEditorInfoBox(wchar_t* str, uint32_t uiFont, uint16_t x, uint16_t y, ui
   x2 = x + w;
   y2 = y + h;
 
-  usFillColorDark = Get16BPPColor(FROMRGB(24, 61, 81));
-  usFillColorLight = Get16BPPColor(FROMRGB(136, 138, 135));
-  usFillColorBack = Get16BPPColor(FROMRGB(250, 240, 188));
+  usFillColorDark = rgb32_to_rgb565(FROMRGB(24, 61, 81));
+  usFillColorLight = rgb32_to_rgb565(FROMRGB(136, 138, 135));
+  usFillColorBack = rgb32_to_rgb565(FROMRGB(250, 240, 188));
 
   ColorFillVideoSurfaceArea(ButtonDestBuffer, x, y, x2, y2, usFillColorDark);
   ColorFillVideoSurfaceArea(ButtonDestBuffer, x + 1, y + 1, x2, y2, usFillColorLight);
@@ -652,7 +654,7 @@ void RenderMapEntryPointsAndLights() {
   }
 }
 
-void BuildTriggerName(struct OBJECTTYPE *pItem, wchar_t* szItemName, int bufSize) {
+void BuildTriggerName(struct OBJECTTYPE *pItem, wchar_t *szItemName, int bufSize) {
   if (pItem->usItem == SWITCH) {
     if (pItem->bFrequency == PANIC_FREQUENCY)
       swprintf(szItemName, bufSize, L"Panic Trigger1");
@@ -749,7 +751,7 @@ void RenderSelectedItemBlownUp() {
 
   BltVideoObjectOutlineFromIndex(FRAME_BUFFER, uiVideoObjectIndex,
                                  Item[gpItem->usItem].ubGraphicNum, xp, yp,
-                                 Get16BPPColor(FROMRGB(0, 140, 170)), TRUE);
+                                 rgb32_to_rgb565(FROMRGB(0, 140, 170)), TRUE);
 
   // Display the item name above it
   SetFont(FONT10ARIAL);

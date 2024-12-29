@@ -33,6 +33,7 @@
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 #define MERC_TEXT_FONT FONT12ARIAL
 #define MERC_TEXT_COLOR FONT_MCOLOR_WHITE
@@ -266,7 +267,8 @@ BOOLEAN DisplayMercVideoIntro(uint16_t usTimeTillFinish);
 void HandleCurrentMercDistortion();
 void HandleTalkingSpeck();
 // BOOLEAN DistortVideoMercImage();
-BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth, uint16_t usHeight);
+BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
+                              uint16_t usHeight);
 BOOLEAN IsAnyMercMercsHired();
 BOOLEAN IsAnyMercMercsDead();
 uint8_t CountNumberOfMercMercsHired();
@@ -1165,7 +1167,8 @@ BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, uint16_t usPosX, uint16_t usPosY, ui
   return (fReturnStatus);
 }
 
-BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth, uint16_t usHeight) {
+BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
+                              uint16_t usHeight) {
   uint32_t uiPitch;
   uint16_t i, j;
   uint16_t *pBuffer = NULL, DestColor;
@@ -1201,13 +1204,13 @@ BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth
       for (i = usPosX; i < usPosX + usWidth; i++) {
         DestColor = pBuffer[(j * uiPitch) + i];
 
-        uiColor = GetRGBColor(DestColor);
+        uiColor = rgb565_to_rgb32(DestColor);
 
         red = (uint8_t)uiColor;
         green = (uint8_t)(uiColor >> 8);
         blue = (uint8_t)(uiColor >> 16);
 
-        DestColor = Get16BPPColor(FROMRGB(255 - red, 250 - green, 250 - blue));
+        DestColor = rgb32_to_rgb565(FROMRGB(255 - red, 250 - green, 250 - blue));
 
         pBuffer[(j * uiPitch) + i] = DestColor;
       }
@@ -1286,7 +1289,7 @@ BOOLEAN DisplayMercVideoIntro(uint16_t usTimeTillFinish) {
 
   ColorFillVideoSurfaceArea(
       FRAME_BUFFER, MERC_VIDEO_FACE_X, MERC_VIDEO_FACE_Y, MERC_VIDEO_FACE_X + MERC_VIDEO_FACE_WIDTH,
-      MERC_VIDEO_FACE_Y + MERC_VIDEO_FACE_HEIGHT, Get16BPPColor(FROMRGB(0, 0, 0)));
+      MERC_VIDEO_FACE_Y + MERC_VIDEO_FACE_HEIGHT, rgb32_to_rgb565(FROMRGB(0, 0, 0)));
 
   // if the intro is done
   if ((uiCurTime - uiLastTime) > usTimeTillFinish) {
@@ -1396,7 +1399,7 @@ void HandleTalkingSpeck() {
   }
 }
 
-void DisplayTextForSpeckVideoPopUp(wchar_t* pString) {
+void DisplayTextForSpeckVideoPopUp(wchar_t *pString) {
   uint16_t usActualHeight;
   int32_t iOldMercPopUpBoxId = iMercPopUpBox;
 

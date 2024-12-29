@@ -36,6 +36,7 @@
 #include "Utils/Text.h"
 #include "Utils/TextInput.h"
 #include "Utils/TimerControl.h"
+#include "jplatform_video.h"
 #include "platform.h"
 
 extern BOOLEAN gfOverheadMapDirty;
@@ -277,8 +278,8 @@ void CreateSummaryWindow() {
   gfRenderGrid = TRUE;
 
   iSummaryButton[SUMMARY_PROGRESSCHECKBOX] = CreateCheckBoxButton(
-      (int16_t)(MAP_LEFT + 50), (int16_t)(MAP_BOTTOM + 5), "EDITOR//smcheckbox.sti", MSYS_PRIORITY_HIGH,
-      SummaryToggleProgressCallback);
+      (int16_t)(MAP_LEFT + 50), (int16_t)(MAP_BOTTOM + 5), "EDITOR//smcheckbox.sti",
+      MSYS_PRIORITY_HIGH, SummaryToggleProgressCallback);
   ButtonList[iSummaryButton[SUMMARY_PROGRESSCHECKBOX]]->uiFlags |= BUTTON_CLICKED_ON;
   gfRenderProgress = TRUE;
 
@@ -644,7 +645,8 @@ void RenderItemDetails() {
   int32_t index, i;
   wchar_t str[100];
   uint32_t uiQuantity, uiExistChance, uiStatus;
-  uint32_t uiTriggerQuantity[8], uiActionQuantity[8], uiTriggerExistChance[8], uiActionExistChance[8];
+  uint32_t uiTriggerQuantity[8], uiActionQuantity[8], uiTriggerExistChance[8],
+      uiActionExistChance[8];
   uint32_t xp, yp;
   int8_t bFreqIndex;
   SetFont(FONT10ARIAL);
@@ -1384,21 +1386,21 @@ void RenderSummaryWindow() {
     if (gfWorldLoaded && !gfTempFile && gsSectorX) {
       x = MAP_LEFT + (gsSectorX - 1) * 13 + 1;
       y = MAP_TOP + (gsSectorY - 1) * 13 + 1;
-      RectangleDraw(TRUE, x, y, x + 11, y + 11, Get16BPPColor(FROMRGB(50, 50, 200)), pDestBuf);
+      RectangleDraw(TRUE, x, y, x + 11, y + 11, rgb32_to_rgb565(FROMRGB(50, 50, 200)), pDestBuf);
     }
 
     // Render the grid for the sector currently in focus (red).
     if (gsSelSectorX > 0 && !gfTempFile) {
       x = MAP_LEFT + (gsSelSectorX - 1) * 13;
       y = MAP_TOP + (gsSelSectorY - 1) * 13;
-      RectangleDraw(TRUE, x, y, x + 13, y + 13, Get16BPPColor(FROMRGB(200, 50, 50)), pDestBuf);
+      RectangleDraw(TRUE, x, y, x + 13, y + 13, rgb32_to_rgb565(FROMRGB(200, 50, 50)), pDestBuf);
     }
 
     // Render the grid for the sector if the mouse is over it (yellow).
     if (gsHiSectorX > 0) {
       x = MAP_LEFT + (gsHiSectorX - 1) * 13 - 1;
       y = MAP_TOP + (gsHiSectorY - 1) * 13 - 1;
-      RectangleDraw(TRUE, x, y, x + 15, y + 15, Get16BPPColor(FROMRGB(200, 200, 50)), pDestBuf);
+      RectangleDraw(TRUE, x, y, x + 15, y + 15, rgb32_to_rgb565(FROMRGB(200, 200, 50)), pDestBuf);
     }
     UnLockVideoSurface(FRAME_BUFFER);
   }
@@ -1425,7 +1427,7 @@ void RenderSummaryWindow() {
   }
 }
 
-void UpdateSectorSummary(wchar_t* gszFilename, BOOLEAN fUpdate) {
+void UpdateSectorSummary(wchar_t *gszFilename, BOOLEAN fUpdate) {
   wchar_t str[50];
   char szCoord[40];
   wchar_t *ptr;

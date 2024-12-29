@@ -54,6 +54,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "jplatform_video.h"
 
 //
 //******  Defines  ******
@@ -409,7 +410,7 @@ BOOLEAN gfFirstTimeInContactScreen;
 uint8_t gubCurrentCount;
 uint8_t gubCurrentStaticMode;
 uint32_t guiMercAttitudeTime;  // retains the amount of time the user is in a screen, if over a
-                             // certain time, the merc gets miffed
+                               // certain time, the merc gets miffed
 uint8_t gubMercAttitudeLevel;  // retains the current level the merc is  P.O.'ed at the caller.
 BOOLEAN
 gfHangUpMerc;  // if we have to cancel the video conferencing after the merc is finsihed talking
@@ -507,7 +508,7 @@ void SelectShutUpMercRegionCallBack(struct MOUSE_REGION *pRegion, int32_t iReaso
 //*******************************************
 
 BOOLEAN UpdateMercInfo(void);
-BOOLEAN LoadMercBioInfo(uint8_t ubIndex, wchar_t* pInfoString, wchar_t* pAddInfo);
+BOOLEAN LoadMercBioInfo(uint8_t ubIndex, wchar_t *pInfoString, wchar_t *pAddInfo);
 BOOLEAN DisplayMercsInventory(uint8_t ubMercID);
 BOOLEAN DisplayMercsFace();
 void DisplayMercStats();
@@ -516,8 +517,8 @@ BOOLEAN DisplayVideoConferencingDisplay();
 BOOLEAN DisplayMercsVideoFace();
 void DisplaySelectLights(BOOLEAN fContractDown, BOOLEAN fBuyEquipDown);
 uint32_t DisplayMercChargeAmount();
-BOOLEAN InitCreateDeleteAimPopUpBox(uint8_t ubFlag, wchar_t* sString1, wchar_t* sString2, uint16_t usPosX,
-                                    uint16_t usPosY, uint8_t ubData);
+BOOLEAN InitCreateDeleteAimPopUpBox(uint8_t ubFlag, wchar_t *sString1, wchar_t *sString2,
+                                    uint16_t usPosX, uint16_t usPosY, uint8_t ubData);
 BOOLEAN InitVideoFaceTalking(uint8_t ubMercID, uint16_t usQuoteNum);
 BOOLEAN InitVideoFace(uint8_t ubMercID);
 BOOLEAN DisplaySnowBackground();
@@ -528,7 +529,7 @@ uint8_t DisplayPixelatedImage(uint8_t ubMaxImages);
 void HandleMercAttitude();
 void StopMercTalking();
 uint8_t DisplayTransparentSnow(uint8_t ubMode, uint32_t uiImageIdentifier, uint8_t ubMaxImages,
-                             BOOLEAN bForward);
+                               BOOLEAN bForward);
 
 BOOLEAN InitDeleteVideoConferencePopUp();
 BOOLEAN DeleteVideoConfPopUp();
@@ -542,7 +543,7 @@ BOOLEAN EnableDisableCurrentVideoConferenceButtons(BOOLEAN fEnable);
 BOOLEAN CanMercBeHired();
 BOOLEAN DisplayMovingTitleBar(BOOLEAN fForward, BOOLEAN fInit);
 BOOLEAN DisplayBlackBackground(uint8_t ubMaxNumOfLoops);
-void DisplayDots(uint16_t usNameX, uint16_t usNameY, uint16_t usStatX, wchar_t* pString);
+void DisplayDots(uint16_t usNameX, uint16_t usNameY, uint16_t usStatX, wchar_t *pString);
 
 void DelayMercSpeech(uint8_t ubMercID, uint16_t usQuoteNum, uint16_t usDelay, BOOLEAN fNewQuote,
                      BOOLEAN fReset);
@@ -974,8 +975,8 @@ BOOLEAN DrawNumeralsToScreen(int32_t iNumber, int8_t bWidth, uint16_t usLocX, ui
   return (TRUE);
 }
 
-BOOLEAN DrawMoneyToScreen(int32_t iNumber, int8_t bWidth, uint16_t usLocX, uint16_t usLocY, uint32_t ulFont,
-                          uint8_t ubColor) {
+BOOLEAN DrawMoneyToScreen(int32_t iNumber, int8_t bWidth, uint16_t usLocX, uint16_t usLocY,
+                          uint32_t ulFont, uint8_t ubColor) {
   wchar_t sStr[10];
 
   swprintf(sStr, ARR_SIZE(sStr), L"%d", iNumber);
@@ -1072,7 +1073,7 @@ BOOLEAN UpdateMercInfo(void) {
   return (TRUE);
 }
 
-BOOLEAN LoadMercBioInfo(uint8_t ubIndex, wchar_t* pInfoString, wchar_t* pAddInfo) {
+BOOLEAN LoadMercBioInfo(uint8_t ubIndex, wchar_t *pInfoString, wchar_t *pAddInfo) {
   HWFILE hFile;
   uint32_t uiBytesRead;
   uint16_t i;
@@ -1272,7 +1273,8 @@ BOOLEAN DisplayMercsInventory(uint8_t ubMercID) {
       usHeight = (uint32_t)pTrav->usHeight;
       usWidth = (uint32_t)pTrav->usWidth;
 
-      sCenX = PosX + (abs((int32_t)((int32_t)WEAPONBOX_SIZE_X - 3 - usWidth)) / 2) - pTrav->sOffsetX;
+      sCenX =
+          PosX + (abs((int32_t)((int32_t)WEAPONBOX_SIZE_X - 3 - usWidth)) / 2) - pTrav->sOffsetX;
       sCenY = PosY + (abs((int32_t)((int32_t)WEAPONBOX_SIZE_Y - usHeight)) / 2) - pTrav->sOffsetY;
 
       // blt the shadow of the item
@@ -1420,7 +1422,7 @@ void BtnNextButtonCallback(GUI_BUTTON *btn, int32_t reason) {
 BOOLEAN DisplayMercsFace() {
   struct VObject *hFaceHandle;
   struct VObject *hPortraitHandle;
-  char* sFaceLoc = "FACES\\BIGFACES\\";
+  char *sFaceLoc = "FACES\\BIGFACES\\";
   char sTemp[100];
   VOBJECT_DESC VObjectDesc;
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -1626,7 +1628,7 @@ uint8_t GetStatColor(int8_t bStat) {
 }
 
 // displays the dots between the stats and the stat name
-void DisplayDots(uint16_t usNameX, uint16_t usNameY, uint16_t usStatX, wchar_t* pString) {
+void DisplayDots(uint16_t usNameX, uint16_t usNameY, uint16_t usStatX, wchar_t *pString) {
   uint16_t usStringLength = StringPixLength(pString, AIM_M_FONT_STATIC_TEXT);
   int16_t i;
   uint16_t usPosX;
@@ -1950,18 +1952,18 @@ void DisplaySelectLights(BOOLEAN fContractDown, BOOLEAN fBuyEquipDown) {
         usPosX = AIM_MEMBER_BUY_CONTRACT_LENGTH_X + AIM_SELECT_LIGHT_ON_X;
         ColorFillVideoSurfaceArea(FRAME_BUFFER, usPosX, usPosY + AIM_SELECT_LIGHT_ON_Y, usPosX + 8,
                                   usPosY + AIM_SELECT_LIGHT_ON_Y + 8,
-                                  Get16BPPColor(FROMRGB(0, 255, 0)));
+                                  rgb32_to_rgb565(FROMRGB(0, 255, 0)));
       } else {
         usPosX = AIM_MEMBER_BUY_CONTRACT_LENGTH_X + AIM_SELECT_LIGHT_OFF_X;
         ColorFillVideoSurfaceArea(FRAME_BUFFER, usPosX, usPosY + AIM_SELECT_LIGHT_OFF_Y, usPosX + 8,
                                   usPosY + AIM_SELECT_LIGHT_OFF_Y + 8,
-                                  Get16BPPColor(FROMRGB(0, 255, 0)));
+                                  rgb32_to_rgb565(FROMRGB(0, 255, 0)));
       }
     } else {
       usPosX = AIM_MEMBER_BUY_CONTRACT_LENGTH_X + AIM_SELECT_LIGHT_OFF_X;
       ColorFillVideoSurfaceArea(FRAME_BUFFER, usPosX, usPosY + AIM_SELECT_LIGHT_OFF_Y, usPosX + 8,
                                 usPosY + AIM_SELECT_LIGHT_OFF_Y + 8,
-                                Get16BPPColor(FROMRGB(0, 0, 0)));
+                                rgb32_to_rgb565(FROMRGB(0, 0, 0)));
     }
     usPosY += AIM_MEMBER_BUY_EQUIPMENT_GAP;
   }
@@ -1974,18 +1976,18 @@ void DisplaySelectLights(BOOLEAN fContractDown, BOOLEAN fBuyEquipDown) {
         usPosX = AIM_MEMBER_BUY_EQUIPMENT_X + AIM_SELECT_LIGHT_ON_X;
         ColorFillVideoSurfaceArea(FRAME_BUFFER, usPosX, usPosY + AIM_SELECT_LIGHT_ON_Y, usPosX + 8,
                                   usPosY + AIM_SELECT_LIGHT_ON_Y + 8,
-                                  Get16BPPColor(FROMRGB(0, 255, 0)));
+                                  rgb32_to_rgb565(FROMRGB(0, 255, 0)));
       } else {
         usPosX = AIM_MEMBER_BUY_EQUIPMENT_X + AIM_SELECT_LIGHT_OFF_X;
         ColorFillVideoSurfaceArea(FRAME_BUFFER, usPosX, usPosY + AIM_SELECT_LIGHT_OFF_Y, usPosX + 8,
                                   usPosY + AIM_SELECT_LIGHT_OFF_Y + 8,
-                                  Get16BPPColor(FROMRGB(0, 255, 0)));
+                                  rgb32_to_rgb565(FROMRGB(0, 255, 0)));
       }
     } else {
       usPosX = AIM_MEMBER_BUY_EQUIPMENT_X + AIM_SELECT_LIGHT_OFF_X;
       ColorFillVideoSurfaceArea(FRAME_BUFFER, usPosX, usPosY + AIM_SELECT_LIGHT_OFF_Y, usPosX + 8,
                                 usPosY + AIM_SELECT_LIGHT_OFF_Y + 8,
-                                Get16BPPColor(FROMRGB(0, 0, 0)));
+                                rgb32_to_rgb565(FROMRGB(0, 0, 0)));
     }
     usPosY += AIM_MEMBER_BUY_EQUIPMENT_GAP;
   }
@@ -2052,8 +2054,8 @@ uint32_t DisplayMercChargeAmount() {
   return (giContractAmount);
 }
 
-BOOLEAN InitCreateDeleteAimPopUpBox(uint8_t ubFlag, wchar_t* sString1, wchar_t* sString2, uint16_t usPosX,
-                                    uint16_t usPosY, uint8_t ubData) {
+BOOLEAN InitCreateDeleteAimPopUpBox(uint8_t ubFlag, wchar_t *sString1, wchar_t *sString2,
+                                    uint16_t usPosX, uint16_t usPosY, uint8_t ubData) {
   VOBJECT_DESC VObjectDesc;
   struct VObject *hPopupBoxHandle;
   static uint16_t usPopUpBoxPosX, usPopUpBoxPosY;
@@ -2427,7 +2429,7 @@ BOOLEAN DisplayTalkingMercFaceForVideoPopUp(int32_t iFaceIndex) {
   return (fIsTheMercTalking);
 }
 
-void DisplayTextForMercFaceVideoPopUp(wchar_t* pString) {
+void DisplayTextForMercFaceVideoPopUp(wchar_t *pString) {
 #ifdef TAIWANESE
   swprintf(gsTalkingMercText, ARR_SIZE(gsTalkingMercText), L"%s", pString);
 #else
@@ -2647,7 +2649,7 @@ BOOLEAN DisplayBlackBackground(uint8_t ubMaxNumOfLoops) {
   ColorFillVideoSurfaceArea(FRAME_BUFFER, AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y,
                             AIM_MEMBER_VIDEO_FACE_X + AIM_MEMBER_VIDEO_FACE_WIDTH,
                             AIM_MEMBER_VIDEO_FACE_Y + AIM_MEMBER_VIDEO_FACE_HEIGHT,
-                            Get16BPPColor(FROMRGB(0, 0, 0)));
+                            rgb32_to_rgb565(FROMRGB(0, 0, 0)));
   InvalidateRegion(AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y,
                    AIM_MEMBER_VIDEO_FACE_X + AIM_MEMBER_VIDEO_FACE_WIDTH,
                    AIM_MEMBER_VIDEO_FACE_Y + AIM_MEMBER_VIDEO_FACE_HEIGHT);
@@ -2776,7 +2778,7 @@ void HandleVideoDistortion() {
 
 // returns true when done. else false
 uint8_t DisplayTransparentSnow(uint8_t ubMode, uint32_t uiImageIdentifier, uint8_t ubMaxImages,
-                             BOOLEAN bForward) {
+                               BOOLEAN bForward) {
   struct VObject *hFuzzLineHandle;
   static int8_t bCount = 0;
   uint32_t uiCurrentTime = 0;
@@ -3585,7 +3587,7 @@ AIM_MEMBER_VIDEO_FACE_X+AIM_MEMBER_VIDEO_FACE_WIDTH,AIM_MEMBER_VIDEO_FACE_Y+AIM_
                         //display the black background with text over it.
                         ColorFillVideoSurfaceArea( FRAME_BUFFER, AIM_MEMBER_VIDEO_FACE_X,
 AIM_MEMBER_VIDEO_FACE_Y, AIM_MEMBER_VIDEO_FACE_X+AIM_MEMBER_VIDEO_FACE_WIDTH,
-AIM_MEMBER_VIDEO_FACE_Y+AIM_MEMBER_VIDEO_FACE_HEIGHT, Get16BPPColor( FROMRGB( 0, 0, 0 ) ) );
+AIM_MEMBER_VIDEO_FACE_Y+AIM_MEMBER_VIDEO_FACE_HEIGHT, rgb32_to_rgb565( FROMRGB( 0, 0, 0 ) ) );
                         DisplayWrappedString(AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y+20,
 AIM_MEMBER_VIDEO_FACE_WIDTH, 2, FONT14ARIAL, 145,  AimPopUpText[AIM_MEMBER_LEAVE_MSG],
 FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
@@ -3797,7 +3799,8 @@ void TempHiringOfMercs(uint8_t ubNumberOfMercs, BOOLEAN fReset) {
     HireMerc(&HireMercStruct);
 
     // add an entry in the finacial page for the hiring of the merc
-    AddTransactionToPlayersBook(HIRED_MERC, MercID[i], -(int32_t)(gMercProfiles[MercID[i]].sSalary));
+    AddTransactionToPlayersBook(HIRED_MERC, MercID[i],
+                                -(int32_t)(gMercProfiles[MercID[i]].sSalary));
 
     if (gMercProfiles[MercID[i]].bMedicalDeposit) {
       // add an entry in the finacial page for the medical deposit
@@ -4040,7 +4043,8 @@ void DemoHiringOfMercs() {
     HireMerc(&HireMercStruct);
 
     // add an entry in the finacial page for the hiring of the merc
-    AddTransactionToPlayersBook(HIRED_MERC, MercID[i], -(int32_t)(gMercProfiles[MercID[i]].sSalary));
+    AddTransactionToPlayersBook(HIRED_MERC, MercID[i],
+                                -(int32_t)(gMercProfiles[MercID[i]].sSalary));
 
     if (gMercProfiles[MercID[i]].bMedicalDeposit) {
       // add an entry in the finacial page for the medical deposit
