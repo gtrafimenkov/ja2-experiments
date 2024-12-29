@@ -111,9 +111,9 @@ void SetFontForeground(uint8_t ubForeground) {
 
   FontForeground8 = ubForeground;
 
-  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].peRed;
-  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].peGreen;
-  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].peBlue;
+  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].red;
+  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].green;
+  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubForeground].blue;
 
   FontForeground16 = rgb32_to_rgb565(FROMRGB(uiRed, uiGreen, uiBlue));
 }
@@ -125,9 +125,9 @@ void SetFontShadow(uint8_t ubShadow) {
 
   // FontForeground8=ubForeground;
 
-  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].peRed;
-  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].peGreen;
-  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].peBlue;
+  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].red;
+  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].green;
+  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubShadow].blue;
 
   FontShadow16 = rgb32_to_rgb565(FROMRGB(uiRed, uiGreen, uiBlue));
 
@@ -157,9 +157,9 @@ void SetFontBackground(uint8_t ubBackground) {
 
   FontBackground8 = ubBackground;
 
-  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].peRed;
-  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].peGreen;
-  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].peBlue;
+  uiRed = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].red;
+  uiGreen = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].green;
+  uiBlue = (uint32_t)FontObjs[FontDefault]->pPaletteEntry[ubBackground].blue;
 
   FontBackground16 = rgb32_to_rgb565(FROMRGB(uiRed, uiGreen, uiBlue));
 }
@@ -1704,10 +1704,10 @@ struct SGPPaletteEntry *ConvertToPaletteEntry(uint8_t sbStart, uint8_t sbEnd, ui
   DbgMessage(TOPIC_FONT_HANDLER, DBG_LEVEL_0, "Converting RGB palette to struct SGPPaletteEntry");
   for(Index=0; Index <= (sbEnd-sbStart);Index++)
   {
-    pPalEntry->peRed = *(pOldPalette + (Index*3));
-          pPalEntry->peGreen = *(pOldPalette + (Index*3) + 1);
-          pPalEntry->peBlue = *(pOldPalette + (Index*3) + 2);
-    pPalEntry->peFlags = 0;
+    pPalEntry->red = *(pOldPalette + (Index*3));
+          pPalEntry->green = *(pOldPalette + (Index*3) + 1);
+          pPalEntry->blue = *(pOldPalette + (Index*3) + 2);
+    pPalEntry->flags = 0;
           pPalEntry++;
   }
   return pInitEntry;

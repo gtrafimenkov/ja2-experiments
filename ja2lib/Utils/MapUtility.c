@@ -264,8 +264,8 @@ uint32_t MapUtilScreenHandle() {
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
     for (cnt = 0; cnt < 256; cnt++) {
-      usLineColor = rgb32_to_rgb565(
-          FROMRGB(pPalette[cnt].peRed, pPalette[cnt].peGreen, pPalette[cnt].peBlue));
+      usLineColor =
+          rgb32_to_rgb565(FROMRGB(pPalette[cnt].red, pPalette[cnt].green, pPalette[cnt].blue));
       RectangleDraw(TRUE, sX, sY, sX, (int16_t)(sY + 10), usLineColor, (uint8_t *)pDestBuf);
       sX++;
       RectangleDraw(TRUE, sX, sY, sX, (int16_t)(sY + 10), usLineColor, (uint8_t *)pDestBuf);

@@ -74,7 +74,7 @@ BOOLEAN LoadPCXFileToImage(HIMAGE hImage, uint16_t fContents) {
   return (TRUE);
 }
 
-PcxObject *LoadPcx(char* pFilename) {
+PcxObject *LoadPcx(char *pFilename) {
   PcxHeader Header;
   PcxObject *pCurrentPcxObject;
   HWFILE hFileHandle;
@@ -313,10 +313,10 @@ BOOLEAN SetPcxPalette(PcxObject *pCurrentPcxObject, HIMAGE hImage) {
 
   // Initialize the proper palette entries
   for (Index = 0; Index < 256; Index++) {
-    hImage->pPalette[Index].peRed = *(pubPalette + (Index * 3));
-    hImage->pPalette[Index].peGreen = *(pubPalette + (Index * 3) + 1);
-    hImage->pPalette[Index].peBlue = *(pubPalette + (Index * 3) + 2);
-    hImage->pPalette[Index].peFlags = 0;
+    hImage->pPalette[Index].red = *(pubPalette + (Index * 3));
+    hImage->pPalette[Index].green = *(pubPalette + (Index * 3) + 1);
+    hImage->pPalette[Index].blue = *(pubPalette + (Index * 3) + 2);
+    hImage->pPalette[Index].flags = 0;
   }
 
   return TRUE;

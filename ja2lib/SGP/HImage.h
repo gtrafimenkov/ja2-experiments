@@ -40,10 +40,10 @@
 
 // Palette structure, mimics that of Win32
 struct SGPPaletteEntry {
-  uint8_t peRed;
-  uint8_t peGreen;
-  uint8_t peBlue;
-  uint8_t peFlags;
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+  uint8_t flags;
 };
 
 #define AUX_FULL_TILE 0x01
@@ -81,7 +81,7 @@ typedef struct tagETRLEObject {
 } ETRLEObject;
 
 typedef struct tagETRLEData {
-  void* pPixData;
+  void *pPixData;
   uint32_t uiSizePixData;
   ETRLEObject *pETRLEObject;
   uint16_t usNumberOfObjects;
@@ -103,10 +103,10 @@ typedef struct {
   // data strucutre of the compresssed format, once developed.
   union {
     struct {
-      void* pImageData;
+      void *pImageData;
     };
     struct {
-      void* pCompressedImageData;
+      void *pCompressedImageData;
     };
     struct {
       uint8_t *p8BPPData;
@@ -145,17 +145,21 @@ BOOLEAN ReleaseImageData(HIMAGE hImage, uint16_t fContents);
 BOOLEAN LoadImageData(HIMAGE hImage, uint16_t fContents);
 
 // This function will run the appropriate copy function based on the type of HIMAGE object
-BOOLEAN CopyImageToBuffer(HIMAGE hImage, uint32_t fBufferType, uint8_t *pDestBuf, uint16_t usDestWidth,
-                          uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect);
+BOOLEAN CopyImageToBuffer(HIMAGE hImage, uint32_t fBufferType, uint8_t *pDestBuf,
+                          uint16_t usDestWidth, uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                          SGPRect *srcRect);
 
 // The following blitters are used by the function above as well as clients
 
 BOOLEAN Copy8BPPImageTo8BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                  uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect);
+                                  uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                  SGPRect *srcRect);
 BOOLEAN Copy8BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                   uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect);
+                                   uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                   SGPRect *srcRect);
 BOOLEAN Copy16BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                    uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect);
+                                    uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                    SGPRect *srcRect);
 
 // This function will create a buffer in memory of ETRLE data, excluding palette
 BOOLEAN GetETRLEImageData(HIMAGE hImage, ETRLEData *pBuffer);
@@ -163,12 +167,13 @@ BOOLEAN GetETRLEImageData(HIMAGE hImage, ETRLEData *pBuffer);
 // UTILITY FUNCTIONS
 
 // Used to create a 16BPP Palette from an 8 bit palette, found in himage.c
-uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale, uint32_t gscale,
-                                 uint32_t bscale, BOOLEAN mono);
+uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale,
+                                   uint32_t gscale, uint32_t bscale, BOOLEAN mono);
 uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette);
 uint16_t Get16BPPColor(uint32_t RGBValue);
 uint32_t GetRGBColor(uint16_t Value16BPP);
-struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd, uint8_t *pOldPalette);
+struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd,
+                                                 uint8_t *pOldPalette);
 
 extern uint16_t gusAlphaMask;
 extern uint16_t gusRedMask;
