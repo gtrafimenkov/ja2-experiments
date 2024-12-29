@@ -52,7 +52,6 @@ void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfa
                      LPDIRECTDRAWSURFACE *ppNewSurface1, LPDIRECTDRAWSURFACE2 *ppNewSurface2);
 void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc);
 void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1, LPDIRECTDRAWSURFACE2 *ppOldSurface2);
-// static struct BufferLockInfo DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface);
 void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect, LPDDSURFACEDESC pSurfaceDesc,
                    uint32_t uiFlags, HANDLE hEvent);
 
@@ -1947,20 +1946,15 @@ BOOLEAN GetRGBDistribution(void) {
   uint16_t usBlueMask = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwBBitMask;
 
   if ((usRedMask != 0xf800) || (usGreenMask != 0x07e0) || (usBlueMask != 0x001f)) {
+    // It may not work some hardware, but 16 bit mode is outdated anyway.
+    // See 16-bit docs/internal/16bit-graphics.md
+
     // char buf[200];
     // snprintf(buf, ARR_SIZE(buf), "XXX RGB distribution: (0x%04x, 0x%04x, 0x%04x)", usRedMask,
     //          usGreenMask, usBlueMask);
-
-    //  TODO
     // DebugLogWrite(buf);
     // DebugLogWrite("XXX RGB distribution other than 565 is not supported");
-
-    // It may not work some hardware, but 16 bit mode is outdated anyway.
-    // We should switch to 32bit mode.
-    //
-    // Maybe useful:
-    //   - https://www.gamedev.net/forums/topic/54104-555-or-565/
-    //   - https://learn.microsoft.com/en-us/windows/win32/directshow/working-with-16-bit-rgb
+    FatalError("XXX RGB distribution other than 565 is not supported");
     return FALSE;
   }
 
