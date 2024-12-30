@@ -255,7 +255,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   vs_desc.usHeight = usTextBoxHeight;
   vs_desc.ubBitDepth = 16;
 
-  if (AddVideoSurface(CreateVideoSurface(&vs_desc), &gMsgBox.uiSaveBuffer) == FALSE) {
+  if (AddVSurface(CreateVSurface(&vs_desc), &gMsgBox.uiSaveBuffer) == FALSE) {
     return (-1);
   }
 

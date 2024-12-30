@@ -8,18 +8,18 @@
 #include "SGP/VObject.h"
 #include "StrUtils.h"
 
-struct VSurface *CreateVideoSurfaceFromFile(char *filepath) {
+struct VSurface *CreateVSurfaceFromFile(char *filepath) {
   VSURFACE_DESC desc;
   desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
   strcopy(desc.ImageFile, sizeof(desc.ImageFile), filepath);
-  return CreateVideoSurface(&desc);
+  return CreateVSurface(&desc);
 }
 
-bool AddVideoSurfaceFromFile(const char *filepath, VSurfID *index) {
+bool AddVSurfaceFromFile(const char *filepath, VSurfID *index) {
   VSURFACE_DESC desc;
   desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
   strcopy(desc.ImageFile, sizeof(desc.ImageFile), filepath);
-  return AddVideoSurface(CreateVideoSurface(&desc), index);
+  return AddVSurface(CreateVSurface(&desc), index);
 }
 
 typedef struct VSURFACE_NODE {
@@ -80,7 +80,7 @@ VSurfID AddVSurfaceToList(struct VSurface *vs) {
   return gpVSurfaceTail->uiIndex;
 }
 
-struct VSurface *FindSurface(VSurfID id) {
+struct VSurface *FindVSurface(VSurfID id) {
   VSURFACE_NODE *curr = gpVSurfaceHead;
   while (curr) {
     if (curr->uiIndex == id) {
@@ -135,8 +135,8 @@ bool DeleteVSurfaceFromList(VSurfID id) {
   return false;
 }
 
-BOOLEAN AddVideoSurface(struct VSurface *vs, uint32_t *puiIndex) {
-  // hVSurface = CreateVideoSurface(pVSurfaceDesc);
+BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *puiIndex) {
+  // hVSurface = CreateVSurface(pVSurfaceDesc);
 
   if (!vs) {
     return FALSE;

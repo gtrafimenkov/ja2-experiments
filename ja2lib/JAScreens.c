@@ -276,7 +276,7 @@ uint32_t InitScreenHandle(void) {
 
   if (ubCurrentScreen == 0) {
     // Load init screen and blit!
-    hVSurface = CreateVideoSurfaceFromFile("ja2_logo.STI");
+    hVSurface = CreateVSurfaceFromFile("ja2_logo.STI");
     if (!hVSurface) AssertMsg(0, "Failed to load ja2_logo.sti!");
 
     // BltVideoSurfaceToVideoSurface( ghFrameBuffer, hVSurface, 0, 0, 0, VS_BLT_FAST, NULL );

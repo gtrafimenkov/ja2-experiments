@@ -323,7 +323,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     SetFontShadow(FONT_NEARBLACK);
     ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...", filepath);
-  } else if (AddVideoSurfaceFromFile(filepath, &uiLoadScreen)) {  // Blit the background image
+  } else if (AddVSurfaceFromFile(filepath, &uiLoadScreen)) {  // Blit the background image
     GetVideoSurface(&hVSurface, uiLoadScreen);
     BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVideoSurfaceFromIndex(uiLoadScreen);
