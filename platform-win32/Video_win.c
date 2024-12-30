@@ -2600,29 +2600,6 @@ BOOLEAN ShutdownVideoSurfaceManager() {
   return TRUE;
 }
 
-BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
-  struct VSurface *hVSurface;
-
-  // Assertions
-  Assert(puiIndex);
-  Assert(pVSurfaceDesc);
-
-  // Create video object
-  hVSurface = CreateVideoSurface(pVSurfaceDesc);
-
-  if (!hVSurface) {
-    // Video Object will set error condition.
-    return FALSE;
-  }
-
-  // Set transparency to default
-  SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
-
-  *puiIndex = AddVSurfaceToList(hVSurface);
-
-  return TRUE;
-}
-
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
   //
   // Check if given backbuffer or primary buffer
@@ -3313,24 +3290,24 @@ BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntr
 
 // Transparency needs to take RGB value and find best fit and place it into DD Surface
 // colorkey value.
-BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *hVSurface, COLORVAL TransColor) {
+BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) {
   DDCOLORKEY ColorKey;
   DWORD fFlags = CLR_INVALID;
   LPDIRECTDRAWSURFACE2 lpDDSurface;
 
   // Assertions
-  Assert(hVSurface != NULL);
+  Assert(vs != NULL);
 
   // Set trans color into Video Surface
-  hVSurface->TransparentColor = TransColor;
+  vs->TransparentColor = TransColor;
 
   // Get surface pointer
-  lpDDSurface = (LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData;
+  lpDDSurface = (LPDIRECTDRAWSURFACE2)vs->pSurfaceData;
   CHECKF(lpDDSurface != NULL);
 
   // Get right pixel format, based on bit depth
 
-  switch (hVSurface->ubBitDepth) {
+  switch (vs->ubBitDepth) {
     case 8:
 
       // Use color directly
