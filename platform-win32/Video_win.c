@@ -2649,12 +2649,6 @@ typedef struct VSURFACE_NODE {
   struct VSurface *hVSurface;
   uint32_t uiIndex;
   struct VSURFACE_NODE *next, *prev;
-
-#ifdef SGP_VIDEO_DEBUGGING
-  char *pName;
-  char *pCode;
-#endif
-
 } VSURFACE_NODE;
 
 VSURFACE_NODE *gpVSurfaceHead = NULL;
@@ -2716,10 +2710,6 @@ BOOLEAN ShutdownVideoSurfaceManager() {
     curr = gpVSurfaceHead;
     gpVSurfaceHead = gpVSurfaceHead->next;
     DeleteVideoSurface(curr->hVSurface);
-#ifdef SGP_VIDEO_DEBUGGING
-    if (curr->pName) MemFree(curr->pName);
-    if (curr->pCode) MemFree(curr->pCode);
-#endif
     MemFree(curr);
   }
   gpVSurfaceHead = NULL;
@@ -2778,10 +2768,6 @@ BOOLEAN AddStandardVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex
     gpVSurfaceHead->prev = gpVSurfaceHead->next = NULL;
     gpVSurfaceTail = gpVSurfaceHead;
   }
-#ifdef SGP_VIDEO_DEBUGGING
-  gpVSurfaceTail->pName = NULL;
-  gpVSurfaceTail->pCode = NULL;
-#endif
   // Set the hVSurface into the node.
   gpVSurfaceTail->hVSurface = hVSurface;
   gpVSurfaceTail->uiIndex = guiVSurfaceIndex += 2;
@@ -3746,16 +3732,6 @@ BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex) {
         curr->prev->next = curr->next;
       }
       // The node is now detached.  Now deallocate it.
-
-#ifdef SGP_VIDEO_DEBUGGING
-      if (curr->pName) {
-        MemFree(curr->pName);
-      }
-      if (curr->pCode) {
-        MemFree(curr->pCode);
-      }
-#endif
-
       MemFree(curr);
       guiVSurfaceSize--;
       return TRUE;
@@ -4724,106 +4700,6 @@ void CheckValidVSurfaceIndex(uint32_t uiIndex) {
     }
   }
 }
-#endif
-
-#ifdef SGP_VIDEO_DEBUGGING
-typedef struct DUMPFILENAME {
-  char str[256];
-} DUMPFILENAME;
-void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {
-  VSURFACE_NODE *curr;
-  FILE *fp;
-  DUMPFILENAME *pName, *pCode;
-  uint32_t *puiCounter;
-  char tempName[256];
-  char tempCode[256];
-  uint32_t i, uiUniqueID;
-  BOOLEAN fFound;
-  if (!guiVSurfaceSize) {
-    return;
-  }
-
-  if (fAppend) {
-    fp = fopen(filename, "a");
-  } else {
-    fp = fopen(filename, "w");
-  }
-  Assert(fp);
-
-  // Allocate enough strings and counters for each node.
-  pName = (DUMPFILENAME *)MemAlloc(sizeof(DUMPFILENAME) * guiVSurfaceSize);
-  pCode = (DUMPFILENAME *)MemAlloc(sizeof(DUMPFILENAME) * guiVSurfaceSize);
-  memset(pName, 0, sizeof(DUMPFILENAME) * guiVSurfaceSize);
-  memset(pCode, 0, sizeof(DUMPFILENAME) * guiVSurfaceSize);
-  puiCounter = (uint32_t *)MemAlloc(4 * guiVSurfaceSize);
-  memset(puiCounter, 0, 4 * guiVSurfaceSize);
-
-  // Loop through the list and record every unique filename and count them
-  uiUniqueID = 0;
-  curr = gpVSurfaceHead;
-  while (curr) {
-    strcpy(tempName, curr->pName);
-    strcpy(tempCode, curr->pCode);
-    fFound = FALSE;
-    for (i = 0; i < uiUniqueID; i++) {
-      if (!strcasecmp(tempName, pName[i].str) &&
-          !strcasecmp(tempCode, pCode[i].str)) {  // same string
-        fFound = TRUE;
-        (puiCounter[i])++;
-        break;
-      }
-    }
-    if (!fFound) {
-      strcpy(pName[i].str, tempName);
-      strcpy(pCode[i].str, tempCode);
-      (puiCounter[i])++;
-      uiUniqueID++;
-    }
-    curr = curr->next;
-  }
-
-  // Now dump the info.
-  fprintf(fp, "-----------------------------------------------\n");
-  fprintf(fp, "%d unique vSurface names exist in %d VSurfaces\n", uiUniqueID, guiVSurfaceSize);
-  fprintf(fp, "-----------------------------------------------\n\n");
-  for (i = 0; i < uiUniqueID; i++) {
-    fprintf(fp, "%d occurrences of %s\n", puiCounter[i], pName[i].str);
-    fprintf(fp, "%s\n\n", pCode[i].str);
-  }
-  fprintf(fp, "\n-----------------------------------------------\n\n");
-
-  // Free all memory associated with this operation.
-  MemFree(pName);
-  MemFree(pCode);
-  MemFree(puiCounter);
-  fclose(fp);
-}
-
-// Debug wrapper for adding vsurfaces
-BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex, uint32_t uiLineNum,
-                              char *pSourceFile) {
-  uint16_t usLength;
-  char str[256];
-  if (!AddStandardVideoSurface(VSurfaceDesc, uiIndex)) {
-    return FALSE;
-  }
-
-  // record the filename of the vsurface (some are created via memory though)
-  usLength = strlen(VSurfaceDesc->ImageFile) + 1;
-  gpVSurfaceTail->pName = (char *)MemAlloc(usLength);
-  memset(gpVSurfaceTail->pName, 0, usLength);
-  strcpy(gpVSurfaceTail->pName, VSurfaceDesc->ImageFile);
-
-  // record the code location of the calling creating function.
-  sprintf(str, "%s -- line(%d)", pSourceFile, uiLineNum);
-  usLength = strlen(str) + 1;
-  gpVSurfaceTail->pCode = (char *)MemAlloc(usLength);
-  memset(gpVSurfaceTail->pCode, 0, usLength);
-  strcpy(gpVSurfaceTail->pCode, str);
-
-  return TRUE;
-}
-
 #endif
 
 //////////////////////////////////////////////////////////////////
