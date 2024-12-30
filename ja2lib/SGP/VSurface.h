@@ -171,13 +171,6 @@ BOOLEAN SetPrimaryVideoSurfaces();
 // Sets transparency
 BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor);
 
-// Adds a video Surface region
-BOOLEAN AddVideoSurfaceRegion(uint32_t uiIndex, VSURFACE_REGION *pNewRegion);
-
-// Gets width, hight, bpp information
-BOOLEAN GetVideoSurfaceDescription(uint32_t uiIndex, uint16_t *usWidth, uint16_t *usHeight,
-                                   uint8_t *ubBitDepth);
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Video Surface manipulation functions
@@ -228,25 +221,8 @@ BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
 // Regions will allow creation of sections within the Surface to manipulate quickly and cleanly
 // An example would be a cursor tileset
 BOOLEAN AddVSurfaceRegion(struct VSurface *hVSurface, VSURFACE_REGION *pNewRegion);
-BOOLEAN AddVSurfaceRegionAtIndex(struct VSurface *hVSurface, uint16_t usIndex,
-                                 VSURFACE_REGION *pNewRegion);
-BOOLEAN AddVSurfaceRegions(struct VSurface *hVSurface, VSURFACE_REGION **ppNewRegions,
-                           uint16_t uiNumRegions);
 BOOLEAN RemoveVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex);
-BOOLEAN ClearAllVSurfaceRegions(struct VSurface *hVSurface);
 BOOLEAN GetVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex, VSURFACE_REGION *aRegion);
-BOOLEAN GetNumRegions(struct VSurface *hVSurface, uint32_t *puiNumRegions);
-BOOLEAN ReplaceVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex,
-                              VSURFACE_REGION *aRegion);
-BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Clipper manipulation functions
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-BOOLEAN SetClipList(struct VSurface *hVSurface, SGPRect *RegionData, uint16_t usNumRegions);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
