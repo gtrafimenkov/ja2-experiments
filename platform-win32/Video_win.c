@@ -2902,15 +2902,7 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *CreateVSurface(VSURFACE_DESC *desc) {
-  if (desc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
-    return CreateVSurfaceFromFile(desc->ImageFile);
-  } else {
-    return CreateVSurfaceBlank(desc->usHeight, desc->usWidth, desc->ubBitDepth);
-  }
-}
-
-struct VSurface *CreateVSurfaceBlank(uint16_t height, uint16_t width, uint8_t bitDepth) {
+struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bitDepth) {
   Assert(height > 0);
   Assert(width > 0);
 

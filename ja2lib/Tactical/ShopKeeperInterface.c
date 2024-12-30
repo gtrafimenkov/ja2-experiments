@@ -768,7 +768,6 @@ BOOLEAN EnterShopKeeperInterface() {
   VOBJECT_DESC VObjectDesc;
   uint8_t ubCnt;
   char zTemp[32];
-  VSURFACE_DESC vs_desc;
   struct SOLDIERTYPE *pSoldier;
 
   // make sure current merc is close enough and eligible to talk to the shopkeeper.
@@ -776,11 +775,9 @@ BOOLEAN EnterShopKeeperInterface() {
             "Selected merc can't interact with shopkeeper.  Send save AM-1");
 
   // Create a video surface to blt corner of the tactical screen that still shines through
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-  vs_desc.usWidth = SKI_TACTICAL_BACKGROUND_START_WIDTH;
-  vs_desc.usHeight = SKI_TACTICAL_BACKGROUND_START_HEIGHT;
-  vs_desc.ubBitDepth = 16;
-  if (!AddVSurface(CreateVSurface(&vs_desc), &guiCornerWhereTacticalIsStillSeenImage)) {
+  if (!AddVSurface(CreateVSurfaceBlank16(SKI_TACTICAL_BACKGROUND_START_WIDTH,
+                                         SKI_TACTICAL_BACKGROUND_START_HEIGHT),
+                   &guiCornerWhereTacticalIsStillSeenImage)) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION,
               L"Failed to create Surface where tactical map shows through");
