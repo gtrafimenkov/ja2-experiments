@@ -185,7 +185,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
 
       // Zero frame buffer
       ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
-      // ColorFillVideoSurfaceArea( guiSAVEBUFFER, 0, 0, 640,	480, Get16BPPColor( FROMRGB( 0, 0, 0
+      // ColorFillVideoSurfaceArea( vsSB, 0, 0, 640,	480, Get16BPPColor( FROMRGB( 0, 0, 0
       // ) ) );
 
       //	SetMusicFadeSpeed( 25 );
@@ -579,13 +579,13 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
   GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
 
   pSrcBuf = LockVideoSurface(vsFB, &uiSrcPitchBYTES);
-  pDestBuf = LockVideoSurface(guiSAVEBUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsSB, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, 0, 0, 640, 480);
 
   UnLockVideoSurface(vsFB);
-  UnLockVideoSurface(guiSAVEBUFFER);
+  UnLockVideoSurface(vsSB);
 
   return (TRUE);
 }

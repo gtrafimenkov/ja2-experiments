@@ -16,7 +16,7 @@
 
 uint32_t guiBOTTOMPANEL = 0;
 uint32_t guiRIGHTPANEL = 0;
-uint32_t guiSAVEBUFFER = 0;
+uint32_t vsSB = 0;
 uint32_t guiEXTRABUFFER = 0;
 
 BOOLEAN gfExtraBuffer = FALSE;
@@ -36,7 +36,7 @@ BOOLEAN InitializeGameVideoObjects() {
   vs_desc.usHeight = usHeight;
   vs_desc.ubBitDepth = ubBitDepth;
 
-  CHECKF(AddVideoSurface(&vs_desc, &guiSAVEBUFFER));
+  CHECKF(AddVideoSurface(&vs_desc, &vsSB));
 
   CHECKF(AddVideoSurface(&vs_desc, &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;

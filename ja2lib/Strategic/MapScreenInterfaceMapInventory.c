@@ -229,8 +229,7 @@ void BlitInventoryPoolGraphic(void) {
 
   // blit inventory pool graphic to the screen
   GetVideoObject(&hHandle, guiMapInventoryPoolBackground);
-  BltVideoObject(guiSAVEBUFFER, hHandle, 0, INVEN_POOL_X, INVEN_POOL_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVideoObject(vsSB, hHandle, 0, INVEN_POOL_X, INVEN_POOL_Y, VO_BLT_SRCTRANSPARENCY, NULL);
 
   // resize list
   CheckAndUnDateSlotAllocation();
@@ -304,9 +303,9 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
     fOutLine = FALSE;
   }
 
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
-  INVRenderItem(guiSAVEBUFFER, NULL, &(pInventoryPoolList[iCurrentSlot + iFirstSlotOnPage].o),
+  INVRenderItem(vsSB, NULL, &(pInventoryPoolList[iCurrentSlot + iFirstSlotOnPage].o),
                 (int16_t)(sX + 7), sY, 60, 25, DIRTYLEVEL2, NULL, 0, fOutLine, sOutLine);  // 67
 
   SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
@@ -320,7 +319,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
       (int16_t)(ITEMDESC_ITEM_STATUS_INV_POOL_OFFSET_Y + MAP_INVENTORY_POOL_SLOT_START_Y +
                 ((MAP_INVEN_SLOT_HEIGHT) * (iCurrentSlot % (MAP_INV_SLOT_COLS)))),
       ITEMDESC_ITEM_STATUS_WIDTH_INV_POOL, ITEMDESC_ITEM_STATUS_HEIGHT_INV_POOL,
-      Get16BPPColor(DESC_STATUS_BAR), Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
+      Get16BPPColor(DESC_STATUS_BAR), Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE, vsSB);
 
   //
   // if the item is not reachable, or if the selected merc is not in the current sector
@@ -330,7 +329,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
         (Menptr[gCharactersList[bSelectedInfoChar].usSolID].sSectorY == sSelMapY) &&
         (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bSectorZ == iCurrentMapSectorZ))) {
     // Shade the item
-    DrawHatchOnInventory(guiSAVEBUFFER, sX, sY, MAP_INVEN_SLOT_WIDTH, MAP_INVEN_SLOT_IMAGE_HEIGHT);
+    DrawHatchOnInventory(vsSB, sX, sY, MAP_INVEN_SLOT_WIDTH, MAP_INVEN_SLOT_IMAGE_HEIGHT);
   }
 
   // the name
@@ -348,7 +347,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
                 ((MAP_INVEN_SPACE_BTWN_SLOTS) * (iCurrentSlot / MAP_INV_SLOT_COLS))),
       0, MAP_INVEN_SLOT_WIDTH, 0, sString, MAP_IVEN_FONT, &sWidth, &sHeight);
 
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   SetFont(MAP_IVEN_FONT);
   SetFontForeground(FONT_WHITE);
@@ -1437,7 +1436,7 @@ void DisplayPagesForMapInventoryPool(void) {
   SetFontBackground(FONT_BLACK);
 
   // set the buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   // grab current and last pages
   swprintf(sString, ARR_SIZE(sString), L"%d / %d", iCurrentInventoryPoolPage + 1,
@@ -1495,7 +1494,7 @@ void DrawNumberOfIventoryPoolItems(void) {
   SetFontBackground(FONT_BLACK);
 
   // set the buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   // grab centered coords
   FindFontCenterCoordinates(MAP_INVENTORY_POOL_NUMBER_X, MAP_INVENTORY_POOL_PAGE_Y,
@@ -1542,7 +1541,7 @@ void DisplayCurrentSector(void) {
   SetFontBackground(FONT_BLACK);
 
   // set the buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   // grab centered coords
   FindFontCenterCoordinates(MAP_INVENTORY_POOL_LOC_X, MAP_INVENTORY_POOL_PAGE_Y,
@@ -1581,7 +1580,7 @@ void DrawTextOnMapInventoryBackground(void) {
   SetFontForeground(FONT_BEIGE);
 
   // set the buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   // Calculate the height of the string, as it needs to be vertically centered.
   usStringHeight =
@@ -1639,7 +1638,7 @@ void DrawTextOnSectorInventory(void) {
   // parse the string
   swprintf(sString, ARR_SIZE(sString), zMarksMapScreenText[11]);
 
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   FindFontCenterCoordinates(MAP_INVENTORY_POOL_SLOT_START_X, MAP_INVENTORY_POOL_SLOT_START_Y - 20,
                             630 - MAP_INVENTORY_POOL_SLOT_START_X, GetFontHeight(FONT14ARIAL),

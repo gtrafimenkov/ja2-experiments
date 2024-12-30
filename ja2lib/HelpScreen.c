@@ -724,7 +724,7 @@ void RenderHelpScreen() {
     gfHaveRenderedFirstFrameToSaveBuffer = TRUE;
 
     // blit everything to the save buffer ( cause the save buffer can bleed through )
-    BlitBufferToBuffer(vsFB, guiSAVEBUFFER, gHelpScreen.usScreenLocX, gHelpScreen.usScreenLocY,
+    BlitBufferToBuffer(vsFB, vsSB, gHelpScreen.usScreenLocX, gHelpScreen.usScreenLocY,
                        (uint16_t)(gHelpScreen.usScreenLocX + gHelpScreen.usScreenWidth),
                        (uint16_t)(gHelpScreen.usScreenLocY + gHelpScreen.usScreenHeight));
 

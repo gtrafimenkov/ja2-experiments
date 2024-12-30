@@ -262,7 +262,7 @@ uint32_t OptionsScreenHandle() {
     RenderOptionsScreen();
 
     // Blit the background to the save buffer
-    BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 0, 640, 480);
+    BlitBufferToBuffer(vsFB, vsSB, 0, 0, 640, 480);
     InvalidateRegion(0, 0, 640, 480);
   }
 

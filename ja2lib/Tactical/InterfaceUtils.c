@@ -398,7 +398,7 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
 
   UnLockVideoSurface(uiBuffer);
 
-  if (uiBuffer == guiSAVEBUFFER) {
+  if (uiBuffer == vsSB) {
     RestoreExternBackgroundRect(sXPos, (int16_t)(sYPos - sHeight), sWidth, (int16_t)(sHeight + 1));
   } else {
     InvalidateRegion(sXPos, (int16_t)(sYPos - sHeight), sXPos + sWidth, (int16_t)(sYPos + 1));
@@ -416,7 +416,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       ubVehicleType = pVehicleList[pSoldier->bVehicleID].ubVehicleType;
 
       // just draw the vehicle
-      BltVideoObjectFromIndex(guiSAVEBUFFER, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY,
+      BltVideoObjectFromIndex(vsSB, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY,
                               VO_BLT_SRCTRANSPARENCY, NULL);
       RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
 
@@ -429,7 +429,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
         // Render as an extern face...
         fAutoFace = FALSE;
       } else {
-        SetAutoFaceActiveFromSoldier(vsFB, guiSAVEBUFFER, GetSolID(pSoldier), sFaceX, sFaceY);
+        SetAutoFaceActiveFromSoldier(vsFB, vsSB, GetSolID(pSoldier), sFaceX, sFaceY);
         //	SetAutoFaceActiveFromSoldier( vsFB, FACE_AUTO_RESTORE_BUFFER,
         // GetSolID(pSoldier) , sFaceX, sFaceY );
       }
@@ -441,12 +441,11 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       if (fAutoFace) {
         RenderAutoFaceFromSoldier(pSoldier->ubID);
       } else {
-        ExternRenderFaceFromSoldier(guiSAVEBUFFER, GetSolID(pSoldier), sFaceX, sFaceY);
+        ExternRenderFaceFromSoldier(vsSB, GetSolID(pSoldier), sFaceX, sFaceY);
       }
     }
   } else {
-    BltVideoObjectFromIndex(guiSAVEBUFFER, guiCLOSE, 5, sFaceX, sFaceY, VO_BLT_SRCTRANSPARENCY,
-                            NULL);
+    BltVideoObjectFromIndex(vsSB, guiCLOSE, 5, sFaceX, sFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
     RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
   }
 }
