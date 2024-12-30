@@ -1346,7 +1346,7 @@ BOOLEAN RenderShopKeeperInterface() {
                    SKI_PLAYERS_CURRENT_BALANCE_OFFSET_TO_VALUE, SKI_PLAYERS_CURRENT_BALANCE_WIDTH,
                    FONT10ARIAL, SKI_ITEM_PRICE_COLOR, FONT_MCOLOR_BLACK, TRUE, CENTER_JUSTIFIED);
 
-  BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, 0, 0, SKI_TACTICAL_BACKGROUND_START_X,
+  BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 0, SKI_TACTICAL_BACKGROUND_START_X,
                      SKI_TACTICAL_BACKGROUND_START_HEIGHT);
 
   // At this point the background is pure, copy it to the save buffer
@@ -1396,7 +1396,7 @@ void RestoreTacticalBackGround() {
   struct VSurface *hDestVSurface, *hSrcVSurface;
   struct Rect SrcRect;
 
-  GetVideoSurface(&hDestVSurface, guiRENDERBUFFER);
+  GetVideoSurface(&hDestVSurface, vsFB);
   GetVideoSurface(&hSrcVSurface, guiCornerWhereTacticalIsStillSeenImage);
 
   SrcRect.left = 0;
@@ -2396,7 +2396,7 @@ uint32_t DisplayInvSlot(uint8_t ubSlotNum, uint16_t usItemIndex, uint16_t usPosX
   // Display the status of the item
   DrawItemUIBarEx(pItemObject, 0, (int16_t)(usPosX + 2), (int16_t)(usPosY + 2 + 20), 2, 20,
                   Get16BPPColor(FROMRGB(140, 136, 119)), Get16BPPColor(FROMRGB(140, 136, 119)),
-                  TRUE, guiRENDERBUFFER);  // guiSAVEBUFFER
+                  TRUE, vsFB);  // guiSAVEBUFFER
 
   // Display the Items Cost
   if (ubItemArea == PLAYERS_OFFER_AREA) {
@@ -6902,6 +6902,6 @@ void HatchOutInvSlot(uint16_t usPosX, uint16_t usPosY) {
   usSlotHeight = SKI_INV_SLOT_HEIGHT;
 
   // Hatch it out
-  DrawHatchOnInventory(guiRENDERBUFFER, usSlotX, usSlotY, usSlotWidth, usSlotHeight);
+  DrawHatchOnInventory(vsFB, usSlotX, usSlotY, usSlotWidth, usSlotHeight);
   InvalidateRegion(usSlotX, usSlotY, usSlotX + usSlotWidth, usSlotY + usSlotHeight);
 }

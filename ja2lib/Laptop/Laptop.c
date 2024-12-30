@@ -3882,32 +3882,32 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
     if (ubCount > 1) {
       sWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       sHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBuffer(guiSAVEBUFFER, guiRENDERBUFFER, (uint16_t)LastRect.iLeft,
-                         (uint16_t)LastRect.iTop, sWidth, sHeight);
+      BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop,
+                         sWidth, sHeight);
     }
 
     // Save rectangle
     if (ubCount > 0) {
       sWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       sHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, (uint16_t)DestRect.iLeft,
-                         (uint16_t)DestRect.iTop, sWidth, sHeight);
+      BlitBufferToBuffer(vsFB, guiSAVEBUFFER, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
+                         sWidth, sHeight);
     }
   } else {
     // Restore the old rect
     if (ubCount < NUMBER_OF_LAPTOP_TITLEBAR_ITERATIONS - 1) {
       sWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       sHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBuffer(guiSAVEBUFFER, guiRENDERBUFFER, (uint16_t)LastRect.iLeft,
-                         (uint16_t)LastRect.iTop, sWidth, sHeight);
+      BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop,
+                         sWidth, sHeight);
     }
 
     // Save rectangle
     if (ubCount < NUMBER_OF_LAPTOP_TITLEBAR_ITERATIONS) {
       sWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       sHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, (uint16_t)DestRect.iLeft,
-                         (uint16_t)DestRect.iTop, sWidth, sHeight);
+      BlitBufferToBuffer(vsFB, guiSAVEBUFFER, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
+                         sWidth, sHeight);
     }
   }
 
