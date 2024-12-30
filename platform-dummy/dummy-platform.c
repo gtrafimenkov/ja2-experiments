@@ -254,8 +254,6 @@ BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) { return FALSE; }
 
 void FatalError(char *pError, ...) {}
 
-uint32_t guiVSurfaceSize = 0;
-
 BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) { return FALSE; };
 
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) { return NULL; }
@@ -335,6 +333,8 @@ BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex, ui
                               char *pSourceFile) {
   return FALSE;
 }
+
+BOOLEAN RestoreVideoSurface(struct VSurface *hVSurface) { return FALSE; }
 
 BOOLEAN SmkPollFlics(void) { return FALSE; }
 

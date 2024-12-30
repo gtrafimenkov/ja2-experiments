@@ -126,9 +126,6 @@ extern BOOLEAN gfReportHitChances;
 
 BOOLEAN gfFirstCycleMovementStarted = FALSE;
 
-extern uint32_t guiVObjectSize;
-extern uint32_t guiVSurfaceSize;
-
 extern BOOLEAN gfNextShotKills;
 
 uint32_t guiSoldierFlags;
