@@ -7454,7 +7454,6 @@ void CreateMercRemoveAssignBox(void) {
 
 BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
   static BOOLEAN fCreated = FALSE;
-  VSURFACE_DESC vs_desc;
   VOBJECT_DESC VObjectDesc;
 
   if ((fShowAssignmentMenu == TRUE) && (fCreated == FALSE)) {
@@ -7462,9 +7461,7 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
     FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
     CHECKF(AddVideoObject(&VObjectDesc, &guiPOPUPBORDERS));
 
-    vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-    strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
-    CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
+    CHECKF(AddVideoSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
 
     // these boxes are always created while in mapscreen...
     CreateEPCBox();

@@ -2637,7 +2637,6 @@ uint32_t MapScreenShutdown(void) {
 
 uint32_t MapScreenHandle(void) {
   uint32_t uiNewScreen;
-  VSURFACE_DESC vs_desc;
   VOBJECT_DESC VObjectDesc;
   //	static BOOLEAN fSecondFrame = FALSE;
   int32_t iCounter = 0;
@@ -2726,16 +2725,8 @@ uint32_t MapScreenHandle(void) {
       // load border graphics
       LoadMapBorderGraphics();
 
-      // fInterfacePanelDirty=DIRTYLEVEL2;
-      // RenderTacticalInterface();
-      vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-      // Grab the Map image
-
-      strcpy(vs_desc.ImageFile, "INTERFACE\\b_map.pcx");
-      CHECKF(AddVideoSurface(&vs_desc, &guiBIGMAP));
-
-      strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
-      CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
+      CHECKF(AddVideoSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
+      CHECKF(AddVideoSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
@@ -8455,16 +8446,11 @@ BOOLEAN AnyMercsLeavingRealSoon() {
 
 BOOLEAN HandlePreloadOfMapGraphics(void) {
   // check amt of memory, if above required amt...use it
-  VSURFACE_DESC vs_desc;
   VOBJECT_DESC VObjectDesc;
 
   fPreLoadedMapGraphics = TRUE;
 
-  vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-  strcpy(vs_desc.ImageFile, "INTERFACE\\b_map.pcx");
-  CHECKF(AddVideoSurface(&vs_desc, &guiBIGMAP));
-  // strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
-  // CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
+  CHECKF(AddVideoSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
@@ -8474,9 +8460,6 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
   FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
   CHECKF(AddVideoObject(&VObjectDesc, &guiSAMICON));
 
-  // VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  // FilenameForBPP("INTERFACE\\s_map.sti", VObjectDesc.ImageFile);
-  // CHECKF( AddVideoObject( &VObjectDesc, &guiMAP ) );
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
   CHECKF(AddVideoObject(&VObjectDesc, &guiMAPCURSORS));
@@ -8485,31 +8468,13 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
   FilenameForBPP("INTERFACE\\sleepicon.sti", VObjectDesc.ImageFile);
   CHECKF(AddVideoObject(&VObjectDesc, &guiSleepIcon));
 
-  // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-  // FilenameForBPP("INTERFACE\\addonslcp.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVideoObject(&VObjectDesc, &guiCORNERADDONS));
-
-  // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-  // FilenameForBPP("INTERFACE\\mapborder.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVideoObject(&VObjectDesc, &guiMAPBORDER));
-
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\charinfo.sti", VObjectDesc.ImageFile);
   CHECKF(AddVideoObject(&VObjectDesc, &guiCHARINFO));
-  /*strcpy(vs_desc.ImageFile, "INTERFACE\\playlist3.pcx");
-  CHECKF(AddVideoSurface( &vs_desc, &guiCHARLIST ));*/
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\newgoldpiece3.sti", VObjectDesc.ImageFile);
   CHECKF(AddVideoObject(&VObjectDesc, &guiCHARLIST));
-
-  // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-  // FilenameForBPP("INTERFACE\\mapbordercorner.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVideoObject(&VObjectDesc, &guiMAPCORNER));
-
-  // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-  // FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVideoObject(&VObjectDesc, &guiPOPUPBORDERS));
 
   // the sublevels
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;

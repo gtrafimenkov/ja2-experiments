@@ -151,15 +151,13 @@ void GetMercPopupBoxFontColor(uint8_t ubBackgroundIndex, uint8_t *pubFontColor,
 
 // Tactical Popup
 BOOLEAN LoadTextMercPopupImages(uint8_t ubBackgroundIndex, uint8_t ubBorderIndex) {
-  VSURFACE_DESC vs_desc;
   VOBJECT_DESC VObjectDesc;
 
   // this function will load the graphics associated with the background and border index values
 
   // the background
-  vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-  strcpy(vs_desc.ImageFile, zMercBackgroundPopupFilenames[ubBackgroundIndex]);
-  CHECKF(AddVideoSurface(&vs_desc, &gPopUpTextBox->uiMercTextPopUpBackground));
+  CHECKF(AddVideoSurfaceFromFile(zMercBackgroundPopupFilenames[ubBackgroundIndex],
+                                 &gPopUpTextBox->uiMercTextPopUpBackground));
 
   // border
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;

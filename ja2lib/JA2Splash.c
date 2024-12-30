@@ -24,13 +24,9 @@ void InitJA2SplashScreen() {
 #if defined(JA2TESTVERSION)
   if (!UsingEnglishResources()) {
     uint32_t uiLogoID = 0;
-    VSURFACE_DESC VSurfaceDesc;
     struct VSurface* hVSurface;
-    MemZero(&VSurfaceDesc, sizeof(VSURFACE_DESC));
-    VSurfaceDesc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-    sprintf(VSurfaceDesc.ImageFile, "LOADSCREENS\\Notification.sti");
-    if (!AddVideoSurface(&VSurfaceDesc, &uiLogoID)) {
-      AssertMsg(0, String("Failed to load %s", VSurfaceDesc.ImageFile));
+    if (!AddVideoSurfaceFromFile("LOADSCREENS\\Notification.sti", &uiLogoID)) {
+      AssertMsg(0, String("Failed to load %s", "LOADSCREENS\\Notification.sti"));
       return;
     }
     GetVideoSurface(&hVSurface, uiLogoID);
@@ -56,13 +52,11 @@ void InitJA2SplashScreen() {
     ClearMainMenu();
   } else {
     uint32_t uiLogoID = 0;
-    VSURFACE_DESC VSurfaceDesc;
     struct VSurface* hVSurface;
-    memset(&VSurfaceDesc, 0, sizeof(VSURFACE_DESC));
-    VSurfaceDesc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-    GetMLGFilename(VSurfaceDesc.ImageFile, MLG_SPLASH);
-    if (!AddVideoSurface(&VSurfaceDesc, &uiLogoID)) {
-      AssertMsg(0, String("Failed to load %s", VSurfaceDesc.ImageFile));
+    SGPFILENAME ImageFile;
+    GetMLGFilename(ImageFile, MLG_SPLASH);
+    if (!AddVideoSurfaceFromFile(ImageFile, &uiLogoID)) {
+      AssertMsg(0, String("Failed to load %s", ImageFile));
       return;
     }
 
