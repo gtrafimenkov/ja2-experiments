@@ -2647,6 +2647,32 @@ BOOLEAN RestoreVideoSurfaces() {
   return TRUE;
 }
 
+static uint32_t addVSurfaceToList(struct VSurface *vs) {
+  // Set into video object list
+  if (gpVSurfaceHead) {
+    // Add node after tail
+    gpVSurfaceTail->next = (VSURFACE_NODE *)MemAlloc(sizeof(VSURFACE_NODE));
+    Assert(gpVSurfaceTail->next);  // out of memory?
+    gpVSurfaceTail->next->prev = gpVSurfaceTail;
+    gpVSurfaceTail->next->next = NULL;
+    gpVSurfaceTail = gpVSurfaceTail->next;
+  } else {
+    // new list
+    gpVSurfaceHead = (VSURFACE_NODE *)MemAlloc(sizeof(VSURFACE_NODE));
+    Assert(gpVSurfaceHead);  // out of memory?
+    gpVSurfaceHead->prev = gpVSurfaceHead->next = NULL;
+    gpVSurfaceTail = gpVSurfaceHead;
+  }
+  // Set the hVSurface into the node.
+  gpVSurfaceTail->hVSurface = vs;
+  gpVSurfaceTail->uiIndex = guiVSurfaceIndex += 2;
+  Assert(guiVSurfaceIndex < 0xfffffff0);  // unlikely that we will ever use 2 billion VSurfaces!
+  // We would have to create about 70 VSurfaces per second for 1 year straight to achieve this...
+  guiVSurfaceSize++;
+  guiVSurfaceTotalAdded++;
+  return gpVSurfaceTail->uiIndex;
+}
+
 BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
   struct VSurface *hVSurface;
 
@@ -2665,27 +2691,7 @@ BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
   // Set transparency to default
   SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
 
-  // Set into video object list
-  if (gpVSurfaceHead) {  // Add node after tail
-    gpVSurfaceTail->next = (VSURFACE_NODE *)MemAlloc(sizeof(VSURFACE_NODE));
-    Assert(gpVSurfaceTail->next);  // out of memory?
-    gpVSurfaceTail->next->prev = gpVSurfaceTail;
-    gpVSurfaceTail->next->next = NULL;
-    gpVSurfaceTail = gpVSurfaceTail->next;
-  } else {  // new list
-    gpVSurfaceHead = (VSURFACE_NODE *)MemAlloc(sizeof(VSURFACE_NODE));
-    Assert(gpVSurfaceHead);  // out of memory?
-    gpVSurfaceHead->prev = gpVSurfaceHead->next = NULL;
-    gpVSurfaceTail = gpVSurfaceHead;
-  }
-  // Set the hVSurface into the node.
-  gpVSurfaceTail->hVSurface = hVSurface;
-  gpVSurfaceTail->uiIndex = guiVSurfaceIndex += 2;
-  *puiIndex = gpVSurfaceTail->uiIndex;
-  Assert(guiVSurfaceIndex < 0xfffffff0);  // unlikely that we will ever use 2 billion VSurfaces!
-  // We would have to create about 70 VSurfaces per second for 1 year straight to achieve this...
-  guiVSurfaceSize++;
-  guiVSurfaceTotalAdded++;
+  *puiIndex = addVSurfaceToList(hVSurface);
 
   return TRUE;
 }
