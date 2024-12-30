@@ -2902,206 +2902,76 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *CreateVSurface(VSURFACE_DESC *VSurfaceDesc) {
-  LPDIRECTDRAW2 lpDD2Object;
-  DDSURFACEDESC SurfaceDescription;
+struct VSurface *CreateVSurface(VSURFACE_DESC *desc) {
+  if (desc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
+    return CreateVSurfaceFromFile(desc->ImageFile);
+  } else {
+    return CreateVSurfaceBlank(desc->usHeight, desc->usWidth, desc->ubBitDepth);
+  }
+}
+
+struct VSurface *CreateVSurfaceBlank(uint16_t height, uint16_t width, uint8_t bitDepth) {
+  Assert(height > 0);
+  Assert(width > 0);
+
   DDPIXELFORMAT PixelFormat;
-  LPDIRECTDRAWSURFACE lpDDS;
-  LPDIRECTDRAWSURFACE2 lpDDS2;
-  struct VSurface *hVSurface;
-  HIMAGE hImage;
-  SGPRect tempRect;
-  uint16_t usHeight;
-  uint16_t usWidth;
-  uint8_t ubBitDepth;
-  uint32_t fMemUsage;
-
-  uint32_t uiRBitMask;
-  uint32_t uiGBitMask;
-  uint32_t uiBBitMask;
-
-  // Clear the memory
-  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
-
-  //
-  // Get Direct Draw Object
-  //
-
-  lpDD2Object = GetDirectDraw2Object();
-
-  //
-  // The description structure contains memory usage flag
-  //
-  fMemUsage = VSurfaceDesc->fCreateFlags;
-
-  //
-  // Check creation options
-  //
-
-  do {
-    //
-    // Check if creating from file
-    //
-
-    if (VSurfaceDesc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
-      //
-      // Create himage object from file
-      //
-
-      hImage = CreateImage(VSurfaceDesc->ImageFile, IMAGE_ALLIMAGEDATA);
-
-      if (hImage == NULL) {
-        DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid Image Filename given");
-        return (NULL);
-      }
-
-      //
-      // Set values from himage
-      //
-      usHeight = hImage->usHeight;
-      usWidth = hImage->usWidth;
-      ubBitDepth = hImage->ubBitDepth;
-      break;
-    }
-
-    //
-    // If here, no special options given,
-    // Set values from given description structure
-    //
-
-    usHeight = VSurfaceDesc->usHeight;
-    usWidth = VSurfaceDesc->usWidth;
-    ubBitDepth = VSurfaceDesc->ubBitDepth;
-
-  } while (FALSE);
-
-  //
-  // Assertions
-  //
-
-  Assert(usHeight > 0);
-  Assert(usWidth > 0);
-
-  //
-  // Setup Direct Draw Description
-  // First do Pixel Format
-  //
-
   memset(&PixelFormat, 0, sizeof(PixelFormat));
   PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
 
-  switch (ubBitDepth) {
-    case 8:
-
+  switch (bitDepth) {
+    case 8: {
       PixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
       PixelFormat.dwRGBBitCount = 8;
-      break;
+    } break;
 
-    case 16:
-
+    case 16: {
       PixelFormat.dwFlags = DDPF_RGB;
       PixelFormat.dwRGBBitCount = 16;
 
-      //
-      // Get current Pixel Format from DirectDraw
-      //
-
-      // We're using pixel formats too -- DB/Wiz
-
+      uint32_t uiRBitMask;
+      uint32_t uiGBitMask;
+      uint32_t uiBBitMask;
       CHECKF(GetPrimaryRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask));
       PixelFormat.dwRBitMask = uiRBitMask;
       PixelFormat.dwGBitMask = uiGBitMask;
       PixelFormat.dwBBitMask = uiBBitMask;
-      break;
+    } break;
 
     default:
-
-      //
-      // If Here, an invalid format was given
-      //
-
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid BPP value, can only be 8 or 16.");
       return (FALSE);
   }
 
+  DDSURFACEDESC SurfaceDescription;
+  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
-
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwWidth = usWidth;
-  SurfaceDescription.dwHeight = usHeight;
+  SurfaceDescription.dwWidth = width;
+  SurfaceDescription.dwHeight = height;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
+  LPDIRECTDRAWSURFACE lpDDS;
+  LPDIRECTDRAWSURFACE2 lpDDS2;
+  LPDIRECTDRAW2 lpDD2Object = GetDirectDraw2Object();
   DDCreateSurface(lpDD2Object, &SurfaceDescription, &lpDDS, &lpDDS2);
 
-  //
-  // Allocate memory for Video Surface data and initialize
-  //
+  struct VSurface *vs = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
+  CHECKF(vs != NULL);
+  memset(vs, 0, sizeof(struct VSurface));
 
-  hVSurface = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
-  memset(hVSurface, 0, sizeof(struct VSurface));
-  CHECKF(hVSurface != NULL);
+  vs->usHeight = height;
+  vs->usWidth = width;
+  vs->ubBitDepth = bitDepth;
+  vs->pSurfaceData1 = (void *)lpDDS;
+  vs->pSurfaceData = (void *)lpDDS2;
+  vs->RegionList = CreateList(DEFAULT_NUM_REGIONS, sizeof(VSURFACE_REGION));
 
-  hVSurface->usHeight = usHeight;
-  hVSurface->usWidth = usWidth;
-  hVSurface->ubBitDepth = ubBitDepth;
-  hVSurface->pSurfaceData1 = (void *)lpDDS;
-  hVSurface->pSurfaceData = (void *)lpDDS2;
-  hVSurface->pSavedSurfaceData1 = NULL;
-  hVSurface->pSavedSurfaceData = NULL;
-  hVSurface->pPalette = NULL;
-  hVSurface->p16BPPPalette = NULL;
-  hVSurface->TransparentColor = FROMRGB(0, 0, 0);
-  hVSurface->RegionList = CreateList(DEFAULT_NUM_REGIONS, sizeof(VSURFACE_REGION));
-  hVSurface->fFlags = 0;
-  hVSurface->pClipper = NULL;
-
-  //
-  // Determine memory and other attributes of newly created surface
-  //
-
-  DDGetSurfaceDescription(lpDDS2, &SurfaceDescription);
-
-  //
-  // Initialize surface with hImage , if given
-  //
-
-  if (VSurfaceDesc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
-    tempRect.iLeft = 0;
-    tempRect.iTop = 0;
-    tempRect.iRight = hImage->usWidth - 1;
-    tempRect.iBottom = hImage->usHeight - 1;
-    SetVideoSurfaceDataFromHImage(hVSurface, hImage, 0, 0, &tempRect);
-
-    //
-    // Set palette from himage
-    //
-
-    if (hImage->ubBitDepth == 8) {
-      SetVideoSurfacePalette(hVSurface, hImage->pPalette);
-    }
-
-    //
-    // Delete himage object
-    //
-
-    DestroyImage(hImage);
-  }
-
-  //
-  // All is well
-  //
-
-  hVSurface->usHeight = usHeight;
-  hVSurface->usWidth = usWidth;
-  hVSurface->ubBitDepth = ubBitDepth;
-
-  giMemUsedInSurfaces += (hVSurface->usHeight * hVSurface->usWidth * (hVSurface->ubBitDepth / 8));
+  giMemUsedInSurfaces += (vs->usHeight * vs->usWidth * (vs->ubBitDepth / 8));
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in Creating Video Surface"));
 
-  return (hVSurface);
+  return (vs);
 }
 
 struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
