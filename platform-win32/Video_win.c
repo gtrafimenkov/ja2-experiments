@@ -2799,51 +2799,6 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
   return (TRUE);
 }
 
-BOOLEAN AddVideoSurfaceRegion(uint32_t uiIndex, VSURFACE_REGION *pNewRegion) {
-  struct VSurface *hVSurface;
-
-  //
-  // Get Video Surface
-  //
-
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_ADDVIDEOSURFACEREGION;
-#endif
-  CHECKF(GetVideoSurface(&hVSurface, uiIndex));
-
-  //
-  // Add Region
-  //
-
-  CHECKF(AddVSurfaceRegion(hVSurface, pNewRegion));
-
-  return (TRUE);
-}
-
-BOOLEAN GetVideoSurfaceDescription(uint32_t uiIndex, uint16_t *usWidth, uint16_t *usHeight,
-                                   uint8_t *ubBitDepth) {
-  struct VSurface *hVSurface;
-
-  Assert(usWidth != NULL);
-  Assert(usHeight != NULL);
-  Assert(ubBitDepth != NULL);
-
-  //
-  // Get Video Surface
-  //
-
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_GETVIDEOSURFACEDESCRIPTION;
-#endif
-  CHECKF(GetVideoSurface(&hVSurface, uiIndex));
-
-  *usWidth = hVSurface->usWidth;
-  *usHeight = hVSurface->usHeight;
-  *ubBitDepth = hVSurface->ubBitDepth;
-
-  return TRUE;
-}
-
 BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
   VSURFACE_NODE *curr;
 
@@ -3703,85 +3658,9 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
 
 // ********************************************************
 //
-// Clipper manipulation functions
-//
-// ********************************************************
-
-BOOLEAN SetClipList(struct VSurface *hVSurface, SGPRect *RegionData, uint16_t usNumRegions) {
-  RGNDATA *pRgnData;
-  uint16_t cnt;
-  RECT aRect;
-  LPDIRECTDRAW2 lpDD2Object;
-
-  // Get Direct Draw Object
-  lpDD2Object = GetDirectDraw2Object();
-
-  // Assertions
-  Assert(hVSurface != NULL);
-  Assert(RegionData != NULL);
-
-  // Varifications
-  CHECKF(usNumRegions > 0);
-
-  // If Clipper already created, release
-  if (hVSurface->pClipper != NULL) {
-    // Release Clipper
-    DDReleaseClipper((LPDIRECTDRAWCLIPPER)hVSurface->pClipper);
-  }
-
-  // Create Clipper Object
-  DDCreateClipper(lpDD2Object, 0, (LPDIRECTDRAWCLIPPER *)&hVSurface->pClipper);
-
-  // Allocate region data
-  pRgnData = (LPRGNDATA)MemAlloc(sizeof(RGNDATAHEADER) + (usNumRegions * sizeof(RECT)));
-  CHECKF(pRgnData);
-
-  // Setup header
-  pRgnData->rdh.dwSize = sizeof(RGNDATA);
-  pRgnData->rdh.iType = RDH_RECTANGLES;
-  pRgnData->rdh.nCount = usNumRegions;
-  pRgnData->rdh.nRgnSize = usNumRegions * sizeof(RECT);
-  pRgnData->rdh.rcBound.top = 0;
-  pRgnData->rdh.rcBound.left = 0;
-  pRgnData->rdh.rcBound.bottom = (int)hVSurface->usHeight;
-  pRgnData->rdh.rcBound.right = (int)hVSurface->usWidth;
-
-  // Copy rectangles into region
-  for (cnt = 0; cnt < usNumRegions; cnt++) {
-    aRect.top = (uint32_t)RegionData[cnt].iTop;
-    aRect.left = (uint32_t)RegionData[cnt].iLeft;
-    aRect.bottom = (uint32_t)RegionData[cnt].iBottom;
-    aRect.right = (uint32_t)RegionData[cnt].iRight;
-
-    memcpy(pRgnData + sizeof(RGNDATAHEADER) + (cnt * sizeof(RECT)), &aRect, sizeof(RECT));
-  }
-
-  // Set items into clipper
-  DDSetClipperList((LPDIRECTDRAWCLIPPER)hVSurface->pClipper, pRgnData, 0);
-
-  // Set Clipper into Surface
-  DDSetClipper((LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData,
-               (LPDIRECTDRAWCLIPPER)hVSurface->pClipper);
-
-  // Delete region data
-  MemFree(pRgnData);
-
-  return (TRUE);
-}
-
-// ********************************************************
-//
 // Region manipulation functions
 //
 // ********************************************************
-
-BOOLEAN GetNumRegions(struct VSurface *hVSurface, uint32_t *puiNumRegions) {
-  Assert(hVSurface);
-
-  *puiNumRegions = ListSize(hVSurface->RegionList);
-
-  return (TRUE);
-}
 
 BOOLEAN AddVSurfaceRegion(struct VSurface *hVSurface, VSURFACE_REGION *pNewRegion) {
   Assert(hVSurface != NULL);
@@ -3794,41 +3673,12 @@ BOOLEAN AddVSurfaceRegion(struct VSurface *hVSurface, VSURFACE_REGION *pNewRegio
   return (TRUE);
 }
 
-// Add a group of regions
-BOOLEAN AddVSurfaceRegions(struct VSurface *hVSurface, VSURFACE_REGION **ppNewRegions,
-                           uint16_t uiNumRegions) {
-  uint16_t cnt;
-
-  Assert(hVSurface != NULL);
-  Assert(ppNewRegions != NULL);
-
-  for (cnt = 0; cnt < uiNumRegions; cnt++) {
-    AddVSurfaceRegion(hVSurface, ppNewRegions[cnt]);
-  }
-
-  return (TRUE);
-}
-
 BOOLEAN RemoveVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex) {
   VSURFACE_REGION aRegion;
 
   Assert(hVSurface != NULL);
 
   return (RemfromList(hVSurface->RegionList, &aRegion, usIndex));
-}
-
-BOOLEAN ClearAllVSurfaceRegions(struct VSurface *hVSurface) {
-  uint32_t uiListSize, cnt;
-
-  Assert(hVSurface != NULL);
-
-  uiListSize = ListSize(hVSurface->RegionList);
-
-  for (cnt = uiListSize - 1; cnt >= 0; cnt--) {
-    RemoveVSurfaceRegion(hVSurface, (uint16_t)cnt);
-  }
-
-  return (TRUE);
 }
 
 BOOLEAN GetVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex, VSURFACE_REGION *aRegion) {
@@ -3849,34 +3699,6 @@ BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
   pRect->top = 0;
   pRect->right = hVSurface->usWidth;
   pRect->bottom = hVSurface->usHeight;
-
-  return (TRUE);
-}
-
-BOOLEAN ReplaceVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex,
-                              VSURFACE_REGION *aRegion) {
-  VSURFACE_REGION OldRegion;
-
-  Assert(hVSurface != NULL);
-
-  // Validate index given
-  if (!PeekList(hVSurface->RegionList, &OldRegion, usIndex)) {
-    return (FALSE);
-  }
-
-  // Replace information
-  hVSurface->RegionList = AddtoList(hVSurface->RegionList, aRegion, usIndex);
-
-  return (TRUE);
-}
-
-BOOLEAN AddVSurfaceRegionAtIndex(struct VSurface *hVSurface, uint16_t usIndex,
-                                 VSURFACE_REGION *pNewRegion) {
-  Assert(hVSurface != NULL);
-  Assert(pNewRegion != NULL);
-
-  // Add new region to list
-  hVSurface->RegionList = AddtoList(hVSurface->RegionList, pNewRegion, usIndex);
 
   return (TRUE);
 }
