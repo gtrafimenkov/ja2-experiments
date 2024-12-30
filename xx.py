@@ -170,6 +170,12 @@ def run_command(command):
 
     elif command == "format-all":
         source_files = find_files("ja2lib", [".h", ".c", ".cc"])
+        source_files += find_files("bin-linux", [".h", ".c", ".cc"])
+        source_files += find_files("bin-win32", [".h", ".c", ".cc"])
+        source_files += find_files("platform-dummy", [".h", ".c", ".cc"])
+        source_files += find_files("platform-dummy", [".h", ".c", ".cc"])
+        source_files += find_files("platform-win32", [".h", ".c", ".cc"])
+        source_files += find_files("unittester", [".h", ".c", ".cc"])
         format_files(source_files)
 
     elif command == "run":
