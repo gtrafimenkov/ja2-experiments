@@ -26,8 +26,8 @@ BOOLEAN InitInteractiveTileManagement();
 void ShutdownInteractiveTileManagement();
 BOOLEAN AddInteractiveTile(int16_t sGridNo, struct LEVELNODE *pLevelNode, uint32_t uiFlags,
                            uint16_t usType);
-BOOLEAN StartInteractiveObject(int16_t sGridNo, uint16_t usStructureID, struct SOLDIERTYPE *pSoldier,
-                               uint8_t ubDirection);
+BOOLEAN StartInteractiveObject(int16_t sGridNo, uint16_t usStructureID,
+                               struct SOLDIERTYPE *pSoldier, uint8_t ubDirection);
 BOOLEAN StartInteractiveObjectFromMouse(struct SOLDIERTYPE *pSoldier, uint8_t ubDirection);
 void CompileInteractiveTiles();
 uint32_t GetInteractiveTileCursor(uint32_t uiOldCursor, BOOLEAN fConfirm);

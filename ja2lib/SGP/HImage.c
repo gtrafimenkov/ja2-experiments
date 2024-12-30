@@ -45,7 +45,7 @@ HIMAGE CreateImage(const char *ImageFile, uint16_t fContents) {
   HIMAGE hImage = NULL;
   SGPFILENAME Extension;
   char ExtensionSep[] = ".";
-  char* StrPtr;
+  char *StrPtr;
   uint32_t iFileLoader;
   SGPFILENAME imageFileCopy;
 
@@ -204,8 +204,9 @@ BOOLEAN LoadImageData(HIMAGE hImage, uint16_t fContents) {
   return (fReturnVal);
 }
 
-BOOLEAN CopyImageToBuffer(HIMAGE hImage, uint32_t fBufferType, uint8_t *pDestBuf, uint16_t usDestWidth,
-                          uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
+BOOLEAN CopyImageToBuffer(HIMAGE hImage, uint32_t fBufferType, uint8_t *pDestBuf,
+                          uint16_t usDestWidth, uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                          SGPRect *srcRect) {
   // Use blitter based on type of image
   Assert(hImage != NULL);
 
@@ -233,7 +234,8 @@ BOOLEAN CopyImageToBuffer(HIMAGE hImage, uint32_t fBufferType, uint8_t *pDestBuf
 }
 
 BOOLEAN Copy8BPPImageTo8BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                  uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
+                                  uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                  SGPRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
   uint32_t cnt;
   uint8_t *pDest, *pSrc;
@@ -275,7 +277,8 @@ BOOLEAN Copy8BPPImageTo8BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usD
 }
 
 BOOLEAN Copy16BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                    uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
+                                    uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                    SGPRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
   uint32_t cnt;
   uint16_t *pDest, *pSrc;
@@ -320,7 +323,8 @@ BOOLEAN Extract8BPPCompressedImageToBuffer(HIMAGE hImage, uint8_t *pDestBuf) { r
 BOOLEAN Extract16BPPCompressedImageToBuffer(HIMAGE hImage, uint8_t *pDestBuf) { return (FALSE); }
 
 BOOLEAN Copy8BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t usDestWidth,
-                                   uint16_t usDestHeight, uint16_t usX, uint16_t usY, SGPRect *srcRect) {
+                                   uint16_t usDestHeight, uint16_t usX, uint16_t usY,
+                                   SGPRect *srcRect) {
   uint32_t uiSrcStart, uiDestStart, uiNumLines, uiLineSize;
   uint32_t rows, cols;
   uint8_t *pSrc, *pSrcTemp;
@@ -441,8 +445,8 @@ shaded according to each pixel's brightness.
         4) For gamma correction, pass in weighted values for each color.
 
 **********************************************************************************************/
-uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale, uint32_t gscale,
-                                 uint32_t bscale, BOOLEAN mono) {
+uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale,
+                                   uint32_t gscale, uint32_t bscale, BOOLEAN mono) {
   uint16_t *p16BPPPalette, r16, g16, b16, usColor;
   uint32_t cnt, lumin;
   uint32_t rmod, gmod, bmod;
@@ -581,7 +585,8 @@ uint32_t GetRGBColor(uint16_t Value16BPP) {
 //
 //*****************************************************************************
 
-struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd, uint8_t *pOldPalette) {
+struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd,
+                                                 uint8_t *pOldPalette) {
   uint16_t Index;
   struct SGPPaletteEntry *pPalEntry;
   struct SGPPaletteEntry *pInitEntry;

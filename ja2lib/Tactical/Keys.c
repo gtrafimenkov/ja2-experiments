@@ -882,8 +882,7 @@ BOOLEAN LoadDoorTableFromDoorTableTempFile() {
   //	sprintf( zMapName, "%s\\d_%s", MAPS_DIR, zTempName);
 
   GetMapTempFileName(SF_DOOR_TABLE_TEMP_FILES_EXISTS, zMapName, (uint8_t)gWorldSectorX,
-                     (uint8_t)gWorldSectorY,
-                     gbWorldSectorZ);
+                     (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
   // Check to see if the file exists
   if (!FileMan_Exists(zMapName)) {
@@ -1200,7 +1199,8 @@ BOOLEAN MercLooksForDoors(struct SOLDIERTYPE *pSoldier, BOOLEAN fUpdateValue) {
     if (PythSpacesAway(pSoldier->sGridNo, sGridNo) <= sDistVisible) {
       // and we can trace a line of sight to his x,y coordinates?
       // (taking into account we are definitely aware of this guy now)
-      if (SoldierTo3DLocationLineOfSightTest(pSoldier, sGridNo, 0, 0, (uint8_t)sDistVisible, TRUE)) {
+      if (SoldierTo3DLocationLineOfSightTest(pSoldier, sGridNo, 0, 0, (uint8_t)sDistVisible,
+                                             TRUE)) {
         // OK, here... update perceived value....
         if (fUpdateValue) {
           InternalUpdateDoorsPerceivedValue(pDoorStatus);
@@ -1548,7 +1548,8 @@ BOOLEAN SetDoorOpenStatus(int16_t sGridNo, BOOLEAN fOpen) {
   }
 }
 
-BOOLEAN SaveDoorStatusArrayToDoorStatusTempFile(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
+BOOLEAN SaveDoorStatusArrayToDoorStatusTempFile(uint8_t sSectorX, uint8_t sSectorY,
+                                                int8_t bSectorZ) {
   char zMapName[128];
   HWFILE hFile;
   uint32_t uiNumBytesWritten;
@@ -1615,8 +1616,7 @@ BOOLEAN LoadDoorStatusArrayFromDoorStatusTempFile() {
   //	sprintf( zMapName, "%s\\ds_%s", MAPS_DIR, zTempName);
 
   GetMapTempFileName(SF_DOOR_STATUS_TEMP_FILE_EXISTS, zMapName, (uint8_t)gWorldSectorX,
-                     (uint8_t)gWorldSectorY,
-                     gbWorldSectorZ);
+                     (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
   // Get rid of the existing door array
   TrashDoorStatusArray();
@@ -1810,8 +1810,9 @@ void HandleDoorsChangeWhenEnteringSectorCurrentlyLoaded() {
   }
 }
 
-void DropKeysInKeyRing(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t bLevel, int8_t bVisible,
-                       BOOLEAN fAddToDropList, int32_t iDropListSlot, BOOLEAN fUseUnLoaded) {
+void DropKeysInKeyRing(struct SOLDIERTYPE *pSoldier, int16_t sGridNo, int8_t bLevel,
+                       int8_t bVisible, BOOLEAN fAddToDropList, int32_t iDropListSlot,
+                       BOOLEAN fUseUnLoaded) {
   uint8_t ubLoop;
   uint8_t ubItem;
   struct OBJECTTYPE Object;

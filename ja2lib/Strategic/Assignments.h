@@ -179,24 +179,24 @@ int16_t GetTownTrainPtsForCharacter(struct SOLDIERTYPE *pTrainer, uint16_t *pusM
 
 // find number of healing pts
 uint16_t CalculateHealingPointsForDoctor(struct SOLDIERTYPE *pSoldier, uint16_t *pusMaxPts,
-                                       BOOLEAN fMakeSureKitIsInHand);
+                                         BOOLEAN fMakeSureKitIsInHand);
 
 // find number of repair pts repairman has available
 uint8_t CalculateRepairPointsForRepairman(struct SOLDIERTYPE *pSoldier, uint16_t *pusMaxPts,
-                                        BOOLEAN fMakeSureKitIsInHand);
+                                          BOOLEAN fMakeSureKitIsInHand);
 
 // get bonus tarining pts due to an instructor for this student
 int16_t GetBonusTrainingPtsDueToInstructor(struct SOLDIERTYPE *pInstructor,
-                                         struct SOLDIERTYPE *pStudent, int8_t bTrainStat,
-                                         BOOLEAN fAtGunRange, uint16_t *pusMaxPts);
+                                           struct SOLDIERTYPE *pStudent, int8_t bTrainStat,
+                                           BOOLEAN fAtGunRange, uint16_t *pusMaxPts);
 
 // get training pts for this soldier
 int16_t GetSoldierTrainingPts(struct SOLDIERTYPE *pSoldier, int8_t bTrainStat, BOOLEAN fAtGunRange,
-                            uint16_t *pusMaxPts);
+                              uint16_t *pusMaxPts);
 
 // pts for being a student for this soldier
 int16_t GetSoldierStudentPts(struct SOLDIERTYPE *pSoldier, int8_t bTrainStat, BOOLEAN fAtGunRange,
-                           uint16_t *pusMaxPts);
+                             uint16_t *pusMaxPts);
 
 // reset these soldiers
 void ResetAssignmentsForAllSoldiersInSectorWhoAreTrainingTown(struct SOLDIERTYPE *pSoldier);

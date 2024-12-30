@@ -28,7 +28,8 @@
 
 extern BOOLEAN fMapScreenBottomDirty;
 
-void GetSectorFacilitiesFlags(uint8_t sMapX, uint8_t sMapY, wchar_t* sFacilitiesString, size_t bufSize) {
+void GetSectorFacilitiesFlags(uint8_t sMapX, uint8_t sMapY, wchar_t *sFacilitiesString,
+                              size_t bufSize) {
   // will build a string stating current facilities present in sector
 
   if (SectorInfo[GetSectorID8(sMapX, sMapY)].uiFacilitiesFlags == 0) {
@@ -88,7 +89,8 @@ void GetSectorFacilitiesFlags(uint8_t sMapX, uint8_t sMapY, wchar_t* sFacilities
 }
 
 // ALL changes of control to player must be funneled through here!
-BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ, BOOLEAN fContested) {
+BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ,
+                                        BOOLEAN fContested) {
   // NOTE: MapSector must be 16-bit, cause MAX_WORLD_X is actually 18, so the sector numbers exceed
   // 256 although we use only 16x16
   uint16_t usMapSector = 0;
@@ -241,7 +243,8 @@ BOOLEAN SetThisSectorAsPlayerControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMa
 }
 
 // ALL changes of control to enemy must be funneled through here!
-BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ, BOOLEAN fContested) {
+BOOLEAN SetThisSectorAsEnemyControlled(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ,
+                                       BOOLEAN fContested) {
   uint16_t usMapSector = 0;
   BOOLEAN fWasPlayerControlled = FALSE;
   TownID bTownId = 0;
@@ -396,7 +399,8 @@ control down there
 }
 */
 
-void ReplaceSoldierProfileInPlayerGroup(uint8_t ubGroupID, uint8_t ubOldProfile, uint8_t ubNewProfile) {
+void ReplaceSoldierProfileInPlayerGroup(uint8_t ubGroupID, uint8_t ubOldProfile,
+                                        uint8_t ubNewProfile) {
   struct GROUP *pGroup;
   PLAYERGROUP *curr;
 

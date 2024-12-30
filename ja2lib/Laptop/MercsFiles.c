@@ -394,7 +394,7 @@ void BtnMercHireButtonCallback(GUI_BUTTON *btn, int32_t reason) {
 BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   struct VObject *hFaceHandle;
   struct VObject *hPortraitHandle;
-  char* sFaceLoc = "FACES\\BIGFACES\\";
+  char *sFaceLoc = "FACES\\BIGFACES\\";
   char sTemp[100];
   MERCPROFILESTRUCT *pMerc;
   VOBJECT_DESC VObjectDesc;

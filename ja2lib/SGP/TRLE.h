@@ -20,14 +20,14 @@ typedef struct {
   uint32_t uiHeightEach;
   uint32_t uiTotalElements;
   TRLEObject *pTRLEObject;
-  void* pPixData;
+  void *pPixData;
   uint32_t uiSizePixDataElem;
 
 } TRLEData;
 
 BOOLEAN GetTRLEObjectData(uint32_t uiTotalElements, TRLEObject *pTRLEObject, int16_t ssIndex,
-                          uint32_t *pWidth, uint32_t *pOffset, uint32_t *pOffLen, uint16_t *pOffsetX,
-                          uint16_t *pOffsetY);
+                          uint32_t *pWidth, uint32_t *pOffset, uint32_t *pOffLen,
+                          uint16_t *pOffsetX, uint16_t *pOffsetY);
 
 BOOLEAN SetTRLEObjectOffset(uint32_t uiTotalElements, TRLEObject *pTRLEObject, int16_t ssIndex,
                             int16_t sOffsetX, int16_t sOffsetY);

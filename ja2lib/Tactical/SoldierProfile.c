@@ -89,7 +89,7 @@ int8_t gbSkillTraitBonus[NUM_SKILLTRAITS] = {
 };
 
 uint8_t gubBasicInventoryPositions[] = {HELMETPOS,   VESTPOS,     LEGPOS,      HANDPOS,
-                                      BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS};
+                                        BIGPOCK1POS, BIGPOCK2POS, BIGPOCK3POS, BIGPOCK4POS};
 
 #define NUM_TERRORISTS 6
 
@@ -463,7 +463,7 @@ void MakeRemainingTerroristsTougher(void) {
 
 void DecideOnAssassin(void) {
   uint8_t ubAssassinPossibility[NUM_ASSASSINS] = {NO_PROFILE, NO_PROFILE, NO_PROFILE,
-                                                NO_PROFILE, NO_PROFILE, NO_PROFILE};
+                                                  NO_PROFILE, NO_PROFILE, NO_PROFILE};
   uint8_t ubAssassinsPossible = 0;
   uint8_t ubLoop, ubLoop2;
   uint8_t ubTown;
@@ -609,9 +609,9 @@ uint16_t CalcCompetence(MERCPROFILESTRUCT *pProfile) {
 
   // marksmanship is very important, count it double
   uiSkills = (uint32_t)((2 * (pow((float)pProfile->bMarksmanship, 3) / 10000)) +
-                      1.5 * (pow((float)pProfile->bMedical, 3) / 10000) +
-                      (pow((float)pProfile->bMechanical, 3) / 10000) +
-                      (pow((float)pProfile->bExplosive, 3) / 10000));
+                        1.5 * (pow((float)pProfile->bMedical, 3) / 10000) +
+                        (pow((float)pProfile->bMechanical, 3) / 10000) +
+                        (pow((float)pProfile->bExplosive, 3) / 10000));
 
   // action points
   uiActionPoints = 5 + (((10 * pProfile->bExpLevel + 3 * pProfile->bAgility +
@@ -624,8 +624,8 @@ uint16_t CalcCompetence(MERCPROFILESTRUCT *pProfile) {
       ((pProfile->bSkillTrait != 0) ? 1 : 0) + ((pProfile->bSkillTrait2 != 0) ? 1 : 0);
 
   usCompetence = (uint16_t)((pow(pProfile->bExpLevel, 0.2) * uiStats * uiSkills *
-                           (uiActionPoints - 6) * (1 + (0.05 * (float)uiSpecialSkills))) /
-                          1000);
+                             (uiActionPoints - 6) * (1 + (0.05 * (float)uiSpecialSkills))) /
+                            1000);
 
   // this currently varies from about 10 (Flo) to 1200 (Gus)
   return (usCompetence);

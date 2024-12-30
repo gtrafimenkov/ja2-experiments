@@ -62,7 +62,7 @@ extern SOLDIERINITNODE *gpSelected;
 #define NORMAL_MAP_SCREEN_BY 2400
 #define NORMAL_MAP_SCREEN_TY 860
 
-#define FASTMAPROWCOLTOPOS(r, c) ((r)*WORLD_COLS + (c))
+#define FASTMAPROWCOLTOPOS(r, c) ((r) * WORLD_COLS + (c))
 
 typedef struct {
   struct VObject *vo;
@@ -322,8 +322,8 @@ void DisplayMercNameInOverhead(struct SOLDIERTYPE *pSoldier) {
   SetFontForeground(FONT_MCOLOR_WHITE);
 
   // Center here....
-  FindFontCenterCoordinates(sWorldScreenX, sWorldScreenY, (int16_t)(1), 1, pSoldier->name, TINYFONT1,
-                            &sX, &sY);
+  FindFontCenterCoordinates(sWorldScreenX, sWorldScreenY, (int16_t)(1), 1, pSoldier->name,
+                            TINYFONT1, &sX, &sY);
 
   // OK, selected guy is here...
   gprintfdirty(sX, sY, pSoldier->name);
@@ -599,7 +599,8 @@ int16_t GetModifiedOffsetLandHeight(int32_t sGridNo) {
 }
 
 void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
-                       int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS, BOOLEAN fFromMapUtility) {
+                       int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS,
+                       BOOLEAN fFromMapUtility) {
   int8_t bXOddFlag = 0;
   int16_t sModifiedHeight = 0;
   int16_t sAnchorPosX_M, sAnchorPosY_M;
@@ -670,8 +671,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
             // usTileIndex ].pLandHead->usIndex ], sX, sY, VO_BLT_SRCTRANSPARENCY, NULL );
             // BltVideoObjectFromIndex(  FRAME_BUFFER, SGR1, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL
             // );
-            Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo, sX,
-                                                sY, pTile->usSubIndex);
+            Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo,
+                                                sX, sY, pTile->usSubIndex);
 
             pNode = pNode->pPrevNode;
           }
@@ -749,8 +750,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
                     gSmTileSurf[pTile->fType].vo->pShades[pNode->ubShadeLevel];
 
                 // RENDER!
-                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo,
-                                                    sX, sY, pTile->usSubIndex);
+                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES,
+                                                    pTile->vo, sX, sY, pTile->usSubIndex);
               }
             }
 
@@ -799,8 +800,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
                     gSmTileSurf[pTile->fType].vo->pShades[pNode->ubShadeLevel];
 
                 // RENDER!
-                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo,
-                                                    sX, sY, pTile->usSubIndex);
+                Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES,
+                                                    pTile->vo, sX, sY, pTile->usSubIndex);
               }
             }
 
@@ -946,8 +947,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       pSrcBuf = LockVideoSurface(guiRENDERBUFFER, &uiSrcPitchBYTES);
       pDestBuf = LockVideoSurface(guiSAVEBUFFER, &uiDestPitchBYTES);
 
-      Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
-                      0, 0, 0, usWidth, usHeight);
+      Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
+                      0, 0, 0, 0, usWidth, usHeight);
 
       UnLockVideoSurface(guiRENDERBUFFER);
       UnLockVideoSurface(guiSAVEBUFFER);
@@ -1033,8 +1034,8 @@ void RenderOverheadOverlays() {
     } else if (pSoldier->uiStatusFlags & SOLDIER_VEHICLE) {  // vehicle
       Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, hVObject, sX, sY,
                                           9);
-      RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, (int16_t)(sX - 6), (int16_t)(sY), (int16_t)(sX + 9),
-                             (int16_t)(sY + 10));
+      RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, (int16_t)(sX - 6), (int16_t)(sY),
+                             (int16_t)(sX + 9), (int16_t)(sY + 10));
     }
     // else if( pSoldier->uiStatusFlags & (SOLDIER_PASSENGER | SOLDIER_DRIVER) )
     //{// //don't draw person, because they are inside the vehicle.
@@ -1117,8 +1118,8 @@ void RenderOverheadOverlays() {
 }
 
 /*//Render the soldiers and items on top of the pristine overhead map.
-void RenderOverheadOverlays( int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S, int16_t
-sStartPointY_S, int16_t sEndXS, int16_t sEndYS )
+void RenderOverheadOverlays( int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
+int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS )
 {
         int8_t				bXOddFlag = 0;
         int16_t				sAnchorPosX_M, sAnchorPosY_M;
@@ -1197,8 +1198,8 @@ FROMRGB( 255, 255, 255 ) );
                                                         RectangleDraw( TRUE, sX, sY, sX + 1, sY + 1,
 usLineColor, pDestBuf );
 
-                                                        InvalidateRegion( sX, sY, (int16_t)( sX + 2 ),
-(int16_t)( sY + 2 ) );
+                                                        InvalidateRegion( sX, sY, (int16_t)( sX + 2
+), (int16_t)( sY + 2 ) );
 
                                                 }
                                                 break;
@@ -1398,7 +1399,7 @@ BOOLEAN GetOverheadMouseGridNoForFullSoldiersGridNo(int16_t *psGridNo) {
   if ((OverheadRegion.uiFlags & MSYS_MOUSE_IN_AREA)) {
     // ATE: Adjust alogrithm values a tad to reflect map positioning
     sWorldScreenX = gsStartRestrictedX + (gusMouseXPos - 5) * 5;
-    sWorldScreenY = gsStartRestrictedY + (gusMouseYPos)*5;
+    sWorldScreenY = gsStartRestrictedY + (gusMouseYPos) * 5;
 
     // Get new proposed center location.
     GetFromAbsoluteScreenXYWorldXY(&uiCellX, &uiCellY, sWorldScreenX, sWorldScreenY);

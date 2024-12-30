@@ -1174,7 +1174,8 @@ uint16_t CreateCorpsePaletteTables(ROTTING_CORPSE *pCorpse) {
     LightPal[uiCount].peRed = (uint8_t)(min(
         (uint16_t)pCorpse->p8BPPPalette[uiCount].peRed + (uint16_t)gpLightColors[0].peRed, 255));
     LightPal[uiCount].peGreen = (uint8_t)(min(
-        (uint16_t)pCorpse->p8BPPPalette[uiCount].peGreen + (uint16_t)gpLightColors[0].peGreen, 255));
+        (uint16_t)pCorpse->p8BPPPalette[uiCount].peGreen + (uint16_t)gpLightColors[0].peGreen,
+        255));
     LightPal[uiCount].peBlue = (uint8_t)(min(
         (uint16_t)pCorpse->p8BPPPalette[uiCount].peBlue + (uint16_t)gpLightColors[0].peBlue, 255));
   }

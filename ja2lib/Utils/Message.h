@@ -18,8 +18,8 @@ struct stringstruct {
   BOOLEAN fBeginningOfNewString;
   uint32_t uiTimeOfLastUpdate;
   uint32_t uiPadding[5];
-  struct stringstruct *pNext;
-  struct stringstruct *pPrev;
+  struct stringstruct* pNext;
+  struct stringstruct* pPrev;
 };
 
 #define MSG_INTERFACE 0
@@ -41,7 +41,7 @@ struct stringstruct {
 #define MSG_FONT_WHITE FONT_MCOLOR_WHITE
 
 typedef struct stringstruct ScrollStringSt;
-typedef ScrollStringSt *ScrollStringStPtr;
+typedef ScrollStringSt* ScrollStringStPtr;
 
 extern ScrollStringStPtr pStringS;
 extern uint32_t StringCount;

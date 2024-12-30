@@ -155,7 +155,7 @@ short trailStratTreedxB = 0;
 
 #define QUESEARCH(ndx, NDX)                                                               \
   {                                                                                       \
-    int32_t k = TOTALCOST(ndx);                                                             \
+    int32_t k = TOTALCOST(ndx);                                                           \
     NDX = pathQB[QHEADNDX].nextLink;                                                      \
     while (NDX && (k > TOTALCOST(NDX))) NDX = pathQB[NDX].nextLink;                       \
     while (NDX && (k == TOTALCOST(NDX)) && FARTHER(ndx, NDX)) NDX = pathQB[NDX].nextLink; \
@@ -179,7 +179,7 @@ extern uint8_t GetTraversability(int16_t sStartSector, int16_t sEndSector);
 // this will find if a shortest strategic path
 
 int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNumber,
-                    BOOLEAN fTacticalTraversal) {
+                      BOOLEAN fTacticalTraversal) {
   int32_t iCnt, ndx, insertNdx, qNewNdx;
   int32_t iDestX, iDestY, locX, locY, dx, dy;
   uint8_t sSectorX, sSectorY;
@@ -312,7 +312,8 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
         }
       } else {
         nextCost = GetTravelTimeForFootTeam(
-            (uint8_t)(GetSectorID8(SectorID16_X(curLoc), SectorID16_Y(curLoc))), (uint8_t)(iCnt / 2));
+            (uint8_t)(GetSectorID8(SectorID16_X(curLoc), SectorID16_Y(curLoc))),
+            (uint8_t)(iCnt / 2));
       }
 
       if (nextCost == 0xffffffff) {
@@ -327,7 +328,8 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
         // if it's the first sector only (no cost yet)
         if (curCost == 0 && (newLoc == sDestination)) {
           if (GetTraversability((int16_t)(GetSectorID8(curLoc % 18, curLoc / 18)),
-                                (int16_t)(GetSectorID8(newLoc % 18, newLoc / 18))) != GROUNDBARRIER) {
+                                (int16_t)(GetSectorID8(newLoc % 18, newLoc / 18))) !=
+              GROUNDBARRIER) {
             nextCost = 0;
           }
         }
@@ -344,8 +346,8 @@ int32_t FindStratPath(int16_t sStart, int16_t sDestination, int16_t sMvtGroupNum
       //make the destination look very attractive
       if( ( newLoc == sDestination ) )
       {
-              if( GetTraversability( ( int16_t )( GetSectorID8( curLoc % 18, curLoc / 18 ) ), ( int16_t
-      ) ( GetSectorID8( newLoc %18,  newLoc / 18 ) ) ) != GROUNDBARRIER )
+              if( GetTraversability( ( int16_t )( GetSectorID8( curLoc % 18, curLoc / 18 ) ), (
+      int16_t ) ( GetSectorID8( newLoc %18,  newLoc / 18 ) ) ) != GROUNDBARRIER )
               {
                       nextCost = 0;
               }
@@ -445,7 +447,7 @@ struct path* BuildAStrategicPath(struct path* pPath, int16_t iStartSectorNum, in
   if (iEndSectorNum < MAP_WORLD_X - 1) return NULL;
 
   iPathLength = ((int32_t)FindStratPath(((int16_t)iStartSectorNum), ((int16_t)iEndSectorNum),
-                                      sMvtGroupNumber, fTacticalTraversal));
+                                        sMvtGroupNumber, fTacticalTraversal));
   while (iPathLength > iCount) {
     switch (gusMapPathingData[iCount]) {
       case (NORTH):
@@ -502,8 +504,8 @@ struct path* BuildAStrategicPath(struct path* pPath, int16_t iStartSectorNum, in
   if( fTempPath == FALSE )
   {
           // change in direction..add waypoint
-          AddWaypointToGroup( ( uint8_t )sMvtGroupNumber, ( uint8_t )( iCurrentSectorNum% MAP_WORLD_X ),
-( uint8_t )( SectorID16_Y(iCurrentSectorNum) ) );
+          AddWaypointToGroup( ( uint8_t )sMvtGroupNumber, ( uint8_t )( iCurrentSectorNum%
+MAP_WORLD_X ), ( uint8_t )( SectorID16_Y(iCurrentSectorNum) ) );
 }
   */
 
@@ -665,8 +667,8 @@ BOOLEAN CanThisMercMoveToThisSector( struct SOLDIERTYPE *pSoldier ,int16_t sX, i
 
 
 
-void SetThisMercsSectorXYToTheseValues( struct SOLDIERTYPE *pSoldier ,int16_t sX, int16_t sY, uint8_t
-ubFromDirection )
+void SetThisMercsSectorXYToTheseValues( struct SOLDIERTYPE *pSoldier ,int16_t sX, int16_t sY,
+uint8_t ubFromDirection )
 {
   // will move a merc ( pSoldier )to a sector sX, sY
 
@@ -1465,7 +1467,8 @@ void ClearMvtForThisSoldierAndGang(struct SOLDIERTYPE* pSoldier) {
   ClearMercPathsAndWaypointsForAllInGroup(pGroup);
 }
 
-BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY, uint8_t sDestX, uint8_t sDestY) {
+BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY,
+                                    uint8_t sDestX, uint8_t sDestY) {
   struct path* pNode = NULL;
 
   // build the path
@@ -1487,8 +1490,9 @@ BOOLEAN MoveGroupFromSectorToSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t 
   return (TRUE);
 }
 
-BOOLEAN MoveGroupFromSectorToSectorButAvoidLastSector(uint8_t ubGroupID, uint8_t sStartX, uint8_t sStartY,
-                                                      uint8_t sDestX, uint8_t sDestY) {
+BOOLEAN MoveGroupFromSectorToSectorButAvoidLastSector(uint8_t ubGroupID, uint8_t sStartX,
+                                                      uint8_t sStartY, uint8_t sDestX,
+                                                      uint8_t sDestY) {
   struct path* pNode = NULL;
 
   // build the path
@@ -1513,9 +1517,9 @@ BOOLEAN MoveGroupFromSectorToSectorButAvoidLastSector(uint8_t ubGroupID, uint8_t
   return (TRUE);
 }
 
-BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectors(uint8_t ubGroupID, uint8_t sStartX,
-                                                                   uint8_t sStartY, uint8_t sDestX,
-                                                                   uint8_t sDestY) {
+BOOLEAN MoveGroupFromSectorToSectorButAvoidPlayerInfluencedSectors(uint8_t ubGroupID,
+                                                                   uint8_t sStartX, uint8_t sStartY,
+                                                                   uint8_t sDestX, uint8_t sDestY) {
   struct path* pNode = NULL;
 
   // init sectors with soldiers in them

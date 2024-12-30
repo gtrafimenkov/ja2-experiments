@@ -140,7 +140,9 @@ uint32_t GetWorldDayInSeconds() { return (guiDay * NUM_SEC_IN_DAY); }
 
 uint32_t GetWorldDayInMinutes() { return ((guiDay * NUM_SEC_IN_DAY) / NUM_SEC_IN_MIN); }
 
-uint32_t GetFutureDayInMinutes(uint32_t uiDay) { return ((uiDay * NUM_SEC_IN_DAY) / NUM_SEC_IN_MIN); }
+uint32_t GetFutureDayInMinutes(uint32_t uiDay) {
+  return ((uiDay * NUM_SEC_IN_DAY) / NUM_SEC_IN_MIN);
+}
 
 // this function returns the amount of minutes there has been from start of game to midnight of the
 // uiDay.

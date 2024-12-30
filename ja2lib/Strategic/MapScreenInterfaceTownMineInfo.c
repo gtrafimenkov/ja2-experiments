@@ -738,11 +738,11 @@ void AddInventoryButtonForMapPopUpBox(void) {
 
   guiMapButtonInventoryImage[1] = LoadButtonImage("INTERFACE\\mapinvbtns.sti", -1, 1, -1, 3, -1);
 
-  guiMapButtonInventory[1] =
-      CreateIconAndTextButton(guiMapButtonInventoryImage[1], pMapPopUpInventoryText[1], BLOCKFONT2,
-                              FONT_WHITE, FONT_BLACK, FONT_WHITE, FONT_BLACK, TEXT_CJUSTIFIED,
-                              (int16_t)(sX), (int16_t)(sY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST - 1,
-                              DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)MapTownMineExitButtonCallBack);
+  guiMapButtonInventory[1] = CreateIconAndTextButton(
+      guiMapButtonInventoryImage[1], pMapPopUpInventoryText[1], BLOCKFONT2, FONT_WHITE, FONT_BLACK,
+      FONT_WHITE, FONT_BLACK, TEXT_CJUSTIFIED, (int16_t)(sX), (int16_t)(sY), BUTTON_TOGGLE,
+      MSYS_PRIORITY_HIGHEST - 1, DEFAULT_MOVE_CALLBACK,
+      (GUI_CALLBACK)MapTownMineExitButtonCallBack);
 
   // delete video object
   DeleteVideoObjectFromIndex(uiObject);

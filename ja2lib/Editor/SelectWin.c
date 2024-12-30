@@ -824,8 +824,8 @@ void RenderSelectionWindow(void) {
     if (button == NULL) return;
 
     if ((abs(iStartClickX - button->Area.MouseXPos) > 9) ||
-        (abs(iStartClickY - (button->Area.MouseYPos + iTopWinCutOff - (int16_t)SelWinStartPoint.iY)) >
-         9)) {
+        (abs(iStartClickY -
+             (button->Area.MouseYPos + iTopWinCutOff - (int16_t)SelWinStartPoint.iY)) > 9)) {
       //			iSX = (int32_t)iStartClickX;
       //			iEX = (int32_t)button->Area.MouseXPos;
       //			iSY = (int32_t)iStartClickY;

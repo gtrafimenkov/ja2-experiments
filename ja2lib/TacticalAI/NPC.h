@@ -169,7 +169,8 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion);
 
 extern void TriggerFriendWithHostileQuote(uint8_t ubNPC);
 
-extern void ReplaceLocationInNPCDataFromProfileID(uint8_t ubNPC, int16_t sOldGridNo, int16_t sNewGridNo);
+extern void ReplaceLocationInNPCDataFromProfileID(uint8_t ubNPC, int16_t sOldGridNo,
+                                                  int16_t sNewGridNo);
 
 extern uint8_t ActionIDForMovementRecord(uint8_t ubNPC, uint8_t ubRecord);
 
@@ -204,7 +205,8 @@ BOOLEAN GetInfoForAbandoningEPC(uint8_t ubNPC, uint16_t *pusQuoteNum, uint16_t *
 
 BOOLEAN RecordHasDialogue(uint8_t ubNPC, uint8_t ubRecord);
 
-int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ, BOOLEAN fSetAsUsed);
+int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ,
+                              BOOLEAN fSetAsUsed);
 
 void ResetOncePerConvoRecordsForNPC(uint8_t ubNPC);
 

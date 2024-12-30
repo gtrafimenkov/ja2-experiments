@@ -573,8 +573,8 @@ void DecayCreatures() {  // when the queen dies, we need to kill off the creatur
                          // time.
 }
 
-void AddCreaturesToBattle(uint8_t ubNumYoungMales, uint8_t ubNumYoungFemales, uint8_t ubNumAdultMales,
-                          uint8_t ubNumAdultFemales) {
+void AddCreaturesToBattle(uint8_t ubNumYoungMales, uint8_t ubNumYoungFemales,
+                          uint8_t ubNumAdultMales, uint8_t ubNumAdultFemales) {
   int32_t iRandom;
   struct SOLDIERTYPE *pSoldier;
   MAPEDGEPOINTINFO MapEdgepointInfo;
@@ -625,7 +625,7 @@ void AddCreaturesToBattle(uint8_t ubNumYoungMales, uint8_t ubNumYoungFemales, ui
       ubNumAdultMales--;
       pSoldier = TacticalCreateCreature(AM_MONSTER);
     } else if (ubNumAdultFemales && iRandom < (int32_t)(ubNumYoungMales + ubNumYoungFemales +
-                                                      ubNumAdultMales + ubNumAdultFemales)) {
+                                                        ubNumAdultMales + ubNumAdultFemales)) {
       ubNumAdultFemales--;
       pSoldier = TacticalCreateCreature(ADULTFEMALEMONSTER);
     } else {
@@ -1272,7 +1272,8 @@ void CreatureNightPlanning() {  // Check the populations of the mine exits, and 
   }
 }
 
-void CheckConditionsForTriggeringCreatureQuest(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
+void CheckConditionsForTriggeringCreatureQuest(uint8_t sSectorX, uint8_t sSectorY,
+                                               int8_t bSectorZ) {
   uint8_t ubValidMines = 0;
   if (!gGameOptions.fSciFi) return;  // No scifi, no creatures...
   if (giLairID) return;              // Creature quest already begun

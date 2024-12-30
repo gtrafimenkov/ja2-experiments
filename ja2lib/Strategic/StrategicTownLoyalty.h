@@ -36,7 +36,7 @@ typedef struct TOWN_LOYALTY {
   BOOLEAN fStarted;  // starting loyalty of each town is initialized only when player first enters
                      // that town
   uint8_t UNUSEDubRebelSentiment;  // current rebel sentiment.  Events could change the starting
-                                 // value...
+                                   // value...
   BOOLEAN fLiberatedAlready;
   uint8_t filler[19];  // reserved for expansion
 
@@ -77,7 +77,8 @@ BOOLEAN HandleLoyaltyAdjustmentForRobbery(struct SOLDIERTYPE *pSoldier);
 void HandleLoyaltyForDemolitionOfBuilding(struct SOLDIERTYPE *pSoldier, int16_t sPointsDmg);
 
 // remove random item from this sector
-void RemoveRandomItemsInSector(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ, uint8_t ubChance);
+void RemoveRandomItemsInSector(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ,
+                               uint8_t ubChance);
 
 // get the shortest distance between these two towns via roads
 int32_t GetTownDistances(uint8_t ubTown, uint8_t ubTownA);
@@ -122,7 +123,8 @@ void AdjustLoyaltyForCivsEatenByMonsters(uint8_t sSectorX, uint8_t sSectorY, uin
 // these are used to handle global loyalty events (ones that effect EVERY town on the map)
 void IncrementTownLoyaltyEverywhere(uint32_t uiLoyaltyIncrease);
 void DecrementTownLoyaltyEverywhere(uint32_t uiLoyaltyDecrease);
-void HandleGlobalLoyaltyEvent(uint8_t ubEventType, uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
+void HandleGlobalLoyaltyEvent(uint8_t ubEventType, uint8_t sSectorX, uint8_t sSectorY,
+                              int8_t bSectorZ);
 void AffectAllTownsLoyaltyByDistanceFrom(int32_t iLoyaltyChange, uint8_t sSectorX, uint8_t sSectorY,
                                          int8_t bSectorZ);
 

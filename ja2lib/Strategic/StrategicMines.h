@@ -58,8 +58,8 @@ enum {
 
 // the strategic mine structures
 typedef struct MINE_LOCATION_TYPE {
-  uint8_t sSectorX;           // x value of sector mine is in
-  uint8_t sSectorY;           // y value of sector mine is in
+  uint8_t sSectorX;        // x value of sector mine is in
+  uint8_t sSectorY;        // y value of sector mine is in
   int8_t bAssociatedTown;  // associated town of this mine
 
 } MINE_LOCATION_TYPE;
@@ -71,7 +71,7 @@ typedef struct MINE_STATUS_TYPE {
 
   uint32_t uiRemainingOreSupply;  // the total value left to this mine (-1 means unlimited)
   uint32_t uiOreRunningOutPoint;  // when supply drop below this, workers tell player the mine is
-                                // running out of ore
+                                  // running out of ore
 
   BOOLEAN fEmpty;       // whether no longer minable
   BOOLEAN fRunningOut;  // whether mine is beginning to run out
@@ -89,10 +89,10 @@ typedef struct MINE_STATUS_TYPE {
                                       // produced from it
   BOOLEAN fAttackedHeadMiner;         // player has attacked the head miner, shutting down mine &
                                       // decreasing loyalty
-  uint16_t usValidDayCreaturesCanInfest;   // Creatures will be permitted to spread if the game day is
-                                         // greater than this value.
+  uint16_t usValidDayCreaturesCanInfest;  // Creatures will be permitted to spread if the game day
+                                          // is greater than this value.
   uint32_t uiTimePlayerProductionStarted;  // time in minutes when 'fMineHasProducedForPlayer' was
-                                         // first set
+                                           // first set
 
   uint8_t filler[11];  // reserved for expansion
 

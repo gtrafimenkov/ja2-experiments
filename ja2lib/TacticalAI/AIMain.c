@@ -98,7 +98,7 @@ int8_t gbDiff[MAX_DIFF_PARMS][5] = {
 
 void EndAIGuysTurn(struct SOLDIERTYPE *pSoldier);
 
-void DebugAI(char* szOutput) {
+void DebugAI(char *szOutput) {
 #ifdef JA2BETAVERSION
   // Send regular debug msg AND AI debug message
   FILE *DebugFile;
@@ -1728,7 +1728,8 @@ int8_t ExecuteAction(struct SOLDIERTYPE *pSoldier) {
       DebugAI(String("ExecuteAction: SkipCoverCheck ON\n"));
 #endif
 
-      //			pSoldier->bDesiredDirection = (uint8_t) ;   // turn to face direction
+      //			pSoldier->bDesiredDirection = (uint8_t) ;   // turn to face
+      //direction
       // in actionData
       SendSoldierSetDesiredDirectionEvent(pSoldier, pSoldier->usActionData);
       // now we'll have to wait for the turning to finish; no need to call TurnSoldier here

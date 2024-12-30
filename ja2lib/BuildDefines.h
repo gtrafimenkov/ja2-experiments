@@ -14,7 +14,7 @@
 // #define JA2TESTVERSION
 
 // If we want to include the editor
-//#define JA2EDITOR
+// #define JA2EDITOR
 
 #ifdef _DEBUG
 #ifndef JA2TESTVERSION

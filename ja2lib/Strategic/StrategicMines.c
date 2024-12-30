@@ -386,8 +386,8 @@ uint32_t ExtractOreFromMine(int8_t bMineIndex, uint32_t uiAmount) {
       // round all fractions UP to the next REMOVAL_RATE_INCREMENT
       gMineStatus[bMineIndex].uiMaxRemovalRate =
           (uint32_t)(((float)gMineStatus[bMineIndex].uiRemainingOreSupply / 10) /
-                       REMOVAL_RATE_INCREMENT +
-                   0.9999) *
+                         REMOVAL_RATE_INCREMENT +
+                     0.9999) *
           REMOVAL_RATE_INCREMENT;
 
       // if we control it

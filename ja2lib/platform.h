@@ -28,7 +28,8 @@ typedef void *SYS_FILE_HANDLE;
 #define FILE_SEEK_FROM_CURRENT 0x04
 
 uint32_t Plat_GetFileSize(SYS_FILE_HANDLE handle);
-BOOLEAN Plat_ReadFile(SYS_FILE_HANDLE handle, void *buffer, uint32_t bytesToRead, uint32_t *readBytes);
+BOOLEAN Plat_ReadFile(SYS_FILE_HANDLE handle, void *buffer, uint32_t bytesToRead,
+                      uint32_t *readBytes);
 BOOLEAN Plat_OpenForReading(const char *path, SYS_FILE_HANDLE *handle);
 void Plat_CloseFile(SYS_FILE_HANDLE handle);
 
@@ -53,7 +54,7 @@ BOOLEAN Plat_CreateDirectory(const char *pcDirectory);
 BOOLEAN Plat_RemoveDirectory(const char *pcDirectory, BOOLEAN fRecursive);
 BOOLEAN Plat_EraseDirectory(const char *pcDirectory);
 
-BOOLEAN Plat_ClearFileAttributes(char* filename);
+BOOLEAN Plat_ClearFileAttributes(char *filename);
 
 // Check if file (or directory) exists.
 BOOLEAN Plat_FileEntityExists(const char *path);

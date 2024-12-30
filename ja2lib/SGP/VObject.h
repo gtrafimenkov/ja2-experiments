@@ -76,20 +76,20 @@ typedef struct {
 // This structure is a video object.
 // The video object contains different data based on it's type, compressed or not
 struct VObject {
-  uint32_t fFlags;                          // Special flags
-  uint32_t uiSizePixData;                   // ETRLE data size
+  uint32_t fFlags;                        // Special flags
+  uint32_t uiSizePixData;                 // ETRLE data size
   struct SGPPaletteEntry *pPaletteEntry;  // 8BPP Palette
   COLORVAL TransparentColor;              // Defaults to 0,0,0
-  uint16_t *p16BPPPalette;                  // A 16BPP palette used for 8->16 blits
+  uint16_t *p16BPPPalette;                // A 16BPP palette used for 8->16 blits
 
-  void* pPixData;               // ETRLE pixel data
+  void *pPixData;             // ETRLE pixel data
   ETRLEObject *pETRLEObject;  // Object offset data etc
   SixteenBPPObjectInfo *p16BPPObject;
   uint16_t *pShades[HVOBJECT_SHADE_TABLES];  // Shading tables
   uint16_t *pShadeCurrent;
-  uint16_t *pGlow;              // glow highlight table
-  uint8_t *pShade8;             // 8-bit shading index table
-  uint8_t *pGlow8;              // 8-bit glow table
+  uint16_t *pGlow;            // glow highlight table
+  uint8_t *pShade8;           // 8-bit shading index table
+  uint8_t *pGlow8;            // 8-bit glow table
   ZStripInfo **ppZStripInfo;  // Z-value strip info arrays
 
   uint16_t usNumberOf16BPPObjects;
@@ -151,8 +151,9 @@ BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex);
 BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hVSrcObject, uint16_t usRegionIndex,
                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_fx *pBltFx);
 
-BOOLEAN BltVideoObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint16_t usRegionIndex,
-                                int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_fx *pBltFx);
+BOOLEAN BltVideoObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
+                                uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY,
+                                uint32_t fBltFlags, blt_fx *pBltFx);
 
 // Sets transparency
 BOOLEAN SetVideoObjectTransparency(uint32_t uiIndex, COLORVAL TransColor);
@@ -185,11 +186,12 @@ uint16_t SetObjectShade(struct VObject *pObj, uint32_t uiShade);
 uint16_t SetObjectHandleShade(uint32_t uiHandle, uint32_t uiShade);
 
 // Fills a rectangular area of an object with a color
-uint16_t FillObjectRect(uint32_t iObj, int32_t x1, int32_t y1, int32_t x2, int32_t y2, COLORVAL color32);
+uint16_t FillObjectRect(uint32_t iObj, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
+                        COLORVAL color32);
 
 // Retrieves an struct VObject* pixel value
-BOOLEAN GetETRLEPixelValue(uint8_t *pDest, struct VObject *hVObject, uint16_t usETLREIndex, uint16_t usX,
-                           uint16_t usY);
+BOOLEAN GetETRLEPixelValue(uint8_t *pDest, struct VObject *hVObject, uint16_t usETLREIndex,
+                           uint16_t usX, uint16_t usY);
 
 // ****************************************************************************
 //
@@ -240,15 +242,17 @@ BOOLEAN ConvertVObjectRegionTo16BPP(struct VObject *hVObject, uint16_t usRegionI
 BOOLEAN CheckFor16BPPRegion(struct VObject *hVObject, uint16_t usRegionIndex, uint8_t ubShadeLevel,
                             uint16_t *pusIndex);
 
-BOOLEAN BltVideoObjectOutlineFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint16_t usIndex,
-                                       int32_t iDestX, int32_t iDestY, int16_t s16BPPColor,
-                                       BOOLEAN fDoOutline);
-BOOLEAN BltVideoObjectOutline(uint32_t uiDestVSurface, struct VObject *hSrcVObject, uint16_t usIndex,
-                              int32_t iDestX, int32_t iDestY, int16_t s16BPPColor, BOOLEAN fDoOutline);
+BOOLEAN BltVideoObjectOutlineFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
+                                       uint16_t usIndex, int32_t iDestX, int32_t iDestY,
+                                       int16_t s16BPPColor, BOOLEAN fDoOutline);
+BOOLEAN BltVideoObjectOutline(uint32_t uiDestVSurface, struct VObject *hSrcVObject,
+                              uint16_t usIndex, int32_t iDestX, int32_t iDestY, int16_t s16BPPColor,
+                              BOOLEAN fDoOutline);
 BOOLEAN BltVideoObjectOutlineShadowFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
                                              uint16_t usIndex, int32_t iDestX, int32_t iDestY);
 BOOLEAN BltVideoObjectOutlineShadow(uint32_t uiDestVSurface, struct VObject *hSrcVObject,
                                     uint16_t usIndex, int32_t iDestX, int32_t iDestY);
-BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2, int32_t Y2);
+BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
+                                int32_t Y2);
 
 #endif

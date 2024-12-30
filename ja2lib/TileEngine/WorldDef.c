@@ -336,7 +336,8 @@ BOOLEAN LoadTileSurfaces(char ppTileSurfaceFilenames[][32], uint8_t ubTilesetID)
   return (TRUE);
 }
 
-BOOLEAN AddTileSurface(char *cFilename, uint32_t ubType, uint8_t ubTilesetID, BOOLEAN fGetFromRoot) {
+BOOLEAN AddTileSurface(char *cFilename, uint32_t ubType, uint8_t ubTilesetID,
+                       BOOLEAN fGetFromRoot) {
   // Add tile surface
   struct TILE_IMAGERY *TileSurf;
   char cFileBPP[128];
@@ -592,7 +593,8 @@ void CompileTileMovementCosts(uint16_t usGridNo) {
     pLand = gpWorldLevelData[usGridNo].pLandHead;
     if (pLand != NULL) {
       // Get terrain type
-      ubTerrainID = gpWorldLevelData[usGridNo].ubTerrainID;  // = GetTerrainType( (int16_t)usGridNo );
+      ubTerrainID =
+          gpWorldLevelData[usGridNo].ubTerrainID;  // = GetTerrainType( (int16_t)usGridNo );
 
       for (ubDirLoop = 0; ubDirLoop < NUM_WORLD_DIRECTIONS; ubDirLoop++) {
         SET_CURRMOVEMENTCOST(ubDirLoop, gTileTypeMovementCost[ubTerrainID]);
@@ -1347,7 +1349,7 @@ void CompileWorldMovementCosts() {
 }
 
 // SAVING CODE
-BOOLEAN SaveWorld(char* puiFilename) {
+BOOLEAN SaveWorld(char *puiFilename) {
 #ifdef JA2EDITOR
   int32_t cnt;
   uint32_t uiSoldierSize;
@@ -1791,7 +1793,8 @@ void OptimizeMapForShadows() {
     if (IsTreePresentAtGridno((int16_t)cnt)) {
       // CHECK FOR A struct STRUCTURE A FOOTPRINT AWAY
       for (dir = 0; dir < NUM_DIR_SEARCHES; dir++) {
-        sNewGridNo = NewGridNo((int16_t)cnt, (uint16_t)DirectionInc(bDirectionsForShadowSearch[dir]));
+        sNewGridNo =
+            NewGridNo((int16_t)cnt, (uint16_t)DirectionInc(bDirectionsForShadowSearch[dir]));
 
         if (gpWorldLevelData[sNewGridNo].pStructureHead == NULL) {
           break;
@@ -2234,7 +2237,7 @@ BOOLEAN EvaluateWorld(char *pSector, uint8_t ubLevel) {
 extern uint8_t GetCurrentSummaryVersion();
 extern void LoadShadeTablesFromTextFile();
 
-BOOLEAN LoadWorld(char* puiFilename) {
+BOOLEAN LoadWorld(char *puiFilename) {
   HWFILE hfile;
   float dMajorMapVersion;
   uint32_t uiFlags;

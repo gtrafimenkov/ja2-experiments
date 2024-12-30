@@ -804,8 +804,9 @@ BOOLEAN SetUpMvtGroupForVehicle(struct SOLDIERTYPE *pSoldier) {
   //{
   // get the vehicle a mvt group
   // pVehicleList[ iId ].ubMovementGroup = CreateNewVehicleGroupDepartingFromSector( ( uint8_t )(
-  // pVehicleList[ iId ].sSectorX ), ( uint8_t )( pVehicleList[ iId ].sSectorY ), iId ); pVehicleList[
-  // iId ].ubMovementGroup = CreateNewVehicleGroupDepartingFromSector( ( uint8_t )( pVehicleList[ iId
+  // pVehicleList[ iId ].sSectorX ), ( uint8_t )( pVehicleList[ iId ].sSectorY ), iId );
+  // pVehicleList[ iId ].ubMovementGroup = CreateNewVehicleGroupDepartingFromSector( ( uint8_t )(
+  // pVehicleList[ iId
   // ].sSectorX ), ( uint8_t )( pVehicleList[ iId ].sSectorY ), iId );
 
   // add everyone in vehicle to this mvt group

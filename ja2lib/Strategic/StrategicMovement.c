@@ -99,7 +99,8 @@ uint32_t uniqueIDMask[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 uint8_t AddGroupToList(struct GROUP *pGroup);
 
-void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY, uint8_t ubSectorZ);
+void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY,
+                                             uint8_t ubSectorZ);
 BOOLEAN PossibleToCoordinateSimultaneousGroupArrivals(struct GROUP *pGroup);
 
 void HandleNonCombatGroupArrival(struct GROUP *pGroup, BOOLEAN fMainGroup, BOOLEAN fNeverLeft);
@@ -128,13 +129,14 @@ void SetLocationOfAllPlayerSoldiersInGroup(struct GROUP *pGroup, uint8_t sSector
 BOOLEAN TestForBloodcatAmbush(struct GROUP *pGroup);
 void NotifyPlayerOfBloodcatBattle(uint8_t ubSectorX, uint8_t ubSectorY);
 
-BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup, uint8_t ubSectorX,
-                                                             uint8_t ubSectorY);
+BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup,
+                                                             uint8_t ubSectorX, uint8_t ubSectorY);
 
 void CancelEmptyPersistentGroupMovement(struct GROUP *pGroup);
 
 BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup);
-BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
+BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY,
+                                                         int8_t bSectorZ);
 void HandlePlayerGroupEnteringSectorToCheckForNPCsOfNoteCallback(uint8_t ubExitValue);
 void DelayEnemyGroupsIfPathsCross(struct GROUP *pPlayerGroup);
 
@@ -175,7 +177,7 @@ uint8_t CreateNewPlayerGroupDepartingFromSector(uint8_t ubSectorX, uint8_t ubSec
 }
 
 uint8_t CreateNewVehicleGroupDepartingFromSector(uint8_t ubSectorX, uint8_t ubSectorY,
-                                               uint32_t uiUNISEDVehicleId) {
+                                                 uint32_t uiUNISEDVehicleId) {
   struct GROUP *pNew;
   AssertMsg(ubSectorX >= 1 && ubSectorX <= 16,
             String("CreateNewVehicleGroup with out of range sectorX value of %d", ubSectorX));
@@ -435,8 +437,8 @@ BOOLEAN GroupReversingDirectionsBetweenSectors(struct GROUP *pGroup, uint8_t ubS
   return TRUE;
 }
 
-BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup, uint8_t ubSectorX,
-                                                             uint8_t ubSectorY) {
+BOOLEAN GroupBetweenSectorsAndSectorXYIsInDifferentDirection(struct GROUP *pGroup,
+                                                             uint8_t ubSectorX, uint8_t ubSectorY) {
   int32_t currDX, currDY, newDX, newDY;
   uint8_t ubNumUnalignedAxes = 0;
 
@@ -1477,7 +1479,8 @@ void GroupArrivedAtSector(uint8_t ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fN
         // add them to the tactical engine!
         if (pGroup->ubSectorX == gWorldSectorX && pGroup->ubSectorY == gWorldSectorY &&
             pGroup->ubSectorZ == gbWorldSectorZ) {
-          UpdateMercInSector(curr->pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+          UpdateMercInSector(curr->pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                             gbWorldSectorZ);
         }
         curr = curr->next;
       }
@@ -1540,7 +1543,8 @@ void GroupArrivedAtSector(uint8_t ubGroupID, BOOLEAN fCheckForBattle, BOOLEAN fN
         if (pGroup->ubSectorX == gWorldSectorX && pGroup->ubSectorY == gWorldSectorY &&
             pGroup->ubSectorZ == gbWorldSectorZ) {
           // add vehicle to the tactical engine!
-          UpdateMercInSector(pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+          UpdateMercInSector(pSoldier, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                             gbWorldSectorZ);
         }
 
         // set directions of insertion
@@ -1662,7 +1666,8 @@ void HandleNonCombatGroupArrival(struct GROUP *pGroup, BOOLEAN fMainGroup, BOOLE
     // if this is the last sector along their movement path (no more waypoints)
     if (GroupAtFinalDestination(pGroup)) {
       // if currently selected sector has nobody in it
-      if (PlayerMercsInSector((uint8_t)sSelMapX, (uint8_t)sSelMapY, (uint8_t)iCurrentMapSectorZ) == 0) {
+      if (PlayerMercsInSector((uint8_t)sSelMapX, (uint8_t)sSelMapY, (uint8_t)iCurrentMapSectorZ) ==
+          0) {
         // make this sector strategically selected
         ChangeSelectedMapSector(pGroup->ubSectorX, pGroup->ubSectorY, pGroup->ubSectorZ);
       }
@@ -1696,7 +1701,8 @@ void HandleNonCombatGroupArrival(struct GROUP *pGroup, BOOLEAN fMainGroup, BOOLE
 // groups that may arrive at the same time -- enemies or players, and blindly add them to the sector
 // without checking for battle conditions, as it has already determined that a new battle is about
 // to start.
-void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY, uint8_t ubSectorZ) {
+void HandleOtherGroupsArrivingSimultaneously(uint8_t ubSectorX, uint8_t ubSectorY,
+                                             uint8_t ubSectorZ) {
   STRATEGICEVENT *pEvent;
   uint32_t uiCurrTimeStamp;
   struct GROUP *pGroup;
@@ -2307,7 +2313,7 @@ int32_t CalculateTravelTimeOfGroup(struct GROUP *pGroup) {
 
   // now get the delta in current sector and next sector
   iDelta = (int32_t)(GetSectorID8(pGroup->ubSectorX, pGroup->ubSectorY) -
-                   GetSectorID8(pGroup->ubNextX, pGroup->ubNextY));
+                     GetSectorID8(pGroup->ubNextX, pGroup->ubNextY));
 
   if (iDelta == 0) {
     // not going anywhere...return current time
@@ -3910,7 +3916,7 @@ void RandomizePatrolGroupLocation(
   }
   // double it (they go back and forth) -- it's using zero based indices, so you have to add one to
   // get the number of actual waypoints in one direction.
-  ubTotalWaypoints = (uint8_t)((ubMaxWaypointID)*2);
+  ubTotalWaypoints = (uint8_t)((ubMaxWaypointID) * 2);
 
   // pick the waypoint they start at
   ubChosen = (uint8_t)Random(ubTotalWaypoints);
@@ -4001,7 +4007,8 @@ BOOLEAN TestForBloodcatAmbush(struct GROUP *pGroup) {
 
       // make sure bloodcats don't outnumber mercs by a factor greater than 2
       bNumMercMaxCats =
-          (int8_t)(PlayerMercsInSector(pGroup->ubSectorX, pGroup->ubSectorY, pGroup->ubSectorZ) * 2);
+          (int8_t)(PlayerMercsInSector(pGroup->ubSectorX, pGroup->ubSectorY, pGroup->ubSectorZ) *
+                   2);
 
       // choose the lowest number of cats calculated by difficulty and progress.
       pSector->bBloodCats = (int8_t)min(bDifficultyMaxCats, bProgressMaxCats);
@@ -4059,8 +4066,8 @@ void NotifyPlayerOfBloodcatBattle(uint8_t ubSectorX, uint8_t ubSectorY) {
   DoScreenIndependantMessageBox(str, MSG_BOX_FLAG_OK, TriggerPrebattleInterface);
 }
 
-void PlaceGroupInSector(uint8_t ubGroupID, uint8_t sPrevX, uint8_t sPrevY, uint8_t sNextX, uint8_t sNextY, int8_t bZ,
-                        BOOLEAN fCheckForBattle) {
+void PlaceGroupInSector(uint8_t ubGroupID, uint8_t sPrevX, uint8_t sPrevY, uint8_t sNextX,
+                        uint8_t sNextY, int8_t bZ, BOOLEAN fCheckForBattle) {
   ClearMercPathsAndWaypointsForAllInGroup(GetGroup(ubGroupID));
 
   // change where they are and where they're going
@@ -4248,7 +4255,8 @@ BOOLEAN HandlePlayerGroupEnteringSectorToCheckForNPCsOfNote(struct GROUP *pGroup
   return (TRUE);
 }
 
-BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
+BOOLEAN WildernessSectorWithAllProfiledNPCsNotSpokenWith(uint8_t sSectorX, uint8_t sSectorY,
+                                                         int8_t bSectorZ) {
   uint8_t ubProfile;
   MERCPROFILESTRUCT *pProfile;
   BOOLEAN fFoundSomebody = FALSE;
