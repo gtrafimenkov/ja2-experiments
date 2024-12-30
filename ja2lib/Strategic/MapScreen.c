@@ -538,16 +538,6 @@ int32_t giFlashContractBaseTime = 0;
 uint32_t guiFlashCursorBaseTime = 0;
 int32_t giPotCharPathBaseTime = 0;
 
-/*
-// next and prev
-int32_t giMapInvPrev;
-int32_t giMapInvNext;
-int32_t giMapInvPrevImage;
-int32_t giMapInvNextImage;
-*/
-extern uint32_t guiVObjectSize;
-extern uint32_t guiVSurfaceSize;
-
 extern uint8_t gubHandPos;
 extern uint16_t gusOldItemIndex;
 extern uint16_t gusNewItemIndex;

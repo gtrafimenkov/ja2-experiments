@@ -260,9 +260,6 @@ uint32_t guiPreviousLapTopCursor;
 uint32_t guiCurrentSidePanel;  // the current navagation panel on the leftside of the laptop screen
 uint32_t guiPreviousSidePanel;
 
-extern uint32_t guiVObjectSize;
-extern uint32_t guiVSurfaceSize;
-
 int32_t iHighLightBookLine = -1;
 BOOLEAN fFastLoadFlag = FALSE;
 BOOLEAN gfSideBarFlag;
