@@ -1274,7 +1274,7 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
     }
   }
 
-  if (PopUpBoxList[uiCounter]->uiBuffer != guiSAVEBUFFER) {
+  if (PopUpBoxList[uiCounter]->uiBuffer != vsSB) {
     InvalidateRegion(
         PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin - 1,
         PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->uiTopMargin,

@@ -700,7 +700,7 @@ void BlinkAutoFace(int32_t iFaceIndex) {
           pFace->ubExpression = NO_EXPRESSION;
           // Update rects just for eyes
 
-          if (pFace->uiAutoRestoreBuffer == guiSAVEBUFFER) {
+          if (pFace->uiAutoRestoreBuffer == vsSB) {
             FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usEyesX, pFace->usEyesY,
                                            pFace->usEyesX, pFace->usEyesY, pFace->usEyesWidth,
                                            pFace->usEyesHeight);
@@ -834,7 +834,7 @@ void MouthAutoFace(int32_t iFaceIndex) {
           if (pFace->GapList.audio_gap_active) {
             pFace->sMouthFrame = 0;
 
-            if (pFace->uiAutoRestoreBuffer == guiSAVEBUFFER) {
+            if (pFace->uiAutoRestoreBuffer == vsSB) {
               FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usMouthX, pFace->usMouthY,
                                              pFace->usMouthX, pFace->usMouthY, pFace->usMouthWidth,
                                              pFace->usMouthHeight);
@@ -870,7 +870,7 @@ void MouthAutoFace(int32_t iFaceIndex) {
                 // RenderFace( uiDestBuffer , uiCount );
                 // pFace->fTaking = FALSE;
                 // Update rects just for Mouth
-                if (pFace->uiAutoRestoreBuffer == guiSAVEBUFFER) {
+                if (pFace->uiAutoRestoreBuffer == vsSB) {
                   FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usMouthX, pFace->usMouthY,
                                                  pFace->usMouthX, pFace->usMouthY,
                                                  pFace->usMouthWidth, pFace->usMouthHeight);
@@ -1366,7 +1366,7 @@ BOOLEAN RenderAutoFace(int32_t iFaceIndex) {
 
   // Blit face to save buffer!
   if (pFace->uiAutoRestoreBuffer != FACE_NO_RESTORE_BUFFER) {
-    if (pFace->uiAutoRestoreBuffer == guiSAVEBUFFER) {
+    if (pFace->uiAutoRestoreBuffer == vsSB) {
       BltVideoObjectFromIndex(pFace->uiAutoRestoreBuffer, pFace->uiVideoObject, 0, pFace->usFaceX,
                               pFace->usFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
     } else {
@@ -1379,7 +1379,7 @@ BOOLEAN RenderAutoFace(int32_t iFaceIndex) {
                               pFace->usEyesX, pFace->usEyesY);
 
   // Restore extern rect
-  if (pFace->uiAutoRestoreBuffer == guiSAVEBUFFER) {
+  if (pFace->uiAutoRestoreBuffer == vsSB) {
     FaceRestoreSavedBackgroundRect(iFaceIndex, (int16_t)(pFace->usFaceX), (int16_t)(pFace->usFaceY),
                                    (int16_t)(pFace->usFaceX), (int16_t)(pFace->usFaceY),
                                    (int16_t)(pFace->usFaceWidth), (int16_t)(pFace->usFaceHeight));
@@ -1430,7 +1430,7 @@ BOOLEAN ExternRenderFace(uint32_t uiBuffer, int32_t iFaceIndex, int16_t sX, int1
                               (uint16_t)(sY + usEyesY));
 
   // Restore extern rect
-  if (uiBuffer == guiSAVEBUFFER) {
+  if (uiBuffer == vsSB) {
     RestoreExternBackgroundRect(sX, sY, pFace->usFaceWidth, pFace->usFaceWidth);
   }
 
@@ -1875,7 +1875,7 @@ void InternalShutupaYoFace(int32_t iFaceIndex, BOOLEAN fForce) {
 
     // ATE: Only change if active!
     if (!pFace->fDisabled) {
-      if (pFace->uiAutoRestoreBuffer == guiSAVEBUFFER) {
+      if (pFace->uiAutoRestoreBuffer == vsSB) {
         FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usMouthX, pFace->usMouthY,
                                        pFace->usMouthX, pFace->usMouthY, pFace->usMouthWidth,
                                        pFace->usMouthHeight);
@@ -1919,7 +1919,7 @@ void SetupFinalTalkingDelay(FACETYPE *pFace) {
 
   // Close mouth!
   if (!pFace->fDisabled) {
-    if (pFace->uiAutoRestoreBuffer == guiSAVEBUFFER) {
+    if (pFace->uiAutoRestoreBuffer == vsSB) {
       FaceRestoreSavedBackgroundRect(pFace->iID, pFace->usMouthX, pFace->usMouthY, pFace->usMouthX,
                                      pFace->usMouthY, pFace->usMouthWidth, pFace->usMouthHeight);
     } else {

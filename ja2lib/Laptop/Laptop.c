@@ -797,8 +797,8 @@ int32_t EnterLaptop() {
   // set the fact we are currently in laptop, for rendering purposes
   fCurrentlyInLaptop = TRUE;
 
-  // clear guiSAVEBUFFER
-  // ColorFillVideoSurfaceArea(guiSAVEBUFFER,	0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)) );
+  // clear vsSB
+  // ColorFillVideoSurfaceArea(vsSB,	0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)) );
   // disable characters panel buttons
 
   // reset redraw flag and redraw new mail
@@ -1648,7 +1648,7 @@ uint32_t LaptopScreenHandle() {
     uiTimeRange = 1000;
     iPercentage = iRealPercentage = 0;
     uiStartTime = GetJA2Clock();
-    BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 0, 640, 480);
+    BlitBufferToBuffer(vsFB, vsSB, 0, 0, 640, 480);
     BlitBufferToBuffer(guiEXTRABUFFER, vsFB, 0, 0, 640, 480);
     PlayJA2SampleFromFile("SOUNDS\\Laptop power up (8-11).wav", RATE_11025, HIGHVOLUME, 1,
                           MIDDLEPAN);
@@ -1681,7 +1681,7 @@ uint32_t LaptopScreenHandle() {
       SrcRect2.iTop = iY - iHeight / 2;
       SrcRect2.iBottom = SrcRect2.iTop + iHeight;
 
-      BltStretchVideoSurface(vsFB, guiSAVEBUFFER, 0, 0, 0, &DstRect, &SrcRect2);
+      BltStretchVideoSurface(vsFB, vsSB, 0, 0, 0, &DstRect, &SrcRect2);
       InvalidateScreen();
       RefreshScreen(NULL);
     }
@@ -2208,7 +2208,7 @@ BOOLEAN LeaveLapTopScreen(void) {
       uiTimeRange = 1000;
       iPercentage = iRealPercentage = 100;
       uiStartTime = GetJA2Clock();
-      BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 0, 640, 480);
+      BlitBufferToBuffer(vsFB, vsSB, 0, 0, 640, 480);
       PlayJA2SampleFromFile("SOUNDS\\Laptop power down (8-11).wav", RATE_11025, HIGHVOLUME, 1,
                             MIDDLEPAN);
       while (iRealPercentage > 0) {
@@ -2260,7 +2260,7 @@ BOOLEAN LeaveLapTopScreen(void) {
         // SrcRect2.iTop, SrcRect2.iRight, SrcRect2.iBottom, Get16BPPColor( FROMRGB( 100, 255, 0 )
         // ), pDestBuf ); UnLockVideoSurface( vsFB );
 
-        BltStretchVideoSurface(vsFB, guiSAVEBUFFER, 0, 0, 0, &DstRect, &SrcRect2);
+        BltStretchVideoSurface(vsFB, vsSB, 0, 0, 0, &DstRect, &SrcRect2);
         InvalidateScreen();
         // gfPrintFrameBuffer = TRUE;
         RefreshScreen(NULL);
@@ -3882,32 +3882,32 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
     if (ubCount > 1) {
       sWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       sHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop,
-                         sWidth, sHeight);
+      BlitBufferToBuffer(vsSB, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop, sWidth,
+                         sHeight);
     }
 
     // Save rectangle
     if (ubCount > 0) {
       sWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       sHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBuffer(vsFB, guiSAVEBUFFER, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
-                         sWidth, sHeight);
+      BlitBufferToBuffer(vsFB, vsSB, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop, sWidth,
+                         sHeight);
     }
   } else {
     // Restore the old rect
     if (ubCount < NUMBER_OF_LAPTOP_TITLEBAR_ITERATIONS - 1) {
       sWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       sHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop,
-                         sWidth, sHeight);
+      BlitBufferToBuffer(vsSB, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop, sWidth,
+                         sHeight);
     }
 
     // Save rectangle
     if (ubCount < NUMBER_OF_LAPTOP_TITLEBAR_ITERATIONS) {
       sWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       sHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBuffer(vsFB, guiSAVEBUFFER, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
-                         sWidth, sHeight);
+      BlitBufferToBuffer(vsFB, vsSB, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop, sWidth,
+                         sHeight);
     }
   }
 
