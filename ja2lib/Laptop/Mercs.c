@@ -330,7 +330,6 @@ void GameInitMercs() {
 
 BOOLEAN EnterMercs() {
   VOBJECT_DESC VObjectDesc;
-  VSURFACE_DESC vs_desc;
 
   SetBookMark(MERC_BOOKMARK);
 
@@ -394,11 +393,8 @@ BOOLEAN EnterMercs() {
   //
 
   // Create a background video surface to blt the face onto
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-  vs_desc.usWidth = MERC_VIDEO_FACE_WIDTH;
-  vs_desc.usHeight = MERC_VIDEO_FACE_HEIGHT;
-  vs_desc.ubBitDepth = 16;
-  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiMercVideoFaceBackground));
+  CHECKF(AddVSurface(CreateVSurfaceBlank16(MERC_VIDEO_FACE_WIDTH, MERC_VIDEO_FACE_HEIGHT),
+                     &guiMercVideoFaceBackground));
 
   RenderMercs();
 

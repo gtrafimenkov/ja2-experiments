@@ -388,21 +388,11 @@ BOOLEAN InitializeTacticalInterface() {
     AssertMsg(0, "Missing INTERFACE\\communicationpopup_2.sti");
 
   // Alocate message surfaces
-  VSURFACE_DESC vs_desc;
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-  vs_desc.usWidth = 640;
-  vs_desc.usHeight = 20;
-  vs_desc.ubBitDepth = 16;
-  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &(gTopMessage.uiSurface)));
+  CHECKF(AddVSurface(CreateVSurfaceBlank16(640, 20), &(gTopMessage.uiSurface)));
 
   InitItemInterface();
-
   InitRadarScreen();
-
   InitTEAMSlots();
-
-  // Init popup box images
-  //	CHECKF( LoadTextMercPopupImages( BASIC_MERC_POPUP_BACKGROUND, BASIC_MERC_POPUP_BORDER ) );
 
   return (TRUE);
 }

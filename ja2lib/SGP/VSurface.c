@@ -142,3 +142,19 @@ BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *puiIndex) {
 
   return TRUE;
 }
+
+struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height) {
+  return CreateVSurfaceBlank(width, height, 8);
+}
+
+struct VSurface *CreateVSurfaceBlank16(uint16_t width, uint16_t height) {
+  return CreateVSurfaceBlank(width, height, 16);
+}
+
+struct VSurface *CreateVSurface(VSURFACE_DESC *desc) {
+  if (desc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
+    return CreateVSurfaceFromFile(desc->ImageFile);
+  } else {
+    return CreateVSurfaceBlank(desc->usWidth, desc->usHeight, desc->ubBitDepth);
+  }
+}

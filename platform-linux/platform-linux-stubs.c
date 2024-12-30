@@ -249,8 +249,6 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
   return FALSE;
 }
 
-struct VSurface *CreateVSurface(VSURFACE_DESC *desc) { return NULL; }
-
 BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette) {
   return FALSE;
 }

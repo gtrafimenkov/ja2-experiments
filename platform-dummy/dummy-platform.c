@@ -275,8 +275,10 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
   return FALSE;
 }
 
-struct VSurface *CreateVSurface(VSURFACE_DESC *desc) { return NULL; }
-struct VSurface *CreateVSurfaceFromFile(const char *filepath) { return NULL; }
+struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bitDepth) {
+  return NULL;
+};
+struct VSurface *CreateVSurfaceFromFile(const char *filepath) { return NULL; };
 
 BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette) {
   return FALSE;

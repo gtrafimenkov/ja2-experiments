@@ -591,14 +591,11 @@ void EnterInitAimMembers() {
 
 BOOLEAN EnterAIMMembers() {
   VOBJECT_DESC VObjectDesc;
-  VSURFACE_DESC vs_desc;
 
   // Create a background video surface to blt the face onto
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-  vs_desc.usWidth = AIM_MEMBER_VIDEO_FACE_WIDTH;
-  vs_desc.usHeight = AIM_MEMBER_VIDEO_FACE_HEIGHT;
-  vs_desc.ubBitDepth = 16;
-  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiVideoFaceBackground));
+  CHECKF(
+      AddVSurface(CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_FACE_WIDTH, AIM_MEMBER_VIDEO_FACE_HEIGHT),
+                  &guiVideoFaceBackground));
 
   // load the stats graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
@@ -2966,7 +2963,6 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
   uint8_t i;
   uint16_t usPosX, usPosY;
   VOBJECT_DESC VObjectDesc;
-  VSURFACE_DESC vs_desc;
 
   // remove the face help text
   gfAimMemberDisplayFaceHelpText = FALSE;
@@ -3047,11 +3043,9 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
       CHECKF(AddVideoObject(&VObjectDesc, &uiVideoBackgroundGraphic));
 
       // Create a background video surface to blt the face onto
-      vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-      vs_desc.usWidth = AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH;
-      vs_desc.usHeight = AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT;
-      vs_desc.ubBitDepth = 16;
-      CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiVideoTitleBar));
+      CHECKF(AddVSurface(CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH,
+                                               AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT),
+                         &guiVideoTitleBar));
 
       gfAimMemberCanMercSayOpeningQuote = TRUE;
 
@@ -3274,11 +3268,9 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
     CHECKF(AddVideoObject(&VObjectDesc, &uiVideoBackgroundGraphic));
 
     // Create a background video surface to blt the face onto
-    vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-    vs_desc.usWidth = AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH;
-    vs_desc.usHeight = AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT;
-    vs_desc.ubBitDepth = 16;
-    CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiVideoTitleBar));
+    CHECKF(AddVSurface(
+        CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT),
+        &guiVideoTitleBar));
 
     GetVideoObject(&hImageHandle, uiVideoBackgroundGraphic);
     BltVideoObject(guiVideoTitleBar, hImageHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
