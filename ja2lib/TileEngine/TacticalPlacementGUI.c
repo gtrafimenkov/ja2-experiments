@@ -387,8 +387,7 @@ void RenderTacticalPlacementGUI() {
   }
   // If the display is dirty render the entire panel.
   if (gfTacticalPlacementGUIDirty) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, giOverheadPanelImage, 0, 0, 320, VO_BLT_SRCTRANSPARENCY,
-                            0);
+    BltVideoObjectFromIndex(vsFB, giOverheadPanelImage, 0, 0, 320, VO_BLT_SRCTRANSPARENCY, 0);
     InvalidateRegion(0, 0, 320, 480);
     gfTacticalPlacementGUIDirty = FALSE;
     MarkButtonsDirty();
@@ -399,42 +398,41 @@ void RenderTacticalPlacementGUI() {
       pSoldier = gMercPlacement[i].pSoldier;
       xp = 95 + (i / 2) * 54;
       yp = (i % 2) ? 422 : 371;
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 36, yp + 2, xp + 44, yp + 30, 0);
-      BltVideoObjectFromIndex(FRAME_BUFFER, giMercPanelImage, 0, xp, yp, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
-      BltVideoObjectFromIndex(FRAME_BUFFER, gMercPlacement[i].uiVObjectID, 0, xp + 2, yp + 2,
+      ColorFillVideoSurfaceArea(vsFB, xp + 36, yp + 2, xp + 44, yp + 30, 0);
+      BltVideoObjectFromIndex(vsFB, giMercPanelImage, 0, xp, yp, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObjectFromIndex(vsFB, gMercPlacement[i].uiVObjectID, 0, xp + 2, yp + 2,
                               VO_BLT_SRCTRANSPARENCY, NULL);
       // HEALTH BAR
       if (!pSoldier->bLife) continue;
       // yellow one for bleeding
       iStartY = yp + 29 - 27 * pSoldier->bLifeMax / 100;
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 36, iStartY, xp + 37, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 36, iStartY, xp + 37, yp + 29,
                                 Get16BPPColor(FROMRGB(107, 107, 57)));
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 37, iStartY, xp + 38, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 37, iStartY, xp + 38, yp + 29,
                                 Get16BPPColor(FROMRGB(222, 181, 115)));
       // pink one for bandaged.
       iStartY += 27 * pSoldier->bBleeding / 100;
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 36, iStartY, xp + 37, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 36, iStartY, xp + 37, yp + 29,
                                 Get16BPPColor(FROMRGB(156, 57, 57)));
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 37, iStartY, xp + 38, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 37, iStartY, xp + 38, yp + 29,
                                 Get16BPPColor(FROMRGB(222, 132, 132)));
       // red one for actual health
       iStartY = yp + 29 - 27 * pSoldier->bLife / 100;
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 36, iStartY, xp + 37, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 36, iStartY, xp + 37, yp + 29,
                                 Get16BPPColor(FROMRGB(107, 8, 8)));
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 37, iStartY, xp + 38, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 37, iStartY, xp + 38, yp + 29,
                                 Get16BPPColor(FROMRGB(206, 0, 0)));
       // BREATH BAR
       iStartY = yp + 29 - 27 * pSoldier->bBreathMax / 100;
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 39, iStartY, xp + 40, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 39, iStartY, xp + 40, yp + 29,
                                 Get16BPPColor(FROMRGB(8, 8, 132)));
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 40, iStartY, xp + 41, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 40, iStartY, xp + 41, yp + 29,
                                 Get16BPPColor(FROMRGB(8, 8, 107)));
       // MORALE BAR
       iStartY = yp + 29 - 27 * pSoldier->bMorale / 100;
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 42, iStartY, xp + 43, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 42, iStartY, xp + 43, yp + 29,
                                 Get16BPPColor(FROMRGB(8, 156, 8)));
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, xp + 43, iStartY, xp + 44, yp + 29,
+      ColorFillVideoSurfaceArea(vsFB, xp + 43, iStartY, xp + 44, yp + 29,
                                 Get16BPPColor(FROMRGB(8, 107, 8)));
     }
     SetFont(BLOCKFONT);
@@ -447,7 +445,7 @@ void RenderTacticalPlacementGUI() {
             gpStrategicString[STR_TP_CHOOSEENTRYPOSITIONS]);
 
     // Shade out the part of the tactical map that isn't considered placable.
-    BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, 0, 320, 640, 160);
+    BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 320, 640, 160);
   }
   if (gfValidLocationsChanged) {
     if (DayTime()) {     // 6AM to 9PM is black
@@ -456,7 +454,7 @@ void RenderTacticalPlacementGUI() {
       usHatchColor = Get16BPPColor(FROMRGB(63, 31, 31));
     }
     gfValidLocationsChanged--;
-    BlitBufferToBuffer(guiSAVEBUFFER, FRAME_BUFFER, 4, 4, 636, 320);
+    BlitBufferToBuffer(guiSAVEBUFFER, vsFB, 4, 4, 636, 320);
     InvalidateRegion(4, 4, 636, 320);
     if (gbCursorMercID == -1) {
       gTPClipRect.iLeft = gfWest ? 30 : 4;
@@ -483,13 +481,13 @@ void RenderTacticalPlacementGUI() {
           break;
       }
     }
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferLooseHatchRectWithColor((uint16_t *)pDestBuf, uiDestPitchBYTES, &gTPClipRect,
                                           usHatchColor);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, gTPClipRect.iLeft, gTPClipRect.iTop, gTPClipRect.iRight,
                   gTPClipRect.iBottom, usHatchColor, pDestBuf);
-    UnLockVideoSurface(FRAME_BUFFER);
+    UnLockVideoSurface(vsFB);
   }
   for (i = 0; i < giPlacements; i++) {  // Render the merc's names
     pSoldier = gMercPlacement[i].pSoldier;

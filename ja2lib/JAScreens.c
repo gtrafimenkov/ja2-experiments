@@ -376,10 +376,10 @@ void PalEditRenderHook() {
     // Set to current
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
-    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, FRAME_BUFFER);
-    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, FRAME_BUFFER);
-    DisplayPaletteRep(pSoldier->VestPal, 50, 90, FRAME_BUFFER);
-    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, FRAME_BUFFER);
+    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, vsFB);
+    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, vsFB);
+    DisplayPaletteRep(pSoldier->VestPal, 50, 90, vsFB);
+    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, vsFB);
   }
 }
 
@@ -636,7 +636,7 @@ uint32_t SexScreenHandle(void) {
   int16_t sX, sY;
 
   // OK, Clear screen and show smily face....
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   // Remove cursor....
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
@@ -702,10 +702,10 @@ uint32_t SexScreenHandle(void) {
   sY = (int16_t)((480 - pTrav->usHeight) / 2);
 
   if (bCurFrame < 24) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiSMILY, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObjectFromIndex(vsFB, guiSMILY, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
   } else {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObjectFromIndex(vsFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY, VO_BLT_SRCTRANSPARENCY,
+                            NULL);
   }
 
   InvalidateRegion(sX, sY, (int16_t)(sX + pTrav->usWidth), (int16_t)(sY + pTrav->usHeight));
@@ -742,13 +742,13 @@ void DisplayTopwareGermanyAddress() {
   ClipRect.iRight = 431;
   ClipRect.iTop = 390;
   ClipRect.iBottom = 475;
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 
   // Draw the anti-aliased address now.
-  BltVideoObjectFromIndex(FRAME_BUFFER, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObjectFromIndex(FRAME_BUFFER, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObjectFromIndex(vsFB, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObjectFromIndex(vsFB, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
   InvalidateRegion(208, 390, 431, 475);
   DeleteVideoObjectFromIndex(uiTempID);
   ExecuteBaseDirtyRectQueue();

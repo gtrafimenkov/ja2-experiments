@@ -344,7 +344,7 @@ void RenderSliderBox(SLIDER *pSlider) {
   if (pSlider->uiFlags & SLIDER_VERTICAL) {
     // display the slider box
     GetVideoObject(&hPixHandle, guiSliderBoxImage);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, pSlider->LastRect.iLeft, pSlider->LastRect.iTop,
+    BltVideoObject(vsFB, hPixHandle, 0, pSlider->LastRect.iLeft, pSlider->LastRect.iTop,
                    VO_BLT_SRCTRANSPARENCY, NULL);
 
     // invalidate the area
@@ -353,7 +353,7 @@ void RenderSliderBox(SLIDER *pSlider) {
   } else {
     // display the slider box
     GetVideoObject(&hPixHandle, guiSliderBoxImage);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, pSlider->usCurrentSliderBoxPosition,
+    BltVideoObject(vsFB, hPixHandle, 0, pSlider->usCurrentSliderBoxPosition,
                    pSlider->usPosY - DEFUALT_SLIDER_SIZE, VO_BLT_SRCTRANSPARENCY, NULL);
 
     // invalidate the area
@@ -565,7 +565,7 @@ void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
 
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
@@ -573,7 +573,7 @@ void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_
   LineDraw(FALSE, usStartX, usStartY, EndX, EndY, iColor, pDestBuf);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 }
 
 void CalculateNewSliderBoxPosition(SLIDER *pSlider) {

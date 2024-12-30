@@ -168,11 +168,11 @@ void SetRelativeStartAndEndPercentage(uint8_t ubID, uint32_t uiRelStartPerc, uin
   // Render the entire panel now, as it doesn't need update during the normal rendering
   if (pCurr->fPanel) {
     // Draw panel
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usPanelLeft, pCurr->usPanelTop,
-                              pCurr->usPanelRight, pCurr->usPanelBottom, pCurr->usLtColor);
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1,
+    ColorFillVideoSurfaceArea(vsFB, pCurr->usPanelLeft, pCurr->usPanelTop, pCurr->usPanelRight,
+                              pCurr->usPanelBottom, pCurr->usLtColor);
+    ColorFillVideoSurfaceArea(vsFB, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1,
                               pCurr->usPanelRight, pCurr->usPanelBottom, pCurr->usDkColor);
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1,
+    ColorFillVideoSurfaceArea(vsFB, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1,
                               pCurr->usPanelRight - 1, pCurr->usPanelBottom - 1, pCurr->usColor);
     InvalidateRegion(pCurr->usPanelLeft, pCurr->usPanelTop, pCurr->usPanelRight,
                      pCurr->usPanelBottom);
@@ -242,23 +242,23 @@ void RenderProgressBar(uint8_t ubID, uint32_t uiPercentage) {
     }
     if (gfUseLoadScreenProgressBar) {
       ColorFillVideoSurfaceArea(
-          FRAME_BUFFER, pCurr->usBarLeft, pCurr->usBarTop, end, pCurr->usBarBottom,
+          vsFB, pCurr->usBarLeft, pCurr->usBarTop, end, pCurr->usBarBottom,
           Get16BPPColor(
               FROMRGB(pCurr->ubColorFillRed, pCurr->ubColorFillGreen, pCurr->ubColorFillBlue)));
       // if( pCurr->usBarRight > gusLeftmostShaded )
       //{
-      //	ShadowVideoSurfaceRect( FRAME_BUFFER, gusLeftmostShaded+1, pCurr->usBarTop, end,
+      //	ShadowVideoSurfaceRect( vsFB, gusLeftmostShaded+1, pCurr->usBarTop, end,
       // pCurr->usBarBottom ); 	gusLeftmostShaded = (uint16_t)end;
       //}
     } else {
       // Border edge of the progress bar itself in gray
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight,
+      ColorFillVideoSurfaceArea(vsFB, pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight,
                                 pCurr->usBarBottom, Get16BPPColor(FROMRGB(160, 160, 160)));
       // Interior of progress bar in black
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usBarLeft + 2, pCurr->usBarTop + 2,
+      ColorFillVideoSurfaceArea(vsFB, pCurr->usBarLeft + 2, pCurr->usBarTop + 2,
                                 pCurr->usBarRight - 2, pCurr->usBarBottom - 2,
                                 Get16BPPColor(FROMRGB(0, 0, 0)));
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, pCurr->usBarLeft + 2, pCurr->usBarTop + 2, end,
+      ColorFillVideoSurfaceArea(vsFB, pCurr->usBarLeft + 2, pCurr->usBarTop + 2, end,
                                 pCurr->usBarBottom - 2, Get16BPPColor(FROMRGB(72, 155, 24)));
     }
     InvalidateRegion(pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight, pCurr->usBarBottom);

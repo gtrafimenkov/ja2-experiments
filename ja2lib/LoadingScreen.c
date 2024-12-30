@@ -175,7 +175,7 @@ uint8_t GetLoadScreenID(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
 
 extern BOOLEAN gfSchedulesHosed;
 
-// sets up the loadscreen with specified ID, and draws it to the FRAME_BUFFER,
+// sets up the loadscreen with specified ID, and draws it to the vsFB,
 // and refreshing the screen with it.
 void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
   VSURFACE_DESC vs_desc;
@@ -323,7 +323,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     SetFont(FONT10ARIAL);
     SetFontForeground(FONT_YELLOW);
     SetFontShadow(FONT_NEARBLACK);
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, 0);
+    ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...",
             vs_desc.ImageFile);
   } else if (AddVideoSurface(&vs_desc, &uiLoadScreen)) {  // Blit the background image
@@ -334,7 +334,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     SetFont(FONT10ARIAL);
     SetFontForeground(FONT_YELLOW);
     SetFontShadow(FONT_NEARBLACK);
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, 0);
+    ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"%S loadscreen data file not found...", vs_desc.ImageFile);
   }
 

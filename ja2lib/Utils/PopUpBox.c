@@ -1284,7 +1284,7 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
             PopUpBoxList[uiCounter]->uiBottomMargin);
   }
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   return TRUE;
 }

@@ -624,7 +624,7 @@ BOOLEAN InitializeButtonImageManager(int32_t DefaultBuffer, int32_t DefaultPitch
   if (DefaultBuffer != BUTTON_USE_DEFAULT)
     ButtonDestBuffer = (uint32_t)DefaultBuffer;
   else
-    ButtonDestBuffer = FRAME_BUFFER;
+    ButtonDestBuffer = vsFB;
 
   if (DefaultPitch != BUTTON_USE_DEFAULT)
     ButtonDestPitch = (uint32_t)DefaultPitch;

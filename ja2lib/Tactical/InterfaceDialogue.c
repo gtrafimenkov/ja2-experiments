@@ -648,7 +648,7 @@ void RenderTalkingMenu() {
     SetFont(MILITARYFONT1);
 
     // Render box!
-    BltVideoObjectFromIndex(FRAME_BUFFER, gTalkPanel.uiPanelVO, 0, gTalkPanel.sX, gTalkPanel.sY,
+    BltVideoObjectFromIndex(vsFB, gTalkPanel.uiPanelVO, 0, gTalkPanel.sX, gTalkPanel.sY,
                             VO_BLT_SRCTRANSPARENCY, NULL);
 
     // Render name
@@ -668,7 +668,7 @@ void RenderTalkingMenu() {
     // Set font settings back
     SetFontShadow(DEFAULT_SHADOW);
 
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
     pSrcBuf = LockVideoSurface(gTalkPanel.uiSaveBuffer, &uiSrcPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
@@ -676,7 +676,7 @@ void RenderTalkingMenu() {
                     (int16_t)(gTalkPanel.sY + TALK_PANEL_FACE_Y), 0, 0, pFace->usFaceWidth,
                     pFace->usFaceHeight);
 
-    UnLockVideoSurface(FRAME_BUFFER);
+    UnLockVideoSurface(vsFB);
     UnLockVideoSurface(gTalkPanel.uiSaveBuffer);
 
     MarkButtonsDirty();
@@ -684,7 +684,7 @@ void RenderTalkingMenu() {
     // If guy is talking.... shadow area
     if (pFace->fTalking || !DialogueQueueIsEmpty()) {
       ShadowVideoSurfaceRect(
-          FRAME_BUFFER, (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X),
+          vsFB, (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X),
           (int16_t)(gTalkPanel.sY + TALK_PANEL_SHADOW_AREA_Y),
           (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X + TALK_PANEL_SHADOW_AREA_WIDTH),
           (int16_t)(gTalkPanel.sY + TALK_PANEL_SHADOW_AREA_Y + TALK_PANEL_SHADOW_AREA_HEIGHT));
@@ -752,7 +752,7 @@ void RenderTalkingMenu() {
 
     if (gTalkPanel.fRenderSubTitlesNow) {
       RenderMercPopUpBoxFromIndex(iInterfaceDialogueBox, gTalkPanel.sPopupX, gTalkPanel.sPopupY,
-                                  FRAME_BUFFER);
+                                  vsFB);
     }
   }
 

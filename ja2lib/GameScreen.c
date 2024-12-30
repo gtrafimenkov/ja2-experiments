@@ -651,7 +651,7 @@ uint32_t MainGameScreenHandle(void) {
 
   if (gfScrollPending) {
     AllocateVideoOverlaysArea();
-    SaveVideoOverlaysArea(FRAME_BUFFER);
+    SaveVideoOverlaysArea(vsFB);
     ExecuteVideoOverlays();
   } else {
     ExecuteVideoOverlays();

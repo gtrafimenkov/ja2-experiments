@@ -479,7 +479,7 @@ BOOLEAN SaveGame(uint8_t ubSaveGameID, wchar_t *pGameDesc, size_t bufSize) {
       zSaveLoadText[SLG_SAVING_GAME_MESSAGE], 300, 0, 0, 0, &usActualWidth, &usActualHeight);
   usPosX = (640 - usActualWidth) / 2;
 
-  RenderMercPopUpBoxFromIndex(iSaveLoadGameMessageBoxID, usPosX, 160, FRAME_BUFFER);
+  RenderMercPopUpBoxFromIndex(iSaveLoadGameMessageBoxID, usPosX, 160, vsFB);
 
   InvalidateRegion(0, 0, 640, 480);
 
