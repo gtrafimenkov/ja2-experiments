@@ -227,7 +227,7 @@ void FatalError(char *pError, ...) {}
 
 uint32_t guiVSurfaceSize = 0;
 
-BOOLEAN AddStandardVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) { return FALSE; };
+BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) { return FALSE; };
 
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) { return NULL; }
 
