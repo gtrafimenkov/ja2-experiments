@@ -4044,7 +4044,7 @@ BOOLEAN MakeVSurfaceFromVObject(uint32_t uiVObject, uint16_t usSubIndex, uint32_
     hDesc.usHeight = hSrcVObject->pETRLEObject[usSubIndex].usHeight;
     hDesc.ubBitDepth = PIXEL_DEPTH;
 
-    if (AddVideoSurface(&hDesc, &uiVSurface)) {
+    if (AddVideoSurface(CreateVideoSurface(&hDesc), &uiVSurface)) {
       if (BltVideoObjectFromIndex(uiVSurface, uiVObject, usSubIndex, 0, 0, VO_BLT_SRCTRANSPARENCY,
                                   NULL)) {
         *puiVSurface = uiVSurface;

@@ -393,7 +393,7 @@ BOOLEAN InitializeTacticalInterface() {
   vs_desc.usWidth = 640;
   vs_desc.usHeight = 20;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(&vs_desc, &(gTopMessage.uiSurface)));
+  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &(gTopMessage.uiSurface)));
 
   InitItemInterface();
 
