@@ -3160,11 +3160,6 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   //
 
   do {
-    if (fMemUsage & VSURFACE_DEFAULT_MEM_USAGE) {
-      SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-      break;
-    }
-
     if (fMemUsage & VSURFACE_SYSTEM_MEM_USAGE) {
       SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
       break;
