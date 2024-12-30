@@ -258,7 +258,6 @@ uint32_t ErrorScreenShutdown(void) { return (TRUE); }
 uint32_t InitScreenInitialize(void) { return (TRUE); }
 
 uint32_t InitScreenHandle(void) {
-  VSURFACE_DESC vs_desc;
   static struct VSurface *hVSurface;
   static uint8_t ubCurrentScreen = 255;
 
@@ -277,11 +276,7 @@ uint32_t InitScreenHandle(void) {
 
   if (ubCurrentScreen == 0) {
     // Load init screen and blit!
-    vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-
-    strcpy(vs_desc.ImageFile, "ja2_logo.STI");
-
-    hVSurface = CreateVideoSurface(&vs_desc);
+    hVSurface = CreateVideoSurfaceFromFile("ja2_logo.STI");
     if (!hVSurface) AssertMsg(0, "Failed to load ja2_logo.sti!");
 
     // BltVideoSurfaceToVideoSurface( ghFrameBuffer, hVSurface, 0, 0, 0, VS_BLT_FAST, NULL );

@@ -233,4 +233,11 @@ BOOLEAN MakeVSurfaceFromVObject(uint32_t uiVObject, uint16_t usSubIndex, uint32_
 BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
                                                    int32_t X2, int32_t Y2);
 
+//////////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////////
+
+struct VSurface *CreateVideoSurfaceFromFile(char *filepath);
+bool AddVideoSurfaceFromFile(const char *filepath, uint32_t *index);
+
 #endif
