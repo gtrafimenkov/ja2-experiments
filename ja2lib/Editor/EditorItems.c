@@ -285,7 +285,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   vs_desc.ubBitDepth = ubBitDepth;
 
   //!!!Memory check.  Create the item buffer
-  if (!AddVideoSurface(CreateVideoSurface(&vs_desc), &eInfo.uiBuffer)) {
+  if (!AddVSurface(CreateVSurface(&vs_desc), &eInfo.uiBuffer)) {
     eInfo.fKill = TRUE;
     eInfo.fActive = FALSE;
     return;

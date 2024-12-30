@@ -289,7 +289,7 @@ BOOLEAN InitializeTacticalInterface() {
       UseLoadedButtonImage(iIconImages[OPEN_DOOR_IMAGES], -1, 15, 16, 17, -1);
 
   // Load interface panels
-  if (!AddVideoSurfaceFromFile("INTERFACE\\IN_TEXT.STI", &guiINTEXT))
+  if (!AddVSurfaceFromFile("INTERFACE\\IN_TEXT.STI", &guiINTEXT))
     AssertMsg(0, "Missing INTERFACE\\In_text.sti");
   SetVideoSurfaceTransparency(guiINTEXT, FROMRGB(255, 0, 0));
 
@@ -393,7 +393,7 @@ BOOLEAN InitializeTacticalInterface() {
   vs_desc.usWidth = 640;
   vs_desc.usHeight = 20;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &(gTopMessage.uiSurface)));
+  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &(gTopMessage.uiSurface)));
 
   InitItemInterface();
 

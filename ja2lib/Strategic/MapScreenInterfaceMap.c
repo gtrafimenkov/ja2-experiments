@@ -1438,7 +1438,7 @@ BOOLEAN InitializePalettesForMap(void) {
   uint32_t uiTempMap;
 
   // load image
-  CHECKF(AddVideoSurfaceFromFile("INTERFACE\\b_map.pcx", &uiTempMap));
+  CHECKF(AddVSurfaceFromFile("INTERFACE\\b_map.pcx", &uiTempMap));
 
   // get video surface
   CHECKF(GetVideoSurface(&hSrcVSurface, uiTempMap));

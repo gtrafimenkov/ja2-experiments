@@ -3796,7 +3796,7 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
   vs_desc.usWidth = LAPTOP_TITLE_BAR_WIDTH;
   vs_desc.usHeight = LAPTOP_TITLE_BAR_HEIGHT;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &guiTitleBarSurface));
+  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiTitleBarSurface));
 
   // blit the toolbar grapgucs onto the surface
   GetVideoObject(&hImageHandle, uiBackgroundGraphic);
@@ -4434,7 +4434,7 @@ BOOLEAN LoadDesktopBackground(void) {
   // load desktop background
   SGPFILENAME ImageFile;
   GetMLGFilename(ImageFile, MLG_DESKTOP);
-  CHECKF(AddVideoSurfaceFromFile(ImageFile, &guiDESKTOP));
+  CHECKF(AddVSurfaceFromFile(ImageFile, &guiDESKTOP));
 
   return (TRUE);
 }

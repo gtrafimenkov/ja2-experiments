@@ -1994,7 +1994,7 @@ BOOLEAN CreateHelpScreenTextBuffer() {
   vs_desc.usWidth = HLP_SCRN__WIDTH_OF_TEXT_BUFFER;
   vs_desc.usHeight = HLP_SCRN__HEIGHT_OF_TEXT_BUFFER;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &guiHelpScreenTextBufferSurface));
+  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiHelpScreenTextBufferSurface));
 
   return (TRUE);
 }

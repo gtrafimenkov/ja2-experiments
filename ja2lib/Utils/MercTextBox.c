@@ -156,8 +156,8 @@ BOOLEAN LoadTextMercPopupImages(uint8_t ubBackgroundIndex, uint8_t ubBorderIndex
   // this function will load the graphics associated with the background and border index values
 
   // the background
-  CHECKF(AddVideoSurfaceFromFile(zMercBackgroundPopupFilenames[ubBackgroundIndex],
-                                 &gPopUpTextBox->uiMercTextPopUpBackground));
+  CHECKF(AddVSurfaceFromFile(zMercBackgroundPopupFilenames[ubBackgroundIndex],
+                             &gPopUpTextBox->uiMercTextPopUpBackground));
 
   // border
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
@@ -395,7 +395,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
   vs_desc.usWidth = usWidth;
   vs_desc.usHeight = usHeight;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &pPopUpTextBox->uiSourceBufferIndex));
+  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &pPopUpTextBox->uiSourceBufferIndex));
   pPopUpTextBox->fMercTextPopupSurfaceInitialized = TRUE;
 
   pPopUpTextBox->sWidth = usWidth;

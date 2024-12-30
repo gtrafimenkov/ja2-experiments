@@ -135,7 +135,7 @@ BOOLEAN ShutdownVideoSurfaceManager();
 BOOLEAN RestoreVideoSurfaces();
 
 // Adds a video Surface to list
-BOOLEAN AddVideoSurface(struct VSurface *vs, uint32_t *uiIndex);
+BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *uiIndex);
 
 // Returns a HVSurface for the specified index
 BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex);
@@ -167,7 +167,7 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor);
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Created from a VSurface_DESC structure. Can be from a file via HIMAGE or empty.
-struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc);
+struct VSurface *CreateVSurface(VSURFACE_DESC *VSurfaceDesc);
 
 // Gets the RGB palette entry values
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteEntry *pPalette);
@@ -237,8 +237,8 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int3
 
 typedef uint32_t VSurfID;
 
-struct VSurface *CreateVideoSurfaceFromFile(char *filepath);
-bool AddVideoSurfaceFromFile(const char *filepath, VSurfID *index);
+struct VSurface *CreateVSurfaceFromFile(char *filepath);
+bool AddVSurfaceFromFile(const char *filepath, VSurfID *index);
 
 void InitVSurfaceList();
 void DeinitVSurfaceList();
@@ -246,6 +246,6 @@ void DeinitVSurfaceList();
 VSurfID AddVSurfaceToList(struct VSurface *vs);
 bool DeleteVSurfaceFromList(VSurfID id);
 
-struct VSurface *FindSurface(VSurfID id);
+struct VSurface *FindVSurface(VSurfID id);
 
 #endif

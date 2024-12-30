@@ -7461,7 +7461,7 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
     FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
     CHECKF(AddVideoObject(&VObjectDesc, &guiPOPUPBORDERS));
 
-    CHECKF(AddVideoSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
+    CHECKF(AddVSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
 
     // these boxes are always created while in mapscreen...
     CreateEPCBox();

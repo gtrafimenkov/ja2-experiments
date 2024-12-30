@@ -2620,7 +2620,7 @@ uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
     return (uint8_t *)LockMouseBuffer(puiPitch);
   }
 
-  struct VSurface *vs = FindSurface(uiVSurface);
+  struct VSurface *vs = FindVSurface(uiVSurface);
   if (!vs) {
     return FALSE;
   }
@@ -2652,7 +2652,7 @@ void UnLockVideoSurface(uint32_t uiVSurface) {
     return;
   }
 
-  struct VSurface *vs = FindSurface(uiVSurface);
+  struct VSurface *vs = FindVSurface(uiVSurface);
   if (!vs) {
     return;
   }
@@ -2706,7 +2706,7 @@ BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
     return TRUE;
   }
 
-  struct VSurface *vs = FindSurface(uiIndex);
+  struct VSurface *vs = FindVSurface(uiIndex);
   if (vs) {
     *hVSurface = vs;
     return TRUE;
@@ -2902,7 +2902,7 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
+struct VSurface *CreateVSurface(VSURFACE_DESC *VSurfaceDesc) {
   LPDIRECTDRAW2 lpDD2Object;
   DDSURFACEDESC SurfaceDescription;
   DDPIXELFORMAT PixelFormat;
