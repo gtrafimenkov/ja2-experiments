@@ -5,6 +5,7 @@
 #include "VSurface.h"
 
 #include "SGP/Debug.h"
+#include "SGP/VObject.h"
 #include "StrUtils.h"
 
 struct VSurface *CreateVideoSurfaceFromFile(char *filepath) {
@@ -132,4 +133,27 @@ bool DeleteVSurfaceFromList(VSurfID id) {
     curr = curr->next;
   }
   return false;
+}
+
+BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
+  struct VSurface *hVSurface;
+
+  // Assertions
+  Assert(puiIndex);
+  Assert(pVSurfaceDesc);
+
+  // Create video object
+  hVSurface = CreateVideoSurface(pVSurfaceDesc);
+
+  if (!hVSurface) {
+    // Video Object will set error condition.
+    return FALSE;
+  }
+
+  // Set transparency to default
+  SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
+
+  *puiIndex = AddVSurfaceToList(hVSurface);
+
+  return TRUE;
 }
