@@ -60,8 +60,8 @@ uint32_t guiRightButtonRepeatTimer;
 BOOLEAN gfTrackMousePos;     // TRUE = queue mouse movement events, FALSE = don't
 BOOLEAN gfLeftButtonState;   // TRUE = Pressed, FALSE = Not Pressed
 BOOLEAN gfRightButtonState;  // TRUE = Pressed, FALSE = Not Pressed
-uint16_t gusMouseXPos;         // X position of the mouse on screen
-uint16_t gusMouseYPos;         // y position of the mouse on screen
+uint16_t gusMouseXPos;       // X position of the mouse on screen
+uint16_t gusMouseYPos;       // y position of the mouse on screen
 
 // The queue structures are used to track input events using queued events
 
@@ -727,7 +727,7 @@ void KeyChange(uint32_t usParam, uint32_t uiParam, uint8_t ufKeyState) {
 
 void KeyDown(uint32_t usParam,
              uint32_t uiParam) {  // Are we PRESSING down one of SHIFT, ALT or CTRL ???
-  if (usParam == 16) {          // SHIFT key is PRESSED
+  if (usParam == 16) {            // SHIFT key is PRESSED
     gfShiftState = SHIFT_DOWN;
     gfKeyState[16] = TRUE;
   } else {
@@ -755,7 +755,7 @@ void KeyDown(uint32_t usParam,
 }
 
 void KeyUp(uint32_t usParam, uint32_t uiParam) {  // Are we RELEASING one of SHIFT, ALT or CTRL ???
-  if (usParam == 16) {                        // SHIFT key is RELEASED
+  if (usParam == 16) {                            // SHIFT key is RELEASED
     gfShiftState = FALSE;
     gfKeyState[16] = FALSE;
   } else {
@@ -1057,7 +1057,8 @@ void SimulateMouseMovement(uint32_t uiNewXPos, uint32_t uiNewYPos) {
   flNewXPos = ((float)uiNewXPos / SCREEN_WIDTH) * 65536;
   flNewYPos = ((float)uiNewYPos / SCREEN_HEIGHT) * 65536;
 
-  mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, (uint32_t)flNewXPos, (uint32_t)flNewYPos, 0, 0);
+  mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, (uint32_t)flNewXPos, (uint32_t)flNewYPos, 0,
+              0);
 }
 
 void DequeueAllKeyBoardEvents() {
@@ -1065,8 +1066,7 @@ void DequeueAllKeyBoardEvents() {
   MSG KeyMessage;
 
   // dequeue all the events waiting in the windows queue
-  while (PeekMessage(&KeyMessage, ghWindow, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
-    ;
+  while (PeekMessage(&KeyMessage, ghWindow, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE));
 
   // Deque all the events waiting in the SGP queue
   while (DequeueEvent(&InputEvent) == TRUE) {

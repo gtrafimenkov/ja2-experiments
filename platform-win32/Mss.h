@@ -2,31 +2,31 @@
 // This file contains code derived from the code released under the terms
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
-//############################################################################
-//##                                                                        ##
-//##  Miles Sound System                                                    ##
-//##                                                                        ##
-//##  MSS.H: Miles Sound System main header file                            ##
-//##                                                                        ##
-//##  Version 1.00 of 15-Feb-95: Initial, derived from AIL.H V3.02          ##
-//##          1.01 of 19-Jun-95: Added various functions for V3.03 release  ##
-//##          1.02 of 22-Nov-95: C++ typedef problem fixed, declspecs added ##
-//##          1.03 of 15-Feb-96: Changes for 16 bit callbacks and multiple  ##
-//##                             16 bit DLL loads (JKR)                     ##
-//##          1.04 of  2-Nov-97: Changes made to handle DLS in future       ##
-//##                             versions                                   ##
-//##          1.05 of  1-Jan-98: Massive changes for version 4.0            ##
-//##          1.06 of 17-Sep-98: Massive changes for version 5.0            ##
-//##          1.07 of  2-Feb-99: Changes for new input API                  ##
-//##          1.08 of  8-Feb-99: Changes for new filter helper functions    ##
-//##                                                                        ##
-//##  Author: John Miles                                                    ##
-//##                                                                        ##
-//############################################################################
-//##                                                                        ##
-//##  Contact RAD Game Tools at 425-893-4300 for technical support.         ##
-//##                                                                        ##
-//############################################################################
+// ############################################################################
+// ##                                                                        ##
+// ##  Miles Sound System                                                    ##
+// ##                                                                        ##
+// ##  MSS.H: Miles Sound System main header file                            ##
+// ##                                                                        ##
+// ##  Version 1.00 of 15-Feb-95: Initial, derived from AIL.H V3.02          ##
+// ##          1.01 of 19-Jun-95: Added various functions for V3.03 release  ##
+// ##          1.02 of 22-Nov-95: C++ typedef problem fixed, declspecs added ##
+// ##          1.03 of 15-Feb-96: Changes for 16 bit callbacks and multiple  ##
+// ##                             16 bit DLL loads (JKR)                     ##
+// ##          1.04 of  2-Nov-97: Changes made to handle DLS in future       ##
+// ##                             versions                                   ##
+// ##          1.05 of  1-Jan-98: Massive changes for version 4.0            ##
+// ##          1.06 of 17-Sep-98: Massive changes for version 5.0            ##
+// ##          1.07 of  2-Feb-99: Changes for new input API                  ##
+// ##          1.08 of  8-Feb-99: Changes for new filter helper functions    ##
+// ##                                                                        ##
+// ##  Author: John Miles                                                    ##
+// ##                                                                        ##
+// ############################################################################
+// ##                                                                        ##
+// ##  Contact RAD Game Tools at 425-893-4300 for technical support.         ##
+// ##                                                                        ##
+// ############################################################################
 
 #ifndef MSS_VERSION
 
@@ -462,7 +462,7 @@ typedef LPVOID AILLPDIRECTSOUNDBUFFER;
 // Pass to AIL_midiOutOpen for NULL MIDI driver
 //
 
-#define MIDI_NULL_DRIVER ((U32)(S32)-2)
+#define MIDI_NULL_DRIVER ((U32)(S32) - 2)
 
 #endif
 
@@ -601,13 +601,13 @@ typedef LPVOID AILLPDIRECTSOUNDBUFFER;
 #ifdef __BORLANDC__
 
 #ifndef REALPTR
-#define REALPTR(x) ((void *)(U32)((((U32)(x)) >> 16 << 4) + ((x)&0xffff) - AIL_sel_base(_DS)))
+#define REALPTR(x) ((void *)(U32)((((U32)(x)) >> 16 << 4) + ((x) & 0xffff) - AIL_sel_base(_DS)))
 #endif
 
 #else
 
 #ifndef REALPTR
-#define REALPTR(x) ((void *)(U32)((((U32)(x)) >> 16 << 4) + ((x)&0xffff)))
+#define REALPTR(x) ((void *)(U32)((((U32)(x)) >> 16 << 4) + ((x) & 0xffff)))
 #endif
 
 #endif
@@ -1071,20 +1071,14 @@ typedef U32(AILCALL FAR *PROVIDER_QUERY_ATTRIBUTE)(HATTRIB index);
 // attributes, and preferences
 //
 
-#define FN(entry_name) \
-  { RIB_FUNCTION, #entry_name, (U32) & (entry_name), RIB_NONE }
-#define REG_FN(entry_name) \
-  { RIB_FUNCTION, #entry_name, (U32) & (entry_name), RIB_NONE }
+#define FN(entry_name) {RIB_FUNCTION, #entry_name, (U32) & (entry_name), RIB_NONE}
+#define REG_FN(entry_name) {RIB_FUNCTION, #entry_name, (U32) & (entry_name), RIB_NONE}
 
-#define AT(entry_name, ID) \
-  { RIB_ATTRIBUTE, (entry_name), (U32) & (ID), RIB_NONE }
-#define REG_AT(entry_name, ID, subtype) \
-  { RIB_ATTRIBUTE, (entry_name), (U32)(ID), subtype }
+#define AT(entry_name, ID) {RIB_ATTRIBUTE, (entry_name), (U32) & (ID), RIB_NONE}
+#define REG_AT(entry_name, ID, subtype) {RIB_ATTRIBUTE, (entry_name), (U32)(ID), subtype}
 
-#define PR(entry_name, ID) \
-  { RIB_PREFERENCE, (entry_name), (U32) & (ID), RIB_NONE }
-#define REG_PR(entry_name, ID, subtype) \
-  { RIB_PREFERENCE, (entry_name), (U32)(ID), subtype }
+#define PR(entry_name, ID) {RIB_PREFERENCE, (entry_name), (U32) & (ID), RIB_NONE}
+#define REG_PR(entry_name, ID, subtype) {RIB_PREFERENCE, (entry_name), (U32)(ID), subtype}
 
 #define RIB_register(x, y, z) RIB_register_interface(HPROVIDER(x), y, ARY_CNT(z), z)
 #define RIB_unregister(x, y, z) RIB_unregister_interface(HPROVIDER(x), y, ARY_CNT(z), z)
@@ -1218,11 +1212,11 @@ typedef S32(AILCALLBACK FAR *AILASIFETCHCB)(
     S32 bytes_requested,  // # of bytes requested by ASI codec
     S32 offset);          // If not -1, application should seek to this point in stream
 
-//############################################################################
-//##                                                                        ##
-//## Interface "ASI codec"                                                  ##
-//##                                                                        ##
-//############################################################################
+// ############################################################################
+// ##                                                                        ##
+// ## Interface "ASI codec"                                                  ##
+// ##                                                                        ##
+// ############################################################################
 
 //
 // Initialize ASI stream codec
@@ -1250,11 +1244,11 @@ typedef ASIRESULT(AILCALL FAR *ASI_SHUTDOWN)(void);
 
 typedef C8 FAR *(AILCALL FAR *ASI_ERROR)(void);
 
-//############################################################################
-//##                                                                        ##
-//## Interface "ASI stream"                                                 ##
-//##                                                                        ##
-//############################################################################
+// ############################################################################
+// ##                                                                        ##
+// ## Interface "ASI stream"                                                 ##
+// ##                                                                        ##
+// ############################################################################
 
 //
 // Open a stream, returning handle to stream
@@ -1325,11 +1319,11 @@ typedef ASIRESULT(AILCALL FAR *ASI_STREAM_CLOSE)(HASISTREAM stream);
 
 #endif
 
-//############################################################################
-//##                                                                        ##
-//## Interface "MSS 3D audio services"                                      ##
-//##                                                                        ##
-//############################################################################
+// ############################################################################
+// ##                                                                        ##
+// ## Interface "MSS 3D audio services"                                      ##
+// ##                                                                        ##
+// ############################################################################
 
 //
 // 3D positioning services
@@ -1471,11 +1465,11 @@ typedef void(AILCALL FAR *M3D_SET_3D_SAMPLE_CONE)(H3DSAMPLE samp, F32 inner_angl
 typedef void(AILCALL FAR *M3D_3D_SAMPLE_CONE)(H3DSAMPLE samp, F32 FAR *inner_angle,
                                               F32 FAR *outer_angle, S32 FAR *outer_volume);
 
-//############################################################################
-//##                                                                        ##
-//## Interface "MSS mixer services"                                         ##
-//##                                                                        ##
-//############################################################################
+// ############################################################################
+// ##                                                                        ##
+// ## Interface "MSS mixer services"                                         ##
+// ##                                                                        ##
+// ############################################################################
 
 //
 // Operation flags used by mixer module
@@ -1987,7 +1981,7 @@ typedef void *LPSTR;
 
 typedef struct _WAVEIN {
   long temp;
-} * HWAVEIN;
+} *HWAVEIN;
 
 typedef struct _WAVEHDR {
   S32 dwFlags;
@@ -2566,7 +2560,7 @@ extern HMDIDRIVER MDI_first;
 // Miscellaneous system services
 //
 
-#define FILE_READ_WITH_SIZE ((void FAR *)(S32)-1)
+#define FILE_READ_WITH_SIZE ((void FAR *)(S32) - 1)
 
 #ifndef NO_OLD_SYS_FUNCTIONS
 
@@ -2811,7 +2805,7 @@ int __cdecl MSS_auto_cleanup(void);
 #ifdef _MSC_VER
 // on MSVC, automatically register a cleanup function
 // ODCODENOTE Remove
-//#define AIL_startup() (MSS_auto_cleanup(),AIL_startup())
+// #define AIL_startup() (MSS_auto_cleanup(),AIL_startup())
 #endif
 
 #endif
@@ -3599,7 +3593,7 @@ DXDEC HDLSFILEID AILCALL AIL_DLS_load_memory(HDLSDEVICE dls, void const FAR *mem
 //
 
 #define AIL_DLS_UNLOAD_MINE 0
-#define AIL_DLS_UNLOAD_ALL ((HDLSFILEID)(U32)(S32)-1)
+#define AIL_DLS_UNLOAD_ALL ((HDLSFILEID)(U32)(S32) - 1)
 
 DXDEC void AILCALL AIL_DLS_unload(HDLSDEVICE dls, HDLSFILEID dlsid);
 
@@ -3838,11 +3832,11 @@ typedef S32 FLTRESULT;
 #define FLT_NOT_INIT 8             // FLT not initialized
 #define FLT_CLOSE_ERR 9            // FLT not closed correctly
 
-//############################################################################
-//##                                                                        ##
-//## Interface "MSS pipeline filter"                                        ##
-//##                                                                        ##
-//############################################################################
+// ############################################################################
+// ##                                                                        ##
+// ## Interface "MSS pipeline filter"                                        ##
+// ##                                                                        ##
+// ############################################################################
 
 typedef FLTRESULT(AILCALL FAR *FLT_STARTUP)(void);
 
@@ -3871,11 +3865,11 @@ typedef void(AILCALL FAR *FLT_POSTMIX_PROCESS)(HDRIVERSTATE driver
 #endif
 );
 
-//############################################################################
-//##                                                                        ##
-//## Interface "Pipeline filter sample services"                            ##
-//##                                                                        ##
-//############################################################################
+// ############################################################################
+// ##                                                                        ##
+// ## Interface "Pipeline filter sample services"                            ##
+// ##                                                                        ##
+// ############################################################################
 
 typedef HSAMPLESTATE(AILCALL FAR *FLTSMP_OPEN_SAMPLE)(HDRIVERSTATE driver, HSAMPLE S);
 

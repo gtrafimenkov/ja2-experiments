@@ -34,10 +34,10 @@ typedef struct SmackTag {
   uint32_t FrameNum;           // Frame Number to be displayed
   uint32_t FrameSize;          // The current frame's size in bytes
   uint32_t SndSize;            // The current frame sound tracks' size in bytes
-  s32 LastRectx;          // Rect set in from SmackToBufferRect (X coord)
-  s32 LastRecty;          // Rect set in from SmackToBufferRect (Y coord)
-  s32 LastRectw;          // Rect set in from SmackToBufferRect (Width)
-  s32 LastRecth;          // Rect set in from SmackToBufferRect (Height)
+  s32 LastRectx;               // Rect set in from SmackToBufferRect (X coord)
+  s32 LastRecty;               // Rect set in from SmackToBufferRect (Y coord)
+  s32 LastRectw;               // Rect set in from SmackToBufferRect (Width)
+  s32 LastRecth;               // Rect set in from SmackToBufferRect (Height)
   uint32_t OpenFlags;          // flags used on open
   uint32_t LeftOfs;            // Left Offset used in SmackTo
   uint32_t TopOfs;             // Top Offset used in SmackTo
@@ -108,7 +108,8 @@ typedef struct SmackSumTag {
 #define SMACKSURFACESLOW 1
 #define SMACKSURFACEDIRECT 2
 
-RADEXPFUNC Smack PTR4* RADEXPLINK SmackOpen(const char PTR4* name, uint32_t flags, uint32_t extrabuf);
+RADEXPFUNC Smack PTR4* RADEXPLINK SmackOpen(const char PTR4* name, uint32_t flags,
+                                            uint32_t extrabuf);
 
 #ifdef __RADMAC__
 #include <files.h>
@@ -121,7 +122,8 @@ RADEXPFUNC void RADEXPLINK SmackNextFrame(Smack PTR4* smk);
 RADEXPFUNC uint32_t RADEXPLINK SmackWait(Smack PTR4* smk);
 RADEXPFUNC void RADEXPLINK SmackClose(Smack PTR4* smk);
 
-RADEXPFUNC void RADEXPLINK SmackVolumePan(Smack PTR4* smk, uint32_t trackflag, uint32_t volume, uint32_t pan);
+RADEXPFUNC void RADEXPLINK SmackVolumePan(Smack PTR4* smk, uint32_t trackflag, uint32_t volume,
+                                          uint32_t pan);
 
 RADEXPFUNC void RADEXPLINK SmackSummary(Smack PTR4* smk, SmackSum PTR4* sum);
 
@@ -129,24 +131,28 @@ RADEXPFUNC uint32_t RADEXPLINK SmackSoundInTrack(Smack PTR4* smk, uint32_t track
 RADEXPFUNC uint32_t RADEXPLINK SmackSoundOnOff(Smack PTR4* smk, uint32_t on);
 
 #ifndef __RADMAC__
-RADEXPFUNC void RADEXPLINK SmackToScreen(Smack PTR4* smk, uint32_t left, uint32_t top, uint32_t BytePS,
-                                         const uint16_t PTR4* WinTbl, void* SetBank, uint32_t Flags);
+RADEXPFUNC void RADEXPLINK SmackToScreen(Smack PTR4* smk, uint32_t left, uint32_t top,
+                                         uint32_t BytePS, const uint16_t PTR4* WinTbl,
+                                         void* SetBank, uint32_t Flags);
 #endif
 
-RADEXPFUNC void RADEXPLINK SmackToBuffer(Smack PTR4* smk, uint32_t left, uint32_t top, uint32_t Pitch,
-                                         uint32_t destheight, const void PTR4* buf, uint32_t Flags);
+RADEXPFUNC void RADEXPLINK SmackToBuffer(Smack PTR4* smk, uint32_t left, uint32_t top,
+                                         uint32_t Pitch, uint32_t destheight, const void PTR4* buf,
+                                         uint32_t Flags);
 RADEXPFUNC uint32_t RADEXPLINK SmackToBufferRect(Smack PTR4* smk, uint32_t SmackSurface);
 
 RADEXPFUNC void RADEXPLINK SmackGoto(Smack PTR4* smk, uint32_t frame);
 RADEXPFUNC void RADEXPLINK SmackColorRemapWithTrans(Smack PTR4* smk, const void PTR4* remappal,
-                                                    uint32_t numcolors, uint32_t paltype, uint32_t transindex);
+                                                    uint32_t numcolors, uint32_t paltype,
+                                                    uint32_t transindex);
 #define SmackColorRemap(smk, remappal, numcolors, paltype) \
   SmackColorRemapWithTrans(smk, remappal, numcolors, paltype, 1000)
 RADEXPFUNC void RADEXPLINK SmackColorTrans(Smack PTR4* smk, const void PTR4* trans);
 RADEXPFUNC void RADEXPLINK SmackFrameRate(uint32_t forcerate);
 RADEXPFUNC void RADEXPLINK SmackSimulate(uint32_t sim);
 
-RADEXPFUNC uint32_t RADEXPLINK SmackGetTrackData(Smack PTR4* smk, void PTR4* dest, uint32_t trackflag);
+RADEXPFUNC uint32_t RADEXPLINK SmackGetTrackData(Smack PTR4* smk, void PTR4* dest,
+                                                 uint32_t trackflag);
 
 RADEXPFUNC void RADEXPLINK SmackSoundCheck(void);
 
@@ -176,24 +182,30 @@ typedef struct _SMACKBLIT {
 #define SMACKBLIT2XINTERLACE 8
 
 RADEXPFUNC HSMACKBLIT RADEXPLINK SmackBlitOpen(uint32_t flags);
-RADEXPFUNC void RADEXPLINK SmackBlitSetPalette(HSMACKBLIT sblit, void PTR4* Palette, uint32_t PalType);
+RADEXPFUNC void RADEXPLINK SmackBlitSetPalette(HSMACKBLIT sblit, void PTR4* Palette,
+                                               uint32_t PalType);
 RADEXPFUNC uint32_t RADEXPLINK SmackBlitSetFlags(HSMACKBLIT sblit, uint32_t flags);
-RADEXPFUNC void RADEXPLINK SmackBlit(HSMACKBLIT sblit, void PTR4* dest, uint32_t destpitch, uint32_t destx,
-                                     uint32_t desty, void PTR4* src, uint32_t srcpitch, uint32_t srcx, uint32_t srcy,
-                                     uint32_t srcw, uint32_t srch);
+RADEXPFUNC void RADEXPLINK SmackBlit(HSMACKBLIT sblit, void PTR4* dest, uint32_t destpitch,
+                                     uint32_t destx, uint32_t desty, void PTR4* src,
+                                     uint32_t srcpitch, uint32_t srcx, uint32_t srcy, uint32_t srcw,
+                                     uint32_t srch);
 RADEXPFUNC void RADEXPLINK SmackBlitClear(HSMACKBLIT sblit, void PTR4* dest, uint32_t destpitch,
-                                          uint32_t destx, uint32_t desty, uint32_t destw, uint32_t desth, s32 color);
+                                          uint32_t destx, uint32_t desty, uint32_t destw,
+                                          uint32_t desth, s32 color);
 RADEXPFUNC void RADEXPLINK SmackBlitClose(HSMACKBLIT sblit);
 RADEXPFUNC void RADEXPLINK SmackBlitTrans(HSMACKBLIT sblit, void PTR4* dest, uint32_t destpitch,
-                                          uint32_t destx, uint32_t desty, void PTR4* src, uint32_t srcpitch,
-                                          uint32_t srcx, uint32_t srcy, uint32_t srcw, uint32_t srch, uint32_t trans);
+                                          uint32_t destx, uint32_t desty, void PTR4* src,
+                                          uint32_t srcpitch, uint32_t srcx, uint32_t srcy,
+                                          uint32_t srcw, uint32_t srch, uint32_t trans);
 RADEXPFUNC void RADEXPLINK SmackBlitMask(HSMACKBLIT sblit, void PTR4* dest, uint32_t destpitch,
-                                         uint32_t destx, uint32_t desty, void PTR4* src, uint32_t srcpitch,
-                                         uint32_t srcx, uint32_t srcy, uint32_t srcw, uint32_t srch, uint32_t trans,
+                                         uint32_t destx, uint32_t desty, void PTR4* src,
+                                         uint32_t srcpitch, uint32_t srcx, uint32_t srcy,
+                                         uint32_t srcw, uint32_t srch, uint32_t trans,
                                          void PTR4* mask);
 RADEXPFUNC void RADEXPLINK SmackBlitMerge(HSMACKBLIT sblit, void PTR4* dest, uint32_t destpitch,
-                                          uint32_t destx, uint32_t desty, void PTR4* src, uint32_t srcpitch,
-                                          uint32_t srcx, uint32_t srcy, uint32_t srcw, uint32_t srch, uint32_t trans,
+                                          uint32_t destx, uint32_t desty, void PTR4* src,
+                                          uint32_t srcpitch, uint32_t srcx, uint32_t srcy,
+                                          uint32_t srcw, uint32_t srch, uint32_t trans,
                                           void PTR4* back);
 RADEXPFUNC char PTR4* RADEXPLINK SmackBlitString(HSMACKBLIT sblit, char PTR4* dest);
 
@@ -396,7 +408,8 @@ RADEXPFUNC void RADEXPLINK SmackBufferGet(SmackBuf PTR4* sbuf, void PTR4* dest);
 RADEXPFUNC uint8_t RADEXPLINK SmackSoundUseMSS(void PTR4* dd);
 RADEXPFUNC uint8_t RADEXPLINK SmackSoundUseDirectSound(void PTR4* dd);  // NULL=Create
 RADEXPFUNC void RADEXPLINK SmackSoundSetDirectSoundHWND(HWND hw);
-RADEXPFUNC uint8_t RADEXPLINK SmackSoundUseDW(uint32_t openfreq, uint32_t openbits, uint32_t openchans);
+RADEXPFUNC uint8_t RADEXPLINK SmackSoundUseDW(uint32_t openfreq, uint32_t openbits,
+                                              uint32_t openchans);
 
 #define SmackTimerSetup()
 #define SmackTimerDone()
@@ -407,20 +420,22 @@ RADEXPFUNC uint8_t RADEXPLINK SmackSoundUseDW(uint32_t openfreq, uint32_t openbi
 #endif
 
 #ifdef __RADMAC__
-RADEXPFUNC SmackBuf PTR4* RADEXPLINK SmackBufferOpen(WindowPtr wp, uint32_t BlitType, uint32_t width,
-                                                     uint32_t height, uint32_t ZoomW, uint32_t ZoomH);
+RADEXPFUNC SmackBuf PTR4* RADEXPLINK SmackBufferOpen(WindowPtr wp, uint32_t BlitType,
+                                                     uint32_t width, uint32_t height,
+                                                     uint32_t ZoomW, uint32_t ZoomH);
 RADEXPFUNC uint32_t RADEXPLINK SmackBufferBlit(SmackBuf PTR4* sbuf, s32 hwndx, s32 hwndy, s32 subx,
-                                          s32 suby, s32 subw, s32 subh);
+                                               s32 suby, s32 subw, s32 subh);
 RADEXPFUNC void RADEXPLINK SmackBufferFromScreen(SmackBuf PTR4* destbuf, s32 x, s32 y);
 
 RADEXPFUNC s32 RADEXPLINK SmackIsSoftwareCursor(GDHandle gd);
 RADEXPFUNC s32 RADEXPLINK SmackCheckCursor(WindowPtr wp, s32 x, s32 y, s32 w, s32 h);
 RADEXPFUNC void RADEXPLINK SmackRestoreCursor(s32 checkcount);
 #else
-RADEXPFUNC SmackBuf PTR4* RADEXPLINK SmackBufferOpen(HWND wnd, uint32_t BlitType, uint32_t width, uint32_t height,
-                                                     uint32_t ZoomW, uint32_t ZoomH);
+RADEXPFUNC SmackBuf PTR4* RADEXPLINK SmackBufferOpen(HWND wnd, uint32_t BlitType, uint32_t width,
+                                                     uint32_t height, uint32_t ZoomW,
+                                                     uint32_t ZoomH);
 RADEXPFUNC uint32_t RADEXPLINK SmackBufferBlit(SmackBuf PTR4* sbuf, HDC dc, s32 hwndx, s32 hwndy,
-                                          s32 subx, s32 suby, s32 subw, s32 subh);
+                                               s32 subx, s32 suby, s32 subw, s32 subh);
 RADEXPFUNC void RADEXPLINK SmackBufferFromScreen(SmackBuf PTR4* destbuf, HWND hw, s32 x, s32 y);
 
 RADEXPFUNC s32 RADEXPLINK SmackIsSoftwareCursor(void* lpDDSP, HCURSOR cur);
@@ -450,11 +465,13 @@ RADEXPFUNC void RADEXPLINK SmackBufferToBufferTrans(SmackBuf PTR4* destbuf, s32 
 RADEXPFUNC void RADEXPLINK SmackBufferToBufferMask(SmackBuf PTR4* destbuf, s32 destx, s32 desty,
                                                    const SmackBuf PTR4* sourcebuf, s32 sourcex,
                                                    s32 sourcey, s32 sourcew, s32 sourceh,
-                                                   uint32_t TransColor, const SmackBuf PTR4* maskbuf);
+                                                   uint32_t TransColor,
+                                                   const SmackBuf PTR4* maskbuf);
 RADEXPFUNC void RADEXPLINK SmackBufferToBufferMerge(SmackBuf PTR4* destbuf, s32 destx, s32 desty,
                                                     const SmackBuf PTR4* sourcebuf, s32 sourcex,
                                                     s32 sourcey, s32 sourcew, s32 sourceh,
-                                                    uint32_t TransColor, const SmackBuf PTR4* mergebuf);
+                                                    uint32_t TransColor,
+                                                    const SmackBuf PTR4* mergebuf);
 RADEXPFUNC void RADEXPLINK SmackBufferCopyPalette(SmackBuf PTR4* destbuf, SmackBuf PTR4* sourcebuf,
                                                   uint32_t remap);
 

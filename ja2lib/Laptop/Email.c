@@ -4581,7 +4581,7 @@ void AddAllEmails() {
   }
 
   //	AddEmail( ( uint8_t )( AIM_REPLY_BARRY + ( AIM_REPLY_LENGTH_BARRY ) ),
-  //AIM_REPLY_LENGTH_BARRY,
+  // AIM_REPLY_LENGTH_BARRY,
   // AIM_REPLY_BARRY, GetWorldTotalMin() );
 
   uiOffset = AIM_REPLY_BARRY;
