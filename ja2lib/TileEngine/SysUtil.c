@@ -34,9 +34,9 @@ BOOLEAN InitializeGameVideoObjects() {
   vs_desc.usHeight = usHeight;
   vs_desc.ubBitDepth = ubBitDepth;
 
-  CHECKF(AddVideoSurface(&vs_desc, &vsSB));
+  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &vsSB));
 
-  CHECKF(AddVideoSurface(&vs_desc, &guiEXTRABUFFER));
+  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;
 
   return (TRUE);

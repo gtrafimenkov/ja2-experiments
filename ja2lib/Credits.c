@@ -756,7 +756,7 @@ BOOLEAN AddCreditNode(uint32_t uiType, uint32_t uiFlags, wchar_t *pString) {
     vs_desc.usHeight = pNodeToAdd->sHeightOfString;
     vs_desc.ubBitDepth = 16;
 
-    if (AddVideoSurface(&vs_desc, &pNodeToAdd->uiVideoSurfaceImage) == 0) {
+    if (AddVideoSurface(CreateVideoSurface(&vs_desc), &pNodeToAdd->uiVideoSurfaceImage) == 0) {
       return (FALSE);
     }
 

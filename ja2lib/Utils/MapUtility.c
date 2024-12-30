@@ -102,7 +102,7 @@ uint32_t MapUtilScreenHandle() {
     vs_desc.usHeight = 44;
     vs_desc.ubBitDepth = ubBitDepth;
 
-    if (AddVideoSurface(&vs_desc, &giMiniMap) == FALSE) {
+    if (AddVideoSurface(CreateVideoSurface(&vs_desc), &giMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
 
@@ -129,7 +129,7 @@ uint32_t MapUtilScreenHandle() {
     vs_desc.usHeight = 44;
     vs_desc.ubBitDepth = 8;
 
-    if (AddVideoSurface(&vs_desc, &gi8BitMiniMap) == FALSE) {
+    if (AddVideoSurface(CreateVideoSurface(&vs_desc), &gi8BitMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
     GetVideoSurface(&ghvSurface, gi8BitMiniMap);

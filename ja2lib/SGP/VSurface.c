@@ -19,7 +19,7 @@ bool AddVideoSurfaceFromFile(const char *filepath, VSurfID *index) {
   VSURFACE_DESC desc;
   desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
   strcopy(desc.ImageFile, sizeof(desc.ImageFile), filepath);
-  return AddVideoSurface(&desc, index);
+  return AddVideoSurface(CreateVideoSurface(&desc), index);
 }
 
 typedef struct VSURFACE_NODE {
@@ -135,25 +135,17 @@ bool DeleteVSurfaceFromList(VSurfID id) {
   return false;
 }
 
-BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
-  struct VSurface *hVSurface;
+BOOLEAN AddVideoSurface(struct VSurface *vs, uint32_t *puiIndex) {
+  // hVSurface = CreateVideoSurface(pVSurfaceDesc);
 
-  // Assertions
-  Assert(puiIndex);
-  Assert(pVSurfaceDesc);
-
-  // Create video object
-  hVSurface = CreateVideoSurface(pVSurfaceDesc);
-
-  if (!hVSurface) {
-    // Video Object will set error condition.
+  if (!vs) {
     return FALSE;
   }
 
   // Set transparency to default
-  SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
+  SetVideoSurfaceTransparencyColor(vs, FROMRGB(0, 0, 0));
 
-  *puiIndex = AddVSurfaceToList(hVSurface);
+  *puiIndex = AddVSurfaceToList(vs);
 
   return TRUE;
 }
