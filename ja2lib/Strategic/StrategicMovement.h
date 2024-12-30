@@ -108,8 +108,8 @@ struct GROUP {
                                  // upon arrival at next sector.
   uint8_t ubRestToFatigueLevel;  // when resting, the group will rest until the fatigue level
                                  // reaches this level.
-  uint32_t uiArrivalTime;  // the arrival time in world minutes that the group will arrive at the
-                           // next sector.
+  uint32_t uiArrivalTime;   // the arrival time in world minutes that the group will arrive at the
+                            // next sector.
   uint32_t uiTraverseTime;  // the total traversal time from the previous sector to the next sector.
   BOOLEAN fRestAtNight;     // set when the group is permitted to rest between 2200 and 0600 when
                             // moving

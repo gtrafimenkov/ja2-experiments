@@ -33,7 +33,8 @@ BOOLEAN Plat_GetCurrentDirectory(STRING512 pcDirectory) {
 
 BOOLEAN Plat_DeleteFile(const char *filename) { return DeleteFile(filename); }
 uint32_t Plat_GetFileSize(SYS_FILE_HANDLE handle) { return GetFileSize(handle, NULL); }
-BOOLEAN Plat_ReadFile(SYS_FILE_HANDLE handle, void *buffer, uint32_t bytesToRead, uint32_t *readBytes) {
+BOOLEAN Plat_ReadFile(SYS_FILE_HANDLE handle, void *buffer, uint32_t bytesToRead,
+                      uint32_t *readBytes) {
   return ReadFile(handle, buffer, bytesToRead, (LPDWORD)readBytes, NULL);
 }
 void Plat_CloseFile(SYS_FILE_HANDLE handle) { CloseHandle(handle); }
@@ -64,7 +65,7 @@ uint32_t Plat_SetFilePointer(SYS_FILE_HANDLE handle, int32_t distance, int seekT
 
 // Gets the free hard drive space from the drive letter passed in.  It has to be the root dir.  (
 // eg. c:\ )
-static uint32_t GetFreeSpaceOnHardDrive(char* pzDriveLetter);
+static uint32_t GetFreeSpaceOnHardDrive(char *pzDriveLetter);
 
 uint32_t Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom() {
   STRING512 zExecDir;
@@ -87,7 +88,7 @@ uint32_t Plat_GetFreeSpaceOnHardDriveWhereGameIsRunningFrom() {
   return (uiFreeSpace);
 }
 
-static uint32_t GetFreeSpaceOnHardDrive(char* pzDriveLetter) {
+static uint32_t GetFreeSpaceOnHardDrive(char *pzDriveLetter) {
   DWORD uiBytesFree = 0;
   DWORD uiSectorsPerCluster = 0;
   DWORD uiBytesPerSector = 0;
@@ -222,7 +223,7 @@ static void W32toSGPFileFind(struct GetFile *pGFStruct, WIN32_FIND_DATA *pW32Str
 //
 //**************************************************************************
 
-HWFILE FileMan_Open(char* strFilename, uint32_t uiOptions, BOOLEAN fDeleteOnClose) {
+HWFILE FileMan_Open(char *strFilename, uint32_t uiOptions, BOOLEAN fDeleteOnClose) {
   HWFILE hFile;
   HANDLE hRealFile;
   DWORD dwAccess;
@@ -402,7 +403,7 @@ extern uint32_t uiTotalFileReadCalls;
 #include "Utils/TimerControl.h"
 #endif
 
-BOOLEAN FileMan_Read(HWFILE hFile, void* pDest, uint32_t uiBytesToRead, uint32_t *puiBytesRead) {
+BOOLEAN FileMan_Read(HWFILE hFile, void *pDest, uint32_t uiBytesToRead, uint32_t *puiBytesRead) {
   HANDLE hRealFile;
   DWORD dwNumBytesToRead;
   uint32_t dwNumBytesRead;
@@ -491,7 +492,8 @@ BOOLEAN FileMan_Read(HWFILE hFile, void* pDest, uint32_t uiBytesToRead, uint32_t
 //
 //**************************************************************************
 
-BOOLEAN FileMan_Write(HWFILE hFile, void* pDest, uint32_t uiBytesToWrite, uint32_t *puiBytesWritten) {
+BOOLEAN FileMan_Write(HWFILE hFile, void *pDest, uint32_t uiBytesToWrite,
+                      uint32_t *puiBytesWritten) {
   HANDLE hRealFile;
   DWORD dwNumBytesToWrite, dwNumBytesWritten;
   BOOLEAN fRet;
@@ -946,7 +948,7 @@ void W32toSGPFileFind(struct GetFile *pGFStruct, WIN32_FIND_DATA *pW32Struct) {
   }
 }
 
-BOOLEAN Plat_ClearFileAttributes(char* strFilename) {
+BOOLEAN Plat_ClearFileAttributes(char *strFilename) {
   return SetFileAttributes(strFilename, FILE_ATTRIBUTE_NORMAL);
 }
 
@@ -1046,7 +1048,7 @@ BOOLEAN FileMan_GetFileWriteTime(HWFILE hFile, uint64_t *pLastWriteTime) {
   return (TRUE);
 }
 
-uint32_t FileMan_Size(char* strFilename) {
+uint32_t FileMan_Size(char *strFilename) {
   HWFILE hFile;
   uint32_t uiSize;
 

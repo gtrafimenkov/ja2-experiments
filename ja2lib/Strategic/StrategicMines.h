@@ -89,8 +89,8 @@ typedef struct MINE_STATUS_TYPE {
                                       // produced from it
   BOOLEAN fAttackedHeadMiner;         // player has attacked the head miner, shutting down mine &
                                       // decreasing loyalty
-  uint16_t usValidDayCreaturesCanInfest;  // Creatures will be permitted to spread if the game day
-                                          // is greater than this value.
+  uint16_t usValidDayCreaturesCanInfest;   // Creatures will be permitted to spread if the game day
+                                           // is greater than this value.
   uint32_t uiTimePlayerProductionStarted;  // time in minutes when 'fMineHasProducedForPlayer' was
                                            // first set
 
