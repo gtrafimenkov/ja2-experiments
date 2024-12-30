@@ -9,10 +9,7 @@
 #include "StrUtils.h"
 
 bool AddVSurfaceFromFile(const char *filepath, VSurfID *index) {
-  VSURFACE_DESC desc;
-  desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-  strcopy(desc.ImageFile, sizeof(desc.ImageFile), filepath);
-  return AddVSurface(CreateVSurface(&desc), index);
+  return AddVSurface(CreateVSurfaceFromFile(filepath), index);
 }
 
 typedef struct VSURFACE_NODE {
@@ -129,8 +126,6 @@ bool DeleteVSurfaceFromList(VSurfID id) {
 }
 
 BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *puiIndex) {
-  // hVSurface = CreateVSurface(pVSurfaceDesc);
-
   if (!vs) {
     return FALSE;
   }
@@ -149,12 +144,4 @@ struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height) {
 
 struct VSurface *CreateVSurfaceBlank16(uint16_t width, uint16_t height) {
   return CreateVSurfaceBlank(width, height, 16);
-}
-
-struct VSurface *CreateVSurface(VSURFACE_DESC *desc) {
-  if (desc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
-    return CreateVSurfaceFromFile(desc->ImageFile);
-  } else {
-    return CreateVSurfaceBlank(desc->usWidth, desc->usHeight, desc->ubBitDepth);
-  }
 }

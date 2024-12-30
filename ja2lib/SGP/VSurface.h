@@ -54,20 +54,6 @@ typedef struct {
 } blt_vs_fx;
 
 //
-// Video Surface Flags
-// Used to describe the memory usage of a video Surface
-//
-
-//
-// Video Surface creation flags
-// Used in the VSurface_DESC structure to describe creation flags
-//
-
-#define VSURFACE_CREATE_DEFAULT \
-  0x00000020  // Creates and empty Surface of given width, height and BPP
-#define VSURFACE_CREATE_FROMFILE 0x00000040  // Creates a video Surface from a file ( using HIMAGE )
-
-//
 // The following structure is used to define a region of the video Surface
 // These regions are stored via a HLIST
 //
@@ -103,19 +89,6 @@ struct VSurface {
   void *pClipper;             // A void pointer encapsolated as a clipper Surface
   HLIST RegionList;           // A List of regions within the video Surface
 };
-
-//
-// This structure describes the creation parameters for a Video Surface
-//
-
-typedef struct {
-  uint32_t fCreateFlags;  // Specifies creation flags like from file or not
-  SGPFILENAME ImageFile;  // Filename of image data to use
-  uint16_t usWidth;       // Width, ignored if given from file
-  uint16_t usHeight;      // Height, ignored if given from file
-  uint8_t ubBitDepth;     // BPP, ignored if given from file
-
-} VSURFACE_DESC;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -165,9 +138,6 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor);
 // Video Surface manipulation functions
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Created from a VSurface_DESC structure. Can be from a file via HIMAGE or empty.
-struct VSurface *CreateVSurface(VSURFACE_DESC *desc);
 
 struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bitDepth);
 struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height);
