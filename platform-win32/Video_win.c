@@ -2555,18 +2555,6 @@ BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect);
 
 void DeletePrimaryVideoSurfaces();
 
-typedef struct VSURFACE_NODE {
-  struct VSurface *hVSurface;
-  uint32_t uiIndex;
-  struct VSURFACE_NODE *next, *prev;
-} VSURFACE_NODE;
-
-VSURFACE_NODE *gpVSurfaceHead = NULL;
-VSURFACE_NODE *gpVSurfaceTail = NULL;
-uint32_t guiVSurfaceIndex = 0;
-uint32_t guiVSurfaceSize = 0;
-uint32_t guiVSurfaceTotalAdded = 0;
-
 #ifdef _DEBUG
 enum {
   DEBUGSTR_NONE,
@@ -2590,12 +2578,8 @@ void CheckValidVSurfaceIndex(uint32_t uiIndex);
 int32_t giMemUsedInSurfaces;
 
 BOOLEAN InitializeVideoSurfaceManager() {
-  // Shouldn't be calling this if the video surface manager already exists.
-  // Call shutdown first...
-  Assert(!gpVSurfaceHead);
-  Assert(!gpVSurfaceTail);
+  InitVSurfaceList();
   RegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Surface Manager");
-  gpVSurfaceHead = gpVSurfaceTail = NULL;
 
   giMemUsedInSurfaces = 0;
 
@@ -2609,68 +2593,11 @@ BOOLEAN InitializeVideoSurfaceManager() {
 }
 
 BOOLEAN ShutdownVideoSurfaceManager() {
-  VSURFACE_NODE *curr;
-
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_0, "Shutting down the Video Surface manager");
-
-  // Delete primary viedeo surfaces
   DeletePrimaryVideoSurfaces();
-
-  while (gpVSurfaceHead) {
-    curr = gpVSurfaceHead;
-    gpVSurfaceHead = gpVSurfaceHead->next;
-    DeleteVideoSurface(curr->hVSurface);
-    MemFree(curr);
-  }
-  gpVSurfaceHead = NULL;
-  gpVSurfaceTail = NULL;
-  guiVSurfaceIndex = 0;
-  guiVSurfaceSize = 0;
-  guiVSurfaceTotalAdded = 0;
+  DeinitVSurfaceList();
   UnRegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Objects");
   return TRUE;
-}
-
-BOOLEAN RestoreVideoSurfaces() {
-  VSURFACE_NODE *curr;
-
-  //
-  // Loop through Video Surfaces and Restore
-  //
-  curr = gpVSurfaceTail;
-  while (curr) {
-    if (!RestoreVideoSurface(curr->hVSurface)) {
-      return FALSE;
-    }
-    curr = curr->prev;
-  }
-  return TRUE;
-}
-
-static uint32_t addVSurfaceToList(struct VSurface *vs) {
-  // Set into video object list
-  if (gpVSurfaceHead) {
-    // Add node after tail
-    gpVSurfaceTail->next = (VSURFACE_NODE *)MemAlloc(sizeof(VSURFACE_NODE));
-    Assert(gpVSurfaceTail->next);  // out of memory?
-    gpVSurfaceTail->next->prev = gpVSurfaceTail;
-    gpVSurfaceTail->next->next = NULL;
-    gpVSurfaceTail = gpVSurfaceTail->next;
-  } else {
-    // new list
-    gpVSurfaceHead = (VSURFACE_NODE *)MemAlloc(sizeof(VSURFACE_NODE));
-    Assert(gpVSurfaceHead);  // out of memory?
-    gpVSurfaceHead->prev = gpVSurfaceHead->next = NULL;
-    gpVSurfaceTail = gpVSurfaceHead;
-  }
-  // Set the hVSurface into the node.
-  gpVSurfaceTail->hVSurface = vs;
-  gpVSurfaceTail->uiIndex = guiVSurfaceIndex += 2;
-  Assert(guiVSurfaceIndex < 0xfffffff0);  // unlikely that we will ever use 2 billion VSurfaces!
-  // We would have to create about 70 VSurfaces per second for 1 year straight to achieve this...
-  guiVSurfaceSize++;
-  guiVSurfaceTotalAdded++;
-  return gpVSurfaceTail->uiIndex;
 }
 
 BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
@@ -2691,14 +2618,12 @@ BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
   // Set transparency to default
   SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
 
-  *puiIndex = addVSurfaceToList(hVSurface);
+  *puiIndex = AddVSurfaceToList(hVSurface);
 
   return TRUE;
 }
 
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
-  VSURFACE_NODE *curr;
-
   //
   // Check if given backbuffer or primary buffer
   //
@@ -2718,31 +2643,15 @@ uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
     return (uint8_t *)LockMouseBuffer(puiPitch);
   }
 
-  //
-  // Otherwise, use list
-  //
-
-  curr = gpVSurfaceHead;
-  while (curr) {
-    if (curr->uiIndex == uiVSurface) {
-      break;
-    }
-    curr = curr->next;
-  }
-  if (!curr) {
+  struct VSurface *vs = FindSurface(uiVSurface);
+  if (!vs) {
     return FALSE;
   }
 
-  //
-  // Lock buffer
-  //
-
-  return LockVideoSurfaceBuffer(curr->hVSurface, puiPitch);
+  return LockVideoSurfaceBuffer(vs, puiPitch);
 }
 
 void UnLockVideoSurface(uint32_t uiVSurface) {
-  VSURFACE_NODE *curr;
-
   //
   // Check if given backbuffer or primary buffer
   //
@@ -2766,22 +2675,12 @@ void UnLockVideoSurface(uint32_t uiVSurface) {
     return;
   }
 
-  curr = gpVSurfaceHead;
-  while (curr) {
-    if (curr->uiIndex == uiVSurface) {
-      break;
-    }
-    curr = curr->next;
-  }
-  if (!curr) {
+  struct VSurface *vs = FindSurface(uiVSurface);
+  if (!vs) {
     return;
   }
 
-  //
-  // unlock buffer
-  //
-
-  UnLockVideoSurfaceBuffer(curr->hVSurface);
+  UnLockVideoSurfaceBuffer(vs);
 }
 
 BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
@@ -2806,8 +2705,6 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
 }
 
 BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
-  VSURFACE_NODE *curr;
-
 #ifdef _DEBUG
   CheckValidVSurfaceIndex(uiIndex);
 #endif
@@ -2832,13 +2729,10 @@ BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
     return TRUE;
   }
 
-  curr = gpVSurfaceHead;
-  while (curr) {
-    if (curr->uiIndex == uiIndex) {
-      *hVSurface = curr->hVSurface;
-      return TRUE;
-    }
-    curr = curr->next;
+  struct VSurface *vs = FindSurface(uiIndex);
+  if (vs) {
+    *hVSurface = vs;
+    return TRUE;
   }
   return FALSE;
 }
@@ -3469,43 +3363,12 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 }
 
 BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex) {
-  VSURFACE_NODE *curr;
-
 #ifdef _DEBUG
   gubVSDebugCode = DEBUGSTR_DELETEVIDEOSURFACEFROMINDEX;
   CheckValidVSurfaceIndex(uiIndex);
 #endif
 
-  curr = gpVSurfaceHead;
-  while (curr) {
-    if (curr->uiIndex == uiIndex) {  // Found the node, so detach it and delete it.
-
-      // Deallocate the memory for the video surface
-      DeleteVideoSurface(curr->hVSurface);
-
-      if (curr ==
-          gpVSurfaceHead) {  // Advance the head, because we are going to remove the head node.
-        gpVSurfaceHead = gpVSurfaceHead->next;
-      }
-      if (curr ==
-          gpVSurfaceTail) {  // Back up the tail, because we are going to remove the tail node.
-        gpVSurfaceTail = gpVSurfaceTail->prev;
-      }
-      // Detach the node from the vsurface list
-      if (curr->next) {  // Make the prev node point to the next
-        curr->next->prev = curr->prev;
-      }
-      if (curr->prev) {  // Make the next node point to the prev
-        curr->prev->next = curr->next;
-      }
-      // The node is now detached.  Now deallocate it.
-      MemFree(curr);
-      guiVSurfaceSize--;
-      return TRUE;
-    }
-    curr = curr->next;
-  }
-  return FALSE;
+  return DeleteVSurfaceFromList(uiIndex);
 }
 
 // Deletes all palettes, surfaces and region data
@@ -3520,12 +3383,6 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
     DDReleasePalette((LPDIRECTDRAWPALETTE)hVSurface->pPalette);
     hVSurface->pPalette = NULL;
   }
-
-  // if ( hVSurface->pClipper != NULL )
-  //{
-  // Release Clipper
-  //	DDReleaseClipper( (LPDIRECTDRAWCLIPPER)hVSurface->pClipper );
-  //}
 
   // Get surface pointer
   lpDDSurface = (LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData;
