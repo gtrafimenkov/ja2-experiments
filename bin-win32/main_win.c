@@ -60,11 +60,6 @@ int PASCAL HandledWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pC
 
 HINSTANCE ghInstance;
 
-// Global Variable Declarations
-#ifdef WINDOWED_MODE
-RECT rcWindow;
-#endif
-
 uint32_t guiMouseWheelMsg;  // For mouse wheel messages
 
 BOOLEAN gfApplicationActive;
@@ -93,15 +88,6 @@ int32_t FAR PASCAL WindowProcedure(HWND hWindow, uint16_t Message, WPARAM wParam
       QueueEvent(MOUSE_WHEEL, wParam, lParam);
       break;
     }
-
-#ifdef WINDOWED_MODE
-    case WM_MOVE:
-
-      GetClientRect(hWindow, &rcWindow);
-      ClientToScreen(hWindow, (LPPOINT)&rcWindow);
-      ClientToScreen(hWindow, (LPPOINT)&rcWindow + 1);
-      break;
-#endif
 
     case WM_ACTIVATEAPP:
       switch (wParam) {
