@@ -809,12 +809,12 @@ BOOLEAN DrawHelpScreenBackGround() {
 
   // if there are buttons, blit the button border
   if (gHelpScreen.bNumberOfButtons != 0) {
-    BltVideoObject(FRAME_BUFFER, hPixHandle, HLP_SCRN_BUTTON_BORDER, usPosX,
-                   gHelpScreen.usScreenLocY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, HLP_SCRN_BUTTON_BORDER, usPosX, gHelpScreen.usScreenLocY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
     usPosX += HELP_SCREEN_BUTTON_BORDER_WIDTH;
   }
 
-  BltVideoObject(FRAME_BUFFER, hPixHandle, HLP_SCRN_DEFAULT_TYPE, usPosX, gHelpScreen.usScreenLocY,
+  BltVideoObject(vsFB, hPixHandle, HLP_SCRN_DEFAULT_TYPE, usPosX, gHelpScreen.usScreenLocY,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   InvalidateRegion(gHelpScreen.usScreenLocX, gHelpScreen.usScreenLocY,
@@ -1176,14 +1176,14 @@ uint16_t RenderSpecificHelpScreen() {
 
     default:
 #ifdef JA2BETAVERSION
-      SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
       AssertMsg(0, "Error in help screen:  RenderSpecificHelpScreen().  DF 0");
 #else
       break;
 #endif
   }
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   // add 1 line to the bottom of the buffer
   usNumVerticalPixelsDisplayed += 10;
@@ -2129,11 +2129,11 @@ void DisplayHelpScreenTextBufferScrollBox() {
   if (!(gHelpScreen.usTotalNumberOfLinesInBuffer <=
         HLP_SCRN__MAX_NUMBER_DISPLAYED_LINES_IN_BUFFER)) {
     ColorFillVideoSurfaceArea(
-        FRAME_BUFFER, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
+        vsFB, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
         iTopPosScrollBox + iSizeOfBox - 1, Get16BPPColor(FROMRGB(227, 198, 88)));
 
     // display the line
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
     // draw the gold highlite line on the top and left
@@ -2151,7 +2151,7 @@ void DisplayHelpScreenTextBufferScrollBox() {
              Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
 
     // unlock frame buffer
-    UnLockVideoSurface(FRAME_BUFFER);
+    UnLockVideoSurface(vsFB);
   }
 }
 

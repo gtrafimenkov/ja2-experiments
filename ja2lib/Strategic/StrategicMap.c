@@ -336,7 +336,7 @@ void BeginLoadScreen() {
     uiTimeRange = 2000;
     iPercentage = 0;
     uiStartTime = GetJA2Clock();
-    BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 640, 480);
+    BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 0, 640, 480);
     PlayJA2SampleFromFile("SOUNDS\\Final Psionic Blast 01 (16-44).wav", RATE_11025, HIGHVOLUME, 1,
                           MIDDLEPAN);
     while (iPercentage < 100) {
@@ -371,12 +371,12 @@ void BeginLoadScreen() {
       SrcRect.iRight = 640 - iPercentage / 20;
       SrcRect.iTop = 367 * iPercentage / 100;
       SrcRect.iBottom = 480 - 39 * iPercentage / 100;
-      BltStretchVideoSurface(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 0, &SrcRect, &DstRect);
+      BltStretchVideoSurface(vsFB, guiSAVEBUFFER, 0, 0, 0, &SrcRect, &DstRect);
       InvalidateScreen();
       RefreshScreen(NULL);
     }
   }
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   RefreshScreen(NULL);
 

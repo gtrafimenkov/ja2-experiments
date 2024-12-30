@@ -417,9 +417,9 @@ void DisplaySirtechSplashScreen() {
   // return;
 
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 
   memset(&VObjectDesc, 0, sizeof(VOBJECT_DESC));
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
@@ -432,7 +432,7 @@ void DisplaySirtechSplashScreen() {
   }
 
   GetVideoObject(&hPixHandle, uiLogoID);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
   DeleteVideoObjectFromIndex(uiLogoID);
 
   InvalidateScreen();

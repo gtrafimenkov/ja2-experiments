@@ -1771,7 +1771,7 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
     BltVideoObjectOutlineFromIndex(uiBuffer, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
                                    sCenX, sCenY, sOutlineColor, fOutline);
 
-    if (uiBuffer == FRAME_BUFFER) {
+    if (uiBuffer == vsFB) {
       InvalidateRegion(sX, sY, (int16_t)(sX + sWidth), (int16_t)(sY + sHeight));
     } else {
       RestoreExternBackgroundRect(sX, sY, sWidth, sHeight);
@@ -4771,7 +4771,7 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(FRAME_BUFFER, gsItemPopupInvX, gsItemPopupInvY,
+      ShadowVideoSurfaceRect(vsFB, gsItemPopupInvX, gsItemPopupInvY,
                              gsItemPopupInvX + gsItemPopupInvWidth,
                              gsItemPopupInvY + gsItemPopupInvHeight);
     }
@@ -4782,14 +4782,14 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
   usWidth = (uint32_t)pTrav->usWidth;
 
   for (cnt = 0; cnt < gubNumItemPopups; cnt++) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth),
+    BltVideoObjectFromIndex(vsFB, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth),
                             gsItemPopupY, VO_BLT_SRCTRANSPARENCY, NULL);
 
     if (cnt < gpItemPopupObject->ubNumberOfObjects) {
       sX = (int16_t)(gsItemPopupX + (cnt * usWidth) + 11);
       sY = (int16_t)(gsItemPopupY + 3);
 
-      INVRenderItem(FRAME_BUFFER, NULL, gpItemPopupObject, sX, sY, 29, 23, DIRTYLEVEL2, NULL,
+      INVRenderItem(vsFB, NULL, gpItemPopupObject, sX, sY, 29, 23, DIRTYLEVEL2, NULL,
                     (uint8_t)RENDER_ITEM_NOSTATUS, FALSE, 0);
 
       // Do status bar here...
@@ -4797,7 +4797,7 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
       sNewY = gsItemPopupY + INV_BAR_DY + 3;
       DrawItemUIBarEx(gpItemPopupObject, (uint8_t)cnt, sNewX, sNewY, ITEM_BAR_WIDTH,
                       ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR), Get16BPPColor(STATUS_BAR_SHADOW),
-                      TRUE, FRAME_BUFFER);
+                      TRUE, vsFB);
     }
   }
 
@@ -4949,7 +4949,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(FRAME_BUFFER, 0, gsKeyRingPopupInvY,
+      ShadowVideoSurfaceRect(vsFB, 0, gsKeyRingPopupInvY,
                              gsKeyRingPopupInvX + gsKeyRingPopupInvWidth,
                              gsKeyRingPopupInvY + gsKeyRingPopupInvHeight);
     }
@@ -4975,7 +4975,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
 
   for (cnt = 0; cnt < NUMBER_KEYS_ON_KEYRING; cnt++) {
     BltVideoObjectFromIndex(
-        FRAME_BUFFER, guiItemPopupBoxes, 0,
+        vsFB, guiItemPopupBoxes, 0,
         (int16_t)(gsKeyRingPopupInvX + (cnt % sKeyRingItemWidth * usWidth) + sOffSetX),
         (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)),
         VO_BLT_SRCTRANSPARENCY, NULL);
@@ -4991,20 +4991,20 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
           (int16_t)(gsKeyRingPopupInvX + sOffSetX + (cnt % sKeyRingItemWidth * usWidth) + 7),
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight) + 24),
           ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, FRAME_BUFFER);
+          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, vsFB);
 
       // set item type
       pObject.usItem = FIRST_KEY + LockTable[gpItemPopupSoldier->pKeyRing[cnt].ubKeyID].usKeyItem;
 
       // render the item
       INVRenderItem(
-          FRAME_BUFFER, NULL, &pObject,
+          vsFB, NULL, &pObject,
           (int16_t)(gsKeyRingPopupInvX + sOffSetX + (cnt % sKeyRingItemWidth * usWidth) + 8),
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)),
           (uint16_t)(usWidth - 8), (uint16_t)(usHeight - 2), DIRTYLEVEL2, NULL, 0, 0, 0);
     }
 
-    // BltVideoObjectFromIndex( FRAME_BUFFER, guiItemPopupBoxes, 0, (int16_t)(gsKeyRingPopupInvX + (
+    // BltVideoObjectFromIndex( vsFB, guiItemPopupBoxes, 0, (int16_t)(gsKeyRingPopupInvX + (
     // cnt % KEY_RING_ROW_WIDTH * usWidth ) ), ( int16_t )( gsKeyRingPopupInvY + ( cnt /
     // KEY_RING_ROW_WIDTH * usHeight ) ), VO_BLT_SRCTRANSPARENCY, NULL );
   }
@@ -5758,7 +5758,7 @@ void RenderItemPickupMenu() {
         usSubRegion = 1;
       }
 
-      BltVideoObjectFromIndex(FRAME_BUFFER, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY,
+      BltVideoObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY,
                               VO_BLT_SRCTRANSPARENCY, NULL);
 
       // Add hieght of object
@@ -5771,18 +5771,18 @@ void RenderItemPickupMenu() {
     // Do end
     if (gItemPickupMenu.bNumSlotsPerPage == NUM_PICKUP_SLOTS &&
         gItemPickupMenu.ubTotalItems > NUM_PICKUP_SLOTS) {
-      BltVideoObjectFromIndex(FRAME_BUFFER, gItemPickupMenu.uiPanelVo, 2, sX, sY,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 2, sX, sY, VO_BLT_SRCTRANSPARENCY,
+                              NULL);
     } else {
-      BltVideoObjectFromIndex(FRAME_BUFFER, gItemPickupMenu.uiPanelVo, 3, sX, sY,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 3, sX, sY, VO_BLT_SRCTRANSPARENCY,
+                              NULL);
     }
 
     // Render items....
     sX = ITEMPICK_GRAPHIC_X + gItemPickupMenu.sX;
     sY = ITEMPICK_GRAPHIC_Y + gItemPickupMenu.sY;
 
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
 
     SetFont(ITEMDESC_FONT);
     SetFontBackground(FONT_MCOLOR_BLACK);
@@ -5905,7 +5905,7 @@ void RenderItemPickupMenu() {
 
     SetFontShadow(DEFAULT_SHADOW);
 
-    UnLockVideoSurface(FRAME_BUFFER);
+    UnLockVideoSurface(vsFB);
 
     InvalidateRegion(gItemPickupMenu.sX, gItemPickupMenu.sY,
                      gItemPickupMenu.sX + gItemPickupMenu.sWidth,

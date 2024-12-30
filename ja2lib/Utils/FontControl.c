@@ -216,7 +216,7 @@ BOOLEAN InitializeFonts() {
 #endif
 
   // Set default for font system
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   gfFontsInit = TRUE;
 

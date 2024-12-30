@@ -377,10 +377,10 @@ void PalEditRenderHook() {
     // Set to current
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
-    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, FRAME_BUFFER);
-    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, FRAME_BUFFER);
-    DisplayPaletteRep(pSoldier->VestPal, 50, 90, FRAME_BUFFER);
-    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, FRAME_BUFFER);
+    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, vsFB);
+    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, vsFB);
+    DisplayPaletteRep(pSoldier->VestPal, 50, 90, vsFB);
+    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, vsFB);
   }
 }
 
@@ -637,7 +637,7 @@ uint32_t SexScreenHandle(void) {
   int16_t sX, sY;
 
   // OK, Clear screen and show smily face....
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   // Remove cursor....
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
@@ -703,10 +703,10 @@ uint32_t SexScreenHandle(void) {
   sY = (int16_t)((480 - pTrav->usHeight) / 2);
 
   if (bCurFrame < 24) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiSMILY, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObjectFromIndex(vsFB, guiSMILY, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
   } else {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObjectFromIndex(vsFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY, VO_BLT_SRCTRANSPARENCY,
+                            NULL);
   }
 
   InvalidateRegion(sX, sY, (int16_t)(sX + pTrav->usWidth), (int16_t)(sY + pTrav->usHeight));

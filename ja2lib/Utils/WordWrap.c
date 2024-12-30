@@ -428,7 +428,7 @@ BOOLEAN DrawTextToScreen(wchar_t *pStr, uint16_t usLocX, uint16_t usLocY, uint16
   }
 
   if (ulFlags & TEXT_SHADOWED)
-    ShadowText(FRAME_BUFFER, pStr, ulFont, (uint16_t)(usPosX - 1), (uint16_t)(usPosY - 1));
+    ShadowText(vsFB, pStr, ulFont, (uint16_t)(usPosX - 1), (uint16_t)(usPosY - 1));
 
   if (USE_WINFONTS()) {
     if (fDirty) {

@@ -597,7 +597,7 @@ void PopupMovementMenu(UI_EVENT *pUIEvent) {
   }
 
   // Blit background!
-  // BltVideoObjectFromIndex( FRAME_BUFFER, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
+  // BltVideoObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
   // VO_BLT_SRCTRANSPARENCY, NULL );
 
   iMenuAnchorX = giMenuAnchorX + 9;
@@ -856,7 +856,7 @@ void PopDownMovementMenu() {
 
 void RenderMovementMenu() {
   if (gfInMovementMenu) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY,
+    BltVideoObjectFromIndex(vsFB, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY,
                             VO_BLT_SRCTRANSPARENCY, NULL);
 
     // Mark buttons dirty!
@@ -946,119 +946,119 @@ void RenderArrows() {
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_BESIDE) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_G) {
     TileElem = gTileDatabase[SECONDPOINTERS1];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_Y) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_YG) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
     TileElem = gTileDatabase[SECONDPOINTERS1];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY + 20,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_GG) {
     TileElem = gTileDatabase[SECONDPOINTERS1];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY + 20,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_YY) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY + 20,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_CLIMB) {
     TileElem = gTileDatabase[SECONDPOINTERS8];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_CLIMB2) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY + 20,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
     TileElem = gTileDatabase[SECONDPOINTERS8];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_CLIMB3) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
     TileElem = gTileDatabase[SECONDPOINTERS8];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                   gsUpArrowY + 40, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY + 20,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY + 40,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BESIDE) {
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                   gsDownArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_G) {
     TileElem = gTileDatabase[SECONDPOINTERS2];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                   gsDownArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_Y) {
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                   gsDownArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_CLIMB) {
     TileElem = gTileDatabase[SECONDPOINTERS7];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                   gsDownArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_YG) {
     TileElem = gTileDatabase[SECONDPOINTERS2];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                   gsDownArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
                    gsDownArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_GG) {
     TileElem = gTileDatabase[SECONDPOINTERS2];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                   gsDownArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
                    gsDownArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_YY) {
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                   gsDownArrowY, VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
                    gsDownArrowY + 20, VO_BLT_SRCTRANSPARENCY, NULL);
   }
 }
@@ -1346,13 +1346,13 @@ void DrawSelectedUIAboveGuy(uint16_t usSoldierID) {
         }
 
         if ((!pSoldier->bNeutral && (pSoldier->bSide != gbPlayerNum))) {
-          BltVideoObjectFromIndex(FRAME_BUFFER, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos,
+          BltVideoObjectFromIndex(vsFB, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos,
                                   VO_BLT_SRCTRANSPARENCY, NULL);
         } else {
-          BltVideoObjectFromIndex(FRAME_BUFFER, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos,
+          BltVideoObjectFromIndex(vsFB, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos,
                                   VO_BLT_SRCTRANSPARENCY, NULL);
 
-          // BltVideoObjectFromIndex(  FRAME_BUFFER, guiRADIO, 0, sXPos, sYPos,
+          // BltVideoObjectFromIndex(  vsFB, guiRADIO, 0, sXPos, sYPos,
           // VO_BLT_SRCTRANSPARENCY, NULL );
         }
       }
@@ -1486,7 +1486,7 @@ void DrawSelectedUIAboveGuy(uint16_t usSoldierID) {
         SetBackgroundRectFilled(iBack);
       }
       TileElem = gTileDatabase[usGraphicToUse];
-      BltVideoObject(FRAME_BUFFER, TileElem.hTileSurface, TileElem.usRegionIndex, sXPos, sYPos,
+      BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, sXPos, sYPos,
                      VO_BLT_SRCTRANSPARENCY, NULL);
 
       // Draw life, breath
@@ -1619,7 +1619,7 @@ void DrawBarsInUIBox(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   // Draw breath points
 
   // Draw new size
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, gsVIEWPORT_WINDOW_START_Y, 640,
                                  (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y));
 
@@ -1661,7 +1661,7 @@ void DrawBarsInUIBox(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   RectangleDraw(TRUE, sXPos + 3, sYPos + 4, (int32_t)(sXPos + dWidth + 3), sYPos + 4, usLineColor,
                 pDestBuf);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 }
 
 void EndDeadlockMsg() {
@@ -1840,7 +1840,7 @@ void PopupDoorOpenMenu(BOOLEAN fClosingDoor) {
   iMenuAnchorY = gOpenDoorMenu.sY;
 
   // Blit background!
-  // BltVideoObjectFromIndex( FRAME_BUFFER, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
+  // BltVideoObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
   // VO_BLT_SRCTRANSPARENCY, NULL );
   iMenuAnchorX = gOpenDoorMenu.sX + 9;
   iMenuAnchorY = gOpenDoorMenu.sY + 8;
@@ -2108,7 +2108,7 @@ void PopDownOpenDoorMenu() {
 
 void RenderOpenDoorMenu() {
   if (gfInOpenDoorMenu) {
-    BltVideoObjectFromIndex(FRAME_BUFFER, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY,
+    BltVideoObjectFromIndex(vsFB, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY,
                             VO_BLT_SRCTRANSPARENCY, NULL);
 
     // Mark buttons dirty!
@@ -2669,7 +2669,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
   mprintf(sX, sY, psString);
 
   // Change back...
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   // Done!
   SetFontShadow(DEFAULT_SHADOW);
@@ -2816,7 +2816,7 @@ void HandleTopMessages() {
       BltFx.SrcRect.iRight = 640;
       BltFx.SrcRect.iBottom = 20;
 
-      BltVideoSurface(FRAME_BUFFER, gTopMessage.uiSurface, 0, 0, 0, VS_BLT_SRCSUBRECT, &BltFx);
+      BltVideoSurface(vsFB, gTopMessage.uiSurface, 0, 0, 0, VS_BLT_SRCSUBRECT, &BltFx);
 
       // Save to save buffer....
       BltFx.SrcRect.iLeft = 0;
@@ -2824,7 +2824,7 @@ void HandleTopMessages() {
       BltFx.SrcRect.iRight = 640;
       BltFx.SrcRect.iBottom = 20;
 
-      BltVideoSurface(guiSAVEBUFFER, FRAME_BUFFER, 0, 0, 0, VS_BLT_SRCSUBRECT, &BltFx);
+      BltVideoSurface(guiSAVEBUFFER, vsFB, 0, 0, 0, VS_BLT_SRCSUBRECT, &BltFx);
 
       InvalidateRegion(0, 0, 640, 20);
 
@@ -2860,7 +2860,7 @@ void EndTopMessage() {
       // BltFx.SrcRect.iRight = 640;
       // BltFx.SrcRect.iBottom = 20;
 
-      // BltVideoSurface( guiSAVEBUFFER, FRAME_BUFFER, 0,
+      // BltVideoSurface( guiSAVEBUFFER, vsFB, 0,
       //															 0,
       // 0,
       // VS_BLT_SRCSUBRECT, &BltFx );
@@ -3196,33 +3196,33 @@ void RenderAimCubeUI() {
       }
 
       // Do first level....
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiAIMCUBES, bGraphicNum, sScreenX,
-                              (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                              VO_BLT_SRCTRANSPARENCY, NULL);
       sBarHeight -= 3;
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiAIMCUBES, bGraphicNum, sScreenX,
-                              (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                              VO_BLT_SRCTRANSPARENCY, NULL);
 
       // Loop through height.....
       for (cnt = 1; cnt <= gCubeUIData.bHeight; cnt++) {
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(FRAME_BUFFER, guiAIMCUBES, bGraphicNum, sScreenX,
-                                (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                                VO_BLT_SRCTRANSPARENCY, NULL);
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(FRAME_BUFFER, guiAIMCUBES, bGraphicNum, sScreenX,
-                                (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                                VO_BLT_SRCTRANSPARENCY, NULL);
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(FRAME_BUFFER, guiAIMCUBES, bGraphicNum, sScreenX,
-                                (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                                VO_BLT_SRCTRANSPARENCY, NULL);
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(FRAME_BUFFER, guiAIMCUBES, bGraphicNum, sScreenX,
-                                (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                                VO_BLT_SRCTRANSPARENCY, NULL);
       }
     }
 
     if (gCubeUIData.fShowPower) {
       sBarHeight = -50;
 
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
+      BltVideoObjectFromIndex(vsFB, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
                               (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
     }
   }
@@ -3387,6 +3387,6 @@ void RenderTopmostMultiPurposeLocator() {
     SetBackgroundRectFilled(iBack);
   }
 
-  BltVideoObjectFromIndex(FRAME_BUFFER, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos,
+  BltVideoObjectFromIndex(vsFB, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos,
                           VO_BLT_SRCTRANSPARENCY, NULL);
 }

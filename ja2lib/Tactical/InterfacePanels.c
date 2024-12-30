@@ -1659,7 +1659,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
       mprintf(usX, usY, sString);
 
       // reset to frame buffer!
-      SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
       RestoreExternBackgroundRect(INTERFACE_START_X, INV_INTERFACE_START_Y,
                                   (640 - INTERFACE_START_X), (480 - INV_INTERFACE_START_Y));
@@ -1750,13 +1750,13 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
 
       // Display bars
       DrawLifeUIBarEx(gpSMCurrentMerc, SM_SELMERC_HEALTH_X, SM_SELMERC_HEALTH_Y,
-                      SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, FRAME_BUFFER);
+                      SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, vsFB);
 
       if (!(gpSMCurrentMerc->uiStatusFlags & SOLDIER_ROBOT)) {
         DrawBreathUIBarEx(gpSMCurrentMerc, SM_SELMERC_BREATH_X, SM_SELMERC_BREATH_Y,
-                          SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, FRAME_BUFFER);
+                          SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, vsFB);
         DrawMoraleUIBarEx(gpSMCurrentMerc, SM_SELMERC_MORALE_X, SM_SELMERC_MORALE_Y,
-                          SM_SELMERC_MORALE_WIDTH, SM_SELMERC_MORALE_HEIGHT, TRUE, FRAME_BUFFER);
+                          SM_SELMERC_MORALE_WIDTH, SM_SELMERC_MORALE_HEIGHT, TRUE, vsFB);
       }
     }
   }
@@ -1779,9 +1779,9 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
     ClipRect.iRight = 536;
     ClipRect.iTop = INV_INTERFACE_START_Y;
     ClipRect.iBottom = 480;
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(FRAME_BUFFER);
+    UnLockVideoSurface(vsFB);
   }
 }
 
@@ -2952,7 +2952,7 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
                                     TM_FACE_WIDTH, TM_FACE_HEIGHT);
 
         // BLIT AP CLOSE PANEL
-        // BltVideoObjectFromIndex( FRAME_BUFFER, guiTEAMObjects, 3, sTEAMAPPanelXY[ posIndex ],
+        // BltVideoObjectFromIndex( vsFB, guiTEAMObjects, 3, sTEAMAPPanelXY[ posIndex ],
         // sTEAMAPPanelXY[ posIndex + 1 ], VO_BLT_SRCTRANSPARENCY, NULL );
         // RestoreExternBackgroundRect( (int16_t)(sTEAMAPPanelXY[ posIndex ]),
         // (int16_t)(sTEAMAPPanelXY[ posIndex + 1 ]), TM_APPANEL_WIDTH, TM_APPANEL_HEIGHT );
@@ -3053,7 +3053,7 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
         mprintf(sFontX, sFontY, L"%s", pSoldier->name);
         gprintfRestore(sFontX, sFontY, L"%s", pSoldier->name);
         // reset to frame buffer!
-        SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
       }
     }
 
@@ -3099,13 +3099,13 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
 
         if (!(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
           DrawLifeUIBarEx(pSoldier, sTEAMLifeXY[posIndex], sTEAMLifeXY[posIndex + 1],
-                          TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, FRAME_BUFFER);
+                          TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsFB);
 
           if (!(pSoldier->uiStatusFlags & SOLDIER_ROBOT)) {
             DrawBreathUIBarEx(pSoldier, sTEAMBreathXY[posIndex], sTEAMBreathXY[posIndex + 1],
-                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, FRAME_BUFFER);
+                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsFB);
             DrawMoraleUIBarEx(pSoldier, sTEAMMoraleXY[posIndex], sTEAMMoraleXY[posIndex + 1],
-                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, FRAME_BUFFER);
+                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsFB);
           }
 
           if (gTacticalStatus.uiFlags & TURNBASED && pSoldier->bLife >= OKLIFE) {
@@ -3716,9 +3716,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
       RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                   TM_FACE_HEIGHT);
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiCLOSE, pSoldier->ubClosePanelFrame,
-                              pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
+      BltVideoObjectFromIndex(vsFB, guiCLOSE, pSoldier->ubClosePanelFrame, pSoldier->sPanelFaceX,
+                              pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
       InvalidateRegion(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY,
                        pSoldier->sPanelFaceX + TM_FACE_WIDTH,
                        pSoldier->sPanelFaceY + TM_FACE_HEIGHT);
@@ -3762,9 +3761,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
 
   if (pSoldier->fDeadPanel) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiDEAD, pSoldier->ubDeadPanelFrame,
-                              pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
+      BltVideoObjectFromIndex(vsFB, guiDEAD, pSoldier->ubDeadPanelFrame, pSoldier->sPanelFaceX,
+                              pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
 
       // Blit hatch!
       BltVideoObjectFromIndex(guiSAVEBUFFER, guiHATCH, 0, pSoldier->sPanelFaceX,
@@ -3797,9 +3795,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
       RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                   TM_FACE_HEIGHT);
-      BltVideoObjectFromIndex(FRAME_BUFFER, guiCLOSE, pSoldier->bOpenPanelFrame,
-                              pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY,
-                              NULL);
+      BltVideoObjectFromIndex(vsFB, guiCLOSE, pSoldier->bOpenPanelFrame, pSoldier->sPanelFaceX,
+                              pSoldier->sPanelFaceY, VO_BLT_SRCTRANSPARENCY, NULL);
     }
   }
 }
@@ -4268,7 +4265,7 @@ void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, int32_t iReaso
       // want the inv done button shutdown and the region behind the keyring shaded
       // ForceButtonUnDirty( giMapInvDoneButton );
       // shade the background
-      ShadowVideoSurfaceRect(FRAME_BUFFER, 0, 107, 261, 359);
+      ShadowVideoSurfaceRect(vsFB, 0, 107, 261, 359);
       InvalidateRegion(0, 107, 261, 359);
     }
 

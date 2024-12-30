@@ -705,7 +705,7 @@ int32_t RegisterVideoOverlay(uint32_t uiFlags, VIDEO_OVERLAY_DESC *pTopmostDesc)
     DisableBackgroundRect(gVideoOverlays[iBlitterIndex].uiBackground, TRUE);
   }
 
-  gVideoOverlays[iBlitterIndex].uiDestBuff = FRAME_BUFFER;
+  gVideoOverlays[iBlitterIndex].uiDestBuff = vsFB;
 
   // DebugMsg( TOPIC_JA2, DBG_LEVEL_0, String( "Register Overlay %d %S", iBlitterIndex,
   // gVideoOverlays[ iBlitterIndex ].zText ) );

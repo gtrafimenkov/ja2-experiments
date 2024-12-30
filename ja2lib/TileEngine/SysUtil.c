@@ -42,7 +42,7 @@ BOOLEAN InitializeGameVideoObjects() {
   CHECKF(AddVideoSurface(&vs_desc, &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;
 
-  guiRENDERBUFFER = FRAME_BUFFER;
+  guiRENDERBUFFER = vsFB;
 
   return (TRUE);
 }

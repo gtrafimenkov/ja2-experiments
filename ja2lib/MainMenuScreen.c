@@ -111,9 +111,9 @@ uint32_t MainMenuScreenHandle() {
   }
   if (guiSplashFrameFade) {  // Fade the splash screen.
     if (guiSplashFrameFade > 2)
-      ShadowVideoSurfaceRectUsingLowPercentTable(FRAME_BUFFER, 0, 0, 640, 480);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
     else if (guiSplashFrameFade > 1)
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, 0);
+      ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     else {
       SetMusicMode(MUSIC_MAIN_MENU);
     }
@@ -293,9 +293,9 @@ void ExitMainMenu() {
   gMsgBox.uiExitScreen = MAINMENU_SCREEN;
   /*
           // CLEAR THE FRAME BUFFER
-          pDestBuf = LockVideoSurface( FRAME_BUFFER, &uiDestPitchBYTES );
+          pDestBuf = LockVideoSurface( vsFB, &uiDestPitchBYTES );
           memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES );
-          UnLockVideoSurface( FRAME_BUFFER );
+          UnLockVideoSurface( vsFB );
           InvalidateScreen( );
   */
 }
@@ -406,9 +406,9 @@ void ClearMainMenu() {
   uint8_t *pDestBuf;
 
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
   InvalidateScreen();
 }
 
@@ -560,10 +560,10 @@ void RenderMainMenu() {
   // Get and display the background image
   GetVideoObject(&hPixHandle, guiMainMenuBackGroundImage);
   BltVideoObject(guiSAVEBUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
 
   GetVideoObject(&hPixHandle, guiJa2LogoImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 188, 15, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, 188, 15, VO_BLT_SRCTRANSPARENCY, NULL);
   BltVideoObject(guiSAVEBUFFER, hPixHandle, 0, 188, 15, VO_BLT_SRCTRANSPARENCY, NULL);
 
 #ifdef TESTFOREIGNFONTS

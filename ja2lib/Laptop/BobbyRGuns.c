@@ -320,8 +320,8 @@ void RenderBobbyRGuns() {
 
   // GunForm
   GetVideoObject(&hPixHandle, guiGunsGrid);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_GRIDLOC_X, BOBBYR_GRIDLOC_Y, VO_BLT_SRCTRANSPARENCY,
+                 NULL);
 
   //	DeleteMouseRegionForBigImage();
   DisplayItemInfo(IC_BOBBY_GUN);
@@ -336,8 +336,8 @@ BOOLEAN DisplayBobbyRBrTitle() {
 
   // BR title
   GetVideoObject(&hPixHandle, guiBrTitle);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_BRTITLE_X, BOBBYR_BRTITLE_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_BRTITLE_X, BOBBYR_BRTITLE_Y, VO_BLT_SRCTRANSPARENCY,
+                 NULL);
 
   // To Order Text
   DrawTextToScreen(BobbyRText[BOBBYR_GUNS_TO_ORDER], BOBBYR_TO_ORDER_TITLE_X,
@@ -345,7 +345,7 @@ BOOLEAN DisplayBobbyRBrTitle() {
                    FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
 
   // First put a shadow behind the image
-  ShadowVideoSurfaceRect(FRAME_BUFFER, BOBBYR_TO_ORDER_TEXT_X - 2, BOBBYR_TO_ORDER_TEXT_Y - 2,
+  ShadowVideoSurfaceRect(vsFB, BOBBYR_TO_ORDER_TEXT_X - 2, BOBBYR_TO_ORDER_TEXT_Y - 2,
                          BOBBYR_TO_ORDER_TEXT_X + BOBBYR_TO_ORDER_TEXT_WIDTH,
                          BOBBYR_TO_ORDER_TEXT_Y + 31);
 
@@ -831,10 +831,10 @@ BOOLEAN DisplayBigItemImage(uint16_t usIndex, uint16_t PosY) {
   sCenY = PosY + 8;
 
   // blt the shadow of the item
-  BltVideoObjectOutlineShadowFromIndex(FRAME_BUFFER, uiImage, 0, sCenX - 2,
+  BltVideoObjectOutlineShadowFromIndex(vsFB, uiImage, 0, sCenX - 2,
                                        sCenY + 2);  // pItem->ubGraphicNum
 
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, sCenX, sCenY, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, sCenX, sCenY, VO_BLT_SRCTRANSPARENCY, NULL);
   DeleteVideoObjectFromIndex(uiImage);
 
   return (TRUE);
