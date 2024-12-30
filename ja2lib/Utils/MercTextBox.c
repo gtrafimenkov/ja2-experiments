@@ -395,7 +395,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
   vs_desc.usWidth = usWidth;
   vs_desc.usHeight = usHeight;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(&vs_desc, &pPopUpTextBox->uiSourceBufferIndex));
+  CHECKF(AddVideoSurface(CreateVideoSurface(&vs_desc), &pPopUpTextBox->uiSourceBufferIndex));
   pPopUpTextBox->fMercTextPopupSurfaceInitialized = TRUE;
 
   pPopUpTextBox->sWidth = usWidth;
