@@ -4031,32 +4031,6 @@ BOOLEAN ShadowVideoSurfaceImage(uint32_t uiDestVSurface, struct VObject *hImageH
   return (TRUE);
 }
 
-BOOLEAN MakeVSurfaceFromVObject(uint32_t uiVObject, uint16_t usSubIndex, uint32_t *puiVSurface) {
-  struct VObject *hSrcVObject;
-  uint32_t uiVSurface;
-  VSURFACE_DESC hDesc;
-
-  if (GetVideoObject(&hSrcVObject, uiVObject)) {
-    // ATE: Memset
-    memset(&hDesc, 0, sizeof(VSURFACE_DESC));
-    hDesc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-    hDesc.usWidth = hSrcVObject->pETRLEObject[usSubIndex].usWidth;
-    hDesc.usHeight = hSrcVObject->pETRLEObject[usSubIndex].usHeight;
-    hDesc.ubBitDepth = PIXEL_DEPTH;
-
-    if (AddVideoSurface(CreateVideoSurface(&hDesc), &uiVSurface)) {
-      if (BltVideoObjectFromIndex(uiVSurface, uiVObject, usSubIndex, 0, 0, VO_BLT_SRCTRANSPARENCY,
-                                  NULL)) {
-        *puiVSurface = uiVSurface;
-        return (TRUE);
-      } else
-        DeleteVideoSurfaceFromIndex(uiVSurface);
-    }
-  }
-
-  return (FALSE);
-}
-
 #ifdef _DEBUG
 void CheckValidVSurfaceIndex(uint32_t uiIndex) {
   BOOLEAN fAssertError = FALSE;
