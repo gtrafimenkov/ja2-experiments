@@ -3410,8 +3410,7 @@ void UnLockVideoSurfaceBuffer(struct VSurface *hVSurface) {
   DDUnlockSurface((LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData, NULL);
 
   // Copy contents if surface is in video
-  if ((hVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE) &&
-      !(hVSurface->fFlags & VSURFACE_RESERVED_SURFACE)) {
+  if ((hVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE)) {
     UpdateBackupSurface(hVSurface);
   }
 }
@@ -4056,8 +4055,7 @@ BOOLEAN FillSurface(struct VSurface *hDestVSurface, blt_vs_fx *pBltFx) {
   DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->pSurfaceData, NULL, NULL, NULL, DDBLT_COLORFILL,
                &BlitterFX);
 
-  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE) &&
-      !(hDestVSurface->fFlags & VSURFACE_RESERVED_SURFACE)) {
+  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE)) {
     UpdateBackupSurface(hDestVSurface);
   }
 
@@ -4076,8 +4074,7 @@ BOOLEAN FillSurfaceRect(struct VSurface *hDestVSurface, blt_vs_fx *pBltFx) {
   DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->pSurfaceData, (LPRECT) & (pBltFx->FillRect),
                NULL, NULL, DDBLT_COLORFILL, &BlitterFX);
 
-  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE) &&
-      !(hDestVSurface->fFlags & VSURFACE_RESERVED_SURFACE)) {
+  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE)) {
     UpdateBackupSurface(hDestVSurface);
   }
 
@@ -4153,8 +4150,7 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
   }
 
   // Update backup surface with new data
-  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE) &&
-      !(hDestVSurface->fFlags & VSURFACE_RESERVED_SURFACE)) {
+  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE)) {
     UpdateBackupSurface(hDestVSurface);
   }
 
@@ -4269,8 +4265,7 @@ BOOLEAN BltVSurfaceUsingDDBlt(struct VSurface *hDestVSurface, struct VSurface *h
                (LPDIRECTDRAWSURFACE2)hSrcVSurface->pSurfaceData, &srcRect, uiDDFlags, NULL);
 
   // Update backup surface with new data
-  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE) &&
-      !(hDestVSurface->fFlags & VSURFACE_RESERVED_SURFACE)) {
+  if ((hDestVSurface->fFlags & VSURFACE_VIDEO_MEM_USAGE)) {
     UpdateBackupSurface(hDestVSurface);
   }
 
