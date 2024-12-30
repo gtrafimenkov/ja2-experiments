@@ -178,144 +178,142 @@ extern BOOLEAN gfSchedulesHosed;
 // sets up the loadscreen with specified ID, and draws it to the vsFB,
 // and refreshing the screen with it.
 void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
-  VSURFACE_DESC vs_desc;
+  char* filepath = NULL;
   struct VSurface* hVSurface;
   uint32_t uiLoadScreen;
 
-  vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-
   switch (ubLoadScreenID) {
     case LOADINGSCREEN_NOTHING:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_Heli.sti");
+      filepath = "LOADSCREENS\\LS_Heli.sti";
       break;
     case LOADINGSCREEN_DAYGENERIC:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayGeneric.sti");
+      filepath = "LOADSCREENS\\LS_DayGeneric.sti";
       break;
     case LOADINGSCREEN_DAYTOWN1:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayTown1.sti");
+      filepath = "LOADSCREENS\\LS_DayTown1.sti";
       break;
     case LOADINGSCREEN_DAYTOWN2:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayTown2.sti");
+      filepath = "LOADSCREENS\\LS_DayTown2.sti";
       break;
     case LOADINGSCREEN_DAYWILD:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayWild.sti");
+      filepath = "LOADSCREENS\\LS_DayWild.sti";
       break;
     case LOADINGSCREEN_DAYTROPICAL:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayTropical.sti");
+      filepath = "LOADSCREENS\\LS_DayTropical.sti";
       break;
     case LOADINGSCREEN_DAYFOREST:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayForest.sti");
+      filepath = "LOADSCREENS\\LS_DayForest.sti";
       break;
     case LOADINGSCREEN_DAYDESERT:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayDesert.sti");
+      filepath = "LOADSCREENS\\LS_DayDesert.sti";
       break;
     case LOADINGSCREEN_DAYPALACE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayPalace.sti");
+      filepath = "LOADSCREENS\\LS_DayPalace.sti";
       break;
     case LOADINGSCREEN_NIGHTGENERIC:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightGeneric.sti");
+      filepath = "LOADSCREENS\\LS_NightGeneric.sti";
       break;
     case LOADINGSCREEN_NIGHTWILD:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightWild.sti");
+      filepath = "LOADSCREENS\\LS_NightWild.sti";
       break;
     case LOADINGSCREEN_NIGHTTOWN1:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightTown1.sti");
+      filepath = "LOADSCREENS\\LS_NightTown1.sti";
       break;
     case LOADINGSCREEN_NIGHTTOWN2:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightTown2.sti");
+      filepath = "LOADSCREENS\\LS_NightTown2.sti";
       break;
     case LOADINGSCREEN_NIGHTFOREST:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightForest.sti");
+      filepath = "LOADSCREENS\\LS_NightForest.sti";
       break;
     case LOADINGSCREEN_NIGHTTROPICAL:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightTropical.sti");
+      filepath = "LOADSCREENS\\LS_NightTropical.sti";
       break;
     case LOADINGSCREEN_NIGHTDESERT:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightDesert.sti");
+      filepath = "LOADSCREENS\\LS_NightDesert.sti";
       break;
     case LOADINGSCREEN_NIGHTPALACE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightPalace.sti");
+      filepath = "LOADSCREENS\\LS_NightPalace.sti";
       break;
     case LOADINGSCREEN_HELI:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_Heli.sti");
+      filepath = "LOADSCREENS\\LS_Heli.sti";
       break;
     case LOADINGSCREEN_BASEMENT:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_Basement.sti");
+      filepath = "LOADSCREENS\\LS_Basement.sti";
       break;
     case LOADINGSCREEN_MINE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_Mine.sti");
+      filepath = "LOADSCREENS\\LS_Mine.sti";
       break;
     case LOADINGSCREEN_CAVE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_Cave.sti");
+      filepath = "LOADSCREENS\\LS_Cave.sti";
       break;
     case LOADINGSCREEN_DAYPINE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayPine.sti");
+      filepath = "LOADSCREENS\\LS_DayPine.sti";
       break;
     case LOADINGSCREEN_NIGHTPINE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightPine.sti");
+      filepath = "LOADSCREENS\\LS_NightPine.sti";
       break;
     case LOADINGSCREEN_DAYMILITARY:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayMilitary.sti");
+      filepath = "LOADSCREENS\\LS_DayMilitary.sti";
       break;
     case LOADINGSCREEN_NIGHTMILITARY:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightMilitary.sti");
+      filepath = "LOADSCREENS\\LS_NightMilitary.sti";
       break;
     case LOADINGSCREEN_DAYSAM:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DaySAM.sti");
+      filepath = "LOADSCREENS\\LS_DaySAM.sti";
       break;
     case LOADINGSCREEN_NIGHTSAM:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightSAM.sti");
+      filepath = "LOADSCREENS\\LS_NightSAM.sti";
       break;
     case LOADINGSCREEN_DAYPRISON:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayPrison.sti");
+      filepath = "LOADSCREENS\\LS_DayPrison.sti";
       break;
     case LOADINGSCREEN_NIGHTPRISON:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightPrison.sti");
+      filepath = "LOADSCREENS\\LS_NightPrison.sti";
       break;
     case LOADINGSCREEN_DAYHOSPITAL:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayHospital.sti");
+      filepath = "LOADSCREENS\\LS_DayHospital.sti";
       break;
     case LOADINGSCREEN_NIGHTHOSPITAL:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightHospital.sti");
+      filepath = "LOADSCREENS\\LS_NightHospital.sti";
       break;
     case LOADINGSCREEN_DAYAIRPORT:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayAirport.sti");
+      filepath = "LOADSCREENS\\LS_DayAirport.sti";
       break;
     case LOADINGSCREEN_NIGHTAIRPORT:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightAirport.sti");
+      filepath = "LOADSCREENS\\LS_NightAirport.sti";
       break;
     case LOADINGSCREEN_DAYLAB:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayLab.sti");
+      filepath = "LOADSCREENS\\LS_DayLab.sti";
       break;
     case LOADINGSCREEN_NIGHTLAB:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightLab.sti");
+      filepath = "LOADSCREENS\\LS_NightLab.sti";
       break;
     case LOADINGSCREEN_DAYOMERTA:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayOmerta.sti");
+      filepath = "LOADSCREENS\\LS_DayOmerta.sti";
       break;
     case LOADINGSCREEN_NIGHTOMERTA:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightOmerta.sti");
+      filepath = "LOADSCREENS\\LS_NightOmerta.sti";
       break;
     case LOADINGSCREEN_DAYCHITZENA:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayChitzena.sti");
+      filepath = "LOADSCREENS\\LS_DayChitzena.sti";
       break;
     case LOADINGSCREEN_NIGHTCHITZENA:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightChitzena.sti");
+      filepath = "LOADSCREENS\\LS_NightChitzena.sti";
       break;
     case LOADINGSCREEN_DAYMINE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayMine.sti");
+      filepath = "LOADSCREENS\\LS_DayMine.sti";
       break;
     case LOADINGSCREEN_NIGHTMINE:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightMine.sti");
+      filepath = "LOADSCREENS\\LS_NightMine.sti";
       break;
     case LOADINGSCREEN_DAYBALIME:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_DayBalime.sti");
+      filepath = "LOADSCREENS\\LS_DayBalime.sti";
       break;
     case LOADINGSCREEN_NIGHTBALIME:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_NightBalime.sti");
+      filepath = "LOADSCREENS\\LS_NightBalime.sti";
       break;
     default:
-      strcpy(vs_desc.ImageFile, "LOADSCREENS\\LS_Heli.sti");
+      filepath = "LOADSCREENS\\LS_Heli.sti";
       break;
   }
 
@@ -324,9 +322,8 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     SetFontForeground(FONT_YELLOW);
     SetFontShadow(FONT_NEARBLACK);
     ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, 0);
-    mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...",
-            vs_desc.ImageFile);
-  } else if (AddVideoSurface(&vs_desc, &uiLoadScreen)) {  // Blit the background image
+    mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...", filepath);
+  } else if (AddVideoSurfaceFromFile(filepath, &uiLoadScreen)) {  // Blit the background image
     GetVideoSurface(&hVSurface, uiLoadScreen);
     BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVideoSurfaceFromIndex(uiLoadScreen);
@@ -335,7 +332,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     SetFontForeground(FONT_YELLOW);
     SetFontShadow(FONT_NEARBLACK);
     ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, 0);
-    mprintf(5, 5, L"%S loadscreen data file not found...", vs_desc.ImageFile);
+    mprintf(5, 5, L"%S loadscreen data file not found...", filepath);
   }
 
   gubLastLoadingScreenID = ubLoadScreenID;
