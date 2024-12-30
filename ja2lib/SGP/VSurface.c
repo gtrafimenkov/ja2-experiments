@@ -8,13 +8,6 @@
 #include "SGP/VObject.h"
 #include "StrUtils.h"
 
-struct VSurface *CreateVSurfaceFromFile(char *filepath) {
-  VSURFACE_DESC desc;
-  desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
-  strcopy(desc.ImageFile, sizeof(desc.ImageFile), filepath);
-  return CreateVSurface(&desc);
-}
-
 bool AddVSurfaceFromFile(const char *filepath, VSurfID *index) {
   VSURFACE_DESC desc;
   desc.fCreateFlags = VSURFACE_CREATE_FROMFILE;
