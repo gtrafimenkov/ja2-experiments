@@ -475,7 +475,7 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   // Build save buffer
   // Create a buffer for him to go!
   // OK, ignore screen widths, height, only use BPP
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
   vs_desc.usWidth = pFace->usFaceWidth;
   vs_desc.usHeight = pFace->usFaceHeight;
   vs_desc.ubBitDepth = 16;

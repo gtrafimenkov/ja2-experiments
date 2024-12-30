@@ -3155,36 +3155,12 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
 
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
 
-  //
-  // Do memory description, based on specified flags
-  //
-
-  do {
-    if (fMemUsage & VSURFACE_SYSTEM_MEM_USAGE) {
-      SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-      break;
-    }
-
-    //
-    // Once here, no mem flags were given, use default
-    //
-
-    SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-
-  } while (FALSE);
-
-  //
-  // Set other, common structure elements
-  //
+  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwWidth = usWidth;
   SurfaceDescription.dwHeight = usHeight;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
-
-  //
-  // Create Surface
-  //
 
   DDCreateSurface(lpDD2Object, &SurfaceDescription, &lpDDS, &lpDDS2);
 
@@ -3215,14 +3191,6 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   //
 
   DDGetSurfaceDescription(lpDDS2, &SurfaceDescription);
-
-  //
-  // Look for system memory
-  //
-
-  if (SurfaceDescription.ddsCaps.dwCaps & DDSCAPS_SYSTEMMEMORY) {
-    hVSurface->fFlags |= VSURFACE_SYSTEM_MEM_USAGE;
-  }
 
   //
   // Initialize surface with hImage , if given
@@ -3885,10 +3853,6 @@ struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurfac
   } else {
     hVSurface->pPalette = NULL;
     hVSurface->p16BPPPalette = NULL;
-  }
-  // Set meory flags
-  if (DDSurfaceDesc.ddsCaps.dwCaps & DDSCAPS_SYSTEMMEMORY) {
-    hVSurface->fFlags |= VSURFACE_SYSTEM_MEM_USAGE;
   }
 
   // All is well
