@@ -5,6 +5,7 @@ on:
     branches:
       - 'main'
       - 'dev'
+      - 'rust-rebased'
   pull_request:
 
 jobs:
