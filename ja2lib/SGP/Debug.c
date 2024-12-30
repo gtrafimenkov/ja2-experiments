@@ -222,8 +222,8 @@ void DbgMessageReal(uint16_t uiTopicId, uint8_t uiCommand, uint8_t uiDebugLevel,
   printf("%4d / %4d / %4d / %s\n", uiTopicId, uiCommand, uiDebugLevel, strMessage);
 }
 
-// void DbgMessageReal(uint16_t uiTopicId, uint8_t uiCommand, uint8_t uiDebugLevel, char *strMessage) {
-// #ifndef _NO_DEBUG_TXT
+// void DbgMessageReal(uint16_t uiTopicId, uint8_t uiCommand, uint8_t uiDebugLevel, char
+// *strMessage) { #ifndef _NO_DEBUG_TXT
 //   FILE *OutFile;
 // #endif
 
@@ -297,7 +297,7 @@ void DbgMessageReal(uint16_t uiTopicId, uint8_t uiCommand, uint8_t uiDebugLevel,
 // ///////////////////////////////////////////////////////////////////////////////////////////////////
 // // Wiz8 compatible debug messaging
 
-void _DebugMessage(char* pString, uint32_t uiLineNum, char* pSourceFile) {
+void _DebugMessage(char *pString, uint32_t uiLineNum, char *pSourceFile) {
   printf("%s [Line %d in %s]\n", pString, uiLineNum, pSourceFile);
 }
 
@@ -339,7 +339,7 @@ void _DebugMessage(char* pString, uint32_t uiLineNum, char* pSourceFile) {
 
 // extern struct VObject* FontObjs[25];
 
-void _FailMessage(char* pString, uint32_t uiLineNum, char* pSourceFile) {
+void _FailMessage(char *pString, uint32_t uiLineNum, char *pSourceFile) {
   printf("Assertion Failure [Line %d in %s]\n", uiLineNum, pSourceFile);
 }
 

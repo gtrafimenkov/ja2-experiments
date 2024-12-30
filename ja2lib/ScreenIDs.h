@@ -38,9 +38,9 @@ enum ScreenTypes {
   AIVIEWER_SCREEN,
 #endif
 
-  //#ifdef JA2BETAVERSION
+  // #ifdef JA2BETAVERSION
   QUEST_DEBUG_SCREEN,
-  //#endif
+  // #endif
 
   MAX_SCREENS
 };

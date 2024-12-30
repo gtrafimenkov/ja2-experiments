@@ -40,8 +40,8 @@ struct VObject;
 // what is used to define these values.
 typedef struct {
   BOOLEAN fDetailedPlacement;  // Specialized information.  Has a counterpart containing all info.
-  uint16_t usStartingGridNo;     // Where the placement position is.
-  int8_t bTeam;                  // The team this individual is part of.
+  uint16_t usStartingGridNo;   // Where the placement position is.
+  int8_t bTeam;                // The team this individual is part of.
   int8_t bRelativeAttributeLevel;
   int8_t bRelativeEquipmentLevel;
   int8_t bDirection;  // 1 of 8 values (always mandatory)

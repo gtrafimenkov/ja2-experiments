@@ -61,12 +61,13 @@ BOOLEAN SetCurrentWorldSector(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ);
 
 BOOLEAN EnterSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
 void UpdateMercsInSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
-void UpdateMercInSector(struct SOLDIERTYPE *pSoldier, uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
+void UpdateMercInSector(struct SOLDIERTYPE *pSoldier, uint8_t sSectorX, uint8_t sSectorY,
+                        int8_t bSectorZ);
 
 void InitializeMapStructure();
 
 // get short sector name without town name
-void GetShortSectorString(uint8_t sMapX, uint8_t sMapY, wchar_t* sString, size_t bufSize);
+void GetShortSectorString(uint8_t sMapX, uint8_t sMapY, wchar_t *sString, size_t bufSize);
 
 // NEW!
 // Calculates the name of the sector based on the loaded sector values.
@@ -74,10 +75,10 @@ void GetShortSectorString(uint8_t sMapX, uint8_t sMapY, wchar_t* sString, size_t
 //						A10_B1
 //						J9_B2_A ( >= BETAVERSION ) else J9_B2 (release
 // equivalent)
-void GetLoadedSectorString(wchar_t* pString, size_t bufSize);
+void GetLoadedSectorString(wchar_t *pString, size_t bufSize);
 
-void GetMapFileName(uint8_t sMapX, uint8_t sMapY, int8_t bSectorZ, char* bString, BOOLEAN fUsePlaceholder,
-                    BOOLEAN fAddAlternateMapLetter);
+void GetMapFileName(uint8_t sMapX, uint8_t sMapY, int8_t bSectorZ, char *bString,
+                    BOOLEAN fUsePlaceholder, BOOLEAN fAddAlternateMapLetter);
 
 // Called from within tactical.....
 void JumpIntoAdjacentSector(uint8_t ubDirection, uint8_t ubJumpCode, int16_t sAdditionalData);

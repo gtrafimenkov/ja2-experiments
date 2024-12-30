@@ -52,18 +52,18 @@ enum {
 // NUMBER_OF_INTERNAL_HIT_LOCATIONS_IN_VEHICLE ];
 
 extern int16_t sVehicleOrigArmorValues[NUMBER_OF_TYPES_OF_VEHICLES]
-                                    [NUMBER_OF_INTERNAL_HIT_LOCATIONS_IN_VEHICLE];
+                                      [NUMBER_OF_INTERNAL_HIT_LOCATIONS_IN_VEHICLE];
 
 // struct for vehicles
 typedef struct {
-  struct path *pMercPath;  // vehicle's stategic path list
-  uint8_t ubMovementGroup;   // the movement group this vehicle belongs to
-  uint8_t ubVehicleType;     // type of vehicle
-  int16_t sSectorX;          // X position on the Stategic Map
-  int16_t sSectorY;          // Y position on the Stategic Map
+  struct path *pMercPath;   // vehicle's stategic path list
+  uint8_t ubMovementGroup;  // the movement group this vehicle belongs to
+  uint8_t ubVehicleType;    // type of vehicle
+  int16_t sSectorX;         // X position on the Stategic Map
+  int16_t sSectorY;         // Y position on the Stategic Map
   int16_t sSectorZ;
   BOOLEAN fBetweenSectors;  // between sectors?
-  int16_t sGridNo;            // location in tactical
+  int16_t sGridNo;          // location in tactical
   struct SOLDIERTYPE *pPassengers[10];
   uint8_t ubDriver;
   int16_t sInternalHitLocations[NUMBER_OF_EXTERNAL_HIT_LOCATIONS_ON_VEHICLE];

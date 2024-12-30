@@ -213,10 +213,10 @@ extern ARMY_COMPOSITION gArmyComp[NUM_ARMY_COMPOSITIONS];
 extern GARRISON_GROUP *gGarrisonGroup;
 extern int32_t giGarrisonArraySize;
 
-wchar_t gwGroupTypeString[NUM_ENEMY_INTENTIONS][20] = {L"RETREAT", L"ASSAULT", L"STAGING", L"PATROL",
-                                                      L"REINFORCE"};
+wchar_t gwGroupTypeString[NUM_ENEMY_INTENTIONS][20] = {L"RETREAT", L"ASSAULT", L"STAGING",
+                                                       L"PATROL", L"REINFORCE"};
 
-void StringFromValue(wchar_t* str, int32_t iValue, uint32_t uiMax) {
+void StringFromValue(wchar_t *str, int32_t iValue, uint32_t uiMax) {
   if (iValue < 0)  // a blank string is determined by a negative value.
     str[0] = '\0';
   else if ((uint32_t)iValue > uiMax)  // higher than max attribute value, so convert it to the max.
@@ -660,7 +660,7 @@ void RenderInfoInSector() {
   if (!gbViewLevel) {
     struct GROUP *pGroup;
     uint8_t ubNumAdmins = 0, ubNumTroops = 0, ubNumElites = 0, ubAdminsInBattle = 0,
-          ubTroopsInBattle = 0, ubElitesInBattle = 0, ubNumGroups = 0;
+            ubTroopsInBattle = 0, ubElitesInBattle = 0, ubNumGroups = 0;
 
     SECTORINFO *pSector = &SectorInfo[GetSectorID8(ubSectorX, ubSectorY)];
 
@@ -1198,7 +1198,8 @@ void CreatureAttackCallback(GUI_BUTTON *btn, int32_t reason) {
         AddStrategicEventUsingSeconds(EVENT_CREATURE_ATTACK, GetWorldTotalSeconds() + 4,
                                       GetSectorID8((uint8_t)gsSelSectorX, (uint8_t)gsSelSectorY));
       } else {
-        CreatureAttackTown((uint8_t)GetSectorID8((uint8_t)gsSelSectorX, (uint8_t)gsSelSectorY), TRUE);
+        CreatureAttackTown((uint8_t)GetSectorID8((uint8_t)gsSelSectorX, (uint8_t)gsSelSectorY),
+                           TRUE);
       }
     }
   }

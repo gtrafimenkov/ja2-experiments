@@ -1182,8 +1182,8 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
@@ -2338,8 +2338,8 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
 
           if (fAlt) {
             if (CHEATER_CHEAT_LEVEL()) {
-              gStrategicStatus.usPlayerKills +=
-                  NumEnemiesInAnySector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+              gStrategicStatus.usPlayerKills += NumEnemiesInAnySector(
+                  (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
               ObliterateSector();
             }
           } else if (fCtrl) {
@@ -3445,8 +3445,8 @@ void CreatePlayerControlledMonster() {
   }
 }
 
-int8_t CheckForAndHandleHandleVehicleInteractiveClick(struct SOLDIERTYPE *pSoldier, uint16_t usMapPos,
-                                                    BOOLEAN fMovementMode) {
+int8_t CheckForAndHandleHandleVehicleInteractiveClick(struct SOLDIERTYPE *pSoldier,
+                                                      uint16_t usMapPos, BOOLEAN fMovementMode) {
   // Look for an item pool
   int16_t sActionGridNo;
   uint8_t ubDirection;

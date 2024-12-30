@@ -427,10 +427,10 @@ void HandleOldBobbyRMailOrders();
 #ifdef JA2BETAVERSION
 void InitSaveGameFilePosition();
 void InitLoadGameFilePosition();
-void SaveGameFilePosition(int32_t iPos, char* pMsg);
-void LoadGameFilePosition(int32_t iPos, char* pMsg);
+void SaveGameFilePosition(int32_t iPos, char *pMsg);
+void LoadGameFilePosition(int32_t iPos, char *pMsg);
 
-void InitShutDownMapTempFileTest(BOOLEAN fInit, char* pNameOfFile, uint8_t ubSaveGameID);
+void InitShutDownMapTempFileTest(BOOLEAN fInit, char *pNameOfFile, uint8_t ubSaveGameID);
 #endif
 
 #ifdef JA2BETAVERSION
@@ -443,7 +443,7 @@ extern BOOLEAN ValidateSoldierInitLinks(uint8_t ubCode);
 //
 /////////////////////////////////////////////////////
 
-BOOLEAN SaveGame(uint8_t ubSaveGameID, wchar_t* pGameDesc, size_t bufSize) {
+BOOLEAN SaveGame(uint8_t ubSaveGameID, wchar_t *pGameDesc, size_t bufSize) {
   uint32_t uiNumBytesWritten = 0;
   HWFILE hFile = 0;
   SAVED_GAME_HEADER SaveGameHeader;
@@ -576,10 +576,10 @@ BOOLEAN SaveGame(uint8_t ubSaveGameID, wchar_t* pGameDesc, size_t bufSize) {
   // struct because the NewWayOfSavingEnemyAndCivliansToTempFile will RESET the civ or enemy flag
   // AFTER they have been saved.
   //
-  NewWayOfSavingEnemyAndCivliansToTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ,
-                                           TRUE, TRUE);
-  NewWayOfSavingEnemyAndCivliansToTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ,
-                                           FALSE, TRUE);
+  NewWayOfSavingEnemyAndCivliansToTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                           gbWorldSectorZ, TRUE, TRUE);
+  NewWayOfSavingEnemyAndCivliansToTempFile((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                           gbWorldSectorZ, FALSE, TRUE);
 
   //
   // Setup the save game header
@@ -610,8 +610,8 @@ BOOLEAN SaveGame(uint8_t ubSaveGameID, wchar_t* pGameDesc, size_t bufSize) {
 
   SaveGameHeader.uiCurrentScreen = guiPreviousOptionScreen;
 
-  SaveGameHeader.fAlternateSector = GetSectorFlagStatus((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
-                                                        gbWorldSectorZ, SF_USE_ALTERNATE_MAP);
+  SaveGameHeader.fAlternateSector = GetSectorFlagStatus(
+      (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ, SF_USE_ALTERNATE_MAP);
 
   if (gfWorldLoaded) {
     SaveGameHeader.fWorldLoaded = TRUE;
@@ -1213,7 +1213,8 @@ BOOLEAN LoadSavedGame(uint8_t ubSavedGameID) {
 
   // if we are suppose to use the alternate sector
   if (SaveGameHeader.fAlternateSector) {
-    SetSectorFlag((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ, SF_USE_ALTERNATE_MAP);
+    SetSectorFlag((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ,
+                  SF_USE_ALTERNATE_MAP);
     gfUseAlternateMap = TRUE;
   }
 
@@ -1241,8 +1242,9 @@ BOOLEAN LoadSavedGame(uint8_t ubSavedGameID) {
         SaveGameHeader.bSectorZ == -1)
       gubLastLoadingScreenID = LOADINGSCREEN_HELI;
     else
-      gubLastLoadingScreenID = GetLoadScreenID(
-          (uint8_t)SaveGameHeader.sSectorX, (uint8_t)SaveGameHeader.sSectorY, SaveGameHeader.bSectorZ);
+      gubLastLoadingScreenID =
+          GetLoadScreenID((uint8_t)SaveGameHeader.sSectorX, (uint8_t)SaveGameHeader.sSectorY,
+                          SaveGameHeader.bSectorZ);
 
     BeginLoadScreen();
   }
@@ -2505,7 +2507,7 @@ to File" ) ); return(FALSE);
 }
 */
 
-BOOLEAN SaveFilesToSavedGame(char* pSrcFileName, HWFILE hFile) {
+BOOLEAN SaveFilesToSavedGame(char *pSrcFileName, HWFILE hFile) {
   uint32_t uiFileSize;
   uint32_t uiNumBytesWritten = 0;
   HWFILE hSrcFile;
@@ -2564,7 +2566,7 @@ BOOLEAN SaveFilesToSavedGame(char* pSrcFileName, HWFILE hFile) {
   return (TRUE);
 }
 
-BOOLEAN LoadFilesFromSavedGame(char* pSrcFileName, HWFILE hFile) {
+BOOLEAN LoadFilesFromSavedGame(char *pSrcFileName, HWFILE hFile) {
   uint32_t uiFileSize;
   uint32_t uiNumBytesWritten = 0;
   HWFILE hSrcFile;
@@ -2777,7 +2779,7 @@ BOOLEAN LoadEmailFromSavedGame(HWFILE hFile) {
     pTempEmail->iId = SavedEmail.iId;
     pTempEmail->fRead = SavedEmail.fRead;
     pTempEmail->fNew = SavedEmail.fNew;
-    pTempEmail->pSubject = (wchar_t*)pData;
+    pTempEmail->pSubject = (wchar_t *)pData;
     pTempEmail->iFirstData = SavedEmail.iFirstData;
     pTempEmail->uiSecondData = SavedEmail.uiSecondData;
     pTempEmail->iThirdData = SavedEmail.iThirdData;
@@ -3101,7 +3103,7 @@ BOOLEAN LoadWatchedLocsFromSavedGame(HWFILE hFile) {
   return (TRUE);
 }
 
-void CreateSavedGameFileNameFromNumber(uint8_t ubSaveGameID, char* pzNewFileName) {
+void CreateSavedGameFileNameFromNumber(uint8_t ubSaveGameID, char *pzNewFileName) {
   // if we are creating the QuickSave file
   if (ubSaveGameID == 0) {
 #ifdef JA2BETAVERSION
@@ -3254,7 +3256,7 @@ void InitSaveGameFilePosition() {
   FileMan_Delete(zFileName);
 }
 
-void SaveGameFilePosition(int32_t iPos, char* pMsg) {
+void SaveGameFilePosition(int32_t iPos, char *pMsg) {
   HWFILE hFile;
   char zTempString[512];
   uint32_t uiNumBytesWritten;
@@ -3293,7 +3295,7 @@ void InitLoadGameFilePosition() {
 
   FileMan_Delete(zFileName);
 }
-void LoadGameFilePosition(int32_t iPos, char* pMsg) {
+void LoadGameFilePosition(int32_t iPos, char *pMsg) {
   HWFILE hFile;
   char zTempString[512];
   uint32_t uiNumBytesWritten;
@@ -3875,7 +3877,7 @@ BOOLEAN DoesUserHaveEnoughHardDriveSpace() {
 
 #ifdef JA2BETAVERSION
 
-void InitShutDownMapTempFileTest(BOOLEAN fInit, char* pNameOfFile, uint8_t ubSaveGameID) {
+void InitShutDownMapTempFileTest(BOOLEAN fInit, char *pNameOfFile, uint8_t ubSaveGameID) {
   char zFileName[128];
   HWFILE hFile;
   char zTempString[512];

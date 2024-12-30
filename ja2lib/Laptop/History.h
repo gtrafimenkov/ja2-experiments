@@ -118,10 +118,11 @@ extern HistoryUnitPtr pHistoryListHead;
 void ResetHistoryFact(uint8_t ubCode, uint8_t sSectorX, uint8_t sSectorY);
 
 // set history fact...to allow for a different color for in progress quests
-uint32_t SetHistoryFact(uint8_t ubCode, uint8_t ubSecondCode, uint32_t uiDate, uint8_t sSectorX, uint8_t sSectorY);
+uint32_t SetHistoryFact(uint8_t ubCode, uint8_t ubSecondCode, uint32_t uiDate, uint8_t sSectorX,
+                        uint8_t sSectorY);
 
-uint32_t AddHistoryToPlayersLog(uint8_t ubCode, uint8_t ubSecondCode, uint32_t uiDate, uint8_t sSectorX,
-                              uint8_t sSectorY);
+uint32_t AddHistoryToPlayersLog(uint8_t ubCode, uint8_t ubSecondCode, uint32_t uiDate,
+                                uint8_t sSectorX, uint8_t sSectorY);
 uint32_t GetTimeQuestWasStarted(uint8_t ubCode);
 
 #endif

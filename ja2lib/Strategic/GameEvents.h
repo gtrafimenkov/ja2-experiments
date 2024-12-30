@@ -30,8 +30,8 @@ void UnlockStrategicEventFromDeletion(STRATEGICEVENT *pEvent);
 BOOLEAN SaveStrategicEventsToSavedGame(HWFILE hFile);
 BOOLEAN LoadStrategicEventsFromSavedGame(HWFILE hFile);
 
-STRATEGICEVENT *AddAdvancedStrategicEvent(uint8_t ubEventType, uint8_t ubCallbackID, uint32_t uiTimeStamp,
-                                          uint32_t uiParam);
+STRATEGICEVENT *AddAdvancedStrategicEvent(uint8_t ubEventType, uint8_t ubCallbackID,
+                                          uint32_t uiTimeStamp, uint32_t uiParam);
 
 BOOLEAN ExecuteStrategicEvent(STRATEGICEVENT *pEvent);
 

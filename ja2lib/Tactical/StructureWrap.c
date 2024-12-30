@@ -18,7 +18,8 @@
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 
-extern BOOLEAN DoesSAMExistHere(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ, int16_t sGridNo);
+extern BOOLEAN DoesSAMExistHere(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ,
+                                int16_t sGridNo);
 
 BOOLEAN IsFencePresentAtGridno(int16_t sGridNo) {
   if (FindStructure(sGridNo, STRUCTURE_ANYFENCE) != NULL) {

@@ -200,7 +200,7 @@ extern BOOLEAN fLockOutMapScreenInterface;
 // The character data structure
 typedef struct {
   uint16_t usSolID;  // soldier ID in MenPtrs
-  BOOLEAN fValid;  // is the current soldier a valid soldier
+  BOOLEAN fValid;    // is the current soldier a valid soldier
 
 } MapScreenCharacterSt;
 
@@ -319,7 +319,8 @@ void DisableTeamInfoPanels(void);
 void EnableTeamInfoPanels(void);
 
 // activate pop up for soldiers in the pre battle interface
-void ActivateSoldierPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPopupType, int16_t xp, int16_t yp);
+void ActivateSoldierPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPopupType, int16_t xp,
+                          int16_t yp);
 
 // hop up one leve,l int he map screen level interface
 void GoUpOneLevelInMap(void);
@@ -343,7 +344,7 @@ void HandleDisplayOfSelectedMercArrows(void);
 void DeselectSelectedListMercsWhoCantMoveWithThisGuy(struct SOLDIERTYPE *pSoldier);
 
 // get morale string for this grunt given this morale level
-void GetMoraleString(struct SOLDIERTYPE *pSoldier, wchar_t* sString);
+void GetMoraleString(struct SOLDIERTYPE *pSoldier, wchar_t *sString);
 
 // handle leaving of equipment in sector
 void HandleLeavingOfEquipmentInCurrentSector(uint32_t uiMercId);
@@ -408,8 +409,8 @@ void GoToPrevCharacterInList(void);
 void GoToNextCharacterInList(void);
 
 // this does the whole miner giving player info speil
-void HandleMinerEvent(uint8_t bMinerNumber, uint8_t sSectorX, uint8_t sSectorY, int16_t sQuoteNumber,
-                      BOOLEAN fForceMapscreen);
+void HandleMinerEvent(uint8_t bMinerNumber, uint8_t sSectorX, uint8_t sSectorY,
+                      int16_t sQuoteNumber, BOOLEAN fForceMapscreen);
 
 // set up the event of animating a mine sector
 void SetUpAnimationOfMineSectors(int32_t iEvent);
@@ -439,7 +440,8 @@ extern uint8_t gubBlitSectorLocatorCode;
 enum { LOCATOR_COLOR_NONE, LOCATOR_COLOR_RED, LOCATOR_COLOR_YELLOW };
 
 extern uint32_t guiSectorLocatorGraphicID;
-void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ, uint8_t ubLocatorID);
+void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ,
+                                   uint8_t ubLocatorID);
 
 // the tactical version
 
@@ -457,7 +459,7 @@ BOOLEAN IsTheInterfaceFastHelpTextActive(void);
 
 // set up the tactical lists
 BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition[], int32_t iYPosition[], int32_t iWidth[],
-                                 wchar_t* sString[], int32_t iSize);
+                                 wchar_t *sString[], int32_t iSize);
 
 // the alternate mapscreen movement system
 void InitializeMovingLists(void);
@@ -516,8 +518,8 @@ BOOLEAN HandleTimeCompressWithTeamJackedInAndGearedToGo(void);
 // void HandlePlayerEnteringMapScreenBeforeGoingToTactical( void );
 
 // handle sector being taken over uncontested
-BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
-                                                           BOOLEAN fContested);
+BOOLEAN NotifyPlayerWhenEnemyTakesControlOfImportantSector(uint8_t sSectorX, uint8_t sSectorY,
+                                                           int8_t bSectorZ, BOOLEAN fContested);
 
 // handle notifying player of invasion by enemy
 void NotifyPlayerOfInvasionByEnemyForces(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,

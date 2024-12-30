@@ -139,7 +139,7 @@ extern uint32_t guiNumWorldItems;
 // preprocess sector for mercs in it
 extern BOOLEAN fSectorsWithSoldiers[MAP_WORLD_X * MAP_WORLD_X][4];
 
-extern wchar_t* pTownNames[];
+extern wchar_t *pTownNames[];
 
 // update the loyalty rating of the passed town id
 void UpdateTownLoyaltyRating(TownID bTownId);
@@ -401,8 +401,8 @@ void HandleMurderOfCivilian(struct SOLDIERTYPE *pSoldier, BOOLEAN fIntentional) 
     struct SOLDIERTYPE *pKiller = MercPtrs[pSoldier->ubAttackerID];
 
     // apply morale penalty for killing a civilian!
-    HandleMoraleEvent(pKiller, MORALE_KILLED_CIVILIAN, (uint8_t)pKiller->sSectorX, (uint8_t)pKiller->sSectorY,
-                      pKiller->bSectorZ);
+    HandleMoraleEvent(pKiller, MORALE_KILLED_CIVILIAN, (uint8_t)pKiller->sSectorX,
+                      (uint8_t)pKiller->sSectorY, pKiller->bSectorZ);
   }
 
   // get town id
@@ -659,7 +659,8 @@ void HandleLoyaltyForDemolitionOfBuilding(struct SOLDIERTYPE *pSoldier, int16_t 
   return;
 }
 
-void RemoveRandomItemsInSector(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ, uint8_t ubChance) {
+void RemoveRandomItemsInSector(uint8_t sSectorX, uint8_t sSectorY, int16_t sSectorZ,
+                               uint8_t ubChance) {
   // remove random items in sector
   uint32_t uiNumberOfItems = 0, iCounter = 0;
   WORLDITEM *pItemList;
@@ -773,8 +774,9 @@ void CalcDistancesBetweenTowns(void) {
       if (ubTownA != ubTownB) {
         // calculate fastest distance between them (in sectors) - not necessarily shortest distance,
         // roads are faster!
-        iDistance = FindStratPath((int16_t)(*townSectors)[uiCounterA].sectorID,
-                                  (int16_t)(*townSectors)[uiCounterB].sectorID, ubTempGroupId, FALSE);
+        iDistance =
+            FindStratPath((int16_t)(*townSectors)[uiCounterA].sectorID,
+                          (int16_t)(*townSectors)[uiCounterB].sectorID, ubTempGroupId, FALSE);
       } else {
         // same town, distance is 0 by definition
         iDistance = 0;
@@ -868,7 +870,9 @@ void ReadInDistancesBetweenTowns(void) {
   return;
 }
 
-int32_t GetTownDistances(uint8_t ubTown, uint8_t ubTownA) { return (iTownDistances[ubTown][ubTownA]); }
+int32_t GetTownDistances(uint8_t ubTown, uint8_t ubTownA) {
+  return (iTownDistances[ubTown][ubTownA]);
+}
 
 BOOLEAN SaveStrategicTownLoyaltyToSaveGameFile(HWFILE hFile) {
   uint32_t uiNumBytesWritten;
@@ -1008,7 +1012,8 @@ void DecrementTownLoyaltyEverywhere(uint32_t uiLoyaltyDecrease) {
   }
 }
 // this applies the change to every town differently, depending on the distance from the event
-void HandleGlobalLoyaltyEvent(uint8_t ubEventType, uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
+void HandleGlobalLoyaltyEvent(uint8_t ubEventType, uint8_t sSectorX, uint8_t sSectorY,
+                              int8_t bSectorZ) {
   int32_t iLoyaltyChange;
   TownID bTownId = 0;
 

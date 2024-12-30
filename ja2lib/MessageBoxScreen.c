@@ -76,13 +76,13 @@ BOOLEAN fRestoreBackgroundForMessageBox = FALSE;
 BOOLEAN gfDontOverRideSaveBuffer = TRUE;  // this variable can be unset if ur in a non gamescreen
                                           // and DONT want the msg box to use the save buffer
 extern void HandleTacticalUILoseCursorFromOtherScreen();
-extern wchar_t* pUpdatePanelButtons[];
+extern wchar_t *pUpdatePanelButtons[];
 
 wchar_t gzUserDefinedButton1[128];
 wchar_t gzUserDefinedButton2[128];
 
 int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
-                   MSGBOX_CALLBACK ReturnCallback, const SGPRect *pCenteringRect) {
+                     MSGBOX_CALLBACK ReturnCallback, const SGPRect *pCenteringRect) {
   VSURFACE_DESC vs_desc;
   uint16_t usTextBoxWidth;
   uint16_t usTextBoxHeight;
@@ -91,7 +91,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   uint8_t *pDestBuf, *pSrcBuf;
   int16_t sButtonX, sButtonY, sBlankSpace;
   uint8_t ubMercBoxBackground = BASIC_MERC_POPUP_BACKGROUND,
-        ubMercBoxBorder = BASIC_MERC_POPUP_BORDER;
+          ubMercBoxBorder = BASIC_MERC_POPUP_BORDER;
   uint8_t ubFontColor, ubFontShadowColor;
   uint16_t usCursor;
   int32_t iId = -1;
@@ -263,8 +263,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   pDestBuf = LockVideoSurface(gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
   pSrcBuf = LockVideoSurface(FRAME_BUFFER, &uiSrcPitchBYTES);
 
-  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0, 0,
-                  gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight);
+  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
+                  0, gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight);
 
   UnLockVideoSurface(gMsgBox.uiSaveBuffer);
   UnLockVideoSurface(FRAME_BUFFER);
@@ -303,8 +303,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[0] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"1", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[0], 0, 1);
     SetButtonCursor(gMsgBox.uiButton[0], usCursor);
 
@@ -312,8 +312,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[1] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"2", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[1], 0, 2);
     SetButtonCursor(gMsgBox.uiButton[1], usCursor);
 
@@ -321,8 +321,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[2] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"3", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[2], 0, 3);
     SetButtonCursor(gMsgBox.uiButton[2], usCursor);
 
@@ -330,8 +330,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
     gMsgBox.uiButton[3] = CreateIconAndTextButton(
         gMsgBox.iButtonImages, L"4", FONT12ARIAL, ubFontColor, ubFontShadowColor, ubFontColor,
         ubFontShadowColor, TEXT_CJUSTIFIED, (int16_t)(gMsgBox.sX + sButtonX),
-        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST, DEFAULT_MOVE_CALLBACK,
-        (GUI_CALLBACK)NumberedMsgBoxCallback);
+        (int16_t)(gMsgBox.sY + sButtonY), BUTTON_TOGGLE, MSYS_PRIORITY_HIGHEST,
+        DEFAULT_MOVE_CALLBACK, (GUI_CALLBACK)NumberedMsgBoxCallback);
     MSYS_SetBtnUserData(gMsgBox.uiButton[3], 0, 4);
     SetButtonCursor(gMsgBox.uiButton[3], usCursor);
     ForceButtonUnDirty(gMsgBox.uiButton[3]);

@@ -498,7 +498,7 @@ BOOLEAN AddPlacementToWorld(SOLDIERINITNODE *curr) {
             // these guys should be guarding Tony!
             tempDetailedPlacement.sInsertionGridNo =
                 13531 + (int16_t)(PreRandom(8) * (PreRandom(1) ? -1 : 1) +
-                                PreRandom(8) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
+                                  PreRandom(8) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
 
             switch (PreRandom(3)) {
               case 0:
@@ -515,7 +515,7 @@ BOOLEAN AddPlacementToWorld(SOLDIERINITNODE *curr) {
             // billy should now be able to roam around
             tempDetailedPlacement.sInsertionGridNo =
                 13531 + (int16_t)(PreRandom(30) * (PreRandom(1) ? -1 : 1) +
-                                PreRandom(30) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
+                                  PreRandom(30) * (PreRandom(1) ? -1 : 1) * WORLD_ROWS);
             tempDetailedPlacement.bOrders = SEEKENEMY;
           } else if (tempDetailedPlacement.ubProfile == MADAME) {
             // she shouldn't be here!
@@ -1273,7 +1273,7 @@ void AddSoldierInitListCreatures(BOOLEAN fQueen, uint8_t ubNumLarvae, uint8_t ub
   // Okay, if we have a queen, place her first.  She MUST have a special placement, else
   // we can't use anything.
   ubNumCreatures = (uint8_t)(ubNumLarvae + ubNumInfants + ubNumYoungMales + ubNumYoungFemales +
-                           ubNumAdultMales + ubNumAdultFemales);
+                             ubNumAdultMales + ubNumAdultFemales);
   if (fQueen) {
     curr = gSoldierInitHead;
     while (curr) {

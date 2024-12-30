@@ -491,10 +491,10 @@ BOOLEAN EnterSaveLoadScreen() {
   usPosX = SLG_FIRST_SAVED_SPOT_X;
   usPosY = SLG_FIRST_SAVED_SPOT_Y;
   for (i = 0; i < NUM_SAVE_GAMES; i++) {
-    MSYS_DefineRegion(&gSelectedSaveRegion[i], usPosX, usPosY,
-                      (uint16_t)(usPosX + SLG_SAVELOCATION_WIDTH),
-                      (uint16_t)(usPosY + SLG_SAVELOCATION_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
-                      SelectedSaveRegionMovementCallBack, SelectedSaveRegionCallBack);
+    MSYS_DefineRegion(
+        &gSelectedSaveRegion[i], usPosX, usPosY, (uint16_t)(usPosX + SLG_SAVELOCATION_WIDTH),
+        (uint16_t)(usPosY + SLG_SAVELOCATION_HEIGHT), MSYS_PRIORITY_HIGH, CURSOR_NORMAL,
+        SelectedSaveRegionMovementCallBack, SelectedSaveRegionCallBack);
     MSYS_AddRegion(&gSelectedSaveRegion[i]);
     MSYS_SetRegionUserData(&gSelectedSaveRegion[i], 0, i);
 
@@ -767,20 +767,20 @@ void GetSaveLoadScreenUserInput() {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
 
@@ -992,8 +992,8 @@ BOOLEAN DoSaveLoadMessageBoxWithRect(uint8_t ubStyle, wchar_t *zString, uint32_t
   return ((giSaveLoadMessageBox != -1));
 }
 
-BOOLEAN DoSaveLoadMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, uint16_t usFlags,
-                             MSGBOX_CALLBACK ReturnCallback) {
+BOOLEAN DoSaveLoadMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen,
+                             uint16_t usFlags, MSGBOX_CALLBACK ReturnCallback) {
   SGPRect CenteringRect = {0, 0, 639, 479};
 
   // do message box and return
@@ -1285,8 +1285,9 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
                        FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
     } else {
       // display the empty spot
-      DrawTextToScreen(pMessageStrings[MSG_EMPTYSLOT], usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y),
-                       609, uiFont, ubFontColor, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
+      DrawTextToScreen(pMessageStrings[MSG_EMPTYSLOT], usPosX,
+                       (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 609, uiFont, ubFontColor,
+                       FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
     }
   }
 
@@ -1847,8 +1848,8 @@ void DisplayOnScreenNumber(BOOLEAN fErase) {
       continue;
     }
 
-    BlitBufferToBuffer(guiSAVEBUFFER, guiRENDERBUFFER, usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y),
-                       10, 10);
+    BlitBufferToBuffer(guiSAVEBUFFER, guiRENDERBUFFER, usPosX,
+                       (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 10, 10);
 
     if (bLoopNum != 10) {
       bNum = bLoopNum;

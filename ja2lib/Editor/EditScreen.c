@@ -138,7 +138,7 @@ BOOLEAN gfFakeLights = FALSE;
 
 int16_t gsLightRadius = 5;
 
-BOOLEAN gfOldDoVideoScroll;    // Saved for returning to previous settings
+BOOLEAN gfOldDoVideoScroll;      // Saved for returning to previous settings
 uint8_t gubOldCurScrollSpeedID;  // Saved for returning to previous settings
 
 int32_t iOldTaskMode = TASK_OPTIONS;
@@ -2637,7 +2637,8 @@ void ShowLightPositionHandles(void) {
       }
 
       if (!fSoldierLight) {
-        iMapIndex = ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
+        iMapIndex =
+            ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
         if (!TypeExistsInObjectLayer(iMapIndex, GOODRING, &usTmpIndex)) {
           AddObjectToHead(iMapIndex, GOODRING1);
           gpWorldLevelData[iMapIndex].pObjectHead->ubShadeLevel = DEFAULT_SHADE_LEVEL;
@@ -2672,7 +2673,8 @@ void RemoveLightPositionHandles(void) {
       }
 
       if (!fSoldierLight) {
-        iMapIndex = ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
+        iMapIndex =
+            ((int32_t)LightSprites[iCount].iY * WORLD_COLS) + (int32_t)LightSprites[iCount].iX;
         RemoveAllObjectsOfTypeRange(iMapIndex, GOODRING, GOODRING);
       }
     }

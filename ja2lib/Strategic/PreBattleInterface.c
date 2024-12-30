@@ -110,8 +110,8 @@ void AutoResolveBattleCallback(GUI_BUTTON *btn, int32_t reason);
 void GoToSectorCallback(GUI_BUTTON *btn, int32_t reason);
 void RetreatMercsCallback(GUI_BUTTON *btn, int32_t reason);
 
-void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition, int szConditionSize,
-                             uint8_t *pubHPPercent, uint8_t *pubBPPercent);
+void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition,
+                             int szConditionSize, uint8_t *pubHPPercent, uint8_t *pubBPPercent);
 
 void CheckForRobotAndIfItsControlled(void);
 
@@ -529,7 +529,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
               pSector = &SectorInfo[GetSectorID8(gubPBSectorX, gubPBSectorY)];
               if (!(pSector->uiFlags & SF_ALREADY_VISITED)) {
                 iChance = (uint8_t)(4 - bBestExpLevel + 2 * gGameOptions.ubDifficultyLevel +
-                                  CurrentPlayerProgressPercentage() / 10);
+                                    CurrentPlayerProgressPercentage() / 10);
                 if (pSector->uiFlags & SF_ENEMY_AMBUSH_LOCATION) {
                   iChance += 20;
                 }
@@ -777,8 +777,8 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     RefreshScreen(NULL);
 
     // Restore the previous rect.
-    BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
-                       (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
+    BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, (uint16_t)DstRect.iLeft,
+                       (uint16_t)DstRect.iTop, (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
                        (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
   }
   BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 640, 480);
@@ -1296,8 +1296,8 @@ enum {
   COND_DEAD
 };
 
-void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition, int szConditionSize,
-                             uint8_t *pubHPPercent, uint8_t *pubBPPercent) {
+void GetSoldierConditionInfo(struct SOLDIERTYPE *pSoldier, wchar_t *szCondition,
+                             int szConditionSize, uint8_t *pubHPPercent, uint8_t *pubBPPercent) {
   Assert(pSoldier);
   *pubHPPercent = (uint8_t)(pSoldier->bLife * 100 / pSoldier->bLifeMax);
   *pubBPPercent = pSoldier->bBreath;
@@ -1512,7 +1512,8 @@ void CalculateNonPersistantPBIInfo() {
         gubEnemyEncounterCode = ENTERING_ENEMY_SECTOR_CODE;
       }
     } else {
-      SECTORINFO *pSector = &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
+      SECTORINFO *pSector =
+          &SectorInfo[GetSectorID8((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY)];
       Assert(pSector);
       if (pSector->ubCreaturesInBattle) {
         gubExplicitEnemyEncounterCode = FIGHTING_CREATURES_CODE;

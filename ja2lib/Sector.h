@@ -51,8 +51,8 @@ BOOLEAN SectorOursAndPeaceful(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ);
 BOOLEAN IsThisSectorASAMSector(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
 
 // This will get an ID string like A9- OMERTA...
-void GetSectorIDString(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ, wchar_t* zString, size_t bufSize,
-                       BOOLEAN fDetailed);
+void GetSectorIDString(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ, wchar_t* zString,
+                       size_t bufSize, BOOLEAN fDetailed);
 
 uint8_t GetLoadedSectorX();
 uint8_t GetLoadedSectorY();

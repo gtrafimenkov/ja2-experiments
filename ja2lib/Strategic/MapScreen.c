@@ -358,7 +358,7 @@ struct rgbcolor {
 typedef struct rgbcolor RGBCOLOR;
 
 struct lineoftext {
-  wchar_t* pLineText;
+  wchar_t *pLineText;
   uint32_t uiFont;
   struct lineoftext *pNext;
 };
@@ -622,8 +622,8 @@ extern void HandlePreBattleInterfaceStates();
 
 // the title for the contract button on the character info panel in the upper left portion of the
 // mapscreen
-extern wchar_t* pContractButtonString[];
-extern wchar_t* pBullseyeStrings[];
+extern wchar_t *pContractButtonString[];
+extern wchar_t *pBullseyeStrings[];
 
 extern struct OBJECTTYPE *gpItemDescObject;
 
@@ -677,17 +677,18 @@ void EndConfirmMapMoveMode(void);
 void CancelMapUIMessage(void);
 void MonitorMapUIMessage(void);
 
-static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColor, BOOLEAN fStationary);
+static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColor,
+                               BOOLEAN fStationary);
 void ShadeMapElem(uint8_t sMapX, uint8_t sMapY);
 void PopupText(wchar_t *pFontString, ...);
-void DrawString(wchar_t* pString, uint16_t uiX, uint16_t uiY, uint32_t uiFont);
+void DrawString(wchar_t *pString, uint16_t uiX, uint16_t uiY, uint32_t uiFont);
 
 // Clock
-void SetClock(wchar_t* pString);
-void SetClockMin(wchar_t*, ...);
-void SetClockHour(wchar_t* pStringA, ...);
-void SetHourAlternate(wchar_t* pStringA, ...);
-void SetDayAlternate(wchar_t* pStringA, ...);
+void SetClock(wchar_t *pString);
+void SetClockMin(wchar_t *, ...);
+void SetClockHour(wchar_t *pStringA, ...);
+void SetHourAlternate(wchar_t *pStringA, ...);
+void SetDayAlternate(wchar_t *pStringA, ...);
 
 void RenderIconsForUpperLeftCornerPiece(int8_t bCharNumber);
 void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo);
@@ -712,7 +713,7 @@ void GlowFace(void);
 void ResetMapButtons();
 
 // Drawing Strings
-void DrawName(wchar_t* pName, int16_t sRowIndex, int32_t iFont);
+void DrawName(wchar_t *pName, int16_t sRowIndex, int32_t iFont);
 void DrawAssignment(int16_t sCharNumber, int16_t sRowIndex, int32_t iFont);
 void DrawLocation(int16_t sCharNumber, int16_t sRowIndex, int32_t iFont);
 void DrawDestination(int16_t sCharNumber, int16_t sRowIndex, int32_t iFont);
@@ -900,7 +901,7 @@ BOOLEAN HandleCtrlOrShiftInTeamPanel(int8_t bCharNumber);
 
 int32_t GetContractExpiryTime(struct SOLDIERTYPE *pSoldier);
 
-void ConvertMinTimeToETADayHourMinString(uint32_t uiTimeInMin, wchar_t* sString, size_t bufSize);
+void ConvertMinTimeToETADayHourMinString(uint32_t uiTimeInMin, wchar_t *sString, size_t bufSize);
 int32_t GetGroundTravelTimeOfCharacter(int8_t bCharNumber);
 
 int16_t CalcLocationValueForChar(int32_t iCounter);
@@ -3543,14 +3544,14 @@ uint32_t MapScreenHandle(void) {
   return (MAP_SCREEN);
 }
 
-void DrawString(wchar_t* pString, uint16_t uiX, uint16_t uiY, uint32_t uiFont) {
+void DrawString(wchar_t *pString, uint16_t uiX, uint16_t uiY, uint32_t uiFont) {
   // draw monochrome string
   SetFont(uiFont);
   gprintfdirty(uiX, uiY, pString);
   mprintf(uiX, uiY, pString);
 }
 
-void SetDayAlternate(wchar_t* pStringA, ...) {
+void SetDayAlternate(wchar_t *pStringA, ...) {
   // this sets the clock counter, unwind loop
   uint16_t uiX = 0;
   uint16_t uiY = 0;
@@ -3580,7 +3581,7 @@ void SetDayAlternate(wchar_t* pStringA, ...) {
   mprintf(uiX, uiY, String);
 }
 
-void SetHourAlternate(wchar_t* pStringA, ...) {
+void SetHourAlternate(wchar_t *pStringA, ...) {
   // this sets the clock counter, unwind loop
   uint16_t uiX = 0;
   uint16_t uiY = 0;
@@ -3611,7 +3612,7 @@ void SetHourAlternate(wchar_t* pStringA, ...) {
   mprintf(uiX, uiY, String);
 }
 
-void SetClockHour(wchar_t* pStringA, ...) {
+void SetClockHour(wchar_t *pStringA, ...) {
   // this sets the clock counter, unwind loop
   uint16_t uiX = 0;
   uint16_t uiY = 0;
@@ -3639,7 +3640,7 @@ void SetClockHour(wchar_t* pStringA, ...) {
   mprintf(uiX, uiY, String);
 }
 
-void SetClockMin(wchar_t* pStringA, ...) {
+void SetClockMin(wchar_t *pStringA, ...) {
   // this sets the clock counter, unwind loop
   wchar_t String[10];
   va_list argptr;
@@ -3665,7 +3666,7 @@ void SetClockMin(wchar_t* pStringA, ...) {
   mprintf(CLOCK_MIN_X_START - 5, CLOCK_Y_START, String);
 }
 
-void DrawName(wchar_t* pName, int16_t sRowIndex, int32_t iFont) {
+void DrawName(wchar_t *pName, int16_t sRowIndex, int32_t iFont) {
   int16_t usX = 0;
   int16_t usY = 0;
 
@@ -3703,8 +3704,8 @@ void DrawAssignment(int16_t sCharNumber, int16_t sRowIndex, int32_t iFont) {
     }
   }
 
-  // RestoreExternBackgroundRect(ASSIGN_X-2, ((uint16_t)(usY+(Y_OFFSET*sRowIndex+1))), ASSIGN_WIDTH+2,
-  // Y_SIZE);
+  // RestoreExternBackgroundRect(ASSIGN_X-2, ((uint16_t)(usY+(Y_OFFSET*sRowIndex+1))),
+  // ASSIGN_WIDTH+2, Y_SIZE);
   DrawString(sString, (uint16_t)usX, ((uint16_t)(usY + (Y_OFFSET * sRowIndex + 1))), iFont);
 }
 
@@ -3725,7 +3726,8 @@ void DrawLocation(int16_t sCharNumber, int16_t sRowIndex, int32_t iFont) {
                               (short)LOC_WIDTH, (short)Y_SIZE, sString, (long)iFont, &usX, &usY);
   }
   // restore background
-  // RestoreExternBackgroundRect(LOC_X, ((uint16_t)(usY+(Y_OFFSET*sRowIndex+1))), LOC_WIDTH, Y_SIZE);
+  // RestoreExternBackgroundRect(LOC_X, ((uint16_t)(usY+(Y_OFFSET*sRowIndex+1))), LOC_WIDTH,
+  // Y_SIZE);
 
   // draw string
   DrawString(sString, ((uint16_t)(usX)), ((uint16_t)(usY + (Y_OFFSET * sRowIndex + 1))),
@@ -4188,20 +4190,20 @@ void GetMapKeyboardInput(uint32_t *puiNewEvent) {
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_DOWN:
-        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_DOWN, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case RIGHT_BUTTON_UP:
         MouseSystemHook(RIGHT_BUTTON_UP, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
                         _RightButtonDown);
         break;
       case RIGHT_BUTTON_REPEAT:
-        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(RIGHT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
       case LEFT_BUTTON_REPEAT:
-        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y, _LeftButtonDown,
-                        _RightButtonDown);
+        MouseSystemHook(LEFT_BUTTON_REPEAT, (int16_t)MousePos.x, (int16_t)MousePos.y,
+                        _LeftButtonDown, _RightButtonDown);
         break;
     }
 
@@ -5286,7 +5288,8 @@ static BOOLEAN GetMapXY(int16_t sX, int16_t sY, uint8_t *psMapWorldX, uint8_t *p
   return (TRUE);
 }
 
-static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColor, BOOLEAN fStationary) {
+static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColor,
+                               BOOLEAN fStationary) {
   int16_t sScreenX, sScreenY;
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
@@ -5647,7 +5650,7 @@ void BltCharInvPanel() {
       HandleCompatibleAmmoUIForMapScreen(
           pSoldier,
           (int32_t)(iCurrentlyHighLightedItem +
-                  (iCurrentInventoryPoolPage * MAP_INVENTORY_POOL_SLOT_COUNT)),
+                    (iCurrentInventoryPoolPage * MAP_INVENTORY_POOL_SLOT_COUNT)),
           TRUE, FALSE);
     }
   }
@@ -6084,7 +6087,8 @@ void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo) {
 
     for (iCounter = 0; iCounter < 5; iCounter++) {
       DrawString(pShortAttributeStrings[iCounter], 88, (int16_t)(22 + iCounter * 10), CHAR_FONT);
-      DrawString(pShortAttributeStrings[iCounter + 5], 133, (int16_t)(22 + iCounter * 10), CHAR_FONT);
+      DrawString(pShortAttributeStrings[iCounter + 5], 133, (int16_t)(22 + iCounter * 10),
+                 CHAR_FONT);
     }
 
     // contract
@@ -6307,11 +6311,11 @@ void CreateMouseRegionsForTeamList(void) {
                       MSYS_NO_CURSOR, TeamListInfoRegionMvtCallBack, TeamListInfoRegionBtnCallBack);
 
     // assignment region
-    MSYS_DefineRegion(&gTeamListAssignmentRegion[sCounter], ASSIGN_X,
-                      (int16_t)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), ASSIGN_X + ASSIGN_WIDTH,
-                      (int16_t)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd),
-                      MSYS_PRIORITY_NORMAL + 1, MSYS_NO_CURSOR, TeamListAssignmentRegionMvtCallBack,
-                      TeamListAssignmentRegionBtnCallBack);
+    MSYS_DefineRegion(
+        &gTeamListAssignmentRegion[sCounter], ASSIGN_X,
+        (int16_t)(Y_START + (sCounter) * (Y_SIZE + 2) + sYAdd), ASSIGN_X + ASSIGN_WIDTH,
+        (int16_t)(145 + (sCounter + 1) * (Y_SIZE + 2) + sYAdd), MSYS_PRIORITY_NORMAL + 1,
+        MSYS_NO_CURSOR, TeamListAssignmentRegionMvtCallBack, TeamListAssignmentRegionBtnCallBack);
 
     // location region (same function as name regions, so uses the same callbacks)
     MSYS_DefineRegion(&gTeamListLocationRegion[sCounter], LOC_X,
@@ -7098,10 +7102,12 @@ void PlotTemporaryPaths(void) {
         /*
                                 if( fZoomFlag )
                                 {
-                                        sMapX =  ( int16_t )( ( ( iZoomX ) / ( MAP_GRID_X ) ) + sMapX
+                                        sMapX =  ( int16_t )( ( ( iZoomX ) / ( MAP_GRID_X ) ) +
+           sMapX
            ); sMapX /= 2;
 
-                                        sMapY =  ( int16_t )( ( ( iZoomY ) / ( MAP_GRID_Y ) ) + sMapY
+                                        sMapY =  ( int16_t )( ( ( iZoomY ) / ( MAP_GRID_Y ) ) +
+           sMapY
            ); sMapY /= 2;
                                 }
         */
@@ -8863,8 +8869,8 @@ void TellPlayerWhyHeCantCompressTime(void) {
     if (OnlyHostileCivsInSector()) {
       wchar_t str[256];
       wchar_t pSectorString[128];
-      GetSectorIDString((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ, pSectorString,
-                        ARR_SIZE(pSectorString), TRUE);
+      GetSectorIDString((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ,
+                        pSectorString, ARR_SIZE(pSectorString), TRUE);
       swprintf(str, ARR_SIZE(str), gzLateLocalizedString[27], pSectorString);
       DoMapMessageBox(MSG_BOX_BASIC_STYLE, str, MAP_SCREEN, MSG_BOX_FLAG_OK,
                       MapScreenDefaultOkBoxCallback);
@@ -9252,8 +9258,9 @@ void DisplayIconsForMercsAsleep(void) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
       if (IsSolActive(pSoldier) && pSoldier->fMercAsleep &&
           CanChangeSleepStatusForSoldier(pSoldier)) {
-        BltVideoObject(guiSAVEBUFFER, hHandle, 0, 125, (int16_t)(Y_START + (iCounter * (Y_SIZE + 2))),
-                       VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVideoObject(guiSAVEBUFFER, hHandle, 0, 125,
+                       (int16_t)(Y_START + (iCounter * (Y_SIZE + 2))), VO_BLT_SRCTRANSPARENCY,
+                       NULL);
       }
     }
   }
@@ -9726,7 +9733,7 @@ void CancelPathsOfAllSelectedCharacters() {
   }
 }
 
-void ConvertMinTimeToETADayHourMinString(uint32_t uiTimeInMin, wchar_t* sString, size_t bufSize) {
+void ConvertMinTimeToETADayHourMinString(uint32_t uiTimeInMin, wchar_t *sString, size_t bufSize) {
   uint32_t uiDay, uiHour, uiMin;
 
   uiDay = (uiTimeInMin / NUM_MIN_IN_DAY);

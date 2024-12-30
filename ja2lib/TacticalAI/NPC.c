@@ -83,10 +83,10 @@ uint8_t gubTeamPenalty;
 BOOLEAN EnsureQuoteFileLoaded(uint8_t ubNPC);
 NPCQuoteInfo *LoadQuoteFile(uint8_t ubNPC);
 uint8_t NPCConsiderQuote(uint8_t ubNPC, uint8_t ubMerc, uint8_t ubApproach, uint8_t ubQuoteNum,
-                       uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray);
+                         uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray);
 uint8_t NPCConsiderReceivingItemFromMerc(uint8_t ubNPC, uint8_t ubMerc, struct OBJECTTYPE *pObj,
-                                       NPCQuoteInfo *pNPCQuoteInfoArray,
-                                       NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum);
+                                         NPCQuoteInfo *pNPCQuoteInfoArray,
+                                         NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum);
 void PCsNearNPC(uint8_t ubNPC);
 void TriggerClosestMercWhoCanSeeNPC(uint8_t ubNPC, NPCQuoteInfo *pQuotePtr);
 BOOLEAN NPCHasUnusedRecordWithGivenApproach(uint8_t ubNPC, uint8_t ubApproach);
@@ -94,9 +94,9 @@ BOOLEAN NPCHasUnusedRecordWithGivenApproach(uint8_t ubNPC, uint8_t ubApproach);
 int8_t gbFirstApproachFlags[4] = {0x01, 0x02, 0x04, 0x08};
 
 uint8_t gubAlternateNPCFileNumsForQueenMeanwhiles[] = {160, 161, 162, 163, 164, 165, 166, 167, 168,
-                                                     169, 170, 171, 172, 173, 174, 175, 176};
+                                                       169, 170, 171, 172, 173, 174, 175, 176};
 uint8_t gubAlternateNPCFileNumsForElliotMeanwhiles[] = {180, 181, 182, 183, 184, 185, 186, 187, 188,
-                                                      189, 190, 191, 192, 193, 194, 195, 196};
+                                                        189, 190, 191, 192, 193, 194, 195, 196};
 
 #ifdef JA2BETAVERSION
 BOOLEAN gfDisplayScreenMsgOnRecordUsage = FALSE;
@@ -521,8 +521,8 @@ void ApproachedForFirstTime(MERCPROFILESTRUCT *pNPCProfile, int8_t bApproach) {
 }
 
 uint8_t NPCConsiderTalking(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uint8_t ubRecord,
-                         NPCQuoteInfo *pNPCQuoteInfoArray, NPCQuoteInfo **ppResultQuoteInfo,
-                         uint8_t *pubQuoteNum) {
+                           NPCQuoteInfo *pNPCQuoteInfoArray, NPCQuoteInfo **ppResultQuoteInfo,
+                           uint8_t *pubQuoteNum) {
   // This function returns the opinion level required of the "most difficult" quote
   // that the NPC is willing to say to the merc.  It can also provide the quote #.
   MERCPROFILESTRUCT *pNPCProfile = NULL;
@@ -642,8 +642,8 @@ uint8_t NPCConsiderTalking(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uint
 }
 
 uint8_t NPCConsiderReceivingItemFromMerc(uint8_t ubNPC, uint8_t ubMerc, struct OBJECTTYPE *pObj,
-                                       NPCQuoteInfo *pNPCQuoteInfoArray,
-                                       NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum) {
+                                         NPCQuoteInfo *pNPCQuoteInfoArray,
+                                         NPCQuoteInfo **ppResultQuoteInfo, uint8_t *pubQuoteNum) {
   // This function returns the opinion level required of the "most difficult" quote
   // that the NPC is willing to say to the merc.  It can also provide the quote #.
   NPCQuoteInfo *pNPCQuoteInfo;
@@ -961,7 +961,8 @@ uint8_t NPCConsiderReceivingItemFromMerc(uint8_t ubNPC, uint8_t ubMerc, struct O
   return (0);
 }
 
-BOOLEAN HandleNPCBeingGivenMoneyByPlayer(uint8_t ubNPC, uint32_t uiMoneyAmount, uint8_t *pQuoteValue) {
+BOOLEAN HandleNPCBeingGivenMoneyByPlayer(uint8_t ubNPC, uint32_t uiMoneyAmount,
+                                         uint8_t *pQuoteValue) {
   switch (ubNPC) {
     // handle for STEVE and VINCE
     case STEVE:
@@ -1038,7 +1039,7 @@ BOOLEAN HandleNPCBeingGivenMoneyByPlayer(uint8_t ubNPC, uint32_t uiMoneyAmount, 
 }
 
 uint8_t NPCConsiderQuote(uint8_t ubNPC, uint8_t ubMerc, uint8_t ubApproach, uint8_t ubQuoteNum,
-                       uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray) {
+                         uint8_t ubTalkDesire, NPCQuoteInfo *pNPCQuoteInfoArray) {
   // This function looks at a quote and determines if conditions for it have been met.
   // Returns 0 if none , 1 if one is found
   MERCPROFILESTRUCT *pNPCProfile;
@@ -2854,7 +2855,8 @@ int8_t FindCivQuoteFileIndex(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ
   return (-1);
 }
 
-int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ, BOOLEAN fSetAsUsed) {
+int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSectorZ,
+                              BOOLEAN fSetAsUsed) {
   int8_t bLoop, bCivQuoteSectorIndex;
   NPCQuoteInfo *pCivQuoteInfoArray;
 
@@ -2878,7 +2880,8 @@ int8_t ConsiderCivilianQuotes(uint8_t sSectorX, uint8_t sSectorY, int8_t sSector
       }
 
       if (pCivQuoteInfoArray[bLoop].ubStartQuest != NO_QUEST) {
-        StartQuest(pCivQuoteInfoArray[bLoop].ubStartQuest, (uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY);
+        StartQuest(pCivQuoteInfoArray[bLoop].ubStartQuest, (uint8_t)gWorldSectorX,
+                   (uint8_t)gWorldSectorY);
       }
 
       // return quote #

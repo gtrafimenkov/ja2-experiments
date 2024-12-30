@@ -531,7 +531,8 @@ void StartMeanwhile() {
 void DoneFadeOutMeanwhile() {
   // OK, insertion data found, enter sector!
 
-  SetCurrentWorldSector((uint8_t)gCurrentMeanwhileDef.sSectorX, (uint8_t)gCurrentMeanwhileDef.sSectorY, 0);
+  SetCurrentWorldSector((uint8_t)gCurrentMeanwhileDef.sSectorX,
+                        (uint8_t)gCurrentMeanwhileDef.sSectorY, 0);
 
   // LocateToMeanwhileCharacter( );
   LocateMeanWhileGrid();

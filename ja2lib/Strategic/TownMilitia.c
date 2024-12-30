@@ -204,7 +204,8 @@ static void promoteMilitia(uint8_t mapX, uint8_t mapY, uint8_t ubCurrentRank, ui
   MarkForRedrawalStrategicMap();
 }
 
-void StrategicRemoveMilitiaFromSector(uint8_t mapX, uint8_t mapY, uint8_t ubRank, uint8_t ubHowMany) {
+void StrategicRemoveMilitiaFromSector(uint8_t mapX, uint8_t mapY, uint8_t ubRank,
+                                      uint8_t ubHowMany) {
   uint8_t currentCount = GetMilitiaOfRankInSector(mapX, mapY, ubRank);
 
   // damn well better have that many around to remove!
@@ -222,7 +223,8 @@ void StrategicRemoveMilitiaFromSector(uint8_t mapX, uint8_t mapY, uint8_t ubRank
 }
 
 // kill pts are (2 * kills) + assists
-uint8_t CheckOneMilitiaForPromotion(uint8_t mapX, uint8_t mapY, uint8_t ubCurrentRank, uint8_t ubRecentKillPts) {
+uint8_t CheckOneMilitiaForPromotion(uint8_t mapX, uint8_t mapY, uint8_t ubCurrentRank,
+                                    uint8_t ubRecentKillPts) {
   uint32_t uiChanceToLevel = 0;
 
   switch (ubCurrentRank) {

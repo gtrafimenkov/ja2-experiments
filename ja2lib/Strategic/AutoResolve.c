@@ -117,9 +117,9 @@ typedef struct AUTORESOLVE_STRUCT {
   uint32_t iInterfaceBuffer;
   int32_t iNumMercFaces;
   int32_t iActualMercFaces;  // this represents the real number of merc faces.  Because
-                           // my debug mode allows to freely add and subtract mercs, we
-                           // can add/remove temp mercs, but we don't want to remove the
-                           // actual mercs.
+                             // my debug mode allows to freely add and subtract mercs, we
+                             // can add/remove temp mercs, but we don't want to remove the
+                             // actual mercs.
   uint32_t uiTimeSlice;
   uint32_t uiTotalElapsedBattleTimeInMilliseconds;
   uint32_t uiPrevTime, uiCurrTime;
@@ -331,8 +331,8 @@ void PlayAutoResolveSample(uint32_t usNum, uint32_t usRate, uint32_t ubVolume, u
   }
 }
 
-void PlayAutoResolveSampleFromFile(char* szFileName, uint32_t usRate, uint32_t ubVolume, uint32_t ubLoops,
-                                   uint32_t uiPan) {
+void PlayAutoResolveSampleFromFile(char *szFileName, uint32_t usRate, uint32_t ubVolume,
+                                   uint32_t ubLoops, uint32_t uiPan) {
   if (gpAR->fSound) {
     PlayJA2SampleFromFile(szFileName, usRate, ubVolume, ubLoops, uiPan);
   }
@@ -522,8 +522,8 @@ void DoTransitionFromPreBattleInterfaceToAutoResolve() {
     RefreshScreen(NULL);
 
     // Restore the previous rect.
-    BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
-                       (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
+    BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, (uint16_t)DstRect.iLeft,
+                       (uint16_t)DstRect.iTop, (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
                        (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
   }
   // BlitBufferToBuffer( FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 640, 480 );
@@ -1161,7 +1161,7 @@ void ExpandWindow() {
 }
 
 uint32_t VirtualSoldierDressWound(struct SOLDIERTYPE *pSoldier, struct SOLDIERTYPE *pVictim,
-                                struct OBJECTTYPE *pKit, int16_t sKitPts, int16_t sStatus) {
+                                  struct OBJECTTYPE *pKit, int16_t sKitPts, int16_t sStatus) {
   uint32_t uiDressSkill, uiPossible, uiActual, uiMedcost, uiDeficiency, uiAvailAPs, uiUsedAPs;
   uint8_t bBelowOKlife, bPtsLeft;
 
@@ -1227,8 +1227,8 @@ uint32_t VirtualSoldierDressWound(struct SOLDIERTYPE *pSoldier, struct SOLDIERTY
   } else {
     uiMedcost = uiActual;
     if (uiMedcost == 0 && uiActual > 0) uiMedcost = 1;
-    if (uiMedcost > (uint32_t)sKitPts)   // can't afford it
-      uiMedcost = uiActual = sKitPts;  // recalc cost AND aid
+    if (uiMedcost > (uint32_t)sKitPts)  // can't afford it
+      uiMedcost = uiActual = sKitPts;   // recalc cost AND aid
   }
 
   bPtsLeft = (int8_t)uiActual;
@@ -1502,10 +1502,10 @@ void RenderAutoResolve() {
 #endif
 
   if (gpAR->fPendingSurrender) {
-    DisplayWrappedString((uint16_t)(gpAR->sCenterStartX + 16), (uint16_t)(230 + gpAR->bVerticalOffset),
-                         108, 2, (uint8_t)FONT10ARIAL, FONT_YELLOW,
-                         gpStrategicString[STR_ENEMY_SURRENDER_OFFER], FONT_BLACK, FALSE,
-                         LEFT_JUSTIFIED);
+    DisplayWrappedString((uint16_t)(gpAR->sCenterStartX + 16),
+                         (uint16_t)(230 + gpAR->bVerticalOffset), 108, 2, (uint8_t)FONT10ARIAL,
+                         FONT_YELLOW, gpStrategicString[STR_ENEMY_SURRENDER_OFFER], FONT_BLACK,
+                         FALSE, LEFT_JUSTIFIED);
   }
 
   if (gpAR->ubBattleStatus != BATTLE_IN_PROGRESS) {
@@ -1884,8 +1884,8 @@ void CreateAutoResolveInterface() {
 
   gpAR->iButton[BANDAGE_BUTTON] =
       QuickCreateButton(gpAR->iButtonImage[BANDAGE_BUTTON], (int16_t)(gpAR->sCenterStartX + 11),
-                        (int16_t)(245 + gpAR->bVerticalOffset), BUTTON_NO_TOGGLE, MSYS_PRIORITY_HIGH,
-                        DEFAULT_MOVE_CALLBACK, BandageButtonCallback);
+                        (int16_t)(245 + gpAR->bVerticalOffset), BUTTON_NO_TOGGLE,
+                        MSYS_PRIORITY_HIGH, DEFAULT_MOVE_CALLBACK, BandageButtonCallback);
 
   gpAR->iButton[DONEWIN_BUTTON] =
       QuickCreateButton(gpAR->iButtonImage[DONEWIN_BUTTON], (int16_t)(gpAR->sCenterStartX + 51),
@@ -2140,9 +2140,9 @@ void RetreatButtonCallback(GUI_BUTTON *btn, int32_t reason) {
       if (!(gpMercs[i].uiFlags & (CELL_RETREATING | CELL_RETREATED))) {
         gpMercs[i].uiFlags |= CELL_RETREATING | CELL_DIRTY;
         // Gets to retreat after a total of 2 attacks.
-        gpMercs[i].usNextAttack =
-            (uint16_t)((1000 + gpMercs[i].usNextAttack * 2 + PreRandom(2000 - gpMercs[i].usAttack)) *
-                     2);
+        gpMercs[i].usNextAttack = (uint16_t)((1000 + gpMercs[i].usNextAttack * 2 +
+                                              PreRandom(2000 - gpMercs[i].usAttack)) *
+                                             2);
         gpAR->usPlayerAttack -= gpMercs[i].usAttack;
         gpMercs[i].usAttack = 0;
       }
@@ -2760,7 +2760,7 @@ void HandleAutoResolveInput() {
 void RenderSoldierCellHealth(SOLDIERCELL *pCell) {
   int32_t cnt, cntStart;
   int32_t xp, yp;
-  wchar_t* pStr;
+  wchar_t *pStr;
   wchar_t str[20];
   uint8_t *pDestBuf, *pSrcBuf;
   uint32_t uiSrcPitchBYTES, uiDestPitchBYTES;
@@ -2772,8 +2772,8 @@ void RenderSoldierCellHealth(SOLDIERCELL *pCell) {
   pSrcBuf = LockVideoSurface(gpAR->iInterfaceBuffer, &uiSrcPitchBYTES);
   xp = pCell->xp + 2;
   yp = pCell->yp + 32;
-  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, xp, yp,
-                  xp - gpAR->Rect.iLeft, yp - gpAR->Rect.iTop, 46, 10);
+  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, xp,
+                  yp, xp - gpAR->Rect.iLeft, yp - gpAR->Rect.iTop, 46, 10);
   UnLockVideoSurface(gpAR->iInterfaceBuffer);
   UnLockVideoSurface(FRAME_BUFFER);
 
@@ -3532,7 +3532,8 @@ void TargetHitCallback(SOLDIERCELL *pTarget, int32_t index) {
           gMercProfiles[GetSolProfile(pKiller->pSoldier)].usKills++;
           gStrategicStatus.usPlayerKills++;
           // EXPERIENCE CLASS GAIN:  Earned a kill
-          StatChange(pKiller->pSoldier, EXPERAMT, (uint16_t)(10 * pTarget->pSoldier->bLevel), FALSE);
+          StatChange(pKiller->pSoldier, EXPERAMT, (uint16_t)(10 * pTarget->pSoldier->bLevel),
+                     FALSE);
           HandleMoraleEvent(pKiller->pSoldier, MORALE_KILLED_ENEMY, gpAR->ubSectorX,
                             gpAR->ubSectorY, 0);
         } else if (pKiller->uiFlags & CELL_MILITIA)
@@ -3616,8 +3617,7 @@ void TargetHitCallback(SOLDIERCELL *pTarget, int32_t index) {
 void Delay(uint32_t uiMilliseconds) {
   int32_t iTime;
   iTime = GetJA2Clock();
-  while (GetJA2Clock() < iTime + uiMilliseconds)
-    ;
+  while (GetJA2Clock() < iTime + uiMilliseconds);
 }
 
 BOOLEAN IsBattleOver() {
@@ -4044,7 +4044,8 @@ BOOLEAN GetCurrentBattleSectorXYZ(uint8_t *psSectorX, uint8_t *psSectorY, int8_t
 }
 
 // Returns TRUE if a battle is happening ONLY
-BOOLEAN GetCurrentBattleSectorXYZAndReturnTRUEIfThereIsABattle(uint8_t *psSectorX, uint8_t *psSectorY,
+BOOLEAN GetCurrentBattleSectorXYZAndReturnTRUEIfThereIsABattle(uint8_t *psSectorX,
+                                                               uint8_t *psSectorY,
                                                                int8_t *psSectorZ) {
   if (gpAR) {
     *psSectorX = gpAR->ubSectorX;

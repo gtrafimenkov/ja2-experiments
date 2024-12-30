@@ -8,10 +8,10 @@
 // ONLY ONE OF THESE CAN BE DEFINED AT A TIME!
 
 #define ENGLISH
-//#define GERMAN
-//#define RUSSIAN
-//#define DUTCH
-//#define POLISH
+// #define GERMAN
+// #define RUSSIAN
+// #define DUTCH
+// #define POLISH
 
 #define BLOOD_N_GORE_ENABLED
 

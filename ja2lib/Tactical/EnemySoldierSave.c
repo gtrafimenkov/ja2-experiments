@@ -33,7 +33,8 @@
 #include "Utils/Message.h"
 
 BOOLEAN CountNumberOfElitesRegularsAdminsAndCreaturesFromEnemySoldiersTempFile(
-    uint8_t *pubNumElites, uint8_t *pubNumRegulars, uint8_t *pubNumAdmins, uint8_t *pubNumCreatures);
+    uint8_t *pubNumElites, uint8_t *pubNumRegulars, uint8_t *pubNumAdmins,
+    uint8_t *pubNumCreatures);
 
 BOOLEAN gfRestoringEnemySoldiersFromTempFile = FALSE;
 BOOLEAN gfRestoringCiviliansFromTempFile = FALSE;
@@ -103,8 +104,7 @@ BOOLEAN LoadEnemySoldiersFromTempFile() {
   //	sprintf( zMapName, "%s\\e_%s", MAPS_DIR, zTempName);
 
   GetMapTempFileName(SF_ENEMY_PRESERVED_TEMP_FILE_EXISTS, zMapName, (uint8_t)gWorldSectorX,
-                     (uint8_t)gWorldSectorY,
-                     gbWorldSectorZ);
+                     (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
   // Open the file for reading
   hfile = FileMan_Open(zMapName, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
@@ -233,8 +233,8 @@ BOOLEAN LoadEnemySoldiersFromTempFile() {
     SECTORINFO *pSector;
     pSector = &SectorInfo[GetSectorID8((uint8_t)sSectorX, (uint8_t)sSectorY)];
     ubStrategicCreatures = pSector->ubNumCreatures;
-    GetNumberOfEnemiesInSector((uint8_t)sSectorX, (uint8_t)sSectorY, &ubStrategicAdmins, &ubStrategicTroops,
-                               &ubStrategicElites);
+    GetNumberOfEnemiesInSector((uint8_t)sSectorX, (uint8_t)sSectorY, &ubStrategicAdmins,
+                               &ubStrategicTroops, &ubStrategicElites);
   }
 
   for (i = 0; i < slots; i++) {
@@ -386,8 +386,9 @@ FAIL_LOAD:
 
 // OLD SAVE METHOD:  This is the older way of saving the civilian and the enemies placement into a
 // temp file
-BOOLEAN SaveEnemySoldiersToTempFile(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ, uint8_t ubFirstIdTeam,
-                                    uint8_t ubLastIdTeam, BOOLEAN fAppendToFile) {
+BOOLEAN SaveEnemySoldiersToTempFile(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
+                                    uint8_t ubFirstIdTeam, uint8_t ubLastIdTeam,
+                                    BOOLEAN fAppendToFile) {
   SOLDIERINITNODE *curr;
   struct SOLDIERTYPE *pSoldier;
   int32_t i;
@@ -700,8 +701,7 @@ BOOLEAN NewWayOfLoadingEnemySoldiersFromTempFile() {
   //	sprintf( zMapName, "%s\\e_%s", MAPS_DIR, zTempName);
 
   GetMapTempFileName(SF_ENEMY_PRESERVED_TEMP_FILE_EXISTS, zMapName, (uint8_t)gWorldSectorX,
-                     (uint8_t)gWorldSectorY,
-                     gbWorldSectorZ);
+                     (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
   // Count the number of enemies ( elites, regulars, admins and creatures ) that are in the temp
   // file.
@@ -871,8 +871,8 @@ BOOLEAN NewWayOfLoadingEnemySoldiersFromTempFile() {
     SECTORINFO *pSector;
     pSector = &SectorInfo[GetSectorID8((uint8_t)sSectorX, (uint8_t)sSectorY)];
     ubStrategicCreatures = pSector->ubNumCreatures;
-    GetNumberOfEnemiesInSector((uint8_t)sSectorX, (uint8_t)sSectorY, &ubStrategicAdmins, &ubStrategicTroops,
-                               &ubStrategicElites);
+    GetNumberOfEnemiesInSector((uint8_t)sSectorX, (uint8_t)sSectorY, &ubStrategicAdmins,
+                               &ubStrategicTroops, &ubStrategicElites);
   }
 
   for (i = 0; i < slots; i++) {
@@ -1069,8 +1069,7 @@ BOOLEAN NewWayOfLoadingCiviliansFromTempFile() {
   // add the 'e' for 'Enemy preserved' to the front of the map name
   // sprintf( zMapName, "%s\\c_%s", MAPS_DIR, zTempName);
   GetMapTempFileName(SF_CIV_PRESERVED_TEMP_FILE_EXISTS, zMapName, (uint8_t)gWorldSectorX,
-                     (uint8_t)gWorldSectorY,
-                     gbWorldSectorZ);
+                     (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
   // Open the file for reading
   hfile = FileMan_Open(zMapName, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
@@ -1322,8 +1321,9 @@ FAIL_LOAD:
 
 // If we are saving a game and we are in the sector, we will need to preserve the links between the
 // soldiers and the soldier init list.  Otherwise, the temp file will be deleted.
-BOOLEAN NewWayOfSavingEnemyAndCivliansToTempFile(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ,
-                                                 BOOLEAN fEnemy, BOOLEAN fValidateOnly) {
+BOOLEAN NewWayOfSavingEnemyAndCivliansToTempFile(uint8_t sSectorX, uint8_t sSectorY,
+                                                 int8_t bSectorZ, BOOLEAN fEnemy,
+                                                 BOOLEAN fValidateOnly) {
   SOLDIERINITNODE *curr;
   struct SOLDIERTYPE *pSoldier;
   int32_t i;
@@ -1596,7 +1596,8 @@ FAIL_SAVE:
 }
 
 BOOLEAN CountNumberOfElitesRegularsAdminsAndCreaturesFromEnemySoldiersTempFile(
-    uint8_t *pubNumElites, uint8_t *pubNumRegulars, uint8_t *pubNumAdmins, uint8_t *pubNumCreatures) {
+    uint8_t *pubNumElites, uint8_t *pubNumRegulars, uint8_t *pubNumAdmins,
+    uint8_t *pubNumCreatures) {
   //	SOLDIERINITNODE *curr;
   SOLDIERCREATE_STRUCT tempDetailedPlacement;
   int32_t i;
@@ -1630,8 +1631,7 @@ BOOLEAN CountNumberOfElitesRegularsAdminsAndCreaturesFromEnemySoldiersTempFile(
   //	sprintf( zMapName, "%s\\e_%s", MAPS_DIR, zTempName);
 
   GetMapTempFileName(SF_ENEMY_PRESERVED_TEMP_FILE_EXISTS, zMapName, (uint8_t)gWorldSectorX,
-                     (uint8_t)gWorldSectorY,
-                     gbWorldSectorZ);
+                     (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
   // Open the file for reading
   hfile = FileMan_Open(zMapName, FILE_ACCESS_READ | FILE_OPEN_EXISTING, FALSE);
@@ -1811,7 +1811,8 @@ BOOLEAN CountNumberOfElitesRegularsAdminsAndCreaturesFromEnemySoldiersTempFile(
 
                                             curr->pBasicPlacement->bPatrolCnt			=
        curr->pDetailedPlacement->bPatrolCnt; memcpy( curr->pBasicPlacement->sPatrolGrid,
-       curr->pDetailedPlacement->sPatrolGrid, sizeof( int16_t ) * curr->pBasicPlacement->bPatrolCnt );
+       curr->pDetailedPlacement->sPatrolGrid, sizeof( int16_t ) * curr->pBasicPlacement->bPatrolCnt
+       );
 
                                             FileMan_Read( hfile, &usCheckSum, 2, &uiNumBytesRead );
                                             if( uiNumBytesRead != 2 )

@@ -160,7 +160,7 @@ struct DB_STRUCTURE {
 struct DB_STRUCTURE_REF {
   struct DB_STRUCTURE* pDBStructure;
   DB_STRUCTURE_TILE** ppTile;  // dynamic array
-};                             // 8 bytes
+};  // 8 bytes
 
 struct STRUCTURE {
   struct STRUCTURE* pPrev;
@@ -176,14 +176,14 @@ struct STRUCTURE {
     struct {
       int16_t sBaseGridNo;
     };
-  };                  // 2 bytes
+  };  // 2 bytes
   int16_t sCubeOffset;  // height of bottom of object in profile "cubes"
   uint32_t fFlags;      // need to have something to indicate base tile/not
   PROFILE* pShape;
   uint8_t ubWallOrientation;
   uint8_t ubVehicleHitLocation;
   uint8_t ubStructureHeight;  // if 0, then unset; otherwise stores height of structure when last
-                            // calculated
+                              // calculated
   uint8_t ubUnused[1];
 };  // 32 bytes
 

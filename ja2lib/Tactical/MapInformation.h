@@ -37,7 +37,7 @@ typedef struct {
   int16_t sCenterGridNo;
   int16_t sIsolatedGridNo;
   int8_t bPadding[83];  // I'm sure lots of map info will be added
-} MAPCREATE_STRUCT;   // 99 bytes
+} MAPCREATE_STRUCT;     // 99 bytes
 
 extern MAPCREATE_STRUCT gMapInformation;
 

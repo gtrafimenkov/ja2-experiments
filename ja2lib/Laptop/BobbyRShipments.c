@@ -60,7 +60,7 @@
 #define BOBBYR_SHIPMENT_NUM_ITEMS_Y BOBBYR_SHIPMENT_SHIPMENT_ORDER_NUM_Y
 #define BOBBYR_SHIPMENT_NUM_ITEMS_WIDTH 116
 
-//#define		BOBBYR_SHIPMENT_
+// #define		BOBBYR_SHIPMENT_
 
 uint32_t guiBobbyRShipmentGrid;
 
@@ -338,9 +338,9 @@ void CreatePreviousShipmentsMouseRegions() {
 
   for (uiCnt = 0; uiCnt < uiNumItems; uiCnt++) {
     MSYS_DefineRegion(&gSelectedPreviousShipmentsRegion[uiCnt], BOBBYR_SHIPMENT_ORDER_NUM_X, usPosY,
-                      (uint16_t)(BOBBYR_SHIPMENT_ORDER_NUM_X + usWidth), (uint16_t)(usPosY + usHeight),
-                      MSYS_PRIORITY_HIGH, CURSOR_WWW, MSYS_NO_CALLBACK,
-                      SelectPreviousShipmentsRegionCallBack);
+                      (uint16_t)(BOBBYR_SHIPMENT_ORDER_NUM_X + usWidth),
+                      (uint16_t)(usPosY + usHeight), MSYS_PRIORITY_HIGH, CURSOR_WWW,
+                      MSYS_NO_CALLBACK, SelectPreviousShipmentsRegionCallBack);
     MSYS_AddRegion(&gSelectedPreviousShipmentsRegion[uiCnt]);
     MSYS_SetRegionUserData(&gSelectedPreviousShipmentsRegion[uiCnt], 0, uiCnt);
 

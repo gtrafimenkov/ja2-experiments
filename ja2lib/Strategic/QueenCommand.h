@@ -24,8 +24,8 @@ void GetNumberOfMobileEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_
                                       uint8_t *pubNumTroops, uint8_t *pubNumElites);
 void GetNumberOfStationaryEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins,
                                           uint8_t *pubNumTroops, uint8_t *pubNumElites);
-void GetNumberOfEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins, uint8_t *pubNumTroops,
-                                uint8_t *pubNumElites);
+void GetNumberOfEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY, uint8_t *pubNumAdmins,
+                                uint8_t *pubNumTroops, uint8_t *pubNumElites);
 
 // Called when entering a sector so the campaign AI can automatically insert the
 // correct number of troops of each type based on the current number in the sector

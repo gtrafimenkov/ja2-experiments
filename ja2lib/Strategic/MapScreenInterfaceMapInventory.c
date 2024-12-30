@@ -40,8 +40,8 @@
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
 
-extern BOOLEAN SaveWorldItemsToTempItemFile(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ, uint32_t uiNumberOfItems,
-                                            WORLDITEM *pData);
+extern BOOLEAN SaveWorldItemsToTempItemFile(uint8_t sMapX, uint8_t sMapY, int8_t bMapZ,
+                                            uint32_t uiNumberOfItems, WORLDITEM *pData);
 
 // status bar colors
 #define DESC_STATUS_BAR FROMRGB(201, 172, 133)
@@ -194,7 +194,8 @@ BOOLEAN CanPlayerUseSectorInventory(struct SOLDIERTYPE *pSelectedSoldier);
 extern void StackObjs(struct OBJECTTYPE *pSourceObj, struct OBJECTTYPE *pTargetObj,
                       uint8_t ubNumberToCopy);
 extern void MAPEndItemPointer();
-extern BOOLEAN GetCurrentBattleSectorXYZAndReturnTRUEIfThereIsABattle(uint8_t *psSectorX, uint8_t *psSectorY,
+extern BOOLEAN GetCurrentBattleSectorXYZAndReturnTRUEIfThereIsABattle(uint8_t *psSectorX,
+                                                                      uint8_t *psSectorY,
                                                                       int8_t *psSectorZ);
 
 // load the background panel graphics for inventory
@@ -291,9 +292,9 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
 
   // set sx and sy
   sX = (int16_t)(MAP_INVENTORY_POOL_SLOT_OFFSET_X + MAP_INVENTORY_POOL_SLOT_START_X +
-               ((MAP_INVEN_SPACE_BTWN_SLOTS) * (iCurrentSlot / MAP_INV_SLOT_COLS)));
+                 ((MAP_INVEN_SPACE_BTWN_SLOTS) * (iCurrentSlot / MAP_INV_SLOT_COLS)));
   sY = (int16_t)(MAP_INVENTORY_POOL_SLOT_START_Y +
-               ((MAP_INVEN_SLOT_HEIGHT) * (iCurrentSlot % (MAP_INV_SLOT_COLS))));
+                 ((MAP_INVEN_SLOT_HEIGHT) * (iCurrentSlot % (MAP_INV_SLOT_COLS))));
 
   if (fMapInventoryItemCompatable[iCurrentSlot]) {
     sOutLine = Get16BPPColor(FROMRGB(255, 255, 255));
@@ -312,14 +313,14 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
 
   // now draw bar for condition
   // Display ststus
-  DrawItemUIBarEx(&(pInventoryPoolList[iCurrentSlot + iFirstSlotOnPage].o), 0,
-                  (int16_t)(ITEMDESC_ITEM_STATUS_INV_POOL_OFFSET_X + MAP_INVENTORY_POOL_SLOT_START_X +
-                          ((MAP_INVEN_SPACE_BTWN_SLOTS) * (iCurrentSlot / MAP_INV_SLOT_COLS))),
-                  (int16_t)(ITEMDESC_ITEM_STATUS_INV_POOL_OFFSET_Y + MAP_INVENTORY_POOL_SLOT_START_Y +
-                          ((MAP_INVEN_SLOT_HEIGHT) * (iCurrentSlot % (MAP_INV_SLOT_COLS)))),
-                  ITEMDESC_ITEM_STATUS_WIDTH_INV_POOL, ITEMDESC_ITEM_STATUS_HEIGHT_INV_POOL,
-                  Get16BPPColor(DESC_STATUS_BAR), Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE,
-                  guiSAVEBUFFER);
+  DrawItemUIBarEx(
+      &(pInventoryPoolList[iCurrentSlot + iFirstSlotOnPage].o), 0,
+      (int16_t)(ITEMDESC_ITEM_STATUS_INV_POOL_OFFSET_X + MAP_INVENTORY_POOL_SLOT_START_X +
+                ((MAP_INVEN_SPACE_BTWN_SLOTS) * (iCurrentSlot / MAP_INV_SLOT_COLS))),
+      (int16_t)(ITEMDESC_ITEM_STATUS_INV_POOL_OFFSET_Y + MAP_INVENTORY_POOL_SLOT_START_Y +
+                ((MAP_INVEN_SLOT_HEIGHT) * (iCurrentSlot % (MAP_INV_SLOT_COLS)))),
+      ITEMDESC_ITEM_STATUS_WIDTH_INV_POOL, ITEMDESC_ITEM_STATUS_HEIGHT_INV_POOL,
+      Get16BPPColor(DESC_STATUS_BAR), Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE, guiSAVEBUFFER);
 
   //
   // if the item is not reachable, or if the selected merc is not in the current sector
@@ -344,7 +345,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
 
   FindFontCenterCoordinates(
       (int16_t)(4 + MAP_INVENTORY_POOL_SLOT_START_X +
-              ((MAP_INVEN_SPACE_BTWN_SLOTS) * (iCurrentSlot / MAP_INV_SLOT_COLS))),
+                ((MAP_INVEN_SPACE_BTWN_SLOTS) * (iCurrentSlot / MAP_INV_SLOT_COLS))),
       0, MAP_INVEN_SLOT_WIDTH, 0, sString, MAP_IVEN_FONT, &sWidth, &sHeight);
 
   SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
@@ -355,7 +356,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
 
   mprintf(sWidth,
           (int16_t)(3 + ITEMDESC_ITEM_STATUS_INV_POOL_OFFSET_Y + MAP_INVENTORY_POOL_SLOT_START_Y +
-                  ((MAP_INVEN_SLOT_HEIGHT) * (iCurrentSlot % (MAP_INV_SLOT_COLS)))),
+                    ((MAP_INVEN_SLOT_HEIGHT) * (iCurrentSlot % (MAP_INV_SLOT_COLS)))),
           sString);
 
   /*
@@ -433,7 +434,8 @@ void CreateDestroyMapInventoryPoolButtons(BOOLEAN fExitFromMapScreen) {
     if ((gWorldSectorX == sSelMapX) && (gWorldSectorY == sSelMapY) &&
         (gbWorldSectorZ == iCurrentMapSectorZ)) {
       // handle all reachable before save
-      HandleAllReachAbleItemsInTheSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+      HandleAllReachAbleItemsInTheSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                         gbWorldSectorZ);
     }
 
     // destroy buttons for map border
@@ -564,8 +566,8 @@ void SaveSeenAndUnseenItems(void) {
 
       // check if seen items exist too
       if (iItemCount > 0) {
-        AddWorldItemsToUnLoadedSector(sSelMapX, sSelMapY, (int8_t)(iCurrentMapSectorZ), 0, iItemCount,
-                                      pSeenItemsList, FALSE);
+        AddWorldItemsToUnLoadedSector(sSelMapX, sSelMapY, (int8_t)(iCurrentMapSectorZ), 0,
+                                      iItemCount, pSeenItemsList, FALSE);
       }
 
     } else if (iItemCount > 0) {
@@ -1121,7 +1123,8 @@ void DestroyStash(void) {
   MemFree(pInventoryPoolList);
 }
 
-int32_t GetSizeOfStashInSector(uint8_t sMapX, uint8_t sMapY, int8_t sMapZ, BOOLEAN fCountStacksAsOne) {
+int32_t GetSizeOfStashInSector(uint8_t sMapX, uint8_t sMapY, int8_t sMapZ,
+                               BOOLEAN fCountStacksAsOne) {
   // get # of items in sector that are visible to the player
   uint32_t uiTotalNumberOfItems = 0, uiTotalNumberOfRealItems = 0;
   WORLDITEM *pTotalSectorList = NULL;
@@ -1320,8 +1323,8 @@ BOOLEAN PlaceObjectInInventoryStash(struct OBJECTTYPE *pInventorySlot,
         // average out the status values using a weighted average...
         pInventorySlot->bStatus[0] =
             (int8_t)(((uint32_t)pInventorySlot->bMoneyStatus * pInventorySlot->uiMoneyAmount +
-                    (uint32_t)pItemPtr->bMoneyStatus * pItemPtr->uiMoneyAmount) /
-                   (pInventorySlot->uiMoneyAmount + pItemPtr->uiMoneyAmount));
+                      (uint32_t)pItemPtr->bMoneyStatus * pItemPtr->uiMoneyAmount) /
+                     (pInventorySlot->uiMoneyAmount + pItemPtr->uiMoneyAmount));
         pInventorySlot->uiMoneyAmount += pItemPtr->uiMoneyAmount;
 
         DeleteObj(pItemPtr);
@@ -1584,15 +1587,15 @@ void DrawTextOnMapInventoryBackground(void) {
   usStringHeight =
       DisplayWrappedString(268, 342, 53, 1, MAP_IVEN_FONT, FONT_BEIGE, pMapInventoryStrings[0],
                            FONT_BLACK, FALSE, RIGHT_JUSTIFIED | DONT_DISPLAY_TEXT);
-  DisplayWrappedString(268, (uint16_t)(342 - (usStringHeight / 2)), 53, 1, MAP_IVEN_FONT, FONT_BEIGE,
-                       pMapInventoryStrings[0], FONT_BLACK, FALSE, RIGHT_JUSTIFIED);
+  DisplayWrappedString(268, (uint16_t)(342 - (usStringHeight / 2)), 53, 1, MAP_IVEN_FONT,
+                       FONT_BEIGE, pMapInventoryStrings[0], FONT_BLACK, FALSE, RIGHT_JUSTIFIED);
 
   // Calculate the height of the string, as it needs to be vertically centered.
   usStringHeight =
       DisplayWrappedString(369, 342, 65, 1, MAP_IVEN_FONT, FONT_BEIGE, pMapInventoryStrings[1],
                            FONT_BLACK, FALSE, RIGHT_JUSTIFIED | DONT_DISPLAY_TEXT);
-  DisplayWrappedString(369, (uint16_t)(342 - (usStringHeight / 2)), 65, 1, MAP_IVEN_FONT, FONT_BEIGE,
-                       pMapInventoryStrings[1], FONT_BLACK, FALSE, RIGHT_JUSTIFIED);
+  DisplayWrappedString(369, (uint16_t)(342 - (usStringHeight / 2)), 65, 1, MAP_IVEN_FONT,
+                       FONT_BEIGE, pMapInventoryStrings[1], FONT_BLACK, FALSE, RIGHT_JUSTIFIED);
 
   DrawTextOnSectorInventory();
 

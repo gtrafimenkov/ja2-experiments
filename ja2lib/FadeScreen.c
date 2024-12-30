@@ -51,8 +51,8 @@ void FadeInBackBufferVersionOne();
 void FadeInBackBufferSquare();
 void FadeInFrameBufferRealFade();
 
-extern BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
-                                                          int32_t X2, int32_t Y2);
+extern BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1,
+                                                          int32_t Y1, int32_t X2, int32_t Y2);
 BOOLEAN UpdateSaveBufferWithBackbuffer(void);
 
 BOOLEAN gfFadeIn = FALSE;
@@ -581,8 +581,8 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
   pSrcBuf = LockVideoSurface(FRAME_BUFFER, &uiSrcPitchBYTES);
   pDestBuf = LockVideoSurface(guiSAVEBUFFER, &uiDestPitchBYTES);
 
-  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0, 0, 0,
-                  0, 640, 480);
+  Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
+                  0, 0, 0, 640, 480);
 
   UnLockVideoSurface(FRAME_BUFFER);
   UnLockVideoSurface(guiSAVEBUFFER);

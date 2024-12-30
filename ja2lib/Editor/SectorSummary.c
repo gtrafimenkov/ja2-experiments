@@ -277,8 +277,8 @@ void CreateSummaryWindow() {
   gfRenderGrid = TRUE;
 
   iSummaryButton[SUMMARY_PROGRESSCHECKBOX] = CreateCheckBoxButton(
-      (int16_t)(MAP_LEFT + 50), (int16_t)(MAP_BOTTOM + 5), "EDITOR//smcheckbox.sti", MSYS_PRIORITY_HIGH,
-      SummaryToggleProgressCallback);
+      (int16_t)(MAP_LEFT + 50), (int16_t)(MAP_BOTTOM + 5), "EDITOR//smcheckbox.sti",
+      MSYS_PRIORITY_HIGH, SummaryToggleProgressCallback);
   ButtonList[iSummaryButton[SUMMARY_PROGRESSCHECKBOX]]->uiFlags |= BUTTON_CLICKED_ON;
   gfRenderProgress = TRUE;
 
@@ -644,7 +644,8 @@ void RenderItemDetails() {
   int32_t index, i;
   wchar_t str[100];
   uint32_t uiQuantity, uiExistChance, uiStatus;
-  uint32_t uiTriggerQuantity[8], uiActionQuantity[8], uiTriggerExistChance[8], uiActionExistChance[8];
+  uint32_t uiTriggerQuantity[8], uiActionQuantity[8], uiTriggerExistChance[8],
+      uiActionExistChance[8];
   uint32_t xp, yp;
   int8_t bFreqIndex;
   SetFont(FONT10ARIAL);
@@ -1425,7 +1426,7 @@ void RenderSummaryWindow() {
   }
 }
 
-void UpdateSectorSummary(wchar_t* gszFilename, BOOLEAN fUpdate) {
+void UpdateSectorSummary(wchar_t *gszFilename, BOOLEAN fUpdate) {
   wchar_t str[50];
   char szCoord[40];
   wchar_t *ptr;

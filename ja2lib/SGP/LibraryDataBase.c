@@ -41,11 +41,11 @@ BOOLEAN IsLibraryRealFile(HWFILE hFile) {
 int16_t gsCurrentLibrary = -1;
 
 static int CompareFileNames(char *arg1, FileHeaderStruct *arg2);
-BOOLEAN GetFileHeaderFromLibrary(int16_t sLibraryID, char* pstrFileName,
+BOOLEAN GetFileHeaderFromLibrary(int16_t sLibraryID, char *pstrFileName,
                                  FileHeaderStruct **pFileHeader);
-void AddSlashToPath(char* pName);
+void AddSlashToPath(char *pName);
 HWFILE CreateLibraryFileHandle(int16_t sLibraryID, uint32_t uiFileNum);
-BOOLEAN CheckIfFileIsAlreadyOpen(char* pFileName, int16_t sLibraryID);
+BOOLEAN CheckIfFileIsAlreadyOpen(char *pFileName, int16_t sLibraryID);
 
 int32_t CompareDirEntryFileNames(char *arg1, DIRENTRY *arg2);
 
@@ -147,7 +147,7 @@ BOOLEAN ShutDownFileDatabase() {
   return (TRUE);
 }
 
-BOOLEAN CheckForLibraryExistence(char* pLibraryName) {
+BOOLEAN CheckForLibraryExistence(char *pLibraryName) {
   SYS_FILE_HANDLE handle;
   if (Plat_OpenForReading(pLibraryName, &handle)) {
     Plat_CloseFile(handle);
@@ -156,7 +156,7 @@ BOOLEAN CheckForLibraryExistence(char* pLibraryName) {
   return FALSE;
 }
 
-BOOLEAN InitializeLibrary(char* pLibraryName, LibraryHeaderStruct *pLibHeader,
+BOOLEAN InitializeLibrary(char *pLibraryName, LibraryHeaderStruct *pLibHeader,
                           BOOLEAN fCanBeOnCDrom) {
   SYS_FILE_HANDLE hFile;
   uint16_t usNumEntries = 0;
@@ -220,7 +220,7 @@ BOOLEAN InitializeLibrary(char* pLibraryName, LibraryHeaderStruct *pLibHeader,
                    FILENAME_SIZE));
 
       // allocate memory for the files name
-      pLibHeader->pFileHeader[uiCount].pFileName = (char*)MemAlloc(strlen(DirEntry.sFileName) + 1);
+      pLibHeader->pFileHeader[uiCount].pFileName = (char *)MemAlloc(strlen(DirEntry.sFileName) + 1);
 
       // if we couldnt allocate memory
       if (!pLibHeader->pFileHeader[uiCount].pFileName) {
@@ -252,12 +252,12 @@ BOOLEAN InitializeLibrary(char* pLibraryName, LibraryHeaderStruct *pLibHeader,
 
   // if the library has a path
   if (strlen(LibFileHeader.sPathToLibrary) != 0) {
-    pLibHeader->sLibraryPath = (char*)MemAlloc(strlen(LibFileHeader.sPathToLibrary) + 1);
+    pLibHeader->sLibraryPath = (char *)MemAlloc(strlen(LibFileHeader.sPathToLibrary) + 1);
     strcpy(pLibHeader->sLibraryPath, LibFileHeader.sPathToLibrary);
   } else {
     // else the library name does not contain a path ( most likely either an error or it is the
     // default path )
-    pLibHeader->sLibraryPath = (char*)MemAlloc(1);
+    pLibHeader->sLibraryPath = (char *)MemAlloc(1);
     pLibHeader->sLibraryPath[0] = '\0';
   }
 
@@ -287,8 +287,8 @@ BOOLEAN InitializeLibrary(char* pLibraryName, LibraryHeaderStruct *pLibHeader,
   return (TRUE);
 }
 
-BOOLEAN LoadDataFromLibrary(int16_t sLibraryID, uint32_t uiFileNum, void* pData, uint32_t uiBytesToRead,
-                            uint32_t *pBytesRead) {
+BOOLEAN LoadDataFromLibrary(int16_t sLibraryID, uint32_t uiFileNum, void *pData,
+                            uint32_t uiBytesToRead, uint32_t *pBytesRead) {
   uint32_t uiOffsetInLibrary, uiLength;
   SYS_FILE_HANDLE hLibraryFile;
   uint32_t uiNumBytesRead;
@@ -337,7 +337,7 @@ BOOLEAN LoadDataFromLibrary(int16_t sLibraryID, uint32_t uiFileNum, void* pData,
 //
 //************************************************************************
 
-BOOLEAN CheckIfFileExistInLibrary(char* pFileName) {
+BOOLEAN CheckIfFileExistInLibrary(char *pFileName) {
   int16_t sLibraryID;
   FileHeaderStruct *pFileHeader;
 
@@ -361,7 +361,7 @@ BOOLEAN CheckIfFileExistInLibrary(char* pFileName) {
 //	( eg. File is  Laptop\Test.sti, if the Laptop\ library is open, it returns true
 //
 //************************************************************************
-int16_t GetLibraryIDFromFileName(char* pFileName) {
+int16_t GetLibraryIDFromFileName(char *pFileName) {
   int16_t sLoop1, sBestMatch = -1;
 
   // loop through all the libraries to check which library the file is in
@@ -405,7 +405,7 @@ int16_t GetLibraryIDFromFileName(char* pFileName) {
 //
 //************************************************************************
 
-BOOLEAN GetFileHeaderFromLibrary(int16_t sLibraryID, char* pstrFileName,
+BOOLEAN GetFileHeaderFromLibrary(int16_t sLibraryID, char *pstrFileName,
                                  FileHeaderStruct **pFileHeader) {
   FileHeaderStruct **ppFileHeader;
   char sFileNameWithPath[FILENAME_SIZE];
@@ -444,7 +444,7 @@ static int CompareFileNames(char *arg1, FileHeaderStruct *arg2) {
   return strcasecmp(sSearchKey, sFileNameWithPath);
 }
 
-void AddSlashToPath(char* pName) {
+void AddSlashToPath(char *pName) {
   uint32_t uiLoop, uiCounter;
   BOOLEAN fDone = FALSE;
   char sNewName[FILENAME_SIZE];
@@ -474,7 +474,7 @@ void AddSlashToPath(char* pName) {
 //
 //************************************************************************
 
-HWFILE OpenFileFromLibrary(char* pName) {
+HWFILE OpenFileFromLibrary(char *pName) {
   FileHeaderStruct *pFileHeader;
   HWFILE hLibFile;
   int16_t sLibraryID;
@@ -672,7 +672,8 @@ BOOLEAN CloseLibraryFile(int16_t sLibraryID, uint32_t uiFileID) {
   return (TRUE);
 }
 
-BOOLEAN LibraryFileSeek(int16_t sLibraryID, uint32_t uiFileNum, uint32_t uiDistance, uint8_t uiHowToSeek) {
+BOOLEAN LibraryFileSeek(int16_t sLibraryID, uint32_t uiFileNum, uint32_t uiDistance,
+                        uint8_t uiHowToSeek) {
   uint32_t uiCurPos, uiSize;
 
   // if the library is not open, return an error
@@ -799,7 +800,7 @@ BOOLEAN IsLibraryOpened(int16_t sLibraryID) {
     return (FALSE);
 }
 
-BOOLEAN CheckIfFileIsAlreadyOpen(char* pFileName, int16_t sLibraryID) {
+BOOLEAN CheckIfFileIsAlreadyOpen(char *pFileName, int16_t sLibraryID) {
   uint16_t usLoop1 = 0;
 
   char filename[256];

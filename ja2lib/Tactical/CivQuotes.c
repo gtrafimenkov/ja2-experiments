@@ -54,13 +54,13 @@ CIV_QUOTE gCivQuotes[NUM_CIV_QUOTES];
 
 uint8_t gubNumEntries[NUM_CIV_QUOTES] = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 
-                                       15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+                                         15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 
-                                       5,  5,  15, 15, 15, 15, 15, 15, 15, 15,
+                                         5,  5,  15, 15, 15, 15, 15, 15, 15, 15,
 
-                                       15, 15, 2,  15, 15, 10, 10, 5,  3,  10,
+                                         15, 15, 2,  15, 15, 10, 10, 5,  3,  10,
 
-                                       3,  3,  3,  3,  3,  3,  3,  3,  3,  3};
+                                         3,  3,  3,  3,  3,  3,  3,  3,  3,  3};
 
 typedef struct {
   BOOLEAN bActive;
@@ -358,7 +358,7 @@ void BeginCivQuote(struct SOLDIERTYPE *pCiv, uint8_t ubCivQuoteID, uint8_t ubEnt
 }
 
 uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUse,
-                             BOOLEAN fCanUseHints) {
+                               BOOLEAN fCanUseHints) {
   uint8_t ubCivType;
   TownID bTownId;
   BOOLEAN bCivLowLoyalty = FALSE;
@@ -507,7 +507,8 @@ uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUs
 
   // ATE: OK, check if we should look for a civ hint....
   if (fCanUseHints) {
-    bCivHint = ConsiderCivilianQuotes((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ, FALSE);
+    bCivHint = ConsiderCivilianQuotes((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY,
+                                      gbWorldSectorZ, FALSE);
   } else {
     bCivHint = -1;
   }
@@ -524,7 +525,8 @@ uint8_t DetermineCivQuoteEntry(struct SOLDIERTYPE *pCiv, uint8_t *pubCivHintToUs
       // Not done yet.
 
       // Are they working for us?
-      bMineId = GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
+      bMineId =
+          GetIdOfMineForSector((uint8_t)gWorldSectorX, (uint8_t)gWorldSectorY, gbWorldSectorZ);
 
       if (PlayerControlsMine(bMineId)) {
         return (CIV_QUOTE_MINERS_FOR_PLAYER);

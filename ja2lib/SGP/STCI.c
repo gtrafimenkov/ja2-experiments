@@ -14,7 +14,7 @@
 
 BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHeader *pHeader);
 BOOLEAN STCILoadIndexed(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHeader *pHeader);
-BOOLEAN STCISetPalette(void* pSTCIPalette, HIMAGE hImage);
+BOOLEAN STCISetPalette(void *pSTCIPalette, HIMAGE hImage);
 
 BOOLEAN LoadSTCIFileToImage(HIMAGE hImage, uint16_t fContents) {
   HWFILE hFile;
@@ -140,7 +140,7 @@ BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHeader 
 BOOLEAN STCILoadIndexed(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHeader *pHeader) {
   uint32_t uiFileSectionSize;
   uint32_t uiBytesRead;
-  void* pSTCIPalette;
+  void *pSTCIPalette;
 
   if (fContents & IMAGE_PALETTE) {  // Allocate memory for reading in the palette
     if (pHeader->Indexed.uiNumberOfColours != 256) {
@@ -289,7 +289,7 @@ BOOLEAN STCILoadIndexed(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHea
   return (TRUE);
 }
 
-BOOLEAN STCISetPalette(void* pSTCIPalette, HIMAGE hImage) {
+BOOLEAN STCISetPalette(void *pSTCIPalette, HIMAGE hImage) {
   uint16_t usIndex;
   STCIPaletteElement *pubPalette;
 

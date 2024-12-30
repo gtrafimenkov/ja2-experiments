@@ -38,8 +38,8 @@ typedef struct {
 extern WORLDITEM *gWorldItems;
 extern uint32_t guiNumWorldItems;
 
-int32_t AddItemToWorld(int16_t sGridNo, struct OBJECTTYPE *pObject, uint8_t ubLevel, uint16_t usFlags,
-                     int8_t bRenderZHeightAboveLevel, int8_t bVisible);
+int32_t AddItemToWorld(int16_t sGridNo, struct OBJECTTYPE *pObject, uint8_t ubLevel,
+                       uint16_t usFlags, int8_t bRenderZHeightAboveLevel, int8_t bVisible);
 void RemoveItemFromWorld(int32_t iItemIndex);
 int32_t FindWorldItem(uint16_t usItem);
 
