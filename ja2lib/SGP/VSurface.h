@@ -169,7 +169,9 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor);
 // Created from a VSurface_DESC structure. Can be from a file via HIMAGE or empty.
 struct VSurface *CreateVSurface(VSURFACE_DESC *desc);
 
-struct VSurface *CreateVSurfaceBlank(uint16_t height, uint16_t width, uint8_t bitDepth);
+struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bitDepth);
+struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height);
+struct VSurface *CreateVSurfaceBlank16(uint16_t width, uint16_t height);
 struct VSurface *CreateVSurfaceFromFile(const char *filepath);
 
 // Gets the RGB palette entry values

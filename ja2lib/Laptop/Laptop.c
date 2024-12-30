@@ -3794,17 +3794,13 @@ BOOLEAN WebPageTileBackground(uint8_t ubNumX, uint8_t ubNumY, uint16_t usWidth, 
 
 BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTitle,
                                      uint32_t uiIconGraphic, uint16_t usIconGraphicIndex) {
-  VSURFACE_DESC vs_desc;
   struct VObject *hImageHandle;
 
   Assert(uiBackgroundGraphic);
 
   // Create a background video surface to blt the title bar onto
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-  vs_desc.usWidth = LAPTOP_TITLE_BAR_WIDTH;
-  vs_desc.usHeight = LAPTOP_TITLE_BAR_HEIGHT;
-  vs_desc.ubBitDepth = 16;
-  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiTitleBarSurface));
+  CHECKF(AddVSurface(CreateVSurfaceBlank16(LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT),
+                     &guiTitleBarSurface));
 
   // blit the toolbar grapgucs onto the surface
   GetVideoObject(&hImageHandle, uiBackgroundGraphic);
@@ -3816,7 +3812,8 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
                  LAPTOP_TITLE_BAR_ICON_OFFSET_X, LAPTOP_TITLE_BAR_ICON_OFFSET_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
-  SetFontDestBuffer(guiTitleBarSurface, 0, 0, vs_desc.usWidth, vs_desc.usHeight, FALSE);
+  SetFontDestBuffer(guiTitleBarSurface, 0, 0, LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT,
+                    FALSE);
   DrawTextToScreen(pTitle, LAPTOP_TITLE_BAR_TEXT_OFFSET_X, LAPTOP_TITLE_BAR_TEXT_OFFSET_Y, 0,
                    FONT14ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
   SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);

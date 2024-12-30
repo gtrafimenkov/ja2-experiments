@@ -1987,14 +1987,10 @@ int8_t HelpScreenDetermineWhichMapScreenHelpToShow() {
 }
 
 BOOLEAN CreateHelpScreenTextBuffer() {
-  VSURFACE_DESC vs_desc;
-
   // Create a background video surface to blt the face onto
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-  vs_desc.usWidth = HLP_SCRN__WIDTH_OF_TEXT_BUFFER;
-  vs_desc.usHeight = HLP_SCRN__HEIGHT_OF_TEXT_BUFFER;
-  vs_desc.ubBitDepth = 16;
-  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiHelpScreenTextBufferSurface));
+  CHECKF(AddVSurface(
+      CreateVSurfaceBlank16(HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER),
+      &guiHelpScreenTextBufferSurface));
 
   return (TRUE);
 }
