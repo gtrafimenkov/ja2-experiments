@@ -14,8 +14,6 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 
-uint32_t guiBOTTOMPANEL = 0;
-uint32_t guiRIGHTPANEL = 0;
 uint32_t vsSB = 0;
 uint32_t guiEXTRABUFFER = 0;
 
