@@ -331,11 +331,6 @@ BOOLEAN ShadowVideoSurfaceImage(uint32_t uiDestVSurface, struct VObject *hImageH
 
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
 
-BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex, uint32_t uiLineNum,
-                              char *pSourceFile) {
-  return FALSE;
-}
-
 BOOLEAN RestoreVideoSurface(struct VSurface *hVSurface) { return FALSE; }
 
 BOOLEAN SmkPollFlics(void) { return FALSE; }

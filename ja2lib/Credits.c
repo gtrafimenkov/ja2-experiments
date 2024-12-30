@@ -342,9 +342,6 @@ void HandleCreditEyeBlinking();
 void InitCreditEyeBlinking();
 // ppp
 
-//	VSURFACE_DESC		vs_desc;
-//	struct VSurface* hVSurface;
-
 uint32_t CreditScreenInit(void) {
   gfCreditsScreenEntry = TRUE;
   return (1);

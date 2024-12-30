@@ -22,21 +22,13 @@ BOOLEAN gfExtraBuffer = FALSE;
 BOOLEAN InitializeSystemVideoObjects() { return (TRUE); }
 
 BOOLEAN InitializeGameVideoObjects() {
-  VSURFACE_DESC vs_desc;
   uint16_t usWidth;
   uint16_t usHeight;
   uint8_t ubBitDepth;
 
-  // Create render buffer
   GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-  vs_desc.usWidth = usWidth;
-  vs_desc.usHeight = usHeight;
-  vs_desc.ubBitDepth = ubBitDepth;
-
-  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &vsSB));
-
-  CHECKF(AddVSurface(CreateVSurface(&vs_desc), &guiEXTRABUFFER));
+  CHECKF(AddVSurface(CreateVSurfaceBlank(usWidth, usHeight, ubBitDepth), &vsSB));
+  CHECKF(AddVSurface(CreateVSurfaceBlank(usWidth, usHeight, ubBitDepth), &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;
 
   return (TRUE);

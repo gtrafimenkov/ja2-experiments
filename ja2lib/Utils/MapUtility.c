@@ -62,7 +62,6 @@ uint32_t MapUtilScreenHandle() {
   static int16_t sFiles = 0, sCurFile = 0;
   static struct FileDialogList *FileList = NULL;
   char zFilename[260], zFilename2[260];
-  VSURFACE_DESC vs_desc;
   uint16_t usWidth;
   uint16_t usHeight;
   uint8_t ubBitDepth;
@@ -97,12 +96,7 @@ uint32_t MapUtilScreenHandle() {
 
     // Create render buffer
     GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
-    vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-    vs_desc.usWidth = 88;
-    vs_desc.usHeight = 44;
-    vs_desc.ubBitDepth = ubBitDepth;
-
-    if (AddVSurface(CreateVSurface(&vs_desc), &giMiniMap) == FALSE) {
+    if (AddVSurface(CreateVSurfaceBlank(88, 44, ubBitDepth), &giMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
 
@@ -123,13 +117,7 @@ uint32_t MapUtilScreenHandle() {
     p24BitValues = (RGBValues *)MemAlloc(MINIMAP_X_SIZE * MINIMAP_Y_SIZE * sizeof(RGBValues));
     p24BitDest = (uint8_t *)p24BitValues;
 
-    // Allocate 8-bit surface
-    vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
-    vs_desc.usWidth = 88;
-    vs_desc.usHeight = 44;
-    vs_desc.ubBitDepth = 8;
-
-    if (AddVSurface(CreateVSurface(&vs_desc), &gi8BitMiniMap) == FALSE) {
+    if (AddVSurface(CreateVSurfaceBlank8(88, 44), &gi8BitMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
     GetVideoSurface(&ghvSurface, gi8BitMiniMap);
