@@ -19,11 +19,6 @@
 #include "StrUtils.h"
 #include "platform_strings.h"
 
-// This is the color substituted to keep a 24bpp -> 16bpp color
-// from going transparent (0x0000) -- DB
-
-#define BLACK_SUBSTITUTE 0x0001
-
 uint16_t gusAlphaMask = 0;
 uint16_t gusRedMask = 0;
 uint16_t gusGreenMask = 0;
@@ -411,10 +406,7 @@ uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette) {
 
     usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
 
-    if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-    } else
-      usColor |= gusAlphaMask;
+    usColor |= gusAlphaMask;
 
     p16BPPPalette[cnt] = usColor;
   }
@@ -488,13 +480,9 @@ uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rs
     else
       b16 = ((uint16_t)b << gusBlueShift);
 
-    // Prevent creation of pure black color
     usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
 
-    if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-    } else
-      usColor |= gusAlphaMask;
+    usColor |= gusAlphaMask;
 
     p16BPPPalette[cnt] = usColor;
   }
@@ -527,14 +515,7 @@ uint16_t Get16BPPColor(uint32_t RGBValue) {
 
   usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
 
-  // if our color worked out to absolute black, and the original wasn't
-  // absolute black, convert it to a VERY dark grey to avoid transparency
-  // problems
-
-  if (usColor == 0) {
-    if (RGBValue != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-  } else
-    usColor |= gusAlphaMask;
+  usColor |= gusAlphaMask;
 
   return (usColor);
 }
