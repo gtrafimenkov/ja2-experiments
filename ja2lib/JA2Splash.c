@@ -40,7 +40,7 @@ void InitJA2SplashScreen() {
 #if !defined(ENGLISH) && defined(JA2TESTVERSION)
   uint32_t uiLogoID = 0;
   struct VSurface* hVSurface;
-  if (!AddVideoSurfaceFromFile("LOADSCREENS\\Notification.sti", &uiLogoID)) {
+  if (!AddVSurfaceFromFile("LOADSCREENS\\Notification.sti", &uiLogoID)) {
     AssertMsg(0, String("Failed to load %s", VSurfaceDesc.ImageFile));
     return;
   }
@@ -67,7 +67,7 @@ void InitJA2SplashScreen() {
   {
     SGPFILENAME ImageFile;
     GetMLGFilename(ImageFile, MLG_SPLASH);
-    if (!AddVideoSurfaceFromFile(ImageFile, &uiLogoID)) {
+    if (!AddVSurfaceFromFile(ImageFile, &uiLogoID)) {
       AssertMsg(0, String("Failed to load %s", ImageFile));
       return;
     }

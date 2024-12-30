@@ -496,7 +496,7 @@ void InternalSetAutoFaceActive(uint32_t uiDisplayBuffer, uint32_t uiRestoreBuffe
 
     pFace->fAutoRestoreBuffer = TRUE;
 
-    CHECKV(AddVideoSurface(CreateVideoSurface(&vs_desc), &(pFace->uiAutoRestoreBuffer)));
+    CHECKV(AddVSurface(CreateVSurface(&vs_desc), &(pFace->uiAutoRestoreBuffer)));
   } else {
     pFace->fAutoRestoreBuffer = FALSE;
     pFace->uiAutoRestoreBuffer = uiRestoreBuffer;
@@ -513,7 +513,7 @@ void InternalSetAutoFaceActive(uint32_t uiDisplayBuffer, uint32_t uiRestoreBuffe
 
     pFace->fAutoDisplayBuffer = TRUE;
 
-    CHECKV(AddVideoSurface(CreateVideoSurface(&vs_desc), &(pFace->uiAutoDisplayBuffer)));
+    CHECKV(AddVSurface(CreateVSurface(&vs_desc), &(pFace->uiAutoDisplayBuffer)));
   } else {
     pFace->fAutoDisplayBuffer = FALSE;
     pFace->uiAutoDisplayBuffer = uiDisplayBuffer;

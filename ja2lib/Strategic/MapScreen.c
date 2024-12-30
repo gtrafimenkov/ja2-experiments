@@ -2721,8 +2721,8 @@ uint32_t MapScreenHandle(void) {
       // load border graphics
       LoadMapBorderGraphics();
 
-      CHECKF(AddVideoSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
-      CHECKF(AddVideoSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
+      CHECKF(AddVSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
+      CHECKF(AddVSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
@@ -8444,7 +8444,7 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
 
   fPreLoadedMapGraphics = TRUE;
 
-  CHECKF(AddVideoSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
+  CHECKF(AddVSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
