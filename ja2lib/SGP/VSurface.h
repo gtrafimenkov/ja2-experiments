@@ -175,10 +175,6 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor);
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Darkens a rectangular area on a surface for menus etc.
-BOOLEAN PixelateVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
-                                 int32_t Y2);
-
 // Created from a VSurface_DESC structure. Can be from a file via HIMAGE or empty.
 struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc);
 
@@ -203,9 +199,6 @@ BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *hVSurface, COLORVAL Tr
 // Sets HVSurface palette, creates if nessessary. Also sets 16BPP palette
 BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette);
 
-// Used if it's in video memory, will re-load backup copy
-// BOOLEAN RestoreVideoSurface( HVSurface hVSurface );
-
 // Deletes all data, including palettes, regions, DD Surfaces
 BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface);
 BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
@@ -218,8 +211,6 @@ BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
 
 // Regions will allow creation of sections within the Surface to manipulate quickly and cleanly
 // An example would be a cursor tileset
-BOOLEAN AddVSurfaceRegion(struct VSurface *hVSurface, VSURFACE_REGION *pNewRegion);
-BOOLEAN RemoveVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex);
 BOOLEAN GetVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex, VSURFACE_REGION *aRegion);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,9 +225,6 @@ BOOLEAN GetVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex, VSURFACE
 BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                                       uint16_t usIndex, int32_t iDestX, int32_t iDestY,
                                       int32_t fBltFlags, blt_vs_fx *pBltFx);
-
-struct VSurface *GetPrimaryVideoSurface();
-struct VSurface *GetBackBufferVideoSurface();
 
 BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
                                int32_t Y2);

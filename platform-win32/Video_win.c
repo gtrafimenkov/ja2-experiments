@@ -3662,25 +3662,6 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
 //
 // ********************************************************
 
-BOOLEAN AddVSurfaceRegion(struct VSurface *hVSurface, VSURFACE_REGION *pNewRegion) {
-  Assert(hVSurface != NULL);
-  Assert(pNewRegion != NULL);
-
-  // Add new region to list
-  hVSurface->RegionList =
-      AddtoList(hVSurface->RegionList, pNewRegion, ListSize(hVSurface->RegionList));
-
-  return (TRUE);
-}
-
-BOOLEAN RemoveVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex) {
-  VSURFACE_REGION aRegion;
-
-  Assert(hVSurface != NULL);
-
-  return (RemfromList(hVSurface->RegionList, &aRegion, usIndex));
-}
-
 BOOLEAN GetVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex, VSURFACE_REGION *aRegion) {
   Assert(hVSurface != NULL);
 
@@ -3986,14 +3967,6 @@ struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurfac
 
   return (hVSurface);
 }
-
-struct VSurface *GetPrimaryVideoSurface() { return (ghPrimary); }
-
-struct VSurface *GetBackBufferVideoSurface() { return (ghBackBuffer); }
-
-struct VSurface *GetFrameBufferVideoSurface() { return (ghFrameBuffer); }
-
-struct VSurface *GetMouseBufferVideoSurface() { return (ghMouseBuffer); }
 
 // UTILITY FUNCTIONS FOR BLITTING
 
