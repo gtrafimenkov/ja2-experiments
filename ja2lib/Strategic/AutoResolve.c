@@ -481,18 +481,18 @@ void DoTransitionFromPreBattleInterfaceToAutoResolve() {
   sEndTop = SrcRect.iTop + gpAR->sHeight / 2;
 
   // save the prebattle/mapscreen interface background
-  BlitBufferToBuffer(FRAME_BUFFER, guiEXTRABUFFER, 0, 0, 640, 480);
+  BlitBufferToBuffer(vsFB, guiEXTRABUFFER, 0, 0, 640, 480);
 
   // render the autoresolve panel
   RenderAutoResolve();
   RenderButtons();
   RenderButtonsFastHelp();
   // save it
-  BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, (uint16_t)SrcRect.iLeft, (uint16_t)SrcRect.iTop,
+  BlitBufferToBuffer(vsFB, guiSAVEBUFFER, (uint16_t)SrcRect.iLeft, (uint16_t)SrcRect.iTop,
                      (uint16_t)SrcRect.iRight, (uint16_t)SrcRect.iBottom);
 
   // hide the autoresolve
-  BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, (uint16_t)SrcRect.iLeft, (uint16_t)SrcRect.iTop,
+  BlitBufferToBuffer(guiEXTRABUFFER, vsFB, (uint16_t)SrcRect.iLeft, (uint16_t)SrcRect.iTop,
                      (uint16_t)SrcRect.iRight, (uint16_t)SrcRect.iBottom);
 
   PlayJA2SampleFromFile("SOUNDS\\Laptop power up (8-11).wav", RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
@@ -517,16 +517,16 @@ void DoTransitionFromPreBattleInterfaceToAutoResolve() {
     DstRect.iTop = iTop - iHeight * iPercentage / 200;
     DstRect.iBottom = DstRect.iTop + max(iHeight * iPercentage / 100, 1);
 
-    BltStretchVideoSurface(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 0, &SrcRect, &DstRect);
+    BltStretchVideoSurface(vsFB, guiSAVEBUFFER, 0, 0, 0, &SrcRect, &DstRect);
     InvalidateScreen();
     RefreshScreen(NULL);
 
     // Restore the previous rect.
-    BlitBufferToBuffer(guiEXTRABUFFER, FRAME_BUFFER, (uint16_t)DstRect.iLeft,
-                       (uint16_t)DstRect.iTop, (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
+    BlitBufferToBuffer(guiEXTRABUFFER, vsFB, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
+                       (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
                        (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
   }
-  // BlitBufferToBuffer( FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 640, 480 );
+  // BlitBufferToBuffer( vsFB, guiSAVEBUFFER, 0, 0, 640, 480 );
 }
 
 void EnterAutoResolveMode(uint8_t ubSectorX, uint8_t ubSectorY) {
@@ -614,10 +614,10 @@ uint32_t AutoResolveScreenHandle() {
     ClipRect.iTop = 0;
     ClipRect.iRight = 640;
     ClipRect.iBottom = 480;
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(FRAME_BUFFER);
-    BlitBufferToBuffer(FRAME_BUFFER, guiSAVEBUFFER, 0, 0, 640, 480);
+    UnLockVideoSurface(vsFB);
+    BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 0, 640, 480);
     KillPreBattleInterface();
     CalculateAutoResolveInfo();
     CalculateSoldierCells(FALSE);
@@ -855,38 +855,38 @@ void CalculateSoldierCells(BOOLEAN fReset) {
 void RenderSoldierCell(SOLDIERCELL *pCell) {
   uint8_t x;
   if (pCell->uiFlags & CELL_MERC) {
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 36, pCell->yp + 2, pCell->xp + 44,
-                              pCell->yp + 30, 0);
-    BltVideoObjectFromIndex(FRAME_BUFFER, gpAR->iPanelImages, MERC_PANEL, pCell->xp, pCell->yp,
+    ColorFillVideoSurfaceArea(vsFB, pCell->xp + 36, pCell->yp + 2, pCell->xp + 44, pCell->yp + 30,
+                              0);
+    BltVideoObjectFromIndex(vsFB, gpAR->iPanelImages, MERC_PANEL, pCell->xp, pCell->yp,
                             VO_BLT_SRCTRANSPARENCY, NULL);
     RenderSoldierCellBars(pCell);
     x = 0;
   } else {
-    BltVideoObjectFromIndex(FRAME_BUFFER, gpAR->iPanelImages, OTHER_PANEL, pCell->xp, pCell->yp,
+    BltVideoObjectFromIndex(vsFB, gpAR->iPanelImages, OTHER_PANEL, pCell->xp, pCell->yp,
                             VO_BLT_SRCTRANSPARENCY, NULL);
     x = 6;
   }
   if (!pCell->pSoldier->bLife) {
     SetObjectHandleShade(pCell->uiVObjectID, 0);
     if (!(pCell->uiFlags & CELL_CREATURE))
-      BltVideoObjectFromIndex(FRAME_BUFFER, gpAR->iFaces, HUMAN_SKULL, pCell->xp + 3 + x,
-                              pCell->yp + 3, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObjectFromIndex(vsFB, gpAR->iFaces, HUMAN_SKULL, pCell->xp + 3 + x, pCell->yp + 3,
+                              VO_BLT_SRCTRANSPARENCY, NULL);
     else
-      BltVideoObjectFromIndex(FRAME_BUFFER, gpAR->iFaces, CREATURE_SKULL, pCell->xp + 3 + x,
-                              pCell->yp + 3, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObjectFromIndex(vsFB, gpAR->iFaces, CREATURE_SKULL, pCell->xp + 3 + x, pCell->yp + 3,
+                              VO_BLT_SRCTRANSPARENCY, NULL);
   } else {
     if (pCell->uiFlags & CELL_HITBYATTACKER) {
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 3 + x, pCell->yp + 3, pCell->xp + 33 + x,
+      ColorFillVideoSurfaceArea(vsFB, pCell->xp + 3 + x, pCell->yp + 3, pCell->xp + 33 + x,
                                 pCell->yp + 29, 65535);
     } else if (pCell->uiFlags & CELL_HITLASTFRAME) {
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 3 + x, pCell->yp + 3, pCell->xp + 33 + x,
+      ColorFillVideoSurfaceArea(vsFB, pCell->xp + 3 + x, pCell->yp + 3, pCell->xp + 33 + x,
                                 pCell->yp + 29, 0);
       SetObjectHandleShade(pCell->uiVObjectID, 1);
-      BltVideoObjectFromIndex(FRAME_BUFFER, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
+      BltVideoObjectFromIndex(vsFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
                               pCell->yp + 3, VO_BLT_SRCTRANSPARENCY, NULL);
     } else {
       SetObjectHandleShade(pCell->uiVObjectID, 0);
-      BltVideoObjectFromIndex(FRAME_BUFFER, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
+      BltVideoObjectFromIndex(vsFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
                               pCell->yp + 3, VO_BLT_SRCTRANSPARENCY, NULL);
     }
   }
@@ -902,9 +902,9 @@ void RenderSoldierCell(SOLDIERCELL *pCell) {
     ClipRect.iTop = pCell->yp + 3;
     ClipRect.iRight = pCell->xp + 33 + x;
     ClipRect.iBottom = pCell->yp + 29;
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(FRAME_BUFFER);
+    UnLockVideoSurface(vsFB);
   }
 
   // Draw the health text
@@ -935,33 +935,33 @@ void RenderSoldierCellBars(SOLDIERCELL *pCell) {
   if (!pCell->pSoldier->bLife) return;
   // yellow one for bleeding
   iStartY = pCell->yp + 29 - 25 * pCell->pSoldier->bLifeMax / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 37, iStartY, pCell->xp + 38, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 37, iStartY, pCell->xp + 38, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(107, 107, 57)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 38, iStartY, pCell->xp + 39, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 38, iStartY, pCell->xp + 39, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(222, 181, 115)));
   // pink one for bandaged.
   iStartY += 25 * pCell->pSoldier->bBleeding / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 37, iStartY, pCell->xp + 38, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 37, iStartY, pCell->xp + 38, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(156, 57, 57)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 38, iStartY, pCell->xp + 39, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 38, iStartY, pCell->xp + 39, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(222, 132, 132)));
   // red one for actual health
   iStartY = pCell->yp + 29 - 25 * pCell->pSoldier->bLife / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 37, iStartY, pCell->xp + 38, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 37, iStartY, pCell->xp + 38, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(107, 8, 8)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 38, iStartY, pCell->xp + 39, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 38, iStartY, pCell->xp + 39, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(206, 0, 0)));
   // BREATH BAR
   iStartY = pCell->yp + 29 - 25 * pCell->pSoldier->bBreathMax / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 41, iStartY, pCell->xp + 42, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 41, iStartY, pCell->xp + 42, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(8, 8, 132)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 42, iStartY, pCell->xp + 43, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 42, iStartY, pCell->xp + 43, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(8, 8, 107)));
   // MORALE BAR
   iStartY = pCell->yp + 29 - 25 * pCell->pSoldier->bMorale / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 45, iStartY, pCell->xp + 46, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 45, iStartY, pCell->xp + 46, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(8, 156, 8)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, pCell->xp + 46, iStartY, pCell->xp + 47, pCell->yp + 29,
+  ColorFillVideoSurfaceArea(vsFB, pCell->xp + 46, iStartY, pCell->xp + 47, pCell->yp + 29,
                             Get16BPPColor(FROMRGB(8, 107, 8)));
 }
 
@@ -1070,25 +1070,25 @@ void ExpandWindow() {
   } else {
     // Restore the previous area
     // left
-    BlitBufferToBuffer(guiSAVEBUFFER, FRAME_BUFFER, (uint16_t)gpAR->ExRect.iLeft,
+    BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)gpAR->ExRect.iLeft,
                        (uint16_t)gpAR->ExRect.iTop, 1,
                        (uint16_t)(gpAR->ExRect.iBottom - gpAR->ExRect.iTop + 1));
     InvalidateRegion(gpAR->ExRect.iLeft, gpAR->ExRect.iTop, gpAR->ExRect.iLeft + 1,
                      gpAR->ExRect.iBottom + 1);
     // right
-    BlitBufferToBuffer(guiSAVEBUFFER, FRAME_BUFFER, (uint16_t)gpAR->ExRect.iRight,
+    BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)gpAR->ExRect.iRight,
                        (uint16_t)gpAR->ExRect.iTop, 1,
                        (uint16_t)(gpAR->ExRect.iBottom - gpAR->ExRect.iTop + 1));
     InvalidateRegion(gpAR->ExRect.iRight, gpAR->ExRect.iTop, gpAR->ExRect.iRight + 1,
                      gpAR->ExRect.iBottom + 1);
     // top
-    BlitBufferToBuffer(guiSAVEBUFFER, FRAME_BUFFER, (uint16_t)gpAR->ExRect.iLeft,
+    BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)gpAR->ExRect.iLeft,
                        (uint16_t)gpAR->ExRect.iTop,
                        (uint16_t)(gpAR->ExRect.iRight - gpAR->ExRect.iLeft + 1), 1);
     InvalidateRegion(gpAR->ExRect.iLeft, gpAR->ExRect.iTop, gpAR->ExRect.iRight + 1,
                      gpAR->ExRect.iTop + 1);
     // bottom
-    BlitBufferToBuffer(guiSAVEBUFFER, FRAME_BUFFER, (uint16_t)gpAR->ExRect.iLeft,
+    BlitBufferToBuffer(guiSAVEBUFFER, vsFB, (uint16_t)gpAR->ExRect.iLeft,
                        (uint16_t)gpAR->ExRect.iBottom,
                        (uint16_t)(gpAR->ExRect.iRight - gpAR->ExRect.iLeft + 1), 1);
     InvalidateRegion(gpAR->ExRect.iLeft, gpAR->ExRect.iBottom, gpAR->ExRect.iRight + 1,
@@ -1141,11 +1141,11 @@ void ExpandWindow() {
   }
 
   // The new rect now determines the state of the current rectangle.
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, gpAR->ExRect.iLeft, gpAR->ExRect.iTop, gpAR->ExRect.iRight,
                 gpAR->ExRect.iBottom, Get16BPPColor(FROMRGB(200, 200, 100)), pDestBuf);
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
   // left
   InvalidateRegion(gpAR->ExRect.iLeft, gpAR->ExRect.iTop, gpAR->ExRect.iLeft + 1,
                    gpAR->ExRect.iBottom + 1);
@@ -1615,7 +1615,7 @@ void RenderAutoResolve() {
     SetFont(BLOCKFONT2);
     xp = gpAR->sCenterStartX + 12;
     yp = 218 + gpAR->bVerticalOffset;
-    BltVideoObjectFromIndex(FRAME_BUFFER, gpAR->iIndent, 0, xp, yp, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObjectFromIndex(vsFB, gpAR->iIndent, 0, xp, yp, VO_BLT_SRCTRANSPARENCY, NULL);
     xp = gpAR->sCenterStartX + 70 - StringPixLength(str, BLOCKFONT2) / 2;
     yp = 227 + gpAR->bVerticalOffset;
     mprintf(xp, yp, str);
@@ -1847,7 +1847,7 @@ void CreateAutoResolveInterface() {
   // Build the interface buffer, and blit the "shaded" background.  This info won't
   // change from now on, but will be used to restore text.
   BuildInterfaceBuffer();
-  BlitBufferToBuffer(guiSAVEBUFFER, FRAME_BUFFER, 0, 0, 640, 480);
+  BlitBufferToBuffer(guiSAVEBUFFER, vsFB, 0, 0, 640, 480);
 
   // If we are bumping up the interface, then also use that piece of info to
   // move the buttons up by the same amount.
@@ -2768,14 +2768,14 @@ void RenderSoldierCellHealth(SOLDIERCELL *pCell) {
 
   SetFont(SMALLCOMPFONT);
   // Restore the background before drawing text.
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   pSrcBuf = LockVideoSurface(gpAR->iInterfaceBuffer, &uiSrcPitchBYTES);
   xp = pCell->xp + 2;
   yp = pCell->yp + 32;
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, xp,
                   yp, xp - gpAR->Rect.iLeft, yp - gpAR->Rect.iTop, 46, 10);
   UnLockVideoSurface(gpAR->iInterfaceBuffer);
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 
   if (pCell->pSoldier->bLife) {
     if (pCell->pSoldier->bLife == pCell->pSoldier->bLifeMax) {

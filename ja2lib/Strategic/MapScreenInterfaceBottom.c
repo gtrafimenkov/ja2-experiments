@@ -509,7 +509,7 @@ void DrawNameOfLoadedSector(void) {
   wchar_t sString[128];
   int16_t sFontX, sFontY;
 
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   SetFont(COMPFONT);
   SetFontForeground(183);
@@ -770,7 +770,7 @@ void DisplayCompressMode(void) {
   }
 
   RestoreExternBackgroundRect(489, 456, 522 - 489, 467 - 454);
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
   SetFont(COMPFONT);
 
   if (GetJA2Clock() - guiCompressionStringBaseTime >= PAUSE_GAME_TIMER) {
@@ -897,7 +897,7 @@ void DisplayScrollBarSlider() {
                      (ubNumMessages - MAX_MESSAGES_ON_MAP_BOTTOM);
 
     GetVideoObject(&hHandle, guiSliderBar);
-    BltVideoObject(FRAME_BUFFER, hHandle, 8, MESSAGE_SCROLL_AREA_START_X + 2,
+    BltVideoObject(vsFB, hHandle, 8, MESSAGE_SCROLL_AREA_START_X + 2,
                    MESSAGE_SCROLL_AREA_START_Y + ubSliderOffset, VO_BLT_SRCTRANSPARENCY, NULL);
   }
 }
@@ -1158,7 +1158,7 @@ void DisplayCurrentBalanceTitleForMapBottom(void) {
   mprintf(sFontX, sFontY, L"%s", sString);
 
   // ste the font buffer
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
   return;
 }
 
@@ -1168,7 +1168,7 @@ void DisplayCurrentBalanceForMapBottom(void) {
   int16_t sFontX, sFontY;
 
   // ste the font buffer
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   // set up the font
   SetFont(COMPFONT);
@@ -1256,7 +1256,7 @@ void DisplayProjectedDailyMineIncome(void) {
     }
   }
   // ste the font buffer
-  SetFontDestBuffer(FRAME_BUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   // set up the font
   SetFont(COMPFONT);
@@ -1441,7 +1441,7 @@ void HandleExitsFromMapScreen(void) {
 
           if (gfExtraBuffer) {  // Then initiate the transition animation from the mapscreen to
                                 // laptop...
-            BlitBufferToBuffer(FRAME_BUFFER, guiEXTRABUFFER, 0, 0, 640, 480);
+            BlitBufferToBuffer(vsFB, guiEXTRABUFFER, 0, 0, 640, 480);
             gfStartMapScreenToLaptopTransition = TRUE;
           }
           break;

@@ -219,14 +219,14 @@ BOOLEAN HandleAutoBandage() {
   if (gTacticalStatus.fAutoBandageMode) {
     if (gfBeginningAutoBandage) {
       // Shadow area
-      ShadowVideoSurfaceRect(FRAME_BUFFER, 0, 0, 640, 480);
+      ShadowVideoSurfaceRect(vsFB, 0, 0, 640, 480);
       InvalidateScreen();
       RefreshScreen(NULL);
     }
 
     DisplayAutoBandageUpdatePanel();
 
-    // RenderMercPopUpBoxFromIndex( giBoxId, gsX, gsY,  FRAME_BUFFER );
+    // RenderMercPopUpBoxFromIndex( giBoxId, gsX, gsY,  vsFB );
 
     // InvalidateRegion( gsX, gsY, gsX + gusTextBoxWidth, gsY + gusTextBoxHeight );
 
@@ -634,7 +634,7 @@ void DisplayAutoBandageUpdatePanel(void) {
       sCurrentYPosition = sYPosition + (iCounterA * TACT_UPDATE_MERC_FACE_X_HEIGHT);
 
       // slap down background piece
-      BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 15, sCurrentXPosition, sCurrentYPosition,
+      BltVideoObject(vsFB, hBackGroundHandle, 15, sCurrentXPosition, sCurrentYPosition,
                      VO_BLT_SRCTRANSPARENCY, NULL);
 
       iIndex = iCounterA * iNumberDoctorsWide + iCounterB;
@@ -669,20 +669,19 @@ void DisplayAutoBandageUpdatePanel(void) {
 
   for (iCounterB = 0; iCounterB < iNumberPatientsWide; iCounterB++) {
     // slap down background piece
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 16,
-                   sXPosition + (iCounterB * TACT_UPDATE_MERC_FACE_X_WIDTH),
-                   sCurrentYPosition + (TACT_UPDATE_MERC_FACE_X_HEIGHT), VO_BLT_SRCTRANSPARENCY,
-                   NULL);
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 16,
+    BltVideoObject(
+        vsFB, hBackGroundHandle, 16, sXPosition + (iCounterB * TACT_UPDATE_MERC_FACE_X_WIDTH),
+        sCurrentYPosition + (TACT_UPDATE_MERC_FACE_X_HEIGHT), VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hBackGroundHandle, 16,
                    sXPosition + (iCounterB * TACT_UPDATE_MERC_FACE_X_WIDTH), sYPosition - 9,
                    VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   // bordering patient title
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 11, sXPosition - 4,
+  BltVideoObject(vsFB, hBackGroundHandle, 11, sXPosition - 4,
                  sYPosition + ((iNumberDoctorsHigh)*TACT_UPDATE_MERC_FACE_X_HEIGHT),
                  VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 13, sXPosition + iTotalPixelsWide,
+  BltVideoObject(vsFB, hBackGroundHandle, 13, sXPosition + iTotalPixelsWide,
                  sYPosition + ((iNumberDoctorsHigh)*TACT_UPDATE_MERC_FACE_X_HEIGHT),
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
@@ -713,7 +712,7 @@ void DisplayAutoBandageUpdatePanel(void) {
           sYPosition + ((iCounterA + iNumberDoctorsHigh) * TACT_UPDATE_MERC_FACE_X_HEIGHT);
 
       // slap down background piece
-      BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 15, sCurrentXPosition, sCurrentYPosition,
+      BltVideoObject(vsFB, hBackGroundHandle, 15, sCurrentXPosition, sCurrentYPosition,
                      VO_BLT_SRCTRANSPARENCY, NULL);
 
       iIndex = iCounterA * iNumberPatientsWide + iCounterB;
@@ -746,10 +745,10 @@ void DisplayAutoBandageUpdatePanel(void) {
 
   // bordering patients squares
   for (iCounterA = 0; iCounterA < iNumberPatientsHigh; iCounterA++) {
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 3, sXPosition - 4,
+    BltVideoObject(vsFB, hBackGroundHandle, 3, sXPosition - 4,
                    sYPosition + ((iCounterA + iNumberDoctorsHigh) * TACT_UPDATE_MERC_FACE_X_HEIGHT),
                    VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 5, sXPosition + iTotalPixelsWide,
+    BltVideoObject(vsFB, hBackGroundHandle, 5, sXPosition + iTotalPixelsWide,
                    sYPosition + ((iCounterA + iNumberDoctorsHigh) * TACT_UPDATE_MERC_FACE_X_HEIGHT),
                    VO_BLT_SRCTRANSPARENCY, NULL);
   }
@@ -759,52 +758,51 @@ void DisplayAutoBandageUpdatePanel(void) {
 
   // pieces bordering doctor squares
   for (iCounterA = 0; iCounterA < iNumberDoctorsHigh; iCounterA++) {
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 3, sXPosition - 4,
+    BltVideoObject(vsFB, hBackGroundHandle, 3, sXPosition - 4,
                    sYPosition + ((iCounterA)*TACT_UPDATE_MERC_FACE_X_HEIGHT),
                    VO_BLT_SRCTRANSPARENCY, NULL);
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 5, sXPosition + iTotalPixelsWide,
+    BltVideoObject(vsFB, hBackGroundHandle, 5, sXPosition + iTotalPixelsWide,
                    sYPosition + ((iCounterA)*TACT_UPDATE_MERC_FACE_X_HEIGHT),
                    VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   // bordering doctor title
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 11, sXPosition - 4, sYPosition - 9,
+  BltVideoObject(vsFB, hBackGroundHandle, 11, sXPosition - 4, sYPosition - 9,
                  VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 13, sXPosition + iTotalPixelsWide, sYPosition - 9,
+  BltVideoObject(vsFB, hBackGroundHandle, 13, sXPosition + iTotalPixelsWide, sYPosition - 9,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   // now the top pieces
   for (iCounterA = 0; iCounterA < iNumberPatientsWide; iCounterA++) {
     // the top bottom
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 1,
+    BltVideoObject(vsFB, hBackGroundHandle, 1,
                    sXPosition + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounterA), sYPosition - 13,
                    VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   // the top corners
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 0, sXPosition - 4, sYPosition - 13,
+  BltVideoObject(vsFB, hBackGroundHandle, 0, sXPosition - 4, sYPosition - 13,
                  VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 2, sXPosition + iTotalPixelsWide, sYPosition - 13,
+  BltVideoObject(vsFB, hBackGroundHandle, 2, sXPosition + iTotalPixelsWide, sYPosition - 13,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   iTotalPixelsHigh += 9;
 
   // the bottom
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 17, sXPosition - 4, sYPosition + iTotalPixelsHigh,
+  BltVideoObject(vsFB, hBackGroundHandle, 17, sXPosition - 4, sYPosition + iTotalPixelsHigh,
                  VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 18,
+  BltVideoObject(vsFB, hBackGroundHandle, 18,
                  sXPosition + iTotalPixelsWide - TACT_UPDATE_MERC_FACE_X_WIDTH,
                  sYPosition + iTotalPixelsHigh, VO_BLT_SRCTRANSPARENCY, NULL);
 
   if (iNumberPatientsWide == 2) {
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 6, sXPosition - 4,
-                   sYPosition + iTotalPixelsHigh, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hBackGroundHandle, 6, sXPosition - 4, sYPosition + iTotalPixelsHigh,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
     CreateTerminateAutoBandageButton((int16_t)(sXPosition),
                                      (int16_t)(sYPosition + iTotalPixelsHigh + 3));
   } else {
-    BltVideoObject(FRAME_BUFFER, hBackGroundHandle, 6,
-                   sXPosition + TACT_UPDATE_MERC_FACE_X_WIDTH - 4, sYPosition + iTotalPixelsHigh,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hBackGroundHandle, 6, sXPosition + TACT_UPDATE_MERC_FACE_X_WIDTH - 4,
+                   sYPosition + iTotalPixelsHigh, VO_BLT_SRCTRANSPARENCY, NULL);
     CreateTerminateAutoBandageButton((int16_t)(sXPosition + TACT_UPDATE_MERC_FACE_X_WIDTH),
                                      (int16_t)(sYPosition + iTotalPixelsHigh + 3));
   }
@@ -1013,15 +1011,15 @@ BOOLEAN RenderSoldierSmallFaceForAutoBandagePanel(int32_t iIndex, int16_t sCurre
   GetVideoObject(&hHandle, giAutoBandagesSoldierFaces[iIndex]);
 
   // fill the background for the info bars black
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 36, sCurrentYPosition + 2,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 36, sCurrentYPosition + 2,
                             sCurrentXPosition + 44, sCurrentYPosition + 30, 0);
 
   // put down the background
-  BltVideoObjectFromIndex(FRAME_BUFFER, giMercPanelImage, 0, sCurrentXPosition, sCurrentYPosition,
+  BltVideoObjectFromIndex(vsFB, giMercPanelImage, 0, sCurrentXPosition, sCurrentYPosition,
                           VO_BLT_SRCTRANSPARENCY, NULL);
 
   // grab the face
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, sCurrentXPosition + 2, sCurrentYPosition + 2,
+  BltVideoObject(vsFB, hHandle, 0, sCurrentXPosition + 2, sCurrentYPosition + 2,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
@@ -1045,37 +1043,37 @@ BOOLEAN RenderSoldierSmallFaceForAutoBandagePanel(int32_t iIndex, int16_t sCurre
 
   // yellow one for bleeding
   iStartY = sCurrentYPosition + 29 - 27 * pSoldier->bLifeMax / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 36, iStartY, sCurrentXPosition + 37,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 36, iStartY, sCurrentXPosition + 37,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(107, 107, 57)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 37, iStartY, sCurrentXPosition + 38,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 37, iStartY, sCurrentXPosition + 38,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(222, 181, 115)));
 
   // pink one for bandaged.
   iStartY += 27 * pSoldier->bBleeding / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 36, iStartY, sCurrentXPosition + 37,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 36, iStartY, sCurrentXPosition + 37,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(156, 57, 57)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 37, iStartY, sCurrentXPosition + 38,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 37, iStartY, sCurrentXPosition + 38,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(222, 132, 132)));
 
   // red one for actual health
   iStartY = sCurrentYPosition + 29 - 27 * pSoldier->bLife / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 36, iStartY, sCurrentXPosition + 37,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 36, iStartY, sCurrentXPosition + 37,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(107, 8, 8)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 37, iStartY, sCurrentXPosition + 38,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 37, iStartY, sCurrentXPosition + 38,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(206, 0, 0)));
 
   // BREATH BAR
   iStartY = sCurrentYPosition + 29 - 27 * pSoldier->bBreathMax / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 39, iStartY, sCurrentXPosition + 40,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 39, iStartY, sCurrentXPosition + 40,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(8, 8, 132)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 40, iStartY, sCurrentXPosition + 41,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 40, iStartY, sCurrentXPosition + 41,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(8, 8, 107)));
 
   // MORALE BAR
   iStartY = sCurrentYPosition + 29 - 27 * pSoldier->bMorale / 100;
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 42, iStartY, sCurrentXPosition + 43,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 42, iStartY, sCurrentXPosition + 43,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(8, 156, 8)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, sCurrentXPosition + 43, iStartY, sCurrentXPosition + 44,
+  ColorFillVideoSurfaceArea(vsFB, sCurrentXPosition + 43, iStartY, sCurrentXPosition + 44,
                             sCurrentYPosition + 29, Get16BPPColor(FROMRGB(8, 107, 8)));
 
   return (TRUE);

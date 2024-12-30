@@ -559,10 +559,10 @@ void HandleBobbyRMailOrder() {
 
     // Bobbyray title
     GetVideoObject(&hPixHandle, guiConfirmGraphic);
-    BltVideoObjectOutlineShadowFromIndex(FRAME_BUFFER, guiConfirmGraphic, 0,
-                                         BOBBYR_CONFIRM_ORDER_X + 3, BOBBYR_CONFIRM_ORDER_Y + 3);
+    BltVideoObjectOutlineShadowFromIndex(vsFB, guiConfirmGraphic, 0, BOBBYR_CONFIRM_ORDER_X + 3,
+                                         BOBBYR_CONFIRM_ORDER_Y + 3);
 
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_CONFIRM_ORDER_X, BOBBYR_CONFIRM_ORDER_Y,
+    BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_CONFIRM_ORDER_X, BOBBYR_CONFIRM_ORDER_Y,
                    VO_BLT_SRCTRANSPARENCY, NULL);
     InvalidateRegion(LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
                      LAPTOP_SCREEN_WEB_LR_Y);
@@ -599,22 +599,22 @@ void RenderBobbyRMailOrder() {
 
   // Order Grid
   GetVideoObject(&hPixHandle, guiBobbyROrderGrid);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_ORDERGRID_X, BOBBYR_ORDERGRID_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_ORDERGRID_X, BOBBYR_ORDERGRID_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   // Location graphic
   GetVideoObject(&hPixHandle, guiBobbyRLocationGraphic);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_LOCATION_BOX_X, BOBBYR_LOCATION_BOX_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_LOCATION_BOX_X, BOBBYR_LOCATION_BOX_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   // DeliverySpeedGraphic
   GetVideoObject(&hPixHandle, guiDeliverySpeedGraphic);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_DELIVERYSPEED_X, BOBBYR_DELIVERYSPEED_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_DELIVERYSPEED_X, BOBBYR_DELIVERYSPEED_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   // Package Weight
   GetVideoObject(&hPixHandle, guiPackageWeightImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_PACKAXGE_WEIGHT_X, BOBBYR_PACKAXGE_WEIGHT_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_PACKAXGE_WEIGHT_X, BOBBYR_PACKAXGE_WEIGHT_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   //
@@ -1037,8 +1037,8 @@ void DisplayShippingCosts(BOOLEAN fCalledFromOrderPage, int32_t iSubTotal, uint1
   // bli the total Saved area onto the grid
   if (fCalledFromOrderPage) {
     GetVideoObject(&hPixHandle, guiTotalSaveArea);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_TOTAL_SAVED_AREA_X,
-                   BOBBYR_TOTAL_SAVED_AREA_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_TOTAL_SAVED_AREA_X, BOBBYR_TOTAL_SAVED_AREA_Y,
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   // if there is a shipment, display the s&h charge
@@ -1127,34 +1127,34 @@ void SelectShippingSpeedRegionCallBack(struct MOUSE_REGION *pRegion, int32_t iRe
 
 BOOLEAN DrawShippingSpeedLights(uint8_t ubSelected) {
   if (ubSelected == 0)
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, gShippingSpeedAreas[0], gShippingSpeedAreas[1],
+    ColorFillVideoSurfaceArea(vsFB, gShippingSpeedAreas[0], gShippingSpeedAreas[1],
                               gShippingSpeedAreas[0] + SHIPPING_SPEED_LIGHT_WIDTH,
                               gShippingSpeedAreas[1] + SHIPPING_SPEED_LIGHT_HEIGHT,
                               Get16BPPColor(FROMRGB(0, 255, 0)));
   else
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, gShippingSpeedAreas[0], gShippingSpeedAreas[1],
+    ColorFillVideoSurfaceArea(vsFB, gShippingSpeedAreas[0], gShippingSpeedAreas[1],
                               gShippingSpeedAreas[0] + SHIPPING_SPEED_LIGHT_WIDTH,
                               gShippingSpeedAreas[1] + SHIPPING_SPEED_LIGHT_HEIGHT,
                               Get16BPPColor(FROMRGB(0, 0, 0)));
 
   if (ubSelected == 1)
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, gShippingSpeedAreas[2], gShippingSpeedAreas[3],
+    ColorFillVideoSurfaceArea(vsFB, gShippingSpeedAreas[2], gShippingSpeedAreas[3],
                               gShippingSpeedAreas[2] + SHIPPING_SPEED_LIGHT_WIDTH,
                               gShippingSpeedAreas[3] + SHIPPING_SPEED_LIGHT_HEIGHT,
                               Get16BPPColor(FROMRGB(0, 255, 0)));
   else
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, gShippingSpeedAreas[2], gShippingSpeedAreas[3],
+    ColorFillVideoSurfaceArea(vsFB, gShippingSpeedAreas[2], gShippingSpeedAreas[3],
                               gShippingSpeedAreas[2] + SHIPPING_SPEED_LIGHT_WIDTH,
                               gShippingSpeedAreas[3] + SHIPPING_SPEED_LIGHT_HEIGHT,
                               Get16BPPColor(FROMRGB(0, 0, 0)));
 
   if (ubSelected == 2)
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, gShippingSpeedAreas[4], gShippingSpeedAreas[5],
+    ColorFillVideoSurfaceArea(vsFB, gShippingSpeedAreas[4], gShippingSpeedAreas[5],
                               gShippingSpeedAreas[4] + SHIPPING_SPEED_LIGHT_WIDTH,
                               gShippingSpeedAreas[5] + SHIPPING_SPEED_LIGHT_HEIGHT,
                               Get16BPPColor(FROMRGB(0, 255, 0)));
   else
-    ColorFillVideoSurfaceArea(FRAME_BUFFER, gShippingSpeedAreas[4], gShippingSpeedAreas[5],
+    ColorFillVideoSurfaceArea(vsFB, gShippingSpeedAreas[4], gShippingSpeedAreas[5],
                               gShippingSpeedAreas[4] + SHIPPING_SPEED_LIGHT_WIDTH,
                               gShippingSpeedAreas[5] + SHIPPING_SPEED_LIGHT_HEIGHT,
                               Get16BPPColor(FROMRGB(0, 0, 0)));
@@ -1295,8 +1295,8 @@ BOOLEAN CreateDestroyBobbyRDropDown(uint8_t ubDropDownAction) {
         MSYS_RemoveRegion(&gSelectedScrollAreaDropDownRegion[i]);
 
       // display the name on the title bar
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, BOBBYR_SHIPPING_LOC_AREA_L_X,
-                                BOBBYR_SHIPPING_LOC_AREA_T_Y, BOBBYR_SHIPPING_LOC_AREA_L_X + 175,
+      ColorFillVideoSurfaceArea(vsFB, BOBBYR_SHIPPING_LOC_AREA_L_X, BOBBYR_SHIPPING_LOC_AREA_T_Y,
+                                BOBBYR_SHIPPING_LOC_AREA_L_X + 175,
                                 BOBBYR_SHIPPING_LOC_AREA_T_Y + BOBBYR_DROP_DOWN_HEIGHT,
                                 Get16BPPColor(FROMRGB(0, 0, 0)));
 
@@ -1338,8 +1338,7 @@ BOOLEAN CreateDestroyBobbyRDropDown(uint8_t ubDropDownAction) {
       struct VObject *hArrowHandle;
 
       // Display the background for the drop down window
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, BOBBYR_CITY_START_LOCATION_X,
-                                BOBBYR_CITY_START_LOCATION_Y,
+      ColorFillVideoSurfaceArea(vsFB, BOBBYR_CITY_START_LOCATION_X, BOBBYR_CITY_START_LOCATION_Y,
                                 BOBBYR_CITY_START_LOCATION_X + BOBBYR_DROP_DOWN_WIDTH,
                                 BOBBYR_CITY_START_LOCATION_Y + BOBBYR_SCROLL_AREA_HEIGHT,
                                 Get16BPPColor(FROMRGB(0, 0, 0)));
@@ -1355,10 +1354,10 @@ BOOLEAN CreateDestroyBobbyRDropDown(uint8_t ubDropDownAction) {
       // blit top & bottom row of images
       for (i = 10; i < BOBBYR_DROP_DOWN_WIDTH - 10; i += 10) {
         // TOP ROW
-        BltVideoObject(FRAME_BUFFER, hImageHandle, 1, i + BOBBYR_CITY_START_LOCATION_X,
+        BltVideoObject(vsFB, hImageHandle, 1, i + BOBBYR_CITY_START_LOCATION_X,
                        usPosY + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
         // BOTTOM ROW
-        BltVideoObject(FRAME_BUFFER, hImageHandle, 6, i + BOBBYR_CITY_START_LOCATION_X,
+        BltVideoObject(vsFB, hImageHandle, 6, i + BOBBYR_CITY_START_LOCATION_X,
                        usHeight - 10 + 6 + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY,
                        NULL);
       }
@@ -1366,33 +1365,33 @@ BOOLEAN CreateDestroyBobbyRDropDown(uint8_t ubDropDownAction) {
       // blit the left and right row of images
       usPosX = 0;
       for (i = 10; i < usHeight - 10; i += 10) {
-        BltVideoObject(FRAME_BUFFER, hImageHandle, 3, usPosX + BOBBYR_CITY_START_LOCATION_X,
+        BltVideoObject(vsFB, hImageHandle, 3, usPosX + BOBBYR_CITY_START_LOCATION_X,
                        i + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
-        BltVideoObject(FRAME_BUFFER, hImageHandle, 4,
+        BltVideoObject(vsFB, hImageHandle, 4,
                        usPosX + BOBBYR_DROP_DOWN_WIDTH - 4 + BOBBYR_CITY_START_LOCATION_X,
                        i + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
       }
 
       // blt the corner images for the row
       // top left
-      BltVideoObject(FRAME_BUFFER, hImageHandle, 0, 0 + BOBBYR_CITY_START_LOCATION_X,
+      BltVideoObject(vsFB, hImageHandle, 0, 0 + BOBBYR_CITY_START_LOCATION_X,
                      usPosY + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
       // top right
-      BltVideoObject(FRAME_BUFFER, hImageHandle, 2,
+      BltVideoObject(vsFB, hImageHandle, 2,
                      BOBBYR_DROP_DOWN_WIDTH - 10 + BOBBYR_CITY_START_LOCATION_X,
                      usPosY + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
       // bottom left
-      BltVideoObject(FRAME_BUFFER, hImageHandle, 5, 0 + BOBBYR_CITY_START_LOCATION_X,
+      BltVideoObject(vsFB, hImageHandle, 5, 0 + BOBBYR_CITY_START_LOCATION_X,
                      usHeight - 10 + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
       // bottom right
-      BltVideoObject(FRAME_BUFFER, hImageHandle, 7,
+      BltVideoObject(vsFB, hImageHandle, 7,
                      BOBBYR_DROP_DOWN_WIDTH - 10 + BOBBYR_CITY_START_LOCATION_X,
                      usHeight - 10 + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
 
       DrawSelectedCity(gbSelectedCity);
 
       // display the scroll bars regions
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, BOBBYR_SCROLL_AREA_X, BOBBYR_SCROLL_AREA_Y,
+      ColorFillVideoSurfaceArea(vsFB, BOBBYR_SCROLL_AREA_X, BOBBYR_SCROLL_AREA_Y,
                                 BOBBYR_SCROLL_AREA_X + BOBBYR_SCROLL_AREA_WIDTH,
                                 BOBBYR_SCROLL_AREA_Y + BOBBYR_SCROLL_AREA_HEIGHT,
                                 Get16BPPColor(FROMRGB(0, 0, 0)));
@@ -1400,45 +1399,43 @@ BOOLEAN CreateDestroyBobbyRDropDown(uint8_t ubDropDownAction) {
       // blt right bar of scroll area
       usPosX = 0;
       for (i = 10; i < BOBBYR_SCROLL_AREA_HEIGHT - 10; i += 10) {
-        BltVideoObject(FRAME_BUFFER, hImageHandle, 3,
-                       BOBBYR_SCROLL_AREA_X + BOBBYR_SCROLL_AREA_WIDTH - 4,
+        BltVideoObject(vsFB, hImageHandle, 3, BOBBYR_SCROLL_AREA_X + BOBBYR_SCROLL_AREA_WIDTH - 4,
                        i + BOBBYR_CITY_START_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
       }
 
       // blit top row of images
       for (i = 0; i < BOBBYR_SCROLL_AREA_WIDTH; i += 10) {
         // TOP ROW
-        BltVideoObject(FRAME_BUFFER, hImageHandle, 1, i + BOBBYR_SCROLL_AREA_X - 10,
-                       BOBBYR_SCROLL_AREA_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVideoObject(vsFB, hImageHandle, 1, i + BOBBYR_SCROLL_AREA_X - 10, BOBBYR_SCROLL_AREA_Y,
+                       VO_BLT_SRCTRANSPARENCY, NULL);
         // BOTTOM ROW
-        BltVideoObject(FRAME_BUFFER, hImageHandle, 6, i + BOBBYR_SCROLL_AREA_X - 10,
+        BltVideoObject(vsFB, hImageHandle, 6, i + BOBBYR_SCROLL_AREA_X - 10,
                        BOBBYR_SCROLL_AREA_Y - 10 + 6 + BOBBYR_SCROLL_AREA_HEIGHT,
                        VO_BLT_SRCTRANSPARENCY, NULL);
       }
 
       // top right
-      BltVideoObject(FRAME_BUFFER, hImageHandle, 2,
-                     BOBBYR_SCROLL_AREA_X + BOBBYR_SCROLL_AREA_WIDTH - 10, BOBBYR_SCROLL_AREA_Y,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObject(vsFB, hImageHandle, 2, BOBBYR_SCROLL_AREA_X + BOBBYR_SCROLL_AREA_WIDTH - 10,
+                     BOBBYR_SCROLL_AREA_Y, VO_BLT_SRCTRANSPARENCY, NULL);
       // bottom right
-      BltVideoObject(
-          FRAME_BUFFER, hImageHandle, 7, BOBBYR_SCROLL_AREA_X + BOBBYR_SCROLL_AREA_WIDTH - 10,
-          BOBBYR_SCROLL_AREA_Y + BOBBYR_SCROLL_AREA_HEIGHT - 10, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObject(vsFB, hImageHandle, 7, BOBBYR_SCROLL_AREA_X + BOBBYR_SCROLL_AREA_WIDTH - 10,
+                     BOBBYR_SCROLL_AREA_Y + BOBBYR_SCROLL_AREA_HEIGHT - 10, VO_BLT_SRCTRANSPARENCY,
+                     NULL);
 
       // fix
-      BltVideoObject(FRAME_BUFFER, hImageHandle, 4,
+      BltVideoObject(vsFB, hImageHandle, 4,
                      BOBBYR_DROP_DOWN_WIDTH - 4 + BOBBYR_CITY_START_LOCATION_X,
                      BOBBYR_CITY_START_LOCATION_Y + 2, VO_BLT_SRCTRANSPARENCY, NULL);
 
       // get and display the up and down arrows
       GetVideoObject(&hArrowHandle, guiGoldArrowImages);
       // top arrow
-      BltVideoObject(FRAME_BUFFER, hArrowHandle, 1, BOBBYR_SCROLL_UP_ARROW_X,
-                     BOBBYR_SCROLL_UP_ARROW_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObject(vsFB, hArrowHandle, 1, BOBBYR_SCROLL_UP_ARROW_X, BOBBYR_SCROLL_UP_ARROW_Y,
+                     VO_BLT_SRCTRANSPARENCY, NULL);
 
       // top arrow
-      BltVideoObject(FRAME_BUFFER, hArrowHandle, 0, BOBBYR_SCROLL_DOWN_ARROW_X,
-                     BOBBYR_SCROLL_DOWN_ARROW_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObject(vsFB, hArrowHandle, 0, BOBBYR_SCROLL_DOWN_ARROW_X, BOBBYR_SCROLL_DOWN_ARROW_Y,
+                     VO_BLT_SRCTRANSPARENCY, NULL);
 
       // display the scroll rectangle
       DrawGoldRectangle(gbSelectedCity);
@@ -1513,7 +1510,7 @@ void DrawSelectedCity(uint8_t ubCityNumber) {
     usPosY = (usFontHeight + 2) * (gubCityAtTopOfList) + BOBBYR_CITY_START_LOCATION_Y;
 
   // display the name in the list
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, BOBBYR_CITY_START_LOCATION_X + 4, usPosY + 4,
+  ColorFillVideoSurfaceArea(vsFB, BOBBYR_CITY_START_LOCATION_X + 4, usPosY + 4,
                             BOBBYR_CITY_START_LOCATION_X + BOBBYR_DROP_DOWN_WIDTH - 4,
                             usPosY + usFontHeight + 6, Get16BPPColor(FROMRGB(200, 169, 87)));
 
@@ -1545,8 +1542,8 @@ void DisplayShippingLocationCity() {
   uint16_t usPosY;
 
   // display the name on the title bar
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, BOBBYR_SHIPPING_LOC_AREA_L_X,
-                            BOBBYR_SHIPPING_LOC_AREA_T_Y, BOBBYR_SHIPPING_LOC_AREA_L_X + 175,
+  ColorFillVideoSurfaceArea(vsFB, BOBBYR_SHIPPING_LOC_AREA_L_X, BOBBYR_SHIPPING_LOC_AREA_T_Y,
+                            BOBBYR_SHIPPING_LOC_AREA_L_X + 175,
                             BOBBYR_SHIPPING_LOC_AREA_T_Y + BOBBYR_DROP_DOWN_HEIGHT,
                             Get16BPPColor(FROMRGB(0, 0, 0)));
 
@@ -1796,12 +1793,11 @@ void DrawGoldRectangle(int8_t bCityNum) {
     usPosY = BOBBYR_SCROLL_AREA_Y + BOBBYR_SCROLL_AREA_HEIGHT - BOBBYR_SCROLL_ARROW_HEIGHT -
              usHeight - 5;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, BOBBYR_SCROLL_AREA_X, usPosY,
-                            BOBBYR_SCROLL_AREA_X + usWidth, usPosY + usHeight,
-                            Get16BPPColor(FROMRGB(186, 165, 68)));
+  ColorFillVideoSurfaceArea(vsFB, BOBBYR_SCROLL_AREA_X, usPosY, BOBBYR_SCROLL_AREA_X + usWidth,
+                            usPosY + usHeight, Get16BPPColor(FROMRGB(186, 165, 68)));
 
   // display the line
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw the gold highlite line on the top and left
@@ -1817,7 +1813,7 @@ void DrawGoldRectangle(int8_t bCityNum) {
            Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 }
 
 uint32_t CalcCostFromWeightOfPackage(uint8_t ubTypeOfService) {
@@ -2169,7 +2165,7 @@ void DrawBobbyROrderTitle() {
 
   // Bobbyray title
   GetVideoObject(&hPixHandle, guiBobbyRayTitle);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, BOBBYR_BOBBY_RAY_TITLE_X, BOBBYR_BOBBY_RAY_TITLE_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_BOBBY_RAY_TITLE_X, BOBBYR_BOBBY_RAY_TITLE_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 }
 

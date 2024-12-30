@@ -151,7 +151,7 @@ void RenderInsurance() {
 
   // Get and display the insurance title
   GetVideoObject(&hPixHandle, guiInsuranceTitleImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_BIG_TITLE_X, INSURANCE_BIG_TITLE_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_BIG_TITLE_X, INSURANCE_BIG_TITLE_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   // Display the title slogan
@@ -167,7 +167,7 @@ void RenderInsurance() {
 
   // Display the bulleted text 1
   GetVideoObject(&hPixHandle, guiInsuranceBulletImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_1_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_1_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
   GetInsuranceText(INS_MLTI_EMPLOY_HIGH_RISK, sText);
   DrawTextToScreen(sText, INSURANCE_SUBTITLE_X + INSURANCE_BULLET_TEXT_OFFSET_X,
@@ -175,7 +175,7 @@ void RenderInsurance() {
                    FALSE, LEFT_JUSTIFIED);
 
   // Display the bulleted text 2
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_2_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_2_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
   GetInsuranceText(INS_MLTI_HIGH_FATALITY_RATE, sText);
   DrawTextToScreen(sText, INSURANCE_SUBTITLE_X + INSURANCE_BULLET_TEXT_OFFSET_X,
@@ -183,7 +183,7 @@ void RenderInsurance() {
                    FALSE, LEFT_JUSTIFIED);
 
   // Display the bulleted text 3
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_3_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_SUBTITLE_X, INSURANCE_BULLET_TEXT_3_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
   GetInsuranceText(INS_MLTI_DRAIN_SALARY, sText);
   DrawTextToScreen(sText, INSURANCE_SUBTITLE_X + INSURANCE_BULLET_TEXT_OFFSET_X,
@@ -286,8 +286,7 @@ void DisplayInsuranceDefaults() {
 
   GetVideoObject(&hPixHandle, guiInsuranceRedBarImage);
   for (i = 0; i < 4; i++) {
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_RED_BAR_X, usPosY, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_RED_BAR_X, usPosY, VO_BLT_SRCTRANSPARENCY, NULL);
     usPosY += INSURANCE_BACKGROUND_HEIGHT;
   }
 
@@ -298,8 +297,8 @@ void DisplayInsuranceDefaults() {
 
       // display the top red bar
       GetVideoObject(&hPixHandle, guiInsuranceBigRedLineImage);
-      BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, usPosY,
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, usPosY, VO_BLT_SRCTRANSPARENCY,
+                     NULL);
 
       break;
 
@@ -311,14 +310,14 @@ void DisplayInsuranceDefaults() {
 
   // display the Bottom red bar
   GetVideoObject(&hPixHandle, guiInsuranceBigRedLineImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, INSURANCE_BOTTOM_RED_BAR_Y,
+  BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_TOP_RED_BAR_X, INSURANCE_BOTTOM_RED_BAR_Y,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   // if it is not the first page, display the small title
   if (guiCurrentLaptopMode != LAPTOP_MODE_INSURANCE) {
     // display the small title bar
     GetVideoObject(&hPixHandle, guiInsuranceSmallTitleImage);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, INSURANCE_SMALL_TITLE_X, INSURANCE_SMALL_TITLE_Y,
+    BltVideoObject(vsFB, hPixHandle, 0, INSURANCE_SMALL_TITLE_X, INSURANCE_SMALL_TITLE_Y,
                    VO_BLT_SRCTRANSPARENCY, NULL);
   }
 }
@@ -340,7 +339,7 @@ void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
 
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
 
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
@@ -352,7 +351,7 @@ void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_
            pDestBuf);
 
   // unlock frame buffer
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 }
 
 void GetInsuranceText(uint8_t ubNumber, wchar_t *pString) {

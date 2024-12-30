@@ -153,7 +153,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       UpdateSaveBufferWithBackbuffer();
 
       // Clear framebuffer
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
       break;
 
     case FADE_OUT_REALFADE:
@@ -164,7 +164,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       gfFadeInVideo = FALSE;
 
       // Clear framebuffer
-      // ColorFillVideoSurfaceArea( FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor( FROMRGB( 0, 0, 0 )
+      // ColorFillVideoSurfaceArea( vsFB, 0, 0, 640, 480, Get16BPPColor( FROMRGB( 0, 0, 0 )
       // ) );
       break;
 
@@ -184,7 +184,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       gFadeFunction = (FADE_FUNCTION)FadeFrameBufferSquare;
 
       // Zero frame buffer
-      ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
       // ColorFillVideoSurfaceArea( guiSAVEBUFFER, 0, 0, 640,	480, Get16BPPColor( FROMRGB( 0, 0, 0
       // ) ) );
 
@@ -277,7 +277,7 @@ uint32_t FadeScreenHandle() {
         case FADE_OUT_REALFADE:
 
           // Clear framebuffer
-          ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+          ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
           break;
       }
 
@@ -302,7 +302,7 @@ void FadeFrameBufferVersionOne() {
   uint32_t uiRGBColor;
   uint16_t s16BPPSrc;
 
-  pBuf = (uint16_t *)LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pBuf = (uint16_t *)LockVideoSurface(vsFB, &uiDestPitchBYTES);
 
   // LOCK FRAME BUFFER
   for (cX = 0; cX < 640; cX++) {
@@ -330,7 +330,7 @@ void FadeFrameBufferVersionOne() {
     }
   }
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 }
 
 void FadeInBackBufferVersionOne() {
@@ -343,7 +343,7 @@ void FadeInBackBufferVersionOne() {
   int16_t bFadeVal = (gsFadeLimit - gsFadeCount) * gbFadeValue;
 
   pDestBuf = (uint16_t *)LockVideoSurface(BACKBUFFER, &uiDestPitchBYTES);
-  pSrcBuf = (uint16_t *)LockVideoSurface(FRAME_BUFFER, &uiSrcPitchBYTES);
+  pSrcBuf = (uint16_t *)LockVideoSurface(vsFB, &uiSrcPitchBYTES);
 
   // LOCK FRAME BUFFER
   for (cX = 0; cX < 640; cX++) {
@@ -371,7 +371,7 @@ void FadeInBackBufferVersionOne() {
     }
   }
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
   UnLockVideoSurface(BACKBUFFER);
 }
 
@@ -383,7 +383,7 @@ void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
   uint32_t uiRGBColor;
   uint16_t s16BPPSrc;
 
-  pBuf = (uint16_t *)LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pBuf = (uint16_t *)LockVideoSurface(vsFB, &uiDestPitchBYTES);
 
   iStartX = gsFadeCount % 2;
   iStartY = 0;
@@ -420,7 +420,7 @@ void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
     }
   }
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 }
 
 void FadeFrameBufferSide() {
@@ -432,12 +432,12 @@ void FadeFrameBufferSide() {
   iX1 = 0;
   iX2 = sFadeMove;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
 
   iX1 = 640 - sFadeMove;
   iX2 = 640;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
 }
 
 void FadeFrameBufferSquare() {
@@ -492,7 +492,7 @@ void FadeInBackBufferSquare() {
   BltFx.SrcRect.iBottom = iY2;
 
   if (BltFx.SrcRect.iRight != BltFx.SrcRect.iLeft) {
-    BltVideoSurface(BACKBUFFER, FRAME_BUFFER, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
+    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
   }
 
   iX1 = giX2;
@@ -506,7 +506,7 @@ void FadeInBackBufferSquare() {
   BltFx.SrcRect.iBottom = iY2;
 
   if (BltFx.SrcRect.iRight != BltFx.SrcRect.iLeft) {
-    BltVideoSurface(BACKBUFFER, FRAME_BUFFER, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
+    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
   }
 
   iX1 = giX1;
@@ -520,7 +520,7 @@ void FadeInBackBufferSquare() {
   BltFx.SrcRect.iBottom = iY2;
 
   if (BltFx.SrcRect.iBottom != BltFx.SrcRect.iTop) {
-    BltVideoSurface(BACKBUFFER, FRAME_BUFFER, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
+    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
   }
 
   iX1 = giX1;
@@ -534,7 +534,7 @@ void FadeInBackBufferSquare() {
   BltFx.SrcRect.iBottom = iY2;
 
   if (BltFx.SrcRect.iBottom != BltFx.SrcRect.iTop) {
-    BltVideoSurface(BACKBUFFER, FRAME_BUFFER, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
+    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &BltFx);
   }
 
   giX1 -= sFadeXMove;
@@ -545,7 +545,7 @@ void FadeInBackBufferSquare() {
 
 void FadeFrameBufferRealFade() {
   if (gsFadeRealCount != gsFadeCount) {
-    ShadowVideoSurfaceRectUsingLowPercentTable(FRAME_BUFFER, 0, 0, 640, 480);
+    ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
 
     gsFadeRealCount = gsFadeCount;
   }
@@ -556,7 +556,7 @@ void FadeInFrameBufferRealFade() {
 
   if (gsFadeRealCount != gsFadeCount) {
     for (cnt = 0; cnt < (gsFadeLimit - gsFadeCount); cnt++) {
-      ShadowVideoSurfaceRectUsingLowPercentTable(FRAME_BUFFER, 0, 0, 640, 480);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
     }
 
     // Refresh Screen
@@ -578,13 +578,13 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
   // Update saved buffer - do for the viewport size ony!
   GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
 
-  pSrcBuf = LockVideoSurface(FRAME_BUFFER, &uiSrcPitchBYTES);
+  pSrcBuf = LockVideoSurface(vsFB, &uiSrcPitchBYTES);
   pDestBuf = LockVideoSurface(guiSAVEBUFFER, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, 0, 0, 640, 480);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
   UnLockVideoSurface(guiSAVEBUFFER);
 
   return (TRUE);

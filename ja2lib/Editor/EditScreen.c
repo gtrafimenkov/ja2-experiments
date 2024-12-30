@@ -741,7 +741,7 @@ void ShowCurrentDrawingMode(void) {
   SetClippingRect(&NewRect);
 
   // Clear it out
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 400, 100, 458, 0);
+  ColorFillVideoSurfaceArea(vsFB, 0, 400, 100, 458, 0);
 
   iShowMode = iDrawMode;
   if (iDrawMode >= DRAW_MODE_ERASE) iShowMode -= DRAW_MODE_ERASE;
@@ -925,8 +925,8 @@ void ShowCurrentDrawingMode(void) {
 
     SetObjectShade(gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface,
                    DEFAULT_SHADE_LEVEL);
-    BltVideoObject(FRAME_BUFFER, gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface,
-                   usUseIndex, (0 + iStartX), (400 + iStartY), VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, gTileDatabase[gTileTypeStartIndex[usObjIndex]].hTileSurface, usUseIndex,
+                   (0 + iStartX), (400 + iStartY), VO_BLT_SRCTRANSPARENCY, NULL);
 
     pETRLEObject->sOffsetX = sTempOffsetX;
     pETRLEObject->sOffsetY = sTempOffsetY;
@@ -934,10 +934,10 @@ void ShowCurrentDrawingMode(void) {
 
   // Set the color for the window's border. Blueish color = Normal, Red = Fake lighting is turned on
   usFillColor = GenericButtonFillColors[0];
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
   RectangleDraw(FALSE, 0, 400, 99, 458, usFillColor, pDestBuf);
 
-  UnLockVideoSurface(FRAME_BUFFER);
+  UnLockVideoSurface(vsFB);
 
   InvalidateRegion(0, 400, 100, 458);
   SetClippingRect(&ClipRect);
@@ -2204,9 +2204,9 @@ uint32_t WaitForHelpScreenResponse(void) {
   InputAtom DummyEvent;
   BOOLEAN fLeaveScreen;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 50, 50, 590, 310, Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 51, 51, 590, 310, Get16BPPColor(FROMRGB(24, 61, 81)));
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, 51, 51, 589, 309, GenericButtonFillColors[0]);
+  ColorFillVideoSurfaceArea(vsFB, 50, 50, 590, 310, Get16BPPColor(FROMRGB(136, 138, 135)));
+  ColorFillVideoSurfaceArea(vsFB, 51, 51, 590, 310, Get16BPPColor(FROMRGB(24, 61, 81)));
+  ColorFillVideoSurfaceArea(vsFB, 51, 51, 589, 309, GenericButtonFillColors[0]);
 
   SetFont(gp12PointFont1);
 
@@ -2393,7 +2393,7 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
   WinRect.iRight = (iWindow == 0) ? (485) : (637);
   WinRect.iBottom = 399;
 
-  ColorFillVideoSurfaceArea(FRAME_BUFFER, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
+  ColorFillVideoSurfaceArea(vsFB, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
                             WinRect.iBottom + 1, Get16BPPColor(FROMRGB(128, 0, 0)));
 
   iWinWidth = WinRect.iRight - WinRect.iLeft;
@@ -2425,7 +2425,7 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
   }
 
   vSfx.SrcRect = ClipRect;
-  BltVideoSurface(FRAME_BUFFER, vSurface, 0, iStartX, iStartY, VS_BLT_SRCSUBRECT, &vSfx);
+  BltVideoSurface(vsFB, vSurface, 0, iStartX, iStartY, VS_BLT_SRCSUBRECT, &vSfx);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -2472,7 +2472,7 @@ void ShowCurrentSlotImage(struct VObject *hVObj, int32_t iWindow) {
   pETRLEObject->sOffsetY = 0;
 
   SetObjectShade(hVObj, DEFAULT_SHADE_LEVEL);
-  BltVideoObject(FRAME_BUFFER, hVObj, 0, (iStartX), (iStartY), VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hVObj, 0, (iStartX), (iStartY), VO_BLT_SRCTRANSPARENCY, NULL);
 
   pETRLEObject->sOffsetX = sTempOffsetX;
   pETRLEObject->sOffsetY = sTempOffsetY;
@@ -3470,7 +3470,7 @@ uint32_t EditScreenHandle(void) {
   // Handle video overlays, for FPS and screen message stuff
   if (gfScrollPending) {
     AllocateVideoOverlaysArea();
-    SaveVideoOverlaysArea(FRAME_BUFFER);
+    SaveVideoOverlaysArea(vsFB);
   }
   ExecuteVideoOverlays();
 

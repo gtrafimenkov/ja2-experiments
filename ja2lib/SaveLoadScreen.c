@@ -613,9 +613,9 @@ BOOLEAN EnterSaveLoadScreen() {
     ButtonList[guiSlgSaveLoadBtn]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
     // CLEAR THE FRAME BUFFER
-    pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnLockVideoSurface(FRAME_BUFFER);
+    UnLockVideoSurface(vsFB);
 
     // CLEAR THE guiRENDERBUFFER
     pDestBuf = LockVideoSurface(guiRENDERBUFFER, &uiDestPitchBYTES);
@@ -689,7 +689,7 @@ void RenderSaveLoadScreen() {
   }
 
   GetVideoObject(&hPixHandle, guiSlgBackGroundImage);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
 
   if (gfSaveGame) {
     // If we are saving a game
@@ -698,15 +698,15 @@ void RenderSaveLoadScreen() {
     //		DrawTextToScreen( zSaveLoadText[SLG_SAVE_GAME], 0, 10, 639, SAVE_LOAD_TITLE_FONT,
     // SAVE_LOAD_TITLE_COLOR, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y, VO_BLT_SRCTRANSPARENCY,
+                   NULL);
   } else {
     // If we are Loading a game
 
     // Display the Title
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject(FRAME_BUFFER, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y, VO_BLT_SRCTRANSPARENCY,
+                   NULL);
   }
 
   DisplaySaveGameList();
@@ -1066,7 +1066,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
   // background
   GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-  BltVideoObject(FRAME_BUFFER, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY,
+  BltVideoObject(vsFB, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY,
                  VO_BLT_SRCTRANSPARENCY, NULL);
 
   //
@@ -1081,7 +1081,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
     // Shadow the slot
     //		if( !gbSaveGameArray[ bEntryID ] )
-    ShadowVideoSurfaceRect(FRAME_BUFFER, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+    ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                            usPosY + SLG_SAVELOCATION_HEIGHT);
   }
 
@@ -1108,7 +1108,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
       uiFont = SAVE_LOAD_QUICKSAVE_FONT;
 
       // Shadow the surface
-      ShadowVideoSurfaceRect(FRAME_BUFFER, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+      ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                              usPosY + SLG_SAVELOCATION_HEIGHT);
     } else {
       SetFontShadow(SAVE_LOAD_EMPTYSLOT_SHADOW_COLOR);

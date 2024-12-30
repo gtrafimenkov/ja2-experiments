@@ -173,7 +173,7 @@ void RenderMapBorder(void) {
 /*
 void RenderMapBorderCorner( void )
 {
-        // renders map border corner to the FRAME_BUFFER
+        // renders map border corner to the vsFB
         struct VObject* hHandle;
 
         if( fDisabledMapBorder )
@@ -189,7 +189,7 @@ void RenderMapBorderCorner( void )
 
         // get and blt corner
         GetVideoObject(&hHandle, guiMapBorderCorner );
-        BltVideoObject( FRAME_BUFFER , hHandle, 0,MAP_BORDER_CORNER_X, MAP_BORDER_CORNER_Y,
+        BltVideoObject( vsFB , hHandle, 0,MAP_BORDER_CORNER_X, MAP_BORDER_CORNER_Y,
 VO_BLT_SRCTRANSPARENCY,NULL );
 
         InvalidateRegion( MAP_BORDER_CORNER_X, MAP_BORDER_CORNER_Y, 635, 315);
@@ -199,7 +199,7 @@ VO_BLT_SRCTRANSPARENCY,NULL );
 */
 
 void RenderMapBorderEtaPopUp(void) {
-  // renders map border corner to the FRAME_BUFFER
+  // renders map border corner to the vsFB
   struct VObject *hHandle;
 
   /*
@@ -220,7 +220,7 @@ void RenderMapBorderEtaPopUp(void) {
 
   // get and blt ETA box
   GetVideoObject(&hHandle, guiMapBorderEtaPopUp);
-  BltVideoObject(FRAME_BUFFER, hHandle, 0, MAP_BORDER_X + 215, 291, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hHandle, 0, MAP_BORDER_X + 215, 291, VO_BLT_SRCTRANSPARENCY, NULL);
 
   InvalidateRegion(MAP_BORDER_X + 215, 291, MAP_BORDER_X + 215 + 100, 310);
 
@@ -716,7 +716,7 @@ void ShowDestinationOfPlottedPath( wchar_t* pLoc )
 {
         int16_t sFontX, sFontY;
 
-        SetFontDestBuffer( FRAME_BUFFER, 0, 0, 640, 480, FALSE );
+        SetFontDestBuffer( vsFB, 0, 0, 640, 480, FALSE );
 
         SetFont( COMPFONT );
         SetFontForeground( 183 );
