@@ -64,8 +64,6 @@ typedef struct {
   0x00000002  // Will force surface into video memory and will fail if it can't
 #define VSURFACE_SYSTEM_MEM_USAGE \
   0x00000004  // Will force surface into system memory and will fail if it can't
-#define VSURFACE_RESERVED_SURFACE \
-  0x00000100  // Reserved for special purposes, like a primary surface
 
 //
 // Video Surface creation flags
