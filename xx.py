@@ -18,6 +18,7 @@ Commands:
   build-debug           - build debug version
   build-release         - build release version
   format-modified       - format modified files using clang-format
+  format-all            - format all sources
   copy-data             - find and copy game data to the debug build localtion
   clean                 - cleanup repository from all unwanted files
   run                   - run debug build
@@ -26,6 +27,16 @@ Commands:
 Examples:
   python xx.py build copy-data run
 """
+
+
+def find_files(dir, extensions):
+    found = []
+    for root, _, files in os.walk(dir):
+        for file in files:
+            ext = os.path.splitext(file)[1]
+            if ext in extensions:
+                found.append(os.path.join(root, file))
+    return found
 
 
 def get_modified_files():
@@ -155,6 +166,10 @@ def run_command(command):
     elif command == "format-modified":
         modified_files = get_modified_files()
         source_files = filter_source_files(modified_files)
+        format_files(source_files)
+
+    elif command == "format-all":
+        source_files = find_files("ja2lib", [".h", ".c", ".cc"])
         format_files(source_files)
 
     elif command == "run":
