@@ -1340,8 +1340,8 @@ void RenderHandPosItem(void) {
   SetFontForeground(CHAR_INFO_PANEL_BLOCK_COLOR);
   SetFontBackground(FONT_BLACK);
 
-  INVRenderItem(guiSAVEBUFFER, pSoldier, &(pSoldier->inv[HANDPOS]), SOLDIER_HAND_X, SOLDIER_HAND_Y,
-                58, 23, DIRTYLEVEL2, NULL, 0, FALSE, 0);
+  INVRenderItem(vsSB, pSoldier, &(pSoldier->inv[HANDPOS]), SOLDIER_HAND_X, SOLDIER_HAND_Y, 58, 23,
+                DIRTYLEVEL2, NULL, 0, FALSE, 0);
 }
 
 void RenderIconsForUpperLeftCornerPiece(int8_t bCharNumber) {
@@ -1352,22 +1352,22 @@ void RenderIconsForUpperLeftCornerPiece(int8_t bCharNumber) {
   // if merc is an AIM merc
   if (Menptr[gCharactersList[bCharNumber].usSolID].ubWhatKindOfMercAmI == MERC_TYPE__AIM_MERC) {
     // finite contract length icon
-    BltVideoObject(guiSAVEBUFFER, hHandle, 0, CHAR_ICON_X, CHAR_ICON_CONTRACT_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsSB, hHandle, 0, CHAR_ICON_X, CHAR_ICON_CONTRACT_Y, VO_BLT_SRCTRANSPARENCY,
+                   NULL);
   }
 
   // if merc has life insurance
   if (Menptr[gCharactersList[bCharNumber].usSolID].usLifeInsurance > 0) {
     // draw life insurance icon
-    BltVideoObject(guiSAVEBUFFER, hHandle, 2, CHAR_ICON_X, CHAR_ICON_CONTRACT_Y + CHAR_ICON_SPACING,
+    BltVideoObject(vsSB, hHandle, 2, CHAR_ICON_X, CHAR_ICON_CONTRACT_Y + CHAR_ICON_SPACING,
                    VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   // if merc has a medical deposit
   if (Menptr[gCharactersList[bCharNumber].usSolID].usMedicalDeposit > 0) {
     // draw medical deposit icon
-    BltVideoObject(guiSAVEBUFFER, hHandle, 1, CHAR_ICON_X,
-                   CHAR_ICON_CONTRACT_Y + (2 * CHAR_ICON_SPACING), VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsSB, hHandle, 1, CHAR_ICON_X, CHAR_ICON_CONTRACT_Y + (2 * CHAR_ICON_SPACING),
+                   VO_BLT_SRCTRANSPARENCY, NULL);
   }
 }
 
@@ -2037,7 +2037,7 @@ void DisplayCharacterInfo(void) {
   Assert(gCharactersList[bSelectedInfoChar].fValid);
 
   // set font buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   // draw character info and face
   DrawCharacterInfo(bSelectedInfoChar);
@@ -2538,7 +2538,7 @@ void DisplayCharacterList() {
   }
 
   // set dest buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
   SetFont(MAP_SCREEN_FONT);
   SetFontBackground(FONT_BLACK);
 
@@ -3003,7 +3003,7 @@ uint32_t MapScreenHandle(void) {
     // TestMessageSystem( );
 
     // fill in
-    ColorFillVideoSurfaceArea(guiSAVEBUFFER, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
+    ColorFillVideoSurfaceArea(vsSB, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
     ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
 
     if ((fFirstTimeInMapScreen == TRUE) && (AnyMercsHired() == FALSE)) {
@@ -5625,11 +5625,11 @@ void BltCharInvPanel() {
 
   GetSoldier(&pSoldier, gCharactersList[bSelectedInfoChar].usSolID);
 
-  pDestBuf = (uint16_t *)LockVideoSurface(guiSAVEBUFFER, &uiDestPitchBYTES);
+  pDestBuf = (uint16_t *)LockVideoSurface(vsSB, &uiDestPitchBYTES);
   GetVideoObject(&hCharListHandle, guiMAPINV);
   Blt8BPPDataTo16BPPBufferTransparent(pDestBuf, uiDestPitchBYTES, hCharListHandle, PLAYER_INFO_X,
                                       PLAYER_INFO_Y, 0);
-  UnLockVideoSurface(guiSAVEBUFFER);
+  UnLockVideoSurface(vsSB);
 
   Assert(pSoldier);
   CreateDestroyMapInvButton();
@@ -5654,7 +5654,7 @@ void BltCharInvPanel() {
   RenderInvBodyPanel(pSoldier, INV_BODY_X, INV_BODY_Y);
 
   // reset font destination buffer to the save buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   // render items in each of chars slots
   HandleRenderInvSlots(pSoldier, DIRTYLEVEL2);
@@ -5666,7 +5666,7 @@ void BltCharInvPanel() {
 
   // Render Values for stats!
   // Set font drawing to saved buffer
-  SetFontDestBuffer(guiSAVEBUFFER, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
 
   SetFontBackground(FONT_MCOLOR_BLACK);
   SetFontForeground(MAP_INV_STATS_TITLE_FONT_COLOR);
@@ -5701,7 +5701,7 @@ void BltCharInvPanel() {
 
   if (InKeyRingPopup()) {
     // shade the background
-    ShadowVideoSurfaceRect(guiSAVEBUFFER, PLAYER_INFO_X, PLAYER_INFO_Y, PLAYER_INFO_X + 261,
+    ShadowVideoSurfaceRect(vsSB, PLAYER_INFO_X, PLAYER_INFO_Y, PLAYER_INFO_X + 261,
                            PLAYER_INFO_Y + (359 - 107));
   } else {
     // blit gold key on top of key ring if key ring is not empty
@@ -7188,8 +7188,7 @@ void RenderTeamRegionBackground(void) {
   // show inventory or the team list?
   if (fShowInventoryFlag == FALSE) {
     GetVideoObject(&hHandle, guiCHARLIST);
-    BltVideoObject(guiSAVEBUFFER, hHandle, 0, PLAYER_INFO_X, PLAYER_INFO_Y, VO_BLT_SRCTRANSPARENCY,
-                   NULL);
+    BltVideoObject(vsSB, hHandle, 0, PLAYER_INFO_X, PLAYER_INFO_Y, VO_BLT_SRCTRANSPARENCY, NULL);
   } else {
     BltCharInvPanel();
   }
@@ -7234,7 +7233,7 @@ void RenderCharacterInfoBackground(void) {
 
   // the upleft hand corner character info panel
   GetVideoObject(&hHandle, guiCHARINFO);
-  BltVideoObject(guiSAVEBUFFER, hHandle, 0, TOWN_INFO_X, TOWN_INFO_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsSB, hHandle, 0, TOWN_INFO_X, TOWN_INFO_Y, VO_BLT_SRCTRANSPARENCY, NULL);
 
   UpdateHelpTextForMapScreenMercIcons();
 
@@ -7245,7 +7244,7 @@ void RenderCharacterInfoBackground(void) {
 
   if ((fDisableDueToBattleRoster == FALSE)) {
     // draw attributes
-    RenderAttributeStringsForUpperLeftHandCorner(guiSAVEBUFFER);
+    RenderAttributeStringsForUpperLeftHandCorner(vsSB);
   }
 
   // reset dirty flag
@@ -9254,9 +9253,8 @@ void DisplayIconsForMercsAsleep(void) {
       pSoldier = MercPtrs[gCharactersList[iCounter].usSolID];
       if (IsSolActive(pSoldier) && pSoldier->fMercAsleep &&
           CanChangeSleepStatusForSoldier(pSoldier)) {
-        BltVideoObject(guiSAVEBUFFER, hHandle, 0, 125,
-                       (int16_t)(Y_START + (iCounter * (Y_SIZE + 2))), VO_BLT_SRCTRANSPARENCY,
-                       NULL);
+        BltVideoObject(vsSB, hHandle, 0, 125, (int16_t)(Y_START + (iCounter * (Y_SIZE + 2))),
+                       VO_BLT_SRCTRANSPARENCY, NULL);
       }
     }
   }
