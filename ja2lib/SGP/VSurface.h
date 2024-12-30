@@ -144,9 +144,7 @@ BOOLEAN ShutdownVideoSurfaceManager();
 BOOLEAN RestoreVideoSurfaces();
 
 // Creates and adds a video Surface to list
-#define AddVideoSurface(a, b) AddStandardVideoSurface(a, b)
-
-BOOLEAN AddStandardVideoSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex);
+BOOLEAN AddVideoSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex);
 
 // Returns a HVSurface for the specified index
 BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex);

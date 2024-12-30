@@ -2647,7 +2647,7 @@ BOOLEAN RestoreVideoSurfaces() {
   return TRUE;
 }
 
-BOOLEAN AddStandardVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
+BOOLEAN AddVideoSurface(VSURFACE_DESC *pVSurfaceDesc, uint32_t *puiIndex) {
   struct VSurface *hVSurface;
 
   // Assertions
