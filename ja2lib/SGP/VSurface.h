@@ -169,6 +169,8 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor);
 // Created from a VSurface_DESC structure. Can be from a file via HIMAGE or empty.
 struct VSurface *CreateVSurface(VSURFACE_DESC *VSurfaceDesc);
 
+struct VSurface *CreateVSurfaceFromFile(const char *filepath);
+
 // Gets the RGB palette entry values
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteEntry *pPalette);
 
@@ -237,7 +239,6 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int3
 
 typedef uint32_t VSurfID;
 
-struct VSurface *CreateVSurfaceFromFile(char *filepath);
 bool AddVSurfaceFromFile(const char *filepath, VSurfID *index);
 
 void InitVSurfaceList();

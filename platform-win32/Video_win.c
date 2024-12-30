@@ -3104,6 +3104,109 @@ struct VSurface *CreateVSurface(VSURFACE_DESC *VSurfaceDesc) {
   return (hVSurface);
 }
 
+struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
+  DDSURFACEDESC SurfaceDescription;
+  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
+
+  LPDIRECTDRAW2 lpDD2Object = GetDirectDraw2Object();
+
+  HIMAGE hImage = CreateImage(filepath, IMAGE_ALLIMAGEDATA);
+
+  if (hImage == NULL) {
+    DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid Image Filename given");
+    return (NULL);
+  }
+
+  uint16_t usHeight = hImage->usHeight;
+  uint16_t usWidth = hImage->usWidth;
+  uint8_t ubBitDepth = hImage->ubBitDepth;
+
+  Assert(usHeight > 0);
+  Assert(usWidth > 0);
+
+  DDPIXELFORMAT PixelFormat;
+  memset(&PixelFormat, 0, sizeof(PixelFormat));
+  PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+
+  switch (ubBitDepth) {
+    case 8: {
+      PixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
+      PixelFormat.dwRGBBitCount = 8;
+    } break;
+
+    case 16: {
+      PixelFormat.dwFlags = DDPF_RGB;
+      PixelFormat.dwRGBBitCount = 16;
+
+      uint32_t uiRBitMask;
+      uint32_t uiGBitMask;
+      uint32_t uiBBitMask;
+      CHECKF(GetPrimaryRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask));
+      PixelFormat.dwRBitMask = uiRBitMask;
+      PixelFormat.dwGBitMask = uiGBitMask;
+      PixelFormat.dwBBitMask = uiBBitMask;
+    } break;
+
+    default:
+      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid BPP value, can only be 8 or 16.");
+      return (FALSE);
+  }
+
+  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+
+  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+
+  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
+  SurfaceDescription.dwWidth = usWidth;
+  SurfaceDescription.dwHeight = usHeight;
+  SurfaceDescription.ddpfPixelFormat = PixelFormat;
+
+  LPDIRECTDRAWSURFACE lpDDS;
+  LPDIRECTDRAWSURFACE2 lpDDS2;
+  DDCreateSurface(lpDD2Object, &SurfaceDescription, &lpDDS, &lpDDS2);
+
+  struct VSurface *vs = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
+  memset(vs, 0, sizeof(struct VSurface));
+  CHECKF(vs != NULL);
+
+  vs->usHeight = usHeight;
+  vs->usWidth = usWidth;
+  vs->ubBitDepth = ubBitDepth;
+  vs->pSurfaceData1 = (void *)lpDDS;
+  vs->pSurfaceData = (void *)lpDDS2;
+  vs->pSavedSurfaceData1 = NULL;
+  vs->pSavedSurfaceData = NULL;
+  vs->pPalette = NULL;
+  vs->p16BPPPalette = NULL;
+  vs->TransparentColor = FROMRGB(0, 0, 0);
+  vs->RegionList = CreateList(DEFAULT_NUM_REGIONS, sizeof(VSURFACE_REGION));
+  vs->fFlags = 0;
+  vs->pClipper = NULL;
+
+  SGPRect tempRect;
+  tempRect.iLeft = 0;
+  tempRect.iTop = 0;
+  tempRect.iRight = hImage->usWidth - 1;
+  tempRect.iBottom = hImage->usHeight - 1;
+  SetVideoSurfaceDataFromHImage(vs, hImage, 0, 0, &tempRect);
+
+  if (hImage->ubBitDepth == 8) {
+    SetVideoSurfacePalette(vs, hImage->pPalette);
+  }
+
+  DestroyImage(hImage);
+
+  vs->usHeight = usHeight;
+  vs->usWidth = usWidth;
+  vs->ubBitDepth = ubBitDepth;
+
+  giMemUsedInSurfaces += (vs->usHeight * vs->usWidth * (vs->ubBitDepth / 8));
+
+  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in CreateVSurfaceFromFile"));
+
+  return vs;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Called when surface is lost, for the most part called by utility functions
