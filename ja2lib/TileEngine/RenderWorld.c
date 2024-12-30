@@ -2270,7 +2270,7 @@ void RenderWorld() {
     uint32_t cnt;
     wchar_t zVal;
 
-    pDestBuf = (uint16_t *)LockVideoSurface(guiRENDERBUFFER, &uiDestPitchBYTES);
+    pDestBuf = (uint16_t *)LockVideoSurface(vsFB, &uiDestPitchBYTES);
 
     for (cnt = 0; cnt < (640 * 480); cnt++) {
       // Get Z value
@@ -2278,7 +2278,7 @@ void RenderWorld() {
       pDestBuf[cnt] = zVal;
     }
 
-    UnLockVideoSurface(guiRENDERBUFFER);
+    UnLockVideoSurface(vsFB);
   }
 }
 

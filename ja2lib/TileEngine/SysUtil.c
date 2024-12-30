@@ -16,7 +16,6 @@
 
 uint32_t guiBOTTOMPANEL = 0;
 uint32_t guiRIGHTPANEL = 0;
-uint32_t guiRENDERBUFFER = 0;
 uint32_t guiSAVEBUFFER = 0;
 uint32_t guiEXTRABUFFER = 0;
 
@@ -41,8 +40,6 @@ BOOLEAN InitializeGameVideoObjects() {
 
   CHECKF(AddVideoSurface(&vs_desc, &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;
-
-  guiRENDERBUFFER = vsFB;
 
   return (TRUE);
 }

@@ -410,7 +410,7 @@ BOOLEAN EnterGIOScreen() {
   // REnder the screen once so we can blt ot to ths save buffer
   RenderGIOScreen();
 
-  BlitBufferToBuffer(guiRENDERBUFFER, guiSAVEBUFFER, 0, 0, 639, 439);
+  BlitBufferToBuffer(vsFB, guiSAVEBUFFER, 0, 0, 639, 439);
 
   gfGIOButtonsAllocated = TRUE;
 
