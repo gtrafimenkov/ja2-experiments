@@ -49,39 +49,42 @@ struct VSurface *ghMouseBuffer = NULL;
 extern int32_t giNumFrames;
 extern uint32_t guiMouseBufferState;  // BUFFER_READY, BUFFER_DIRTY, BUFFER_DISABLED
 
-struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface);
+static struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface);
 
 extern BOOLEAN GetRGBDistribution(void);
 
 // Surface Functions
 
-void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
-                     LPDIRECTDRAWSURFACE *ppNewSurface1, LPDIRECTDRAWSURFACE2 *ppNewSurface2);
-void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc);
-void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1, LPDIRECTDRAWSURFACE2 *ppOldSurface2);
-void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect, LPDDSURFACEDESC pSurfaceDesc,
-                   uint32_t uiFlags, HANDLE hEvent);
-void DDUnlockSurface(LPDIRECTDRAWSURFACE2 pSurface, void *_platformData2);
-void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
-                      LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans);
-void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
-                  LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiFlags,
-                  LPDDBLTFX pDDBltFx);
-void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
-                          LPDDCOLORKEY pDDColorKey);
+static void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
+                            LPDIRECTDRAWSURFACE *ppNewSurface1,
+                            LPDIRECTDRAWSURFACE2 *ppNewSurface2);
+static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc);
+static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
+                             LPDIRECTDRAWSURFACE2 *ppOldSurface2);
+static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
+                          LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent);
+static void DDUnlockSurface(LPDIRECTDRAWSURFACE2 pSurface, void *_platformData2);
+static void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
+                             LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans);
+static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
+                         LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiFlags,
+                         LPDDBLTFX pDDBltFx);
+static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
+                                 LPDDCOLORKEY pDDColorKey);
 
 // Palette Functions
-void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
-                     LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter);
-void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiStartingEntry,
-                         uint32_t uiCount, LPPALETTEENTRY pEntries);
-void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette);
-void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
-                         uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
+static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
+                            LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter);
+static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
+                                uint32_t uiStartingEntry, uint32_t uiCount,
+                                LPPALETTEENTRY pEntries);
+static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette);
+static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
+                                uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
 
 // local functions
-char *DirectXErrorDescription(int32_t iDXReturn);
-void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename);
+static char *DirectXErrorDescription(int32_t iDXReturn);
+static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename);
 
 #undef ATTEMPT
 #define ATTEMPT(x) DirectXAttempt((x), __LINE__, __FILE__)
@@ -204,10 +207,11 @@ extern int16_t gusRedShift;
 extern int16_t gusBlueShift;
 extern int16_t gusGreenShift;
 
-void AddRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom, uint32_t uiFlags);
-void SnapshotSmall(void);
-void VideoMovieCapture(BOOLEAN fEnable);
-void RefreshMovieCache();
+static void AddRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
+                        uint32_t uiFlags);
+static void SnapshotSmall(void);
+static void VideoMovieCapture(BOOLEAN fEnable);
+static void RefreshMovieCache();
 
 static void *LockFrameBuffer(uint32_t *uiPitch);
 static void UnlockFrameBuffer(void);
@@ -661,7 +665,8 @@ void InvalidateRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBo
   }
 }
 
-void AddRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom, uint32_t uiFlags) {
+static void AddRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
+                        uint32_t uiFlags) {
   if (guiDirtyRegionExCount < MAX_DIRTY_REGIONS) {
     // DO SOME PREMIMARY CHECKS FOR VALID RECTS
     if (iLeft < 0) iLeft = 0;
@@ -2139,7 +2144,7 @@ typedef struct {
 
 #pragma pack(pop)
 
-void SnapshotSmall(void) {
+static void SnapshotSmall(void) {
   int32_t iCountX, iCountY;
   DDSURFACEDESC SurfaceDescription;
   uint16_t *pVideo, *pDest;
@@ -2186,7 +2191,7 @@ void VideoCaptureToggle(void) {
 #endif
 }
 
-void VideoMovieCapture(BOOLEAN fEnable) {
+static void VideoMovieCapture(BOOLEAN fEnable) {
   int32_t cnt;
 
   gfVideoCapture = fEnable;
@@ -2210,7 +2215,7 @@ void VideoMovieCapture(BOOLEAN fEnable) {
   }
 }
 
-void RefreshMovieCache() {
+static void RefreshMovieCache() {
   TARGA_HEADER Header;
   int32_t iCountX, iCountY;
   FILE *disk;
@@ -3167,7 +3172,7 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
 //
 // *****************************************************************************
 
-struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface) {
+static struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface) {
   // Create Video Surface
   DDPIXELFORMAT PixelFormat;
   struct VSurface *hVSurface;
@@ -3708,8 +3713,9 @@ void SmkShutdownVideo(void) {
 //////////////////////////////////////////////////////////////////
 
 // DirectDrawSurface2 Calls
-void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
-                     LPDIRECTDRAWSURFACE *ppNewSurface1, LPDIRECTDRAWSURFACE2 *ppNewSurface2) {
+static void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
+                            LPDIRECTDRAWSURFACE *ppNewSurface1,
+                            LPDIRECTDRAWSURFACE2 *ppNewSurface2) {
   Assert(pExistingDirectDraw != NULL);
   Assert(pNewSurfaceDesc != NULL);
   Assert(ppNewSurface1 != NULL);
@@ -3724,8 +3730,8 @@ void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfa
 }
 
 // Lock, unlock calls
-void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect, LPDDSURFACEDESC pSurfaceDesc,
-                   uint32_t uiFlags, HANDLE hEvent) {
+static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
+                          LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent) {
   HRESULT ReturnCode;
 
   Assert(pSurface != NULL);
@@ -3742,13 +3748,13 @@ void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect, LPDDSURFACED
   ATTEMPT(ReturnCode);
 }
 
-void DDUnlockSurface(LPDIRECTDRAWSURFACE2 pSurface, void *_platformData2) {
+static void DDUnlockSurface(LPDIRECTDRAWSURFACE2 pSurface, void *_platformData2) {
   Assert(pSurface != NULL);
 
   ATTEMPT(IDirectDrawSurface2_Unlock(pSurface, _platformData2));
 }
 
-void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc) {
+static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc) {
   Assert(pSurface != NULL);
   Assert(pSurfaceDesc != NULL);
 
@@ -3758,7 +3764,8 @@ void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurf
   ATTEMPT(IDirectDrawSurface2_GetSurfaceDesc(pSurface, pSurfaceDesc));
 }
 
-void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1, LPDIRECTDRAWSURFACE2 *ppOldSurface2) {
+static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
+                             LPDIRECTDRAWSURFACE2 *ppOldSurface2) {
   Assert(ppOldSurface1 != NULL);
   Assert(ppOldSurface2 != NULL);
   Assert(*ppOldSurface1 != NULL);
@@ -3771,8 +3778,8 @@ void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1, LPDIRECTDRAWSURFACE2 *
   *ppOldSurface2 = NULL;
 }
 
-void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
-                      LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans) {
+static void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
+                             LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans) {
   HRESULT ReturnCode;
 
   Assert(pDestSurface != NULL);
@@ -3785,9 +3792,9 @@ void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t 
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
-void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
-                  LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiFlags,
-                  LPDDBLTFX pDDBltFx) {
+static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
+                         LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiFlags,
+                         LPDDBLTFX pDDBltFx) {
   HRESULT ReturnCode;
 
   Assert(pDestSurface != NULL);
@@ -3801,37 +3808,38 @@ void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
   ATTEMPT(ReturnCode);
 }
 
-void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
-                     LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter) {
+static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
+                            LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter) {
   Assert(pDirectDraw != NULL);
 
   ATTEMPT(IDirectDraw2_CreatePalette(pDirectDraw, uiFlags, pColorTable, ppDDPalette, pUnkOuter));
 }
 
-void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiStartingEntry,
-                         uint32_t uiCount, LPPALETTEENTRY pEntries) {
+static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
+                                uint32_t uiStartingEntry, uint32_t uiCount,
+                                LPPALETTEENTRY pEntries) {
   Assert(pPalette != NULL);
   Assert(pEntries != NULL);
 
   ATTEMPT(IDirectDrawPalette_SetEntries(pPalette, uiFlags, uiStartingEntry, uiCount, pEntries));
 }
 
-void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
-                         uint32_t uiNumEntries, LPPALETTEENTRY pEntries) {
+static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
+                                uint32_t uiNumEntries, LPPALETTEENTRY pEntries) {
   Assert(pPalette != NULL);
   Assert(pEntries != NULL);
 
   ATTEMPT(IDirectDrawPalette_GetEntries(pPalette, uiFlags, uiBase, uiNumEntries, pEntries));
 }
 
-void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette) {
+static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette) {
   Assert(pPalette != NULL);
 
   ATTEMPT(IDirectDrawPalette_Release(pPalette));
 }
 
-void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
-                          LPDDCOLORKEY pDDColorKey) {
+static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
+                                 LPDDCOLORKEY pDDColorKey) {
   Assert(pSurface != NULL);
   Assert(pDDColorKey != NULL);
 
@@ -3842,7 +3850,7 @@ void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
 // DirectXCommon
 //////////////////////////////////////////////////////////////////
 
-void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) {
+static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) {
 #ifdef _DEBUG
   if (iErrorCode != DD_OK) {
     FastDebugMsg("DIRECTX COMMON: DirectX Error\n");
@@ -3851,7 +3859,7 @@ void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) {
 #endif
 }
 
-char *DirectXErrorDescription(int32_t iDXReturn) {
+static char *DirectXErrorDescription(int32_t iDXReturn) {
   switch (iDXReturn) {
     case DD_OK:
       return "No error.\0";
