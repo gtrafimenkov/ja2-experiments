@@ -1781,9 +1781,8 @@ void DisplaySelectedListBox() {
   BltVideoObject(vsFB, hImageHandle, 0, usPosX - 5, usPosY - 1);
 
   // Bottom arrow
-  BltVideoObjectOld(
-      vsIndexFB, hImageHandle, 1, usPosX,
-      usPosY + gpActiveListBox->usScrollHeight - gpActiveListBox->usScrollArrowHeight);
+  BltVideoObject(vsFB, hImageHandle, 1, usPosX,
+                 usPosY + gpActiveListBox->usScrollHeight - gpActiveListBox->usScrollArrowHeight);
 
   // display the scroll rectangle
   DrawQdsScrollRectangle();  // gpActiveListBox->sCurSelectedItem, usPosX, usPosY, (uint16_t)(usPosY
