@@ -15,6 +15,7 @@
 #include "SGP/STCI.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
+#include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 #include "StrUtils.h"
 #include "platform_strings.h"
@@ -381,7 +382,7 @@ BOOLEAN Copy8BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t us
 }
 
 uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette) {
-  uint16_t *p16BPPPalette, r16, g16, b16, usColor;
+  uint16_t *p16BPPPalette, usColor;
   uint32_t cnt;
   uint8_t r, g, b;
 
@@ -394,22 +395,7 @@ uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette) {
     g = pPalette[cnt].peGreen;
     b = pPalette[cnt].peBlue;
 
-    if (gusRedShift < 0)
-      r16 = ((uint16_t)r >> abs(gusRedShift));
-    else
-      r16 = ((uint16_t)r << gusRedShift);
-
-    if (gusGreenShift < 0)
-      g16 = ((uint16_t)g >> abs(gusGreenShift));
-    else
-      g16 = ((uint16_t)g << gusGreenShift);
-
-    if (gusBlueShift < 0)
-      b16 = ((uint16_t)b >> abs(gusBlueShift));
-    else
-      b16 = ((uint16_t)b << gusBlueShift);
-
-    usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
+    usColor = PackColorsToRGB16(r, g, b);
 
     if (usColor == 0) {
       if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
@@ -447,7 +433,7 @@ shaded according to each pixel's brightness.
 **********************************************************************************************/
 uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale,
                                    uint32_t gscale, uint32_t bscale, BOOLEAN mono) {
-  uint16_t *p16BPPPalette, r16, g16, b16, usColor;
+  uint16_t *p16BPPPalette, usColor;
   uint32_t cnt, lumin;
   uint32_t rmod, gmod, bmod;
   uint8_t r, g, b;
@@ -473,23 +459,7 @@ uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rs
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    if (gusRedShift < 0)
-      r16 = ((uint16_t)r >> (-gusRedShift));
-    else
-      r16 = ((uint16_t)r << gusRedShift);
-
-    if (gusGreenShift < 0)
-      g16 = ((uint16_t)g >> (-gusGreenShift));
-    else
-      g16 = ((uint16_t)g << gusGreenShift);
-
-    if (gusBlueShift < 0)
-      b16 = ((uint16_t)b >> (-gusBlueShift));
-    else
-      b16 = ((uint16_t)b << gusBlueShift);
-
-    // Prevent creation of pure black color
-    usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
+    usColor = PackColorsToRGB16(r, g, b);
 
     if (usColor == 0) {
       if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
@@ -503,29 +473,13 @@ uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rs
 
 // Convert from RGB to 16 bit value
 uint16_t Get16BPPColor(uint32_t RGBValue) {
-  uint16_t r16, g16, b16, usColor;
   uint8_t r, g, b;
 
   r = SGPGetRValue(RGBValue);
   g = SGPGetGValue(RGBValue);
   b = SGPGetBValue(RGBValue);
 
-  if (gusRedShift < 0)
-    r16 = ((uint16_t)r >> abs(gusRedShift));
-  else
-    r16 = ((uint16_t)r << gusRedShift);
-
-  if (gusGreenShift < 0)
-    g16 = ((uint16_t)g >> abs(gusGreenShift));
-  else
-    g16 = ((uint16_t)g << gusGreenShift);
-
-  if (gusBlueShift < 0)
-    b16 = ((uint16_t)b >> abs(gusBlueShift));
-  else
-    b16 = ((uint16_t)b << gusBlueShift);
-
-  usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
+  uint16_t usColor = PackColorsToRGB16(r, g, b);
 
   // if our color worked out to absolute black, and the original wasn't
   // absolute black, convert it to a VERY dark grey to avoid transparency
@@ -536,7 +490,7 @@ uint16_t Get16BPPColor(uint32_t RGBValue) {
   } else
     usColor |= gusAlphaMask;
 
-  return (usColor);
+  return usColor;
 }
 
 // Convert from 16 BPP to RGBvalue
