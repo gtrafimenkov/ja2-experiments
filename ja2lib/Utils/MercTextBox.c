@@ -421,9 +421,10 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
     UnLockVideoSurface(pPopUpTextBox->uiSourceBufferIndex);
 
   } else {
-    if (!GetVideoSurface(&hSrcVSurface, pPopUpTextBox->uiMercTextPopUpBackground)) {
-      AssertMsg(0, String("Failed to GetVideoSurface for PrepareMercPopupBox.  VSurfaceID:  %d",
-                          pPopUpTextBox->uiMercTextPopUpBackground));
+    if (!GetVSurfaceByIndexOld(&hSrcVSurface, pPopUpTextBox->uiMercTextPopUpBackground)) {
+      AssertMsg(0,
+                String("Failed to GetVSurfaceByIndexOld for PrepareMercPopupBox.  VSurfaceID:  %d",
+                       pPopUpTextBox->uiMercTextPopUpBackground));
     }
 
     pDestBuf = (uint16_t *)LockVideoSurface(pPopUpTextBox->uiSourceBufferIndex, &uiDestPitchBYTES);

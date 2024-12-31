@@ -2398,7 +2398,7 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
   iWinWidth = WinRect.iRight - WinRect.iLeft;
   iWinHeight = WinRect.iBottom - WinRect.iTop;
 
-  GetVideoSurface(&hvSurface, vSurface);
+  GetVSurfaceByIndexOld(&hvSurface, vSurface);
 
   iPicWidth = (int32_t)hvSurface->usWidth;
   iPicHeight = (int32_t)hvSurface->usHeight;

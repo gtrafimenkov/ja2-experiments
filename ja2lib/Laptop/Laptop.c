@@ -4377,7 +4377,7 @@ BOOLEAN DrawDeskTopBackground(void) {
   clip.iBottom = 408 + 19;
   // get surfaces
   pDestBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
-  CHECKF(GetVideoSurface(&hSrcVSurface, guiDESKTOP));
+  CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiDESKTOP));
   pSrcBuf = LockVideoSurface(guiDESKTOP, &uiSrcPitchBYTES);
 
   // blit .pcx for the background onto desktop

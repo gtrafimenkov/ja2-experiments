@@ -2011,8 +2011,8 @@ void RenderTextBufferToScreen() {
   struct VSurface *hDestVSurface, *hSrcVSurface;
   struct Rect SrcRect;
 
-  GetVideoSurface(&hDestVSurface, vsIndexFB);
-  GetVideoSurface(&hSrcVSurface, guiHelpScreenTextBufferSurface);
+  GetVSurfaceByIndexOld(&hDestVSurface, vsIndexFB);
+  GetVSurfaceByIndexOld(&hSrcVSurface, guiHelpScreenTextBufferSurface);
 
   SrcRect.left = 0;
   SrcRect.top = gHelpScreen.iLineAtTopOfTextBuffer * HLP_SCRN__HEIGHT_OF_1_LINE_IN_BUFFER;
