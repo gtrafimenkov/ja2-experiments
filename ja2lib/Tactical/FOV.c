@@ -435,8 +435,6 @@ void RevealRoofsAndItems(struct SOLDIERTYPE *pSoldier, uint32_t itemsToo, BOOLEA
 
         gubFOVDebugInfoInfo[marker] = (uint8_t)markercnt;
 
-        StartFrameBufferRender();
-
         RenderFOVDebug();
 
         SetFont(LARGEFONT1);

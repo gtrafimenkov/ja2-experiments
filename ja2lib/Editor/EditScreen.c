@@ -3350,7 +3350,6 @@ extern void AutoLoadMap();
 uint32_t EditScreenHandle(void) {
   uint32_t uiRetVal;
   BOOLEAN fShowingCursor;
-  StartFrameBufferRender();
 
   if (gfWorldLoaded && gMapInformation.ubMapVersion <= 7 && !gfCorruptMap) {
     ScreenMsg(FONT_MCOLOR_RED, MSG_ERROR,

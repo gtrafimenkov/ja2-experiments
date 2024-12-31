@@ -561,7 +561,6 @@ uint32_t MainGameScreenHandle(void) {
   }
 
   /////////////////////////////////////////////////////
-  StartFrameBufferRender();
 
   HandleTopMessages();
 
@@ -829,8 +828,6 @@ void EndModalTactical() {
 }
 
 void HandleModalTactical() {
-  StartFrameBufferRender();
-
   RestoreBackgroundRects();
 
   RenderWorld();

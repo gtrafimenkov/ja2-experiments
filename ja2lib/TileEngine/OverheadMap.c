@@ -457,7 +457,6 @@ void HandleOverheadMap() {
   }
 
   RenderButtons();
-  StartFrameBufferRender();
 
   // save background rects
   SaveBackgroundRects();

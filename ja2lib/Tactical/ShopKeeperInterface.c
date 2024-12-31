@@ -675,8 +675,6 @@ uint32_t ShopKeeperScreenInit() {
 }
 
 uint32_t ShopKeeperScreenHandle() {
-  StartFrameBufferRender();
-
   if (gfSKIScreenEntry) {
     PauseGame();
 

@@ -102,7 +102,6 @@ uint32_t AniEditScreenHandle(void) {
   }
 
   /////////////////////////////////////////////////////
-  StartFrameBufferRender();
 
   RenderWorld();
 
