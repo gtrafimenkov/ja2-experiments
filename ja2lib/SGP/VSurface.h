@@ -44,11 +44,9 @@ struct VSurface {
   uint8_t ubBitDepth;         // 8 or 16
   void *_platformData1;       // platform-specific data (Direct Draw One Interface)
   void *_platformData2;       // platform-specific data (Direct Draw Two Interface)
-  uint32_t fFlags;            // Used to describe memory usage, etc
   void *pPalette;             // A void pointer, but for this implementation a DDPalette
   uint16_t *p16BPPPalette;    // A 16BPP palette used for 8->16 blits
   COLORVAL TransparentColor;  // Defaults to 0,0,0
-  void *pClipper;             // A void pointer encapsolated as a clipper Surface
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
