@@ -307,7 +307,7 @@ void RenderSliderBox(SLIDER *pSlider) {
     // If it is not the first time to render the slider
     if (!(pSlider->LastRect.iLeft == 0 && pSlider->LastRect.iRight == 0)) {
       // Restore the old rect
-      BlitBufferToBuffer(vsSB, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
+      BlitBufferToBuffer(vsSaveBufferID, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
                          (uint16_t)pSlider->LastRect.iTop, pSlider->ubSliderWidth,
                          pSlider->ubSliderHeight);
 
@@ -317,7 +317,7 @@ void RenderSliderBox(SLIDER *pSlider) {
     }
 
     // Blit the new rect
-    BlitBufferToBuffer(vsIndexFB, vsSB, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
+    BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
                        pSlider->ubSliderWidth, pSlider->ubSliderHeight);
   } else {
     // fill out the settings for the current dest and source rects
@@ -329,12 +329,13 @@ void RenderSliderBox(SLIDER *pSlider) {
     // If it is not the first time to render the slider
     if (!(pSlider->LastRect.iLeft == 0 && pSlider->LastRect.iRight == 0)) {
       // Restore the old rect
-      BlitBufferToBuffer(vsSB, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
+      BlitBufferToBuffer(vsSaveBufferID, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
                          (uint16_t)pSlider->LastRect.iTop, 8, 15);
     }
 
     // save the new rect
-    BlitBufferToBuffer(vsIndexFB, vsSB, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop, 8, 15);
+    BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
+                       8, 15);
   }
 
   // Save the new rect location

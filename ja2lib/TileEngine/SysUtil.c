@@ -14,7 +14,7 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 
-uint32_t vsSB = 0;
+uint32_t vsSaveBufferID = 0;
 uint32_t guiEXTRABUFFER = 0;
 
 BOOLEAN gfExtraBuffer = FALSE;
@@ -26,7 +26,7 @@ BOOLEAN InitializeGameVideoObjects() {
   uint16_t usHeight;
 
   GetCurrentVideoSettings(&usWidth, &usHeight);
-  CHECKF(AddVSurface(CreateVSurfaceBlank16(usWidth, usHeight), &vsSB));
+  CHECKF(AddVSurface(CreateVSurfaceBlank16(usWidth, usHeight), &vsSaveBufferID));
   CHECKF(AddVSurface(CreateVSurfaceBlank16(usWidth, usHeight), &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;
 

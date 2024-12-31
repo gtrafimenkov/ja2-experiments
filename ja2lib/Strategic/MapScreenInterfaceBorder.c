@@ -143,7 +143,7 @@ void DeleteMapBorderGraphics(void) {
 }
 
 void RenderMapBorder(void) {
-  // renders the actual border to the vsSB
+  // renders the actual border to the vsSaveBufferID
   struct VObject *hHandle;
 
   /*
@@ -161,7 +161,7 @@ void RenderMapBorder(void) {
 
   // get and blt border
   GetVideoObject(&hHandle, guiMapBorder);
-  BltVideoObject(vsSB, hHandle, 0, MAP_BORDER_X, MAP_BORDER_Y);
+  BltVideoObject(vsSaveBufferID, hHandle, 0, MAP_BORDER_X, MAP_BORDER_Y);
 
   // show the level marker
   DisplayCurrentLevelMarker();
@@ -986,7 +986,7 @@ void DisplayCurrentLevelMarker(void) {
 
   // it's actually a white rectangle, not a green arrow!
   GetVideoObject(&hHandle, guiLEVELMARKER);
-  BltVideoObject(vsSB, hHandle, 0, MAP_LEVEL_MARKER_X + 1,
+  BltVideoObject(vsSaveBufferID, hHandle, 0, MAP_LEVEL_MARKER_X + 1,
                  MAP_LEVEL_MARKER_Y + (MAP_LEVEL_MARKER_DELTA * (int16_t)iCurrentMapSectorZ));
 
   return;
