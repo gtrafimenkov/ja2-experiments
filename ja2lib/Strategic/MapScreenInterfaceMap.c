@@ -658,7 +658,7 @@ uint32_t DrawMap(void) {
     }
 
     UnlockVSurfaceByID(guiBIGMAP);
-    UnlockVSurfaceByID(vsSaveBufferID);
+    UnlockVSurface(vsSaveBuffer);
 
     // shade map sectors (must be done after Tixa/Orta/Mine icons have been blitted, but before
     // icons!)
@@ -1152,7 +1152,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
         break;
 
       case (MAP_SHADE_DK_GREEN):
@@ -1176,7 +1176,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
         break;
 
       case (MAP_SHADE_LT_RED):
@@ -1200,7 +1200,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
         break;
 
       case (MAP_SHADE_DK_RED):
@@ -1224,7 +1224,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
         break;
     }
 
@@ -1330,7 +1330,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
 
         break;
 
@@ -1350,7 +1350,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
 
         break;
 
@@ -1370,7 +1370,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
 
         break;
 
@@ -1390,7 +1390,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // unlock source and dest buffers
         UnlockVSurfaceByID(guiBIGMAP);
-        UnlockVSurfaceByID(vsSaveBufferID);
+        UnlockVSurface(vsSaveBuffer);
 
         break;
     }
@@ -3954,7 +3954,7 @@ void BlitMineIcon(uint8_t sMapX, uint8_t sMapY) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                  MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
                                  MAP_VIEW_HEIGHT - 9);
-  UnlockVSurfaceByID(vsSaveBufferID);
+  UnlockVSurface(vsSaveBuffer);
 
   if (fZoomFlag) {
     GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
@@ -4150,7 +4150,7 @@ void BlitTownGridMarkers(void) {
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
 
   // unlock surface
-  UnlockVSurfaceByID(vsSaveBufferID);
+  UnlockVSurface(vsSaveBuffer);
 
   return;
 }
@@ -4199,7 +4199,7 @@ void BlitMineGridMarkers(void) {
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
 
   // unlock surface
-  UnlockVSurfaceByID(vsSaveBufferID);
+  UnlockVSurface(vsSaveBuffer);
 
   return;
 }
@@ -5623,7 +5623,7 @@ void ShowSAMSitesOnStrategicMap(void) {
       SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                      MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
                                      MAP_VIEW_HEIGHT - 9);
-      UnlockVSurfaceByID(vsSaveBufferID);
+      UnlockVSurface(vsSaveBuffer);
 
       GetScreenXYFromMapXYStationary(sSectorX, sSectorY, &sX, &sY);
       sX -= 8;
@@ -5731,7 +5731,7 @@ void BlitSAMGridMarkers(void) {
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
 
   // unlock surface
-  UnlockVSurfaceByID(vsSaveBufferID);
+  UnlockVSurface(vsSaveBuffer);
 
   return;
 }
@@ -5861,7 +5861,7 @@ void DrawOrta() {
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                    MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
                                    MAP_VIEW_HEIGHT - 9);
-    UnlockVSurfaceByID(vsSaveBufferID);
+    UnlockVSurface(vsSaveBuffer);
 
     GetScreenXYFromMapXYStationary(ORTA_SECTOR_X, ORTA_SECTOR_Y, &sX, &sY);
     sX += -MAP_GRID_X + 2;
@@ -5890,7 +5890,7 @@ void DrawTixa() {
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                    MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
                                    MAP_VIEW_HEIGHT - 9);
-    UnlockVSurfaceByID(vsSaveBufferID);
+    UnlockVSurface(vsSaveBuffer);
 
     GetScreenXYFromMapXYStationary(TIXA_SECTOR_X, TIXA_SECTOR_Y, &sX, &sY);
     sX += -MAP_GRID_X + 3;

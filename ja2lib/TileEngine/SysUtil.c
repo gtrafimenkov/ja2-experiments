@@ -17,6 +17,8 @@
 uint32_t vsSaveBufferID = 0;
 uint32_t guiEXTRABUFFER = 0;
 
+struct VSurface *vsSaveBuffer = NULL;
+
 BOOLEAN gfExtraBuffer = FALSE;
 
 BOOLEAN InitializeSystemVideoObjects() { return (TRUE); }
@@ -26,7 +28,9 @@ BOOLEAN InitializeGameVideoObjects() {
   uint16_t usHeight;
 
   GetCurrentVideoSettings(&usWidth, &usHeight);
-  CHECKF(AddVSurface(CreateVSurfaceBlank16(usWidth, usHeight), &vsSaveBufferID));
+
+  vsSaveBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
+  CHECKF(AddVSurface(vsSaveBuffer, &vsSaveBufferID));
   CHECKF(AddVSurface(CreateVSurfaceBlank16(usWidth, usHeight), &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;
 

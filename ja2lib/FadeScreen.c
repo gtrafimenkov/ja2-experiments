@@ -578,7 +578,7 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
                   0, 0, 0, 640, 480);
 
   UnlockVSurface(vsFB);
-  UnlockVSurfaceByID(vsSaveBufferID);
+  UnlockVSurface(vsSaveBuffer);
 
   return (TRUE);
 }
