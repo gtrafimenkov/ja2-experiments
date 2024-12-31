@@ -1029,7 +1029,7 @@ void ShowUncertainNumberEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY) {
     sYPosition -= 2;
 
     // small question mark
-    BltVideoObjectOld(vsSaveBufferID, hIconHandle, SMALL_QUESTION_MARK, sXPosition, sYPosition);
+    BltVideoObject(vsSaveBuffer, hIconHandle, SMALL_QUESTION_MARK, sXPosition, sYPosition);
     InvalidateRegion(sXPosition, sYPosition, sXPosition + DMAP_GRID_X, sYPosition + DMAP_GRID_Y);
   }
 }
@@ -3489,8 +3489,7 @@ void ShowPeopleInMotion(uint8_t sX, uint8_t sY) {
           iX = MAP_VIEW_START_X + (iX * MAP_GRID_X) + sOffsetX;
           iY = MAP_Y_ICON_OFFSET + MAP_VIEW_START_Y + (iY * MAP_GRID_Y) + sOffsetY;
 
-          BltVideoObjectOld(vsSaveBufferID, hIconHandle, (uint16_t)iCounter, (int16_t)iX,
-                            (int16_t)iY);
+          BltVideoObject(vsSaveBuffer, hIconHandle, (uint16_t)iCounter, (int16_t)iX, (int16_t)iY);
         } else {
           GetScreenXYFromMapXYStationary(((uint8_t)(iX)), ((uint8_t)(iY)), &sXPosition,
                                          &sYPosition);
@@ -3501,7 +3500,7 @@ void ShowPeopleInMotion(uint8_t sX, uint8_t sY) {
           // clip blits to mapscreen region
           ClipBlitsToMapViewRegion();
 
-          BltVideoObjectOld(vsSaveBufferID, hIconHandle, (uint16_t)iCounter, iX, iY);
+          BltVideoObject(vsSaveBuffer, hIconHandle, (uint16_t)iCounter, iX, iY);
 
           // restore clip blits
           RestoreClipRegionToFullScreen();
@@ -3960,13 +3959,12 @@ void BlitMineIcon(uint8_t sMapX, uint8_t sMapY) {
   if (fZoomFlag) {
     GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
     // when zoomed, the x,y returned is the CENTER of the map square in question
-    BltVideoObjectOld(vsSaveBufferID, hHandle, 0, sScreenX - MAP_GRID_ZOOM_X / 4,
-                      sScreenY - MAP_GRID_ZOOM_Y / 4);
+    BltVideoObject(vsSaveBuffer, hHandle, 0, sScreenX - MAP_GRID_ZOOM_X / 4,
+                   sScreenY - MAP_GRID_ZOOM_Y / 4);
   } else {
     GetScreenXYFromMapXY((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
     // when not zoomed, the x,y returned is the top left CORNER of the map square in question
-    BltVideoObjectOld(vsSaveBufferID, hHandle, 1, sScreenX + MAP_GRID_X / 4,
-                      sScreenY + MAP_GRID_Y / 4);
+    BltVideoObject(vsSaveBuffer, hHandle, 1, sScreenX + MAP_GRID_X / 4, sScreenY + MAP_GRID_Y / 4);
   }
 }
 
@@ -5400,7 +5398,7 @@ void HandleLowerLevelMapBlit(void) {
   }
 
   // handle the blt of the sublevel
-  BltVideoObjectOld(vsSaveBufferID, hHandle, 0, MAP_VIEW_START_X + 21, MAP_VIEW_START_Y + 17);
+  BltVideoObject(vsSaveBuffer, hHandle, 0, MAP_VIEW_START_X + 21, MAP_VIEW_START_Y + 17);
 
   // handle shading of sublevels
   ShadeSubLevelsNotVisited();
@@ -5639,7 +5637,7 @@ void ShowSAMSitesOnStrategicMap(void) {
 
     // draw SAM site icon
     GetVideoObject(&hHandle, guiSAMICON);
-    BltVideoObjectOld(vsSaveBufferID, hHandle, ubVidObjIndex, sX, sY);
+    BltVideoObject(vsSaveBuffer, hHandle, ubVidObjIndex, sX, sY);
 
     if (fShowAircraftFlag) {
       // write "SAM Site" centered underneath
@@ -5846,7 +5844,7 @@ void DrawMapBoxIcon(struct VObject *hIconHandle, uint16_t usVOIndex, uint8_t sMa
     iX = MAP_VIEW_START_X + (sMapX * MAP_GRID_X) + MAP_X_ICON_OFFSET + (3 * iColumnNumber);
     iY = MAP_VIEW_START_Y + (sMapY * MAP_GRID_Y) + MAP_Y_ICON_OFFSET + (3 * iRowNumber);
 
-    BltVideoObjectOld(vsSaveBufferID, hIconHandle, usVOIndex, iX, iY);
+    BltVideoObject(vsSaveBuffer, hIconHandle, usVOIndex, iX, iY);
     InvalidateRegion(iX, iY, iX + DMAP_GRID_X, iY + DMAP_GRID_Y);
   }
 }
@@ -5877,7 +5875,7 @@ void DrawOrta() {
 
   // draw Orta in its sector
   GetVideoObject(&hHandle, guiORTAICON);
-  BltVideoObjectOld(vsSaveBufferID, hHandle, ubVidObjIndex, sX, sY);
+  BltVideoObject(vsSaveBuffer, hHandle, ubVidObjIndex, sX, sY);
 }
 
 void DrawTixa() {
@@ -5905,7 +5903,7 @@ void DrawTixa() {
 
   // draw Tixa in its sector
   GetVideoObject(&hHandle, guiTIXAICON);
-  BltVideoObjectOld(vsSaveBufferID, hHandle, ubVidObjIndex, sX, sY);
+  BltVideoObject(vsSaveBuffer, hHandle, ubVidObjIndex, sX, sY);
 }
 
 void DrawBullseye() {
@@ -5917,7 +5915,7 @@ void DrawBullseye() {
 
   // draw the bullseye in that sector
   GetVideoObject(&hHandle, guiBULLSEYE);
-  BltVideoObjectOld(vsSaveBufferID, hHandle, 0, sX, sY);
+  BltVideoObject(vsSaveBuffer, hHandle, 0, sX, sY);
 }
 
 void HideExistenceOfUndergroundMapSector(uint8_t ubSectorX, uint8_t ubSectorY) {
