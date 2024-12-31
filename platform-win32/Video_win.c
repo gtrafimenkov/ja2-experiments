@@ -63,7 +63,6 @@ void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1, LPDIRECTDRAWSURFACE2 *
 void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect, LPDDSURFACEDESC pSurfaceDesc,
                    uint32_t uiFlags, HANDLE hEvent);
 void DDUnlockSurface(LPDIRECTDRAWSURFACE2 pSurface, void *_platformData2);
-void DDRestoreSurface(LPDIRECTDRAWSURFACE2 pSurface);
 void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
                       LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans);
 void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
@@ -84,7 +83,6 @@ void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_
 // local functions
 char *DirectXErrorDescription(int32_t iDXReturn);
 void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename);
-void DirectXAssert(BOOLEAN fValue, int32_t nLine, char *szFilename);
 
 #undef ATTEMPT
 #define ATTEMPT(x) DirectXAttempt((x), __LINE__, __FILE__)
@@ -119,8 +117,6 @@ typedef struct {
 //
 // Video state variables
 //
-
-static RECT gScrollRegion;
 
 #define MAX_NUM_FRAMES 25
 
@@ -167,7 +163,6 @@ static MouseCursorBackground gMouseCursorBackground[2];
 
 static struct VObject *gpCursorStore;
 
-BOOLEAN gfFatalError = FALSE;
 char gFatalErrorString[512];
 
 // 8-bit palette stuff
@@ -188,7 +183,6 @@ uint32_t guiRefreshThreadState;  // THREAD_ON, THREAD_OFF, THREAD_SUSPENDED
 // Dirty rectangle management variables
 //
 
-void (*gpFrameBufferRefreshOverride)(void);
 SGPRect gListOfDirtyRegions[MAX_DIRTY_REGIONS];
 uint32_t guiDirtyRegionCount;
 BOOLEAN gfForceFullScreenRefresh;
@@ -196,10 +190,6 @@ BOOLEAN gfForceFullScreenRefresh;
 SGPRect gDirtyRegionsEx[MAX_DIRTY_REGIONS];
 uint32_t gDirtyRegionsFlagsEx[MAX_DIRTY_REGIONS];
 uint32_t guiDirtyRegionExCount;
-
-SGPRect gBACKUPListOfDirtyRegions[MAX_DIRTY_REGIONS];
-uint32_t gBACKUPuiDirtyRegionCount;
-BOOLEAN gBACKUPfForceFullScreenRefresh;
 
 //
 // Screen output stuff
@@ -462,7 +452,6 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
     memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
     SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
     SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-    // SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
     SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
     SurfaceDescription.dwWidth = MAX_CURSOR_WIDTH;
     SurfaceDescription.dwHeight = MAX_CURSOR_HEIGHT;
@@ -494,7 +483,6 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   guiRefreshThreadState = THREAD_OFF;
   guiDirtyRegionCount = 0;
   gfForceFullScreenRefresh = TRUE;
-  gpFrameBufferRefreshOverride = NULL;
   gpCursorStore = NULL;
   gfPrintFrameBuffer = FALSE;
   guiPrintFrameBufferIndex = 0;
@@ -545,12 +533,6 @@ void ShutdownVideoManager(void) {
 }
 
 void SuspendVideoManager(void) { guiVideoManagerState = VIDEO_SUSPENDED; }
-
-void DoTester() {
-  IDirectDraw2_RestoreDisplayMode(gpDirectDrawObject);
-  IDirectDraw2_SetCooperativeLevel(gpDirectDrawObject, ghWindow, DDSCL_NORMAL);
-  ShowCursor(TRUE);
-}
 
 BOOLEAN RestoreVideoManager(void) {
   HRESULT ReturnCode;
@@ -814,13 +796,6 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
             0, sScrollXIncrement * 2);
       }
 
-      // for(uiCountY=0; uiCountY < usHeight; uiCountY++)
-      //{
-      //	memcpy(pDestBuf+(uiCountY*uiDestPitchBYTES),
-      //					pSrcBuf+(uiCountY*uiDestPitchBYTES)+sScrollXIncrement*uiBPP,
-      //					uiDestPitchBYTES-sScrollXIncrement*uiBPP);
-      //}
-
       StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - sScrollXIncrement);
       usMouseXPos -= sScrollXIncrement;
 
@@ -852,12 +827,6 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
 
-      // for(uiCountY=usHeight-1; uiCountY >= sScrollYIncrement; uiCountY--)
-      //{
-      //	memcpy(pDestBuf+(uiCountY*uiDestPitchBYTES),
-      //					pSrcBuf+((uiCountY-sScrollYIncrement)*uiDestPitchBYTES),
-      //					uiDestPitchBYTES);
-      //}
       StripRegions[0].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement);
       usNumStrips = 1;
 
@@ -889,13 +858,6 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
            uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
-
-      // for(uiCountY=0; uiCountY < (usHeight-sScrollYIncrement); uiCountY++)
-      //{
-      //	memcpy(pDestBuf+(uiCountY*uiDestPitchBYTES),
-      //					pSrcBuf+((uiCountY+sScrollYIncrement)*uiDestPitchBYTES),
-      //					uiDestPitchBYTES);
-      //}
 
       StripRegions[0].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
       usNumStrips = 1;
@@ -1066,18 +1028,6 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
   }
 
   if (fRenderStrip) {
-    // Memset to 0
-#ifdef SCROLL_TEST
-    {
-      DDBLTFX BlitterFX;
-
-      BlitterFX.dwSize = sizeof(DDBLTFX);
-      BlitterFX.dwFillColor = 0;
-
-      DDBltSurface((LPDIRECTDRAWSURFACE2)pDest, NULL, NULL, NULL, DDBLT_COLORFILL, &BlitterFX);
-    }
-#endif
-
     for (cnt = 0; cnt < usNumStrips; cnt++) {
       RenderStaticWorldRect((int16_t)StripRegions[cnt].left, (int16_t)StripRegions[cnt].top,
                             (int16_t)StripRegions[cnt].right, (int16_t)StripRegions[cnt].bottom,
@@ -1161,35 +1111,7 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
 
     // BLIT NEW
     ExecuteVideoOverlaysToAlternateBuffer(BACKBUFFER);
-
-#if 0
-
-		// Erase mouse from old position
-		if (gMouseCursorBackground[ uiCurrentMouseBackbuffer ].fRestore == TRUE )
-		{
-
-			do
-			{
-				ReturnCode = IDirectDrawSurface2_BltFast(gpBackBuffer, usMouseXPos, usMouseYPos, gMouseCursorBackground[uiCurrentMouseBackbuffer].pSurface, (LPRECT)&MouseRegion, DDBLTFAST_NOCOLORKEY);
-				if ((ReturnCode != DD_OK)&&(ReturnCode != DDERR_WASSTILLDRAWING))
-				{
-					DirectXAttempt ( ReturnCode, __LINE__, __FILE__ );
-
-					if (ReturnCode == DDERR_SURFACELOST)
-					{
-
-					}
-				}
-			} while (ReturnCode != DD_OK);
-		}
-
-#endif
   }
-
-  // InvalidateRegion( sLeftDraw, sTopDraw, sRightDraw, sBottomDraw );
-
-  // UpdateSaveBuffer();
-  // SaveBackgroundRects();
 }
 
 void RefreshScreen(void *DummyVariable) {
@@ -1278,23 +1200,12 @@ void RefreshScreen(void *DummyVariable) {
     // Well the frame buffer is dirty.
     //
 
-    if (gpFrameBufferRefreshOverride != NULL) {
-      //
-      // Method (3) - We are using a function override to refresh the frame buffer. First we
-      // call the override function then we must set the override pointer to NULL
-      //
-
-      (*gpFrameBufferRefreshOverride)();
-      gpFrameBufferRefreshOverride = NULL;
-    }
-
     if (gfFadeInitialized && gfFadeInVideo) {
       gFadeFunction();
-    } else
-    //
-    // Either Method (1) or (2)
-    //
-    {
+    } else {
+      //
+      // Either Method (1) or (2)
+      //
       if (gfForceFullScreenRefresh == TRUE) {
         //
         // Method (1) - We will be refreshing the entire screen
@@ -2220,9 +2131,6 @@ void FatalError(char *pError, ...) {
   vsprintf(gFatalErrorString, pError, argptr);
   va_end(argptr);
 
-  gfFatalError = TRUE;
-
-  // Release DDraw
   IDirectDraw2_RestoreDisplayMode(gpDirectDrawObject);
   IDirectDraw2_Release(gpDirectDrawObject);
   ShowWindow(ghWindow, SW_HIDE);
@@ -4159,12 +4067,6 @@ void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1, LPDIRECTDRAWSURFACE2 *
 
   *ppOldSurface1 = NULL;
   *ppOldSurface2 = NULL;
-}
-
-void DDRestoreSurface(LPDIRECTDRAWSURFACE2 pSurface) {
-  Assert(pSurface != NULL);
-
-  ATTEMPT(IDirectDrawSurface2_Restore(pSurface));
 }
 
 void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
