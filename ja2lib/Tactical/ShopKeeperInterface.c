@@ -1346,8 +1346,8 @@ BOOLEAN RenderShopKeeperInterface() {
 
   // At this point the background is pure, copy it to the save buffer
   if (gfRenderScreenOnNextLoop) {
-    GetVideoSurface(&hDestVSurface, guiCornerWhereTacticalIsStillSeenImage);
-    GetVideoSurface(&hSrcVSurface, vsSB);
+    GetVSurfaceByIndexOld(&hDestVSurface, guiCornerWhereTacticalIsStillSeenImage);
+    GetVSurfaceByIndexOld(&hSrcVSurface, vsSB);
 
     SrcRect.left = SKI_TACTICAL_BACKGROUND_START_X;
     SrcRect.top = SKI_TACTICAL_BACKGROUND_START_Y;
@@ -1391,8 +1391,8 @@ void RestoreTacticalBackGround() {
   struct VSurface *hDestVSurface, *hSrcVSurface;
   struct Rect SrcRect;
 
-  GetVideoSurface(&hDestVSurface, vsIndexFB);
-  GetVideoSurface(&hSrcVSurface, guiCornerWhereTacticalIsStillSeenImage);
+  GetVSurfaceByIndexOld(&hDestVSurface, vsIndexFB);
+  GetVSurfaceByIndexOld(&hSrcVSurface, guiCornerWhereTacticalIsStillSeenImage);
 
   SrcRect.left = 0;
   SrcRect.top = 0;

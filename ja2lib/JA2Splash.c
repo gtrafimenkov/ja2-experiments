@@ -44,7 +44,7 @@ void InitJA2SplashScreen() {
     AssertMsg(0, String("Failed to load %s", VSurfaceDesc.ImageFile));
     return;
   }
-  GetVideoSurface(&hVSurface, uiLogoID);
+  GetVSurfaceByIndexOld(&hVSurface, uiLogoID);
   BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
   DeleteVSurfaceByIndex(uiLogoID);
 
@@ -72,7 +72,7 @@ void InitJA2SplashScreen() {
       return;
     }
 
-    GetVideoSurface(&hVSurface, uiLogoID);
+    GetVSurfaceByIndexOld(&hVSurface, uiLogoID);
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVSurfaceByIndex(uiLogoID);
   }

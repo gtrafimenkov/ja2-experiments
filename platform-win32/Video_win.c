@@ -2480,7 +2480,7 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
 #ifdef _DEBUG
   gubVSDebugCode = DEBUGSTR_SETVIDEOSURFACETRANSPARENCY;
 #endif
-  CHECKF(GetVideoSurface(&hVSurface, uiIndex));
+  CHECKF(GetVSurfaceByIndexOld(&hVSurface, uiIndex));
 
   //
   // Set transparency
@@ -2491,11 +2491,7 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
   return (TRUE);
 }
 
-BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
-#ifdef _DEBUG
-  CheckValidVSurfaceIndex(uiIndex);
-#endif
-
+BOOLEAN GetVSurfaceByIndexOld(struct VSurface **hVSurface, uint32_t uiIndex) {
   if (uiIndex == PRIMARY_SURFACE) {
     *hVSurface = ghPrimary;
     return TRUE;
@@ -2541,13 +2537,13 @@ BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_
 #ifdef _DEBUG
   gubVSDebugCode = DEBUGSTR_BLTVIDEOSURFACE_DST;
 #endif
-  if (!GetVideoSurface(&hDestVSurface, uiDestVSurface)) {
+  if (!GetVSurfaceByIndexOld(&hDestVSurface, uiDestVSurface)) {
     return FALSE;
   }
 #ifdef _DEBUG
   gubVSDebugCode = DEBUGSTR_BLTVIDEOSURFACE_SRC;
 #endif
-  if (!GetVideoSurface(&hSrcVSurface, uiSrcVSurface)) {
+  if (!GetVSurfaceByIndexOld(&hSrcVSurface, uiSrcVSurface)) {
     return FALSE;
   }
   if (!BltVSurfaceToVSurface(hDestVSurface, hSrcVSurface, usRegionIndex, iDestX, iDestY, fBltFlags,
@@ -2571,7 +2567,7 @@ BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
 #ifdef _DEBUG
   gubVSDebugCode = DEBUGSTR_COLORFILLVIDEOSURFACEAREA;
 #endif
-  if (!GetVideoSurface(&hDestVSurface, uiDestVSurface)) {
+  if (!GetVSurfaceByIndexOld(&hDestVSurface, uiDestVSurface)) {
     return FALSE;
   }
 
@@ -3411,7 +3407,7 @@ void CheckValidVSurfaceIndex(uint32_t uiIndex) {
         break;
       case DEBUGSTR_NONE:
       default:
-        sprintf(str, "GetVideoSurface");
+        sprintf(str, "GetVSurfaceByIndexOld");
         break;
     }
     if (uiIndex == 0xffffffff) {
@@ -3662,7 +3658,7 @@ void SmkSetupVideo(void) {
   uint16_t usRed, usGreen, usBlue;
   struct VSurface *hVSurface;
 
-  GetVideoSurface(&hVSurface, vsIndexFB);
+  GetVSurfaceByIndexOld(&hVSurface, vsIndexFB);
   lpVideoPlayback2 = (LPDIRECTDRAWSURFACE2)hVSurface->_platformData2;
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));

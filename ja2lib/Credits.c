@@ -899,7 +899,7 @@ BOOLEAN DisplayCreditNode(CRDT_NODE *pCurrent) {
     }
   }
 
-  GetVideoSurface(&hVSurface, pCurrent->uiVideoSurfaceImage);
+  GetVSurfaceByIndexOld(&hVSurface, pCurrent->uiVideoSurfaceImage);
 
   BltVSurfaceToVSurface(vsFB, hVSurface, 0, pCurrent->sPosX, pCurrent->sPosY, VS_BLT_USECOLORKEY,
                         NULL);
