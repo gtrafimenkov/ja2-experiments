@@ -657,7 +657,7 @@ uint32_t mprintf(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   }
 
   // Unlock buffer
-  UnLockVideoSurface(FontDestBuffer);
+  UnlockVSurfaceByID(FontDestBuffer);
 
   return (0);
 }
@@ -763,7 +763,7 @@ uint32_t gprintf(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   }
 
   // Unlock buffer
-  UnLockVideoSurface(FontDestBuffer);
+  UnlockVSurfaceByID(FontDestBuffer);
 
   return (0);
 }
@@ -808,7 +808,7 @@ uint32_t gprintfDirty(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   }
 
   // Unlock buffer
-  UnLockVideoSurface(FontDestBuffer);
+  UnlockVSurfaceByID(FontDestBuffer);
 
   InvalidateRegion(x, y, x + StringPixLength(string, FontDefault), y + GetFontHeight(FontDefault));
 
@@ -1001,7 +1001,7 @@ uint32_t mprintf_coded(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   }
 
   // Unlock buffer
-  UnLockVideoSurface(FontDestBuffer);
+  UnlockVSurfaceByID(FontDestBuffer);
 
   return (0);
 }

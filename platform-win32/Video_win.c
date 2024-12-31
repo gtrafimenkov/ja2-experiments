@@ -2275,7 +2275,7 @@ uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
   return LockVSurface(vs, puiPitch);
 }
 
-void UnLockVideoSurface(uint32_t id) {
+void UnlockVSurfaceByID(VSurfID id) {
   switch (id) {
     case PRIMARY_SURFACE:
       IDirectDrawSurface2_Unlock(gpPrimarySurface, NULL);

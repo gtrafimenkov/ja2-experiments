@@ -2020,8 +2020,8 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
                     (int16_t)(pBlitter->sX + 14), (int16_t)(pBlitter->sY + 6), 0, 0,
                     gpCurrentTalkingFace->usFaceWidth, gpCurrentTalkingFace->usFaceHeight);
 
-    UnLockVideoSurface(pBlitter->uiDestBuff);
-    UnLockVideoSurface(gpCurrentTalkingFace->uiAutoDisplayBuffer);
+    UnlockVSurfaceByID(pBlitter->uiDestBuff);
+    UnlockVSurfaceByID(gpCurrentTalkingFace->uiAutoDisplayBuffer);
 
     InvalidateRegion(pBlitter->sX, pBlitter->sY, pBlitter->sX + 99, pBlitter->sY + 98);
   }

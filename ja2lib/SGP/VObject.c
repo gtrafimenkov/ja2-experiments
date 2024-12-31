@@ -241,18 +241,18 @@ BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint
   gubVODebugCode = DEBUGSTR_BLTVIDEOOBJECTFROMINDEX;
 #endif
   if (!GetVideoObject(&hSrcVObject, uiSrcVObject)) {
-    UnLockVideoSurface(uiDestVSurface);
+    UnlockVSurfaceByID(uiDestVSurface);
     return FALSE;
   }
 
   // Now we have the video object and surface, call the VO blitter function
   if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY)) {
-    UnLockVideoSurface(uiDestVSurface);
+    UnlockVSurfaceByID(uiDestVSurface);
     // VO Blitter will set debug messages for error conditions
     return FALSE;
   }
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 
@@ -320,12 +320,12 @@ BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *vsSrc, uint16_t 
 
   // Now we have the video object and surface, call the VO blitter function
   if (!BltVideoObjectToBuffer(pBuffer, uiPitch, vsSrc, usRegionIndex, iDestX, iDestY)) {
-    UnLockVideoSurface(uiDestVSurface);
+    UnlockVSurfaceByID(uiDestVSurface);
     // VO Blitter will set debug messages for error conditions
     return (FALSE);
   }
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 
@@ -647,7 +647,7 @@ BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
 
   // Now we have the video object and surface, call the shadow function
   if (!Blt16BPPBufferPixelateRect(pBuffer, uiPitch, &area, uiPattern)) {
-    UnLockVideoSurface(uiDestVSurface);
+    UnlockVSurfaceByID(uiDestVSurface);
     // Blit has failed if false returned
     return (FALSE);
   }
@@ -658,7 +658,7 @@ BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
   //	InvalidateBackbuffer( );
   //}
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 
@@ -1057,7 +1057,7 @@ BOOLEAN BltVideoObjectOutlineFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVO
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 
@@ -1083,7 +1083,7 @@ BOOLEAN BltVideoObjectOutline(uint32_t uiDestVSurface, struct VObject *hSrcVObje
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 
@@ -1116,7 +1116,7 @@ BOOLEAN BltVideoObjectOutlineShadowFromIndex(uint32_t uiDestVSurface, uint32_t u
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 
@@ -1141,7 +1141,7 @@ BOOLEAN BltVideoObjectOutlineShadow(uint32_t uiDestVSurface, struct VObject *hSr
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 

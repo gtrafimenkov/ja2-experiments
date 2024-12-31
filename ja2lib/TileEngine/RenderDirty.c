@@ -278,7 +278,7 @@ BOOLEAN RestoreBackgroundRects(void) {
   }
 
   UnlockVSurface(vsFB);
-  UnLockVideoSurface(vsSB);
+  UnlockVSurfaceByID(vsSB);
 
   EmptyBackgroundRects();
 
@@ -366,7 +366,7 @@ BOOLEAN SaveBackgroundRects(void) {
   }
 
   UnlockVSurface(vsFB);
-  UnLockVideoSurface(vsSB);
+  UnlockVSurfaceByID(vsSB);
 
   return (TRUE);
 }
@@ -469,7 +469,7 @@ BOOLEAN UpdateSaveBuffer(void) {
                   (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y));
 
   UnlockVSurface(vsFB);
-  UnLockVideoSurface(vsSB);
+  UnlockVSurfaceByID(vsSB);
 
   return (TRUE);
 }
@@ -486,7 +486,7 @@ BOOLEAN RestoreExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth,
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
   UnlockVSurface(vsFB);
-  UnLockVideoSurface(vsSB);
+  UnlockVSurfaceByID(vsSB);
 
   // Add rect to frame buffer queue
   InvalidateRegionEx(sLeft, sTop, (sLeft + sWidth), (sTop + sHeight), 0);
@@ -516,7 +516,7 @@ BOOLEAN RestoreExternBackgroundRectGivenID(int32_t iBack) {
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
   UnlockVSurface(vsFB);
-  UnLockVideoSurface(vsSB);
+  UnlockVSurfaceByID(vsSB);
 
   // Add rect to frame buffer queue
   InvalidateRegionEx(sLeft, sTop, (sLeft + sWidth), (sTop + sHeight), 0);
@@ -535,7 +535,7 @@ BOOLEAN CopyExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth, in
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
-  UnLockVideoSurface(vsSB);
+  UnlockVSurfaceByID(vsSB);
   UnlockVSurface(vsFB);
 
   return (TRUE);
@@ -929,7 +929,7 @@ void SaveVideoOverlaysArea(uint32_t uiSrcBuffer) {
     }
   }
 
-  UnLockVideoSurface(uiSrcBuffer);
+  UnlockVSurfaceByID(uiSrcBuffer);
 }
 
 void SaveVideoOverlayArea(uint32_t uiSrcBuffer, uint32_t uiCount) {
@@ -956,7 +956,7 @@ void SaveVideoOverlayArea(uint32_t uiSrcBuffer, uint32_t uiCount) {
     }
   }
 
-  UnLockVideoSurface(uiSrcBuffer);
+  UnlockVSurfaceByID(uiSrcBuffer);
 }
 
 void DeleteVideoOverlaysArea() {
@@ -1052,7 +1052,7 @@ BOOLEAN RestoreShiftedVideoOverlays(int16_t sShiftX, int16_t sShiftY) {
     }
   }
 
-  UnLockVideoSurface(BACKBUFFER);
+  UnlockVSurface(vsBackBuffer);
 
   return (TRUE);
 }
@@ -1085,7 +1085,7 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter) {
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                  pBlitter->zText);
 
-  UnLockVideoSurface(pBlitter->uiDestBuff);
+  UnlockVSurfaceByID(pBlitter->uiDestBuff);
 }
 
 BOOLEAN BlitBufferToBuffer(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t usSrcX,
@@ -1100,8 +1100,8 @@ BOOLEAN BlitBufferToBuffer(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t
   fRetVal = Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf,
                             uiSrcPitchBYTES, usSrcX, usSrcY, usSrcX, usSrcY, usWidth, usHeight);
 
-  UnLockVideoSurface(uiDestBuffer);
-  UnLockVideoSurface(uiSrcBuffer);
+  UnlockVSurfaceByID(uiDestBuffer);
+  UnlockVSurfaceByID(uiSrcBuffer);
 
   return (fRetVal);
 }
