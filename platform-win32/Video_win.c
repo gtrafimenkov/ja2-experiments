@@ -2527,7 +2527,6 @@ BOOLEAN SetBackbufferInterface(LPDIRECTDRAWSURFACE2 pSurface);
 BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
                                          struct VSurface *hSrcVSurface, RECT *DestRect,
                                          RECT *SrcRect);
-BOOLEAN FillSurfaceRect(struct VSurface *hDestVSurface, blt_vs_fx *pBltFx);
 BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                            uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
                            struct Rect *SrcRect);
@@ -2739,9 +2738,7 @@ BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_
 
 BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int32_t iDestY1,
                                   int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
-  blt_vs_fx BltFx;
   struct VSurface *hDestVSurface;
-  SGPRect Clip;
 
 #ifdef _DEBUG
   gubVSDebugCode = DEBUGSTR_COLORFILLVIDEOSURFACEAREA;
@@ -2750,13 +2747,7 @@ BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
     return FALSE;
   }
 
-  BltFx.ColorFill = Color16BPP;
-  BltFx.DestRegion = 0;
-
-  //
-  // Clip fill region coords
-  //
-
+  SGPRect Clip;
   GetClippingRect(&Clip);
 
   if (iDestX1 < Clip.iLeft) iDestX1 = Clip.iLeft;
@@ -2777,12 +2768,20 @@ BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
 
   if ((iDestX2 <= iDestX1) || (iDestY2 <= iDestY1)) return (FALSE);
 
-  BltFx.SrcRect.iLeft = BltFx.FillRect.iLeft = iDestX1;
-  BltFx.SrcRect.iTop = BltFx.FillRect.iTop = iDestY1;
-  BltFx.SrcRect.iRight = BltFx.FillRect.iRight = iDestX2;
-  BltFx.SrcRect.iBottom = BltFx.FillRect.iBottom = iDestY2;
+  RECT r;
+  r.left = iDestX1;
+  r.top = iDestY1;
+  r.right = iDestX2;
+  r.bottom = iDestY2;
 
-  return (FillSurfaceRect(hDestVSurface, &BltFx));
+  {
+    DDBLTFX BlitterFX;
+    BlitterFX.dwSize = sizeof(DDBLTFX);
+    BlitterFX.dwFillColor = Color16BPP;
+    DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->pSurfaceData, &r, NULL, NULL, DDBLT_COLORFILL,
+                 &BlitterFX);
+  }
+  return TRUE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3600,21 +3599,6 @@ BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
     SrcRect->top = 0;
     DestRect->top = DestRect->bottom - (SrcRect->bottom - SrcRect->top);
   }
-
-  return (TRUE);
-}
-
-BOOLEAN FillSurfaceRect(struct VSurface *hDestVSurface, blt_vs_fx *pBltFx) {
-  DDBLTFX BlitterFX;
-
-  Assert(hDestVSurface != NULL);
-  CHECKF(pBltFx != NULL);
-
-  BlitterFX.dwSize = sizeof(DDBLTFX);
-  BlitterFX.dwFillColor = pBltFx->ColorFill;
-
-  DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->pSurfaceData, (LPRECT) & (pBltFx->FillRect),
-               NULL, NULL, DDBLT_COLORFILL, &BlitterFX);
 
   return (TRUE);
 }
