@@ -413,7 +413,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       ubVehicleType = pVehicleList[pSoldier->bVehicleID].ubVehicleType;
 
       // just draw the vehicle
-      BltVObjectFromIndexOld(vsSaveBufferID, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY);
+      BltVObjectFromIndex(vsSaveBuffer, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY);
       RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
 
       return;
@@ -441,7 +441,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       }
     }
   } else {
-    BltVObjectFromIndexOld(vsSaveBufferID, guiCLOSE, 5, sFaceX, sFaceY);
+    BltVObjectFromIndex(vsSaveBuffer, guiCLOSE, 5, sFaceX, sFaceY);
     RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
   }
 }

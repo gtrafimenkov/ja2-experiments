@@ -1480,21 +1480,19 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
     //}
 
     if (InItemDescriptionBox()) {
-      BltVObjectFromIndexOld(vsSaveBufferID, guiSMPanel, 0, INTERFACE_START_X,
-                             INV_INTERFACE_START_Y);
+      BltVObjectFromIndex(vsSaveBuffer, guiSMPanel, 0, INTERFACE_START_X, INV_INTERFACE_START_Y);
       RenderSoldierFace(gpSMCurrentMerc, SM_SELMERC_FACE_X, SM_SELMERC_FACE_Y, TRUE);
 
       // ATE: Need these lines here to fix flash bug with face selection box
       if (gfSMDisableForItems) {
-        BltVObjectFromIndexOld(vsSaveBufferID, guiSMObjects2, 0, SM_SELMERC_PLATE_X,
-                               SM_SELMERC_PLATE_Y);
+        BltVObjectFromIndex(vsSaveBuffer, guiSMObjects2, 0, SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y);
         RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y, SM_SELMERC_PLATE_WIDTH,
                                     SM_SELMERC_PLATE_HEIGHT);
       } else {
         if (gusSelectedSoldier == gpSMCurrentMerc->ubID &&
             gTacticalStatus.ubCurrentTeam == OUR_TEAM && OK_INTERRUPT_MERC(gpSMCurrentMerc)) {
-          BltVObjectFromIndexOld(vsSaveBufferID, guiSMObjects, 0, SM_SELMERC_PLATE_X,
-                                 SM_SELMERC_PLATE_Y);
+          BltVObjectFromIndex(vsSaveBuffer, guiSMObjects, 0, SM_SELMERC_PLATE_X,
+                              SM_SELMERC_PLATE_Y);
           RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y,
                                       SM_SELMERC_PLATE_WIDTH, SM_SELMERC_PLATE_HEIGHT);
         }
@@ -1502,8 +1500,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
 
       RenderItemDescriptionBox();
     } else {
-      BltVObjectFromIndexOld(vsSaveBufferID, guiSMPanel, 0, INTERFACE_START_X,
-                             INV_INTERFACE_START_Y);
+      BltVObjectFromIndex(vsSaveBuffer, guiSMPanel, 0, INTERFACE_START_X, INV_INTERFACE_START_Y);
 
       RenderInvBodyPanel(gpSMCurrentMerc, SM_BODYINV_X, SM_BODYINV_Y);
 
@@ -1513,15 +1510,14 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
       // Hitlight
 
       if (gfSMDisableForItems) {
-        BltVObjectFromIndexOld(vsSaveBufferID, guiSMObjects2, 0, SM_SELMERC_PLATE_X,
-                               SM_SELMERC_PLATE_Y);
+        BltVObjectFromIndex(vsSaveBuffer, guiSMObjects2, 0, SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y);
         RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y, SM_SELMERC_PLATE_WIDTH,
                                     SM_SELMERC_PLATE_HEIGHT);
       } else {
         if (gusSelectedSoldier == gpSMCurrentMerc->ubID &&
             gTacticalStatus.ubCurrentTeam == OUR_TEAM && OK_INTERRUPT_MERC(gpSMCurrentMerc)) {
-          BltVObjectFromIndexOld(vsSaveBufferID, guiSMObjects, 0, SM_SELMERC_PLATE_X,
-                                 SM_SELMERC_PLATE_Y);
+          BltVObjectFromIndex(vsSaveBuffer, guiSMObjects, 0, SM_SELMERC_PLATE_X,
+                              SM_SELMERC_PLATE_Y);
           RestoreExternBackgroundRect(SM_SELMERC_PLATE_X, SM_SELMERC_PLATE_Y,
                                       SM_SELMERC_PLATE_WIDTH, SM_SELMERC_PLATE_HEIGHT);
         }
@@ -2936,7 +2932,7 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
     MarkAButtonDirty(iTEAMPanelButtons[TEAM_MAP_SCREEN_BUTTON]);
     MarkAButtonDirty(iTEAMPanelButtons[CHANGE_SQUAD_BUTTON]);
 
-    BltVObjectFromIndexOld(vsSaveBufferID, guiTEAMPanel, 0, INTERFACE_START_X, INTERFACE_START_Y);
+    BltVObjectFromIndex(vsSaveBuffer, guiTEAMPanel, 0, INTERFACE_START_X, INTERFACE_START_Y);
     RestoreExternBackgroundRect(INTERFACE_START_X, INTERFACE_START_Y, (640 - INTERFACE_START_X),
                                 (480 - INTERFACE_START_Y));
 
@@ -2945,15 +2941,15 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
       // GET SOLDIER
       if (!gTeamPanel[cnt].fOccupied) {
         // BLIT CLOSE PANEL
-        BltVObjectFromIndexOld(vsSaveBufferID, guiCLOSE, 5, sTEAMFacesXY[posIndex],
-                               sTEAMFacesXY[posIndex + 1]);
+        BltVObjectFromIndex(vsSaveBuffer, guiCLOSE, 5, sTEAMFacesXY[posIndex],
+                            sTEAMFacesXY[posIndex + 1]);
         RestoreExternBackgroundRect(sTEAMFacesXY[posIndex], sTEAMFacesXY[posIndex + 1],
                                     TM_FACE_WIDTH, TM_FACE_HEIGHT);
 
         if (gTacticalStatus.ubCurrentTeam != OUR_TEAM || INTERRUPT_QUEUED) {
           // Hatch out...
-          BltVObjectFromIndexOld(vsSaveBufferID, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
-                                 sTEAMFaceHighlXY[posIndex + 1]);
+          BltVObjectFromIndex(vsSaveBuffer, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
+                              sTEAMFaceHighlXY[posIndex + 1]);
           RestoreExternBackgroundRect(sTEAMFaceHighlXY[posIndex], sTEAMFaceHighlXY[posIndex + 1],
                                       TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT);
         }
@@ -2994,13 +2990,13 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
         // Render Selected guy if selected
         if (gusSelectedSoldier == GetSolID(pSoldier) && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
             OK_INTERRUPT_MERC(pSoldier)) {
-          BltVObjectFromIndexOld(vsSaveBufferID, guiTEAMObjects, 0, sTEAMFaceHighlXY[posIndex],
-                                 sTEAMFaceHighlXY[posIndex + 1]);
+          BltVObjectFromIndex(vsSaveBuffer, guiTEAMObjects, 0, sTEAMFaceHighlXY[posIndex],
+                              sTEAMFaceHighlXY[posIndex + 1]);
           RestoreExternBackgroundRect(sTEAMFaceHighlXY[posIndex], sTEAMFaceHighlXY[posIndex + 1],
                                       TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT);
         } else if (gTacticalStatus.ubCurrentTeam != OUR_TEAM || !OK_INTERRUPT_MERC(pSoldier)) {
-          BltVObjectFromIndexOld(vsSaveBufferID, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
-                                 sTEAMFaceHighlXY[posIndex + 1]);
+          BltVObjectFromIndex(vsSaveBuffer, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
+                              sTEAMFaceHighlXY[posIndex + 1]);
           RestoreExternBackgroundRect(sTEAMFaceHighlXY[posIndex], sTEAMFaceHighlXY[posIndex + 1],
                                       TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT);
         }
@@ -3719,12 +3715,12 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
 
         // Finish!
         if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
-          BltVObjectFromIndexOld(vsSaveBufferID, guiDEAD, pSoldier->ubDeadPanelFrame,
-                                 pSoldier->sPanelFaceX, pSoldier->sPanelFaceY);
+          BltVObjectFromIndex(vsSaveBuffer, guiDEAD, pSoldier->ubDeadPanelFrame,
+                              pSoldier->sPanelFaceX, pSoldier->sPanelFaceY);
 
           // Blit hatch!
-          BltVObjectFromIndexOld(vsSaveBufferID, guiHATCH, 0, pSoldier->sPanelFaceX,
-                                 pSoldier->sPanelFaceY);
+          BltVObjectFromIndex(vsSaveBuffer, guiHATCH, 0, pSoldier->sPanelFaceX,
+                              pSoldier->sPanelFaceY);
 
           RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                       TM_FACE_HEIGHT);
@@ -3741,8 +3737,7 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
                              pSoldier->sPanelFaceY);
 
       // Blit hatch!
-      BltVObjectFromIndexOld(vsSaveBufferID, guiHATCH, 0, pSoldier->sPanelFaceX,
-                             pSoldier->sPanelFaceY);
+      BltVObjectFromIndex(vsSaveBuffer, guiHATCH, 0, pSoldier->sPanelFaceX, pSoldier->sPanelFaceY);
 
       InvalidateRegion(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY,
                        pSoldier->sPanelFaceX + TM_FACE_WIDTH,
@@ -3783,7 +3778,7 @@ void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY, 
                           BOOLEAN fDirty) {
   if (IsSolActive(pSoldier) && !(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
     if (pSoldier->uiStatusFlags & SOLDIER_DRIVER) {
-      BltVObjectFromIndexOld(vsSaveBufferID, guiVEHINV, 0, sX, sY);
+      BltVObjectFromIndex(vsSaveBuffer, guiVEHINV, 0, sX, sY);
       RestoreExternBackgroundRect(sX, sY, (int16_t)(TM_INV_WIDTH), (int16_t)(TM_INV_HEIGHT));
     } else {
       // Look in primary hand
@@ -3793,7 +3788,7 @@ void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY, 
     }
 
     if (pSoldier->uiStatusFlags & (SOLDIER_PASSENGER | SOLDIER_DRIVER)) {
-      BltVObjectFromIndexOld(vsSaveBufferID, guiVEHINV, 1, sX, (int16_t)(sY + TM_INV_HAND_SEPY));
+      BltVObjectFromIndex(vsSaveBuffer, guiVEHINV, 1, sX, (int16_t)(sY + TM_INV_HAND_SEPY));
       RestoreExternBackgroundRect(sX, (int16_t)(sY + TM_INV_HAND_SEPY), (int16_t)(TM_INV_WIDTH),
                                   (int16_t)(TM_INV_HEIGHT));
     } else {
