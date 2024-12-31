@@ -13,7 +13,6 @@
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
-#include "SGP/WinFont.h"
 #include "TileEngine/RenderDirty.h"
 #include "Utils/FontControl.h"
 
@@ -419,31 +418,17 @@ BOOLEAN DrawTextToScreen(wchar_t *pStr, uint16_t usLocX, uint16_t usLocY, uint16
 
   SetFont(ulFont);
 
-  if (USE_WINFONTS()) {
-    COLORVAL Color = FROMRGB(255, 255, 255);
-    SetWinFontForeColor(GET_WINFONT(), &Color);
-  } else {
-    SetFontForeground(ubColor);
-    SetFontBackground(ubBackGroundColor);
-  }
+  SetFontForeground(ubColor);
+  SetFontBackground(ubBackGroundColor);
 
   if (ulFlags & TEXT_SHADOWED)
     ShadowText(vsFB, pStr, ulFont, (uint16_t)(usPosX - 1), (uint16_t)(usPosY - 1));
 
-  if (USE_WINFONTS()) {
-    if (fDirty) {
-      gprintfdirty(usPosX, usPosY, pStr);
-      WinFont_mprintf(GET_WINFONT(), usPosX, usPosY, pStr);
-    } else {
-      WinFont_mprintf(GET_WINFONT(), usPosX, usPosY, pStr);
-    }
+  if (fDirty) {
+    gprintfdirty(usPosX, usPosY, pStr);
+    mprintf(usPosX, usPosY, pStr);
   } else {
-    if (fDirty) {
-      gprintfdirty(usPosX, usPosY, pStr);
-      mprintf(usPosX, usPosY, pStr);
-    } else {
-      mprintf(usPosX, usPosY, pStr);
-    }
+    mprintf(usPosX, usPosY, pStr);
   }
 
   if (IAN_WRAP_NO_SHADOW & ulFlags) {

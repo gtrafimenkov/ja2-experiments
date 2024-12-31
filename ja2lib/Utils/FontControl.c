@@ -13,7 +13,6 @@
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
-#include "SGP/WinFont.h"
 
 int32_t giCurWinFont = 0;
 BOOLEAN gfUseWinFonts = FALSE;
@@ -92,8 +91,6 @@ int32_t giSubTitleWinFont;
 BOOLEAN gfFontsInit = FALSE;
 
 uint16_t CreateFontPaletteTables(struct VObject* pObj);
-
-extern wchar_t gzFontName[32];
 
 BOOLEAN InitializeFonts() {
   // Initialize fonts
@@ -295,22 +292,8 @@ uint16_t CreateFontPaletteTables(struct VObject* pObj) {
   return (TRUE);
 }
 
-uint16_t WFGetFontHeight(int32_t FontNum) {
-  if (USE_WINFONTS()) {
-    // return how many Y pixels we used
-    return (GetWinFontHeight(L"a\0", GET_WINFONT()));
-  } else {
-    // return how many Y pixels we used
-    return (GetFontHeight(FontNum));
-  }
-}
+uint16_t WFGetFontHeight(int32_t FontNum) { return (GetFontHeight(FontNum)); }
 
 int16_t WFStringPixLength(wchar_t* string, int32_t UseFont) {
-  if (USE_WINFONTS()) {
-    // return how many Y pixels we used
-    return (WinFontStringPixLength(string, GET_WINFONT()));
-  } else {
-    // return how many Y pixels we used
-    return (StringPixLength(string, UseFont));
-  }
+  return (StringPixLength(string, UseFont));
 }

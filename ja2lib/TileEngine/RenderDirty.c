@@ -17,7 +17,6 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
-#include "SGP/WinFont.h"
 #include "TileEngine/RenderWorld.h"
 #include "TileEngine/SysUtil.h"
 #include "Utils/FontControl.h"
@@ -565,13 +564,8 @@ uint16_t gprintfdirty(int16_t x, int16_t y, wchar_t *pFontString, ...) {
             argptr);  // process gprintf string (get output str)
   va_end(argptr);
 
-  if (USE_WINFONTS()) {
-    uiStringLength = WinFontStringPixLength(string, GET_WINFONT());
-    uiStringHeight = GetWinFontHeight(string, GET_WINFONT());
-  } else {
-    uiStringLength = StringPixLength(string, FontDefault);
-    uiStringHeight = GetFontHeight(FontDefault);
-  }
+  uiStringLength = StringPixLength(string, FontDefault);
+  uiStringHeight = GetFontHeight(FontDefault);
 
   if (uiStringLength > 0) {
     iBack = RegisterBackgroundRect(BGND_FLAG_SINGLE, NULL, x, y, (int16_t)(x + uiStringLength),
