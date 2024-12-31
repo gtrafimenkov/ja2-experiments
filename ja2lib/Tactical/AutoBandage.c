@@ -1016,8 +1016,8 @@ BOOLEAN RenderSoldierSmallFaceForAutoBandagePanel(int32_t iIndex, int16_t sCurre
                             sCurrentXPosition + 44, sCurrentYPosition + 30, 0);
 
   // put down the background
-  BltVideoObjectFromIndex(vsFB, giMercPanelImage, 0, sCurrentXPosition, sCurrentYPosition,
-                          VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsFB, giMercPanelImage, 0, sCurrentXPosition, sCurrentYPosition,
+                      VO_BLT_SRCTRANSPARENCY, NULL);
 
   // grab the face
   BltVideoObject(vsFB, hHandle, 0, sCurrentXPosition + 2, sCurrentYPosition + 2,
