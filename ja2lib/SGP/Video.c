@@ -20,6 +20,6 @@ void EraseMouseCursor() {
   void *pTmpPointer = LockVideoSurface(MOUSE_BUFFER, &uiPitch);
   if (pTmpPointer) {
     memset(pTmpPointer, 0, MAX_CURSOR_HEIGHT * uiPitch);
-    UnLockVideoSurface(MOUSE_BUFFER);
+    UnlockVSurfaceByID(MOUSE_BUFFER);
   }
 }

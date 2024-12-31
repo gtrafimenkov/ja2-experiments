@@ -4385,7 +4385,7 @@ BOOLEAN DrawDeskTopBackground(void) {
                               LAPTOP_SCREEN_UL_X - 2, LAPTOP_SCREEN_UL_Y - 3, &clip);
 
   // release surfaces
-  UnLockVideoSurface(guiDESKTOP);
+  UnlockVSurfaceByID(guiDESKTOP);
   UnlockVSurface(vsFB);
 
   return (TRUE);

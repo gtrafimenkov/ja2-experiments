@@ -283,7 +283,7 @@ static BOOLEAN InternalShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X
   //	InvalidateBackbuffer( );
   //}
 
-  UnLockVideoSurface(uiDestVSurface);
+  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 

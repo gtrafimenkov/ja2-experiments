@@ -261,7 +261,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight);
 
-  UnLockVideoSurface(gMsgBox.uiSaveBuffer);
+  UnlockVSurfaceByID(gMsgBox.uiSaveBuffer);
   UnlockVSurface(vsFB);
 
   // Create top-level mouse region
@@ -791,7 +791,7 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                     gMsgBox.sX, gMsgBox.sY, 0, 0, gMsgBox.usWidth, gMsgBox.usHeight);
 
-    UnLockVideoSurface(gMsgBox.uiSaveBuffer);
+    UnlockVSurfaceByID(gMsgBox.uiSaveBuffer);
     UnlockVSurface(vsFB);
 
     InvalidateRegion(gMsgBox.sX, gMsgBox.sY, (int16_t)(gMsgBox.sX + gMsgBox.usWidth),

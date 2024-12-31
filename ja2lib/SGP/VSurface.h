@@ -80,7 +80,7 @@ struct VSurface *GetVSurfaceByID(VSurfID id);
 BOOLEAN GetVSurfaceByIndexOld(struct VSurface **pvs, VSurfID id);
 
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *uiPitch);
-void UnLockVideoSurface(uint32_t uiVSurface);
+void UnlockVSurfaceByID(VSurfID id);
 
 // Blits a video Surface to another video Surface
 BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_t usRegionIndex,

@@ -946,7 +946,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
                       0, 0, 0, 0, usWidth, usHeight);
 
       UnlockVSurface(vsFB);
-      UnLockVideoSurface(vsSB);
+      UnlockVSurfaceByID(vsSB);
     }
   }
 }
@@ -1305,7 +1305,7 @@ NULL, (int16_t)(sX-2), (int16_t)(sY-2), (int16_t)(sX + 5), (int16_t)(sY + 11));
 
         }
         while( !fEndRenderCol );
-        UnLockVideoSurface( vsIndexFB );
+        UnlockVSurfaceByID( vsIndexFB );
 }
 */
 

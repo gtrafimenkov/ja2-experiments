@@ -370,7 +370,7 @@ void FadeInBackBufferVersionOne() {
   }
 
   UnlockVSurface(vsFB);
-  UnLockVideoSurface(BACKBUFFER);
+  UnlockVSurface(vsBackBuffer);
 }
 
 void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
@@ -578,7 +578,7 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
                   0, 0, 0, 640, 480);
 
   UnlockVSurface(vsFB);
-  UnLockVideoSurface(vsSB);
+  UnlockVSurfaceByID(vsSB);
 
   return (TRUE);
 }

@@ -721,7 +721,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
 
         SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-        UnLockVideoSurface(uiBuffer);
+        UnlockVSurfaceByID(uiBuffer);
       } else if ((pFace->uiFlags & FACE_SHOW_MOVING_HILIGHT)) {
         if (pFace->ubSoldierID != NOBODY) {
           if (MercPtrs[pFace->ubSoldierID]->bLife >= OKLIFE) {
@@ -741,7 +741,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
 
             SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-            UnLockVideoSurface(uiBuffer);
+            UnlockVSurfaceByID(uiBuffer);
           }
         }
       } else {
@@ -759,7 +759,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
 
         SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-        UnLockVideoSurface(pFace->uiAutoDisplayBuffer);
+        UnlockVSurfaceByID(pFace->uiAutoDisplayBuffer);
       }
     }
   }
@@ -777,7 +777,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
 
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-    UnLockVideoSurface(uiBuffer);
+    UnlockVSurfaceByID(uiBuffer);
   }
 }
 
@@ -1109,7 +1109,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
         usLineColor = Get16BPPColor(FROMRGB(105, 8, 9));
         RectangleDraw(TRUE, sX1, sY1, sX2, sY2, usLineColor, pDestBuf);
 
-        UnLockVideoSurface(uiRenderBuffer);
+        UnlockVSurfaceByID(uiRenderBuffer);
       }
 
       if ((MercPtrs[pFace->ubSoldierID]->bInSector &&
@@ -1753,8 +1753,8 @@ BOOLEAN FaceRestoreSavedBackgroundRect(int32_t iFaceIndex, int16_t sDestLeft, in
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sDestLeft, sDestTop, sSrcLeft, sSrcTop, sWidth, sHeight);
 
-  UnLockVideoSurface(pFace->uiAutoDisplayBuffer);
-  UnLockVideoSurface(pFace->uiAutoRestoreBuffer);
+  UnlockVSurfaceByID(pFace->uiAutoDisplayBuffer);
+  UnlockVSurfaceByID(pFace->uiAutoRestoreBuffer);
 
   // Add rect to frame buffer queue
   if (pFace->uiAutoDisplayBuffer == vsIndexFB) {

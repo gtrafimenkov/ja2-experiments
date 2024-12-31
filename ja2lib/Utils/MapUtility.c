@@ -227,7 +227,7 @@ uint32_t MapUtilScreenHandle() {
     dX += gdXStep;
   }
 
-  UnLockVideoSurface(giMiniMap);
+  UnlockVSurfaceByID(giMiniMap);
   UnlockVSurface(vsFB);
 
   // RENDER!
@@ -272,7 +272,7 @@ uint32_t MapUtilScreenHandle() {
   WriteSTIFile(pDataPtr, pPalette, MINIMAP_X_SIZE, MINIMAP_Y_SIZE, zFilename2,
                CONVERT_ETRLE_COMPRESS, 0);
 
-  UnLockVideoSurface(gi8BitMiniMap);
+  UnlockVSurfaceByID(gi8BitMiniMap);
 
   SetFont(TINYFONT1);
   SetFontBackground(FONT_MCOLOR_BLACK);
