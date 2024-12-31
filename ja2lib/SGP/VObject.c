@@ -230,7 +230,7 @@ BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint
   struct VObject *hSrcVObject;
 
   // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);
@@ -312,7 +312,7 @@ BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *vsSrc, uint16_t 
   uint32_t uiPitch;
 
   // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);
@@ -634,7 +634,7 @@ BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
                              {0, 1, 0, 1, 0, 1, 0, 1}, {1, 0, 1, 0, 1, 0, 1, 0}};
 
   // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);
@@ -1035,7 +1035,7 @@ BOOLEAN BltVideoObjectOutlineFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVO
   struct VObject *hSrcVObject;
 
   // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);
@@ -1067,7 +1067,7 @@ BOOLEAN BltVideoObjectOutline(uint32_t uiDestVSurface, struct VObject *hSrcVObje
   uint16_t *pBuffer;
   uint32_t uiPitch;
   // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);
@@ -1094,7 +1094,7 @@ BOOLEAN BltVideoObjectOutlineShadowFromIndex(uint32_t uiDestVSurface, uint32_t u
   struct VObject *hSrcVObject;
 
   // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);
@@ -1125,7 +1125,7 @@ BOOLEAN BltVideoObjectOutlineShadow(uint32_t uiDestVSurface, struct VObject *hSr
   uint16_t *pBuffer;
   uint32_t uiPitch;
   // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);

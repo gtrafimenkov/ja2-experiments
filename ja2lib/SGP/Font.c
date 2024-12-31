@@ -638,7 +638,7 @@ uint32_t mprintf(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   desty = y;
 
   // Lock the dest buffer
-  pDestBuf = LockVideoSurface(FontDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(FontDestBuffer, &uiDestPitchBYTES);
 
   while ((*curletter) != 0) {
     uint8_t transletter = GetIndex(*curletter++);
@@ -744,7 +744,7 @@ uint32_t gprintf(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   desty = y;
 
   // Lock the dest buffer
-  pDestBuf = LockVideoSurface(FontDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(FontDestBuffer, &uiDestPitchBYTES);
 
   while ((*curletter) != 0) {
     uint8_t transletter = GetIndex(*curletter++);
@@ -789,7 +789,7 @@ uint32_t gprintfDirty(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   desty = y;
 
   // Lock the dest buffer
-  pDestBuf = LockVideoSurface(FontDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(FontDestBuffer, &uiDestPitchBYTES);
 
   while ((*curletter) != 0) {
     uint8_t transletter = GetIndex(*curletter++);
@@ -973,7 +973,7 @@ uint32_t mprintf_coded(int32_t x, int32_t y, wchar_t *pFontString, ...) {
   usOldForeColor = FontForeground16;
 
   // Lock the dest buffer
-  pDestBuf = LockVideoSurface(FontDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(FontDestBuffer, &uiDestPitchBYTES);
 
   while ((*curletter) != 0) {
     if ((*curletter) == 180) {

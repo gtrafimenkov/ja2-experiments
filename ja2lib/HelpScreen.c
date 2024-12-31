@@ -2047,7 +2047,7 @@ void ClearHelpScreenTextBuffer() {
   uint8_t *pDestBuf;
 
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVideoSurface(guiHelpScreenTextBufferSurface, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(guiHelpScreenTextBufferSurface, &uiDestPitchBYTES);
   memset(pDestBuf, 0, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER * uiDestPitchBYTES);
   UnlockVSurfaceByID(guiHelpScreenTextBufferSurface);
   InvalidateScreen();
@@ -2126,7 +2126,7 @@ void DisplayHelpScreenTextBufferScrollBox() {
         iTopPosScrollBox + iSizeOfBox - 1, Get16BPPColor(FROMRGB(227, 198, 88)));
 
     // display the line
-    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
     // draw the gold highlite line on the top and left

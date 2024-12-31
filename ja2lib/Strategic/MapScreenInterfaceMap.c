@@ -624,7 +624,7 @@ uint32_t DrawMap(void) {
     pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
 
     CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-    pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+    pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
     // clip blits to mapscreen region
     // ClipBlitsToMapViewRegion( );
@@ -1141,7 +1141,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1165,7 +1165,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         /// lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1189,7 +1189,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1213,7 +1213,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1322,7 +1322,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
@@ -1342,7 +1342,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         /// lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
@@ -1362,7 +1362,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
@@ -1382,7 +1382,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
         CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVideoSurface(guiBIGMAP, &uiSrcPitchBYTES);
+        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,

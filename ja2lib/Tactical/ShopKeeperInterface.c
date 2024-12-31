@@ -2790,7 +2790,7 @@ void DrawHatchOnInventory(uint32_t uiSurface, uint16_t usPosX, uint16_t usPosY, 
   ClipRect.iTop = usPosY;
   ClipRect.iBottom = usPosY + usHeight;
 
-  pDestBuf = LockVideoSurface(uiSurface, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(uiSurface, &uiDestPitchBYTES);
   Blt16BPPBufferPixelateRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect, Pattern);
   UnlockVSurfaceByID(uiSurface);
 }

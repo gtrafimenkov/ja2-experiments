@@ -5722,7 +5722,7 @@ void RenderItemPickupMenu() {
     sX = ITEMPICK_GRAPHIC_X + gItemPickupMenu.sX;
     sY = ITEMPICK_GRAPHIC_Y + gItemPickupMenu.sY;
 
-    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
 
     SetFont(ITEMDESC_FONT);
     SetFontBackground(FONT_MCOLOR_BLACK);

@@ -1338,7 +1338,7 @@ void DisplaySectionLine() {
   usStartY = QUEST_DBS_FIRST_COL_NUMBER_Y;
   usEndY = 475;
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
 
   // draw the line in b/n the first and second section
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
@@ -2045,7 +2045,7 @@ void DrawQdsScrollRectangle()  // int16_t sSelectedEntry, uint16_t usStartPosX, 
                             Get16BPPColor(FROMRGB(130, 132, 128)));
 
   // display the line
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw the gold highlite line on the top and left

@@ -5768,7 +5768,7 @@ void RenderRectangleForPersonnelTransactionAmount(void) {
   // grab total length
   iLength = StringPixLength(sTempString, ATM_FONT);
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
   RectangleDraw(TRUE, (ATM_DISPLAY_X + ATM_DISPLAY_WIDTH) - iLength - 2, ATM_DISPLAY_Y + 35,
                 ATM_DISPLAY_X + ATM_DISPLAY_WIDTH + 1, ATM_DISPLAY_Y + iHeight + 36,

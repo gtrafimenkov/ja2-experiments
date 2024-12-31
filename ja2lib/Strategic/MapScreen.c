@@ -1037,7 +1037,7 @@ void ContractListRegionBoxGlow(uint16_t usCount) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, TIME_REMAINING_X, usY, TIME_REMAINING_X + TIME_REMAINING_WIDTH,
                 usY + GetFontHeight(MAP_SCREEN_FONT) + 2, usColor, pDestBuf);
@@ -1093,7 +1093,7 @@ void GlowFace(void) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 9, 18, 60, 63, usColor, pDestBuf);
   InvalidateRegion(9, 18, 61, 64);
@@ -1150,7 +1150,7 @@ void GlowItem(void) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 3, 80, 64, 104, usColor, pDestBuf);
   InvalidateRegion(3, 80, 65, 105);
@@ -1189,7 +1189,7 @@ void GlowTrashCan(void) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, TRASH_CAN_X, TRASH_CAN_Y, TRASH_CAN_X + TRASH_CAN_WIDTH,
                 TRASH_CAN_Y + TRASH_CAN_HEIGHT, usColor, pDestBuf);
@@ -2150,7 +2150,7 @@ void HighLightAssignLine() {
     usY += 6;
   }
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   for (usCount = 0; usCount < MAX_CHARACTER_COUNT; usCount++) {
@@ -2225,7 +2225,7 @@ void HighLightDestLine() {
   else
     iColorNum--;
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   for (usCount = 0; usCount < MAX_CHARACTER_COUNT; usCount++) {
@@ -2304,7 +2304,7 @@ void HighLightSleepLine() {
   else
     iColorNum--;
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   for (usCount = 0; usCount < MAX_CHARACTER_COUNT; usCount++) {
@@ -5212,7 +5212,7 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   }
 
   // blit in the highlighted sector
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
 
   // clip to view region
   ClipBlitsToMapViewRegionForRectangleAndABit(uiDestPitchBYTES);
@@ -5422,7 +5422,7 @@ void PopupText(wchar_t *pFontString, ...) {
 
   BltVideoSurface(vsIndexFB, guiINTEXT, 0, 85, 160, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
 
   SetFont(LARGEFONT1);
   SetFontBackground(FONT_MCOLOR_BLACK);
@@ -9161,7 +9161,7 @@ void CheckForAndRenderNewMailOverlay() {
           uint8_t *pDestBuf;
           SGPRect area = {463, 417, 477, 425};
 
-          pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+          pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
           Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &area);
           UnlockVSurface(vsFB);
         }

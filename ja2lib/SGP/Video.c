@@ -17,7 +17,7 @@ void GetCurrentVideoSettings(uint16_t *usWidth, uint16_t *usHeight) {
 
 void EraseMouseCursor() {
   uint32_t uiPitch;
-  void *pTmpPointer = LockVideoSurface(MOUSE_BUFFER, &uiPitch);
+  void *pTmpPointer = LockVSurfaceByID(MOUSE_BUFFER, &uiPitch);
   if (pTmpPointer) {
     memset(pTmpPointer, 0, MAX_CURSOR_HEIGHT * uiPitch);
     UnlockVSurfaceByID(MOUSE_BUFFER);
