@@ -222,7 +222,7 @@ void FatalError(char *pError, ...) {}
 
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) { return NULL; }
 
-void UnLockVideoSurface(uint32_t uiVSurface) {}
+void UnlockVSurfaceByID(VSurfID id) {}
 
 BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) { return FALSE; }
 

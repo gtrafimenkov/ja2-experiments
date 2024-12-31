@@ -2048,7 +2048,7 @@ void ClearHelpScreenTextBuffer() {
   // CLEAR THE FRAME BUFFER
   pDestBuf = LockVideoSurface(guiHelpScreenTextBufferSurface, &uiDestPitchBYTES);
   memset(pDestBuf, 0, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER * uiDestPitchBYTES);
-  UnLockVideoSurface(guiHelpScreenTextBufferSurface);
+  UnlockVSurfaceByID(guiHelpScreenTextBufferSurface);
   InvalidateScreen();
 }
 
