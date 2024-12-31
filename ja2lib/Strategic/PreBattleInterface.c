@@ -736,9 +736,9 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     gfEnterAutoResolveMode = TRUE;
   }
 
-  BlitBufferToBufferOld(vsSaveBufferID, vsIndexFB, 27, 54, 209, 32);
+  BlitBufferToBuffer(vsSaveBuffer, vsFB, 27, 54, 209, 32);
   RenderButtons();
-  BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 27, 54, 209, 32);
+  BlitBufferToBuffer(vsFB, vsSaveBuffer, 27, 54, 209, 32);
   gfRenderPBInterface = TRUE;
 
   // hide the prebattle interface
@@ -781,7 +781,7 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
                           (uint16_t)DstRect.iTop, (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
                           (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
   }
-  BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
+  BlitBufferToBuffer(vsFB, vsSaveBuffer, 0, 0, 640, 480);
 }
 
 void KillPreBattleInterface() {
