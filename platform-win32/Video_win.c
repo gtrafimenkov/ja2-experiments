@@ -2878,9 +2878,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Lock must be followed by release
-// Pitch MUST be used for all width calculations ( Pitch is in bytes )
-// The time between Locking and unlocking must be minimal
 uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
   DDSURFACEDESC SurfaceDescription;
 
