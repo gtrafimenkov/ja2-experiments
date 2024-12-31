@@ -5654,9 +5654,6 @@ void InitShopKeeperItemDescBox(struct OBJECTTYPE *pObject, uint8_t ubPocket,
 void StartSKIDescriptionBox(void) {
   int32_t iCnt;
 
-  // shadow the entire screen
-  //	ShadowVideoSurfaceRect( vsIndexFB, 0, 0, 640, 480 );
-
   // if the current merc is too far away, dont shade the SM panel because it is already shaded
   if (gfSMDisableForItems)
     DrawHatchOnInventory(vsIndexFB, 0, 0, 640, 338);
