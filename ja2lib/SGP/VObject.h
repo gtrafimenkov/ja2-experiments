@@ -201,10 +201,6 @@ extern BOOLEAN gfVideoObjectsInit;
 // These blitting functions more-or less encapsolate all of the functionality of DirectDraw
 // Blitting, giving an API layer for portability.
 
-BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                               struct VObject *hSrcVObject, uint16_t usIndex, int32_t iDestX,
-                               int32_t iDestY, int32_t fBltFlags, blt_fx *pBltFx);
-
 struct VObject *GetPrimaryVideoObject();
 struct VObject *GetBackBufferVideoObject();
 
