@@ -613,12 +613,12 @@ BOOLEAN EnterSaveLoadScreen() {
     // CLEAR THE FRAME BUFFER
     pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
 
     // CLEAR THE vsIndexFB
     pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
   }
 
   gfGettingNameFromSaveLoadScreen = FALSE;

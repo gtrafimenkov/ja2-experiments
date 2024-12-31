@@ -616,7 +616,7 @@ uint32_t AutoResolveScreenHandle() {
     ClipRect.iBottom = 480;
     pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
     BlitBufferToBuffer(vsIndexFB, vsSB, 0, 0, 640, 480);
     KillPreBattleInterface();
     CalculateAutoResolveInfo();
@@ -901,7 +901,7 @@ void RenderSoldierCell(SOLDIERCELL *pCell) {
     ClipRect.iBottom = pCell->yp + 29;
     pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
   }
 
   // Draw the health text
@@ -1120,7 +1120,7 @@ void ExpandWindow() {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, gpAR->ExRect.iLeft, gpAR->ExRect.iTop, gpAR->ExRect.iRight,
                 gpAR->ExRect.iBottom, Get16BPPColor(FROMRGB(200, 200, 100)), pDestBuf);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   // left
   InvalidateRegion(gpAR->ExRect.iLeft, gpAR->ExRect.iTop, gpAR->ExRect.iLeft + 1,
                    gpAR->ExRect.iBottom + 1);
@@ -2750,7 +2750,7 @@ void RenderSoldierCellHealth(SOLDIERCELL *pCell) {
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, xp,
                   yp, xp - gpAR->Rect.iLeft, yp - gpAR->Rect.iTop, 46, 10);
   UnLockVideoSurface(gpAR->iInterfaceBuffer);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   if (pCell->pSoldier->bLife) {
     if (pCell->pSoldier->bLife == pCell->pSoldier->bLifeMax) {

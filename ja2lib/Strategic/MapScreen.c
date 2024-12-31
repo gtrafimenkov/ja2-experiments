@@ -999,70 +999,7 @@ void DisplayDestinationOfCurrentDestMerc(void) {
   mprintf(sX, sY, sString);
 }
 
-void ContractBoxGlow(void) {
-  /* Why not?
-   static int32_t iColorNum=10;
-   static BOOLEAN fDelta=FALSE;
-   static BOOLEAN fOldContractGlow = FALSE;
-   uint16_t usColor;
-   uint32_t uiDestPitchBYTES;
-   uint8_t	*pDestBuf;
-
-
-          // stopped glowing?
-          if( ( fGlowContractRegion == FALSE )&&( ( fOldContractGlow == TRUE )||(
-   fResetContractGlow== TRUE ) ) )
-          {
-                  // restore background
-                  // RestoreExternBackgroundRect( CONTRACT_X, CONTRACT_Y, CONTRACT_WIDTH+1,
-   CONTRACT_HEIGHT+1 );
-
-                  // reset old
-                  fOldContractGlow = FALSE;
-          }
-
-          // not glowing right now, leave
-          if( ( fGlowContractRegion == FALSE )||( fResetContractGlow == TRUE ) )
-          {
-                  // reset color rotation
-                  iColorNum =0;
-                  fDelta = TRUE;
-
-                  // reset
-                  fResetContractGlow = FALSE;
-                  return;
-          }
-
-          // if not ready to change glow phase yet, leave
-          if ( !gfGlowTimerExpired )
-                  return;
-
-
-          // change direction of glow?
-          if((iColorNum==0)||(iColorNum==10))
-          {
-           fDelta=!fDelta;
-          }
-
-          // increment color
-          if(!fDelta)
-                  iColorNum++;
-          else
-                  iColorNum--;
-
-          usColor=Get16BPPColor( FROMRGB( GlowColorsA[iColorNum].ubRed,
-   GlowColorsA[iColorNum].ubGreen, GlowColorsA[iColorNum].ubBlue ) ); pDestBuf = LockVideoSurface(
-   vsIndexFB, &uiDestPitchBYTES ); SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640,
-   480); RectangleDraw( TRUE, CONTRACT_X, CONTRACT_Y, CONTRACT_X+CONTRACT_WIDTH,
-   CONTRACT_Y+CONTRACT_HEIGHT, usColor, pDestBuf ); InvalidateRegion(CONTRACT_X, CONTRACT_Y,
-   CONTRACT_X+CONTRACT_WIDTH+1, CONTRACT_Y+CONTRACT_HEIGHT+1); UnLockVideoSurface( vsIndexFB );
-
-          // restore background
-          if((iColorNum==0)||(iColorNum==1))
-                  RestoreExternBackgroundRect( CONTRACT_X, CONTRACT_Y, CONTRACT_WIDTH+1,
-   CONTRACT_HEIGHT+1 );
-  */
-}
+void ContractBoxGlow(void) {}
 
 void ContractListRegionBoxGlow(uint16_t usCount) {
   static int32_t iColorNum = 10;
@@ -1112,7 +1049,7 @@ void ContractListRegionBoxGlow(uint16_t usCount) {
                 usY + GetFontHeight(MAP_SCREEN_FONT) + 2, usColor, pDestBuf);
   InvalidateRegion(TIME_REMAINING_X - 1, usY, TIME_REMAINING_X + TIME_REMAINING_WIDTH + 1,
                    usY + GetFontHeight(MAP_SCREEN_FONT) + 3);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   /*
           // restore background
@@ -1166,7 +1103,7 @@ void GlowFace(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 9, 18, 60, 63, usColor, pDestBuf);
   InvalidateRegion(9, 18, 61, 64);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   // restore background
   if ((iColorNum == 0) || (iColorNum == 1))
@@ -1223,7 +1160,7 @@ void GlowItem(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 3, 80, 64, 104, usColor, pDestBuf);
   InvalidateRegion(3, 80, 65, 105);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void GlowTrashCan(void) {
@@ -1264,7 +1201,7 @@ void GlowTrashCan(void) {
                 TRASH_CAN_Y + TRASH_CAN_HEIGHT, usColor, pDestBuf);
   InvalidateRegion(TRASH_CAN_X, TRASH_CAN_Y, TRASH_CAN_X + TRASH_CAN_WIDTH + 1,
                    TRASH_CAN_Y + TRASH_CAN_HEIGHT + 1);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   // restore background
   if ((iColorNum == 0) || (iColorNum == 1))
@@ -2254,7 +2191,7 @@ void HighLightAssignLine() {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void HighLightDestLine() {
@@ -2332,7 +2269,7 @@ void HighLightDestLine() {
   }
   // InvalidateRegion( usX+4, usY, DEST_ETA_WIDTH-10, usY+GetFontHeight(MAP_SCREEN_FONT)+3);
   // InvalidateRegion( usX+10, usY, usX+ASSIGN_WIDTH, usY+GetFontHeight(MAP_SCREEN_FONT)+3);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void HighLightSleepLine() {
@@ -2409,7 +2346,7 @@ void HighLightSleepLine() {
       InvalidateRegion(usX, usY, usX2 + 5, usY + GetFontHeight(MAP_SCREEN_FONT) + 3);
     }
   }
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void AddCharacter(struct SOLDIERTYPE *pCharacter) {
@@ -5288,7 +5225,7 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   InvalidateRegion(sScreenX, sScreenY - 2, sScreenX + DMAP_GRID_X + 1, sScreenY + DMAP_GRID_Y - 1);
 
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void PollLeftButtonInMapView(uint32_t *puiNewEvent) {
@@ -5495,7 +5432,7 @@ void PopupText(wchar_t *pFontString, ...) {
 
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, LARGEFONT1, sX, sY, PopupString);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   InvalidateScreen();
 }
@@ -9227,7 +9164,7 @@ void CheckForAndRenderNewMailOverlay() {
 
           pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
           Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &area);
-          UnLockVideoSurface(vsIndexFB);
+          UnlockVSurface(vsFB);
         }
         InvalidateRegion(463, 417, 481, 430);
       }

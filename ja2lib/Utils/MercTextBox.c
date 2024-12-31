@@ -237,14 +237,6 @@ BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, uint32_t uiBuffer) {
                      (int16_t)(sDestY + gPopUpTextBox->sHeight));
   }
 
-  // unlock the video surfaces
-
-  // source
-  //	UnLockVideoSurface( gPopUpTextBox->uiSourceBufferIndex );
-
-  // destination
-  //	UnLockVideoSurface( uiBuffer );
-
   // return success or failure
   return fReturnValue;
 }

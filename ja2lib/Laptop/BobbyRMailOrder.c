@@ -1807,7 +1807,7 @@ void DrawGoldRectangle(int8_t bCityNum) {
            Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
 
   // unlock frame buffer
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 uint32_t CalcCostFromWeightOfPackage(uint8_t ubTypeOfService) {

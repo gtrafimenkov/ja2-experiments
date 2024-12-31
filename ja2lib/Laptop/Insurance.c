@@ -344,7 +344,7 @@ void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_
            pDestBuf);
 
   // unlock frame buffer
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void GetInsuranceText(uint8_t ubNumber, wchar_t *pString) {
