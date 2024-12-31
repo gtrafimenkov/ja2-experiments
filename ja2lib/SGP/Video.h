@@ -14,6 +14,8 @@ struct VSurface;
 
 #define VIDEO_NO_CURSOR 0xFFFF
 
+#define MAX_CURSOR_HEIGHT 64
+
 extern int32_t giNumFrames;
 
 struct PlatformInitParams;
@@ -32,7 +34,7 @@ extern BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffse
 extern void EndFrameBufferRender(void);
 extern void PrintScreen(void);
 
-extern BOOLEAN EraseMouseCursor();
+void EraseMouseCursor();
 extern BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint16_t usCursorHeight,
                                         uint16_t usCursorWidth);
 void DirtyCursor();
