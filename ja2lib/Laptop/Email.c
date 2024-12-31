@@ -4137,16 +4137,6 @@ BOOLEAN DisplayNumberOfPagesToThisEmail(int32_t iViewerY) {
   int16_t sX = 0, sY = 0;
   wchar_t sString[32];
 
-  // get and blt the email list background
-  // load, blt and delete graphics
-  // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-  //	FilenameForBPP( "LAPTOP\\mailindent.sti", VObjectDesc.ImageFile );
-  // CHECKF( AddStandardVideoObject( &VObjectDesc, &uiMailIndent ) );
-  // GetVideoObject( &hHandle, uiMailIndent );
-  // BltVideoObject( vsFB, hHandle, 0,VIEWER_X + INDENT_X_OFFSET, VIEWER_Y + iViewerY +
-  // INDENT_Y_OFFSET - 10, VO_BLT_SRCTRANSPARENCY,NULL ); DeleteVideoObjectFromIndex( uiMailIndent
-  // );
-
   giNumberOfPagesToCurrentEmail = (giNumberOfPagesToCurrentEmail);
 
   // parse current page and max number of pages to email

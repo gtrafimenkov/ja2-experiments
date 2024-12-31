@@ -4986,14 +4986,8 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)),
           (uint16_t)(usWidth - 8), (uint16_t)(usHeight - 2), DIRTYLEVEL2, NULL, 0, 0, 0);
     }
-
-    // BltVObjectFromIndex( vsFB, guiItemPopupBoxes, 0, (int16_t)(gsKeyRingPopupInvX + (
-    // cnt % KEY_RING_ROW_WIDTH * usWidth ) ), ( int16_t )( gsKeyRingPopupInvY + ( cnt /
-    // KEY_RING_ROW_WIDTH * usHeight ) ), VO_BLT_SRCTRANSPARENCY, NULL );
   }
 
-  // RestoreExternBackgroundRect( gsItemPopupInvX, gsItemPopupInvY, gsItemPopupInvWidth,
-  // gsItemPopupInvHeight );
   InvalidateRegion(gsKeyRingPopupInvX, gsKeyRingPopupInvY,
                    gsKeyRingPopupInvX + gsKeyRingPopupInvWidth,
                    gsKeyRingPopupInvY + gsKeyRingPopupInvHeight);

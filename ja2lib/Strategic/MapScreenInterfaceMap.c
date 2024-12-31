@@ -1032,33 +1032,6 @@ void ShowUncertainNumberEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY) {
     BltVideoObject(vsSB, hIconHandle, SMALL_QUESTION_MARK, sXPosition, sYPosition);
     InvalidateRegion(sXPosition, sYPosition, sXPosition + DMAP_GRID_X, sYPosition + DMAP_GRID_Y);
   }
-  /*
-          else
-          {
-                  int16_t sX = 0, sY = 0;
-
-                  GetScreenXYFromMapXYStationary( sSectorX, sSectorY, &sX, &sY );
-                  sYPosition = sY-MAP_GRID_Y;
-                  sXPosition = sX-MAP_GRID_X;
-
-                  // get the x and y position
-                  sXPosition = MAP_X_ICON_OFFSET + sXPosition ;
-                  sYPosition = sYPosition - 1;
-
-                  // clip blits to mapscreen region
-                  ClipBlitsToMapViewRegion( );
-
-                  // large question mark
-                  BltVideoObject(vsSB, hIconHandle, BIG_QUESTION_MARK, sXPosition,
-     sYPosition, VO_BLT_SRCTRANSPARENCY, NULL );
-
-                  // restore clip blits
-                  RestoreClipRegionToFullScreen( );
-
-                  InvalidateRegion( sXPosition, sYPosition, sXPosition + DMAP_GRID_ZOOM_X,
-     sYPosition + DMAP_GRID_ZOOM_Y );
-          }
-  */
 }
 
 void ShowTeamAndVehicles(int32_t fShowFlags) {
@@ -5874,30 +5847,6 @@ void DrawMapBoxIcon(struct VObject *hIconHandle, uint16_t usVOIndex, uint8_t sMa
     BltVideoObject(vsSB, hIconHandle, usVOIndex, iX, iY);
     InvalidateRegion(iX, iY, iX + DMAP_GRID_X, iY + DMAP_GRID_Y);
   }
-  /*
-          else
-          {
-                  INT sX, sY;
-
-                  GetScreenXYFromMapXYStationary( ( uint16_t ) sX,( uint16_t ) sY, &sX, &sY );
-                  iY = sY-MAP_GRID_Y;
-                  iX = sX-MAP_GRID_X;
-
-                  // clip blits to mapscreen region
-                  ClipBlitsToMapViewRegion( );
-
-                  BltVideoObject(vsSB,
-     hIconHandle,BIG_YELLOW_BOX,MAP_X_ICON_OFFSET+iX+6*iColumnNumber+2,MAP_Y_ICON_OFFSET+iY+6*iRowNumber,
-     VO_BLT_SRCTRANSPARENCY, NULL );
-
-                  // restore clip blits
-                  RestoreClipRegionToFullScreen( );
-
-                  InvalidateRegion(MAP_X_ICON_OFFSET+iX+6*iColumnNumber+2,
-     MAP_Y_ICON_OFFSET+iY+6*iRowNumber,MAP_X_ICON_OFFSET+iX+6*iColumnNumber+2+ DMAP_GRID_ZOOM_X,
-     MAP_Y_ICON_OFFSET+iY+6*iRowNumber + DMAP_GRID_ZOOM_Y );
-          }
-  */
 }
 
 void DrawOrta() {
