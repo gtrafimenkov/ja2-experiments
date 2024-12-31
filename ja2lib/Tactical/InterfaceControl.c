@@ -534,7 +534,7 @@ void RenderTopmostTacticalInterface() {
             sX -= 10;
             sY -= 10;
 
-            BltVObjectFromIndex(vsIndexFB, uiBogTarget, 0, sX, sY);
+            BltVObjectFromIndexOld(vsIndexFB, uiBogTarget, 0, sX, sY);
             InvalidateRegion(sX, sY, sX + 20, sY + 20);
           }
         }
