@@ -2525,7 +2525,6 @@ BOOLEAN SetBackbufferInterface(LPDIRECTDRAWSURFACE2 pSurface);
 #define DEFAULT_NUM_REGIONS 5
 #define DEFAULT_VIDEO_SURFACE_LIST_SIZE 10
 
-BOOLEAN UpdateBackupSurface(struct VSurface *hVSurface);
 BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
                                          struct VSurface *hSrcVSurface, RECT *DestRect,
                                          RECT *SrcRect);
@@ -3555,35 +3554,6 @@ BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSu
                String("Incompatible BPP values with src and dest Video Surfaces for blitting"));
     return (FALSE);
   }
-
-  return (TRUE);
-}
-
-// ******************************************************************************************
-//
-// UTILITY FUNCTIONS
-//
-// ******************************************************************************************
-
-// Blt to backup buffer
-BOOLEAN UpdateBackupSurface(struct VSurface *hVSurface) {
-  RECT aRect;
-
-  // Assertions
-  Assert(hVSurface != NULL);
-
-  // Validations
-  CHECKF(hVSurface->pSavedSurfaceData != NULL);
-
-  aRect.top = (int)0;
-  aRect.left = (int)0;
-  aRect.bottom = (int)hVSurface->usHeight;
-  aRect.right = (int)hVSurface->usWidth;
-
-  // Copy all contents into backup buffer
-  DDBltFastSurface((LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData, 0, 0,
-                   (LPDIRECTDRAWSURFACE2)hVSurface->pSavedSurfaceData, &aRect,
-                   DDBLTFAST_NOCOLORKEY);
 
   return (TRUE);
 }
