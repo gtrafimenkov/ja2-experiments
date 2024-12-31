@@ -819,7 +819,7 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
   MSYS_RemoveRegion(&(gMsgBox.BackRegion));
 
   // Remove save buffer!
-  DeleteVideoSurfaceFromIndex(gMsgBox.uiSaveBuffer);
+  DeleteVSurfaceByIndex(gMsgBox.uiSaveBuffer);
 
   switch (gMsgBox.uiExitScreen) {
     case GAME_SCREEN:

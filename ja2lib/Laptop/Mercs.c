@@ -456,7 +456,7 @@ void ExitMercs() {
 
   RemoveMercBackGround();
 
-  DeleteVideoSurfaceFromIndex(guiMercVideoFaceBackground);
+  DeleteVSurfaceByIndex(guiMercVideoFaceBackground);
 
   /*
           //Set that we have been here before

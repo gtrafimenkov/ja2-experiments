@@ -1423,7 +1423,7 @@ BOOLEAN InitializePalettesForMap(void) {
   pMapDKGreenPalette = Create16BPPPaletteShaded(pPalette, 0, 200, 0, TRUE);
 
   // delete image
-  DeleteVideoSurfaceFromIndex(uiTempMap);
+  DeleteVSurfaceByIndex(uiTempMap);
 
   return (TRUE);
 }
