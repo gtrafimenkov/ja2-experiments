@@ -4107,3 +4107,24 @@ static char *DirectXErrorDescription(int32_t iDXReturn) {
 //////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////
+
+uint16_t PackColorsToRGB16(uint8_t r, uint8_t g, uint8_t b) {
+  uint16_t r16, g16, b16;
+
+  if (gusRedShift < 0)
+    r16 = ((uint16_t)r >> abs(gusRedShift));
+  else
+    r16 = ((uint16_t)r << gusRedShift);
+
+  if (gusGreenShift < 0)
+    g16 = ((uint16_t)g >> abs(gusGreenShift));
+  else
+    g16 = ((uint16_t)g << gusGreenShift);
+
+  if (gusBlueShift < 0)
+    b16 = ((uint16_t)b >> abs(gusBlueShift));
+  else
+    b16 = ((uint16_t)b << gusBlueShift);
+
+  return (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
+}
