@@ -534,12 +534,6 @@ BOOLEAN RenderCreditScreen() {
 
   GetVideoObject(&hPixHandle, guiCreditBackGroundImage);
   BltVideoObject(vsFB, hPixHandle, 0, 0, 0);
-  /*
-          struct VSurface* hVSurface;
-
-          GetVideoSurface( &hVSurface, guiCreditBackGroundImage );
-          BltVideoSurfaceToVideoSurface( ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL );
-  */
   if (!gfCrdtHaveRenderedFirstFrameToSaveBuffer) {
     gfCrdtHaveRenderedFirstFrameToSaveBuffer = TRUE;
 
@@ -917,8 +911,8 @@ BOOLEAN DisplayCreditNode(CRDT_NODE *pCurrent) {
 
   GetVideoSurface(&hVSurface, pCurrent->uiVideoSurfaceImage);
 
-  BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, pCurrent->sPosX, pCurrent->sPosY,
-                                VS_BLT_CLIPPED | VS_BLT_USECOLORKEY, NULL);
+  BltVSurfaceToVSurface(ghFrameBuffer, hVSurface, 0, pCurrent->sPosX, pCurrent->sPosY,
+                        VS_BLT_CLIPPED | VS_BLT_USECOLORKEY, NULL);
 
   return (TRUE);
 }

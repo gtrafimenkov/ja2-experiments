@@ -296,9 +296,9 @@ BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex) { return FALSE; }
 
 BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) { return FALSE; }
 
-BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                                      uint16_t usIndex, int32_t iDestX, int32_t iDestY,
-                                      int32_t fBltFlags, blt_vs_fx *pBltFx) {
+BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
+                              uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
+                              blt_vs_fx *pBltFx) {
   return FALSE;
 }
 
