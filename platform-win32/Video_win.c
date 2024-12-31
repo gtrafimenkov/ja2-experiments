@@ -3368,7 +3368,6 @@ BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSu
                                       int32_t fBltFlags, blt_vs_fx *pBltFx) {
   RECT SrcRect, DestRect;
   uint8_t *pSrcSurface8, *pDestSurface8;
-  uint16_t *pDestSurface16, *pSrcSurface16;
   uint32_t uiSrcPitch, uiDestPitch, uiWidth, uiHeight;
 
   // Assertions
@@ -3426,53 +3425,28 @@ BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSu
   if ((iDestX + (int32_t)uiWidth) < (int32_t)DestRect.left) return (FALSE);
   if ((iDestY + (int32_t)uiHeight) < (int32_t)DestRect.top) return (FALSE);
 
-  // DB The mirroring stuff has to do it's own clipping because
-  // it needs to invert some of the numbers
-  if (!(fBltFlags & VS_BLT_MIRROR_Y)) {
-    if ((iDestX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
-      SrcRect.right -= ((iDestX + uiWidth) - DestRect.right);
-      uiWidth -= ((iDestX + uiWidth) - DestRect.right);
-    }
-    if ((iDestY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
-      SrcRect.bottom -= ((iDestY + uiHeight) - DestRect.bottom);
-      uiHeight -= ((iDestY + uiHeight) - DestRect.bottom);
-    }
-    if (iDestX < DestRect.left) {
-      SrcRect.left += (DestRect.left - iDestX);
-      uiWidth -= (DestRect.left - iDestX);
-      iDestX = DestRect.left;
-    }
-    if (iDestY < (int32_t)DestRect.top) {
-      SrcRect.top += (DestRect.top - iDestY);
-      uiHeight -= (DestRect.top - iDestY);
-      iDestY = DestRect.top;
-    }
+  if ((iDestX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
+    SrcRect.right -= ((iDestX + uiWidth) - DestRect.right);
+    uiWidth -= ((iDestX + uiWidth) - DestRect.right);
+  }
+  if ((iDestY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
+    SrcRect.bottom -= ((iDestY + uiHeight) - DestRect.bottom);
+    uiHeight -= ((iDestY + uiHeight) - DestRect.bottom);
+  }
+  if (iDestX < DestRect.left) {
+    SrcRect.left += (DestRect.left - iDestX);
+    uiWidth -= (DestRect.left - iDestX);
+    iDestX = DestRect.left;
+  }
+  if (iDestY < (int32_t)DestRect.top) {
+    SrcRect.top += (DestRect.top - iDestY);
+    uiHeight -= (DestRect.top - iDestY);
+    iDestY = DestRect.top;
   }
 
   // Send dest position, rectangle, etc to DD bltfast function
   // First check BPP values for compatibility
   if (hDestVSurface->ubBitDepth == 16 && hSrcVSurface->ubBitDepth == 16) {
-    if (fBltFlags & VS_BLT_MIRROR_Y) {
-      if ((pSrcSurface16 = (uint16_t *)LockVideoSurfaceBuffer(hSrcVSurface, &uiSrcPitch)) == NULL) {
-        DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-                   String("Failed on lock of 16BPP surface for blitting"));
-        return (FALSE);
-      }
-
-      if ((pDestSurface16 = (uint16_t *)LockVideoSurfaceBuffer(hDestVSurface, &uiDestPitch)) ==
-          NULL) {
-        UnLockVideoSurfaceBuffer(hSrcVSurface);
-        DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-                   String("Failed on lock of 16BPP dest surface for blitting"));
-        return (FALSE);
-      }
-
-      Blt16BPPTo16BPPMirror(pDestSurface16, uiDestPitch, pSrcSurface16, uiSrcPitch, iDestX, iDestY,
-                            SrcRect.left, SrcRect.top, uiWidth, uiHeight);
-      UnLockVideoSurfaceBuffer(hSrcVSurface);
-      UnLockVideoSurfaceBuffer(hDestVSurface);
-      return (TRUE);
-    }
     struct Rect srcRect = {SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom};
     CHECKF(BltVSurfaceUsingDD(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &srcRect));
 
