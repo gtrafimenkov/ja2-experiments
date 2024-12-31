@@ -683,7 +683,7 @@ uint32_t QuestDebugScreenHandle() {
     RenderQuestDebugSystem();
 
     // At this point the background is pure, copy it to the save buffer
-    BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 0, 0, 639, 479);
+    BlitBufferToBuffer(vsFB, vsSaveBuffer, 0, 0, 639, 479);
   }
   RestoreBackgroundRects();
 

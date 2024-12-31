@@ -528,7 +528,7 @@ BOOLEAN RenderCreditScreen() {
     gfCrdtHaveRenderedFirstFrameToSaveBuffer = TRUE;
 
     // blit everything to the save buffer ( cause the save buffer can bleed through )
-    BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
+    BlitBufferToBuffer(vsFB, vsSaveBuffer, 0, 0, 640, 480);
 
     UnmarkButtonsDirty();
   }
