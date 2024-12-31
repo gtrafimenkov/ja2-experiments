@@ -362,7 +362,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
 
   pTmpPointer = LockVideoSurface(vsIndexFB, &uiPitch);
   memset(pTmpPointer, 0, 480 * uiPitch);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   //
   // Initialize the main mouse surfaces

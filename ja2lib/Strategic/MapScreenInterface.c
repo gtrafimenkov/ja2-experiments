@@ -2153,7 +2153,7 @@ void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion) {
                 pDestBuf);
   RectangleDraw(TRUE, iX, iY, iX + iW - 2, iY + iH - 2, Get16BPPColor(FROMRGB(227, 198, 88)),
                 pDestBuf);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   ShadowVideoSurfaceRect(vsIndexFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
   ShadowVideoSurfaceRect(vsIndexFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
 

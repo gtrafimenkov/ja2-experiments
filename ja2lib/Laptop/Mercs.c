@@ -1152,7 +1152,7 @@ BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, uint16_t usPosX, uint16_t usPosY, ui
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   return (fReturnStatus);
 }
@@ -1206,7 +1206,7 @@ BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth
       }
     }
   }
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   return (uiReturnValue);
 }

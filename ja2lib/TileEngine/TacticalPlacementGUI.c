@@ -486,7 +486,7 @@ void RenderTacticalPlacementGUI() {
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, gTPClipRect.iLeft, gTPClipRect.iTop, gTPClipRect.iRight,
                   gTPClipRect.iBottom, usHatchColor, pDestBuf);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
   }
   for (i = 0; i < giPlacements; i++) {  // Render the merc's names
     pSoldier = gMercPlacement[i].pSoldier;

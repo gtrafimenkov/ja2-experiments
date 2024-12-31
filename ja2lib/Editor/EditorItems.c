@@ -292,7 +292,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   }
 
   UnLockVideoSurface(eInfo.uiBuffer);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   x = 0;
   y = 0;
@@ -502,7 +502,7 @@ void RenderEditorItemsInfo() {
                   360, 60 * eInfo.sScrollIndex, 0, 360, 80);
 
   UnLockVideoSurface(eInfo.uiBuffer);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   // calculate the min and max index that is currently shown.  This determines
   // if the highlighted and/or selected items are drawn with the outlines.

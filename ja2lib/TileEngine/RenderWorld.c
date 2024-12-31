@@ -2024,7 +2024,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               // is easier on the eyes, and prevent the drawing of the 	end of the world if it would
               // be drawn on the editor's taskbar.
               if (iTempPosY_S < 360) {
-                if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(vsIndexFB);
+                if (!(uiFlags & TILES_DIRTY)) UnlockVSurface(vsFB);
                 ColorFillVideoSurfaceArea(
                     vsIndexFB, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
                     (int16_t)(min(iTempPosY_S + 20, 360)), Get16BPPColor(FROMRGB(0, 0, 0)));
@@ -2061,7 +2061,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
     }
   } while (!fEndRenderCol);
 
-  if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(vsIndexFB);
+  if (!(uiFlags & TILES_DIRTY)) UnlockVSurface(vsFB);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
     EndCurInteractiveTileCheck();
@@ -2279,7 +2279,7 @@ void RenderWorld() {
       pDestBuf[cnt] = zVal;
     }
 
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
   }
 }
 
@@ -5602,7 +5602,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 #ifdef _DEBUG
@@ -5695,7 +5695,7 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
@@ -5780,7 +5780,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M,
@@ -5862,7 +5862,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 #endif
@@ -5986,7 +5986,7 @@ void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void CalcRenderParameters(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom) {

@@ -729,33 +729,6 @@ uint16_t SetObjectHandleShade(uint32_t uiHandle, uint32_t uiShade) {
   return (SetObjectShade(hObj, uiShade));
 }
 
-/*
-uint16_t FillObjectRect(uint32_t iObj, int32_t x1, int32_t y1, int32_t x2, int32_t y2, COLORVAL
-color32)
-{
-uint16_t	*pBuffer;
-uint32_t	uiPitch;
-//struct VSurface* pSurface;
-
-        // Lock video surface
-        pBuffer = (uint16_t*)LockVideoSurface(iObj, &uiPitch );
-        //UnLockVideoSurface(iObj);
-
-
-        if (pBuffer == NULL)
-                return( FALSE );
-
-        FillRect16BPP(pBuffer, uiPitch, x1, y1, x2, y2, Get16BPPColor(color32));
-
-        // Mark as dirty if it's the backbuffer
-        if(iObj == BACKBUFFER)
-                InvalidateBackbuffer();
-
-        UnLockVideoSurface(iObj);
-}
-
-*/
-
 /********************************************************************************************
         GetETRLEPixelValue
 

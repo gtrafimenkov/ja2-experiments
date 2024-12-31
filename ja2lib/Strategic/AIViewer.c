@@ -812,7 +812,7 @@ void RenderViewer() {
             ClipRect.iRight = ClipRect.iLeft + VIEWER_CELLW - 1;
             Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
             Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-            UnLockVideoSurface(vsIndexFB);
+            UnlockVSurface(vsFB);
           }
         }
       }
@@ -834,7 +834,7 @@ void RenderViewer() {
     y = VIEWER_TOP + (gsSelSectorY - 1) * 22;
     RectangleDraw(TRUE, x, y, x + 26, y + 22, Get16BPPColor(FROMRGB(200, 50, 50)), pDestBuf);
   }
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void ViewerExitCallback(GUI_BUTTON *btn, int32_t reason) {

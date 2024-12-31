@@ -228,7 +228,7 @@ uint32_t MapUtilScreenHandle() {
   }
 
   UnLockVideoSurface(giMiniMap);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   // RENDER!
   BltVideoSurface(vsIndexFB, giMiniMap, 0, 20, 360, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
@@ -259,7 +259,7 @@ uint32_t MapUtilScreenHandle() {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   // Remove extension
   for (cnt = strlen(zFilename) - 1; cnt >= 0; cnt--) {

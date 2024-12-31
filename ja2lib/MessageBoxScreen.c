@@ -262,7 +262,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
                   0, gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight);
 
   UnLockVideoSurface(gMsgBox.uiSaveBuffer);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   // Create top-level mouse region
   MSYS_DefineRegion(&(gMsgBox.BackRegion), 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST, usCursor,
@@ -792,7 +792,7 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
                     gMsgBox.sX, gMsgBox.sY, 0, 0, gMsgBox.usWidth, gMsgBox.usHeight);
 
     UnLockVideoSurface(gMsgBox.uiSaveBuffer);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
 
     InvalidateRegion(gMsgBox.sX, gMsgBox.sY, (int16_t)(gMsgBox.sX + gMsgBox.usWidth),
                      (int16_t)(gMsgBox.sY + gMsgBox.usHeight));
@@ -862,20 +862,6 @@ uint32_t MessageBoxScreenHandle() {
 
       gfStartedFromGameScreen = FALSE;
       gfStartedFromMapScreen = FALSE;
-      /*
-                              // Save what we have under here...
-                              pDestBuf = LockVideoSurface( gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
-                              pSrcBuf = LockVideoSurface( vsIndexFB, &uiSrcPitchBYTES);
-
-                              Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES,
-                                                      (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
-                                                      0 , 0,
-                                                      gMsgBox.sX , gMsgBox.sY,
-                                                      gMsgBox.usWidth, gMsgBox.usHeight );
-
-                              UnLockVideoSurface( gMsgBox.uiSaveBuffer );
-                              UnLockVideoSurface( vsIndexFB );
-      */
     }
 
     gfNewMessageBox = FALSE;
