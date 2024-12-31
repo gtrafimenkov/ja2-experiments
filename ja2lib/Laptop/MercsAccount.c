@@ -158,11 +158,11 @@ void RenderMercsAccount() {
 
   // Account Number Grid
   GetVideoObject(&hPixHandle, guiMercOrderGrid);
-  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, MERC_AC_ORDER_GRID_X, MERC_AC_ORDER_GRID_Y);
+  BltVideoObject(vsFB, hPixHandle, 0, MERC_AC_ORDER_GRID_X, MERC_AC_ORDER_GRID_Y);
 
   // Merc Order Grid
   GetVideoObject(&hPixHandle, guiAccountNumberGrid);
-  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, MERC_AC_ACCOUNT_NUMBER_X, MERC_AC_ACCOUNT_NUMBER_Y);
+  BltVideoObject(vsFB, hPixHandle, 0, MERC_AC_ACCOUNT_NUMBER_X, MERC_AC_ACCOUNT_NUMBER_Y);
 
   // Display Players account number
   swprintf(sText, ARR_SIZE(sText), L"%s %05d", MercAccountText[MERC_ACCOUNT_ACCOUNT],

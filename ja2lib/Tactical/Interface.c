@@ -938,120 +938,104 @@ void RenderArrows() {
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_BESIDE) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_G) {
     TileElem = gTileDatabase[SECONDPOINTERS1];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_Y) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_YG) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
     TileElem = gTileDatabase[SECONDPOINTERS1];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
+                   gsUpArrowY + 20);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_GG) {
     TileElem = gTileDatabase[SECONDPOINTERS1];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
+                   gsUpArrowY + 20);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_YY) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
+                   gsUpArrowY + 20);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_CLIMB) {
     TileElem = gTileDatabase[SECONDPOINTERS8];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_CLIMB2) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
+                   gsUpArrowY + 20);
     TileElem = gTileDatabase[SECONDPOINTERS8];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_UP_ABOVE_CLIMB3) {
     TileElem = gTileDatabase[SECONDPOINTERS3];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX, gsUpArrowY);
     TileElem = gTileDatabase[SECONDPOINTERS8];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY + 20);
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
-                      gsUpArrowY + 40);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
+                   gsUpArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsUpArrowX,
+                   gsUpArrowY + 40);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BESIDE) {
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_G) {
     TileElem = gTileDatabase[SECONDPOINTERS2];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_Y) {
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_CLIMB) {
     TileElem = gTileDatabase[SECONDPOINTERS7];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_YG) {
     TileElem = gTileDatabase[SECONDPOINTERS2];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY);
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
+                   gsDownArrowY + 20);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_GG) {
     TileElem = gTileDatabase[SECONDPOINTERS2];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY);
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
+                   gsDownArrowY + 20);
   }
 
   if (guiShowUPDownArrows & ARROWS_SHOW_DOWN_BELOW_YY) {
     TileElem = gTileDatabase[SECONDPOINTERS4];
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY);
-    BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
-                      gsDownArrowY + 20);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX, gsDownArrowY);
+    BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, gsDownArrowX,
+                   gsDownArrowY + 20);
   }
 }
 
@@ -1473,7 +1457,7 @@ void DrawSelectedUIAboveGuy(uint16_t usSoldierID) {
         SetBackgroundRectFilled(iBack);
       }
       TileElem = gTileDatabase[usGraphicToUse];
-      BltVideoObjectOld(vsIndexFB, TileElem.hTileSurface, TileElem.usRegionIndex, sXPos, sYPos);
+      BltVideoObject(vsFB, TileElem.hTileSurface, TileElem.usRegionIndex, sXPos, sYPos);
 
       // Draw life, breath
       // Only do this when we are a vehicle but on our team
