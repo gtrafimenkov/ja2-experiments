@@ -328,7 +328,7 @@ void FadeFrameBufferVersionOne() {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void FadeInBackBufferVersionOne() {
@@ -369,7 +369,7 @@ void FadeInBackBufferVersionOne() {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   UnLockVideoSurface(BACKBUFFER);
 }
 
@@ -418,7 +418,7 @@ void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void FadeFrameBufferSide() {
@@ -577,7 +577,7 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, 0, 0, 640, 480);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   UnLockVideoSurface(vsSB);
 
   return (TRUE);

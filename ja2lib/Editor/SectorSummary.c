@@ -1256,7 +1256,7 @@ void RenderSummaryWindow() {
     pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 15, 405, 28, 0, pDestBuf);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
     ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 351, 16, 404, 27);
     if (gpCurrentSectorSummary)
     /*&& gpCurrentSectorSummary->usNumItems ||
@@ -1271,7 +1271,7 @@ void RenderSummaryWindow() {
     pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 30, 405, 43, 0, pDestBuf);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
     if (gpCurrentSectorSummary)
     /*&& gpCurrentSectorSummary->usNumItems ||
             gpPEnemyItemsSummaryArray && gusPEnemyItemsSummaryArraySize ||
@@ -1314,7 +1314,7 @@ void RenderSummaryWindow() {
         pos = (uint16_t)(i * 13 + MAP_TOP);
         LineDraw(TRUE, MAP_LEFT, pos, MAP_RIGHT - 1, pos, 0, pDestBuf);
       }
-      UnLockVideoSurface(vsIndexFB);
+      UnlockVSurface(vsFB);
     }
     if (gfRenderProgress) {
       uint8_t ubNumUndergroundLevels;
@@ -1372,7 +1372,7 @@ void RenderSummaryWindow() {
               giCurrentViewLevel == ALTERNATE_B1_MASK || giCurrentViewLevel == ALTERNATE_B2_MASK ||
               giCurrentViewLevel == ALTERNATE_B3_MASK)
             Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-          UnLockVideoSurface(vsIndexFB);
+          UnlockVSurface(vsFB);
         }
       }
     }
@@ -1401,7 +1401,7 @@ void RenderSummaryWindow() {
       y = MAP_TOP + (gsHiSectorY - 1) * 13 - 1;
       RectangleDraw(TRUE, x, y, x + 15, y + 15, Get16BPPColor(FROMRGB(200, 200, 50)), pDestBuf);
     }
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
   }
   // Check to see if the user clicked on one of the hot spot mode change areas.
   if (gfLeftButtonState) {

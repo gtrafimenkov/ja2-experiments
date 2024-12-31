@@ -1775,7 +1775,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
     ClipRect.iBottom = 480;
     pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
   }
 }
 

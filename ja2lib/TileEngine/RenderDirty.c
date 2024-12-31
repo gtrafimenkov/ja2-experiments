@@ -277,7 +277,7 @@ BOOLEAN RestoreBackgroundRects(void) {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   UnLockVideoSurface(vsSB);
 
   EmptyBackgroundRects();
@@ -365,7 +365,7 @@ BOOLEAN SaveBackgroundRects(void) {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   UnLockVideoSurface(vsSB);
 
   return (TRUE);
@@ -468,7 +468,7 @@ BOOLEAN UpdateSaveBuffer(void) {
                   gsVIEWPORT_WINDOW_START_Y, 0, gsVIEWPORT_WINDOW_START_Y, usWidth,
                   (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y));
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   UnLockVideoSurface(vsSB);
 
   return (TRUE);
@@ -485,7 +485,7 @@ BOOLEAN RestoreExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth,
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   UnLockVideoSurface(vsSB);
 
   // Add rect to frame buffer queue
@@ -515,7 +515,7 @@ BOOLEAN RestoreExternBackgroundRectGivenID(int32_t iBack) {
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   UnLockVideoSurface(vsSB);
 
   // Add rect to frame buffer queue
@@ -536,7 +536,7 @@ BOOLEAN CopyExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth, in
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
   UnLockVideoSurface(vsSB);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 
   return (TRUE);
 }

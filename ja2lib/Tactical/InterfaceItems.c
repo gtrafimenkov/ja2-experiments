@@ -1042,42 +1042,6 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
   if (fDirtyLevel == DIRTYLEVEL2) {
     // CHECK FOR COMPATIBILITY WITH MAGAZINES
 
-    /*	OLD VERSION OF GUN/AMMO MATCH HIGHLIGHTING
-                    uint32_t	uiDestPitchBYTES;
-                    uint8_t		*pDestBuf;
-                    uint16_t	usLineColor;
-
-                    if ( ( Item [ pSoldier->inv[ HANDPOS ].usItem ].usItemClass & IC_GUN )  && (
-       Item[ pObject->usItem ].usItemClass & IC_AMMO ) )
-                    {
-                            // CHECK
-                            if (Weapon[pSoldier->inv[ HANDPOS ].usItem].ubCalibre ==
-       Magazine[Item[pObject->usItem].ubClassIndex].ubCalibre )
-                            {
-                                    // IT's an OK calibre ammo, do something!
-                                    // Render Item with specific color
-                                    //fOutline = TRUE;
-                                    //sOutlineColor = Get16BPPColor( FROMRGB( 96, 104, 128 ) );
-                                    //sOutlineColor = Get16BPPColor( FROMRGB( 20, 20, 120 ) );
-
-                                    // Draw rectangle!
-                                    pDestBuf = LockVideoSurface( vsSB, &uiDestPitchBYTES );
-                                    SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640, 480
-       );
-
-                                    //usLineColor = Get16BPPColor( FROMRGB( 255, 255, 0 ) );
-                                    usLineColor = Get16BPPColor( FROMRGB( 230, 215, 196 ) );
-                                    RectangleDraw( TRUE, (sX+1), (sY+1), (sX + gSMInvData[ sPocket
-       ].sWidth - 2 ),( sY + gSMInvData[ sPocket ].sHeight - 2 ), usLineColor, pDestBuf );
-
-                                    SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640, 480
-       );
-
-                                    UnLockVideoSurface( vsSB );
-                            }
-                    }
-    */
-
     if (gbCompatibleAmmo[sPocket]) {
       fOutline = TRUE;
       sOutlineColor = Get16BPPColor(FROMRGB(255, 255, 255));
@@ -5877,7 +5841,7 @@ void RenderItemPickupMenu() {
 
     SetFontShadow(DEFAULT_SHADOW);
 
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
 
     InvalidateRegion(gItemPickupMenu.sX, gItemPickupMenu.sY,
                      gItemPickupMenu.sX + gItemPickupMenu.sWidth,

@@ -1647,7 +1647,7 @@ void DrawBarsInUIBox(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   RectangleDraw(TRUE, sXPos + 3, sYPos + 4, (int32_t)(sXPos + dWidth + 3), sYPos + 4, usLineColor,
                 pDestBuf);
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 void EndDeadlockMsg() {

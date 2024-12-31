@@ -908,7 +908,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       } while (!fEndRenderCol);
     }
 
-    UnLockVideoSurface(vsIndexFB);
+    UnlockVSurface(vsFB);
 
     // OK, blacken out edges of smaller maps...
     if (gMapInformation.ubRestrictedScrollID != 0) {
@@ -945,7 +945,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                       0, 0, 0, 0, usWidth, usHeight);
 
-      UnLockVideoSurface(vsIndexFB);
+      UnlockVSurface(vsFB);
       UnLockVideoSurface(vsSB);
     }
   }
@@ -1109,7 +1109,7 @@ void RenderOverheadOverlays() {
     }
   }
 
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
 }
 
 /*//Render the soldiers and items on top of the pristine overhead map.

@@ -291,13 +291,6 @@ void ExitMainMenu() {
   DeleteVideoObjectFromIndex(guiJa2LogoImage);
 
   gMsgBox.uiExitScreen = MAINMENU_SCREEN;
-  /*
-          // CLEAR THE FRAME BUFFER
-          pDestBuf = LockVideoSurface( vsIndexFB, &uiDestPitchBYTES );
-          memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES );
-          UnLockVideoSurface( vsIndexFB );
-          InvalidateScreen( );
-  */
 }
 
 void MenuButtonCallback(GUI_BUTTON *btn, int32_t reason) {
@@ -408,7 +401,7 @@ void ClearMainMenu() {
   // CLEAR THE FRAME BUFFER
   pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnLockVideoSurface(vsIndexFB);
+  UnlockVSurface(vsFB);
   InvalidateScreen();
 }
 
