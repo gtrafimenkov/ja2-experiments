@@ -223,8 +223,8 @@ static BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYT
                                       struct VObject *vsSrc, uint16_t usIndex, int32_t iDestX,
                                       int32_t iDestY);
 
-BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint16_t usRegionIndex,
-                            int32_t iDestX, int32_t iDestY) {
+BOOLEAN BltVObjectFromIndexOld(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
+                               uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
   struct VObject *hSrcVObject;
@@ -1164,7 +1164,7 @@ void CheckValidVObjectIndex(uint32_t uiIndex) {
         sprintf(str, "SetVideoObjectTransparency");
         break;
       case DEBUGSTR_BLTVIDEOOBJECTFROMINDEX:
-        sprintf(str, "BltVObjectFromIndex");
+        sprintf(str, "BltVObjectFromIndexOld");
         break;
       case DEBUGSTR_SETOBJECTHANDLESHADE:
         sprintf(str, "SetObjectHandleShade");

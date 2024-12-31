@@ -387,7 +387,7 @@ void RenderTacticalPlacementGUI() {
   }
   // If the display is dirty render the entire panel.
   if (gfTacticalPlacementGUIDirty) {
-    BltVObjectFromIndex(vsIndexFB, giOverheadPanelImage, 0, 0, 320);
+    BltVObjectFromIndexOld(vsIndexFB, giOverheadPanelImage, 0, 0, 320);
     InvalidateRegion(0, 0, 320, 480);
     gfTacticalPlacementGUIDirty = FALSE;
     MarkButtonsDirty();
@@ -399,8 +399,8 @@ void RenderTacticalPlacementGUI() {
       xp = 95 + (i / 2) * 54;
       yp = (i % 2) ? 422 : 371;
       ColorFillVideoSurfaceArea(vsIndexFB, xp + 36, yp + 2, xp + 44, yp + 30, 0);
-      BltVObjectFromIndex(vsIndexFB, giMercPanelImage, 0, xp, yp);
-      BltVObjectFromIndex(vsIndexFB, gMercPlacement[i].uiVObjectID, 0, xp + 2, yp + 2);
+      BltVObjectFromIndexOld(vsIndexFB, giMercPanelImage, 0, xp, yp);
+      BltVObjectFromIndexOld(vsIndexFB, gMercPlacement[i].uiVObjectID, 0, xp + 2, yp + 2);
       // HEALTH BAR
       if (!pSoldier->bLife) continue;
       // yellow one for bleeding

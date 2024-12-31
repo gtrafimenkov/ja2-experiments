@@ -644,7 +644,7 @@ void RenderTalkingMenu() {
     SetFont(MILITARYFONT1);
 
     // Render box!
-    BltVObjectFromIndex(vsIndexFB, gTalkPanel.uiPanelVO, 0, gTalkPanel.sX, gTalkPanel.sY);
+    BltVObjectFromIndexOld(vsIndexFB, gTalkPanel.uiPanelVO, 0, gTalkPanel.sX, gTalkPanel.sY);
 
     // Render name
     if (gTalkPanel.fOnName) {

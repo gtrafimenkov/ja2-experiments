@@ -849,7 +849,7 @@ void PopDownMovementMenu() {
 
 void RenderMovementMenu() {
   if (gfInMovementMenu) {
-    BltVObjectFromIndex(vsIndexFB, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY);
+    BltVObjectFromIndexOld(vsIndexFB, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY);
 
     // Mark buttons dirty!
     MarkAButtonDirty(iActionIcons[WALK_ICON]);
@@ -1338,9 +1338,9 @@ void DrawSelectedUIAboveGuy(uint16_t usSoldierID) {
         }
 
         if ((!pSoldier->bNeutral && (pSoldier->bSide != gbPlayerNum))) {
-          BltVObjectFromIndex(vsIndexFB, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos);
+          BltVObjectFromIndexOld(vsIndexFB, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos);
         } else {
-          BltVObjectFromIndex(vsIndexFB, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos);
+          BltVObjectFromIndexOld(vsIndexFB, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos);
         }
       }
     }
@@ -2091,7 +2091,7 @@ void PopDownOpenDoorMenu() {
 
 void RenderOpenDoorMenu() {
   if (gfInOpenDoorMenu) {
-    BltVObjectFromIndex(vsIndexFB, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY);
+    BltVObjectFromIndexOld(vsIndexFB, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY);
 
     // Mark buttons dirty!
     MarkAButtonDirty(iActionIcons[USE_KEYRING_ICON]);
@@ -2500,7 +2500,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case AIR_RAID_TURN_MESSAGE:
 
       // Render rect into surface
-      BltVObjectFromIndex(uiSurface, uiBAR, 0, 0, 0);
+      BltVObjectFromIndexOld(uiSurface, uiBAR, 0, 0, 0);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_WHITE);
       uiBarToUseInUpDate = uiBAR;
@@ -2510,7 +2510,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case PLAYER_INTERRUPT_MESSAGE:
 
       // Render rect into surface
-      BltVObjectFromIndex(uiSurface, uiINTBAR, 0, 0, 0);
+      BltVObjectFromIndexOld(uiSurface, uiINTBAR, 0, 0, 0);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_BLACK);
       SetFontShadow(NO_SHADOW);
@@ -2520,7 +2520,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case PLAYER_TURN_MESSAGE:
 
       // Render rect into surface
-      BltVObjectFromIndex(uiSurface, uiPLAYERBAR, 0, 0, 0);
+      BltVObjectFromIndexOld(uiSurface, uiPLAYERBAR, 0, 0, 0);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_BLACK);
       SetFontShadow(NO_SHADOW);
@@ -2542,7 +2542,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
 
     // Render end peice
     sBarX = PROG_BAR_START_X;
-    BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, 1, sBarX, PROG_BAR_START_Y);
+    BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, 1, sBarX, PROG_BAR_START_Y);
 
     // Determine Length
     dLength = (gTacticalStatus.usTactialTurnLimitCounter) * dNumStepsPerEnemy;
@@ -2558,8 +2558,8 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
         break;
       }
 
-      BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
-                          PROG_BAR_START_Y);
+      BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
+                             PROG_BAR_START_Y);
 
       dCurSize++;
       cnt2++;
@@ -2572,10 +2572,10 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     // Do end...
     if (gTacticalStatus.usTactialTurnLimitCounter == gTacticalStatus.usTactialTurnLimitMax) {
       sBarX++;
-      BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
-                          PROG_BAR_START_Y);
+      BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
+                             PROG_BAR_START_Y);
       sBarX++;
-      BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(12), sBarX, PROG_BAR_START_Y);
+      BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, (int16_t)(12), sBarX, PROG_BAR_START_Y);
     }
   }
 
@@ -3088,28 +3088,34 @@ void RenderAimCubeUI() {
       }
 
       // Do first level....
-      BltVObjectFromIndex(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
+      BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
+                             (sScreenY + sBarHeight));
       sBarHeight -= 3;
-      BltVObjectFromIndex(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
+      BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
+                             (sScreenY + sBarHeight));
 
       // Loop through height.....
       for (cnt = 1; cnt <= gCubeUIData.bHeight; cnt++) {
         sBarHeight -= 3;
-        BltVObjectFromIndex(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
+        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
+                               (sScreenY + sBarHeight));
         sBarHeight -= 3;
-        BltVObjectFromIndex(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
+        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
+                               (sScreenY + sBarHeight));
         sBarHeight -= 3;
-        BltVObjectFromIndex(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
+        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
+                               (sScreenY + sBarHeight));
         sBarHeight -= 3;
-        BltVObjectFromIndex(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
+        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
+                               (sScreenY + sBarHeight));
       }
     }
 
     if (gCubeUIData.fShowPower) {
       sBarHeight = -50;
 
-      BltVObjectFromIndex(vsIndexFB, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
-                          (sScreenY + sBarHeight));
+      BltVObjectFromIndexOld(vsIndexFB, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
+                             (sScreenY + sBarHeight));
     }
   }
 }
@@ -3273,5 +3279,5 @@ void RenderTopmostMultiPurposeLocator() {
     SetBackgroundRectFilled(iBack);
   }
 
-  BltVObjectFromIndex(vsIndexFB, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos);
+  BltVObjectFromIndexOld(vsIndexFB, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos);
 }
