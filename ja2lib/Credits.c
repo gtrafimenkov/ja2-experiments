@@ -348,8 +348,6 @@ uint32_t CreditScreenInit(void) {
 }
 
 uint32_t CreditScreenHandle(void) {
-  StartFrameBufferRender();
-
   if (gfCreditsScreenEntry) {
     if (!EnterCreditsScreen()) {
       gfCreditsScreenEntry = FALSE;

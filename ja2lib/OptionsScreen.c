@@ -250,8 +250,6 @@ uint32_t OptionsScreenInit() {
 }
 
 uint32_t OptionsScreenHandle() {
-  StartFrameBufferRender();
-
   if (gfOptionsScreenEntry) {
     PauseGame();
     EnterOptionsScreen();

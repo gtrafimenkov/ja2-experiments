@@ -204,7 +204,6 @@ uint32_t ErrorScreenHandle(void) {
 #endif
 
   // For quick setting of new video stuff / to be changed
-  StartFrameBufferRender();
 
   // Create string
   SetFont(LARGEFONT1);

@@ -288,8 +288,6 @@ uint32_t SaveLoadScreenInit() {
 }
 
 uint32_t SaveLoadScreenHandle() {
-  StartFrameBufferRender();
-
   if (gfSaveLoadScreenEntry) {
     EnterSaveLoadScreen();
     gfSaveLoadScreenEntry = FALSE;

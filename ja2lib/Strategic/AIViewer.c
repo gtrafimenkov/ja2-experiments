@@ -1007,8 +1007,6 @@ uint32_t AIViewerScreenInit() {
 }
 
 uint32_t AIViewerScreenHandle() {
-  StartFrameBufferRender();
-
   RestoreBackgroundRects();
 
   if (gfViewerEntry) {
