@@ -220,10 +220,13 @@ BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex) {
 }
 
 BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint16_t usRegionIndex,
-                            int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_fx *pBltFx) {
+                            int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
   struct VObject *hSrcVObject;
+
+  uint32_t fBltFlags = VO_BLT_SRCTRANSPARENCY;
+  blt_fx *pBltFx = NULL;
 
   // Lock video surface
   pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
@@ -304,9 +307,12 @@ BOOLEAN DeleteVideoObjectFromIndex(uint32_t uiVObject) {
 // There are two types, a BltFast and a Blt. BltFast is 10% faster, uses no
 // clipping lists
 BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hSrcVObject, uint16_t usRegionIndex,
-                       int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_fx *pBltFx) {
+                       int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
+
+  uint32_t fBltFlags = VO_BLT_SRCTRANSPARENCY;
+  blt_fx *pBltFx = NULL;
 
   // Lock video surface
   pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);

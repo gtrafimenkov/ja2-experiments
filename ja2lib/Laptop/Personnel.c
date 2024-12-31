@@ -627,13 +627,11 @@ void RenderPersonnel(void) {
 
   // blit title
   GetVideoObject(&hHandle, guiTITLE);
-  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2);
 
   // blit screen
   GetVideoObject(&hHandle, guiSCREEN);
-  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y + 22,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y + 22);
 
   // render pictures of mercs on scnree
   // RenderPersonnelPictures( );
@@ -836,8 +834,7 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
     }
   }
 
-  BltVideoObject(vsFB, hFaceHandle, 0, IMAGE_BOX_X + (iSlot * IMAGE_BOX_WIDTH), IMAGE_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hFaceHandle, 0, IMAGE_BOX_X + (iSlot * IMAGE_BOX_WIDTH), IMAGE_BOX_Y);
 
   // if the merc is dead, display it
   if (!fCurrentTeamMode) {
@@ -1870,7 +1867,7 @@ void RenderPersonnelScreenBackground(void) {
     GetVideoObject(&hHandle, guiDEPARTEDTEAM);
   }
 
-  BltVideoObject(vsFB, hHandle, 0, DEPARTED_X, DEPARTED_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hHandle, 0, DEPARTED_X, DEPARTED_Y);
 
   return;
 }
@@ -2050,8 +2047,7 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
                      (int16_t)(SMALL_PORTRAIT_START_X +
                                (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
                      (int16_t)(SMALL_PORTRAIT_START_Y +
-                               (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT),
-                     VO_BLT_SRCTRANSPARENCY, NULL);
+                               (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT));
 
       if (Menptr[iId + iCnt].bLife <= 0) {
         // if the merc is dead, display it
@@ -2227,7 +2223,7 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
   int32_t iTotalAmmo = 0;
 
   GetVideoObject(&hHandle, guiPersonnelInventory);
-  BltVideoObject(vsFB, hHandle, 0, (int16_t)(397), (int16_t)(200), VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hHandle, 0, (int16_t)(397), (int16_t)(200));
 
   if (fCurrentTeamMode == FALSE) {
     return;
@@ -4383,8 +4379,7 @@ BOOLEAN DisplayPortraitOfPastMerc(int32_t iId, int32_t iCounter, BOOLEAN fDead, 
                  (int16_t)(SMALL_PORTRAIT_START_X +
                            (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
                  (int16_t)(SMALL_PORTRAIT_START_Y +
-                           (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT),
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+                           (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT));
 
   /*
    text on the Small portrait
@@ -4786,8 +4781,7 @@ BOOLEAN DisplayHighLightBox(void) {
                 2),
       (int16_t)(SMALL_PORTRAIT_START_Y +
                 (iCurrentPersonSelectedId / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT -
-                3),
-      VO_BLT_SRCTRANSPARENCY, NULL);
+                3));
 
   // deleteit
   DeleteVideoObjectFromIndex(uiBox);
@@ -4954,8 +4948,7 @@ BOOLEAN RenderAtmPanel(void) {
 
     // blit it
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
 
     DeleteVideoObjectFromIndex(uiBox);
 
@@ -4982,13 +4975,11 @@ BOOLEAN RenderAtmPanel(void) {
     CHECKF(AddStandardVideoObject(&VObjectDesc, &uiBox));
 
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
 
     // blit it
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(vsFB, hHandle, 1, (int16_t)(ATM_UL_X + 1), (int16_t)(ATM_UL_Y + 18),
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hHandle, 1, (int16_t)(ATM_UL_X + 1), (int16_t)(ATM_UL_Y + 18));
 
     DeleteVideoObjectFromIndex(uiBox);
 
@@ -5169,8 +5160,7 @@ void RenderSliderBarForPersonnelInventory(void) {
   // render slider bar for personnel
   GetVideoObject(&hHandle, guiPersonnelInventory);
   BltVideoObject(vsFB, hHandle, 5, (int16_t)(X_OF_PERSONNEL_SCROLL_REGION),
-                 (int16_t)(guiSliderPosition + Y_OF_PERSONNEL_SCROLL_REGION),
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+                 (int16_t)(guiSliderPosition + Y_OF_PERSONNEL_SCROLL_REGION));
 }
 
 void ATMStartButtonCallback(GUI_BUTTON *btn, int32_t reason) {

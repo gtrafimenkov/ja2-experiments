@@ -857,23 +857,19 @@ void RenderSoldierCell(SOLDIERCELL *pCell) {
   if (pCell->uiFlags & CELL_MERC) {
     ColorFillVideoSurfaceArea(vsFB, pCell->xp + 36, pCell->yp + 2, pCell->xp + 44, pCell->yp + 30,
                               0);
-    BltVObjectFromIndex(vsFB, gpAR->iPanelImages, MERC_PANEL, pCell->xp, pCell->yp,
-                        VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, gpAR->iPanelImages, MERC_PANEL, pCell->xp, pCell->yp);
     RenderSoldierCellBars(pCell);
     x = 0;
   } else {
-    BltVObjectFromIndex(vsFB, gpAR->iPanelImages, OTHER_PANEL, pCell->xp, pCell->yp,
-                        VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, gpAR->iPanelImages, OTHER_PANEL, pCell->xp, pCell->yp);
     x = 6;
   }
   if (!pCell->pSoldier->bLife) {
     SetObjectHandleShade(pCell->uiVObjectID, 0);
     if (!(pCell->uiFlags & CELL_CREATURE))
-      BltVObjectFromIndex(vsFB, gpAR->iFaces, HUMAN_SKULL, pCell->xp + 3 + x, pCell->yp + 3,
-                          VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, gpAR->iFaces, HUMAN_SKULL, pCell->xp + 3 + x, pCell->yp + 3);
     else
-      BltVObjectFromIndex(vsFB, gpAR->iFaces, CREATURE_SKULL, pCell->xp + 3 + x, pCell->yp + 3,
-                          VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, gpAR->iFaces, CREATURE_SKULL, pCell->xp + 3 + x, pCell->yp + 3);
   } else {
     if (pCell->uiFlags & CELL_HITBYATTACKER) {
       ColorFillVideoSurfaceArea(vsFB, pCell->xp + 3 + x, pCell->yp + 3, pCell->xp + 33 + x,
@@ -883,11 +879,11 @@ void RenderSoldierCell(SOLDIERCELL *pCell) {
                                 pCell->yp + 29, 0);
       SetObjectHandleShade(pCell->uiVObjectID, 1);
       BltVObjectFromIndex(vsFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
-                          pCell->yp + 3, VO_BLT_SRCTRANSPARENCY, NULL);
+                          pCell->yp + 3);
     } else {
       SetObjectHandleShade(pCell->uiVObjectID, 0);
       BltVObjectFromIndex(vsFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
-                          pCell->yp + 3, VO_BLT_SRCTRANSPARENCY, NULL);
+                          pCell->yp + 3);
     }
   }
 
@@ -998,52 +994,44 @@ void BuildInterfaceBuffer() {
   // Blit the back panels...
   for (y = DestRect.iTop; y < DestRect.iBottom; y += 40) {
     for (x = DestRect.iLeft; x < DestRect.iRight; x += 50) {
-      BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, C_TEXTURE, x, y,
-                          VO_BLT_SRCTRANSPARENCY, 0);
+      BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, C_TEXTURE, x, y);
     }
   }
   // Blit the left and right edges
   for (y = DestRect.iTop; y < DestRect.iBottom; y += 40) {
     x = DestRect.iLeft;
-    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, L_BORDER, x, y,
-                        VO_BLT_SRCTRANSPARENCY, 0);
+    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, L_BORDER, x, y);
     x = DestRect.iRight - 3;
-    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, R_BORDER, x, y,
-                        VO_BLT_SRCTRANSPARENCY, 0);
+    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, R_BORDER, x, y);
   }
   // Blit the top and bottom edges
   for (x = DestRect.iLeft; x < DestRect.iRight; x += 50) {
     y = DestRect.iTop;
-    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, T_BORDER, x, y,
-                        VO_BLT_SRCTRANSPARENCY, 0);
+    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, T_BORDER, x, y);
     y = DestRect.iBottom - 3;
-    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, B_BORDER, x, y,
-                        VO_BLT_SRCTRANSPARENCY, 0);
+    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, B_BORDER, x, y);
   }
   // Blit the 4 corners
   BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, TL_BORDER, DestRect.iLeft,
-                      DestRect.iTop, VO_BLT_SRCTRANSPARENCY, NULL);
+                      DestRect.iTop);
   BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, TR_BORDER, DestRect.iRight - 10,
-                      DestRect.iTop, VO_BLT_SRCTRANSPARENCY, NULL);
+                      DestRect.iTop);
   BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, BL_BORDER, DestRect.iLeft,
-                      DestRect.iBottom - 9, VO_BLT_SRCTRANSPARENCY, NULL);
+                      DestRect.iBottom - 9);
   BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, BR_BORDER, DestRect.iRight - 10,
-                      DestRect.iBottom - 9, VO_BLT_SRCTRANSPARENCY, NULL);
+                      DestRect.iBottom - 9);
 
   // Blit the center pieces
   x = gpAR->sCenterStartX - gpAR->Rect.iLeft;
   y = 0;
   // Top
-  BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, TOP_MIDDLE, x, y,
-                      VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, TOP_MIDDLE, x, y);
   // Middle
   for (y = 40; y < gpAR->sHeight - 40; y += 40) {
-    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, AUTO_MIDDLE, x, y,
-                        VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, AUTO_MIDDLE, x, y);
   }
   y = gpAR->sHeight - 40;
-  BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, BOT_MIDDLE, x, y,
-                      VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(gpAR->iInterfaceBuffer, gpAR->iPanelImages, BOT_MIDDLE, x, y);
 
   SetClippingRect(&ClipRect);
 }
@@ -1607,7 +1595,7 @@ void RenderAutoResolve() {
     SetFont(BLOCKFONT2);
     xp = gpAR->sCenterStartX + 12;
     yp = 218 + gpAR->bVerticalOffset;
-    BltVObjectFromIndex(vsFB, gpAR->iIndent, 0, xp, yp, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, gpAR->iIndent, 0, xp, yp);
     xp = gpAR->sCenterStartX + 70 - StringPixLength(str, BLOCKFONT2) / 2;
     yp = 227 + gpAR->bVerticalOffset;
     mprintf(xp, yp, str);
