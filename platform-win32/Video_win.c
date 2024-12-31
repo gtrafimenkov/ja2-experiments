@@ -201,8 +201,6 @@ static void SnapshotSmall(void);
 static void VideoMovieCapture(BOOLEAN fEnable);
 static void RefreshMovieCache();
 
-static void UnlockFrameBuffer(void);
-
 static void *LockPrimarySurface(LPDIRECTDRAWSURFACE2 _surf, uint32_t *uiPitch);
 
 BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
@@ -363,9 +361,9 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // Blank out the frame buffer
   //
 
-  pTmpPointer = LockPrimarySurface(gpFrameBuffer, &uiPitch);
+  pTmpPointer = LockVideoSurface(vsIndexFB, &uiPitch);
   memset(pTmpPointer, 0, 480 * uiPitch);
-  UnlockFrameBuffer();
+  UnLockVideoSurface(vsIndexFB);
 
   //
   // Initialize the main mouse surfaces
@@ -1779,57 +1777,13 @@ static void *LockPrimarySurface(LPDIRECTDRAWSURFACE2 _surf, uint32_t *uiPitch) {
   return SurfaceDescription.lpSurface;
 }
 
-static void UnlockPrimarySurface(void) {
+static void UnlockPrimarySurface(LPDIRECTDRAWSURFACE2 _surf) {
   DDSURFACEDESC SurfaceDescription;
   HRESULT ReturnCode;
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Unlock(gpPrimarySurface, &SurfaceDescription);
-  if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-  }
-}
-
-static void UnlockBackBuffer(void) {
-  DDSURFACEDESC SurfaceDescription;
-  HRESULT ReturnCode;
-
-  //
-  // W A R N I N G ---- W A R N I N G ---- W A R N I N G ---- W A R N I N G ---- W A R N I N G ----
-  //
-  // This function is intended to be called by a thread which has already locked the
-  // FRAME_BUFFER_MUTEX mutual exclusion section. Anything else will cause the application to
-  // yack
-  //
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Unlock(gpBackBuffer, &SurfaceDescription);
-  if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-  }
-}
-
-static void UnlockFrameBuffer(void) {
-  DDSURFACEDESC SurfaceDescription;
-  HRESULT ReturnCode;
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Unlock(gpFrameBuffer, &SurfaceDescription);
-  if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-  }
-}
-
-static void UnlockMouseBuffer(void) {
-  DDSURFACEDESC SurfaceDescription;
-  HRESULT ReturnCode;
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Unlock(gpMouseCursorOriginal, &SurfaceDescription);
+  ReturnCode = IDirectDrawSurface2_Unlock(_surf, &SurfaceDescription);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
     DirectXAttempt(ReturnCode, __LINE__, __FILE__);
   }
@@ -2339,22 +2293,22 @@ void UnLockVideoSurface(uint32_t uiVSurface) {
   // Check if given backbuffer or primary buffer
   //
   if (uiVSurface == PRIMARY_SURFACE) {
-    UnlockPrimarySurface();
+    UnlockPrimarySurface(gpPrimarySurface);
     return;
   }
 
   if (uiVSurface == BACKBUFFER) {
-    UnlockBackBuffer();
+    UnlockPrimarySurface(gpBackBuffer);
     return;
   }
 
   if (uiVSurface == vsIndexFB) {
-    UnlockFrameBuffer();
+    UnlockPrimarySurface(gpFrameBuffer);
     return;
   }
 
   if (uiVSurface == MOUSE_BUFFER) {
-    UnlockMouseBuffer();
+    UnlockPrimarySurface(gpMouseCursorOriginal);
     return;
   }
 
