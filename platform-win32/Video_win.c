@@ -3374,11 +3374,6 @@ BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSu
   // Assertions
   Assert(hDestVSurface != NULL);
 
-  // Check for colorfill rectangle
-  if (fBltFlags & VS_BLT_COLORFILLRECT) {
-    return (FillSurfaceRect(hDestVSurface, pBltFx));
-  }
-
   // Check for source coordinate options - from region, specific rect or full src dimensions
   do {
     // Use SUBRECT if specified
