@@ -1085,15 +1085,15 @@ void DisplayFastHelp(struct MOUSE_REGION *region) {
     } else {
       uint8_t *pDestBuf;
       uint32_t uiDestPitchBYTES;
-      pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+      pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
       SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
       RectangleDraw(TRUE, iX + 1, iY + 1, iX + iW - 1, iY + iH - 1,
                     Get16BPPColor(FROMRGB(65, 57, 15)), pDestBuf);
       RectangleDraw(TRUE, iX, iY, iX + iW - 2, iY + iH - 2, Get16BPPColor(FROMRGB(227, 198, 88)),
                     pDestBuf);
-      UnLockVideoSurface(vsFB);
-      ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
-      ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
+      UnLockVideoSurface(vsIndexFB);
+      ShadowVideoSurfaceRect(vsIndexFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
+      ShadowVideoSurfaceRect(vsIndexFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
 
       SetFont(FONT10ARIAL);
       SetFontShadow(FONT_NEARBLACK);

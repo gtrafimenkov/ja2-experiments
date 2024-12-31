@@ -369,10 +369,10 @@ void PalEditRenderHook() {
     // Set to current
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
-    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, vsFB);
-    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, vsFB);
-    DisplayPaletteRep(pSoldier->VestPal, 50, 90, vsFB);
-    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, vsFB);
+    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, vsIndexFB);
+    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, vsIndexFB);
+    DisplayPaletteRep(pSoldier->VestPal, 50, 90, vsIndexFB);
+    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, vsIndexFB);
   }
 }
 
@@ -629,7 +629,7 @@ uint32_t SexScreenHandle(void) {
   int16_t sX, sY;
 
   // OK, Clear screen and show smily face....
-  ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   // Remove cursor....
   SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
@@ -696,9 +696,9 @@ uint32_t SexScreenHandle(void) {
   sY = (int16_t)((480 - pTrav->usHeight) / 2);
 
   if (bCurFrame < 24) {
-    BltVObjectFromIndex(vsFB, guiSMILY, 0, sX, sY);
+    BltVObjectFromIndex(vsIndexFB, guiSMILY, 0, sX, sY);
   } else {
-    BltVObjectFromIndex(vsFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY);
+    BltVObjectFromIndex(vsIndexFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY);
   }
 
   InvalidateRegion(sX, sY, (int16_t)(sX + pTrav->usWidth), (int16_t)(sY + pTrav->usHeight));
@@ -735,13 +735,13 @@ void DisplayTopwareGermanyAddress() {
   ClipRect.iRight = 431;
   ClipRect.iTop = 390;
   ClipRect.iBottom = 475;
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   // Draw the anti-aliased address now.
-  BltVObjectFromIndex(vsFB, uiTempID, 0, 218, 400);
-  BltVObjectFromIndex(vsFB, uiTempID, 0, 218, 400);
+  BltVObjectFromIndex(vsIndexFB, uiTempID, 0, 218, 400);
+  BltVObjectFromIndex(vsIndexFB, uiTempID, 0, 218, 400);
   InvalidateRegion(208, 390, 431, 475);
   DeleteVideoObjectFromIndex(uiTempID);
   ExecuteBaseDirtyRectQueue();

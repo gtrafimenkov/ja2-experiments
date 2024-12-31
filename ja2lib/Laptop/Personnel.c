@@ -627,11 +627,11 @@ void RenderPersonnel(void) {
 
   // blit title
   GetVideoObject(&hHandle, guiTITLE);
-  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2);
+  BltVideoObject(vsIndexFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2);
 
   // blit screen
   GetVideoObject(&hHandle, guiSCREEN);
-  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y + 22);
+  BltVideoObject(vsIndexFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y + 22);
 
   // render personnel screen background
   RenderPersonnelScreenBackground();
@@ -818,7 +818,7 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
     }
   }
 
-  BltVideoObject(vsFB, hFaceHandle, 0, IMAGE_BOX_X + (iSlot * IMAGE_BOX_WIDTH), IMAGE_BOX_Y);
+  BltVideoObject(vsIndexFB, hFaceHandle, 0, IMAGE_BOX_X + (iSlot * IMAGE_BOX_WIDTH), IMAGE_BOX_Y);
 
   // if the merc is dead, display it
   if (!fCurrentTeamMode) {
@@ -1851,7 +1851,7 @@ void RenderPersonnelScreenBackground(void) {
     GetVideoObject(&hHandle, guiDEPARTEDTEAM);
   }
 
-  BltVideoObject(vsFB, hHandle, 0, DEPARTED_X, DEPARTED_Y);
+  BltVideoObject(vsIndexFB, hHandle, 0, DEPARTED_X, DEPARTED_Y);
 
   return;
 }
@@ -2027,7 +2027,7 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
         SetObjectHandleShade(guiFACE, 0);
       }
 
-      BltVideoObject(vsFB, hFaceHandle, 0,
+      BltVideoObject(vsIndexFB, hFaceHandle, 0,
                      (int16_t)(SMALL_PORTRAIT_START_X +
                                (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
                      (int16_t)(SMALL_PORTRAIT_START_Y +
@@ -2207,7 +2207,7 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
   int32_t iTotalAmmo = 0;
 
   GetVideoObject(&hHandle, guiPersonnelInventory);
-  BltVideoObject(vsFB, hHandle, 0, (int16_t)(397), (int16_t)(200));
+  BltVideoObject(vsIndexFB, hHandle, 0, (int16_t)(397), (int16_t)(200));
 
   if (fCurrentTeamMode == FALSE) {
     return;
@@ -2249,17 +2249,17 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
         sCenY = PosY + (abs((int32_t)(22 - usHeight)) / 2) - pTrav->sOffsetY;
 
         // shadow
-        // BltVideoObjectOutlineShadowFromIndex( vsFB, GetInterfaceGraphicForItem( pItem ),
+        // BltVideoObjectOutlineShadowFromIndex( vsIndexFB, GetInterfaceGraphicForItem( pItem ),
         // pItem->ubGraphicNum, sCenX-2, sCenY+2);
 
         // blt the item
-        BltVideoObjectOutlineFromIndex(vsFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
-                                       sCenX, sCenY, 0, FALSE);
+        BltVideoObjectOutlineFromIndex(vsIndexFB, GetInterfaceGraphicForItem(pItem),
+                                       pItem->ubGraphicNum, sCenX, sCenY, 0, FALSE);
 
         SetFont(FONT10ARIAL);
         SetFontForeground(FONT_WHITE);
         SetFontBackground(FONT_BLACK);
-        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
         // grab item name
         LoadItemInfo(sIndex, sString, NULL);
@@ -4359,7 +4359,7 @@ BOOLEAN DisplayPortraitOfPastMerc(int32_t iId, int32_t iCounter, BOOLEAN fDead, 
     SetObjectHandleShade(guiFACE, 0);
   }
 
-  BltVideoObject(vsFB, hFaceHandle, 0,
+  BltVideoObject(vsIndexFB, hFaceHandle, 0,
                  (int16_t)(SMALL_PORTRAIT_START_X +
                            (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
                  (int16_t)(SMALL_PORTRAIT_START_Y +
@@ -4759,7 +4759,7 @@ BOOLEAN DisplayHighLightBox(void) {
   // blit it
   GetVideoObject(&hHandle, uiBox);
   BltVideoObject(
-      vsFB, hHandle, 0,
+      vsIndexFB, hHandle, 0,
       (int16_t)(SMALL_PORTRAIT_START_X +
                 (iCurrentPersonSelectedId % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH -
                 2),
@@ -4932,7 +4932,7 @@ BOOLEAN RenderAtmPanel(void) {
 
     // blit it
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
+    BltVideoObject(vsIndexFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
 
     DeleteVideoObjectFromIndex(uiBox);
 
@@ -4959,11 +4959,11 @@ BOOLEAN RenderAtmPanel(void) {
     CHECKF(AddStandardVideoObject(&VObjectDesc, &uiBox));
 
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(vsFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
+    BltVideoObject(vsIndexFB, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y));
 
     // blit it
     GetVideoObject(&hHandle, uiBox);
-    BltVideoObject(vsFB, hHandle, 1, (int16_t)(ATM_UL_X + 1), (int16_t)(ATM_UL_Y + 18));
+    BltVideoObject(vsIndexFB, hHandle, 1, (int16_t)(ATM_UL_X + 1), (int16_t)(ATM_UL_Y + 18));
 
     DeleteVideoObjectFromIndex(uiBox);
 
@@ -5143,7 +5143,7 @@ void RenderSliderBarForPersonnelInventory(void) {
 
   // render slider bar for personnel
   GetVideoObject(&hHandle, guiPersonnelInventory);
-  BltVideoObject(vsFB, hHandle, 5, (int16_t)(X_OF_PERSONNEL_SCROLL_REGION),
+  BltVideoObject(vsIndexFB, hHandle, 5, (int16_t)(X_OF_PERSONNEL_SCROLL_REGION),
                  (int16_t)(guiSliderPosition + Y_OF_PERSONNEL_SCROLL_REGION));
 }
 
@@ -5768,12 +5768,12 @@ void RenderRectangleForPersonnelTransactionAmount(void) {
   // grab total length
   iLength = StringPixLength(sTempString, ATM_FONT);
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
   RectangleDraw(TRUE, (ATM_DISPLAY_X + ATM_DISPLAY_WIDTH) - iLength - 2, ATM_DISPLAY_Y + 35,
                 ATM_DISPLAY_X + ATM_DISPLAY_WIDTH + 1, ATM_DISPLAY_Y + iHeight + 36,
                 Get16BPPColor(FROMRGB(255, 255, 255)), pDestBuf);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void HandleTimedAtmModes(void) {

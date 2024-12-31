@@ -572,7 +572,7 @@ void DisplayFullNameStringCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
@@ -587,7 +587,7 @@ void DisplayFullNameStringCursor(void) {
                    FULL_NAME_CURSOR_Y + CURSOR_HEIGHT + 1 - 2);
 
   // unlock frame buffer
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
   return;
 }
 
@@ -628,7 +628,7 @@ void DisplayNickNameStringCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
@@ -642,7 +642,7 @@ void DisplayNickNameStringCursor(void) {
                    (uint16_t)uiNickNameCursorPosition + 1, NICK_NAME_CURSOR_Y + CURSOR_HEIGHT + 1);
 
   // unlock frame buffer
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
   return;
 }
 
@@ -733,7 +733,7 @@ void DisplayMaleGlowCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw rectangle
@@ -747,7 +747,7 @@ void DisplayMaleGlowCursor(void) {
                    MALE_BOX_Y + MALE_BOX_HEIGHT + 1);
 
   // unlock frame buffer
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
   return;
 }
 
@@ -788,7 +788,7 @@ void DisplayFemaleGlowCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw rectangle
@@ -802,7 +802,7 @@ void DisplayFemaleGlowCursor(void) {
                    MALE_BOX_Y + MALE_BOX_HEIGHT + 1);
 
   // unlock frame buffer
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
   return;
 }
 

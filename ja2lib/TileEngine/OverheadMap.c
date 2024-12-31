@@ -626,7 +626,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
 
   if (gfOverheadMapDirty) {
     // Black out.......
-    ColorFillVideoSurfaceArea(vsFB, sStartPointX_S, sStartPointY_S, sEndXS, sEndYS, 0);
+    ColorFillVideoSurfaceArea(vsIndexFB, sStartPointX_S, sStartPointY_S, sEndXS, sEndYS, 0);
 
     InvalidateScreen();
     gfOverheadMapDirty = FALSE;
@@ -638,10 +638,10 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
     sAnchorPosY_S = sStartPointY_S;
 
     // Zero out area!
-    // ColorFillVideoSurfaceArea( vsFB, 0, 0, (int16_t)(640),
+    // ColorFillVideoSurfaceArea( vsIndexFB, 0, 0, (int16_t)(640),
     // (int16_t)(gsVIEWPORT_WINDOW_END_Y), Get16BPPColor( FROMRGB( 0, 0, 0 ) ) );
 
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
     do {
       fEndRenderRow = FALSE;
@@ -908,26 +908,26 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       } while (!fEndRenderCol);
     }
 
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
 
     // OK, blacken out edges of smaller maps...
     if (gMapInformation.ubRestrictedScrollID != 0) {
       CalculateRestrictedMapCoords(NORTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(WEST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(SOUTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(EAST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
     }
 
     if (!fFromMapUtility) {
       // Render border!
-      BltVObjectFromIndex(vsFB, uiOVERMAP, 0, 0, 0);
+      BltVObjectFromIndex(vsIndexFB, uiOVERMAP, 0, 0, 0);
     }
 
     // Update the save buffer
@@ -939,13 +939,13 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       // Update saved buffer - do for the viewport size ony!
       GetCurrentVideoSettings(&usWidth, &usHeight);
 
-      pSrcBuf = LockVideoSurface(vsFB, &uiSrcPitchBYTES);
+      pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
       pDestBuf = LockVideoSurface(vsSB, &uiDestPitchBYTES);
 
       Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                       0, 0, 0, 0, usWidth, usHeight);
 
-      UnLockVideoSurface(vsFB);
+      UnLockVideoSurface(vsIndexFB);
       UnLockVideoSurface(vsSB);
     }
   }
@@ -963,7 +963,7 @@ void RenderOverheadOverlays() {
   uint8_t *pDestBuf;
   uint8_t ubPassengers = 0;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   GetVideoObject(&hVObject, uiPERSONS);
 
   // SOLDIER OVERLAY
@@ -1109,7 +1109,7 @@ void RenderOverheadOverlays() {
     }
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 /*//Render the soldiers and items on top of the pristine overhead map.
@@ -1131,7 +1131,7 @@ int16_t sStartPointY_S, int16_t sEndXS, int16_t sEndYS )
         int16_t				sHeight;
         struct SOLDIERTYPE	*pSoldier;
         struct VObject* hVObject;
-        pDestBuf = LockVideoSurface( vsFB, &uiDestPitchBYTES );
+        pDestBuf = LockVideoSurface( vsIndexFB, &uiDestPitchBYTES );
         // Begin Render Loop
         sAnchorPosX_M = sStartPointX_M;
         sAnchorPosY_M = sStartPointY_M;
@@ -1305,7 +1305,7 @@ NULL, (int16_t)(sX-2), (int16_t)(sY-2), (int16_t)(sX + 5), (int16_t)(sY + 11));
 
         }
         while( !fEndRenderCol );
-        UnLockVideoSurface( vsFB );
+        UnLockVideoSurface( vsIndexFB );
 }
 */
 

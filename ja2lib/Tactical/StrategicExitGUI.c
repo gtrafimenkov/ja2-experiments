@@ -599,7 +599,7 @@ void RenderSectorExitMenu() {
 
   UpdateSectorExitMenu();
 
-  RenderMercPopUpBoxFromIndex(gExitDialog.iBoxId, gExitDialog.sX, gExitDialog.sY, vsFB);
+  RenderMercPopUpBoxFromIndex(gExitDialog.iBoxId, gExitDialog.sX, gExitDialog.sY, vsIndexFB);
   InvalidateRegion(gExitDialog.sX, gExitDialog.sY, gExitDialog.usWidth, gExitDialog.usHeight);
 
   SetFont(FONT12ARIAL);

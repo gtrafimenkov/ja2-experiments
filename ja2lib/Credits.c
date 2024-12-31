@@ -523,12 +523,12 @@ BOOLEAN RenderCreditScreen() {
   struct VObject *hPixHandle;
 
   GetVideoObject(&hPixHandle, guiCreditBackGroundImage);
-  BltVideoObject(vsFB, hPixHandle, 0, 0, 0);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, 0, 0);
   if (!gfCrdtHaveRenderedFirstFrameToSaveBuffer) {
     gfCrdtHaveRenderedFirstFrameToSaveBuffer = TRUE;
 
     // blit everything to the save buffer ( cause the save buffer can bleed through )
-    BlitBufferToBuffer(vsFB, vsSB, 0, 0, 640, 480);
+    BlitBufferToBuffer(vsIndexFB, vsSB, 0, 0, 640, 480);
 
     UnmarkButtonsDirty();
   }
@@ -751,7 +751,7 @@ BOOLEAN AddCreditNode(uint32_t uiType, uint32_t uiFlags, wchar_t *pString) {
                          pNodeToAdd->pString, 0, FALSE, gubCrdtJustification);
 
     // reset the font dest buffer
-    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   }
 
   //
@@ -1197,7 +1197,7 @@ void HandleCreditEyeBlinking() {
   for (ubCnt = 0; ubCnt < NUM_PEOPLE_IN_CREDITS; ubCnt++) {
     if ((GetJA2Clock() - gCreditFaces[ubCnt].uiLastBlinkTime) >
         (uint32_t)gCreditFaces[ubCnt].sBlinkFreq) {
-      BltVideoObject(vsFB, hPixHandle, (uint8_t)(ubCnt * 3), gCreditFaces[ubCnt].sEyeX,
+      BltVideoObject(vsIndexFB, hPixHandle, (uint8_t)(ubCnt * 3), gCreditFaces[ubCnt].sEyeX,
                      gCreditFaces[ubCnt].sEyeY);
       InvalidateRegion(gCreditFaces[ubCnt].sEyeX, gCreditFaces[ubCnt].sEyeY,
                        gCreditFaces[ubCnt].sEyeX + CRDT_EYE_WIDTH,

@@ -1026,10 +1026,10 @@ void MouseClickedInTextRegionCallback(struct MOUSE_REGION *reg, int32_t reason) 
 void RenderBackgroundField(TEXTINPUTNODE *pNode) {
   uint16_t usColor;
   if (pColors->fBevelling) {
-    ColorFillVideoSurfaceArea(vsFB, pNode->region.RegionTopLeftX, pNode->region.RegionTopLeftY,
+    ColorFillVideoSurfaceArea(vsIndexFB, pNode->region.RegionTopLeftX, pNode->region.RegionTopLeftY,
                               pNode->region.RegionBottomRightX, pNode->region.RegionBottomRightY,
                               pColors->usDarkerColor);
-    ColorFillVideoSurfaceArea(vsFB, pNode->region.RegionTopLeftX + 1,
+    ColorFillVideoSurfaceArea(vsIndexFB, pNode->region.RegionTopLeftX + 1,
                               pNode->region.RegionTopLeftY + 1, pNode->region.RegionBottomRightX,
                               pNode->region.RegionBottomRightY, pColors->usBrighterColor);
   }
@@ -1038,7 +1038,7 @@ void RenderBackgroundField(TEXTINPUTNODE *pNode) {
   else
     usColor = pColors->usTextFieldColor;
 
-  ColorFillVideoSurfaceArea(vsFB, pNode->region.RegionTopLeftX + 1,
+  ColorFillVideoSurfaceArea(vsIndexFB, pNode->region.RegionTopLeftX + 1,
                             pNode->region.RegionTopLeftY + 1, pNode->region.RegionBottomRightX - 1,
                             pNode->region.RegionBottomRightY - 1, usColor);
 
@@ -1103,7 +1103,7 @@ void RenderActiveTextField() {
     uiCursorXPos = StringPixLengthArg(pColors->usFont, gubCursorPos, str) + 2;
     if (GetJA2Clock() % 1000 < 500) {  // draw the blinking ibeam cursor during the on blink period.
       ColorFillVideoSurfaceArea(
-          vsFB, gpActive->region.RegionTopLeftX + uiCursorXPos,
+          vsIndexFB, gpActive->region.RegionTopLeftX + uiCursorXPos,
           gpActive->region.RegionTopLeftY + usOffset,
           gpActive->region.RegionTopLeftX + uiCursorXPos + 1,
           gpActive->region.RegionTopLeftY + usOffset + GetFontHeight(pColors->usFont),
@@ -1170,9 +1170,9 @@ void RenderInactiveTextFieldNode(TEXTINPUTNODE *pNode) {
     ClipRect.iRight = pNode->region.RegionBottomRightX;
     ClipRect.iTop = pNode->region.RegionTopLeftY;
     ClipRect.iBottom = pNode->region.RegionBottomRightY;
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
   }
 }
 

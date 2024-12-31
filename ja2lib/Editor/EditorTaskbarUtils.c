@@ -736,8 +736,8 @@ void RenderSelectedItemBlownUp() {
   sOffsetY = hVObject->pETRLEObject[Item[gpItem->usItem].ubGraphicNum].sOffsetY;
   yp = sScreenY + (20 - sHeight - sOffsetY * 2) / 2;
 
-  BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, Item[gpItem->usItem].ubGraphicNum, xp,
-                                 yp, Get16BPPColor(FROMRGB(0, 140, 170)), TRUE);
+  BltVideoObjectOutlineFromIndex(vsIndexFB, uiVideoObjectIndex, Item[gpItem->usItem].ubGraphicNum,
+                                 xp, yp, Get16BPPColor(FROMRGB(0, 140, 170)), TRUE);
 
   // Display the item name above it
   SetFont(FONT10ARIAL);
@@ -890,7 +890,7 @@ void ProcessEditorRendering() {
       RenderDoorLockInfo();
   }
 
-  if (fSaveBuffer) BlitBufferToBuffer(vsFB, vsSB, 0, 360, 640, 120);
+  if (fSaveBuffer) BlitBufferToBuffer(vsIndexFB, vsSB, 0, 360, 640, 120);
 
   // Make sure this is TRUE at all times.
   // It is set to false when before we save the buffer, so the buttons don't get

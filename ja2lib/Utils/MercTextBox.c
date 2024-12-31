@@ -232,7 +232,7 @@ BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, uint32_t uiBuffer) {
   // sDestY, 0, 0, gPopUpTextBox->sWidth, gPopUpTextBox->sHeight);
 
   // Invalidate!
-  if (uiBuffer == vsFB) {
+  if (uiBuffer == vsIndexFB) {
     InvalidateRegion(sDestX, sDestY, (int16_t)(sDestX + gPopUpTextBox->sWidth),
                      (int16_t)(sDestY + gPopUpTextBox->sHeight));
   }
@@ -519,7 +519,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
   }
 #endif
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   SetFontShadow(DEFAULT_SHADOW);
 
   if (iBoxId == -1) {

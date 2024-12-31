@@ -6916,7 +6916,7 @@ void CreateSquadBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_RESIZE));
 
   // which buffer will box render to
-  SetBoxBuffer(ghSquadBox, vsFB);
+  SetBoxBuffer(ghSquadBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghSquadBox, guiPOPUPBORDERS);
@@ -6994,7 +6994,7 @@ void CreateEPCBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_RESIZE | POPUP_BOX_FLAG_CENTER_TEXT));
 
   // which buffer will box render to
-  SetBoxBuffer(ghEpcBox, vsFB);
+  SetBoxBuffer(ghEpcBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghEpcBox, guiPOPUPBORDERS);
@@ -7137,7 +7137,7 @@ BOOLEAN DisplayVehicleMenu(struct SOLDIERTYPE *pSoldier) {
 void CreateVehicleBox() {
   CreatePopUpBox(&ghVehicleBox, VehicleDimensions, VehiclePosition,
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
-  SetBoxBuffer(ghVehicleBox, vsFB);
+  SetBoxBuffer(ghVehicleBox, vsIndexFB);
   SetBorderType(ghVehicleBox, guiPOPUPBORDERS);
   SetBackGroundSurface(ghVehicleBox, guiPOPUPTEX);
   SetMargins(ghVehicleBox, 6, 6, 4, 4);
@@ -7147,7 +7147,7 @@ void CreateVehicleBox() {
 void CreateRepairBox(void) {
   CreatePopUpBox(&ghRepairBox, RepairDimensions, RepairPosition,
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
-  SetBoxBuffer(ghRepairBox, vsFB);
+  SetBoxBuffer(ghRepairBox, vsIndexFB);
   SetBorderType(ghRepairBox, guiPOPUPBORDERS);
   SetBackGroundSurface(ghRepairBox, guiPOPUPTEX);
   SetMargins(ghRepairBox, 6, 6, 4, 4);
@@ -7168,7 +7168,7 @@ void CreateContractBox(struct SOLDIERTYPE *pCharacter) {
 
   CreatePopUpBox(&ghContractBox, ContractDimensions, ContractPosition,
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_RESIZE));
-  SetBoxBuffer(ghContractBox, vsFB);
+  SetBoxBuffer(ghContractBox, vsIndexFB);
   SetBorderType(ghContractBox, guiPOPUPBORDERS);
   SetBackGroundSurface(ghContractBox, guiPOPUPTEX);
   SetMargins(ghContractBox, 6, 6, 4, 4);
@@ -7281,7 +7281,7 @@ void CreateAttributeBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
 
   // which buffer will box render to
-  SetBoxBuffer(ghAttributeBox, vsFB);
+  SetBoxBuffer(ghAttributeBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghAttributeBox, guiPOPUPBORDERS);
@@ -7342,7 +7342,7 @@ void CreateTrainingBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
 
   // which buffer will box render to
-  SetBoxBuffer(ghTrainingBox, vsFB);
+  SetBoxBuffer(ghTrainingBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghTrainingBox, guiPOPUPBORDERS);
@@ -7411,7 +7411,7 @@ void CreateAssignmentsBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
 
   // which buffer will box render to
-  SetBoxBuffer(ghAssignmentBox, vsFB);
+  SetBoxBuffer(ghAssignmentBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghAssignmentBox, guiPOPUPBORDERS);
@@ -7478,7 +7478,7 @@ void CreateMercRemoveAssignBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
 
   // which buffer will box render to
-  SetBoxBuffer(ghRemoveMercAssignBox, vsFB);
+  SetBoxBuffer(ghRemoveMercAssignBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghRemoveMercAssignBox, guiPOPUPBORDERS);

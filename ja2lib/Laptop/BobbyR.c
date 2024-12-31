@@ -297,33 +297,33 @@ void RenderBobbyR() {
 
   // Bobby's Name
   GetVideoObject(&hPixHandle, guiBobbyName);
-  BltVideoObject(vsFB, hPixHandle, 0, BOBBY_RAYS_NAME_X, BOBBY_RAYS_NAME_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBY_RAYS_NAME_X, BOBBY_RAYS_NAME_Y);
 
   // Plaque
   GetVideoObject(&hPixHandle, guiPlaque);
-  BltVideoObject(vsFB, hPixHandle, 0, BOBBYS_PLAQUES_X, BOBBYS_PLAQUES_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBYS_PLAQUES_X, BOBBYS_PLAQUES_Y);
 
   // Top Hinge
   GetVideoObject(&hPixHandle, guiTopHinge);
-  BltVideoObject(vsFB, hPixHandle, 0, BOBBIES_TOPHINGE_X, BOBBIES_TOPHINGE_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBIES_TOPHINGE_X, BOBBIES_TOPHINGE_Y);
 
   // Bottom Hinge
   GetVideoObject(&hPixHandle, guiBottomHinge);
-  BltVideoObject(vsFB, hPixHandle, 0, BOBBIES_BOTTOMHINGE_X, BOBBIES_BOTTOMHINGE_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBIES_BOTTOMHINGE_X, BOBBIES_BOTTOMHINGE_Y);
 
   // StorePlaque
   GetVideoObject(&hStorePlaqueHandle, guiStorePlaque);
-  BltVideoObject(vsFB, hStorePlaqueHandle, 0, BOBBIES_STORE_PLAQUE_X, BOBBIES_STORE_PLAQUE_Y);
+  BltVideoObject(vsIndexFB, hStorePlaqueHandle, 0, BOBBIES_STORE_PLAQUE_X, BOBBIES_STORE_PLAQUE_Y);
 
   // Handle
   GetVideoObject(&hPixHandle, guiHandle);
-  BltVideoObject(vsFB, hPixHandle, 0, BOBBIES_HANDLE_X, BOBBIES_HANDLE_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBIES_HANDLE_X, BOBBIES_HANDLE_Y);
 
   SetFontShadow(BOBBIES_SENTENCE_BACKGROUNDCOLOR);
 
   if (LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
     // Bobbys first sentence
-    //	ShadowText( vsFB, BobbyRaysFrontText[BOBBYR_ADVERTISMENT_1], BOBBIES_SENTENCE_FONT,
+    //	ShadowText( vsIndexFB, BobbyRaysFrontText[BOBBYR_ADVERTISMENT_1], BOBBIES_SENTENCE_FONT,
     // BOBBIES_FIRST_SENTENCE_X, BOBBIES_FIRST_SENTENCE_Y );
     DrawTextToScreen(BobbyRaysFrontText[BOBBYR_ADVERTISMENT_1], BOBBIES_FIRST_SENTENCE_X,
                      BOBBIES_FIRST_SENTENCE_Y, BOBBIES_FIRST_SENTENCE_WIDTH, BOBBIES_SENTENCE_FONT,
@@ -375,8 +375,8 @@ void RenderBobbyR() {
 
   // if we cant go to any sub pages, darken the page out
   if (!LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
-    ShadowVideoSurfaceRect(vsFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
-                           LAPTOP_SCREEN_WEB_LR_Y);
+    ShadowVideoSurfaceRect(vsIndexFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y,
+                           LAPTOP_SCREEN_LR_X, LAPTOP_SCREEN_WEB_LR_Y);
   }
 
   RenderWWWProgramTitleBar();
@@ -411,7 +411,7 @@ BOOLEAN DrawBobbyRWoodBackground() {
   for (y = 0; y < 4; y++) {
     uiPosX = BOBBY_WOOD_BACKGROUND_X;
     for (x = 0; x < 4; x++) {
-      BltVideoObject(vsFB, hWoodBackGroundHandle, 0, uiPosX, uiPosY);
+      BltVideoObject(vsIndexFB, hWoodBackGroundHandle, 0, uiPosX, uiPosY);
       uiPosX += BOBBY_WOOD_BACKGROUND_WIDTH;
     }
     uiPosY += BOBBY_WOOD_BACKGROUND_HEIGHT;
@@ -475,10 +475,10 @@ void HandleBobbyRUnderConstructionAni(BOOLEAN fReset) {
   if (((uiCurTime - uiLastTime) > BOBBYR_UNDERCONSTRUCTION_ANI_DELAY) || (fReDrawScreenFlag)) {
     // The undercontsruction graphic
     GetVideoObject(&hPixHandle, guiUnderConstructionImage);
-    BltVideoObject(vsFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
+    BltVideoObject(vsIndexFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
                    BOBBYR_UNDERCONSTRUCTION_Y);
 
-    BltVideoObject(vsFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
+    BltVideoObject(vsIndexFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
                    BOBBYR_UNDERCONSTRUCTION1_Y);
 
     DrawTextToScreen(BobbyRaysFrontText[BOBBYR_UNDER_CONSTRUCTION],

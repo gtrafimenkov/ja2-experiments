@@ -814,7 +814,7 @@ void RenderSelectionWindow(void) {
 
   if (!fButtonsPresent) return;
 
-  ColorFillVideoSurfaceArea(vsFB, 0, 0, 600, 400, GenericButtonFillColors[0]);
+  ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 600, 400, GenericButtonFillColors[0]);
   DrawSelections();
   MarkButtonsDirty();
   RenderButtons();
@@ -861,10 +861,10 @@ void RenderSelectionWindow(void) {
       else if (usFillGreen < 5)
         usDir = 5;
 
-      ColorFillVideoSurfaceArea(vsFB, iSX, iSY, iEX, iSY + 1, usFillColor);
-      ColorFillVideoSurfaceArea(vsFB, iSX, iEY, iEX, iEY + 1, usFillColor);
-      ColorFillVideoSurfaceArea(vsFB, iSX, iSY, iSX + 1, iEY, usFillColor);
-      ColorFillVideoSurfaceArea(vsFB, iEX, iSY, iEX + 1, iEY, usFillColor);
+      ColorFillVideoSurfaceArea(vsIndexFB, iSX, iSY, iEX, iSY + 1, usFillColor);
+      ColorFillVideoSurfaceArea(vsIndexFB, iSX, iEY, iEX, iEY + 1, usFillColor);
+      ColorFillVideoSurfaceArea(vsIndexFB, iSX, iSY, iSX + 1, iEY, usFillColor);
+      ColorFillVideoSurfaceArea(vsIndexFB, iEX, iSY, iEX + 1, iEY, usFillColor);
     }
   }
 }
@@ -1461,7 +1461,7 @@ BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBotto
       usFillColor = SelWinFillColor;
       if (pNode->fChosen) usFillColor = SelWinHilightFillColor;
 
-      ColorFillVideoSurfaceArea(vsFB, pNode->iX, iCurrY, pNode->iX + pNode->iWidth,
+      ColorFillVideoSurfaceArea(vsIndexFB, pNode->iX, iCurrY, pNode->iX + pNode->iWidth,
                                 iCurrY + pNode->iHeight, usFillColor);
     }
 
@@ -1469,8 +1469,8 @@ BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBotto
     if (pNode->fChosen) sCount = pSelList[FindInSelectionList(pNode)].sCount;
 
     SetObjectShade(pNode->hObj, DEFAULT_SHADE_LEVEL);
-    fReturnVal =
-        BltVideoObject(vsFB, pNode->hObj, pNode->uiIndex, (uint16_t)pNode->iX, (uint16_t)iCurrY);
+    fReturnVal = BltVideoObject(vsIndexFB, pNode->hObj, pNode->uiIndex, (uint16_t)pNode->iX,
+                                (uint16_t)iCurrY);
 
     if (sCount != 0) {
       gprintf(pNode->iX, iCurrY, L"%d", sCount);
