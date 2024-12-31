@@ -1521,9 +1521,6 @@ BOOLEAN HandleSpecialTerroristFile(int32_t iFileNumber, char *sPictureName) {
       // Blt face to screen to
       GetVideoObject(&hHandle, uiPicture);
 
-      // def: 3/24/99
-      //				BltVideoObject(vsFB, hHandle, 0,( int16_t ) (
-      // FILE_VIEWER_X +  30 ), ( int16_t ) ( iYPositionOnPage + 5), VO_BLT_SRCTRANSPARENCY,NULL);
       BltVideoObject(vsFB, hHandle, 0, (int16_t)(FILE_VIEWER_X + 30),
                      (int16_t)(iYPositionOnPage + 21));
 

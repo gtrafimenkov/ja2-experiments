@@ -15,9 +15,6 @@
 //
 // ************************************************************************************
 
-// Defines for blitting
-#define VO_BLT_SRCTRANSPARENCY 0x000000002
-
 // Defines for struct VObject* limits
 #define HVOBJECT_SHADE_TABLES 48
 

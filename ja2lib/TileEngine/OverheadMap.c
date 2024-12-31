@@ -668,11 +668,6 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
 
             pTile->vo->pShadeCurrent = gSmTileSurf[pTile->fType].vo->pShades[pNode->ubShadeLevel];
 
-            // RENDER!
-            // BltVObjectFromIndex(  vsFB, SGR1, gSmallTileDatabase[ gpWorldLevelData[
-            // usTileIndex ].pLandHead->usIndex ], sX, sY, VO_BLT_SRCTRANSPARENCY, NULL );
-            // BltVObjectFromIndex(  vsFB, SGR1, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL
-            // );
             Blt8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES, pTile->vo,
                                                 sX, sY, pTile->usSubIndex);
 

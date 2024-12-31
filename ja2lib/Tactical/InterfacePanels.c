@@ -2943,16 +2943,6 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
         RestoreExternBackgroundRect(sTEAMFacesXY[posIndex], sTEAMFacesXY[posIndex + 1],
                                     TM_FACE_WIDTH, TM_FACE_HEIGHT);
 
-        // BLIT AP CLOSE PANEL
-        // BltVObjectFromIndex( vsFB, guiTEAMObjects, 3, sTEAMAPPanelXY[ posIndex ],
-        // sTEAMAPPanelXY[ posIndex + 1 ], VO_BLT_SRCTRANSPARENCY, NULL );
-        // RestoreExternBackgroundRect( (int16_t)(sTEAMAPPanelXY[ posIndex ]),
-        // (int16_t)(sTEAMAPPanelXY[ posIndex + 1 ]), TM_APPANEL_WIDTH, TM_APPANEL_HEIGHT );
-        // InvalidateRegion( (int16_t)(sTEAMAPPanelXY[ posIndex ]), (int16_t)(sTEAMAPPanelXY[
-        // posIndex + 1 ]), (int16_t)(sTEAMAPPanelXY[ posIndex ] + TM_APPANEL_WIDTH),
-        // (int16_t)(sTEAMAPPanelXY[ posIndex
-        // + 1 ] + TM_APPANEL_HEIGHT ) );
-
         if (gTacticalStatus.ubCurrentTeam != OUR_TEAM || INTERRUPT_QUEUED) {
           // Hatch out...
           BltVObjectFromIndex(vsSB, guiTEAMObjects, 1, sTEAMFaceHighlXY[posIndex],
@@ -3006,18 +2996,6 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
                               sTEAMFaceHighlXY[posIndex + 1]);
           RestoreExternBackgroundRect(sTEAMFaceHighlXY[posIndex], sTEAMFaceHighlXY[posIndex + 1],
                                       TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT);
-          // Render non-selection
-          // BltVObjectFromIndex( vsSB, guiTEAMObjects, 4, sTEAMFaceHighlXY[ posIndex
-          // ], sTEAMFaceHighlXY[ posIndex + 1 ], VO_BLT_SRCTRANSPARENCY, NULL );
-          // RestoreExternBackgroundRect( sTEAMFaceHighlXY[ posIndex ], sTEAMFaceHighlXY[ posIndex +
-          // 1 ], TM_FACEHIGHTL_WIDTH, TM_FACEHIGHTL_HEIGHT );
-
-          // Render faceplate
-          // BltVObjectFromIndex( vsSB, guiTEAMObjects, 1, sTEAMFacesXY[ posIndex ] +
-          // TM_FACEPLATE_OFFSET_X, sTEAMFacesXY[ posIndex + 1 ] + TM_FACEPLATE_OFFSET_Y,
-          // VO_BLT_SRCTRANSPARENCY, NULL ); RestoreExternBackgroundRect( (int16_t)(sTEAMFacesXY[
-          // posIndex ] + TM_FACEPLATE_OFFSET_X), (int16_t)(sTEAMFacesXY[ posIndex + 1 ] +
-          // TM_FACEPLATE_OFFSET_Y ), TM_FACEPLATE_WIDTH, TM_FACEPLATE_HEIGHT );
         }
 
         CheckForFacePanelStartAnims(pSoldier, sTEAMFacesXY[posIndex], sTEAMFacesXY[posIndex + 1]);
