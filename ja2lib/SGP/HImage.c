@@ -495,35 +495,9 @@ uint16_t Get16BPPColor(uint32_t RGBValue) {
 
 // Convert from 16 BPP to RGBvalue
 uint32_t GetRGBColor(uint16_t Value16BPP) {
-  uint16_t r16, g16, b16;
-  uint32_t r, g, b, val;
-
-  r16 = Value16BPP & gusRedMask;
-  g16 = Value16BPP & gusGreenMask;
-  b16 = Value16BPP & gusBlueMask;
-
-  if (gusRedShift < 0)
-    r = ((uint32_t)r16 << abs(gusRedShift));
-  else
-    r = ((uint32_t)r16 >> gusRedShift);
-
-  if (gusGreenShift < 0)
-    g = ((uint32_t)g16 << abs(gusGreenShift));
-  else
-    g = ((uint32_t)g16 >> gusGreenShift);
-
-  if (gusBlueShift < 0)
-    b = ((uint32_t)b16 << abs(gusBlueShift));
-  else
-    b = ((uint32_t)b16 >> gusBlueShift);
-
-  r &= 0x000000ff;
-  g &= 0x000000ff;
-  b &= 0x000000ff;
-
-  val = FROMRGB(r, g, b);
-
-  return (val);
+  uint8_t r, g, b;
+  UnpackRGB16(Value16BPP, &r, &g, &b);
+  return FROMRGB(r, g, b);
 }
 
 //*****************************************************************************
