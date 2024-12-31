@@ -3018,8 +3018,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   vs->pPalette = NULL;
   vs->p16BPPPalette = NULL;
   vs->TransparentColor = FROMRGB(0, 0, 0);
-  vs->fFlags = 0;
-  vs->pClipper = NULL;
 
   SGPRect tempRect;
   tempRect.iLeft = 0;
@@ -3448,7 +3446,6 @@ struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurfac
   hVSurface->ubBitDepth = (uint8_t)PixelFormat.dwRGBBitCount;
   hVSurface->_platformData2 = (void *)lpDDSurface;
   hVSurface->_platformData1 = NULL;
-  hVSurface->fFlags = 0;
 
   // Get and Set palette, if attached, allow to fail
   ReturnCode = IDirectDrawSurface2_GetPalette(lpDDSurface, &pDDPalette);
