@@ -1775,7 +1775,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                 (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, hVObject, sXPos,
                                 sYPos, usImageIndex, &gClippingRect, pShadeTable);
 
-                            UnlockVSurfaceByID(vsSaveBufferID);
+                            UnlockVSurface(vsSaveBuffer);
 
                             // Turn it off!
                             pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);
@@ -1841,7 +1841,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                               (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, gpZBuffer, sZLevel,
                               hVObject, sXPos, sYPos, usImageIndex, &gClippingRect);
 
-                          UnlockVSurfaceByID(vsSaveBufferID);
+                          UnlockVSurface(vsSaveBuffer);
 
                           // Turn it off!
                           pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);
@@ -1899,7 +1899,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                 (uint16_t *)pSaveBuf, uiSaveBufferPitchBYTES, hVObject, sXPos,
                                 sYPos, usImageIndex, pShadeTable);
 
-                            UnlockVSurfaceByID(vsSaveBufferID);
+                            UnlockVSurface(vsSaveBuffer);
 
                             // Turn it off!
                             pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);
@@ -1967,7 +1967,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                                          uiSaveBufferPitchBYTES, gpZBuffer, sZLevel,
                                                          hVObject, sXPos, sYPos, usImageIndex);
 
-                          UnlockVSurfaceByID(vsSaveBufferID);
+                          UnlockVSurface(vsSaveBuffer);
 
                           // Turn it off!
                           pNode->uiFlags &= (~LEVELNODE_UPDATESAVEBUFFERONCE);

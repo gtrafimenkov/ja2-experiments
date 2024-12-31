@@ -9,12 +9,6 @@
 #include "Tactical/Interface.h"
 #include "TileEngine/IsometricUtils.h"
 
-// Global variables for video objects
-extern uint32_t vsSaveBufferID;
-extern uint32_t guiEXTRABUFFER;
-
-extern BOOLEAN gfExtraBuffer;
-
 BOOLEAN InitializeSystemVideoObjects();
 BOOLEAN InitializeGameVideoObjects();
 

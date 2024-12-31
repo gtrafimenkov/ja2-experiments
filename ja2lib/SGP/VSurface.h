@@ -19,6 +19,14 @@ extern struct VSurface *vsBackBuffer;
 extern struct VSurface *vsFB;
 extern struct VSurface *vsMouseBuffer;
 
+// Global variables for video objects
+extern uint32_t vsSaveBufferID;
+extern uint32_t guiEXTRABUFFER;
+
+extern struct VSurface *vsSaveBuffer;
+
+extern BOOLEAN gfExtraBuffer;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Video Surface SGP Module
