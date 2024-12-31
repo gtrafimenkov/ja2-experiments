@@ -5173,7 +5173,7 @@ void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t s
                               MAP_GRID_Y);
 
   // blit object to frame buffer
-  BltVideoObjectOld(vsIndexFB, hHandle, ubFrame, sScreenX, sScreenY);
+  BltVideoObject(vsFB, hHandle, ubFrame, sScreenX, sScreenY);
 
   // invalidate region on frame buffer
   InvalidateRegion(sScreenX, sScreenY - 1, sScreenX + MAP_GRID_X, sScreenY + MAP_GRID_Y);
