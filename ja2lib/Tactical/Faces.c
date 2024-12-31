@@ -572,11 +572,11 @@ void SetAutoFaceInActive(int32_t iFaceIndex) {
   }
 
   if (pFace->fAutoRestoreBuffer) {
-    DeleteVideoSurfaceFromIndex(pFace->uiAutoRestoreBuffer);
+    DeleteVSurfaceByIndex(pFace->uiAutoRestoreBuffer);
   }
 
   if (pFace->fAutoDisplayBuffer) {
-    DeleteVideoSurfaceFromIndex(pFace->uiAutoDisplayBuffer);
+    DeleteVSurfaceByIndex(pFace->uiAutoDisplayBuffer);
   }
 
   if (pFace->iVideoOverlay != -1) {

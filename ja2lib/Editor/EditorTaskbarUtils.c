@@ -207,9 +207,9 @@ void CreateEditorBuffers() {
 
 void DeleteEditorBuffers() {
   int32_t i;
-  DeleteVideoSurfaceFromIndex(guiMercTempBuffer);
+  DeleteVSurfaceByIndex(guiMercTempBuffer);
   for (i = 0; i < 9; i++) {
-    DeleteVideoSurfaceFromIndex(guiMercInvPanelBuffers[i]);
+    DeleteVSurfaceByIndex(guiMercInvPanelBuffers[i]);
   }
 }
 

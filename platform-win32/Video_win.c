@@ -2377,7 +2377,7 @@ enum {
   DEBUGSTR_SHADOWVIDEOSURFACERECT,
   DEBUGSTR_BLTSTRETCHVIDEOSURFACE_DST,
   DEBUGSTR_BLTSTRETCHVIDEOSURFACE_SRC,
-  DEBUGSTR_DELETEVIDEOSURFACEFROMINDEX
+  DEBUGSTR_DeleteVSurfaceByIndex
 };
 
 uint8_t gubVSDebugCode = 0;
@@ -2985,15 +2985,6 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
   return (TRUE);
 }
 
-BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex) {
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_DELETEVIDEOSURFACEFROMINDEX;
-  CheckValidVSurfaceIndex(uiIndex);
-#endif
-
-  return DeleteVSurfaceFromList(uiIndex);
-}
-
 // Deletes all palettes, surfaces and region data
 BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
   LPDIRECTDRAWSURFACE2 lpDDSurface;
@@ -3419,8 +3410,8 @@ void CheckValidVSurfaceIndex(uint32_t uiIndex) {
       case DEBUGSTR_BLTSTRETCHVIDEOSURFACE_SRC:
         sprintf(str, "BltStretchVideoSurface (src)");
         break;
-      case DEBUGSTR_DELETEVIDEOSURFACEFROMINDEX:
-        sprintf(str, "DeleteVideoSurfaceFromIndex");
+      case DEBUGSTR_DeleteVSurfaceByIndex:
+        sprintf(str, "DeleteVSurfaceByIndex");
         break;
       case DEBUGSTR_NONE:
       default:

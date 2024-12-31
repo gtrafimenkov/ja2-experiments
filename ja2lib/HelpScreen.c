@@ -1993,7 +1993,7 @@ BOOLEAN CreateHelpScreenTextBuffer() {
   return (TRUE);
 }
 
-void DestroyHelpScreenTextBuffer() { DeleteVideoSurfaceFromIndex(guiHelpScreenTextBufferSurface); }
+void DestroyHelpScreenTextBuffer() { DeleteVSurfaceByIndex(guiHelpScreenTextBufferSurface); }
 
 void RenderCurrentHelpScreenTextToBuffer() {
   // clear the buffer ( use 0, black as a transparent color

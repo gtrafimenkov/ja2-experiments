@@ -326,7 +326,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
   } else if (AddVSurfaceFromFile(filepath, &uiLoadScreen)) {  // Blit the background image
     GetVideoSurface(&hVSurface, uiLoadScreen);
     BltVSurfaceToVSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
-    DeleteVideoSurfaceFromIndex(uiLoadScreen);
+    DeleteVSurfaceByIndex(uiLoadScreen);
   } else {  // Failed to load the file, so use a black screen and print out message.
     SetFont(FONT10ARIAL);
     SetFontForeground(FONT_YELLOW);
