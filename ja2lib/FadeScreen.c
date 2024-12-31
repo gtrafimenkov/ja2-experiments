@@ -51,8 +51,6 @@ void FadeInBackBufferVersionOne();
 void FadeInBackBufferSquare();
 void FadeInFrameBufferRealFade();
 
-extern BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1,
-                                                          int32_t Y1, int32_t X2, int32_t Y2);
 BOOLEAN UpdateSaveBufferWithBackbuffer(void);
 
 BOOLEAN gfFadeIn = FALSE;

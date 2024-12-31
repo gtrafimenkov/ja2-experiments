@@ -271,16 +271,6 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
   return FALSE;
 }
 
-BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
-                               int32_t Y2) {
-  return FALSE;
-}
-
-BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
-                                                   int32_t X2, int32_t Y2) {
-  return FALSE;
-}
-
 BOOLEAN BltStretchVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, int32_t iDestX,
                                int32_t iDestY, uint32_t fBltFlags, SGPRect *SrcRect,
                                SGPRect *DestRect) {
@@ -293,6 +283,9 @@ BOOLEAN ShadowVideoSurfaceImage(uint32_t uiDestVSurface, struct VObject *hImageH
 }
 
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
+
+uint8_t *LockVideoSurfaceBuffer(struct VSurface *hVSurface, uint32_t *pPitch) { return NULL; }
+void UnLockVideoSurfaceBuffer(struct VSurface *hVSurface) {}
 
 BOOLEAN SmkPollFlics(void) { return FALSE; }
 
