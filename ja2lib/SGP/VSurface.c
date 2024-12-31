@@ -211,12 +211,12 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
                          &aRect)) {
     DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                String("Error Occured Copying HIMAGE to struct VSurface*"));
-    UnLockVideoSurfaceBuffer(hVSurface);
+    UnlockVSurface(hVSurface);
     return (FALSE);
   }
 
   // All is OK
-  UnLockVideoSurfaceBuffer(hVSurface);
+  UnlockVSurface(hVSurface);
 
   return (TRUE);
 }
