@@ -614,32 +614,14 @@ BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
       break;
 
     case 8:
-
-      // Switch based on flags given
-      do {
-        if (fBltFlags & VO_BLT_SRCTRANSPARENCY) {
-          if (BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect))
-            Blt8BPPDataTo16BPPBufferTransparentClip(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
-                                                    iDestY, usIndex, &ClippingRect);
-          else
-            Blt8BPPDataTo16BPPBufferTransparent(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
-                                                iDestY, usIndex);
-          break;
-        } else if (fBltFlags & VO_BLT_SHADOW) {
-          if (BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect))
-            Blt8BPPDataTo16BPPBufferShadowClip(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
-                                               iDestY, usIndex, &ClippingRect);
-          else
-            Blt8BPPDataTo16BPPBufferShadow(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX, iDestY,
-                                           usIndex);
-          break;
-        }
-        // Use default blitter here
-        // Blt8BPPDataTo16BPPBuffer( hDestVObject, hSrcVObject, (uint16_t)iDestX, (uint16_t)iDestY,
-        // (SGPRect*)&SrcRect );
-
-      } while (FALSE);
-
+      if (fBltFlags & VO_BLT_SRCTRANSPARENCY) {
+        if (BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect))
+          Blt8BPPDataTo16BPPBufferTransparentClip(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
+                                                  iDestY, usIndex, &ClippingRect);
+        else
+          Blt8BPPDataTo16BPPBufferTransparent(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
+                                              iDestY, usIndex);
+      }
       break;
   }
 
