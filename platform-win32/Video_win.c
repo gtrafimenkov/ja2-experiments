@@ -2687,7 +2687,17 @@ uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
 }
 
 void UnlockVSurface(struct VSurface *vs) {
-  IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL);
+  if (vs == vsPrimary) {
+    IDirectDrawSurface2_Unlock(gpPrimarySurface, NULL);
+  } else if (vs == vsBackBuffer) {
+    IDirectDrawSurface2_Unlock(gpBackBuffer, NULL);
+  } else if (vs == vsFB) {
+    IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
+  } else if (vs == vsMouseBuffer) {
+    IDirectDrawSurface2_Unlock(gpMouseCursor, NULL);
+  } else {
+    IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL);
+  }
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette
