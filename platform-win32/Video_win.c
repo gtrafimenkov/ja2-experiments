@@ -2674,10 +2674,11 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
-  DDSURFACEDESC SurfaceDescription;
+  if (vs == NULL) {
+    return NULL;
+  }
 
-  Assert(vs != NULL);
-  Assert(pPitch != NULL);
+  DDSURFACEDESC SurfaceDescription;
 
   DDLockSurface((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL, &SurfaceDescription, 0, NULL);
 
