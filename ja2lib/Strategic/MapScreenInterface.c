@@ -4105,11 +4105,11 @@ void RenderSoldierSmallFaceForUpdatePanel(int32_t iIndex, int32_t iX, int32_t iY
   ColorFillVideoSurfaceArea(vsSB, iX + 36, iY + 2, iX + 44, iY + 30, 0);
 
   // put down the background
-  BltVideoObjectFromIndex(vsSB, giMercPanelImage, 0, iX, iY, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsSB, giMercPanelImage, 0, iX, iY, VO_BLT_SRCTRANSPARENCY, NULL);
 
   // grab the face
-  BltVideoObjectFromIndex(vsSB, giUpdateSoldierFaces[iIndex], 0, iX + 2, iY + 2,
-                          VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsSB, giUpdateSoldierFaces[iIndex], 0, iX + 2, iY + 2, VO_BLT_SRCTRANSPARENCY,
+                      NULL);
 
   // HEALTH BAR
   pSoldier = pUpdateSoldierBox[iIndex];

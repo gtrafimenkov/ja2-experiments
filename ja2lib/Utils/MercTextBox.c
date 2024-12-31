@@ -477,12 +477,12 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
 
   // Icon if ness....
   if (pPopUpTextBox->uiFlags & MERC_POPUP_PREPARE_FLAGS_STOPICON) {
-    BltVideoObjectFromIndex(pPopUpTextBox->uiSourceBufferIndex, guiBoxIcons, 0, 5, 4,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(pPopUpTextBox->uiSourceBufferIndex, guiBoxIcons, 0, 5, 4,
+                        VO_BLT_SRCTRANSPARENCY, NULL);
   }
   if (pPopUpTextBox->uiFlags & MERC_POPUP_PREPARE_FLAGS_SKULLICON) {
-    BltVideoObjectFromIndex(pPopUpTextBox->uiSourceBufferIndex, guiSkullIcons, 0, 9, 4,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(pPopUpTextBox->uiSourceBufferIndex, guiSkullIcons, 0, 9, 4,
+                        VO_BLT_SRCTRANSPARENCY, NULL);
   }
 
   // Get the font and shadow colors

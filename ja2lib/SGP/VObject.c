@@ -219,9 +219,8 @@ BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex) {
   return FALSE;
 }
 
-BOOLEAN BltVideoObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
-                                uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY,
-                                uint32_t fBltFlags, blt_fx *pBltFx) {
+BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint16_t usRegionIndex,
+                            int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_fx *pBltFx) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
   struct VObject *hSrcVObject;
@@ -1196,7 +1195,7 @@ void CheckValidVObjectIndex(uint32_t uiIndex) {
         sprintf(str, "SetVideoObjectTransparency");
         break;
       case DEBUGSTR_BLTVIDEOOBJECTFROMINDEX:
-        sprintf(str, "BltVideoObjectFromIndex");
+        sprintf(str, "BltVObjectFromIndex");
         break;
       case DEBUGSTR_SETOBJECTHANDLESHADE:
         sprintf(str, "SetObjectHandleShade");
