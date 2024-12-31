@@ -724,7 +724,7 @@ void RenderHelpScreen() {
     gfHaveRenderedFirstFrameToSaveBuffer = TRUE;
 
     // blit everything to the save buffer ( cause the save buffer can bleed through )
-    BlitBufferToBuffer(vsFB, vsSB, gHelpScreen.usScreenLocX, gHelpScreen.usScreenLocY,
+    BlitBufferToBuffer(vsIndexFB, vsSB, gHelpScreen.usScreenLocX, gHelpScreen.usScreenLocY,
                        (uint16_t)(gHelpScreen.usScreenLocX + gHelpScreen.usScreenWidth),
                        (uint16_t)(gHelpScreen.usScreenLocY + gHelpScreen.usScreenHeight));
 
@@ -808,11 +808,11 @@ BOOLEAN DrawHelpScreenBackGround() {
 
   // if there are buttons, blit the button border
   if (gHelpScreen.bNumberOfButtons != 0) {
-    BltVideoObject(vsFB, hPixHandle, HLP_SCRN_BUTTON_BORDER, usPosX, gHelpScreen.usScreenLocY);
+    BltVideoObject(vsIndexFB, hPixHandle, HLP_SCRN_BUTTON_BORDER, usPosX, gHelpScreen.usScreenLocY);
     usPosX += HELP_SCREEN_BUTTON_BORDER_WIDTH;
   }
 
-  BltVideoObject(vsFB, hPixHandle, HLP_SCRN_DEFAULT_TYPE, usPosX, gHelpScreen.usScreenLocY);
+  BltVideoObject(vsIndexFB, hPixHandle, HLP_SCRN_DEFAULT_TYPE, usPosX, gHelpScreen.usScreenLocY);
 
   InvalidateRegion(gHelpScreen.usScreenLocX, gHelpScreen.usScreenLocY,
                    gHelpScreen.usScreenLocX + gHelpScreen.usScreenWidth,
@@ -1173,14 +1173,14 @@ uint16_t RenderSpecificHelpScreen() {
 
     default:
 #ifdef JA2BETAVERSION
-      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
       AssertMsg(0, "Error in help screen:  RenderSpecificHelpScreen().  DF 0");
 #else
       break;
 #endif
   }
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   // add 1 line to the bottom of the buffer
   usNumVerticalPixelsDisplayed += 10;
@@ -2011,7 +2011,7 @@ void RenderTextBufferToScreen() {
   struct VSurface *hDestVSurface, *hSrcVSurface;
   struct Rect SrcRect;
 
-  GetVideoSurface(&hDestVSurface, vsFB);
+  GetVideoSurface(&hDestVSurface, vsIndexFB);
   GetVideoSurface(&hSrcVSurface, guiHelpScreenTextBufferSurface);
 
   SrcRect.left = 0;
@@ -2121,11 +2121,11 @@ void DisplayHelpScreenTextBufferScrollBox() {
   if (!(gHelpScreen.usTotalNumberOfLinesInBuffer <=
         HLP_SCRN__MAX_NUMBER_DISPLAYED_LINES_IN_BUFFER)) {
     ColorFillVideoSurfaceArea(
-        vsFB, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
+        vsIndexFB, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
         iTopPosScrollBox + iSizeOfBox - 1, Get16BPPColor(FROMRGB(227, 198, 88)));
 
     // display the line
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
     // draw the gold highlite line on the top and left
@@ -2143,7 +2143,7 @@ void DisplayHelpScreenTextBufferScrollBox() {
              Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
 
     // unlock frame buffer
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
   }
 }
 

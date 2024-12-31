@@ -296,7 +296,7 @@ uint32_t SaveLoadScreenHandle() {
     PauseGame();
 
     // save the new rect
-    BlitBufferToBuffer(vsFB, vsSB, 0, 0, 639, 439);
+    BlitBufferToBuffer(vsIndexFB, vsSB, 0, 0, 639, 439);
   }
 
   RestoreBackgroundRects();
@@ -611,14 +611,14 @@ BOOLEAN EnterSaveLoadScreen() {
     ButtonList[guiSlgSaveLoadBtn]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
     // CLEAR THE FRAME BUFFER
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
 
-    // CLEAR THE vsFB
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    // CLEAR THE vsIndexFB
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
   }
 
   gfGettingNameFromSaveLoadScreen = FALSE;
@@ -687,7 +687,7 @@ void RenderSaveLoadScreen() {
   }
 
   GetVideoObject(&hPixHandle, guiSlgBackGroundImage);
-  BltVideoObject(vsFB, hPixHandle, 0, 0, 0);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, 0, 0);
 
   if (gfSaveGame) {
     // If we are saving a game
@@ -696,13 +696,13 @@ void RenderSaveLoadScreen() {
     //		DrawTextToScreen( zSaveLoadText[SLG_SAVE_GAME], 0, 10, 639, SAVE_LOAD_TITLE_FONT,
     // SAVE_LOAD_TITLE_COLOR, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED	);
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject(vsFB, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
+    BltVideoObject(vsIndexFB, hPixHandle, 1, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
   } else {
     // If we are Loading a game
 
     // Display the Title
     GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-    BltVideoObject(vsFB, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
+    BltVideoObject(vsIndexFB, hPixHandle, 0, SLG_TITLE_POS_X, SLG_TITLE_POS_Y);
   }
 
   DisplaySaveGameList();
@@ -1062,7 +1062,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
   // background
   GetVideoObject(&hPixHandle, guiBackGroundAddOns);
-  BltVideoObject(vsFB, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY);
+  BltVideoObject(vsIndexFB, hPixHandle, gbSaveGameSelectedLocation[bEntryID], usPosX, usPosY);
 
   //
   // Set the shadow color
@@ -1076,7 +1076,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
     // Shadow the slot
     //		if( !gbSaveGameArray[ bEntryID ] )
-    ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+    ShadowVideoSurfaceRect(vsIndexFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                            usPosY + SLG_SAVELOCATION_HEIGHT);
   }
 
@@ -1103,7 +1103,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
       uiFont = SAVE_LOAD_QUICKSAVE_FONT;
 
       // Shadow the surface
-      ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+      ShadowVideoSurfaceRect(vsIndexFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                              usPosY + SLG_SAVELOCATION_HEIGHT);
     } else {
       SetFontShadow(SAVE_LOAD_EMPTYSLOT_SHADOW_COLOR);
@@ -1843,7 +1843,7 @@ void DisplayOnScreenNumber(BOOLEAN fErase) {
       continue;
     }
 
-    BlitBufferToBuffer(vsSB, vsFB, usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 10, 10);
+    BlitBufferToBuffer(vsSB, vsIndexFB, usPosX, (uint16_t)(usPosY + SLG_DATE_OFFSET_Y), 10, 10);
 
     if (bLoopNum != 10) {
       bNum = bLoopNum;

@@ -151,7 +151,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       UpdateSaveBufferWithBackbuffer();
 
       // Clear framebuffer
-      ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
       break;
 
     case FADE_OUT_REALFADE:
@@ -162,7 +162,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       gfFadeInVideo = FALSE;
 
       // Clear framebuffer
-      // ColorFillVideoSurfaceArea( vsFB, 0, 0, 640, 480, Get16BPPColor( FROMRGB( 0, 0, 0 )
+      // ColorFillVideoSurfaceArea( vsIndexFB, 0, 0, 640, 480, Get16BPPColor( FROMRGB( 0, 0, 0 )
       // ) );
       break;
 
@@ -182,7 +182,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       gFadeFunction = (FADE_FUNCTION)FadeFrameBufferSquare;
 
       // Zero frame buffer
-      ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
       // ColorFillVideoSurfaceArea( vsSB, 0, 0, 640,	480, Get16BPPColor( FROMRGB( 0, 0, 0
       // ) ) );
 
@@ -275,7 +275,7 @@ uint32_t FadeScreenHandle() {
         case FADE_OUT_REALFADE:
 
           // Clear framebuffer
-          ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+          ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
           break;
       }
 
@@ -300,7 +300,7 @@ void FadeFrameBufferVersionOne() {
   uint32_t uiRGBColor;
   uint16_t s16BPPSrc;
 
-  pBuf = (uint16_t *)LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   // LOCK FRAME BUFFER
   for (cX = 0; cX < 640; cX++) {
@@ -328,7 +328,7 @@ void FadeFrameBufferVersionOne() {
     }
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void FadeInBackBufferVersionOne() {
@@ -341,7 +341,7 @@ void FadeInBackBufferVersionOne() {
   int16_t bFadeVal = (gsFadeLimit - gsFadeCount) * gbFadeValue;
 
   pDestBuf = (uint16_t *)LockVideoSurface(BACKBUFFER, &uiDestPitchBYTES);
-  pSrcBuf = (uint16_t *)LockVideoSurface(vsFB, &uiSrcPitchBYTES);
+  pSrcBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
 
   // LOCK FRAME BUFFER
   for (cX = 0; cX < 640; cX++) {
@@ -369,7 +369,7 @@ void FadeInBackBufferVersionOne() {
     }
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
   UnLockVideoSurface(BACKBUFFER);
 }
 
@@ -381,7 +381,7 @@ void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
   uint32_t uiRGBColor;
   uint16_t s16BPPSrc;
 
-  pBuf = (uint16_t *)LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   iStartX = gsFadeCount % 2;
   iStartY = 0;
@@ -418,7 +418,7 @@ void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
     }
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void FadeFrameBufferSide() {
@@ -430,12 +430,12 @@ void FadeFrameBufferSide() {
   iX1 = 0;
   iX2 = sFadeMove;
 
-  ColorFillVideoSurfaceArea(vsFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsIndexFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
 
   iX1 = 640 - sFadeMove;
   iX2 = 640;
 
-  ColorFillVideoSurfaceArea(vsFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVideoSurfaceArea(vsIndexFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
 }
 
 void FadeFrameBufferSquare() {
@@ -490,7 +490,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iRight != SrcRect.iLeft) {
-    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVideoSurface(BACKBUFFER, vsIndexFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   iX1 = giX2;
@@ -504,7 +504,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iRight != SrcRect.iLeft) {
-    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVideoSurface(BACKBUFFER, vsIndexFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   iX1 = giX1;
@@ -518,7 +518,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iBottom != SrcRect.iTop) {
-    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVideoSurface(BACKBUFFER, vsIndexFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   iX1 = giX1;
@@ -532,7 +532,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iBottom != SrcRect.iTop) {
-    BltVideoSurface(BACKBUFFER, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVideoSurface(BACKBUFFER, vsIndexFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   giX1 -= sFadeXMove;
@@ -543,7 +543,7 @@ void FadeInBackBufferSquare() {
 
 void FadeFrameBufferRealFade() {
   if (gsFadeRealCount != gsFadeCount) {
-    ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
+    ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 0, 0, 640, 480);
 
     gsFadeRealCount = gsFadeCount;
   }
@@ -554,7 +554,7 @@ void FadeInFrameBufferRealFade() {
 
   if (gsFadeRealCount != gsFadeCount) {
     for (cnt = 0; cnt < (gsFadeLimit - gsFadeCount); cnt++) {
-      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 0, 0, 640, 480);
     }
 
     // Refresh Screen
@@ -571,13 +571,13 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
   uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;
 
-  pSrcBuf = LockVideoSurface(vsFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
   pDestBuf = LockVideoSurface(vsSB, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, 0, 0, 640, 480);
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
   UnLockVideoSurface(vsSB);
 
   return (TRUE);

@@ -283,7 +283,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   }
 
   pDestBuf = LockVideoSurface(eInfo.uiBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(vsFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
 
   // copy a blank chunk of the editor interface to the new buffer.
   for (i = 0; i < eInfo.sWidth; i += 60) {
@@ -292,7 +292,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   }
 
   UnLockVideoSurface(eInfo.uiBuffer);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   x = 0;
   y = 0;
@@ -455,7 +455,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
         usCounter++;
       }
     }
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   SetClippingRect(&SaveRect);
   gfRenderTaskbar = TRUE;
 }
@@ -494,7 +494,7 @@ void RenderEditorItemsInfo() {
                              // highlighted.
     eInfo.sHilitedItemIndex = -1;
   }
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   pSrcBuf = LockVideoSurface(eInfo.uiBuffer, &uiSrcPitchBYTES);
 
   // copy the items buffer to the editor bar
@@ -502,7 +502,7 @@ void RenderEditorItemsInfo() {
                   360, 60 * eInfo.sScrollIndex, 0, 360, 80);
 
   UnLockVideoSurface(eInfo.uiBuffer);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   // calculate the min and max index that is currently shown.  This determines
   // if the highlighted and/or selected items are drawn with the outlines.
@@ -521,8 +521,8 @@ void RenderEditorItemsInfo() {
       sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
-        BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
-                                       Get16BPPColor(FROMRGB(250, 250, 0)), TRUE);
+        BltVideoObjectOutlineFromIndex(vsIndexFB, uiVideoObjectIndex, item->ubGraphicNum, sStart,
+                                       y + 2, Get16BPPColor(FROMRGB(250, 250, 0)), TRUE);
       }
     }
   }
@@ -538,8 +538,8 @@ void RenderEditorItemsInfo() {
       sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
-        BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
-                                       Get16BPPColor(FROMRGB(250, 0, 0)), TRUE);
+        BltVideoObjectOutlineFromIndex(vsIndexFB, uiVideoObjectIndex, item->ubGraphicNum, sStart,
+                                       y + 2, Get16BPPColor(FROMRGB(250, 0, 0)), TRUE);
       }
     }
   }

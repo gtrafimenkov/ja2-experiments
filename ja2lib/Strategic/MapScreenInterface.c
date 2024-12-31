@@ -2139,19 +2139,19 @@ void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion) {
   // too far
   if ((iY + iH) >= SCREEN_HEIGHT) iY = (SCREEN_HEIGHT - iH - 15);
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, iX + 1, iY + 1, iX + iW - 1, iY + iH - 1, Get16BPPColor(FROMRGB(65, 57, 15)),
                 pDestBuf);
   RectangleDraw(TRUE, iX, iY, iX + iW - 2, iY + iH - 2, Get16BPPColor(FROMRGB(227, 198, 88)),
                 pDestBuf);
-  UnLockVideoSurface(vsFB);
-  ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
-  ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
+  UnLockVideoSurface(vsIndexFB);
+  ShadowVideoSurfaceRect(vsIndexFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
+  ShadowVideoSurfaceRect(vsIndexFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
 
   // fillt he video surface areas
-  // ColorFillVideoSurfaceArea(vsFB, iX, iY, (iX + iW), (iY + iH), 0);
-  // ColorFillVideoSurfaceArea(vsFB, (iX + 1), (iY + 1), (iX + iW - 1), (iY + iH - 1),
+  // ColorFillVideoSurfaceArea(vsIndexFB, iX, iY, (iX + iW), (iY + iH), 0);
+  // ColorFillVideoSurfaceArea(vsIndexFB, (iX + 1), (iY + 1), (iX + iW - 1), (iY + iH - 1),
   // usFillColor);
 
   SetFont(FONT10ARIAL);
@@ -2735,7 +2735,7 @@ void CreatePopUpBoxForMovementBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_RESIZE));
 
   // which buffer will box render to
-  SetBoxBuffer(ghMoveBox, vsFB);
+  SetBoxBuffer(ghMoveBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghMoveBox, guiPOPUPBORDERS);
@@ -3950,7 +3950,7 @@ void DisplaySoldierUpdateBox() {
                          FONT_BLACK, 0, CENTER_JUSTIFIED);
   }
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   // restore extern background rect
   RestoreExternBackgroundRect((int16_t)(iX - 5), (int16_t)(iY - 5),
@@ -5167,7 +5167,7 @@ void HandleBlitOfSectorLocatorIcon(uint8_t sSectorX, uint8_t sSectorY, int16_t s
                               MAP_GRID_Y);
 
   // blit object to frame buffer
-  BltVideoObject(vsFB, hHandle, ubFrame, sScreenX, sScreenY);
+  BltVideoObject(vsIndexFB, hHandle, ubFrame, sScreenX, sScreenY);
 
   // invalidate region on frame buffer
   InvalidateRegion(sScreenX, sScreenY - 1, sScreenX + MAP_GRID_X, sScreenY + MAP_GRID_Y);

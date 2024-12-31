@@ -377,7 +377,7 @@ void RenderRubberBanding() {
   }
 
   // Draw rectangle.....
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, gsVIEWPORT_END_X, gsVIEWPORT_WINDOW_END_Y);
 
   usLineColor = Get16BPPColor(guiColors[iFlashColor]);
@@ -444,7 +444,7 @@ void RenderRubberBanding() {
     SetBackgroundRectFilled(iBack);
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void RenderTopmostTacticalInterface() {
@@ -534,7 +534,7 @@ void RenderTopmostTacticalInterface() {
             sX -= 10;
             sY -= 10;
 
-            BltVObjectFromIndex(vsFB, uiBogTarget, 0, sX, sY);
+            BltVObjectFromIndex(vsIndexFB, uiBogTarget, 0, sX, sY);
             InvalidateRegion(sX, sY, sX + 20, sY + 20);
           }
         }
@@ -744,7 +744,7 @@ void RenderTopmostTacticalInterface() {
   HandleShowingOfTacticalInterfaceFastHelpText();
   HandleShadingOfLinesForAssignmentMenus();
   DetermineBoxPositions();
-  DisplayBoxes(vsFB);
+  DisplayBoxes(vsIndexFB);
 }
 
 void StartViewportOverlays() {
@@ -768,7 +768,7 @@ void StartViewportOverlays() {
   gDirtyClipRect.iBottom = gsVIEWPORT_WINDOW_END_Y;
 
   SaveFontSettings();
-  SetFontDestBuffer(vsFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y, FALSE);
 }
 
 void EndViewportOverlays() {

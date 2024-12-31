@@ -1130,7 +1130,7 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
   }
 
   if (fHatchItOut) {
-    uint32_t uiWhichBuffer = (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? vsSB : vsFB;
+    uint32_t uiWhichBuffer = (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? vsSB : vsIndexFB;
     DrawHatchOnInventory(uiWhichBuffer, sX, sY, (uint16_t)(gSMInvData[sPocket].sWidth - 1),
                          (uint16_t)(gSMInvData[sPocket].sHeight - 1));
   }
@@ -1764,7 +1764,7 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
     BltVideoObjectOutlineFromIndex(uiBuffer, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
                                    sCenX, sCenY, sOutlineColor, fOutline);
 
-    if (uiBuffer == vsFB) {
+    if (uiBuffer == vsIndexFB) {
       InvalidateRegion(sX, sY, (int16_t)(sX + sWidth), (int16_t)(sY + sHeight));
     } else {
       RestoreExternBackgroundRect(sX, sY, sWidth, sHeight);
@@ -3204,7 +3204,7 @@ void RenderItemDescriptionBox() {
       }
       if (fHatchOutAttachments) {
         // uint32_t uiWhichBuffer = ( guiCurrentItemDescriptionScreen == MAP_SCREEN ) ?
-        // vsSB : vsFB;
+        // vsSB : vsIndexFB;
         DrawHatchOnInventory(
             vsSB, (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX),
             (int16_t)(gsInvDescY + gItemDescAttachmentsXY[cnt].sY - 2),
@@ -4753,7 +4753,7 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(vsFB, gsItemPopupInvX, gsItemPopupInvY,
+      ShadowVideoSurfaceRect(vsIndexFB, gsItemPopupInvX, gsItemPopupInvY,
                              gsItemPopupInvX + gsItemPopupInvWidth,
                              gsItemPopupInvY + gsItemPopupInvHeight);
     }
@@ -4764,13 +4764,14 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
   usWidth = (uint32_t)pTrav->usWidth;
 
   for (cnt = 0; cnt < gubNumItemPopups; cnt++) {
-    BltVObjectFromIndex(vsFB, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth), gsItemPopupY);
+    BltVObjectFromIndex(vsIndexFB, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth),
+                        gsItemPopupY);
 
     if (cnt < gpItemPopupObject->ubNumberOfObjects) {
       sX = (int16_t)(gsItemPopupX + (cnt * usWidth) + 11);
       sY = (int16_t)(gsItemPopupY + 3);
 
-      INVRenderItem(vsFB, NULL, gpItemPopupObject, sX, sY, 29, 23, DIRTYLEVEL2, NULL,
+      INVRenderItem(vsIndexFB, NULL, gpItemPopupObject, sX, sY, 29, 23, DIRTYLEVEL2, NULL,
                     (uint8_t)RENDER_ITEM_NOSTATUS, FALSE, 0);
 
       // Do status bar here...
@@ -4778,7 +4779,7 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
       sNewY = gsItemPopupY + INV_BAR_DY + 3;
       DrawItemUIBarEx(gpItemPopupObject, (uint8_t)cnt, sNewX, sNewY, ITEM_BAR_WIDTH,
                       ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR), Get16BPPColor(STATUS_BAR_SHADOW),
-                      TRUE, vsFB);
+                      TRUE, vsIndexFB);
     }
   }
 
@@ -4930,7 +4931,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(vsFB, 0, gsKeyRingPopupInvY,
+      ShadowVideoSurfaceRect(vsIndexFB, 0, gsKeyRingPopupInvY,
                              gsKeyRingPopupInvX + gsKeyRingPopupInvWidth,
                              gsKeyRingPopupInvY + gsKeyRingPopupInvHeight);
     }
@@ -4956,7 +4957,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
 
   for (cnt = 0; cnt < NUMBER_KEYS_ON_KEYRING; cnt++) {
     BltVObjectFromIndex(
-        vsFB, guiItemPopupBoxes, 0,
+        vsIndexFB, guiItemPopupBoxes, 0,
         (int16_t)(gsKeyRingPopupInvX + (cnt % sKeyRingItemWidth * usWidth) + sOffSetX),
         (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)));
 
@@ -4971,14 +4972,14 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
           (int16_t)(gsKeyRingPopupInvX + sOffSetX + (cnt % sKeyRingItemWidth * usWidth) + 7),
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight) + 24),
           ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, vsFB);
+          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, vsIndexFB);
 
       // set item type
       pObject.usItem = FIRST_KEY + LockTable[gpItemPopupSoldier->pKeyRing[cnt].ubKeyID].usKeyItem;
 
       // render the item
       INVRenderItem(
-          vsFB, NULL, &pObject,
+          vsIndexFB, NULL, &pObject,
           (int16_t)(gsKeyRingPopupInvX + sOffSetX + (cnt % sKeyRingItemWidth * usWidth) + 8),
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)),
           (uint16_t)(usWidth - 8), (uint16_t)(usHeight - 2), DIRTYLEVEL2, NULL, 0, 0, 0);
@@ -5732,7 +5733,7 @@ void RenderItemPickupMenu() {
         usSubRegion = 1;
       }
 
-      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY);
+      BltVObjectFromIndex(vsIndexFB, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY);
 
       // Add hieght of object
       GetVideoObjectETRLESubregionProperties(gItemPickupMenu.uiPanelVo, usSubRegion, &usWidth,
@@ -5744,16 +5745,16 @@ void RenderItemPickupMenu() {
     // Do end
     if (gItemPickupMenu.bNumSlotsPerPage == NUM_PICKUP_SLOTS &&
         gItemPickupMenu.ubTotalItems > NUM_PICKUP_SLOTS) {
-      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 2, sX, sY);
+      BltVObjectFromIndex(vsIndexFB, gItemPickupMenu.uiPanelVo, 2, sX, sY);
     } else {
-      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 3, sX, sY);
+      BltVObjectFromIndex(vsIndexFB, gItemPickupMenu.uiPanelVo, 3, sX, sY);
     }
 
     // Render items....
     sX = ITEMPICK_GRAPHIC_X + gItemPickupMenu.sX;
     sY = ITEMPICK_GRAPHIC_Y + gItemPickupMenu.sY;
 
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
     SetFont(ITEMDESC_FONT);
     SetFontBackground(FONT_MCOLOR_BLACK);
@@ -5876,7 +5877,7 @@ void RenderItemPickupMenu() {
 
     SetFontShadow(DEFAULT_SHADOW);
 
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
 
     InvalidateRegion(gItemPickupMenu.sX, gItemPickupMenu.sY,
                      gItemPickupMenu.sX + gItemPickupMenu.sWidth,

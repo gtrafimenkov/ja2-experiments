@@ -564,11 +564,12 @@ void RenderEmail(void) {
 
   // get and blt the email list background
   GetVideoObject(&hHandle, guiEmailBackground);
-  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, EMAIL_LIST_WINDOW_Y + LAPTOP_SCREEN_UL_Y);
+  BltVideoObject(vsIndexFB, hHandle, 0, LAPTOP_SCREEN_UL_X,
+                 EMAIL_LIST_WINDOW_Y + LAPTOP_SCREEN_UL_Y);
 
   // get and blt the email title bar
   GetVideoObject(&hHandle, guiEmailTitle);
-  BltVideoObject(vsFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2);
+  BltVideoObject(vsIndexFB, hHandle, 0, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_UL_Y - 2);
 
   // show text on titlebar
   DisplayTextOnTitleBar();
@@ -590,7 +591,7 @@ void RenderEmail(void) {
 
   // display border
   GetVideoObject(&hHandle, guiLaptopBACKGROUND);
-  BltVideoObject(vsFB, hHandle, 0, 108, 23);
+  BltVideoObject(vsIndexFB, hHandle, 0, 108, 23);
 
   ReDisplayBoxes();
 
@@ -1156,9 +1157,9 @@ void DrawLetterIcon(int32_t iCounter, BOOLEAN fRead) {
 
   // is it read or not?
   if (fRead)
-    BltVideoObject(vsFB, hHandle, 0, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2));
+    BltVideoObject(vsIndexFB, hHandle, 0, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2));
   else
-    BltVideoObject(vsFB, hHandle, 1, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2));
+    BltVideoObject(vsIndexFB, hHandle, 1, INDIC_X, (MIDDLE_Y + iCounter * MIDDLE_WIDTH + 2));
   return;
 }
 
@@ -1168,7 +1169,7 @@ void DrawSubject(int32_t iCounter, wchar_t *pSubject, BOOLEAN fRead) {
   // draw subject line of mail being viewed in viewer
 
   // lock buffer to prevent overwrite
-  SetFontDestBuffer(vsFB, SUBJECT_X, ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)),
+  SetFontDestBuffer(vsIndexFB, SUBJECT_X, ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)),
                     SUBJECT_X + SUBJECT_WIDTH,
                     ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)) + MIDDLE_WIDTH, FALSE);
   SetFontShadow(NO_SHADOW);
@@ -1200,7 +1201,7 @@ void DrawSubject(int32_t iCounter, wchar_t *pSubject, BOOLEAN fRead) {
   }
   SetFontShadow(DEFAULT_SHADOW);
   // reset font dest buffer
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   return;
 }
@@ -1497,8 +1498,8 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
   GetVideoObject(&hHandle, guiEmailMessage);
 
   // place the graphic on the frame buffer
-  BltVideoObject(vsFB, hHandle, 1, VIEWER_X, VIEWER_MESSAGE_BODY_START_Y + iViewerPositionY);
-  BltVideoObject(vsFB, hHandle, 1, VIEWER_X,
+  BltVideoObject(vsIndexFB, hHandle, 1, VIEWER_X, VIEWER_MESSAGE_BODY_START_Y + iViewerPositionY);
+  BltVideoObject(vsIndexFB, hHandle, 1, VIEWER_X,
                  VIEWER_MESSAGE_BODY_START_Y + GetFontHeight(MESSAGE_FONT) + iViewerPositionY);
 
   // set shadow
@@ -1508,11 +1509,11 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
   GetVideoObject(&hHandle, guiEmailMessage);
 
   // place the graphic on the frame buffer
-  BltVideoObject(vsFB, hHandle, 0, VIEWER_X, VIEWER_Y + iViewerPositionY);
+  BltVideoObject(vsIndexFB, hHandle, 0, VIEWER_X, VIEWER_Y + iViewerPositionY);
 
   // the icon for the title of this box
   GetVideoObject(&hHandle, guiTITLEBARICONS);
-  BltVideoObject(vsFB, hHandle, 0, VIEWER_X + 5, VIEWER_Y + iViewerPositionY + 2);
+  BltVideoObject(vsIndexFB, hHandle, 0, VIEWER_X + 5, VIEWER_Y + iViewerPositionY + 2);
 
   // display header text
   DisplayEmailMessageSubjectDateFromLines(pMail, iViewerPositionY);
@@ -1527,7 +1528,7 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
     GetVideoObject(&hHandle, guiEmailMessage);
 
     // place the graphic on the frame buffer
-    BltVideoObject(vsFB, hHandle, 1, VIEWER_X,
+    BltVideoObject(vsIndexFB, hHandle, 1, VIEWER_X,
                    iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
                        ((GetFontHeight(MESSAGE_FONT)) * (iCounter)));
   }
@@ -1537,12 +1538,12 @@ int32_t DisplayEmailMessage(EmailPtr pMail) {
 
   if (giNumberOfPagesToCurrentEmail <= 2) {
     // place the graphic on the frame buffer
-    BltVideoObject(vsFB, hHandle, 2, VIEWER_X,
+    BltVideoObject(vsIndexFB, hHandle, 2, VIEWER_X,
                    iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
                        ((GetFontHeight(MESSAGE_FONT)) * (iCounter)));
   } else {
     // place the graphic on the frame buffer
-    BltVideoObject(vsFB, hHandle, 3, VIEWER_X,
+    BltVideoObject(vsIndexFB, hHandle, 3, VIEWER_X,
                    iViewerPositionY + VIEWER_MESSAGE_BODY_START_Y +
                        ((GetFontHeight(MESSAGE_FONT)) * (iCounter)));
   }
@@ -1839,11 +1840,11 @@ BOOLEAN DisplayNewMailBox(void) {
   //	return ( FALSE );
 
   GetVideoObject(&hHandle, guiEmailWarning);
-  BltVideoObject(vsFB, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y);
+  BltVideoObject(vsIndexFB, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y);
 
   // the icon for the title of this box
   GetVideoObject(&hHandle, guiTITLEBARICONS);
-  BltVideoObject(vsFB, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2);
+  BltVideoObject(vsIndexFB, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2);
 
   // font stuff
   SetFont(EMAIL_HEADER_FONT);
@@ -2193,7 +2194,7 @@ BOOLEAN DisplayDeleteNotice(EmailPtr pMail) {
   // load graphics
 
   GetVideoObject(&hHandle, guiEmailWarning);
-  BltVideoObject(vsFB, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y);
+  BltVideoObject(vsIndexFB, hHandle, 0, EMAIL_WARNING_X, EMAIL_WARNING_Y);
 
   // font stuff
   SetFont(EMAIL_HEADER_FONT);
@@ -2203,7 +2204,7 @@ BOOLEAN DisplayDeleteNotice(EmailPtr pMail) {
 
   // the icon for the title of this box
   GetVideoObject(&hHandle, guiTITLEBARICONS);
-  BltVideoObject(vsFB, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2);
+  BltVideoObject(vsIndexFB, hHandle, 0, EMAIL_WARNING_X + 5, EMAIL_WARNING_Y + 2);
 
   // title
   mprintf(EMAIL_WARNING_X + 30, EMAIL_WARNING_Y + 8, pEmailTitleText[0]);
@@ -2541,7 +2542,7 @@ void DrawLineDividers(void) {
 
   for (iCounter = 1; iCounter < 19; iCounter++) {
     GetVideoObject(&hHandle, guiMAILDIVIDER);
-    BltVideoObject(vsFB, hHandle, 0, INDIC_X - 10, (MIDDLE_Y + iCounter * MIDDLE_WIDTH - 1));
+    BltVideoObject(vsIndexFB, hHandle, 0, INDIC_X - 10, (MIDDLE_Y + iCounter * MIDDLE_WIDTH - 1));
   }
 
   return;
@@ -4150,7 +4151,7 @@ BOOLEAN DisplayNumberOfPagesToThisEmail(int32_t iViewerY) {
   // turn off the shadows
   SetFontShadow(NO_SHADOW);
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   FindFontCenterCoordinates(VIEWER_X + INDENT_X_OFFSET, 0, INDENT_X_WIDTH, 0, sString, FONT12ARIAL,
                             &sX, &sY);

@@ -308,7 +308,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
   INVRenderItem(vsSB, NULL, &(pInventoryPoolList[iCurrentSlot + iFirstSlotOnPage].o),
                 (int16_t)(sX + 7), sY, 60, 25, DIRTYLEVEL2, NULL, 0, fOutLine, sOutLine);  // 67
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   // now draw bar for condition
   // Display ststus
@@ -379,7 +379,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
           }
   */
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   return (TRUE);
 }
@@ -1449,7 +1449,7 @@ void DisplayPagesForMapInventoryPool(void) {
 
   mprintf(sX, sY, sString);
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 }
 
 int32_t GetTotalNumberOfItemsInSectorStash(void) {
@@ -1503,7 +1503,7 @@ void DrawNumberOfIventoryPoolItems(void) {
 
   mprintf(sX, sY, sString);
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   return;
 }
@@ -1550,7 +1550,7 @@ void DisplayCurrentSector(void) {
 
   mprintf(sX, sY, sString);
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 }
 
 void CheckAndUnDateSlotAllocation(void) {
@@ -1598,7 +1598,7 @@ void DrawTextOnMapInventoryBackground(void) {
 
   DrawTextOnSectorInventory();
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   return;
 }
@@ -1650,7 +1650,7 @@ void DrawTextOnSectorInventory(void) {
 
   mprintf(sX, sY, sString);
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 }
 
 void HandleFlashForHighLightedItem(void) {

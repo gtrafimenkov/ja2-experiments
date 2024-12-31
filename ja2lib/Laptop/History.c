@@ -357,11 +357,11 @@ void RenderHistoryBackGround(void) {
   GetVideoObject(&hHandle, guiTITLE);
 
   // blt title bar to screen
-  BltVideoObject(vsFB, hHandle, 0, TOP_X, TOP_Y - 2);
+  BltVideoObject(vsIndexFB, hHandle, 0, TOP_X, TOP_Y - 2);
 
   // get and blt the top part of the screen, video object and blt to screen
   GetVideoObject(&hHandle, guiTOP);
-  BltVideoObject(vsFB, hHandle, 0, TOP_X, TOP_Y + 22);
+  BltVideoObject(vsIndexFB, hHandle, 0, TOP_X, TOP_Y + 22);
 
   // display background for history list
   DisplayHistoryListBackground();
@@ -715,13 +715,13 @@ void DisplayHistoryListBackground(void) {
   GetVideoObject(&hHandle, guiSHADELINE);
   for (iCounter = 0; iCounter < 11; iCounter++) {
     // blt title bar to screen
-    BltVideoObject(vsFB, hHandle, 0, TOP_X + 15, (TOP_DIVLINE_Y + BOX_HEIGHT * 2 * iCounter));
+    BltVideoObject(vsIndexFB, hHandle, 0, TOP_X + 15, (TOP_DIVLINE_Y + BOX_HEIGHT * 2 * iCounter));
   }
 
   // the long hortizontal line int he records list display region
   GetVideoObject(&hHandle, guiLONGLINE);
-  BltVideoObject(vsFB, hHandle, 0, TOP_X + 9, (TOP_DIVLINE_Y));
-  BltVideoObject(vsFB, hHandle, 0, TOP_X + 9, (TOP_DIVLINE_Y + BOX_HEIGHT * 2 * 11));
+  BltVideoObject(vsIndexFB, hHandle, 0, TOP_X + 9, (TOP_DIVLINE_Y));
+  BltVideoObject(vsIndexFB, hHandle, 0, TOP_X + 9, (TOP_DIVLINE_Y + BOX_HEIGHT * 2 * 11));
 
   return;
 }

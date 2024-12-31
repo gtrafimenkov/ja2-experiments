@@ -918,7 +918,7 @@ void ScreenMaskForGamePauseBtnCallBack(struct MOUSE_REGION* pRegion, int32_t iRe
 void RenderPausedGameBox(void) {
   if ((gfPauseDueToPlayerGamePause == TRUE) && (gfGamePaused == TRUE) && (iPausedPopUpBox != -1)) {
     RenderMercPopUpBoxFromIndex(iPausedPopUpBox, (int16_t)(320 - usPausedActualWidth / 2),
-                                (int16_t)(200 - usPausedActualHeight / 2), vsFB);
+                                (int16_t)(200 - usPausedActualHeight / 2), vsIndexFB);
     InvalidateRegion((int16_t)(320 - usPausedActualWidth / 2),
                      (int16_t)(200 - usPausedActualHeight / 2),
                      (int16_t)(320 - usPausedActualWidth / 2 + usPausedActualWidth),

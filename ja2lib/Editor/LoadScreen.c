@@ -488,15 +488,18 @@ void RemoveFileDialog(void) {
 }
 
 void DrawFileDialog(void) {
-  ColorFillVideoSurfaceArea(vsFB, 179, 69, (179 + 281), 261, Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(vsFB, 180, 70, (179 + 281), 261, Get16BPPColor(FROMRGB(24, 61, 81)));
-  ColorFillVideoSurfaceArea(vsFB, 180, 70, (179 + 280), 260, Get16BPPColor(FROMRGB(65, 79, 94)));
-
-  ColorFillVideoSurfaceArea(vsFB, (179 + 4), (69 + 3), (179 + 4 + 240), (69 + 123),
-                            Get16BPPColor(FROMRGB(24, 61, 81)));
-  ColorFillVideoSurfaceArea(vsFB, (179 + 5), (69 + 4), (179 + 4 + 240), (69 + 123),
+  ColorFillVideoSurfaceArea(vsIndexFB, 179, 69, (179 + 281), 261,
                             Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(vsFB, (179 + 5), (69 + 4), (179 + 3 + 240), (69 + 122),
+  ColorFillVideoSurfaceArea(vsIndexFB, 180, 70, (179 + 281), 261,
+                            Get16BPPColor(FROMRGB(24, 61, 81)));
+  ColorFillVideoSurfaceArea(vsIndexFB, 180, 70, (179 + 280), 260,
+                            Get16BPPColor(FROMRGB(65, 79, 94)));
+
+  ColorFillVideoSurfaceArea(vsIndexFB, (179 + 4), (69 + 3), (179 + 4 + 240), (69 + 123),
+                            Get16BPPColor(FROMRGB(24, 61, 81)));
+  ColorFillVideoSurfaceArea(vsIndexFB, (179 + 5), (69 + 4), (179 + 4 + 240), (69 + 123),
+                            Get16BPPColor(FROMRGB(136, 138, 135)));
+  ColorFillVideoSurfaceArea(vsIndexFB, (179 + 5), (69 + 4), (179 + 3 + 240), (69 + 122),
                             Get16BPPColor(FROMRGB(250, 240, 188)));
 
   MarkButtonsDirty();

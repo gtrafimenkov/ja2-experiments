@@ -1992,7 +1992,7 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
       }
 
       // reset the font dest buffer
-      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
       // Display bars
       DrawLifeUIBarEx(pSoldier, (int16_t)(pBlitter->sX + 69), (int16_t)(pBlitter->sY + 47), 3, 42,

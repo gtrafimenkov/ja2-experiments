@@ -537,19 +537,19 @@ void RenderMercs() {
 
   // Title
   GetVideoObject(&hPixHandle, guiMercSymbol);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_TITLE_X, MERC_TITLE_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_TITLE_X, MERC_TITLE_Y);
 
   // Speck Portrait
   GetVideoObject(&hPixHandle, guiSpecPortrait);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_PORTRAIT_X, MERC_PORTRAIT_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_PORTRAIT_X, MERC_PORTRAIT_Y);
 
   // Account Box
   GetVideoObject(&hPixHandle, guiAccountBox);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_ACCOUNT_BOX_X, MERC_ACCOUNT_BOX_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_ACCOUNT_BOX_X, MERC_ACCOUNT_BOX_Y);
 
   // Files Box
   GetVideoObject(&hPixHandle, guiFilesBox);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_FILE_BOX_X, MERC_FILE_BOX_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_FILE_BOX_X, MERC_FILE_BOX_Y);
 
   // Text on the Speck Portrait
   DisplayWrappedString(MERC_PORTRAIT_TEXT_X, MERC_PORTRAIT_TEXT_Y, MERC_PORTRAIT_TEXT_WIDTH, 2,
@@ -578,7 +578,7 @@ void RenderMercs() {
     DrawButton(guiAccountBoxButton);
     ButtonList[guiAccountBoxButton]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
-    RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsFB);
+    RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsIndexFB);
   }
 
   MarkButtonsDirty();
@@ -633,7 +633,8 @@ void BtnAccountBoxButtonCallback(GUI_BUTTON *btn, int32_t reason) {
       if (iMercPopUpBox != -1) {
         ButtonList[guiAccountBoxButton]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
-        RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsFB);
+        RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y,
+                                    vsIndexFB);
       }
 
       InvalidateRegion(btn->Area.RegionTopLeftX, btn->Area.RegionTopLeftY,
@@ -1001,8 +1002,8 @@ BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
   HandleTalkingAutoFaces();
 
   // Blt the face surface to the video background surface
-  if (!BltStretchVideoSurface(vsFB, guiMercVideoFaceBackground, 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
-                              &DestRect))
+  if (!BltStretchVideoSurface(vsIndexFB, guiMercVideoFaceBackground, 0, 0, VS_BLT_USECOLORKEY,
+                              &SrcRect, &DestRect))
     return (FALSE);
 
   // HandleCurrentMercDistortion();
@@ -1095,7 +1096,7 @@ BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, uint16_t usPosX, uint16_t usPosY, ui
   BOOLEAN fReturnStatus = FALSE;
   i = 0;
 
-  pBuffer = (uint16_t *)LockVideoSurface(vsFB, &uiPitch);
+  pBuffer = (uint16_t *)LockVideoSurface(vsIndexFB, &uiPitch);
   Assert(pBuffer);
 
   if (ubPixelationAmount == 255) {
@@ -1151,7 +1152,7 @@ BOOLEAN PixelateVideoMercImage(BOOLEAN fUp, uint16_t usPosX, uint16_t usPosY, ui
     }
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   return (fReturnStatus);
 }
@@ -1167,7 +1168,7 @@ BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth
   uint8_t uiReturnValue;
   uint16_t usEndOnLine = 0;
 
-  pBuffer = (uint16_t *)LockVideoSurface(vsFB, &uiPitch);
+  pBuffer = (uint16_t *)LockVideoSurface(vsIndexFB, &uiPitch);
   Assert(pBuffer);
 
   uiPitch /= 2;
@@ -1205,7 +1206,7 @@ BOOLEAN DistortVideoMercImage(uint16_t usPosX, uint16_t usPosY, uint16_t usWidth
       }
     }
   }
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   return (uiReturnValue);
 }
@@ -1277,7 +1278,7 @@ BOOLEAN DisplayMercVideoIntro(uint16_t usTimeTillFinish) {
   if (uiLastTime == 0) uiLastTime = uiCurTime;
 
   ColorFillVideoSurfaceArea(
-      vsFB, MERC_VIDEO_FACE_X, MERC_VIDEO_FACE_Y, MERC_VIDEO_FACE_X + MERC_VIDEO_FACE_WIDTH,
+      vsIndexFB, MERC_VIDEO_FACE_X, MERC_VIDEO_FACE_Y, MERC_VIDEO_FACE_X + MERC_VIDEO_FACE_WIDTH,
       MERC_VIDEO_FACE_Y + MERC_VIDEO_FACE_HEIGHT, Get16BPPColor(FROMRGB(0, 0, 0)));
 
   // if the intro is done
@@ -1352,7 +1353,7 @@ void HandleTalkingSpeck() {
             ButtonList[guiAccountBoxButton]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
             RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y,
-                                        vsFB);
+                                        vsIndexFB);
           }
         }
       }
@@ -1429,7 +1430,7 @@ void DisplayTextForSpeckVideoPopUp(wchar_t *pString) {
                       LAPTOP_SCREEN_UL_X;
 
   // Render the pop box
-  RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsFB);
+  RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsIndexFB);
 
   // check to make sure the region is not already initialized
   if (!(gMercSiteSubTitleMouseRegion.uiFlags & MSYS_REGION_EXISTS)) {
@@ -2044,7 +2045,7 @@ void DrawMercVideoBackGround() {
   struct VObject *hPixHandle;
 
   GetVideoObject(&hPixHandle, guiMercVideoPopupBackground);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_VIDEO_BACKGROUND_X, MERC_VIDEO_BACKGROUND_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_VIDEO_BACKGROUND_X, MERC_VIDEO_BACKGROUND_Y);
 
   // put the title on the window
   DrawTextToScreen(MercHomePageText[MERC_SPECK_COM], MERC_X_VIDEO_TITLE_X, MERC_X_VIDEO_TITLE_Y, 0,

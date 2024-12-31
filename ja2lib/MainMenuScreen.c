@@ -111,9 +111,9 @@ uint32_t MainMenuScreenHandle() {
   }
   if (guiSplashFrameFade) {  // Fade the splash screen.
     if (guiSplashFrameFade > 2)
-      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 0, 0, 640, 480);
     else if (guiSplashFrameFade > 1)
-      ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, 0);
+      ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, 0);
     else {
       SetMusicMode(MUSIC_MAIN_MENU);
     }
@@ -293,9 +293,9 @@ void ExitMainMenu() {
   gMsgBox.uiExitScreen = MAINMENU_SCREEN;
   /*
           // CLEAR THE FRAME BUFFER
-          pDestBuf = LockVideoSurface( vsFB, &uiDestPitchBYTES );
+          pDestBuf = LockVideoSurface( vsIndexFB, &uiDestPitchBYTES );
           memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES );
-          UnLockVideoSurface( vsFB );
+          UnLockVideoSurface( vsIndexFB );
           InvalidateScreen( );
   */
 }
@@ -406,9 +406,9 @@ void ClearMainMenu() {
   uint8_t *pDestBuf;
 
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
   InvalidateScreen();
 }
 
@@ -560,10 +560,10 @@ void RenderMainMenu() {
   // Get and display the background image
   GetVideoObject(&hPixHandle, guiMainMenuBackGroundImage);
   BltVideoObject(vsSB, hPixHandle, 0, 0, 0);
-  BltVideoObject(vsFB, hPixHandle, 0, 0, 0);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, 0, 0);
 
   GetVideoObject(&hPixHandle, guiJa2LogoImage);
-  BltVideoObject(vsFB, hPixHandle, 0, 188, 15);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, 188, 15);
   BltVideoObject(vsSB, hPixHandle, 0, 188, 15);
 
 #ifdef TESTFOREIGNFONTS

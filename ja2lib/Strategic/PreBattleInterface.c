@@ -718,7 +718,7 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
   sEndTop = 180;
 
   // save the mapscreen buffer
-  BlitBufferToBuffer(vsFB, guiEXTRABUFFER, 0, 0, 640, 480);
+  BlitBufferToBuffer(vsIndexFB, guiEXTRABUFFER, 0, 0, 640, 480);
 
   if (gfEnterAutoResolveMode) {  // If we are intending on immediately entering autoresolve, change
                                  // the global flag so that it will actually
@@ -736,13 +736,13 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     gfEnterAutoResolveMode = TRUE;
   }
 
-  BlitBufferToBuffer(vsSB, vsFB, 27, 54, 209, 32);
+  BlitBufferToBuffer(vsSB, vsIndexFB, 27, 54, 209, 32);
   RenderButtons();
-  BlitBufferToBuffer(vsFB, vsSB, 27, 54, 209, 32);
+  BlitBufferToBuffer(vsIndexFB, vsSB, 27, 54, 209, 32);
   gfRenderPBInterface = TRUE;
 
   // hide the prebattle interface
-  BlitBufferToBuffer(guiEXTRABUFFER, vsFB, 0, 0, 261, 359);
+  BlitBufferToBuffer(guiEXTRABUFFER, vsIndexFB, 0, 0, 261, 359);
   PlayJA2SampleFromFile("SOUNDS\\Laptop power up (8-11).wav", RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
   InvalidateScreen();
   RefreshScreen(NULL);
@@ -771,17 +771,17 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     DstRect.iTop = iTop - iHeight * iPercentage / 200;
     DstRect.iBottom = DstRect.iTop + max(iHeight * iPercentage / 100, 1);
 
-    BltStretchVideoSurface(vsFB, vsSB, 0, 0, 0, &PBIRect, &DstRect);
+    BltStretchVideoSurface(vsIndexFB, vsSB, 0, 0, 0, &PBIRect, &DstRect);
 
     InvalidateScreen();
     RefreshScreen(NULL);
 
     // Restore the previous rect.
-    BlitBufferToBuffer(guiEXTRABUFFER, vsFB, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
+    BlitBufferToBuffer(guiEXTRABUFFER, vsIndexFB, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
                        (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
                        (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
   }
-  BlitBufferToBuffer(vsFB, vsSB, 0, 0, 640, 480);
+  BlitBufferToBuffer(vsIndexFB, vsSB, 0, 0, 640, 480);
 }
 
 void KillPreBattleInterface() {
@@ -1135,7 +1135,7 @@ void RenderPreBattleInterface() {
     RestoreExternBackgroundRect(0, 0, 261, 359);
 
     // restore font destinanation buffer to the frame buffer
-    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   } else if (gfBlinkHeader) {
     RenderPBHeader(&x, &width);  // the text is important enough to blink.
   }

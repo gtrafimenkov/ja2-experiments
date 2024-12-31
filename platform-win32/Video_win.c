@@ -2422,7 +2422,7 @@ uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
     return (uint8_t *)LockBackBuffer(puiPitch);
   }
 
-  if (uiVSurface == vsFB) {
+  if (uiVSurface == vsIndexFB) {
     return (uint8_t *)LockFrameBuffer(puiPitch);
   }
 
@@ -2452,7 +2452,7 @@ void UnLockVideoSurface(uint32_t uiVSurface) {
     return;
   }
 
-  if (uiVSurface == vsFB) {
+  if (uiVSurface == vsIndexFB) {
     UnlockFrameBuffer();
     return;
   }
@@ -2506,7 +2506,7 @@ BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
     return TRUE;
   }
 
-  if (uiIndex == vsFB) {
+  if (uiIndex == vsIndexFB) {
     *hVSurface = ghFrameBuffer;
     return TRUE;
   }
@@ -3666,7 +3666,7 @@ void SmkSetupVideo(void) {
   uint16_t usRed, usGreen, usBlue;
   struct VSurface *hVSurface;
 
-  GetVideoSurface(&hVSurface, vsFB);
+  GetVideoSurface(&hVSurface, vsIndexFB);
   lpVideoPlayback2 = (LPDIRECTDRAWSURFACE2)hVSurface->_platformData2;
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
