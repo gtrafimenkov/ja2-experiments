@@ -81,17 +81,6 @@ struct VSurface *FindVSurface(VSurfID id) {
   return NULL;
 }
 
-BOOLEAN RestoreVideoSurfaces() {
-  VSURFACE_NODE *curr = gpVSurfaceTail;
-  while (curr) {
-    if (!RestoreVideoSurface(curr->hVSurface)) {
-      return FALSE;
-    }
-    curr = curr->prev;
-  }
-  return TRUE;
-}
-
 bool DeleteVSurfaceFromList(VSurfID id) {
   VSURFACE_NODE *curr = gpVSurfaceHead;
   while (curr) {

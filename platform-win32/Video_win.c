@@ -3052,11 +3052,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BOOLEAN RestoreVideoSurface(struct VSurface *hVSurface) {
-  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, String("Failed to restore Video Surface surface"));
-  return (FALSE);
-}
-
 // Lock must be followed by release
 // Pitch MUST be used for all width calculations ( Pitch is in bytes )
 // The time between Locking and unlocking must be minimal
