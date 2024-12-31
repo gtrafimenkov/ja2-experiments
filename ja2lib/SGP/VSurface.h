@@ -35,8 +35,6 @@ struct VObject;
 #define VS_BLT_USEDESTCOLORKEY 0x000000200
 #define VS_BLT_FAST 0x000000004
 #define VS_BLT_CLIPPED 0x000000008
-#define VS_BLT_SRCREGION 0x000000010
-#define VS_BLT_DESTREGION 0x000000080
 #define VS_BLT_SRCSUBRECT 0x000000040
 #define VS_BLT_COLORFILLRECT 0x000000100
 #define VS_BLT_MIRROR_Y 0x000001000
@@ -52,18 +50,6 @@ typedef struct {
   uint16_t DestRegion;  // Given a DEST region for dest positions within the VO
 
 } blt_vs_fx;
-
-//
-// The following structure is used to define a region of the video Surface
-// These regions are stored via a HLIST
-//
-
-typedef struct {
-  SGPRect RegionCoords;  // Rectangle describing coordinates of region
-  SGPPoint Origin;       // Origin used for hot spots, etc
-  uint8_t ubHitMask;     // Byte flags for hit detection
-
-} VSURFACE_REGION;
 
 //
 // This structure is a video Surface. Contains a HLIST of regions
@@ -87,7 +73,6 @@ struct VSurface {
   uint16_t *p16BPPPalette;    // A 16BPP palette used for 8->16 blits
   COLORVAL TransparentColor;  // Defaults to 0,0,0
   void *pClipper;             // A void pointer encapsolated as a clipper Surface
-  HLIST RegionList;           // A List of regions within the video Surface
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,16 +153,6 @@ BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntr
 // Deletes all data, including palettes, regions, DD Surfaces
 BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface);
 BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Region manipulation functions
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Regions will allow creation of sections within the Surface to manipulate quickly and cleanly
-// An example would be a cursor tileset
-BOOLEAN GetVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex, VSURFACE_REGION *aRegion);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
