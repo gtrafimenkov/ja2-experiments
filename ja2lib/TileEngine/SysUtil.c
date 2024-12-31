@@ -24,11 +24,10 @@ BOOLEAN InitializeSystemVideoObjects() { return (TRUE); }
 BOOLEAN InitializeGameVideoObjects() {
   uint16_t usWidth;
   uint16_t usHeight;
-  uint8_t ubBitDepth;
 
-  GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
-  CHECKF(AddVSurface(CreateVSurfaceBlank(usWidth, usHeight, ubBitDepth), &vsSB));
-  CHECKF(AddVSurface(CreateVSurfaceBlank(usWidth, usHeight, ubBitDepth), &guiEXTRABUFFER));
+  GetCurrentVideoSettings(&usWidth, &usHeight);
+  CHECKF(AddVSurface(CreateVSurfaceBlank16(usWidth, usHeight), &vsSB));
+  CHECKF(AddVSurface(CreateVSurfaceBlank16(usWidth, usHeight), &guiEXTRABUFFER));
   gfExtraBuffer = TRUE;
 
   return (TRUE);
