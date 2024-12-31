@@ -188,13 +188,11 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   SGPRect SaveRect, NewRect;
   struct VObject *hVObject;
   uint32_t uiVideoObjectIndex;
-  uint16_t usUselessWidth, usUselessHeight;
   int16_t sWidth, sOffset, sStart;
   int16_t i, x, y;
   uint16_t usCounter;
   wchar_t pStr[100];  //, pStr2[ 100 ];
   wchar_t pItemName[SIZE_ITEM_NAME];
-  uint8_t ubBitDepth;
   BOOLEAN fTypeMatch;
   int32_t iEquipCount = 0;
 
@@ -277,10 +275,8 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   eInfo.sWidth = (eInfo.sNumItems > 12) ? ((eInfo.sNumItems + 1) / 2) * 60 : 360;
   eInfo.sHeight = 80;
   // Create item buffer
-  GetCurrentVideoSettings(&usUselessWidth, &usUselessHeight, &ubBitDepth);
-
   //!!!Memory check.  Create the item buffer
-  if (!AddVSurface(CreateVSurfaceBlank(eInfo.sWidth, eInfo.sHeight, ubBitDepth), &eInfo.uiBuffer)) {
+  if (!AddVSurface(CreateVSurfaceBlank16(eInfo.sWidth, eInfo.sHeight), &eInfo.uiBuffer)) {
     eInfo.fKill = TRUE;
     eInfo.fActive = FALSE;
     return;

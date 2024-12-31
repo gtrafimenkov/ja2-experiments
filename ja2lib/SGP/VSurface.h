@@ -41,7 +41,7 @@ struct VObject;
 struct VSurface {
   uint16_t usHeight;          // Height of Video Surface
   uint16_t usWidth;           // Width of Video Surface
-  uint8_t ubBitDepth;         // BPP ALWAYS 16!
+  uint8_t ubBitDepth;         // 8 or 16
   void *_platformData1;       // platform-specific data (Direct Draw One Interface)
   void *_platformData2;       // platform-specific data (Direct Draw Two Interface)
   uint32_t fFlags;            // Used to describe memory usage, etc
