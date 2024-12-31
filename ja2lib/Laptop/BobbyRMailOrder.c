@@ -1791,7 +1791,7 @@ void DrawGoldRectangle(int8_t bCityNum) {
                             usPosY + usHeight, Get16BPPColor(FROMRGB(186, 165, 68)));
 
   // display the line
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw the gold highlite line on the top and left

@@ -332,7 +332,7 @@ void DisplaySmallRedLineWithShadow(uint16_t usStartX, uint16_t usStartY, uint16_
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
 
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 

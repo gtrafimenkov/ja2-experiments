@@ -1085,7 +1085,7 @@ void DisplayFastHelp(struct MOUSE_REGION *region) {
     } else {
       uint8_t *pDestBuf;
       uint32_t uiDestPitchBYTES;
-      pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+      pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
       SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
       RectangleDraw(TRUE, iX + 1, iY + 1, iX + iW - 1, iY + iH - 1,
                     Get16BPPColor(FROMRGB(65, 57, 15)), pDestBuf);

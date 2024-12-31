@@ -735,7 +735,7 @@ void DisplayTopwareGermanyAddress() {
   ClipRect.iRight = 431;
   ClipRect.iTop = 390;
   ClipRect.iBottom = 475;
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
   UnlockVSurface(vsFB);
 

@@ -1605,7 +1605,7 @@ void DrawBarsInUIBox(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   // Draw breath points
 
   // Draw new size
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, gsVIEWPORT_WINDOW_START_Y, 640,
                                  (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y));
 
@@ -1728,7 +1728,7 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   BltVideoSurface(pBlitter->uiDestBuff, guiINTEXT, 0, pBlitter->pBackground->sLeft,
                   pBlitter->pBackground->sTop, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
-  pDestBuf = LockVideoSurface(pBlitter->uiDestBuff, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(pBlitter->uiDestBuff, &uiDestPitchBYTES);
 
   SetFont(pBlitter->uiFontID);
   SetFontBackground(pBlitter->ubFontBack);

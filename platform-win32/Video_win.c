@@ -360,7 +360,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // Blank out the frame buffer
   //
 
-  pTmpPointer = LockVideoSurface(vsIndexFB, &uiPitch);
+  pTmpPointer = LockVSurfaceByID(vsIndexFB, &uiPitch);
   memset(pTmpPointer, 0, 480 * uiPitch);
   UnlockVSurface(vsFB);
 
@@ -2247,7 +2247,7 @@ BOOLEAN ShutdownVideoSurfaceManager() {
   return TRUE;
 }
 
-uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
+uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
   //
   // Check if given backbuffer or primary buffer
   //

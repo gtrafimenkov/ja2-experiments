@@ -87,7 +87,7 @@ struct VSurface *GetVSurfaceByID(VSurfID id);
 // Returns a HVSurface for the specified index
 BOOLEAN GetVSurfaceByIndexOld(struct VSurface **pvs, VSurfID id);
 
-uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *uiPitch);
+uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *uiPitch);
 void UnlockVSurfaceByID(VSurfID id);
 
 // Blits a video Surface to another video Surface

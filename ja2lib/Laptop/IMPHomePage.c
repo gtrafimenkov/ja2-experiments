@@ -195,7 +195,7 @@ void DisplayActivationStringCursor(void) {
     uiBaseTime = GetJA2Clock();
   }
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state

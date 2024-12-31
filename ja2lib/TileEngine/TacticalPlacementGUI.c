@@ -480,7 +480,7 @@ void RenderTacticalPlacementGUI() {
           break;
       }
     }
-    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
     Blt16BPPBufferLooseHatchRectWithColor((uint16_t *)pDestBuf, uiDestPitchBYTES, &gTPClipRect,
                                           usHatchColor);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
