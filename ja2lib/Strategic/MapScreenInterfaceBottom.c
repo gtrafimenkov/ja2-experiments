@@ -255,7 +255,7 @@ void RenderMapScreenInterfaceBottom(void) {
   if (fMapScreenBottomDirty == TRUE) {
     // get and blt panel
     GetVideoObject(&hHandle, guiMAPBOTTOMPANEL);
-    BltVideoObject(vsSaveBufferID, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y);
+    BltVideoObjectOld(vsSaveBufferID, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y);
 
     if (GetSectorFlagStatus(sSelMapX, sSelMapY, (uint8_t)iCurrentMapSectorZ, SF_ALREADY_VISITED) ==
         TRUE) {
@@ -896,8 +896,8 @@ void DisplayScrollBarSlider() {
                      (ubNumMessages - MAX_MESSAGES_ON_MAP_BOTTOM);
 
     GetVideoObject(&hHandle, guiSliderBar);
-    BltVideoObject(vsIndexFB, hHandle, 8, MESSAGE_SCROLL_AREA_START_X + 2,
-                   MESSAGE_SCROLL_AREA_START_Y + ubSliderOffset);
+    BltVideoObjectOld(vsIndexFB, hHandle, 8, MESSAGE_SCROLL_AREA_START_X + 2,
+                      MESSAGE_SCROLL_AREA_START_Y + ubSliderOffset);
   }
 }
 

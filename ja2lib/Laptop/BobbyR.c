@@ -297,27 +297,28 @@ void RenderBobbyR() {
 
   // Bobby's Name
   GetVideoObject(&hPixHandle, guiBobbyName);
-  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBY_RAYS_NAME_X, BOBBY_RAYS_NAME_Y);
+  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, BOBBY_RAYS_NAME_X, BOBBY_RAYS_NAME_Y);
 
   // Plaque
   GetVideoObject(&hPixHandle, guiPlaque);
-  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBYS_PLAQUES_X, BOBBYS_PLAQUES_Y);
+  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, BOBBYS_PLAQUES_X, BOBBYS_PLAQUES_Y);
 
   // Top Hinge
   GetVideoObject(&hPixHandle, guiTopHinge);
-  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBIES_TOPHINGE_X, BOBBIES_TOPHINGE_Y);
+  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, BOBBIES_TOPHINGE_X, BOBBIES_TOPHINGE_Y);
 
   // Bottom Hinge
   GetVideoObject(&hPixHandle, guiBottomHinge);
-  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBIES_BOTTOMHINGE_X, BOBBIES_BOTTOMHINGE_Y);
+  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, BOBBIES_BOTTOMHINGE_X, BOBBIES_BOTTOMHINGE_Y);
 
   // StorePlaque
   GetVideoObject(&hStorePlaqueHandle, guiStorePlaque);
-  BltVideoObject(vsIndexFB, hStorePlaqueHandle, 0, BOBBIES_STORE_PLAQUE_X, BOBBIES_STORE_PLAQUE_Y);
+  BltVideoObjectOld(vsIndexFB, hStorePlaqueHandle, 0, BOBBIES_STORE_PLAQUE_X,
+                    BOBBIES_STORE_PLAQUE_Y);
 
   // Handle
   GetVideoObject(&hPixHandle, guiHandle);
-  BltVideoObject(vsIndexFB, hPixHandle, 0, BOBBIES_HANDLE_X, BOBBIES_HANDLE_Y);
+  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, BOBBIES_HANDLE_X, BOBBIES_HANDLE_Y);
 
   SetFontShadow(BOBBIES_SENTENCE_BACKGROUNDCOLOR);
 
@@ -411,7 +412,7 @@ BOOLEAN DrawBobbyRWoodBackground() {
   for (y = 0; y < 4; y++) {
     uiPosX = BOBBY_WOOD_BACKGROUND_X;
     for (x = 0; x < 4; x++) {
-      BltVideoObject(vsIndexFB, hWoodBackGroundHandle, 0, uiPosX, uiPosY);
+      BltVideoObjectOld(vsIndexFB, hWoodBackGroundHandle, 0, uiPosX, uiPosY);
       uiPosX += BOBBY_WOOD_BACKGROUND_WIDTH;
     }
     uiPosY += BOBBY_WOOD_BACKGROUND_HEIGHT;
@@ -475,11 +476,11 @@ void HandleBobbyRUnderConstructionAni(BOOLEAN fReset) {
   if (((uiCurTime - uiLastTime) > BOBBYR_UNDERCONSTRUCTION_ANI_DELAY) || (fReDrawScreenFlag)) {
     // The undercontsruction graphic
     GetVideoObject(&hPixHandle, guiUnderConstructionImage);
-    BltVideoObject(vsIndexFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
-                   BOBBYR_UNDERCONSTRUCTION_Y);
+    BltVideoObjectOld(vsIndexFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
+                      BOBBYR_UNDERCONSTRUCTION_Y);
 
-    BltVideoObject(vsIndexFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
-                   BOBBYR_UNDERCONSTRUCTION1_Y);
+    BltVideoObjectOld(vsIndexFB, hPixHandle, usCount, BOBBYR_UNDERCONSTRUCTION_X,
+                      BOBBYR_UNDERCONSTRUCTION1_Y);
 
     DrawTextToScreen(BobbyRaysFrontText[BOBBYR_UNDER_CONSTRUCTION],
                      BOBBYR_UNDER_CONSTRUCTION_TEXT_X, BOBBYR_UNDER_CONSTRUCTION_TEXT_Y,
