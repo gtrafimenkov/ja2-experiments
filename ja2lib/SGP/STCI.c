@@ -10,6 +10,7 @@
 #include "SGP/ImgFmt.h"
 #include "SGP/MemMan.h"
 #include "SGP/Types.h"
+#include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 
 BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHeader *pHeader);
@@ -99,24 +100,27 @@ BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHeader 
     if (pHeader->ubDepth == 16) {
       // ASSUMPTION: file data is 565 R,G,B
 
-      if (gusRedMask != (uint16_t)pHeader->RGB.uiRedMask ||
-          gusGreenMask != (uint16_t)pHeader->RGB.uiGreenMask ||
-          gusBlueMask != (uint16_t)pHeader->RGB.uiBlueMask) {
+      uint16_t redMask, greenMask, blueMask;
+      GetRGB16Masks(&redMask, &greenMask, &blueMask);
+
+      if (redMask != (uint16_t)pHeader->RGB.uiRedMask ||
+          greenMask != (uint16_t)pHeader->RGB.uiGreenMask ||
+          blueMask != (uint16_t)pHeader->RGB.uiBlueMask) {
         // colour distribution of the file is different from hardware!  We have to change it!
         DbgMessage(TOPIC_HIMAGE, DBG_LEVEL_3, "Converting to current RGB distribution!");
         // Convert the image to the current hardware's specifications
-        if (gusRedMask > gusGreenMask && gusGreenMask > gusBlueMask) {
+        if (redMask > greenMask && greenMask > blueMask) {
           // hardware wants RGB!
-          if (gusRedMask == 0x7C00 && gusGreenMask == 0x03E0 &&
-              gusBlueMask == 0x001F) {  // hardware is 555
+          if (redMask == 0x7C00 && greenMask == 0x03E0 && blueMask == 0x001F) {
+            // hardware is 555
             ConvertRGBDistribution565To555(hImage->p16BPPData,
                                            pHeader->usWidth * pHeader->usHeight);
             return (TRUE);
-          } else if (gusRedMask == 0xFC00 && gusGreenMask == 0x03E0 && gusBlueMask == 0x001F) {
+          } else if (redMask == 0xFC00 && greenMask == 0x03E0 && blueMask == 0x001F) {
             ConvertRGBDistribution565To655(hImage->p16BPPData,
                                            pHeader->usWidth * pHeader->usHeight);
             return (TRUE);
-          } else if (gusRedMask == 0xF800 && gusGreenMask == 0x07C0 && gusBlueMask == 0x003F) {
+          } else if (redMask == 0xF800 && greenMask == 0x07C0 && blueMask == 0x003F) {
             ConvertRGBDistribution565To556(hImage->p16BPPData,
                                            pHeader->usWidth * pHeader->usHeight);
             return (TRUE);
