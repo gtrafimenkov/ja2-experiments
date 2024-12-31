@@ -25,8 +25,6 @@
 
 #define BLACK_SUBSTITUTE 0x0001
 
-uint16_t gusAlphaMask = 0;
-
 // this funky union is used for fast 16-bit pixel format conversions
 typedef union {
   struct {
@@ -376,7 +374,7 @@ BOOLEAN Copy8BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t us
 }
 
 uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette) {
-  uint16_t *p16BPPPalette, usColor;
+  uint16_t *p16BPPPalette;
   uint32_t cnt;
   uint8_t r, g, b;
 
@@ -389,12 +387,11 @@ uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette) {
     g = pPalette[cnt].peGreen;
     b = pPalette[cnt].peBlue;
 
-    usColor = PackColorsToRGB16(r, g, b);
+    uint16_t usColor = PackColorsToRGB16(r, g, b);
 
     if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-    } else
-      usColor |= gusAlphaMask;
+      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
+    }
 
     p16BPPPalette[cnt] = usColor;
   }
@@ -427,7 +424,7 @@ shaded according to each pixel's brightness.
 **********************************************************************************************/
 uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale,
                                    uint32_t gscale, uint32_t bscale, BOOLEAN mono) {
-  uint16_t *p16BPPPalette, usColor;
+  uint16_t *p16BPPPalette;
   uint32_t cnt, lumin;
   uint32_t rmod, gmod, bmod;
   uint8_t r, g, b;
@@ -453,12 +450,11 @@ uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rs
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    usColor = PackColorsToRGB16(r, g, b);
+    uint16_t usColor = PackColorsToRGB16(r, g, b);
 
     if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-    } else
-      usColor |= gusAlphaMask;
+      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
+    }
 
     p16BPPPalette[cnt] = usColor;
   }
@@ -480,9 +476,8 @@ uint16_t Get16BPPColor(uint32_t RGBValue) {
   // problems
 
   if (usColor == 0) {
-    if (RGBValue != 0) usColor = BLACK_SUBSTITUTE | gusAlphaMask;
-  } else
-    usColor |= gusAlphaMask;
+    if (RGBValue != 0) usColor = BLACK_SUBSTITUTE;
+  }
 
   return usColor;
 }
@@ -573,7 +568,7 @@ void ConvertRGBDistribution565To555(uint16_t *p16BPPData, uint32_t uiNumberOfPix
       // now shift back into the upper word
       Pixel.uiValue <<= 5;
       // and copy back
-      *pPixel = Pixel.usHigher | gusAlphaMask;
+      *pPixel = Pixel.usHigher;
     }
     pPixel++;
   }
