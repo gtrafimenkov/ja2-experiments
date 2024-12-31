@@ -2942,7 +2942,6 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
   vs->ubBitDepth = bitDepth;
   vs->pSurfaceData1 = (void *)lpDDS;
   vs->pSurfaceData = (void *)lpDDS2;
-  vs->RegionList = CreateList(DEFAULT_NUM_REGIONS, sizeof(VSURFACE_REGION));
 
   giMemUsedInSurfaces += (vs->usHeight * vs->usWidth * (vs->ubBitDepth / 8));
 
@@ -3026,7 +3025,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   vs->pPalette = NULL;
   vs->p16BPPPalette = NULL;
   vs->TransparentColor = FROMRGB(0, 0, 0);
-  vs->RegionList = CreateList(DEFAULT_NUM_REGIONS, sizeof(VSURFACE_REGION));
   vs->fFlags = 0;
   vs->pClipper = NULL;
 
@@ -3325,9 +3323,6 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
                      (LPDIRECTDRAWSURFACE2 *)&hVSurface->pSavedSurfaceData);
   }
 
-  // Release region data
-  DeleteList(hVSurface->RegionList);
-
   // If there is a 16bpp palette, free it
   if (hVSurface->p16BPPPalette != NULL) {
     MemFree(hVSurface->p16BPPPalette);
@@ -3347,16 +3342,6 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
 // Region manipulation functions
 //
 // ********************************************************
-
-BOOLEAN GetVSurfaceRegion(struct VSurface *hVSurface, uint16_t usIndex, VSURFACE_REGION *aRegion) {
-  Assert(hVSurface != NULL);
-
-  if (!PeekList(hVSurface->RegionList, aRegion, usIndex)) {
-    return (FALSE);
-  }
-
-  return (TRUE);
-}
 
 BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
   Assert(hVSurface != NULL);
@@ -3382,7 +3367,6 @@ BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
 BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                                       uint16_t usIndex, int32_t iDestX, int32_t iDestY,
                                       int32_t fBltFlags, blt_vs_fx *pBltFx) {
-  VSURFACE_REGION aRegion;
   RECT SrcRect, DestRect;
   uint8_t *pSrcSurface8, *pDestSurface8;
   uint16_t *pDestSurface16, *pSrcSurface16;
@@ -3390,22 +3374,6 @@ BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSu
 
   // Assertions
   Assert(hDestVSurface != NULL);
-
-  // Check that both region and subrect are not given
-  if ((fBltFlags & VS_BLT_SRCREGION) && (fBltFlags & VS_BLT_SRCSUBRECT)) {
-    DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, String("Inconsistant blit flags given"));
-    return (FALSE);
-  }
-
-  // Check for dest src options
-  if (fBltFlags & VS_BLT_DESTREGION) {
-    CHECKF(pBltFx != NULL);
-    CHECKF(GetVSurfaceRegion(hDestVSurface, pBltFx->DestRegion, &aRegion));
-
-    // Set starting coordinates from destination region
-    iDestY = aRegion.RegionCoords.iTop;
-    iDestX = aRegion.RegionCoords.iLeft;
-  }
 
   // Check for fill, if true, fill entire region with color
   if (fBltFlags & VS_BLT_COLORFILL) {
@@ -3419,17 +3387,6 @@ BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSu
 
   // Check for source coordinate options - from region, specific rect or full src dimensions
   do {
-    // Get Region from index, if specified
-    if (fBltFlags & VS_BLT_SRCREGION) {
-      CHECKF(GetVSurfaceRegion(hSrcVSurface, usIndex, &aRegion))
-
-      SrcRect.top = (int)aRegion.RegionCoords.iTop;
-      SrcRect.left = (int)aRegion.RegionCoords.iLeft;
-      SrcRect.bottom = (int)aRegion.RegionCoords.iBottom;
-      SrcRect.right = (int)aRegion.RegionCoords.iRight;
-      break;
-    }
-
     // Use SUBRECT if specified
     if (fBltFlags & VS_BLT_SRCSUBRECT) {
       SGPRect aSubRect;
@@ -3592,7 +3549,6 @@ struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurfac
   hVSurface->pSurfaceData = (void *)lpDDSurface;
   hVSurface->pSurfaceData1 = NULL;
   hVSurface->pSavedSurfaceData = NULL;
-  hVSurface->RegionList = CreateList(DEFAULT_NUM_REGIONS, sizeof(VSURFACE_REGION));
   hVSurface->fFlags = 0;
 
   // Get and Set palette, if attached, allow to fail
