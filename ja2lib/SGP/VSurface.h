@@ -30,7 +30,6 @@ struct VObject;
 // Defines for blitting
 //
 
-#define VS_BLT_COLORFILL 0x000000020
 #define VS_BLT_USECOLORKEY 0x000000002
 #define VS_BLT_USEDESTCOLORKEY 0x000000200
 #define VS_BLT_FAST 0x000000004
