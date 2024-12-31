@@ -673,8 +673,6 @@ uint32_t QuestDebugScreenInit() {
 }
 
 uint32_t QuestDebugScreenHandle() {
-  StartFrameBufferRender();
-
   if (gfQuestDebugEntry) {
     PauseGame();
 

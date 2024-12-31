@@ -765,7 +765,7 @@ uint32_t ProcessFileIO() {
   char ubNewFilename[1024];
   switch (gbCurrentFileIOStatus) {
     case INITIATE_MAP_SAVE:  // draw save message
-      StartFrameBufferRender();
+
       SaveFontSettings();
       SetFont(HUGEFONT);
       SetFontForeground(FONT_LTKHAKI);

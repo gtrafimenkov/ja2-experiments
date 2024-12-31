@@ -223,8 +223,6 @@ void ConfirmGioIronManMessageBoxCallBack(uint8_t bExitValue);
 uint32_t GameInitOptionsScreenInit(void) { return (1); }
 
 uint32_t GameInitOptionsScreenHandle(void) {
-  StartFrameBufferRender();
-
   if (gfGIOScreenEntry) {
     //		PauseGame();
 

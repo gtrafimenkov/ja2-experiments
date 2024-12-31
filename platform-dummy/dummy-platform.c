@@ -242,8 +242,6 @@ BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uin
   return FALSE;
 }
 
-void StartFrameBufferRender(void) {}
-
 void EndFrameBufferRender(void) {}
 
 BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) { return FALSE; }
