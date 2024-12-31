@@ -194,12 +194,12 @@ static uint32_t guiDirtyRegionExCount;
 static BOOLEAN gfPrintFrameBuffer;
 static uint32_t guiPrintFrameBufferIndex;
 
-extern uint16_t gusRedMask;
-extern uint16_t gusGreenMask;
-extern uint16_t gusBlueMask;
-extern int16_t gusRedShift;
-extern int16_t gusBlueShift;
-extern int16_t gusGreenShift;
+static uint16_t gusRedMask;
+static uint16_t gusGreenMask;
+static uint16_t gusBlueMask;
+static int16_t gusRedShift;
+static int16_t gusBlueShift;
+static int16_t gusGreenShift;
 
 static void AddRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
                         uint32_t uiFlags);
@@ -4148,4 +4148,10 @@ void UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {
     *b = ((uint32_t)b16 << abs(gusBlueShift));
   else
     *b = ((uint32_t)b16 >> gusBlueShift);
+}
+
+void GetRGB16Masks(uint16_t *red, uint16_t *green, uint16_t *blue) {
+  *red = gusRedMask;
+  *green = gusGreenMask;
+  *blue = gusBlueMask;
 }

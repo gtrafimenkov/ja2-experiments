@@ -26,12 +26,6 @@
 #define BLACK_SUBSTITUTE 0x0001
 
 uint16_t gusAlphaMask = 0;
-uint16_t gusRedMask = 0;
-uint16_t gusGreenMask = 0;
-uint16_t gusBlueMask = 0;
-int16_t gusRedShift = 0;
-int16_t gusBlueShift = 0;
-int16_t gusGreenShift = 0;
 
 // this funky union is used for fast 16-bit pixel format conversions
 typedef union {

@@ -176,6 +176,7 @@ struct VSurface *FindVSurface(VSurfID id);
 
 uint16_t PackColorsToRGB16(uint8_t r, uint8_t g, uint8_t b);
 void UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b);
+void GetRGB16Masks(uint16_t *red, uint16_t *green, uint16_t *blue);
 
 //////////////////////////////////////////////////////////////////////////////
 //
