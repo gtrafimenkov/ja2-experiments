@@ -1768,7 +1768,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                           }
 
                           if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                            pSaveBuf = LockVideoSurface(vsSaveBufferID, &uiSaveBufferPitchBYTES);
+                            pSaveBuf = LockVSurface(vsSaveBuffer, &uiSaveBufferPitchBYTES);
 
                             // BLIT HERE
                             Blt8BPPDataTo16BPPBufferTransShadowClip(
@@ -1834,7 +1834,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                         }
 
                         if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                          pSaveBuf = LockVideoSurface(vsSaveBufferID, &uiSaveBufferPitchBYTES);
+                          pSaveBuf = LockVSurface(vsSaveBuffer, &uiSaveBufferPitchBYTES);
 
                           // BLIT HERE
                           Blt8BPPDataTo16BPPBufferTransZClip(
@@ -1892,7 +1892,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                           }
 
                           if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                            pSaveBuf = LockVideoSurface(vsSaveBufferID, &uiSaveBufferPitchBYTES);
+                            pSaveBuf = LockVSurface(vsSaveBuffer, &uiSaveBufferPitchBYTES);
 
                             // BLIT HERE
                             Blt8BPPDataTo16BPPBufferTransShadow(
@@ -1960,7 +1960,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                                            sYPos, usImageIndex);
 
                         if ((uiLevelNodeFlags & LEVELNODE_UPDATESAVEBUFFERONCE)) {
-                          pSaveBuf = LockVideoSurface(vsSaveBufferID, &uiSaveBufferPitchBYTES);
+                          pSaveBuf = LockVSurface(vsSaveBuffer, &uiSaveBufferPitchBYTES);
 
                           // BLIT HERE
                           Blt8BPPDataTo16BPPBufferTransZ((uint16_t *)pSaveBuf,

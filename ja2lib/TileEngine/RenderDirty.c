@@ -244,7 +244,7 @@ BOOLEAN RestoreBackgroundRects(void) {
   uint8_t *pDestBuf, *pSrcBuf;
 
   pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(vsSaveBufferID, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumBackSaves; uiCount++) {
     if (gBackSaves[uiCount].fFilled && (!gBackSaves[uiCount].fDisabled)) {
@@ -462,7 +462,7 @@ BOOLEAN UpdateSaveBuffer(void) {
   GetCurrentVideoSettings(&usWidth, &usHeight);
 
   pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
-  pDestBuf = LockVideoSurface(vsSaveBufferID, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   gsVIEWPORT_WINDOW_START_Y, 0, gsVIEWPORT_WINDOW_START_Y, usWidth,
@@ -481,7 +481,7 @@ BOOLEAN RestoreExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth,
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
   pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(vsSaveBufferID, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
@@ -511,7 +511,7 @@ BOOLEAN RestoreExternBackgroundRectGivenID(int32_t iBack) {
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
   pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(vsSaveBufferID, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
@@ -530,7 +530,7 @@ BOOLEAN CopyExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth, in
 
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
-  pDestBuf = LockVideoSurface(vsSaveBufferID, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
   pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
