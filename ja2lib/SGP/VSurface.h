@@ -42,9 +42,8 @@ struct VSurface {
   uint16_t usHeight;          // Height of Video Surface
   uint16_t usWidth;           // Width of Video Surface
   uint8_t ubBitDepth;         // BPP ALWAYS 16!
-  void *pSurfaceData;         // A void pointer, but for this implementation, is really a
-                              // lpDirectDrawSurface;
-  void *pSurfaceData1;        // Direct Draw One Interface
+  void *_platformData1;       // platform-specific data (Direct Draw One Interface)
+  void *_platformData2;       // platform-specific data (Direct Draw Two Interface)
   uint32_t fFlags;            // Used to describe memory usage, etc
   void *pPalette;             // A void pointer, but for this implementation a DDPalette
   uint16_t *p16BPPPalette;    // A 16BPP palette used for 8->16 blits
