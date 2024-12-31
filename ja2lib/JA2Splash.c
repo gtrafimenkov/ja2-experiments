@@ -30,7 +30,7 @@ void InitJA2SplashScreen() {
       return;
     }
     GetVideoSurface(&hVSurface, uiLogoID);
-    BltVSurfaceToVSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
+    BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVSurfaceByIndex(uiLogoID);
 
     InvalidateScreen();
@@ -61,7 +61,7 @@ void InitJA2SplashScreen() {
     }
 
     GetVideoSurface(&hVSurface, uiLogoID);
-    BltVSurfaceToVSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
+    BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVSurfaceByIndex(uiLogoID);
   }
 

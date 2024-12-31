@@ -187,7 +187,7 @@ void SoundRemoveSampleFlags(uint32_t uiSample, uint32_t uiFlags) {}
 // Video
 /////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *ghFrameBuffer = NULL;
+struct VSurface *vsFB = NULL;
 int32_t giNumFrames = 0;
 
 void InvalidateRegion(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom) {}
