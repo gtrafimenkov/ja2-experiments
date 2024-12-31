@@ -132,6 +132,10 @@ BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
 // These blitting functions more-or less encapsolate all of the functionality of DirectDraw
 // Blitting, giving an API layer for portability.
 
+BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
+                    uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect,
+                    struct Rect *DestRect);
+
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                               uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
                               SGPRect *srcRect);

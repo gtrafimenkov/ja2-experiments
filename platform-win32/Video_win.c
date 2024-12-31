@@ -3347,11 +3347,12 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
   return (TRUE);
 }
 
-static BOOLEAN BltVSurfaceUsingDDBlt(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                                     uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                                     struct Rect *SrcRect, RECT *DestRect) {
+BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
+                    uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect,
+                    struct Rect *DestRect) {
   uint32_t uiDDFlags;
   RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
+  RECT destRect = {DestRect->left, DestRect->top, DestRect->right, DestRect->bottom};
 
   // Default flags
   uiDDFlags = DDBLT_WAIT;
@@ -3361,48 +3362,8 @@ static BOOLEAN BltVSurfaceUsingDDBlt(struct VSurface *hDestVSurface, struct VSur
     uiDDFlags |= DDBLT_KEYSRC;
   }
 
-  DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, DestRect,
+  DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &destRect,
                (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags, NULL);
-
-  return (TRUE);
-}
-
-//
-// This function will stretch the source image to the size of the dest rect.
-//
-// If the 2 images are not 16 Bpp, it returns false.
-//
-BOOLEAN BltStretchVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, int32_t iDestX,
-                               int32_t iDestY, uint32_t fBltFlags, SGPRect *SrcRect,
-                               SGPRect *DestRect) {
-  struct VSurface *hDestVSurface;
-  struct VSurface *hSrcVSurface;
-
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_BLTSTRETCHVIDEOSURFACE_DST;
-#endif
-  if (!GetVideoSurface(&hDestVSurface, uiDestVSurface)) {
-    return FALSE;
-  }
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_BLTSTRETCHVIDEOSURFACE_SRC;
-#endif
-  if (!GetVideoSurface(&hSrcVSurface, uiSrcVSurface)) {
-    return FALSE;
-  }
-
-  // if the 2 images are not both 16bpp, return FALSE
-  if ((hDestVSurface->ubBitDepth != 16) && (hSrcVSurface->ubBitDepth != 16)) return (FALSE);
-
-  struct Rect srcRect = {SrcRect->iLeft, SrcRect->iTop, SrcRect->iRight, SrcRect->iBottom};
-  if (!BltVSurfaceUsingDDBlt(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &srcRect,
-                             (RECT *)DestRect)) {
-    //
-    // VO Blitter will set debug messages for error conditions
-    //
-
-    return (FALSE);
-  }
 
   return (TRUE);
 }

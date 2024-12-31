@@ -4,6 +4,7 @@
 
 #include "VSurface.h"
 
+#include "Rect.h"
 #include "SGP/Debug.h"
 #include "SGP/HImage.h"
 #include "SGP/VObject.h"
@@ -290,4 +291,30 @@ BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, 
 BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
                                                    int32_t X2, int32_t Y2) {
   return (InternalShadowVideoSurfaceRect(uiDestVSurface, X1, Y1, X2, Y2, TRUE));
+}
+
+//
+// This function will stretch the source image to the size of the dest rect.
+//
+// If the 2 images are not 16 Bpp, it returns false.
+//
+BOOLEAN BltStretchVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, int32_t iDestX,
+                               int32_t iDestY, uint32_t fBltFlags, SGPRect *SrcRect,
+                               SGPRect *DestRect) {
+  struct VSurface *hDestVSurface;
+  struct VSurface *hSrcVSurface;
+
+  if (!GetVideoSurface(&hDestVSurface, uiDestVSurface)) {
+    return FALSE;
+  }
+  if (!GetVideoSurface(&hSrcVSurface, uiSrcVSurface)) {
+    return FALSE;
+  }
+
+  // if the 2 images are not both 16bpp, return FALSE
+  if ((hDestVSurface->ubBitDepth != 16) && (hSrcVSurface->ubBitDepth != 16)) return (FALSE);
+
+  struct Rect srcRect = {SrcRect->iLeft, SrcRect->iTop, SrcRect->iRight, SrcRect->iBottom};
+  struct Rect destRect = {DestRect->iLeft, DestRect->iTop, DestRect->iRight, DestRect->iBottom};
+  return BltVSurface(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &srcRect, &destRect);
 }
