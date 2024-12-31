@@ -135,9 +135,8 @@ BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex);
 BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hVSrcObject, uint16_t usRegionIndex,
                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_fx *pBltFx);
 
-BOOLEAN BltVideoObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
-                                uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY,
-                                uint32_t fBltFlags, blt_fx *pBltFx);
+BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint16_t usRegionIndex,
+                            int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_fx *pBltFx);
 
 // Sets transparency
 BOOLEAN SetVideoObjectTransparency(uint32_t uiIndex, COLORVAL TransColor);

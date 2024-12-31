@@ -5200,7 +5200,7 @@ void EndMapScreen(BOOLEAN fDuringFade) {
     sprintf(VObjectDesc.ImageFile, "INTERFACE\\LaptopOn.sti");
     if (!AddStandardVideoObject(&VObjectDesc, &uiLaptopOn))
       AssertMsg(0, "Failed to load data\\Interface\\LaptopOn.sti");
-    BltVideoObjectFromIndex(vsFB, uiLaptopOn, 0, 465, 417, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, uiLaptopOn, 0, 465, 417, VO_BLT_SRCTRANSPARENCY, NULL);
     InvalidateRegion(465, 417, 480, 427);
     ExecuteBaseDirtyRectQueue();
     EndFrameBufferRender();
@@ -9220,10 +9220,10 @@ void CheckForAndRenderNewMailOverlay() {
     if (GetJA2Clock() % 1000 < 667) {
       if (ButtonList[guiMapBottomExitButtons[MAP_EXIT_TO_LAPTOP]]->uiFlags &
           BUTTON_CLICKED_ON) {  // button is down, so offset the icon
-        BltVideoObjectFromIndex(vsFB, guiNewMailIcons, 1, 465, 418, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsFB, guiNewMailIcons, 1, 465, 418, VO_BLT_SRCTRANSPARENCY, NULL);
         InvalidateRegion(465, 418, 480, 428);
       } else {  // button is up, so draw the icon normally
-        BltVideoObjectFromIndex(vsFB, guiNewMailIcons, 0, 464, 417, VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsFB, guiNewMailIcons, 0, 464, 417, VO_BLT_SRCTRANSPARENCY, NULL);
         if (!(ButtonList[guiMapBottomExitButtons[MAP_EXIT_TO_LAPTOP]]->uiFlags & BUTTON_ENABLED)) {
           uint32_t uiDestPitchBYTES;
           uint8_t *pDestBuf;

@@ -594,7 +594,7 @@ void PopupMovementMenu(UI_EVENT *pUIEvent) {
   }
 
   // Blit background!
-  // BltVideoObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
+  // BltVObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
   // VO_BLT_SRCTRANSPARENCY, NULL );
 
   iMenuAnchorX = giMenuAnchorX + 9;
@@ -853,8 +853,8 @@ void PopDownMovementMenu() {
 
 void RenderMovementMenu() {
   if (gfInMovementMenu) {
-    BltVideoObjectFromIndex(vsFB, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY,
+                        VO_BLT_SRCTRANSPARENCY, NULL);
 
     // Mark buttons dirty!
     MarkAButtonDirty(iActionIcons[WALK_ICON]);
@@ -1343,13 +1343,13 @@ void DrawSelectedUIAboveGuy(uint16_t usSoldierID) {
         }
 
         if ((!pSoldier->bNeutral && (pSoldier->bSide != gbPlayerNum))) {
-          BltVideoObjectFromIndex(vsFB, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos,
-                                  VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsFB, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos,
+                              VO_BLT_SRCTRANSPARENCY, NULL);
         } else {
-          BltVideoObjectFromIndex(vsFB, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos,
-                                  VO_BLT_SRCTRANSPARENCY, NULL);
+          BltVObjectFromIndex(vsFB, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos,
+                              VO_BLT_SRCTRANSPARENCY, NULL);
 
-          // BltVideoObjectFromIndex(  vsFB, guiRADIO, 0, sXPos, sYPos,
+          // BltVObjectFromIndex(  vsFB, guiRADIO, 0, sXPos, sYPos,
           // VO_BLT_SRCTRANSPARENCY, NULL );
         }
       }
@@ -1837,7 +1837,7 @@ void PopupDoorOpenMenu(BOOLEAN fClosingDoor) {
   iMenuAnchorY = gOpenDoorMenu.sY;
 
   // Blit background!
-  // BltVideoObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
+  // BltVObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
   // VO_BLT_SRCTRANSPARENCY, NULL );
   iMenuAnchorX = gOpenDoorMenu.sX + 9;
   iMenuAnchorY = gOpenDoorMenu.sY + 8;
@@ -2105,8 +2105,8 @@ void PopDownOpenDoorMenu() {
 
 void RenderOpenDoorMenu() {
   if (gfInOpenDoorMenu) {
-    BltVideoObjectFromIndex(vsFB, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY,
+                        VO_BLT_SRCTRANSPARENCY, NULL);
 
     // Mark buttons dirty!
     MarkAButtonDirty(iActionIcons[USE_KEYRING_ICON]);
@@ -2515,7 +2515,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case AIR_RAID_TURN_MESSAGE:
 
       // Render rect into surface
-      BltVideoObjectFromIndex(uiSurface, uiBAR, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(uiSurface, uiBAR, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_WHITE);
       uiBarToUseInUpDate = uiBAR;
@@ -2525,7 +2525,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case PLAYER_INTERRUPT_MESSAGE:
 
       // Render rect into surface
-      BltVideoObjectFromIndex(uiSurface, uiINTBAR, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(uiSurface, uiINTBAR, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_BLACK);
       SetFontShadow(NO_SHADOW);
@@ -2536,10 +2536,10 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
 
       // Render rect into surface
       // if ( gGameOptions.fTurnTimeLimit )
-      { BltVideoObjectFromIndex(uiSurface, uiPLAYERBAR, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL); }
+      { BltVObjectFromIndex(uiSurface, uiPLAYERBAR, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL); }
       // else
       //{
-      //	BltVideoObjectFromIndex( uiSurface, uiPLAYERBAR, 13, 0, 0, VO_BLT_SRCTRANSPARENCY,
+      //	BltVObjectFromIndex( uiSurface, uiPLAYERBAR, 13, 0, 0, VO_BLT_SRCTRANSPARENCY,
       // NULL );
       //}
       SetFontBackground(FONT_MCOLOR_BLACK);
@@ -2564,7 +2564,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
 
 			// Render end peice
 			sBarX = PROG_BAR_START_X;
-			BltVideoObjectFromIndex( uiSurface, uiBAR, 3, sBarX, PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL );
+			BltVObjectFromIndex( uiSurface, uiBAR, 3, sBarX, PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL );
 
 			// Determine Length
 		//	iLength   = (gubProgCurEnemy ) * usNumStepsPerEnemy;
@@ -2582,7 +2582,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
 					break;
 				}
 
-				BltVideoObjectFromIndex( uiSurface, uiBAR, (int16_t)( 4 + cnt2 ), sBarX, PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL );
+				BltVObjectFromIndex( uiSurface, uiBAR, (int16_t)( 4 + cnt2 ), sBarX, PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL );
 
 				cnt1++;
 				cnt2++;
@@ -2615,8 +2615,8 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
 
     // Render end peice
     sBarX = PROG_BAR_START_X;
-    BltVideoObjectFromIndex(uiSurface, uiBarToUseInUpDate, 1, sBarX, PROG_BAR_START_Y,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, 1, sBarX, PROG_BAR_START_Y,
+                        VO_BLT_SRCTRANSPARENCY, NULL);
 
     // Determine Length
     dLength = (gTacticalStatus.usTactialTurnLimitCounter) * dNumStepsPerEnemy;
@@ -2632,8 +2632,8 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
         break;
       }
 
-      BltVideoObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
-                              PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
+                          PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL);
 
       dCurSize++;
       cnt2++;
@@ -2646,11 +2646,11 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     // Do end...
     if (gTacticalStatus.usTactialTurnLimitCounter == gTacticalStatus.usTactialTurnLimitMax) {
       sBarX++;
-      BltVideoObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
-                              PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
+                          PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL);
       sBarX++;
-      BltVideoObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(12), sBarX, PROG_BAR_START_Y,
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(uiSurface, uiBarToUseInUpDate, (int16_t)(12), sBarX, PROG_BAR_START_Y,
+                          VO_BLT_SRCTRANSPARENCY, NULL);
     }
   }
 
@@ -3193,34 +3193,34 @@ void RenderAimCubeUI() {
       }
 
       // Do first level....
-      BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                          VO_BLT_SRCTRANSPARENCY, NULL);
       sBarHeight -= 3;
-      BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
-                              VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                          VO_BLT_SRCTRANSPARENCY, NULL);
 
       // Loop through height.....
       for (cnt = 1; cnt <= gCubeUIData.bHeight; cnt++) {
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
-                                VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                            VO_BLT_SRCTRANSPARENCY, NULL);
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
-                                VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                            VO_BLT_SRCTRANSPARENCY, NULL);
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
-                                VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                            VO_BLT_SRCTRANSPARENCY, NULL);
         sBarHeight -= 3;
-        BltVideoObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
-                                VO_BLT_SRCTRANSPARENCY, NULL);
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight),
+                            VO_BLT_SRCTRANSPARENCY, NULL);
       }
     }
 
     if (gCubeUIData.fShowPower) {
       sBarHeight = -50;
 
-      BltVideoObjectFromIndex(vsFB, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
-                              (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
+      BltVObjectFromIndex(vsFB, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
+                          (sScreenY + sBarHeight), VO_BLT_SRCTRANSPARENCY, NULL);
     }
   }
 }
@@ -3384,6 +3384,6 @@ void RenderTopmostMultiPurposeLocator() {
     SetBackgroundRectFilled(iBack);
   }
 
-  BltVideoObjectFromIndex(vsFB, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos,
-                          VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVObjectFromIndex(vsFB, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos,
+                      VO_BLT_SRCTRANSPARENCY, NULL);
 }

@@ -764,8 +764,8 @@ void RenderViewer() {
 
   if (gfRenderMap) {
     gfRenderMap = FALSE;
-    BltVideoObjectFromIndex(vsFB, guiMapGraphicID, 0, VIEWER_LEFT, VIEWER_TOP,
-                            VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiMapGraphicID, 0, VIEWER_LEFT, VIEWER_TOP, VO_BLT_SRCTRANSPARENCY,
+                        NULL);
     InvalidateRegion(VIEWER_LEFT, VIEWER_TOP, VIEWER_RIGHT, VIEWER_BOTTOM);
     // Draw the coordinates
     ClearViewerRegion(0, 0, VIEWER_RIGHT, 14);
