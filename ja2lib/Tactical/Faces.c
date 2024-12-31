@@ -245,12 +245,12 @@ int32_t InternalInitFace(uint8_t usMercProfileID, uint8_t ubSoldierID, uint32_t 
   }
 
   // Load
-  if (AddVideoObject(&VObjectDesc, &uiVideoObject) == FALSE) {
+  if (AddStandardVideoObject(&VObjectDesc, &uiVideoObject) == FALSE) {
     // If we are a big face, use placeholder...
     if (uiInitFlags & FACE_BIGFACE) {
       sprintf(VObjectDesc.ImageFile, "FACES\\placeholder.sti");
 
-      if (AddVideoObject(&VObjectDesc, &uiVideoObject) == FALSE) {
+      if (AddStandardVideoObject(&VObjectDesc, &uiVideoObject) == FALSE) {
         return (-1);
       }
     } else {

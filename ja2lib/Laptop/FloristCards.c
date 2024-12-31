@@ -67,7 +67,7 @@ BOOLEAN EnterFloristCards() {
   // load the Flower Account Box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\CardBlank.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiCardBackground));
+  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiCardBackground));
 
   ubCount = 0;
   usPosY = FLORIST_CARD_FIRST_POS_Y;

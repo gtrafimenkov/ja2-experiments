@@ -107,7 +107,7 @@ BOOLEAN RenderPortrait(int16_t sX, int16_t sY) {
     // load it
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP(pPlayerSelectedBigFaceFileNames[iCurrentPortrait], VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+    CHECKF(AddStandardVideoObject(&VObjectDesc, &uiGraphicHandle));
 
     // show it
     GetVideoObject(&hHandle, uiGraphicHandle);
@@ -121,7 +121,7 @@ BOOLEAN RenderPortrait(int16_t sX, int16_t sY) {
     // load it
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP(pPlayerSelectedBigFaceFileNames[iCurrentPortrait + 8], VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiGraphicHandle));
+    CHECKF(AddStandardVideoObject(&VObjectDesc, &uiGraphicHandle));
 
     // show it
     GetVideoObject(&hHandle, uiGraphicHandle);
