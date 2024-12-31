@@ -85,13 +85,9 @@ void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_
 char *DirectXErrorDescription(int32_t iDXReturn);
 void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename);
 void DirectXAssert(BOOLEAN fValue, int32_t nLine, char *szFilename);
-void DirectXZeroMem(void *pMemory, int nSize);
 
 #undef ATTEMPT
 #define ATTEMPT(x) DirectXAttempt((x), __LINE__, __FILE__)
-
-#undef ZEROMEM
-#define ZEROMEM(x) DirectXZeroMem((void *)&(x), sizeof(x))
 
 #undef DEBUGMSG
 #define DEBUGMSG(x) DebugPrint(x)
@@ -325,7 +321,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // Initialize Primary Surface along with BackBuffer
   //
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
@@ -358,7 +354,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // Initialize the frame buffer
   //
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
@@ -390,7 +386,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // Initialize the main mouse surfaces
   //
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
   // SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
@@ -425,7 +421,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // Initialize the main mouse original surface
   //
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
@@ -463,7 +459,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
     // Initialize the direct draw surfaces for the mouse background
     //
 
-    ZEROMEM(SurfaceDescription);
+    memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
     SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
     SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
     // SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
@@ -1416,7 +1412,7 @@ void RefreshScreen(void *DummyVariable) {
     // surface which can be interlaced or have a funky pitch
     //
 
-    ZEROMEM(SurfaceDescription);
+    memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
     SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
     SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
     SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
@@ -1465,7 +1461,7 @@ void RefreshScreen(void *DummyVariable) {
       // Lock temp surface
       //
 
-      ZEROMEM(SurfaceDescription);
+      memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
       SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
       ReturnCode = IDirectDrawSurface2_Lock(pTmpBuffer, NULL, &SurfaceDescription, 0, NULL);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -1511,7 +1507,7 @@ void RefreshScreen(void *DummyVariable) {
       // Unlock temp surface
       //
 
-      ZEROMEM(SurfaceDescription);
+      memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
       SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
       ReturnCode = IDirectDrawSurface2_Unlock(pTmpBuffer, &SurfaceDescription);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -1890,7 +1886,7 @@ void *LockPrimarySurface(uint32_t *uiPitch) {
   HRESULT ReturnCode;
   DDSURFACEDESC SurfaceDescription;
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
 
   do {
@@ -1911,7 +1907,7 @@ void UnlockPrimarySurface(void) {
   DDSURFACEDESC SurfaceDescription;
   HRESULT ReturnCode;
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_Unlock(gpPrimarySurface, &SurfaceDescription);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -1931,7 +1927,7 @@ void *LockBackBuffer(uint32_t *uiPitch) {
   // yack
   //
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
 
   do {
@@ -1960,7 +1956,7 @@ void UnlockBackBuffer(void) {
   // yack
   //
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_Unlock(gpBackBuffer, &SurfaceDescription);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -1972,7 +1968,7 @@ void *LockFrameBuffer(uint32_t *uiPitch) {
   HRESULT ReturnCode;
   DDSURFACEDESC SurfaceDescription;
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
 
   do {
@@ -1994,7 +1990,7 @@ void UnlockFrameBuffer(void) {
   DDSURFACEDESC SurfaceDescription;
   HRESULT ReturnCode;
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_Unlock(gpFrameBuffer, &SurfaceDescription);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -2006,7 +2002,7 @@ void *LockMouseBuffer(uint32_t *uiPitch) {
   HRESULT ReturnCode;
   DDSURFACEDESC SurfaceDescription;
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_Lock(gpMouseCursorOriginal, NULL, &SurfaceDescription, 0, NULL);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -2023,7 +2019,7 @@ void UnlockMouseBuffer(void) {
   DDSURFACEDESC SurfaceDescription;
   HRESULT ReturnCode;
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_Unlock(gpMouseCursorOriginal, &SurfaceDescription);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -2038,7 +2034,7 @@ BOOLEAN GetRGBDistribution(void) {
 
   Assert(gpPrimarySurface != NULL);
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_PIXELFORMAT;
   ReturnCode = IDirectDrawSurface2_GetSurfaceDesc(gpPrimarySurface, &SurfaceDescription);
@@ -2278,7 +2274,7 @@ void SnapshotSmall(void) {
 
   HRESULT ReturnCode;
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_Lock(gpPrimarySurface, NULL, &SurfaceDescription, 0, NULL);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -2330,7 +2326,7 @@ void SnapshotSmall(void) {
     RefreshMovieCache();
   }
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_Unlock(gpPrimarySurface, &SurfaceDescription);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -4287,7 +4283,7 @@ void SmkSetupVideo(void) {
   GetVideoSurface(&hVSurface, vsFB);
   lpVideoPlayback2 = GetVideoSurfaceDDSurface(hVSurface);
 
-  ZEROMEM(SurfaceDescription);
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   ReturnCode = IDirectDrawSurface2_GetSurfaceDesc(lpVideoPlayback2, &SurfaceDescription);
   if (ReturnCode != DD_OK) {
@@ -4552,7 +4548,7 @@ void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect, LPDDSURFACED
   Assert(pSurface != NULL);
   Assert(pSurfaceDesc != NULL);
 
-  ZEROMEM(*pSurfaceDesc);
+  memset(pSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
   pSurfaceDesc->dwSize = sizeof(DDSURFACEDESC);
 
   do {
@@ -4573,7 +4569,7 @@ void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurf
   Assert(pSurface != NULL);
   Assert(pSurfaceDesc != NULL);
 
-  ZEROMEM(*pSurfaceDesc);
+  memset(pSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
   pSurfaceDesc->dwSize = sizeof(DDSURFACEDESC);
 
   ATTEMPT(IDirectDrawSurface2_GetSurfaceDesc(pSurface, pSurfaceDesc));
@@ -4668,8 +4664,6 @@ void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
 //////////////////////////////////////////////////////////////////
 // DirectXCommon
 //////////////////////////////////////////////////////////////////
-
-void DirectXZeroMem(void *pMemory, int nSize) { memset(pMemory, 0, nSize); }
 
 void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) {
 #ifdef _DEBUG
