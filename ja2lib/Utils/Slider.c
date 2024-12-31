@@ -307,9 +307,9 @@ void RenderSliderBox(SLIDER *pSlider) {
     // If it is not the first time to render the slider
     if (!(pSlider->LastRect.iLeft == 0 && pSlider->LastRect.iRight == 0)) {
       // Restore the old rect
-      BlitBufferToBuffer(vsSaveBufferID, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
-                         (uint16_t)pSlider->LastRect.iTop, pSlider->ubSliderWidth,
-                         pSlider->ubSliderHeight);
+      BlitBufferToBufferOld(vsSaveBufferID, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
+                            (uint16_t)pSlider->LastRect.iTop, pSlider->ubSliderWidth,
+                            pSlider->ubSliderHeight);
 
       // invalidate the old area
       InvalidateRegion(pSlider->LastRect.iLeft, pSlider->LastRect.iTop, pSlider->LastRect.iRight,
@@ -317,8 +317,8 @@ void RenderSliderBox(SLIDER *pSlider) {
     }
 
     // Blit the new rect
-    BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
-                       pSlider->ubSliderWidth, pSlider->ubSliderHeight);
+    BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
+                          (uint16_t)DestRect.iTop, pSlider->ubSliderWidth, pSlider->ubSliderHeight);
   } else {
     // fill out the settings for the current dest and source rects
     DestRect.iLeft = pSlider->usCurrentSliderBoxPosition;
@@ -329,13 +329,13 @@ void RenderSliderBox(SLIDER *pSlider) {
     // If it is not the first time to render the slider
     if (!(pSlider->LastRect.iLeft == 0 && pSlider->LastRect.iRight == 0)) {
       // Restore the old rect
-      BlitBufferToBuffer(vsSaveBufferID, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
-                         (uint16_t)pSlider->LastRect.iTop, 8, 15);
+      BlitBufferToBufferOld(vsSaveBufferID, vsIndexFB, (uint16_t)pSlider->LastRect.iLeft,
+                            (uint16_t)pSlider->LastRect.iTop, 8, 15);
     }
 
     // save the new rect
-    BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
-                       8, 15);
+    BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
+                          (uint16_t)DestRect.iTop, 8, 15);
   }
 
   // Save the new rect location
