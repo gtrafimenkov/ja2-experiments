@@ -1088,8 +1088,8 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter) {
   UnlockVSurfaceByID(pBlitter->uiDestBuff);
 }
 
-BOOLEAN BlitBufferToBuffer(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t usSrcX,
-                           uint16_t usSrcY, uint16_t usWidth, uint16_t usHeight) {
+BOOLEAN BlitBufferToBufferOld(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t usSrcX,
+                              uint16_t usSrcY, uint16_t usWidth, uint16_t usHeight) {
   uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;
   BOOLEAN fRetVal;

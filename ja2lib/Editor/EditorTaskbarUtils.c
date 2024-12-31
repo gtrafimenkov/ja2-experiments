@@ -890,7 +890,7 @@ void ProcessEditorRendering() {
       RenderDoorLockInfo();
   }
 
-  if (fSaveBuffer) BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, 0, 360, 640, 120);
+  if (fSaveBuffer) BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 0, 360, 640, 120);
 
   // Make sure this is TRUE at all times.
   // It is set to false when before we save the buffer, so the buttons don't get

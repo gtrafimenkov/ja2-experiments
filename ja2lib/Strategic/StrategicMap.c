@@ -343,7 +343,7 @@ void BeginLoadScreen() {
     uiTimeRange = 2000;
     iPercentage = 0;
     uiStartTime = GetJA2Clock();
-    BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
+    BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
     PlayJA2SampleFromFile("SOUNDS\\Final Psionic Blast 01 (16-44).wav", RATE_11025, HIGHVOLUME, 1,
                           MIDDLEPAN);
     while (iPercentage < 100) {

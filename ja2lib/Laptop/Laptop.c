@@ -1643,8 +1643,8 @@ uint32_t LaptopScreenHandle() {
     uiTimeRange = 1000;
     iPercentage = iRealPercentage = 0;
     uiStartTime = GetJA2Clock();
-    BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
-    BlitBufferToBuffer(guiEXTRABUFFER, vsIndexFB, 0, 0, 640, 480);
+    BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
+    BlitBufferToBufferOld(guiEXTRABUFFER, vsIndexFB, 0, 0, 640, 480);
     PlayJA2SampleFromFile("SOUNDS\\Laptop power up (8-11).wav", RATE_11025, HIGHVOLUME, 1,
                           MIDDLEPAN);
     while (iRealPercentage < 100) {
@@ -2203,11 +2203,11 @@ BOOLEAN LeaveLapTopScreen(void) {
       uiTimeRange = 1000;
       iPercentage = iRealPercentage = 100;
       uiStartTime = GetJA2Clock();
-      BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
+      BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, 0, 0, 640, 480);
       PlayJA2SampleFromFile("SOUNDS\\Laptop power down (8-11).wav", RATE_11025, HIGHVOLUME, 1,
                             MIDDLEPAN);
       while (iRealPercentage > 0) {
-        BlitBufferToBuffer(guiEXTRABUFFER, vsIndexFB, 0, 0, 640, 480);
+        BlitBufferToBufferOld(guiEXTRABUFFER, vsIndexFB, 0, 0, 640, 480);
 
         uiCurrTime = GetJA2Clock();
         iPercentage = (uiCurrTime - uiStartTime) * 100 / uiTimeRange;
@@ -3836,32 +3836,32 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
     if (ubCount > 1) {
       sWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       sHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBuffer(vsSaveBufferID, vsIndexFB, (uint16_t)LastRect.iLeft,
-                         (uint16_t)LastRect.iTop, sWidth, sHeight);
+      BlitBufferToBufferOld(vsSaveBufferID, vsIndexFB, (uint16_t)LastRect.iLeft,
+                            (uint16_t)LastRect.iTop, sWidth, sHeight);
     }
 
     // Save rectangle
     if (ubCount > 0) {
       sWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       sHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
-                         (uint16_t)DestRect.iTop, sWidth, sHeight);
+      BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
+                            (uint16_t)DestRect.iTop, sWidth, sHeight);
     }
   } else {
     // Restore the old rect
     if (ubCount < NUMBER_OF_LAPTOP_TITLEBAR_ITERATIONS - 1) {
       sWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       sHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBuffer(vsSaveBufferID, vsIndexFB, (uint16_t)LastRect.iLeft,
-                         (uint16_t)LastRect.iTop, sWidth, sHeight);
+      BlitBufferToBufferOld(vsSaveBufferID, vsIndexFB, (uint16_t)LastRect.iLeft,
+                            (uint16_t)LastRect.iTop, sWidth, sHeight);
     }
 
     // Save rectangle
     if (ubCount < NUMBER_OF_LAPTOP_TITLEBAR_ITERATIONS) {
       sWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       sHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
-                         (uint16_t)DestRect.iTop, sWidth, sHeight);
+      BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
+                            (uint16_t)DestRect.iTop, sWidth, sHeight);
     }
   }
 
