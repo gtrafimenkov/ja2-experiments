@@ -23,7 +23,7 @@
 
 struct VSurface *ghPrimary = NULL;
 struct VSurface *ghBackBuffer = NULL;
-struct VSurface *ghFrameBuffer = NULL;
+struct VSurface *vsFB = NULL;
 struct VSurface *ghMouseBuffer = NULL;
 
 #define INITGUID
@@ -2306,8 +2306,8 @@ BOOLEAN SetPrimaryVideoSurfaces() {
   pSurface = gpFrameBuffer;
   CHECKF(pSurface != NULL);
 
-  ghFrameBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(ghFrameBuffer != NULL);
+  vsFB = CreateVideoSurfaceFromDDSurface(pSurface);
+  CHECKF(vsFB != NULL);
 
   return (TRUE);
 }
@@ -2327,9 +2327,9 @@ static void DeletePrimaryVideoSurfaces() {
     ghBackBuffer = NULL;
   }
 
-  if (ghFrameBuffer != NULL) {
-    DeleteVideoSurface(ghFrameBuffer);
-    ghFrameBuffer = NULL;
+  if (vsFB != NULL) {
+    DeleteVideoSurface(vsFB);
+    vsFB = NULL;
   }
 
   if (ghMouseBuffer != NULL) {
@@ -2507,7 +2507,7 @@ BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
   }
 
   if (uiIndex == vsIndexFB) {
-    *hVSurface = ghFrameBuffer;
+    *hVSurface = vsFB;
     return TRUE;
   }
 
