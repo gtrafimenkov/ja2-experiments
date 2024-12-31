@@ -197,7 +197,7 @@ void InternalSetAutoFaceActive(uint32_t uiDisplayBuffer, uint32_t uiRestoreBuffe
 // To begin rendering of the face sprite, call this function once:
 BOOLEAN RenderAutoFace(int32_t iFaceIndex);
 // This will draw the face into it's saved buffer and then display it on the display buffer. If the
-// display buffer given is vsFB, the regions will automatically be dirtied, so no calls to
+// display buffer given is vsIndexFB, the regions will automatically be dirtied, so no calls to
 // InvalidateRegion() should be nessesary.
 
 // If you want to setup the face to talking, ( most times this call is done in JA2 by other

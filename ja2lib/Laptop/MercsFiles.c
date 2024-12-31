@@ -233,15 +233,15 @@ void RenderMercsFiles() {
 
   // Portrait Box
   GetVideoObject(&hPixHandle, guiPortraitBox);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_FILES_PORTRAIT_BOX_X, MERC_FILES_PORTRAIT_BOX_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_FILES_PORTRAIT_BOX_X, MERC_FILES_PORTRAIT_BOX_Y);
 
   // Stats Box
   GetVideoObject(&hPixHandle, guiStatsBox);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_FILES_STATS_BOX_X, MERC_FILES_STATS_BOX_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_FILES_STATS_BOX_X, MERC_FILES_STATS_BOX_Y);
 
   // bio box
   GetVideoObject(&hPixHandle, guiBioBox);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_FILES_BIO_BOX_X + 1, MERC_FILES_BIO_BOX_Y);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, MERC_FILES_BIO_BOX_X + 1, MERC_FILES_BIO_BOX_Y);
 
   // Display the mercs face
   DisplayMercFace(GetMercIDFromMERCArray(gubCurMercIndex));
@@ -399,7 +399,8 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
 
   // Portrait Frame
   GetVideoObject(&hPortraitHandle, guiPortraitBox);
-  BltVideoObject(vsFB, hPortraitHandle, 0, MERC_FILES_PORTRAIT_BOX_X, MERC_FILES_PORTRAIT_BOX_Y);
+  BltVideoObject(vsIndexFB, hPortraitHandle, 0, MERC_FILES_PORTRAIT_BOX_X,
+                 MERC_FILES_PORTRAIT_BOX_Y);
 
   pMerc = &gMercProfiles[ubMercID];
 
@@ -414,7 +415,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
 
   // Blt face to screen
   GetVideoObject(&hFaceHandle, guiMercFace);
-  BltVideoObject(vsFB, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y);
+  BltVideoObject(vsIndexFB, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y);
 
   // if the merc is dead, shadow the face red and put text over top saying the merc is dead
   if (IsMercDead(ubMercID)) {
@@ -430,7 +431,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
     SetObjectHandleShade(guiMercFace, 0);
 
     // Blt face to screen
-    BltVideoObject(vsFB, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y);
+    BltVideoObject(vsIndexFB, hFaceHandle, 0, MERC_FACE_X, MERC_FACE_Y);
 
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, MercInfo[MERC_FILES_MERC_IS_DEAD], FONT_MCOLOR_BLACK,
@@ -438,7 +439,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   }
 
   else if (ubMercID == FLO && gubFact[FACT_PC_MARRYING_DARYL_IS_FLO]) {
-    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsIndexFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, pPersonnelDepartedStateStrings[3], FONT_MCOLOR_BLACK,
@@ -448,7 +449,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   // else if the merc is currently a POW or, the merc was fired as a pow
   else if (pMerc->bMercStatus == MERC_FIRED_AS_A_POW ||
            (pSoldier && GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
-    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsIndexFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, pPOWStrings[0], FONT_MCOLOR_BLACK, FALSE,
@@ -458,7 +459,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   // if the merc is hired already, say it
   else if (!IsMercHireable(ubMercID) &&
            (pMerc->bMercStatus == MERC_HIRED_BUT_NOT_ARRIVED_YET || pMerc->bMercStatus > 0)) {
-    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsIndexFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, MercInfo[MERC_FILES_ALREADY_HIRED], FONT_MCOLOR_BLACK,
@@ -467,7 +468,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
 
   // if the merc is away on another assignemnt, say the merc is unavailable
   else if (!IsMercHireable(ubMercID)) {
-    ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
+    ShadowVideoSurfaceRect(vsIndexFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,
                          FONT14ARIAL, 145, MercInfo[MERC_FILES_MERC_UNAVAILABLE], FONT_MCOLOR_BLACK,

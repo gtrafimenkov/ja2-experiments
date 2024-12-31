@@ -547,7 +547,7 @@ void DrawMapIndexBigMap(BOOLEAN fSelectedCursorIsYellow) {
   int32_t iCount = 0;
   BOOLEAN fDrawCursors;
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   // SetFontColors(FONT_FCOLOR_GREEN)
   SetFont(MAP_FONT);
   SetFontForeground(MAP_INDEX_COLOR);
@@ -589,7 +589,7 @@ void DrawMapIndexBigMap(BOOLEAN fSelectedCursorIsYellow) {
   InvalidateRegion(MAP_HORT_INDEX_X, MAP_HORT_INDEX_Y, MAP_HORT_INDEX_X + (iCount - 1) * MAP_GRID_X,
                    MAP_HORT_INDEX_Y + MAP_HORT_HEIGHT);
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 }
 
 void HandleShowingOfEnemiesWithMilitiaOn(void) {
@@ -2380,10 +2380,10 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
       if ((!fZoomFlag) ||
           ((fZoomFlag) && (iX > MAP_VIEW_START_X) && (iY > MAP_VIEW_START_Y) &&
            (iX < 640 - MAP_GRID_X * 2) && (iY < MAP_VIEW_START_Y + MAP_VIEW_HEIGHT))) {
-        BltVideoObject(vsFB, hMapHandle, (uint16_t)iDirection, iX, iY);
+        BltVideoObject(vsIndexFB, hMapHandle, (uint16_t)iDirection, iX, iY);
 
         if (!fUTurnFlag) {
-          BltVideoObject(vsFB, hMapHandle, (uint16_t)iArrow, iArrowX, iArrowY);
+          BltVideoObject(vsIndexFB, hMapHandle, (uint16_t)iArrow, iArrowX, iArrowY);
           InvalidateRegion(iArrowX, iArrowY, iArrowX + 2 * MAP_GRID_X, iArrowY + 2 * MAP_GRID_Y);
         }
 
@@ -2408,7 +2408,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
 
 void AnimateRoute(struct path *pPath) {
   // set buffer
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   // the animated path
   if (TraceCharAnimatedRoute(pPath, FALSE, FALSE)) {
@@ -3120,7 +3120,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
         // DMAP_GRID_Y); else RestoreExternBackgroundRect(((int16_t)iArrowX),
         // ((int16_t)iArrowY),DMAP_GRID_ZOOM_X, DMAP_GRID_ZOOM_Y);
         if (pNode != pPath) {
-          BltVideoObject(vsFB, hMapHandle, (uint16_t)iArrow, iArrowX, iArrowY);
+          BltVideoObject(vsIndexFB, hMapHandle, (uint16_t)iArrow, iArrowX, iArrowY);
           InvalidateRegion(iArrowX, iArrowY, iArrowX + 2 * MAP_GRID_X, iArrowY + 2 * MAP_GRID_Y);
         }
       }
@@ -3545,7 +3545,7 @@ void ShowPeopleInMotion(uint8_t sX, uint8_t sY) {
   }
 
   // restore buffer
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 }
 
 void DisplayDistancesForHelicopter(void) {
@@ -3580,7 +3580,7 @@ void DisplayDistancesForHelicopter(void) {
 
   // blit in background
   GetVideoObject(&hHandle, guiMapBorderHeliSectors);
-  BltVideoObject(vsFB, hHandle, 0, MAP_HELICOPTER_ETA_POPUP_X, sYPosition);
+  BltVideoObject(vsIndexFB, hHandle, 0, MAP_HELICOPTER_ETA_POPUP_X, sYPosition);
 
   //	sTotalCanTravel = ( int16_t )GetTotalDistanceHelicopterCanTravel( );
   sDistanceToGo = (int16_t)DistanceOfIntendedHelicopterPath();
@@ -3809,7 +3809,7 @@ void DisplayPositionOfHelicopter(void) {
       ClipBlitsToMapViewRegion();
 
       GetVideoObject(&hHandle, guiHelicopterIcon);
-      BltVideoObject(vsFB, hHandle, HELI_ICON, x, y);
+      BltVideoObject(vsIndexFB, hHandle, HELI_ICON, x, y);
 
       // now get number of people and blit that too
       iNumberOfPeopleInHelicopter = GetNumberOfPassengersInHelicopter();
@@ -3874,7 +3874,7 @@ void DisplayDestinationOfHelicopter(void) {
     ClipBlitsToMapViewRegion();
 
     GetVideoObject(&hHandle, guiHelicopterIcon);
-    BltVideoObject(vsFB, hHandle, HELI_SHADOW_ICON, x, y);
+    BltVideoObject(vsIndexFB, hHandle, HELI_SHADOW_ICON, x, y);
     InvalidateRegion(x, y, x + HELI_SHADOW_ICON_WIDTH, y + HELI_SHADOW_ICON_HEIGHT);
 
     RestoreClipRegionToFullScreen();
@@ -4060,7 +4060,7 @@ void BlitMineText(uint8_t sMapX, uint8_t sMapY) {
     ubLineCnt++;
   }
 
-  SetFontDestBuffer(vsFB, MAP_VIEW_START_X, MAP_VIEW_START_Y,
+  SetFontDestBuffer(vsIndexFB, MAP_VIEW_START_X, MAP_VIEW_START_Y,
                     MAP_VIEW_START_X + MAP_VIEW_WIDTH + MAP_GRID_X,
                     MAP_VIEW_START_Y + MAP_VIEW_HEIGHT + 7, FALSE);
 }
@@ -4226,7 +4226,7 @@ void DisplayLevelString(void) {
 
   mprintf(MAP_LEVEL_STRING_X, MAP_LEVEL_STRING_Y, sString);
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   return;
 }
@@ -4378,10 +4378,10 @@ BOOLEAN DrawMilitiaPopUpBox(void) {
   // get the properties of the militia object
   GetVideoObject(&hVObject, guiMilitia);
 
-  BltVideoObject(vsFB, hVObject, 0, MAP_MILITIA_BOX_POS_X, MAP_MILITIA_BOX_POS_Y);
+  BltVideoObject(vsIndexFB, hVObject, 0, MAP_MILITIA_BOX_POS_X, MAP_MILITIA_BOX_POS_Y);
 
   GetVideoObject(&hVObject, guiMilitiaMaps);
-  BltVideoObject(vsFB, hVObject, (uint16_t)(sSelectedMilitiaTown - 1),
+  BltVideoObject(vsIndexFB, hVObject, (uint16_t)(sSelectedMilitiaTown - 1),
                  MAP_MILITIA_BOX_POS_X + MAP_MILITIA_MAP_X,
                  MAP_MILITIA_BOX_POS_Y + MAP_MILITIA_MAP_Y);
 
@@ -4563,7 +4563,7 @@ void RenderIconsPerSectorForSelectedTown(void) {
         }
       }
 
-      BltVideoObject(vsFB, hVObject, (uint16_t)(iCurrentIcon), sX, sY);
+      BltVideoObject(vsIndexFB, hVObject, (uint16_t)(iCurrentIcon), sX, sY);
     }
   }
 
@@ -4597,7 +4597,7 @@ void ShowHighLightedSectorOnMilitiaMap(void) {
     GetVideoObject(&hVObject, guiMilitiaSectorHighLight);
 
     // blt the object
-    BltVideoObject(vsFB, hVObject, 0, sX, sY);
+    BltVideoObject(vsIndexFB, hVObject, 0, sX, sY);
   }
 
   if (sSectorMilitiaMapSectorOutline != -1) {
@@ -4610,7 +4610,7 @@ void ShowHighLightedSectorOnMilitiaMap(void) {
     GetVideoObject(&hVObject, guiMilitiaSectorOutline);
 
     // blt the object
-    BltVideoObject(vsFB, hVObject, 0, sX, sY);
+    BltVideoObject(vsIndexFB, hVObject, 0, sX, sY);
   }
 
   return;
@@ -4843,7 +4843,7 @@ void DisplayUnallocatedMilitia(void) {
       iCurrentIcon = 10;
     }
 
-    BltVideoObject(vsFB, hVObject, (uint16_t)(iCurrentIcon), sX, sY);
+    BltVideoObject(vsIndexFB, hVObject, (uint16_t)(iCurrentIcon), sX, sY);
   }
 }
 
@@ -5206,7 +5206,7 @@ void RenderShadingForUnControlledSectors(void) {
       sY = MAP_MILITIA_BOX_POS_Y + MAP_MILITIA_MAP_Y +
            ((iCounter / MILITIA_BOX_ROWS) * MILITIA_BOX_BOX_HEIGHT);
 
-      ShadowVideoSurfaceRect(vsFB, sX, sY, sX + MILITIA_BOX_BOX_WIDTH - 1,
+      ShadowVideoSurfaceRect(vsIndexFB, sX, sY, sX + MILITIA_BOX_BOX_WIDTH - 1,
                              sY + MILITIA_BOX_BOX_HEIGHT - 1);
     }
   }

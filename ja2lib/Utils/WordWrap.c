@@ -422,7 +422,7 @@ BOOLEAN DrawTextToScreen(wchar_t *pStr, uint16_t usLocX, uint16_t usLocY, uint16
   SetFontBackground(ubBackGroundColor);
 
   if (ulFlags & TEXT_SHADOWED)
-    ShadowText(vsFB, pStr, ulFont, (uint16_t)(usPosX - 1), (uint16_t)(usPosY - 1));
+    ShadowText(vsIndexFB, pStr, ulFont, (uint16_t)(usPosX - 1), (uint16_t)(usPosY - 1));
 
   if (fDirty) {
     gprintfdirty(usPosX, usPosY, pStr);

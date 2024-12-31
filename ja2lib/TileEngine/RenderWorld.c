@@ -723,7 +723,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
   iAnchorPosX_S = iStartPointX_S;
   iAnchorPosY_S = iStartPointY_S;
 
-  if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
     if (ShouldCheckForMouseDetections()) {
@@ -1563,7 +1563,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                                pNode->uiAPCost);
                   mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                                  pNode->uiAPCost);
-                  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+                  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
                 } else if ((uiLevelNodeFlags & LEVELNODE_ERASEZ) && !(uiFlags & TILES_DIRTY)) {
                   Zero8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                        hVObject, sXPos, sYPos, usImageIndex);
@@ -1991,7 +1991,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                                                    pSoldier->ubPlannedUIAPCost);
                       mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                                      pSoldier->ubPlannedUIAPCost);
-                      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+                      SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
                     }
                   }
                 }
@@ -2009,7 +2009,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               // ATE: Used here in the editor to denote then an area is not in the world
 
               // Kris:  Fixed a couple things here...
-              //  First, there was a problem with the vsFB already being locked which caused
+              //  First, there was a problem with the vsIndexFB already being locked which caused
               //  failures,
               //	and eventual crashes, so if it reaches this code, the buffer needs to be
               // unlocked first, as
@@ -2024,11 +2024,12 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               // is easier on the eyes, and prevent the drawing of the 	end of the world if it would
               // be drawn on the editor's taskbar.
               if (iTempPosY_S < 360) {
-                if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(vsFB);
+                if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(vsIndexFB);
                 ColorFillVideoSurfaceArea(
-                    vsFB, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
+                    vsIndexFB, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
                     (int16_t)(min(iTempPosY_S + 20, 360)), Get16BPPColor(FROMRGB(0, 0, 0)));
-                if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+                if (!(uiFlags & TILES_DIRTY))
+                  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
               }
             }
           }
@@ -2060,7 +2061,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
     }
   } while (!fEndRenderCol);
 
-  if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(vsFB);
+  if (!(uiFlags & TILES_DIRTY)) UnLockVideoSurface(vsIndexFB);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
     EndCurInteractiveTileCheck();
@@ -2140,7 +2141,7 @@ void RenderWorld() {
 
   // If we are testing renderer, set background to pink!
   if (gTacticalStatus.uiFlags & DEBUGCLIFFS) {
-    ColorFillVideoSurfaceArea(vsFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
+    ColorFillVideoSurfaceArea(vsIndexFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
                               Get16BPPColor(FROMRGB(0, 255, 0)));
     SetRenderFlags(RENDER_FLAG_FULL);
   }
@@ -2270,7 +2271,7 @@ void RenderWorld() {
     uint32_t cnt;
     wchar_t zVal;
 
-    pDestBuf = (uint16_t *)LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
     for (cnt = 0; cnt < (640 * 480); cnt++) {
       // Get Z value
@@ -2278,7 +2279,7 @@ void RenderWorld() {
       pDestBuf[cnt] = zVal;
     }
 
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
   }
 }
 
@@ -5527,7 +5528,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5552,7 +5553,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
 
         if (gubWorldRoomInfo[usTileIndex] != NO_ROOM) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           switch (gubWorldRoomInfo[usTileIndex] % 5) {
             case 0:
               SetFontForeground(FONT_GRAY3);
@@ -5572,7 +5573,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
           }
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gubWorldRoomInfo[usTileIndex]);
-          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5601,7 +5602,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 #ifdef _DEBUG
@@ -5625,7 +5626,7 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5649,11 +5650,11 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
         if (gubFOVDebugInfoInfo[usTileIndex] != 0) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           SetFontForeground(FONT_GRAY3);
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gubFOVDebugInfoInfo[usTileIndex]);
-          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
           Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                   gTileDatabase[0].hTileSurface, sTempPosX_S,
@@ -5662,10 +5663,10 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
         if (gubGridNoMarkers[usTileIndex] == gubGridNoValue) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           SetFontForeground(FONT_FCOLOR_YELLOW);
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY + 4, L"x");
-          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5694,7 +5695,7 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sStartPointX_S,
@@ -5716,7 +5717,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5740,7 +5741,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
 
         if (gsCoverValue[usTileIndex] != 0x7F7F) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           if (usTileIndex == gsBestCover) {
             SetFontForeground(FONT_MCOLOR_RED);
           } else if (gsCoverValue[usTileIndex] < 0) {
@@ -5750,7 +5751,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
           }
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gsCoverValue[usTileIndex]);
-          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5779,7 +5780,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M,
@@ -5802,7 +5803,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5825,7 +5826,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
         sY += gsRenderHeight;
 
         SetFont(SMALLCOMPFONT);
-        SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+        SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
 
         if (!GridNoOnVisibleWorldTile(usTileIndex)) {
           SetFontForeground(FONT_MCOLOR_RED);
@@ -5833,7 +5834,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
           SetFontForeground(FONT_GRAY3);
         }
         mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d", usTileIndex);
-        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
       }
 
       sTempPosX_S += 40;
@@ -5861,7 +5862,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 #endif
@@ -5896,7 +5897,7 @@ void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   // Get VObject for firt land peice!
   TileElem = &(gTileDatabase[FIRSTTEXTURE1]);
@@ -5985,7 +5986,7 @@ void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M
 
   } while (!fEndRenderCol);
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void CalcRenderParameters(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom) {

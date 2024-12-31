@@ -87,7 +87,7 @@ uint32_t MapUtilScreenHandle() {
   bAvR = bAvG = bAvB = 0;
 
   // Zero out area!
-  ColorFillVideoSurfaceArea(vsFB, 0, 0, (int16_t)(640), (int16_t)(480),
+  ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, (int16_t)(640), (int16_t)(480),
                             Get16BPPColor(FROMRGB(0, 0, 0)));
 
   if (fNewMap) {
@@ -169,7 +169,7 @@ uint32_t MapUtilScreenHandle() {
   dY = dStartY;
 
   pDestBuf = (uint16_t *)LockVideoSurface(giMiniMap, &uiDestPitchBYTES);
-  pSrcBuf = (uint16_t *)LockVideoSurface(vsFB, &uiSrcPitchBYTES);
+  pSrcBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
 
   for (iX = 0; iX < 88; iX++) {
     dY = dStartY;
@@ -228,14 +228,14 @@ uint32_t MapUtilScreenHandle() {
   }
 
   UnLockVideoSurface(giMiniMap);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   // RENDER!
-  BltVideoSurface(vsFB, giMiniMap, 0, 20, 360, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVideoSurface(vsIndexFB, giMiniMap, 0, 20, 360, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
   // QUantize!
   pDataPtr = (uint8_t *)LockVideoSurface(gi8BitMiniMap, &uiSrcPitchBYTES);
-  pDestBuf = (uint16_t *)LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   QuantizeImage(pDataPtr, p24BitDest, MINIMAP_X_SIZE, MINIMAP_Y_SIZE, pPalette);
   SetVideoSurfacePalette(ghvSurface, pPalette);
   // Blit!
@@ -259,7 +259,7 @@ uint32_t MapUtilScreenHandle() {
     }
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   // Remove extension
   for (cnt = strlen(zFilename) - 1; cnt >= 0; cnt--) {

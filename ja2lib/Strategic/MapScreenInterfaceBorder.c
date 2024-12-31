@@ -170,7 +170,7 @@ void RenderMapBorder(void) {
 }
 
 void RenderMapBorderEtaPopUp(void) {
-  // renders map border corner to the vsFB
+  // renders map border corner to the vsIndexFB
   struct VObject *hHandle;
 
   /*
@@ -191,7 +191,7 @@ void RenderMapBorderEtaPopUp(void) {
 
   // get and blt ETA box
   GetVideoObject(&hHandle, guiMapBorderEtaPopUp);
-  BltVideoObject(vsFB, hHandle, 0, MAP_BORDER_X + 215, 291);
+  BltVideoObject(vsIndexFB, hHandle, 0, MAP_BORDER_X + 215, 291);
 
   InvalidateRegion(MAP_BORDER_X + 215, 291, MAP_BORDER_X + 215 + 100, 310);
 
@@ -687,7 +687,7 @@ void ShowDestinationOfPlottedPath( wchar_t* pLoc )
 {
         int16_t sFontX, sFontY;
 
-        SetFontDestBuffer( vsFB, 0, 0, 640, 480, FALSE );
+        SetFontDestBuffer( vsIndexFB, 0, 0, 640, 480, FALSE );
 
         SetFont( COMPFONT );
         SetFontForeground( 183 );

@@ -233,7 +233,7 @@ void CreateTownInfoBox(void) {
   CreatePopUpBox(&ghTownMineBox, TownMineDimensions, TownMinePosition, (POPUP_BOX_FLAG_CLIP_TEXT));
 
   // which buffer will box render to
-  SetBoxBuffer(ghTownMineBox, vsFB);
+  SetBoxBuffer(ghTownMineBox, vsIndexFB);
 
   // border type?
   SetBorderType(ghTownMineBox, guiPOPUPBORDERS);

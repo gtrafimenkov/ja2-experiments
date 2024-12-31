@@ -670,7 +670,7 @@ void BlinkAutoFace(int32_t iFaceIndex) {
           BltVObjectFromIndex(pFace->uiAutoDisplayBuffer, pFace->uiVideoObject, (int16_t)(sFrame),
                               pFace->usEyesX, pFace->usEyesY);
 
-          if (pFace->uiAutoDisplayBuffer == vsFB) {
+          if (pFace->uiAutoDisplayBuffer == vsIndexFB) {
             InvalidateRegion(pFace->usEyesX, pFace->usEyesY, pFace->usEyesX + pFace->usEyesWidth,
                              pFace->usEyesY + pFace->usEyesHeight);
           }
@@ -706,7 +706,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
   iFaceIndex = pFace->iID;
 
   if (!gFacesData[iFaceIndex].fDisabled) {
-    if (pFace->uiAutoDisplayBuffer == vsFB && IsTacticalMode()) {
+    if (pFace->uiAutoDisplayBuffer == vsIndexFB && IsTacticalMode()) {
       // If we are highlighted, do this now!
       if ((pFace->uiFlags & FACE_SHOW_WHITE_HILIGHT)) {
         // Lock buffer
@@ -839,7 +839,7 @@ void MouthAutoFace(int32_t iFaceIndex) {
                                     (int16_t)(sFrame + 4), pFace->usMouthX, pFace->usMouthY);
 
                 // Update rects
-                if (pFace->uiAutoDisplayBuffer == vsFB) {
+                if (pFace->uiAutoDisplayBuffer == vsIndexFB) {
                   InvalidateRegion(pFace->usMouthX, pFace->usMouthY,
                                    pFace->usMouthX + pFace->usMouthWidth,
                                    pFace->usMouthY + pFace->usMouthHeight);
@@ -1100,7 +1100,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
         sY2 = sY1 + GetFontHeight(TINYFONT1) - 1;
 
         mprintf((int16_t)(sX1 + 1), (int16_t)(sY1 - 1), sString);
-        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
         // Draw box
         pDestBuf = LockVideoSurface(uiRenderBuffer, &uiDestPitchBYTES);
@@ -1142,7 +1142,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
             pFace->fDisplayTextOver = FACE_NO_TEXT_OVER;
           }
 
-          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
         }
       }
     }
@@ -1303,7 +1303,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
         SetFontBackground(FONT_BLACK);
 
         mprintf(sFaceX + pFace->usFaceWidth - usTextWidth, (int16_t)(sFaceY + 3), sString);
-        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
       }
     }
   } else {
@@ -1757,7 +1757,7 @@ BOOLEAN FaceRestoreSavedBackgroundRect(int32_t iFaceIndex, int16_t sDestLeft, in
   UnLockVideoSurface(pFace->uiAutoRestoreBuffer);
 
   // Add rect to frame buffer queue
-  if (pFace->uiAutoDisplayBuffer == vsFB) {
+  if (pFace->uiAutoDisplayBuffer == vsIndexFB) {
     InvalidateRegionEx(sDestLeft - 2, sDestTop - 2, (sDestLeft + sWidth + 3),
                        (sDestTop + sHeight + 2), 0);
   }

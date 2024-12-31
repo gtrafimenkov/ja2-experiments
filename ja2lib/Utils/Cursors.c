@@ -4722,7 +4722,7 @@ void DrawMouseText() {
 
     mprintf(sX, sY + 12, gzLocation);
     // reset
-    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   }
 
   if (gfUIIntTileLocation) {
@@ -4738,7 +4738,7 @@ void DrawMouseText() {
 
     mprintf(sX, sY + 6, gzIntTileLocation);
     // reset
-    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   }
 
   if (gfUIIntTileLocation2) {
@@ -4754,7 +4754,7 @@ void DrawMouseText() {
 
     mprintf(sX, sY - 2, gzIntTileLocation2);
     // reset
-    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
   }
 
   // if ( ( ( gTacticalStatus.uiFlags & TURNBASED ) && ( gTacticalStatus.uiFlags & INCOMBAT ) ) )
@@ -4825,7 +4825,7 @@ void DrawMouseText() {
       SetFontShadow(DEFAULT_SHADOW);
 
       // reset
-      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
     }
   }
 
@@ -4852,7 +4852,7 @@ void DrawMouseText() {
 			}
 
 			// reset
-			SetFontDestBuffer( vsFB, 0, 0, 640, 480, FALSE );
+			SetFontDestBuffer( vsIndexFB, 0, 0, 640, 480, FALSE );
 		}
 	}
 #endif

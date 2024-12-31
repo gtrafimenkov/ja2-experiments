@@ -1252,11 +1252,11 @@ void RenderSummaryWindow() {
     // Draw the mode tabs
     SetFontForeground(FONT_YELLOW);
     mprintf(354, 18, L"Summary");
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 15, 405, 28, 0, pDestBuf);
-    UnLockVideoSurface(vsFB);
-    ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 351, 16, 404, 27);
+    UnLockVideoSurface(vsIndexFB);
+    ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 351, 16, 404, 27);
     if (gpCurrentSectorSummary)
     /*&& gpCurrentSectorSummary->usNumItems ||
             gpPEnemyItemsSummaryArray && gusPEnemyItemsSummaryArraySize ||
@@ -1267,19 +1267,19 @@ void RenderSummaryWindow() {
       SetFontForeground(FONT_RED);
     }
     mprintf(354, 33, L"Items");
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 30, 405, 43, 0, pDestBuf);
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
     if (gpCurrentSectorSummary)
     /*&& gpCurrentSectorSummary->usNumItems ||
             gpPEnemyItemsSummaryArray && gusPEnemyItemsSummaryArraySize ||
             gpNEnemyItemsSummaryArray && gusNEnemyItemsSummaryArraySize )
             */
     {
-      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 351, 31, 404, 42);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 351, 31, 404, 42);
     } else {
-      ShadowVideoSurfaceRect(vsFB, 351, 31, 404, 42);
+      ShadowVideoSurfaceRect(vsIndexFB, 351, 31, 404, 42);
     }
     SetFontForeground(FONT_GRAY2);
   }
@@ -1288,7 +1288,7 @@ void RenderSummaryWindow() {
 
   if (gfRenderMap) {
     gfRenderMap = FALSE;
-    BltVObjectFromIndex(vsFB, guiOmertaMap, 0, MAP_LEFT - 2, MAP_TOP - 2);
+    BltVObjectFromIndex(vsIndexFB, guiOmertaMap, 0, MAP_LEFT - 2, MAP_TOP - 2);
     InvalidateRegion(MAP_LEFT - 1, MAP_TOP - 1, MAP_RIGHT + 1, MAP_BOTTOM + 1);
     // Draw the coordinates
     SetFont(SMALLCOMPFONT);
@@ -1303,7 +1303,7 @@ void RenderSummaryWindow() {
     }
     if (gfRenderGrid) {
       uint16_t pos;
-      pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+      pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
       SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
       for (i = 1; i <= 15; i++) {
         // draw vertical lines
@@ -1313,7 +1313,7 @@ void RenderSummaryWindow() {
         pos = (uint16_t)(i * 13 + MAP_TOP);
         LineDraw(TRUE, MAP_LEFT, pos, MAP_RIGHT - 1, pos, 0, pDestBuf);
       }
-      UnLockVideoSurface(vsFB);
+      UnLockVideoSurface(vsIndexFB);
     }
     if (gfRenderProgress) {
       uint8_t ubNumUndergroundLevels;
@@ -1363,7 +1363,7 @@ void RenderSummaryWindow() {
           }
           ClipRect.iLeft = MAP_LEFT + x * 13;
           ClipRect.iRight = ClipRect.iLeft + 12;
-          pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+          pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
           Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
           if (giCurrentViewLevel == BASEMENT1_LEVEL_MASK ||
               giCurrentViewLevel == BASEMENT2_LEVEL_MASK ||
@@ -1371,14 +1371,14 @@ void RenderSummaryWindow() {
               giCurrentViewLevel == ALTERNATE_B1_MASK || giCurrentViewLevel == ALTERNATE_B2_MASK ||
               giCurrentViewLevel == ALTERNATE_B3_MASK)
             Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-          UnLockVideoSurface(vsFB);
+          UnLockVideoSurface(vsIndexFB);
         }
       }
     }
   }
 
   if (gfGlobalSummaryExists) {
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     // Render the grid for the map currently residing in memory (blue).
     if (gfWorldLoaded && !gfTempFile && gsSectorX) {
@@ -1400,7 +1400,7 @@ void RenderSummaryWindow() {
       y = MAP_TOP + (gsHiSectorY - 1) * 13 - 1;
       RectangleDraw(TRUE, x, y, x + 15, y + 15, Get16BPPColor(FROMRGB(200, 200, 50)), pDestBuf);
     }
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
   }
   // Check to see if the user clicked on one of the hot spot mode change areas.
   if (gfLeftButtonState) {

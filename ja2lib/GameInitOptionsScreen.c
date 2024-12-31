@@ -409,7 +409,7 @@ BOOLEAN EnterGIOScreen() {
   // REnder the screen once so we can blt ot to ths save buffer
   RenderGIOScreen();
 
-  BlitBufferToBuffer(vsFB, vsSB, 0, 0, 639, 439);
+  BlitBufferToBuffer(vsIndexFB, vsSB, 0, 0, 639, 439);
 
   gfGIOButtonsAllocated = TRUE;
 
@@ -502,10 +502,10 @@ BOOLEAN RenderGIOScreen() {
 
   // Get the main background screen graphic and blt it
   GetVideoObject(&hPixHandle, guiGIOMainBackGroundImage);
-  BltVideoObject(vsFB, hPixHandle, 0, 0, 0);
+  BltVideoObject(vsIndexFB, hPixHandle, 0, 0, 0);
 
   // Shade the background
-  ShadowVideoSurfaceRect(vsFB, 48, 55, 592, 378);  // 358
+  ShadowVideoSurfaceRect(vsIndexFB, 48, 55, 592, 378);  // 358
 
   // Display the title
   DrawTextToScreen(gzGIOScreenText[GIO_INITIAL_GAME_SETTINGS], GIO_MAIN_TITLE_X, GIO_MAIN_TITLE_Y,

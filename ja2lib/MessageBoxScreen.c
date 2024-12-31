@@ -256,13 +256,13 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
 
   // Save what we have under here...
   pDestBuf = LockVideoSurface(gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(vsFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight);
 
   UnLockVideoSurface(gMsgBox.uiSaveBuffer);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   // Create top-level mouse region
   MSYS_DefineRegion(&(gMsgBox.BackRegion), 0, 0, 640, 480, MSYS_PRIORITY_HIGHEST, usCursor,
@@ -786,13 +786,13 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
       gfDontOverRideSaveBuffer) {
     // restore what we have under here...
     pSrcBuf = LockVideoSurface(gMsgBox.uiSaveBuffer, &uiSrcPitchBYTES);
-    pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                     gMsgBox.sX, gMsgBox.sY, 0, 0, gMsgBox.usWidth, gMsgBox.usHeight);
 
     UnLockVideoSurface(gMsgBox.uiSaveBuffer);
-    UnLockVideoSurface(vsFB);
+    UnLockVideoSurface(vsIndexFB);
 
     InvalidateRegion(gMsgBox.sX, gMsgBox.sY, (int16_t)(gMsgBox.sX + gMsgBox.usWidth),
                      (int16_t)(gMsgBox.sY + gMsgBox.usHeight));
@@ -865,7 +865,7 @@ uint32_t MessageBoxScreenHandle() {
       /*
                               // Save what we have under here...
                               pDestBuf = LockVideoSurface( gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
-                              pSrcBuf = LockVideoSurface( vsFB, &uiSrcPitchBYTES);
+                              pSrcBuf = LockVideoSurface( vsIndexFB, &uiSrcPitchBYTES);
 
                               Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                       (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
@@ -874,7 +874,7 @@ uint32_t MessageBoxScreenHandle() {
                                                       gMsgBox.usWidth, gMsgBox.usHeight );
 
                               UnLockVideoSurface( gMsgBox.uiSaveBuffer );
-                              UnLockVideoSurface( vsFB );
+                              UnLockVideoSurface( vsIndexFB );
       */
     }
 
@@ -946,7 +946,7 @@ uint32_t MessageBoxScreenHandle() {
       MarkAButtonDirty(gMsgBox.uiNOButton);
     }
 
-    RenderMercPopUpBoxFromIndex(gMsgBox.iBoxId, gMsgBox.sX, gMsgBox.sY, vsFB);
+    RenderMercPopUpBoxFromIndex(gMsgBox.iBoxId, gMsgBox.sX, gMsgBox.sY, vsIndexFB);
     // gMsgBox.fRenderBox = FALSE;
     // ATE: Render each frame...
   }

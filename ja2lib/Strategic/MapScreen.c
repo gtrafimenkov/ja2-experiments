@@ -1052,10 +1052,10 @@ void ContractBoxGlow(void) {
 
           usColor=Get16BPPColor( FROMRGB( GlowColorsA[iColorNum].ubRed,
    GlowColorsA[iColorNum].ubGreen, GlowColorsA[iColorNum].ubBlue ) ); pDestBuf = LockVideoSurface(
-   vsFB, &uiDestPitchBYTES ); SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640,
+   vsIndexFB, &uiDestPitchBYTES ); SetClippingRegionAndImageWidth( uiDestPitchBYTES, 0, 0, 640,
    480); RectangleDraw( TRUE, CONTRACT_X, CONTRACT_Y, CONTRACT_X+CONTRACT_WIDTH,
    CONTRACT_Y+CONTRACT_HEIGHT, usColor, pDestBuf ); InvalidateRegion(CONTRACT_X, CONTRACT_Y,
-   CONTRACT_X+CONTRACT_WIDTH+1, CONTRACT_Y+CONTRACT_HEIGHT+1); UnLockVideoSurface( vsFB );
+   CONTRACT_X+CONTRACT_WIDTH+1, CONTRACT_Y+CONTRACT_HEIGHT+1); UnLockVideoSurface( vsIndexFB );
 
           // restore background
           if((iColorNum==0)||(iColorNum==1))
@@ -1106,13 +1106,13 @@ void ContractListRegionBoxGlow(uint16_t usCount) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, TIME_REMAINING_X, usY, TIME_REMAINING_X + TIME_REMAINING_WIDTH,
                 usY + GetFontHeight(MAP_SCREEN_FONT) + 2, usColor, pDestBuf);
   InvalidateRegion(TIME_REMAINING_X - 1, usY, TIME_REMAINING_X + TIME_REMAINING_WIDTH + 1,
                    usY + GetFontHeight(MAP_SCREEN_FONT) + 3);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   /*
           // restore background
@@ -1162,11 +1162,11 @@ void GlowFace(void) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 9, 18, 60, 63, usColor, pDestBuf);
   InvalidateRegion(9, 18, 61, 64);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   // restore background
   if ((iColorNum == 0) || (iColorNum == 1))
@@ -1219,11 +1219,11 @@ void GlowItem(void) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 3, 80, 64, 104, usColor, pDestBuf);
   InvalidateRegion(3, 80, 65, 105);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void GlowTrashCan(void) {
@@ -1258,13 +1258,13 @@ void GlowTrashCan(void) {
   // glow contract box
   usColor = Get16BPPColor(FROMRGB(GlowColorsA[iColorNum].ubRed, GlowColorsA[iColorNum].ubGreen,
                                   GlowColorsA[iColorNum].ubBlue));
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, TRASH_CAN_X, TRASH_CAN_Y, TRASH_CAN_X + TRASH_CAN_WIDTH,
                 TRASH_CAN_Y + TRASH_CAN_HEIGHT, usColor, pDestBuf);
   InvalidateRegion(TRASH_CAN_X, TRASH_CAN_Y, TRASH_CAN_X + TRASH_CAN_WIDTH + 1,
                    TRASH_CAN_Y + TRASH_CAN_HEIGHT + 1);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   // restore background
   if ((iColorNum == 0) || (iColorNum == 1))
@@ -1425,18 +1425,18 @@ void DrawCharBars(void) {
     }
 
     // current health
-    DrawLifeUIBarEx(pSoldier, BAR_INFO_X, BAR_INFO_Y, 3, 42, TRUE, vsFB);
+    DrawLifeUIBarEx(pSoldier, BAR_INFO_X, BAR_INFO_Y, 3, 42, TRUE, vsIndexFB);
 
     // robot doesn't have energy/fuel
     if (!AM_A_ROBOT(pSoldier)) {
       // current energy/fuel
-      DrawBreathUIBarEx(pSoldier, BAR_INFO_X + 6, BAR_INFO_Y, 3, 42, TRUE, vsFB);
+      DrawBreathUIBarEx(pSoldier, BAR_INFO_X + 6, BAR_INFO_Y, 3, 42, TRUE, vsIndexFB);
     }
 
     // vehicles and robot don't have morale
     if (!(pSoldier->uiStatusFlags & SOLDIER_VEHICLE) && !AM_A_ROBOT(pSoldier)) {
       // draw morale bar
-      DrawMoraleUIBarEx(pSoldier, BAR_INFO_X + 12, BAR_INFO_Y, 3, 42, TRUE, vsFB);
+      DrawMoraleUIBarEx(pSoldier, BAR_INFO_X + 12, BAR_INFO_Y, 3, 42, TRUE, vsIndexFB);
     }
   }
 
@@ -2037,7 +2037,7 @@ void DisplayCharacterInfo(void) {
 
   RenderHandPosItem();
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   RenderIconsForUpperLeftCornerPiece(bSelectedInfoChar);
 
@@ -2217,7 +2217,7 @@ void HighLightAssignLine() {
     usY += 6;
   }
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   for (usCount = 0; usCount < MAX_CHARACTER_COUNT; usCount++) {
@@ -2254,7 +2254,7 @@ void HighLightAssignLine() {
     }
   }
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void HighLightDestLine() {
@@ -2292,7 +2292,7 @@ void HighLightDestLine() {
   else
     iColorNum--;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   for (usCount = 0; usCount < MAX_CHARACTER_COUNT; usCount++) {
@@ -2332,7 +2332,7 @@ void HighLightDestLine() {
   }
   // InvalidateRegion( usX+4, usY, DEST_ETA_WIDTH-10, usY+GetFontHeight(MAP_SCREEN_FONT)+3);
   // InvalidateRegion( usX+10, usY, usX+ASSIGN_WIDTH, usY+GetFontHeight(MAP_SCREEN_FONT)+3);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void HighLightSleepLine() {
@@ -2371,7 +2371,7 @@ void HighLightSleepLine() {
   else
     iColorNum--;
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   for (usCount = 0; usCount < MAX_CHARACTER_COUNT; usCount++) {
@@ -2409,7 +2409,7 @@ void HighLightSleepLine() {
       InvalidateRegion(usX, usY, usX2 + 5, usY + GetFontHeight(MAP_SCREEN_FONT) + 3);
     }
   }
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void AddCharacter(struct SOLDIERTYPE *pCharacter) {
@@ -2526,7 +2526,7 @@ void DisplayCharacterList() {
   uint8_t ubForegroundColor = 0;
 
   if ((fShowAssignmentMenu == TRUE) && (fTeamPanelDirty == FALSE)) {
-    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
     return;
   }
 
@@ -2573,7 +2573,7 @@ void DisplayCharacterList() {
   }
 
   HandleDisplayOfSelectedMercArrows();
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   EnableDisableTeamListRegionsAndHelpText();
 
@@ -2988,7 +2988,7 @@ uint32_t MapScreenHandle(void) {
 
     // fill in
     ColorFillVideoSurfaceArea(vsSB, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
-    ColorFillVideoSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
+    ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
 
     if ((fFirstTimeInMapScreen == TRUE) && (AnyMercsHired() == FALSE)) {
       // render both panels for the restore
@@ -3400,7 +3400,7 @@ uint32_t MapScreenHandle(void) {
   }
 
   // pop up display boxes
-  DisplayBoxes(vsFB);
+  DisplayBoxes(vsIndexFB);
 
   // render buttons
   RenderButtons();
@@ -3409,13 +3409,13 @@ uint32_t MapScreenHandle(void) {
     // redisplay Movement box to blit it over any border buttons, since if long enough it can
     // overlap them
     ForceUpDateOfBox(ghMoveBox);
-    DisplayOnePopupBox(ghMoveBox, vsFB);
+    DisplayOnePopupBox(ghMoveBox, vsIndexFB);
   }
 
   if (fShowContractMenu) {
     // redisplay Contract box to blit it over any map sort buttons, since they overlap
     ForceUpDateOfBox(ghContractBox);
-    DisplayOnePopupBox(ghContractBox, vsFB);
+    DisplayOnePopupBox(ghContractBox, vsIndexFB);
   }
 
   // If we have new email, blink the email icon on top of the laptop button.
@@ -3477,7 +3477,7 @@ uint32_t MapScreenHandle(void) {
     SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
 
     // Shadow area
-    ShadowVideoSurfaceRect(vsFB, 0, 0, 640, 480);
+    ShadowVideoSurfaceRect(vsIndexFB, 0, 0, 640, 480);
     InvalidateScreen();
   }
 
@@ -5197,7 +5197,7 @@ void EndMapScreen(BOOLEAN fDuringFade) {
     sprintf(VObjectDesc.ImageFile, "INTERFACE\\LaptopOn.sti");
     if (!AddStandardVideoObject(&VObjectDesc, &uiLaptopOn))
       AssertMsg(0, "Failed to load data\\Interface\\LaptopOn.sti");
-    BltVObjectFromIndex(vsFB, uiLaptopOn, 0, 465, 417);
+    BltVObjectFromIndex(vsIndexFB, uiLaptopOn, 0, 465, 417);
     InvalidateRegion(465, 417, 480, 427);
     ExecuteBaseDirtyRectQueue();
     EndFrameBufferRender();
@@ -5277,7 +5277,7 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   { GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY); }
 
   // blit in the highlighted sector
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   // clip to view region
   ClipBlitsToMapViewRegionForRectangleAndABit(uiDestPitchBYTES);
@@ -5288,7 +5288,7 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   InvalidateRegion(sScreenX, sScreenY - 2, sScreenX + DMAP_GRID_X + 1, sScreenY + DMAP_GRID_Y - 1);
 
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 }
 
 void PollLeftButtonInMapView(uint32_t *puiNewEvent) {
@@ -5485,9 +5485,9 @@ void PopupText(wchar_t *pFontString, ...) {
   FindFontCenterCoordinates(0, 0, SCREEN_WIDTH, INTERFACE_START_Y, PopupString, LARGEFONT1, &sX,
                             &sY);
 
-  BltVideoSurface(vsFB, guiINTEXT, 0, 85, 160, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVideoSurface(vsIndexFB, guiINTEXT, 0, 85, 160, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
-  pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
 
   SetFont(LARGEFONT1);
   SetFontBackground(FONT_MCOLOR_BLACK);
@@ -5495,7 +5495,7 @@ void PopupText(wchar_t *pFontString, ...) {
 
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, LARGEFONT1, sX, sY, PopupString);
 
-  UnLockVideoSurface(vsFB);
+  UnLockVideoSurface(vsIndexFB);
 
   InvalidateScreen();
 }
@@ -5635,7 +5635,7 @@ void BltCharInvPanel() {
   HandleRenderInvSlots(pSoldier, DIRTYLEVEL2);
 
   // reset font destination buffer
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
   SetFont(BLOCKFONT2);
 
@@ -5682,7 +5682,7 @@ void BltCharInvPanel() {
     // blit gold key on top of key ring if key ring is not empty
   }
 
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 }
 
 // check for and highlight any ammo
@@ -6073,7 +6073,7 @@ void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo) {
   }
 
   // restore buffer
-  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 }
 
 void DisplayThePotentialPathForCurrentDestinationCharacterForMapScreenInterface(int16_t sMapX,
@@ -9216,18 +9216,18 @@ void CheckForAndRenderNewMailOverlay() {
     if (GetJA2Clock() % 1000 < 667) {
       if (ButtonList[guiMapBottomExitButtons[MAP_EXIT_TO_LAPTOP]]->uiFlags &
           BUTTON_CLICKED_ON) {  // button is down, so offset the icon
-        BltVObjectFromIndex(vsFB, guiNewMailIcons, 1, 465, 418);
+        BltVObjectFromIndex(vsIndexFB, guiNewMailIcons, 1, 465, 418);
         InvalidateRegion(465, 418, 480, 428);
       } else {  // button is up, so draw the icon normally
-        BltVObjectFromIndex(vsFB, guiNewMailIcons, 0, 464, 417);
+        BltVObjectFromIndex(vsIndexFB, guiNewMailIcons, 0, 464, 417);
         if (!(ButtonList[guiMapBottomExitButtons[MAP_EXIT_TO_LAPTOP]]->uiFlags & BUTTON_ENABLED)) {
           uint32_t uiDestPitchBYTES;
           uint8_t *pDestBuf;
           SGPRect area = {463, 417, 477, 425};
 
-          pDestBuf = LockVideoSurface(vsFB, &uiDestPitchBYTES);
+          pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
           Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &area);
-          UnLockVideoSurface(vsFB);
+          UnLockVideoSurface(vsIndexFB);
         }
         InvalidateRegion(463, 417, 481, 430);
       }
