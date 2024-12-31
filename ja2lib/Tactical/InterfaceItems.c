@@ -991,8 +991,7 @@ void RenderInvBodyPanel(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY) {
   // Blit body inv, based on body type
   int8_t bSubImageIndex = gbCompatibleApplyItem;
 
-  BltVObjectFromIndexOld(vsSaveBufferID, guiBodyInvVO[pSoldier->ubBodyType][bSubImageIndex], 0, sX,
-                         sY);
+  BltVObjectFromIndex(vsSaveBuffer, guiBodyInvVO[pSoldier->ubBodyType][bSubImageIndex], 0, sX, sY);
 }
 
 void HandleRenderInvSlots(struct SOLDIERTYPE *pSoldier, uint8_t fDirtyLevel) {
@@ -1014,10 +1013,10 @@ void HandleRenderInvSlots(struct SOLDIERTYPE *pSoldier, uint8_t fDirtyLevel) {
     if (KeyExistsInKeyRing(pSoldier, ANYKEY, NULL)) {
       // blit gold key here?
       if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
-        BltVObjectFromIndexOld(vsSaveBufferID, guiGoldKeyVO, 0, 496, 446);
+        BltVObjectFromIndex(vsSaveBuffer, guiGoldKeyVO, 0, 496, 446);
         RestoreExternBackgroundRect(496, 446, 29, 23);
       } else {
-        BltVObjectFromIndexOld(vsSaveBufferID, guiGoldKeyVO, 0, 217, 271);
+        BltVObjectFromIndex(vsSaveBuffer, guiGoldKeyVO, 0, 217, 271);
         RestoreExternBackgroundRect(217, 271, 29, 23);
       }
     }
@@ -1053,10 +1052,10 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
     // position graphic
     if (sPocket == SECONDHANDPOS && Item[pSoldier->inv[HANDPOS].usItem].fFlags & ITEM_TWO_HANDED) {
       if (guiCurrentItemDescriptionScreen != MAP_SCREEN) {
-        BltVObjectFromIndexOld(vsSaveBufferID, guiSecItemHiddenVO, 0, 217, 448);
+        BltVObjectFromIndex(vsSaveBuffer, guiSecItemHiddenVO, 0, 217, 448);
         RestoreExternBackgroundRect(217, 448, 72, 28);
       } else {
-        BltVObjectFromIndexOld(vsSaveBufferID, guiMapInvSecondHandBlockout, 0, 14, 218);
+        BltVObjectFromIndex(vsSaveBuffer, guiMapInvSecondHandBlockout, 0, 14, 218);
         RestoreExternBackgroundRect(14, 218, 102, 24);
       }
     }
@@ -2610,20 +2609,20 @@ void RenderItemDescriptionBox() {
     sCenY = MAP_ITEMDESC_ITEM_Y + (abs((int16_t)(ITEMDESC_ITEM_HEIGHT - usHeight)) / 2) -
             pTrav->sOffsetY;
 
-    BltVObjectFromIndexOld(vsSaveBufferID, guiMapItemDescBox, 0, gsInvDescX, gsInvDescY);
+    BltVObjectFromIndex(vsSaveBuffer, guiMapItemDescBox, 0, gsInvDescX, gsInvDescY);
 
     // Display the money 'seperating' border
     if (gpItemDescObject->usItem == MONEY) {
       // Render the money Boxes
-      BltVObjectFromIndexOld(vsSaveBufferID, guiMoneyGraphicsForDescBox, 0,
-                             (uint16_t)(gMapMoneyButtonLoc.x + gMoneyButtonOffsets[0].x),
-                             (uint16_t)(gMapMoneyButtonLoc.y + gMoneyButtonOffsets[0].y));
+      BltVObjectFromIndex(vsSaveBuffer, guiMoneyGraphicsForDescBox, 0,
+                          (uint16_t)(gMapMoneyButtonLoc.x + gMoneyButtonOffsets[0].x),
+                          (uint16_t)(gMapMoneyButtonLoc.y + gMoneyButtonOffsets[0].y));
     }
 
     // Display item
     BltVideoObjectOutlineShadowFromIndex(vsSaveBufferID, guiItemGraphic, 0, sCenX - 2, sCenY + 2);
 
-    BltVObjectFromIndexOld(vsSaveBufferID, guiItemGraphic, 0, sCenX, sCenY);
+    BltVObjectFromIndex(vsSaveBuffer, guiItemGraphic, 0, sCenX, sCenY);
 
     // Display ststus
     DrawItemUIBarEx(gpItemDescObject, gubItemDescStatusIndex, (int16_t)MAP_ITEMDESC_ITEM_STATUS_X,
@@ -2689,12 +2688,12 @@ void RenderItemDescriptionBox() {
 
     if (Item[gpItemDescObject->usItem].usItemClass & IC_GUN) {
       // display bullets for ROF
-      BltVObjectFromIndexOld(vsSaveBufferID, guiBullet, 0, MAP_BULLET_SING_X, MAP_BULLET_SING_Y);
+      BltVObjectFromIndex(vsSaveBuffer, guiBullet, 0, MAP_BULLET_SING_X, MAP_BULLET_SING_Y);
 
       if (Weapon[gpItemDescObject->usItem].ubShotsPerBurst > 0) {
         for (cnt = 0; cnt < Weapon[gpItemDescObject->usItem].ubShotsPerBurst; cnt++) {
-          BltVObjectFromIndexOld(vsSaveBufferID, guiBullet, 0,
-                                 MAP_BULLET_BURST_X + cnt * (BULLET_WIDTH + 1), MAP_BULLET_BURST_Y);
+          BltVObjectFromIndex(vsSaveBuffer, guiBullet, 0,
+                              MAP_BULLET_BURST_X + cnt * (BULLET_WIDTH + 1), MAP_BULLET_BURST_Y);
         }
       }
     }
@@ -3120,18 +3119,18 @@ void RenderItemDescriptionBox() {
     sCenY =
         ITEMDESC_ITEM_Y + (abs((int16_t)(ITEMDESC_ITEM_HEIGHT - usHeight)) / 2) - pTrav->sOffsetY;
 
-    BltVObjectFromIndexOld(vsSaveBufferID, guiItemDescBox, 0, gsInvDescX, gsInvDescY);
+    BltVObjectFromIndex(vsSaveBuffer, guiItemDescBox, 0, gsInvDescX, gsInvDescY);
 
     if (gpItemDescObject->usItem == MONEY) {
       // Render the money Boxes
-      BltVObjectFromIndexOld(vsSaveBufferID, guiMoneyGraphicsForDescBox, 0,
-                             (uint16_t)(gsInvDescX + gItemDescAttachmentsXY[0].sX - 1),
-                             (uint16_t)(gsInvDescY + gItemDescAttachmentsXY[0].sY - 2));
+      BltVObjectFromIndex(vsSaveBuffer, guiMoneyGraphicsForDescBox, 0,
+                          (uint16_t)(gsInvDescX + gItemDescAttachmentsXY[0].sX - 1),
+                          (uint16_t)(gsInvDescY + gItemDescAttachmentsXY[0].sY - 2));
     }
 
     // Display item
     BltVideoObjectOutlineShadowFromIndex(vsSaveBufferID, guiItemGraphic, 0, sCenX - 2, sCenY + 2);
-    BltVObjectFromIndexOld(vsSaveBufferID, guiItemGraphic, 0, sCenX, sCenY);
+    BltVObjectFromIndex(vsSaveBuffer, guiItemGraphic, 0, sCenX, sCenY);
 
     // Display status
     DrawItemUIBarEx(gpItemDescObject, gubItemDescStatusIndex, (int16_t)ITEMDESC_ITEM_STATUS_X,
@@ -3186,12 +3185,12 @@ void RenderItemDescriptionBox() {
 
     if (Item[gpItemDescObject->usItem].usItemClass & IC_GUN) {
       // display bullets for ROF
-      BltVObjectFromIndexOld(vsSaveBufferID, guiBullet, 0, BULLET_SING_X, BULLET_SING_Y);
+      BltVObjectFromIndex(vsSaveBuffer, guiBullet, 0, BULLET_SING_X, BULLET_SING_Y);
 
       if (Weapon[gpItemDescObject->usItem].ubShotsPerBurst > 0) {
         for (cnt = 0; cnt < Weapon[gpItemDescObject->usItem].ubShotsPerBurst; cnt++) {
-          BltVObjectFromIndexOld(vsSaveBufferID, guiBullet, 0,
-                                 BULLET_BURST_X + cnt * (BULLET_WIDTH + 1), BULLET_BURST_Y);
+          BltVObjectFromIndex(vsSaveBuffer, guiBullet, 0, BULLET_BURST_X + cnt * (BULLET_WIDTH + 1),
+                              BULLET_BURST_Y);
         }
       }
     }

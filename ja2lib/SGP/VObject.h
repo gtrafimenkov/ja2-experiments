@@ -9,6 +9,8 @@
 #include "SGP/HImage.h"
 #include "SGP/Types.h"
 
+struct VSurface;
+
 // ************************************************************************************
 //
 // Video Object SGP Module
@@ -132,6 +134,8 @@ BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex);
 BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hVSrcObject, uint16_t usRegionIndex,
                        int32_t iDestX, int32_t iDestY);
 
+BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16_t usRegionIndex,
+                            int32_t iDestX, int32_t iDestY);
 BOOLEAN BltVObjectFromIndexOld(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
                                uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY);
 
