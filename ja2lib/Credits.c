@@ -523,7 +523,7 @@ BOOLEAN RenderCreditScreen() {
   struct VObject *hPixHandle;
 
   GetVideoObject(&hPixHandle, guiCreditBackGroundImage);
-  BltVideoObject(vsIndexFB, hPixHandle, 0, 0, 0);
+  BltVideoObjectOld(vsIndexFB, hPixHandle, 0, 0, 0);
   if (!gfCrdtHaveRenderedFirstFrameToSaveBuffer) {
     gfCrdtHaveRenderedFirstFrameToSaveBuffer = TRUE;
 
@@ -1197,8 +1197,8 @@ void HandleCreditEyeBlinking() {
   for (ubCnt = 0; ubCnt < NUM_PEOPLE_IN_CREDITS; ubCnt++) {
     if ((GetJA2Clock() - gCreditFaces[ubCnt].uiLastBlinkTime) >
         (uint32_t)gCreditFaces[ubCnt].sBlinkFreq) {
-      BltVideoObject(vsIndexFB, hPixHandle, (uint8_t)(ubCnt * 3), gCreditFaces[ubCnt].sEyeX,
-                     gCreditFaces[ubCnt].sEyeY);
+      BltVideoObjectOld(vsIndexFB, hPixHandle, (uint8_t)(ubCnt * 3), gCreditFaces[ubCnt].sEyeX,
+                        gCreditFaces[ubCnt].sEyeY);
       InvalidateRegion(gCreditFaces[ubCnt].sEyeX, gCreditFaces[ubCnt].sEyeY,
                        gCreditFaces[ubCnt].sEyeX + CRDT_EYE_WIDTH,
                        gCreditFaces[ubCnt].sEyeY + CRDT_EYE_HEIGHT);

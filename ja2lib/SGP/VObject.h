@@ -131,8 +131,8 @@ uint16_t CreateObjectPaletteTables(struct VObject *pObj, uint32_t uiType);
 BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex);
 
 // Blits a video object to another video object
-BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hVSrcObject, uint16_t usRegionIndex,
-                       int32_t iDestX, int32_t iDestY);
+BOOLEAN BltVideoObjectOld(uint32_t uiDestVSurface, struct VObject *hVSrcObject,
+                          uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY);
 
 BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16_t usRegionIndex,
                             int32_t iDestX, int32_t iDestY);

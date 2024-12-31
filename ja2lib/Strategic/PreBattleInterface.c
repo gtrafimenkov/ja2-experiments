@@ -929,20 +929,20 @@ void RenderPreBattleInterface() {
     gfRenderPBInterface = FALSE;
     GetVideoObject(&hVObject, uiInterfaceImages);
     // main panel
-    BltVideoObject(vsSaveBufferID, hVObject, MAINPANEL, 0, 0);
+    BltVideoObjectOld(vsSaveBufferID, hVObject, MAINPANEL, 0, 0);
     // main title
 
     RenderPBHeader(&x, &width);
     // now draw the title bars up to the text.
     for (i = x - 12; i > 20; i -= 10) {
-      BltVideoObject(vsSaveBufferID, hVObject, TITLE_BAR_PIECE, i, 6);
+      BltVideoObjectOld(vsSaveBufferID, hVObject, TITLE_BAR_PIECE, i, 6);
     }
     for (i = x + width + 2; i < 231; i += 10) {
-      BltVideoObject(vsSaveBufferID, hVObject, TITLE_BAR_PIECE, i, 6);
+      BltVideoObjectOld(vsSaveBufferID, hVObject, TITLE_BAR_PIECE, i, 6);
     }
 
     y = BOTTOM_Y - ACTUAL_HEIGHT - ROW_HEIGHT * max(guiNumUninvolved, 1);
-    BltVideoObject(vsSaveBufferID, hVObject, UNINVOLVED_HEADER, 8, y);
+    BltVideoObjectOld(vsSaveBufferID, hVObject, UNINVOLVED_HEADER, 8, y);
 
     SetFont(BLOCKFONT);
     SetFontForeground(FONT_BEIGE);
@@ -991,12 +991,12 @@ void RenderPreBattleInterface() {
     // Draw the bottom columns
     for (i = 0; i < (int32_t)max(guiNumUninvolved, 1); i++) {
       y = BOTTOM_Y - ROW_HEIGHT * (i + 1) + 1;
-      BltVideoObject(vsSaveBufferID, hVObject, BOTTOM_COLUMN, 161, y);
+      BltVideoObjectOld(vsSaveBufferID, hVObject, BOTTOM_COLUMN, 161, y);
     }
 
     for (i = 0; i < (int32_t)(21 - max(guiNumUninvolved, 1)); i++) {
       y = TOP_Y + ROW_HEIGHT * i;
-      BltVideoObject(vsSaveBufferID, hVObject, TOP_COLUMN, 186, y);
+      BltVideoObjectOld(vsSaveBufferID, hVObject, TOP_COLUMN, 186, y);
     }
 
     // location

@@ -181,7 +181,7 @@ void RenderAccumulatedBurstLocations() {
         SetBackgroundRectFilled(iBack);
       }
 
-      BltVideoObject(vsIndexFB, hVObject, 1, sXPos, sYPos);
+      BltVideoObjectOld(vsIndexFB, hVObject, 1, sXPos, sYPos);
     }
   }
 }
