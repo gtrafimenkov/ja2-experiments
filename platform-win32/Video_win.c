@@ -81,12 +81,6 @@ void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette);
 void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
                          uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
 
-// Clipper functions
-void DDCreateClipper(LPDIRECTDRAW2 pDirectDraw, uint32_t fFlags, LPDIRECTDRAWCLIPPER *pDDClipper);
-void DDSetClipper(LPDIRECTDRAWSURFACE2 pSurface, LPDIRECTDRAWCLIPPER pDDClipper);
-void DDReleaseClipper(LPDIRECTDRAWCLIPPER pDDClipper);
-void DDSetClipperList(LPDIRECTDRAWCLIPPER pDDClipper, LPRGNDATA pClipList, uint32_t uiFlags);
-
 // local functions
 char *DirectXErrorDescription(int32_t iDXReturn);
 void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename);
@@ -4669,34 +4663,6 @@ void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
   Assert(pDDColorKey != NULL);
 
   ATTEMPT(IDirectDrawSurface2_SetColorKey(pSurface, uiFlags, pDDColorKey));
-}
-
-// Clipper FUnctions
-void DDCreateClipper(LPDIRECTDRAW2 pDirectDraw, uint32_t fFlags, LPDIRECTDRAWCLIPPER *pDDClipper) {
-  Assert(pDirectDraw != NULL);
-  Assert(pDDClipper != NULL);
-
-  ATTEMPT(IDirectDraw2_CreateClipper(pDirectDraw, 0, pDDClipper, NULL));
-}
-
-void DDSetClipper(LPDIRECTDRAWSURFACE2 pSurface, LPDIRECTDRAWCLIPPER pDDClipper) {
-  Assert(pSurface != NULL);
-  Assert(pDDClipper != NULL);
-
-  ATTEMPT(IDirectDrawSurface2_SetClipper(pSurface, pDDClipper));
-}
-
-void DDReleaseClipper(LPDIRECTDRAWCLIPPER pDDClipper) {
-  Assert(pDDClipper != NULL);
-
-  ATTEMPT(IDirectDrawClipper_Release(pDDClipper));
-}
-
-void DDSetClipperList(LPDIRECTDRAWCLIPPER pDDClipper, LPRGNDATA pClipList, uint32_t uiFlags) {
-  Assert(pDDClipper != NULL);
-  Assert(pClipList != NULL);
-
-  ATTEMPT(IDirectDrawClipper_SetClipList(pDDClipper, pClipList, uiFlags));
 }
 
 //////////////////////////////////////////////////////////////////
