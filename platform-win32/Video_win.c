@@ -4128,3 +4128,24 @@ uint16_t PackColorsToRGB16(uint8_t r, uint8_t g, uint8_t b) {
 
   return (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
 }
+
+void UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {
+  uint16_t r16 = rgb16 & gusRedMask;
+  uint16_t g16 = rgb16 & gusGreenMask;
+  uint16_t b16 = rgb16 & gusBlueMask;
+
+  if (gusRedShift < 0)
+    *r = ((uint32_t)r16 << abs(gusRedShift));
+  else
+    *r = ((uint32_t)r16 >> gusRedShift);
+
+  if (gusGreenShift < 0)
+    *g = ((uint32_t)g16 << abs(gusGreenShift));
+  else
+    *g = ((uint32_t)g16 >> gusGreenShift);
+
+  if (gusBlueShift < 0)
+    *b = ((uint32_t)b16 << abs(gusBlueShift));
+  else
+    *b = ((uint32_t)b16 >> gusBlueShift);
+}
