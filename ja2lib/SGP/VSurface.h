@@ -117,7 +117,7 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch);
 
 // Must be called after Locking buffer call above
-void UnLockVideoSurfaceBuffer(struct VSurface *hVSurface);
+void UnlockVSurface(struct VSurface *hVSurface);
 
 // Set data from HIMAGE.
 BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage, uint16_t usX,

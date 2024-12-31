@@ -56,7 +56,6 @@ static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
                              LPDIRECTDRAWSURFACE2 *ppOldSurface2);
 static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
                           LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent);
-static void DDUnlockSurface(LPDIRECTDRAWSURFACE2 pSurface, void *_platformData2);
 static void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
                              LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans);
 static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
@@ -1777,18 +1776,6 @@ static void *LockPrimarySurface(LPDIRECTDRAWSURFACE2 _surf, uint32_t *uiPitch) {
   return SurfaceDescription.lpSurface;
 }
 
-static void UnlockPrimarySurface(LPDIRECTDRAWSURFACE2 _surf) {
-  DDSURFACEDESC SurfaceDescription;
-  HRESULT ReturnCode;
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Unlock(_surf, &SurfaceDescription);
-  if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-  }
-}
-
 BOOLEAN GetRGBDistribution(void) {
   DDSURFACEDESC SurfaceDescription;
   uint16_t usBit;
@@ -2288,36 +2275,27 @@ uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
   return LockVSurface(vs, puiPitch);
 }
 
-void UnLockVideoSurface(uint32_t uiVSurface) {
-  //
-  // Check if given backbuffer or primary buffer
-  //
-  if (uiVSurface == PRIMARY_SURFACE) {
-    UnlockPrimarySurface(gpPrimarySurface);
-    return;
+void UnLockVideoSurface(uint32_t id) {
+  switch (id) {
+    case PRIMARY_SURFACE:
+      IDirectDrawSurface2_Unlock(gpPrimarySurface, NULL);
+      break;
+    case BACKBUFFER:
+      IDirectDrawSurface2_Unlock(gpBackBuffer, NULL);
+      break;
+    case vsIndexFB:
+      IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
+      break;
+    case MOUSE_BUFFER:
+      IDirectDrawSurface2_Unlock(gpMouseCursorOriginal, NULL);
+      break;
+    default: {
+      struct VSurface *vs = FindVSurface(id);
+      if (vs) {
+        UnlockVSurface(vs);
+      }
+    }
   }
-
-  if (uiVSurface == BACKBUFFER) {
-    UnlockPrimarySurface(gpBackBuffer);
-    return;
-  }
-
-  if (uiVSurface == vsIndexFB) {
-    UnlockPrimarySurface(gpFrameBuffer);
-    return;
-  }
-
-  if (uiVSurface == MOUSE_BUFFER) {
-    UnlockPrimarySurface(gpMouseCursorOriginal);
-    return;
-  }
-
-  struct VSurface *vs = FindVSurface(uiVSurface);
-  if (!vs) {
-    return;
-  }
-
-  UnLockVideoSurfaceBuffer(vs);
 }
 
 BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
@@ -2698,11 +2676,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
 uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
   DDSURFACEDESC SurfaceDescription;
 
-  // Assertions
-  if (vs == NULL) {
-    int i = 0;
-  }
-
   Assert(vs != NULL);
   Assert(pPitch != NULL);
 
@@ -2713,10 +2686,8 @@ uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
   return (uint8_t *)SurfaceDescription.lpSurface;
 }
 
-void UnLockVideoSurfaceBuffer(struct VSurface *hVSurface) {
-  Assert(hVSurface != NULL);
-
-  DDUnlockSurface((LPDIRECTDRAWSURFACE2)hVSurface->_platformData2, NULL);
+void UnlockVSurface(struct VSurface *vs) {
+  IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL);
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette
@@ -2943,7 +2914,7 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
     }
 
     if ((pDestSurface8 = (uint8_t *)LockVSurface(hDestVSurface, &uiDestPitch)) == NULL) {
-      UnLockVideoSurfaceBuffer(hSrcVSurface);
+      UnlockVSurface(hSrcVSurface);
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                  String("Failed on lock of 8BPP dest surface for blitting"));
       return (FALSE);
@@ -2951,8 +2922,8 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
 
     Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, iDestX, iDestY,
                   SrcRect.left, SrcRect.top, uiWidth, uiHeight);
-    UnLockVideoSurfaceBuffer(hSrcVSurface);
-    UnLockVideoSurfaceBuffer(hDestVSurface);
+    UnlockVSurface(hSrcVSurface);
+    UnlockVSurface(hDestVSurface);
     return (TRUE);
   } else {
     DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
@@ -3329,7 +3300,7 @@ BOOLEAN SmkPollFlics(void) {
                         SmkList[uiCount].SmackHandle->Height, SurfaceDescription.lpSurface,
                         guiSmackPixelFormat);
           SmackDoFrame(SmkList[uiCount].SmackHandle);
-          DDUnlockSurface(SmkList[uiCount].lpDDS, SurfaceDescription.lpSurface);
+          IDirectDrawSurface2_Unlock(SmkList[uiCount].lpDDS, SurfaceDescription.lpSurface);
           // temp til I figure out what to do with it
           // InvalidateRegion(0,0, 640, 480, FALSE);
 
@@ -3543,12 +3514,6 @@ static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
   ATTEMPT(ReturnCode);
-}
-
-static void DDUnlockSurface(LPDIRECTDRAWSURFACE2 pSurface, void *_platformData2) {
-  Assert(pSurface != NULL);
-
-  ATTEMPT(IDirectDrawSurface2_Unlock(pSurface, _platformData2));
 }
 
 static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc) {
