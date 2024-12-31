@@ -47,7 +47,6 @@ struct VSurface *ghMouseBuffer = NULL;
 #define VIDEO_NO_CURSOR 0xFFFF
 
 extern int32_t giNumFrames;
-extern uint32_t guiMouseBufferState;  // BUFFER_READY, BUFFER_DIRTY, BUFFER_DISABLED
 
 static struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface);
 
@@ -122,10 +121,10 @@ typedef struct {
 
 #define MAX_NUM_FRAMES 25
 
-BOOLEAN gfVideoCapture = FALSE;
-uint32_t guiFramePeriod = (1000 / 15);
-uint32_t guiLastFrame;
-uint16_t *gpFrameData[MAX_NUM_FRAMES];
+static BOOLEAN gfVideoCapture = FALSE;
+static uint32_t guiFramePeriod = (1000 / 15);
+static uint32_t guiLastFrame;
+static uint16_t *gpFrameData[MAX_NUM_FRAMES];
 int32_t giNumFrames = 0;
 
 //
@@ -165,40 +164,35 @@ static MouseCursorBackground gMouseCursorBackground[2];
 
 static struct VObject *gpCursorStore;
 
-char gFatalErrorString[512];
-
-// 8-bit palette stuff
-
-struct SGPPaletteEntry gSgpPalette[256];
-LPDIRECTDRAWPALETTE gpDirectDrawPalette;
+static char gFatalErrorString[512];
 
 //
 // Refresh thread based variables
 //
 
-uint32_t guiFrameBufferState;    // BUFFER_READY, BUFFER_DIRTY
-uint32_t guiMouseBufferState;    // BUFFER_READY, BUFFER_DIRTY, BUFFER_DISABLED
-uint32_t guiVideoManagerState;   // VIDEO_ON, VIDEO_OFF, VIDEO_SUSPENDED, VIDEO_SHUTTING_DOWN
-uint32_t guiRefreshThreadState;  // THREAD_ON, THREAD_OFF, THREAD_SUSPENDED
+static uint32_t guiFrameBufferState;    // BUFFER_READY, BUFFER_DIRTY
+static uint32_t guiMouseBufferState;    // BUFFER_READY, BUFFER_DIRTY, BUFFER_DISABLED
+static uint32_t guiVideoManagerState;   // VIDEO_ON, VIDEO_OFF, VIDEO_SUSPENDED, VIDEO_SHUTTING_DOWN
+static uint32_t guiRefreshThreadState;  // THREAD_ON, THREAD_OFF, THREAD_SUSPENDED
 
 //
 // Dirty rectangle management variables
 //
 
-SGPRect gListOfDirtyRegions[MAX_DIRTY_REGIONS];
-uint32_t guiDirtyRegionCount;
-BOOLEAN gfForceFullScreenRefresh;
+static SGPRect gListOfDirtyRegions[MAX_DIRTY_REGIONS];
+static uint32_t guiDirtyRegionCount;
+static BOOLEAN gfForceFullScreenRefresh;
 
-SGPRect gDirtyRegionsEx[MAX_DIRTY_REGIONS];
-uint32_t gDirtyRegionsFlagsEx[MAX_DIRTY_REGIONS];
-uint32_t guiDirtyRegionExCount;
+static SGPRect gDirtyRegionsEx[MAX_DIRTY_REGIONS];
+static uint32_t gDirtyRegionsFlagsEx[MAX_DIRTY_REGIONS];
+static uint32_t guiDirtyRegionExCount;
 
 //
 // Screen output stuff
 //
 
-BOOLEAN gfPrintFrameBuffer;
-uint32_t guiPrintFrameBufferIndex;
+static BOOLEAN gfPrintFrameBuffer;
+static uint32_t guiPrintFrameBufferIndex;
 
 extern uint16_t gusRedMask;
 extern uint16_t gusGreenMask;
@@ -2062,10 +2056,12 @@ void PrintScreen(void) { gfPrintFrameBuffer = TRUE; }
 
 BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) {
   HRESULT ReturnCode;
+  struct SGPPaletteEntry gSgpPalette[256];
 
   // If we are in 256 colors, then we have to initialize the palette system to 0 (faded out)
   memcpy(gSgpPalette, pPalette, sizeof(struct SGPPaletteEntry) * 256);
 
+  LPDIRECTDRAWPALETTE gpDirectDrawPalette;
   ReturnCode =
       IDirectDraw_CreatePalette(gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
                                 (LPPALETTEENTRY)(&gSgpPalette[0]), &gpDirectDrawPalette, NULL);
@@ -2105,9 +2101,6 @@ void FatalError(char *pError, ...) {
   IDirectDraw2_RestoreDisplayMode(gpDirectDrawObject);
   IDirectDraw2_Release(gpDirectDrawObject);
   ShowWindow(ghWindow, SW_HIDE);
-
-  // destroy the window
-  // DestroyWindow( ghWindow );
 
   gfProgramIsRunning = FALSE;
 
