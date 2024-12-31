@@ -537,22 +537,19 @@ void RenderMercs() {
 
   // Title
   GetVideoObject(&hPixHandle, guiMercSymbol);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_TITLE_X, MERC_TITLE_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, MERC_TITLE_X, MERC_TITLE_Y);
 
   // Speck Portrait
   GetVideoObject(&hPixHandle, guiSpecPortrait);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_PORTRAIT_X, MERC_PORTRAIT_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, MERC_PORTRAIT_X, MERC_PORTRAIT_Y);
 
   // Account Box
   GetVideoObject(&hPixHandle, guiAccountBox);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_ACCOUNT_BOX_X, MERC_ACCOUNT_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, MERC_ACCOUNT_BOX_X, MERC_ACCOUNT_BOX_Y);
 
   // Files Box
   GetVideoObject(&hPixHandle, guiFilesBox);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_FILE_BOX_X, MERC_FILE_BOX_Y, VO_BLT_SRCTRANSPARENCY,
-                 NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, MERC_FILE_BOX_X, MERC_FILE_BOX_Y);
 
   // Text on the Speck Portrait
   DisplayWrappedString(MERC_PORTRAIT_TEXT_X, MERC_PORTRAIT_TEXT_Y, MERC_PORTRAIT_TEXT_WIDTH, 2,
@@ -2047,8 +2044,7 @@ void DrawMercVideoBackGround() {
   struct VObject *hPixHandle;
 
   GetVideoObject(&hPixHandle, guiMercVideoPopupBackground);
-  BltVideoObject(vsFB, hPixHandle, 0, MERC_VIDEO_BACKGROUND_X, MERC_VIDEO_BACKGROUND_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, MERC_VIDEO_BACKGROUND_X, MERC_VIDEO_BACKGROUND_Y);
 
   // put the title on the window
   DrawTextToScreen(MercHomePageText[MERC_SPECK_COM], MERC_X_VIDEO_TITLE_X, MERC_X_VIDEO_TITLE_Y, 0,

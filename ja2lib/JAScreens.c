@@ -699,10 +699,9 @@ uint32_t SexScreenHandle(void) {
   sY = (int16_t)((480 - pTrav->usHeight) / 2);
 
   if (bCurFrame < 24) {
-    BltVObjectFromIndex(vsFB, guiSMILY, 0, sX, sY, VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVObjectFromIndex(vsFB, guiSMILY, 0, sX, sY);
   } else {
-    BltVObjectFromIndex(vsFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY, VO_BLT_SRCTRANSPARENCY,
-                        NULL);
+    BltVObjectFromIndex(vsFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY);
   }
 
   InvalidateRegion(sX, sY, (int16_t)(sX + pTrav->usWidth), (int16_t)(sY + pTrav->usHeight));

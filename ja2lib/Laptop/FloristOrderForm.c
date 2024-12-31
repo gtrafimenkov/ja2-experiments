@@ -512,27 +512,23 @@ void RenderFloristOrderForm() {
   // The flowe Delivery location
   GetVideoObject(&hPixHandle, guiDeliveryLocation);
   BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_DELIVERY_LOCATION_X,
-                 FLOWER_ORDER_DELIVERY_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+                 FLOWER_ORDER_DELIVERY_LOCATION_Y);
 
   // The flowe Flower Frame
   GetVideoObject(&hPixHandle, guiFlowerFrame);
-  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_FLOWER_BOX_X, FLOWER_ORDER_FLOWER_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_FLOWER_BOX_X, FLOWER_ORDER_FLOWER_BOX_Y);
 
   // The currenltly selected flwoer
   GetVideoObject(&hPixHandle, guiCurrentlySelectedFlowerImage);
-  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_FLOWER_BOX_X + 5, FLOWER_ORDER_FLOWER_BOX_Y + 5,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_FLOWER_BOX_X + 5, FLOWER_ORDER_FLOWER_BOX_Y + 5);
 
   // The flowe Name Box
   GetVideoObject(&hPixHandle, guiNameBox);
-  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_NAME_BOX_X, FLOWER_ORDER_NAME_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_NAME_BOX_X, FLOWER_ORDER_NAME_BOX_Y);
 
   // The flowe Personel sentiments
   GetVideoObject(&hPixHandle, guiPersonalSentiments);
-  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_SENTIMENT_BOX_X, FLOWER_ORDER_SENTIMENT_BOX_Y,
-                 VO_BLT_SRCTRANSPARENCY, NULL);
+  BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_SENTIMENT_BOX_X, FLOWER_ORDER_SENTIMENT_BOX_Y);
 
   // Bouquet name, price and order number,text
   DrawTextToScreen(sOrderFormText[FLORIST_ORDER_NAME_BOUQUET], FLOWER_ORDER_FLOWER_NAME_X,
@@ -830,56 +826,44 @@ void DisplayFloristCheckBox() {
   // check box
   GetVideoObject(&hPixHandle, guiFlowerOrderCheckBoxButtonImage);
   if (gfFLoristCheckBox0Down)
-    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_0_X, FLOWER_ORDER_CHECK_BOX_0_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_0_X, FLOWER_ORDER_CHECK_BOX_0_Y);
   else
-    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_0_X, FLOWER_ORDER_CHECK_BOX_0_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_0_X, FLOWER_ORDER_CHECK_BOX_0_Y);
 
   // first check box
   GetVideoObject(&hPixHandle, guiFlowerOrderCheckBoxButtonImage);
   if (gfFLoristCheckBox1Down)
-    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_1_X, FLOWER_ORDER_CHECK_BOX_1_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_1_X, FLOWER_ORDER_CHECK_BOX_1_Y);
   else
-    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_1_X, FLOWER_ORDER_CHECK_BOX_1_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_1_X, FLOWER_ORDER_CHECK_BOX_1_Y);
 
   // second check box
   GetVideoObject(&hPixHandle, guiFlowerOrderCheckBoxButtonImage);
   if (gfFLoristCheckBox2Down)
-    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_2_X, FLOWER_ORDER_CHECK_BOX_2_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_2_X, FLOWER_ORDER_CHECK_BOX_2_Y);
   else
-    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_2_X, FLOWER_ORDER_CHECK_BOX_2_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_2_X, FLOWER_ORDER_CHECK_BOX_2_Y);
 
   // third check box
   GetVideoObject(&hPixHandle, guiFlowerOrderCheckBoxButtonImage);
   if (gfFLoristCheckBox3Down)
-    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_3_X, FLOWER_ORDER_CHECK_BOX_3_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_3_X, FLOWER_ORDER_CHECK_BOX_3_Y);
   else
-    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_3_X, FLOWER_ORDER_CHECK_BOX_3_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_3_X, FLOWER_ORDER_CHECK_BOX_3_Y);
 
   // Foiurth check box
   GetVideoObject(&hPixHandle, guiFlowerOrderCheckBoxButtonImage);
   if (gfFLoristCheckBox4Down)
-    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_4_X, FLOWER_ORDER_CHECK_BOX_4_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_4_X, FLOWER_ORDER_CHECK_BOX_4_Y);
   else
-    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_4_X, FLOWER_ORDER_CHECK_BOX_4_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_4_X, FLOWER_ORDER_CHECK_BOX_4_Y);
 
   // fifth check box
   GetVideoObject(&hPixHandle, guiFlowerOrderCheckBoxButtonImage);
   if (gfFLoristCheckBox5Down)
-    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_5_X, FLOWER_ORDER_CHECK_BOX_5_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 1, FLOWER_ORDER_CHECK_BOX_5_X, FLOWER_ORDER_CHECK_BOX_5_Y);
   else
-    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_5_X, FLOWER_ORDER_CHECK_BOX_5_Y,
-                   VO_BLT_SRCTRANSPARENCY, NULL);
+    BltVideoObject(vsFB, hPixHandle, 0, FLOWER_ORDER_CHECK_BOX_5_X, FLOWER_ORDER_CHECK_BOX_5_Y);
 
   InvalidateRegion(LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
                    LAPTOP_SCREEN_WEB_LR_Y);
@@ -1126,42 +1110,39 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(uint8_t ubDropDownMode) {
       for (i = 10; i < FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 10; i += 10) {
         // TOP ROW
         BltVideoObject(vsFB, hImageHandle, 1, i + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-                       usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+                       usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
 
         // BOTTOM ROW
         BltVideoObject(vsFB, hImageHandle, 6, i + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-                       usHeight - 10 + 6 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y,
-                       VO_BLT_SRCTRANSPARENCY, NULL);
+                       usHeight - 10 + 6 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       }
 
       // blit the left and right row of images
       usPosX = 0;
       for (i = 10; i < usHeight - 10; i += 10) {
         BltVideoObject(vsFB, hImageHandle, 3, usPosX + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-                       i + FLOWER_ORDER_DROP_DOWN_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+                       i + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
         BltVideoObject(
             vsFB, hImageHandle, 4,
             usPosX + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 4 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-            i + FLOWER_ORDER_DROP_DOWN_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+            i + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       }
 
       // blt the corner images for the row
       // top left
       BltVideoObject(vsFB, hImageHandle, 0, 0 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-                     usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+                     usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       // top right
       BltVideoObject(vsFB, hImageHandle, 2,
                      FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-                     usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y, VO_BLT_SRCTRANSPARENCY, NULL);
+                     usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       // bottom left
       BltVideoObject(vsFB, hImageHandle, 5, 0 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-                     usHeight - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y, VO_BLT_SRCTRANSPARENCY,
-                     NULL);
+                     usHeight - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       // bottom right
       BltVideoObject(vsFB, hImageHandle, 7,
                      FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-                     usHeight - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y, VO_BLT_SRCTRANSPARENCY,
-                     NULL);
+                     usHeight - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
 
       // Display the list of cities
       usPosY = FLOWER_ORDER_DROP_DOWN_CITY_START_Y + 3;
