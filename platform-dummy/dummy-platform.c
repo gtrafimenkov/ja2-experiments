@@ -212,7 +212,6 @@ void SoundRemoveSampleFlags(uint32_t uiSample, uint32_t uiFlags) {}
 // Video
 /////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *vsFB = NULL;
 int32_t giNumFrames = 0;
 
 void InvalidateRegion(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom) {}
@@ -254,8 +253,6 @@ BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColo
 void UnLockVideoSurface(uint32_t uiVSurface) {}
 
 BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) { return FALSE; }
-
-BOOLEAN GetVSurfaceByIndexOld(struct VSurface **hVSurface, uint32_t uiIndex) { return FALSE; }
 
 BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                     uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect,

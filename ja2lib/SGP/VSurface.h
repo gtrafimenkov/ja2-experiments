@@ -10,6 +10,14 @@
 #include "SGP/Types.h"
 
 struct VObject;
+struct VSurface;
+
+typedef uint32_t VSurfID;
+
+extern struct VSurface *ghPrimary;
+extern struct VSurface *ghBackBuffer;
+extern struct VSurface *vsFB;
+extern struct VSurface *ghMouseBuffer;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -66,8 +74,10 @@ BOOLEAN ShutdownVideoSurfaceManager();
 // Adds a video Surface to list
 BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *uiIndex);
 
+struct VSurface *GetVSurfaceByID(VSurfID id);
+
 // Returns a HVSurface for the specified index
-BOOLEAN GetVSurfaceByIndexOld(struct VSurface **hVSurface, uint32_t uiIndex);
+BOOLEAN GetVSurfaceByIndexOld(struct VSurface **pvs, VSurfID id);
 
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *uiPitch);
 void UnLockVideoSurface(uint32_t uiVSurface);
@@ -156,8 +166,6 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int3
 //////////////////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////////////////
-
-typedef uint32_t VSurfID;
 
 bool AddVSurfaceFromFile(const char *filepath, VSurfID *index);
 
