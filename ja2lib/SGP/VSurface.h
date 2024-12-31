@@ -23,7 +23,7 @@ struct VObject;
 
 #define PRIMARY_SURFACE 0xFFFFFFF0
 #define BACKBUFFER 0xFFFFFFF1
-#define vsFB 0xFFFFFFF2
+#define vsIndexFB 0xFFFFFFF2
 #define MOUSE_BUFFER 0xFFFFFFF3
 
 //
@@ -104,7 +104,7 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath);
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteEntry *pPalette);
 
 // Returns a flat pointer for direct manipulation of data
-uint8_t *LockVideoSurfaceBuffer(struct VSurface *hVSurface, uint32_t *pPitch);
+uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch);
 
 // Must be called after Locking buffer call above
 void UnLockVideoSurfaceBuffer(struct VSurface *hVSurface);
