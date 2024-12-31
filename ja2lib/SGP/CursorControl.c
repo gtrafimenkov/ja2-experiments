@@ -40,7 +40,7 @@ BOOLEAN BltToMouseCursorFromVObject(struct VObject *hVObject, uint16_t usVideoOb
                                     uint16_t usXPos, uint16_t usYPos) {
   BOOLEAN ReturnValue;
 
-  ReturnValue = BltVideoObject(MOUSE_BUFFER, hVObject, usVideoObjectSubIndex, usXPos, usYPos);
+  ReturnValue = BltVideoObjectOld(MOUSE_BUFFER, hVObject, usVideoObjectSubIndex, usXPos, usYPos);
 
   return ReturnValue;
 }

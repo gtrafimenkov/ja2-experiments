@@ -433,10 +433,10 @@ void RenderStationaryGroups() {
       uint8_t allMilCount = CountAllMilitiaInSectorID8(iSector);
 
       if (pSector->uiFlags & SF_MINING_SITE)
-        BltVideoObject(vsIndexFB, hVObject, MINING_ICON, xp + 25, yp - 1);
+        BltVideoObjectOld(vsIndexFB, hVObject, MINING_ICON, xp + 25, yp - 1);
 
       if (pSector->uiFlags & SF_SAM_SITE)
-        BltVideoObject(vsIndexFB, hVObject, SAM_ICON, xp + 20, yp + 4);
+        BltVideoObjectOld(vsIndexFB, hVObject, SAM_ICON, xp + 20, yp + 4);
 
       if (allMilCount > 0) {
         // show militia
@@ -520,9 +520,9 @@ void RenderMovingGroupsAndMercs() {
         // if the group was moving, then draw the anchor to visually indicate the sector of
         // influence for enemy patrol groups.
         if (pGroup->uiTraverseTime) {
-          BltVideoObject(vsIndexFB, hVObject, GROUP_ANCHOR,
-                         VIEWER_LEFT + VIEWER_CELLW * (pGroup->ubSectorX - 1),
-                         VIEWER_TOP + VIEWER_CELLH * (pGroup->ubSectorY - 1));
+          BltVideoObjectOld(vsIndexFB, hVObject, GROUP_ANCHOR,
+                            VIEWER_LEFT + VIEWER_CELLW * (pGroup->ubSectorX - 1),
+                            VIEWER_TOP + VIEWER_CELLH * (pGroup->ubSectorY - 1));
         }
 
         ubNumAdmins = pGroup->pEnemyGroup->ubNumAdmins;  //+ pGroup->pEnemyGroup->ubAdminsInBattle;
@@ -1627,7 +1627,7 @@ void BlitGroupIcon(uint8_t ubIconType, uint8_t ubIconColor, uint32_t uiX, uint32
   Assert(ubIconColor < NUM_ICON_COLORS);
 
   ubObjectIndex = (ubIconType * NUM_ICON_COLORS) + ubIconColor;
-  BltVideoObject(vsIndexFB, hVObject, ubObjectIndex, uiX, uiY);
+  BltVideoObjectOld(vsIndexFB, hVObject, ubObjectIndex, uiX, uiY);
 }
 
 void PrintDetailedEnemiesInSectorInfo(int32_t iScreenX, int32_t iScreenY, uint8_t ubSectorX,

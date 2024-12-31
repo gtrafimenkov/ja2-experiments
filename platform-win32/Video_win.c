@@ -1870,7 +1870,7 @@ BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uin
   // Get new cursor data
   //
 
-  ReturnValue = BltVideoObject(MOUSE_BUFFER, gpCursorStore, usVideoObjectSubIndex, 0, 0);
+  ReturnValue = BltVideoObjectOld(MOUSE_BUFFER, gpCursorStore, usVideoObjectSubIndex, 0, 0);
   guiMouseBufferState = BUFFER_DIRTY;
 
   if (GetVideoObjectETRLEProperties(gpCursorStore, &pETRLEPointer, usVideoObjectSubIndex)) {
@@ -2490,7 +2490,7 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
   for (h = 0; h < hblits; h++) {
     xc = (int16_t)iDestX1;
     for (w = 0; w < wblits; w++) {
-      BltVideoObject(uiDestVSurface, BkgrndImg, Index, xc + Ox, yc + Oy);
+      BltVideoObjectOld(uiDestVSurface, BkgrndImg, Index, xc + Ox, yc + Oy);
       xc += pw;
     }
     yc += ph;

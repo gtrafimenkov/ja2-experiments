@@ -344,7 +344,7 @@ void RenderSliderBox(SLIDER *pSlider) {
   if (pSlider->uiFlags & SLIDER_VERTICAL) {
     // display the slider box
     GetVideoObject(&hPixHandle, guiSliderBoxImage);
-    BltVideoObject(vsIndexFB, hPixHandle, 0, pSlider->LastRect.iLeft, pSlider->LastRect.iTop);
+    BltVideoObjectOld(vsIndexFB, hPixHandle, 0, pSlider->LastRect.iLeft, pSlider->LastRect.iTop);
 
     // invalidate the area
     InvalidateRegion(pSlider->LastRect.iLeft, pSlider->LastRect.iTop, pSlider->LastRect.iRight,
@@ -352,8 +352,8 @@ void RenderSliderBox(SLIDER *pSlider) {
   } else {
     // display the slider box
     GetVideoObject(&hPixHandle, guiSliderBoxImage);
-    BltVideoObject(vsIndexFB, hPixHandle, 0, pSlider->usCurrentSliderBoxPosition,
-                   pSlider->usPosY - DEFUALT_SLIDER_SIZE);
+    BltVideoObjectOld(vsIndexFB, hPixHandle, 0, pSlider->usCurrentSliderBoxPosition,
+                      pSlider->usPosY - DEFUALT_SLIDER_SIZE);
 
     // invalidate the area
     InvalidateRegion(pSlider->usCurrentSliderBoxPosition, pSlider->usPosY - DEFUALT_SLIDER_SIZE,

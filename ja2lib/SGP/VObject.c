@@ -333,8 +333,8 @@ BOOLEAN DeleteVideoObjectFromIndex(uint32_t uiVObject) {
 // Based on flags, blit accordingly
 // There are two types, a BltFast and a Blt. BltFast is 10% faster, uses no
 // clipping lists
-BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *vsSrc, uint16_t usRegionIndex,
-                       int32_t iDestX, int32_t iDestY) {
+BOOLEAN BltVideoObjectOld(uint32_t uiDestVSurface, struct VObject *vsSrc, uint16_t usRegionIndex,
+                          int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
 
