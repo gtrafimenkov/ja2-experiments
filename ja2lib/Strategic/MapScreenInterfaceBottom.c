@@ -254,7 +254,7 @@ void RenderMapScreenInterfaceBottom(void) {
   if (fMapScreenBottomDirty == TRUE) {
     // get and blt panel
     GetVideoObject(&hHandle, guiMAPBOTTOMPANEL);
-    BltVideoObject(vsSB, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y);
+    BltVideoObject(vsSaveBufferID, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y);
 
     if (GetSectorFlagStatus(sSelMapX, sSelMapY, (uint8_t)iCurrentMapSectorZ, SF_ALREADY_VISITED) ==
         TRUE) {
@@ -1133,7 +1133,7 @@ void DisplayCurrentBalanceTitleForMapBottom(void) {
   int16_t sFontX, sFontY;
 
   // ste the font buffer
-  SetFontDestBuffer(vsSB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
 
   SetFont(COMPFONT);
   SetFontForeground(MAP_BOTTOM_FONT_COLOR);
