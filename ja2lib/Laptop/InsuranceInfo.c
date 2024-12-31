@@ -101,7 +101,7 @@ BOOLEAN EnterInsuranceInfo() {
   // load the Insurance bullet graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBulletImage));
+  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiBulletImage));
 
   // left arrow
   guiInsPrevButtonImage = LoadButtonImage("LAPTOP\\InsLeftButton.sti", 2, 0, -1, 1, -1);

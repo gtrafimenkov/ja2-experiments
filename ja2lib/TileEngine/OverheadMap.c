@@ -491,12 +491,14 @@ void GoIntoOverheadMap() {
   // LOAD CLOSE ANIM
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\MAP_BORD.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &uiOVERMAP)) AssertMsg(0, "Missing INTERFACE\\MAP_BORD.sti");
+  if (!AddStandardVideoObject(&VObjectDesc, &uiOVERMAP))
+    AssertMsg(0, "Missing INTERFACE\\MAP_BORD.sti");
 
   // LOAD PERSONS
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\PERSONS.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &uiPERSONS)) AssertMsg(0, "Missing INTERFACE\\PERSONS.sti");
+  if (!AddStandardVideoObject(&VObjectDesc, &uiPERSONS))
+    AssertMsg(0, "Missing INTERFACE\\PERSONS.sti");
 
   // Add shades to persons....
   GetVideoObject(&hVObject, uiPERSONS);
