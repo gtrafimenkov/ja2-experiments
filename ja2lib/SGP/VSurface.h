@@ -45,12 +45,6 @@ struct VSurface {
   void *pSurfaceData;         // A void pointer, but for this implementation, is really a
                               // lpDirectDrawSurface;
   void *pSurfaceData1;        // Direct Draw One Interface
-  void *pSavedSurfaceData1;   // A void pointer, but for this implementation, is really a
-                              // lpDirectDrawSurface; pSavedSurfaceData is used to hold all video
-                              // memory Surfaces so that they my be restored
-  void *pSavedSurfaceData;    // A void pointer, but for this implementation, is really a
-                              // lpDirectDrawSurface; pSavedSurfaceData is used to hold all video
-                              // memory Surfaces so that they my be restored
   uint32_t fFlags;            // Used to describe memory usage, etc
   void *pPalette;             // A void pointer, but for this implementation a DDPalette
   uint16_t *p16BPPPalette;    // A 16BPP palette used for 8->16 blits
