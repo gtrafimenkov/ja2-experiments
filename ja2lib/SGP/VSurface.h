@@ -35,14 +35,6 @@ struct VObject;
 #define VS_BLT_SRCSUBRECT 0x000000040
 
 //
-// Effects structure for specialized blitting
-//
-
-typedef struct {
-  SGPRect SrcRect;  // Given SRC subrect instead of srcregion
-} blt_vs_fx;
-
-//
 // This structure is a video Surface. Contains a HLIST of regions
 //
 
@@ -94,7 +86,7 @@ void UnLockVideoSurface(uint32_t uiVSurface);
 
 // Blits a video Surface to another video Surface
 BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_t usRegionIndex,
-                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_vs_fx *pBltFx);
+                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, SGPRect *srcRect);
 
 BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int32_t iDestY1,
                                   int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP);
@@ -156,7 +148,7 @@ BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                               uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
-                              blt_vs_fx *pBltFx);
+                              SGPRect *srcRect);
 
 BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
                                int32_t Y2);

@@ -2611,9 +2611,6 @@ void CheckForAndHandleEndPlayerTimeLimit() {
 }
 
 void HandleTopMessages() {
-  // uint32_t		uiTime;
-  blt_vs_fx BltFx;
-
   // OK, is out current count > 0 ?
   if (gTacticalStatus.fInTopMessage) {
     // gfTopMessageDirty = TRUE;
@@ -2717,20 +2714,21 @@ void HandleTopMessages() {
       gTopMessage.sWorldRenderY = gsRenderCenterY;
 
       // Redner!
-      BltFx.SrcRect.iLeft = 0;
-      BltFx.SrcRect.iTop = 20 - gTopMessage.bYPos;
-      BltFx.SrcRect.iRight = 640;
-      BltFx.SrcRect.iBottom = 20;
+      SGPRect SrcRect;
+      SrcRect.iLeft = 0;
+      SrcRect.iTop = 20 - gTopMessage.bYPos;
+      SrcRect.iRight = 640;
+      SrcRect.iBottom = 20;
 
-      BltVideoSurface(vsFB, gTopMessage.uiSurface, 0, 0, 0, VS_BLT_SRCSUBRECT, &BltFx);
+      BltVideoSurface(vsFB, gTopMessage.uiSurface, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
 
       // Save to save buffer....
-      BltFx.SrcRect.iLeft = 0;
-      BltFx.SrcRect.iTop = 0;
-      BltFx.SrcRect.iRight = 640;
-      BltFx.SrcRect.iBottom = 20;
+      SrcRect.iLeft = 0;
+      SrcRect.iTop = 0;
+      SrcRect.iRight = 640;
+      SrcRect.iBottom = 20;
 
-      BltVideoSurface(vsSB, vsFB, 0, 0, 0, VS_BLT_SRCSUBRECT, &BltFx);
+      BltVideoSurface(vsSB, vsFB, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
 
       InvalidateRegion(0, 0, 640, 20);
 
@@ -2744,8 +2742,6 @@ void HandleTopMessages() {
 }
 
 void EndTopMessage() {
-  //	blt_vs_fx BltFx;
-
   // OK, end the topmost message!
   if (gTacticalStatus.fInTopMessage) {
     // Are we the last?
