@@ -7,6 +7,8 @@
 #include "SGP/Debug.h"
 #include "SGP/HImage.h"
 #include "SGP/VObject.h"
+#include "SGP/VObjectBlitters.h"
+#include "SGP/WCheck.h"
 #include "StrUtils.h"
 
 bool AddVSurfaceFromFile(const char *filepath, VSurfID *index) {
@@ -211,4 +213,81 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   UnLockVideoSurfaceBuffer(hVSurface);
 
   return (TRUE);
+}
+
+static BOOLEAN InternalShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
+                                              int32_t X2, int32_t Y2,
+                                              BOOLEAN fLowPercentShadeTable) {
+  uint16_t *pBuffer;
+  uint32_t uiPitch;
+  SGPRect area;
+  struct VSurface *hVSurface;
+
+  CHECKF(GetVideoSurface(&hVSurface, uiDestVSurface));
+
+  if (X1 < 0) X1 = 0;
+
+  if (X2 < 0) return (FALSE);
+
+  if (Y2 < 0) return (FALSE);
+
+  if (Y1 < 0) Y1 = 0;
+
+  if (X2 >= hVSurface->usWidth) X2 = hVSurface->usWidth - 1;
+
+  if (Y2 >= hVSurface->usHeight) Y2 = hVSurface->usHeight - 1;
+
+  if (X1 >= hVSurface->usWidth) return (FALSE);
+
+  if (Y1 >= hVSurface->usHeight) return (FALSE);
+
+  if ((X2 - X1) <= 0) return (FALSE);
+
+  if ((Y2 - Y1) <= 0) return (FALSE);
+
+  area.iTop = Y1;
+  area.iBottom = Y2;
+  area.iLeft = X1;
+  area.iRight = X2;
+
+  // Lock video surface
+  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
+  // UnLockVideoSurface( uiDestVSurface );
+
+  if (pBuffer == NULL) {
+    return (FALSE);
+  }
+
+  if (!fLowPercentShadeTable) {
+    // Now we have the video object and surface, call the shadow function
+    if (!Blt16BPPBufferShadowRect(pBuffer, uiPitch, &area)) {
+      // Blit has failed if false returned
+      return (FALSE);
+    }
+  } else {
+    // Now we have the video object and surface, call the shadow function
+    if (!Blt16BPPBufferShadowRectAlternateTable(pBuffer, uiPitch, &area)) {
+      // Blit has failed if false returned
+      return (FALSE);
+    }
+  }
+
+  // Mark as dirty if it's the backbuffer
+  // if ( uiDestVSurface == BACKBUFFER )
+  //{
+  //	InvalidateBackbuffer( );
+  //}
+
+  UnLockVideoSurface(uiDestVSurface);
+  return (TRUE);
+}
+
+BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
+                               int32_t Y2) {
+  return (InternalShadowVideoSurfaceRect(uiDestVSurface, X1, Y1, X2, Y2, FALSE));
+}
+
+BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
+                                                   int32_t X2, int32_t Y2) {
+  return (InternalShadowVideoSurfaceRect(uiDestVSurface, X1, Y1, X2, Y2, TRUE));
 }
