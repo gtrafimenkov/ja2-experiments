@@ -232,8 +232,6 @@ BOOLEAN GetPrimaryRGBDistributionMasks(uint32_t *RedBitMask, uint32_t *GreenBitM
   return FALSE;
 }
 
-BOOLEAN EraseMouseCursor() { return FALSE; }
-
 BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint16_t usCursorHeight,
                                  uint16_t usCursorWidth) {
   return FALSE;
