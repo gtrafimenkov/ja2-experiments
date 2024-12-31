@@ -946,7 +946,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
                       0, 0, 0, 0, usWidth, usHeight);
 
       UnlockVSurface(vsFB);
-      UnlockVSurfaceByID(vsSaveBufferID);
+      UnlockVSurface(vsSaveBuffer);
     }
   }
 }

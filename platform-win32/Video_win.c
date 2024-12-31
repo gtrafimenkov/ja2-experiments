@@ -2687,6 +2687,9 @@ uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
 }
 
 void UnlockVSurface(struct VSurface *vs) {
+  if (vs == NULL) {
+    return;
+  }
   if (vs == vsPrimary) {
     IDirectDrawSurface2_Unlock(gpPrimarySurface, NULL);
   } else if (vs == vsBackBuffer) {

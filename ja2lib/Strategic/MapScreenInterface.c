@@ -191,9 +191,6 @@ int32_t fVehicleIsMoving[NUMBER_OF_SQUADS];
 
 struct MOUSE_REGION gMoveBoxScreenMask;
 
-// the save buffer
-extern uint32_t vsSaveBufferID;
-
 extern BOOLEAN fShowInventoryFlag;
 extern FACETYPE *gpCurrentTalkingFace;
 extern uint8_t gubCurrentTalkingID;

@@ -5543,7 +5543,7 @@ void BltCharInvPanel() {
   GetVideoObject(&hCharListHandle, guiMAPINV);
   Blt8BPPDataTo16BPPBufferTransparent(pDestBuf, uiDestPitchBYTES, hCharListHandle, PLAYER_INFO_X,
                                       PLAYER_INFO_Y, 0);
-  UnlockVSurfaceByID(vsSaveBufferID);
+  UnlockVSurface(vsSaveBuffer);
 
   Assert(pSoldier);
   CreateDestroyMapInvButton();
