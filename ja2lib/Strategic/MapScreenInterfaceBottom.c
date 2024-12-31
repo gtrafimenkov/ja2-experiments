@@ -254,7 +254,7 @@ void RenderMapScreenInterfaceBottom(void) {
   if (fMapScreenBottomDirty == TRUE) {
     // get and blt panel
     GetVideoObject(&hHandle, guiMAPBOTTOMPANEL);
-    BltVideoObjectOld(vsSaveBufferID, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y);
+    BltVideoObject(vsSaveBuffer, hHandle, 0, MAP_BOTTOM_X, MAP_BOTTOM_Y);
 
     if (GetSectorFlagStatus(sSelMapX, sSelMapY, (uint8_t)iCurrentMapSectorZ, SF_ALREADY_VISITED) ==
         TRUE) {

@@ -983,7 +983,7 @@ void HandleDisplayOfSelectedMercArrows(void) {
   }
 
   GetVideoObject(&hHandle, guiSelectedCharArrow);
-  BltVideoObjectOld(vsSaveBufferID, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition);
+  BltVideoObject(vsSaveBuffer, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition);
 
   // now run through the selected list of guys, an arrow for each
   for (ubCount = 0; ubCount < MAX_CHARACTER_COUNT; ubCount++) {
@@ -1002,7 +1002,7 @@ void HandleDisplayOfSelectedMercArrows(void) {
         }
 
         GetVideoObject(&hHandle, guiSelectedCharArrow);
-        BltVideoObjectOld(vsSaveBufferID, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition);
+        BltVideoObject(vsSaveBuffer, hHandle, 0, SELECTED_CHAR_ARROW_X, sYPosition);
       }
     }
   }
@@ -3828,20 +3828,19 @@ void DisplaySoldierUpdateBox() {
   GetVideoObject(&hBackGroundHandle, guiUpdatePanelTactical);
 
   // Display the 2 TOP corner pieces
-  BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 0, iX - 4, iY - 4);
-  BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 2, iX + iUpdatePanelWidth, iY - 4);
+  BltVideoObject(vsSaveBuffer, hBackGroundHandle, 0, iX - 4, iY - 4);
+  BltVideoObject(vsSaveBuffer, hBackGroundHandle, 2, iX + iUpdatePanelWidth, iY - 4);
 
   if (fFourWideMode) {
     // Display 2 vertical lines starting at the bottom
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 3, iX - 4,
-                      iY + iUpdatePanelHeight - 3 - 70);
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
-                      iY + iUpdatePanelHeight - 3 - 70);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 3, iX - 4, iY + iUpdatePanelHeight - 3 - 70);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
+                   iY + iUpdatePanelHeight - 3 - 70);
 
     // Display the 2 bottom corner pieces
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 0, iX - 4, iY + iUpdatePanelHeight - 3);
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 2, iX + iUpdatePanelWidth,
-                      iY + iUpdatePanelHeight - 3);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 0, iX - 4, iY + iUpdatePanelHeight - 3);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 2, iX + iUpdatePanelWidth,
+                   iY + iUpdatePanelHeight - 3);
   }
 
   SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
@@ -3858,7 +3857,7 @@ void DisplaySoldierUpdateBox() {
     iFaceX = iX + (iCounter % iNumberWide) * TACT_UPDATE_MERC_FACE_X_WIDTH;
     iFaceY = iY + (iCounter / iNumberWide) * TACT_UPDATE_MERC_FACE_X_HEIGHT;
 
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 20, iFaceX, iFaceY);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 20, iFaceX, iFaceY);
   }
 
   // loop through the mercs to be displayed
@@ -3923,19 +3922,19 @@ void DisplaySoldierUpdateBox() {
   // now wrap the border
   for (iCounter = 0; iCounter < iNumberHigh; iCounter++) {
     // the sides
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 3, iX - 4,
-                      iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT);
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
-                      iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 3, iX - 4,
+                   iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 5, iX + iUpdatePanelWidth,
+                   iY + (iCounter)*TACT_UPDATE_MERC_FACE_X_HEIGHT);
   }
 
   // big horizontal line
   for (iCounter = 0; iCounter < iNumberWide; iCounter++) {
     // the top bottom
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 1,
-                      iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter), iY - 4);
-    BltVideoObjectOld(vsSaveBufferID, hBackGroundHandle, 1,
-                      iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter), iY + iUpdatePanelHeight - 3);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 1,
+                   iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter), iY - 4);
+    BltVideoObject(vsSaveBuffer, hBackGroundHandle, 1,
+                   iX + TACT_UPDATE_MERC_FACE_X_WIDTH * (iCounter), iY + iUpdatePanelHeight - 3);
   }
 
   // Display the reason for the update box

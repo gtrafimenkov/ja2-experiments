@@ -229,7 +229,7 @@ void BlitInventoryPoolGraphic(void) {
 
   // blit inventory pool graphic to the screen
   GetVideoObject(&hHandle, guiMapInventoryPoolBackground);
-  BltVideoObjectOld(vsSaveBufferID, hHandle, 0, INVEN_POOL_X, INVEN_POOL_Y);
+  BltVideoObject(vsSaveBuffer, hHandle, 0, INVEN_POOL_X, INVEN_POOL_Y);
 
   // resize list
   CheckAndUnDateSlotAllocation();
