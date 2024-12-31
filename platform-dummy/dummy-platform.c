@@ -2,6 +2,10 @@
 // This file contains code derived from the code released under the terms
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
+// This library must contain the same functions as platform-win32.
+// This library doesn't depend on direct draw, smackw, and other dlls
+// and thus is better suitable for the unittests binary.
+
 #include "Point.h"
 #include "SGP/Input.h"
 #include "SGP/SoundMan.h"

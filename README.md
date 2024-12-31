@@ -18,7 +18,7 @@ Other branches contain different experiments.
 
 ```
 ja2lib             - platform-independent part of the game code
-platfrom-dummy     - dummy implementation of the platfrom code (used in unit tests)
+platfrom-dummy     - platform code for win32 for unit tests binary
 platform-linux     - platform code for Linux
 platform-win32     - platform code for win32
 bin-win32          - project to build the game binary for Windows
