@@ -12,10 +12,10 @@
 #include "SGP/WCheck.h"
 #include "StrUtils.h"
 
-struct VSurface *ghPrimary = NULL;
-struct VSurface *ghBackBuffer = NULL;
+struct VSurface *vsPrimary = NULL;
+struct VSurface *vsBackBuffer = NULL;
 struct VSurface *vsFB = NULL;
-struct VSurface *ghMouseBuffer = NULL;
+struct VSurface *vsMouseBuffer = NULL;
 
 bool AddVSurfaceFromFile(const char *filepath, VSurfID *index) {
   return AddVSurface(CreateVSurfaceFromFile(filepath), index);
@@ -327,13 +327,13 @@ BOOLEAN BltStretchVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, 
 struct VSurface *GetVSurfaceByID(VSurfID id) {
   switch (id) {
     case PRIMARY_SURFACE:
-      return ghPrimary;
+      return vsPrimary;
     case BACKBUFFER:
-      return ghBackBuffer;
+      return vsBackBuffer;
     case vsIndexFB:
       return vsFB;
     case MOUSE_BUFFER:
-      return ghMouseBuffer;
+      return vsMouseBuffer;
     default:
       return FindVSurface(id);
   }

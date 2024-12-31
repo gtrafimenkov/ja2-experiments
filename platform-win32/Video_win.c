@@ -2114,8 +2114,8 @@ BOOLEAN SetPrimaryVideoSurfaces() {
   pSurface = gpPrimarySurface;
   CHECKF(pSurface != NULL);
 
-  ghPrimary = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(ghPrimary != NULL);
+  vsPrimary = CreateVideoSurfaceFromDDSurface(pSurface);
+  CHECKF(vsPrimary != NULL);
 
   //
   // Get Backbuffer surface
@@ -2124,8 +2124,8 @@ BOOLEAN SetPrimaryVideoSurfaces() {
   pSurface = gpBackBuffer;
   CHECKF(pSurface != NULL);
 
-  ghBackBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(ghBackBuffer != NULL);
+  vsBackBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
+  CHECKF(vsBackBuffer != NULL);
 
   //
   // Get mouse buffer surface
@@ -2133,8 +2133,8 @@ BOOLEAN SetPrimaryVideoSurfaces() {
   pSurface = gpMouseCursor;
   CHECKF(pSurface != NULL);
 
-  ghMouseBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(ghMouseBuffer != NULL);
+  vsMouseBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
+  CHECKF(vsMouseBuffer != NULL);
 
   //
   // Get frame buffer surface
@@ -2154,14 +2154,14 @@ static void DeletePrimaryVideoSurfaces() {
   // If globals are not null, delete them
   //
 
-  if (ghPrimary != NULL) {
-    DeleteVideoSurface(ghPrimary);
-    ghPrimary = NULL;
+  if (vsPrimary != NULL) {
+    DeleteVideoSurface(vsPrimary);
+    vsPrimary = NULL;
   }
 
-  if (ghBackBuffer != NULL) {
-    DeleteVideoSurface(ghBackBuffer);
-    ghBackBuffer = NULL;
+  if (vsBackBuffer != NULL) {
+    DeleteVideoSurface(vsBackBuffer);
+    vsBackBuffer = NULL;
   }
 
   if (vsFB != NULL) {
@@ -2169,9 +2169,9 @@ static void DeletePrimaryVideoSurfaces() {
     vsFB = NULL;
   }
 
-  if (ghMouseBuffer != NULL) {
-    DeleteVideoSurface(ghMouseBuffer);
-    ghMouseBuffer = NULL;
+  if (vsMouseBuffer != NULL) {
+    DeleteVideoSurface(vsMouseBuffer);
+    vsMouseBuffer = NULL;
   }
 }
 

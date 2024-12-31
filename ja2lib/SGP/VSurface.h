@@ -14,10 +14,10 @@ struct VSurface;
 
 typedef uint32_t VSurfID;
 
-extern struct VSurface *ghPrimary;
-extern struct VSurface *ghBackBuffer;
+extern struct VSurface *vsPrimary;
+extern struct VSurface *vsBackBuffer;
 extern struct VSurface *vsFB;
-extern struct VSurface *ghMouseBuffer;
+extern struct VSurface *vsMouseBuffer;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
