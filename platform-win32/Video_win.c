@@ -3016,8 +3016,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   vs->ubBitDepth = ubBitDepth;
   vs->pSurfaceData1 = (void *)lpDDS;
   vs->pSurfaceData = (void *)lpDDS2;
-  vs->pSavedSurfaceData1 = NULL;
-  vs->pSavedSurfaceData = NULL;
   vs->pPalette = NULL;
   vs->p16BPPPalette = NULL;
   vs->TransparentColor = FROMRGB(0, 0, 0);
@@ -3055,49 +3053,8 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 BOOLEAN RestoreVideoSurface(struct VSurface *hVSurface) {
-  LPDIRECTDRAWSURFACE2 lpDDSurface;
-  LPDIRECTDRAWSURFACE2 lpBackupDDSurface;
-  RECT aRect;
-
-  Assert(hVSurface != NULL);
-
-  //
-  // Restore is only for VIDEO MEMORY - should check if VIDEO and QUIT if not
-  //
-
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, String("Failed to restore Video Surface surface"));
   return (FALSE);
-
-  //
-  // Check for valid secondary surface
-  //
-
-  if (hVSurface->pSavedSurfaceData1 == NULL) {
-    //
-    // No secondary surface available
-    //
-
-    DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-               String("Failure in retoring- no secondary surface found"));
-    return (FALSE);
-  }
-
-  // Restore primary surface
-  lpDDSurface = (LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData;
-  DDRestoreSurface(lpDDSurface);
-
-  // Blit backup surface data into primary
-  lpBackupDDSurface = (LPDIRECTDRAWSURFACE2)hVSurface->pSavedSurfaceData;
-
-  aRect.top = (int)0;
-  aRect.left = (int)0;
-  aRect.bottom = (int)hVSurface->usHeight;
-  aRect.right = (int)hVSurface->usWidth;
-
-  DDBltFastSurface((LPDIRECTDRAWSURFACE2)hVSurface->pSavedSurfaceData, 0, 0,
-                   (LPDIRECTDRAWSURFACE2)hVSurface->pSurfaceData, &aRect, DDBLTFAST_NOCOLORKEY);
-
-  return (TRUE);
 }
 
 // Lock must be followed by release
@@ -3313,12 +3270,6 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
     DDReleaseSurface((LPDIRECTDRAWSURFACE *)&hVSurface->pSurfaceData1, &lpDDSurface);
   }
 
-  // Release backup surface
-  if (hVSurface->pSavedSurfaceData != NULL) {
-    DDReleaseSurface((LPDIRECTDRAWSURFACE *)&hVSurface->pSavedSurfaceData1,
-                     (LPDIRECTDRAWSURFACE2 *)&hVSurface->pSavedSurfaceData);
-  }
-
   // If there is a 16bpp palette, free it
   if (hVSurface->p16BPPPalette != NULL) {
     MemFree(hVSurface->p16BPPPalette);
@@ -3502,7 +3453,6 @@ struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurfac
   hVSurface->ubBitDepth = (uint8_t)PixelFormat.dwRGBBitCount;
   hVSurface->pSurfaceData = (void *)lpDDSurface;
   hVSurface->pSurfaceData1 = NULL;
-  hVSurface->pSavedSurfaceData = NULL;
   hVSurface->fFlags = 0;
 
   // Get and Set palette, if attached, allow to fail
