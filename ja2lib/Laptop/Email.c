@@ -370,27 +370,27 @@ BOOLEAN EnterEmail() {
   // title bar
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailTitle));
+  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiEmailTitle));
 
   // the list background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Mailwindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailBackground));
+  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiEmailBackground));
 
   // the indication/notification box
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\MailIndicator.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailIndicator));
+  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiEmailIndicator));
 
   // the message background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\emailviewer.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiEmailMessage));
+  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiEmailMessage));
 
   // the message background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\maillistdivider.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMAILDIVIDER));
+  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMAILDIVIDER));
 
   // AddEmail(IMP_EMAIL_PROFILE_RESULTS, IMP_EMAIL_PROFILE_RESULTS_LENGTH, IMP_PROFILE_RESULTS,
   // GetWorldTotalMin( ) );
@@ -4155,7 +4155,7 @@ BOOLEAN DisplayNumberOfPagesToThisEmail(int32_t iViewerY) {
   // load, blt and delete graphics
   // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
   //	FilenameForBPP( "LAPTOP\\mailindent.sti", VObjectDesc.ImageFile );
-  // CHECKF( AddVideoObject( &VObjectDesc, &uiMailIndent ) );
+  // CHECKF( AddStandardVideoObject( &VObjectDesc, &uiMailIndent ) );
   // GetVideoObject( &hHandle, uiMailIndent );
   // BltVideoObject( vsFB, hHandle, 0,VIEWER_X + INDENT_X_OFFSET, VIEWER_Y + iViewerY +
   // INDENT_Y_OFFSET - 10, VO_BLT_SRCTRANSPARENCY,NULL ); DeleteVideoObjectFromIndex( uiMailIndent
