@@ -17,9 +17,6 @@
 
 // Defines for blitting
 #define VO_BLT_SRCTRANSPARENCY 0x000000002
-#define VO_BLT_TRANSSHADOW 0x000000003
-#define VO_BLT_UNCOMPRESSED 0x000004000
-#define VO_BLT_CLIP 0x000000001
 
 // Defines for struct VObject* limits
 #define HVOBJECT_SHADE_TABLES 48
