@@ -325,7 +325,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...", filepath);
   } else if (AddVSurfaceFromFile(filepath, &uiLoadScreen)) {  // Blit the background image
     GetVideoSurface(&hVSurface, uiLoadScreen);
-    BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
+    BltVSurfaceToVSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVideoSurfaceFromIndex(uiLoadScreen);
   } else {  // Failed to load the file, so use a black screen and print out message.
     SetFont(FONT10ARIAL);

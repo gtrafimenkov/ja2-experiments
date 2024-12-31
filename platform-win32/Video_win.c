@@ -2723,9 +2723,9 @@ BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_
   if (!GetVideoSurface(&hSrcVSurface, uiSrcVSurface)) {
     return FALSE;
   }
-  if (!BltVideoSurfaceToVideoSurface(
-          hDestVSurface, hSrcVSurface, usRegionIndex, iDestX, iDestY, fBltFlags,
-          pBltFx)) {  // VO Blitter will set debug messages for error conditions
+  if (!BltVSurfaceToVSurface(hDestVSurface, hSrcVSurface, usRegionIndex, iDestX, iDestY, fBltFlags,
+                             pBltFx)) {
+    // VO Blitter will set debug messages for error conditions
     return FALSE;
   }
   return TRUE;
@@ -3361,9 +3361,9 @@ BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
 // Blt  will use DD Blt or BltFast depending on flags.
 // Will drop down into user-defined blitter if 8->16 BPP blitting is being done
 
-BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                                      uint16_t usIndex, int32_t iDestX, int32_t iDestY,
-                                      int32_t fBltFlags, blt_vs_fx *pBltFx) {
+BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
+                              uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
+                              blt_vs_fx *pBltFx) {
   RECT SrcRect, DestRect;
   uint8_t *pSrcSurface8, *pDestSurface8;
   uint32_t uiSrcPitch, uiDestPitch, uiWidth, uiHeight;
