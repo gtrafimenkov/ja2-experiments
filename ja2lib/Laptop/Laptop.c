@@ -3885,7 +3885,7 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
   return (TRUE);
 }
 
-void RemoveTitleBarMaximizeGraphics() { DeleteVideoSurfaceFromIndex(guiTitleBarSurface); }
+void RemoveTitleBarMaximizeGraphics() { DeleteVSurfaceByIndex(guiTitleBarSurface); }
 
 void HandleSlidingTitleBar(void) {
   if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
@@ -4392,7 +4392,7 @@ BOOLEAN LoadDesktopBackground(void) {
 void DeleteDesktopBackground(void) {
   // delete desktop
 
-  DeleteVideoSurfaceFromIndex(guiDESKTOP);
+  DeleteVSurfaceByIndex(guiDESKTOP);
   return;
 }
 

@@ -85,7 +85,7 @@ struct VSurface *FindVSurface(VSurfID id) {
   return NULL;
 }
 
-bool DeleteVSurfaceFromList(VSurfID id) {
+bool DeleteVSurfaceByIndex(VSurfID id) {
   VSURFACE_NODE *curr = gpVSurfaceHead;
   while (curr) {
     if (curr->uiIndex == id) {  // Found the node, so detach it and delete it.

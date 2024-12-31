@@ -549,7 +549,7 @@ void DeleteTalkingMenu() {
   }
 
   // Delete save buffer
-  DeleteVideoSurfaceFromIndex(gTalkPanel.uiSaveBuffer);
+  DeleteVSurfaceByIndex(gTalkPanel.uiSaveBuffer);
 
   // Remove video object
   DeleteVideoObjectFromIndex(gTalkPanel.uiPanelVO);

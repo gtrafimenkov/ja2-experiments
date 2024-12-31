@@ -463,8 +463,6 @@ BOOLEAN EnterCreditsScreen() {
 BOOLEAN ExitCreditScreen() {
   uint32_t uiCnt;
 
-  // Blit the background image
-  //	DeleteVideoSurfaceFromIndex( guiCreditBackGroundImage );
   DeleteVideoObjectFromIndex(guiCreditBackGroundImage);
 
   DeleteVideoObjectFromIndex(guiCreditFaces);
@@ -475,12 +473,6 @@ BOOLEAN ExitCreditScreen() {
   for (uiCnt = 0; uiCnt < NUM_PEOPLE_IN_CREDITS; uiCnt++) {
     MSYS_RemoveRegion(&gCrdtMouseRegions[uiCnt]);
   }
-
-  /*
-          //close the text file
-          FileMan_Close( ghFile );
-          ghFile = 0;
-  */
 
   return (TRUE);
 }
@@ -651,7 +643,7 @@ BOOLEAN DeleteNode(CRDT_NODE *pNodeToDelete) {
 
   // if the node had something to display, delete a surface for it
   if (pTempNode->uiType == CRDT_NODE_DEFAULT) {
-    DeleteVideoSurfaceFromIndex(pTempNode->uiVideoSurfaceImage);
+    DeleteVSurfaceByIndex(pTempNode->uiVideoSurfaceImage);
     pTempNode->uiVideoSurfaceImage = 0;
   }
 

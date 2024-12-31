@@ -1900,7 +1900,7 @@ void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
   DeleteVideoObjectFromIndex(gpAR->iPanelImages);
   DeleteVideoObjectFromIndex(gpAR->iFaces);
   DeleteVideoObjectFromIndex(gpAR->iIndent);
-  DeleteVideoSurfaceFromIndex(gpAR->iInterfaceBuffer);
+  DeleteVSurfaceByIndex(gpAR->iInterfaceBuffer);
 
   if (fDeleteForGood) {  // Delete the soldier instances -- done when we are completely finished.
 

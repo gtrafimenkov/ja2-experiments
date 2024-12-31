@@ -5096,7 +5096,7 @@ void EndMapScreen(BOOLEAN fDuringFade) {
     DeleteVideoObjectFromIndex(guiCHARINFO);
     DeleteVideoObjectFromIndex(guiCHARICONS);
     DeleteVideoObjectFromIndex(guiCROSS);
-    DeleteVideoSurfaceFromIndex(guiBIGMAP);
+    DeleteVSurfaceByIndex(guiBIGMAP);
     DeleteVideoObjectFromIndex(guiSAMICON);
     DeleteVideoObjectFromIndex(guiMAPINV);
     DeleteVideoObjectFromIndex(guiMapInvSecondHandBlockout);
@@ -8581,7 +8581,7 @@ void HandleRemovalOfPreLoadedMapGraphics(void) {
     DeleteVideoObjectFromIndex(guiCHARINFO);
     DeleteVideoObjectFromIndex(guiCHARICONS);
     DeleteVideoObjectFromIndex(guiCROSS);
-    DeleteVideoSurfaceFromIndex(guiBIGMAP);
+    DeleteVSurfaceByIndex(guiBIGMAP);
     DeleteVideoObjectFromIndex(guiSubLevel1);
     DeleteVideoObjectFromIndex(guiSubLevel2);
     DeleteVideoObjectFromIndex(guiSubLevel3);

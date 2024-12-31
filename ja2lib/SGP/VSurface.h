@@ -121,7 +121,6 @@ BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntr
 
 // Deletes all data, including palettes, regions, DD Surfaces
 BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface);
-BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -166,7 +165,7 @@ void InitVSurfaceList();
 void DeinitVSurfaceList();
 
 VSurfID AddVSurfaceToList(struct VSurface *vs);
-bool DeleteVSurfaceFromList(VSurfID id);
+bool DeleteVSurfaceByIndex(VSurfID id);
 
 struct VSurface *FindVSurface(VSurfID id);
 
