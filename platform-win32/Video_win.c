@@ -21,11 +21,6 @@
 #include "Utils/TimerControl.h"
 #include "platform.h"
 
-struct VSurface *ghPrimary = NULL;
-struct VSurface *ghBackBuffer = NULL;
-struct VSurface *vsFB = NULL;
-struct VSurface *ghMouseBuffer = NULL;
-
 #define INITGUID
 #include <ddraw.h>
 #include <windows.h>
@@ -2259,10 +2254,6 @@ static void RefreshMovieCache() {
 #include "SGP/VSurface.h"
 #include "SGP/WCheck.h"
 
-extern struct VSurface *ghPrimary;
-extern struct VSurface *ghBackBuffer;
-extern struct VSurface *ghMouseBuffer;
-
 static void DeletePrimaryVideoSurfaces();
 
 BOOLEAN SetPrimaryVideoSurfaces() {
@@ -2489,35 +2480,6 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
   SetVideoSurfaceTransparencyColor(hVSurface, TransColor);
 
   return (TRUE);
-}
-
-BOOLEAN GetVSurfaceByIndexOld(struct VSurface **hVSurface, uint32_t uiIndex) {
-  if (uiIndex == PRIMARY_SURFACE) {
-    *hVSurface = ghPrimary;
-    return TRUE;
-  }
-
-  if (uiIndex == BACKBUFFER) {
-    *hVSurface = ghBackBuffer;
-    return TRUE;
-  }
-
-  if (uiIndex == vsIndexFB) {
-    *hVSurface = vsFB;
-    return TRUE;
-  }
-
-  if (uiIndex == MOUSE_BUFFER) {
-    *hVSurface = ghMouseBuffer;
-    return TRUE;
-  }
-
-  struct VSurface *vs = FindVSurface(uiIndex);
-  if (vs) {
-    *hVSurface = vs;
-    return TRUE;
-  }
-  return FALSE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
