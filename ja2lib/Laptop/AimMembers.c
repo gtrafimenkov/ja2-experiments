@@ -3584,32 +3584,32 @@ BOOLEAN DisplayMovingTitleBar(BOOLEAN fForward, BOOLEAN fInit) {
     if (ubCount > 2) {
       usWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       usHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBufferOld(vsSaveBufferID, vsIndexFB, (uint16_t)LastRect.iLeft,
-                            (uint16_t)LastRect.iTop, usWidth, usHeight);
+      BlitBufferToBuffer(vsSaveBuffer, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop,
+                         usWidth, usHeight);
     }
 
     // Save rectangle
     if (ubCount > 1) {
       usWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       usHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
-                            (uint16_t)DestRect.iTop, usWidth, usHeight);
+      BlitBufferToBuffer(vsFB, vsSaveBuffer, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
+                         usWidth, usHeight);
     }
   } else {
     // Restore the old rect
     if (ubCount < AIM_MEMBER_VIDEO_TITLE_ITERATIONS - 2) {
       usWidth = (uint16_t)(LastRect.iRight - LastRect.iLeft);
       usHeight = (uint16_t)(LastRect.iBottom - LastRect.iTop);
-      BlitBufferToBufferOld(vsSaveBufferID, vsIndexFB, (uint16_t)LastRect.iLeft,
-                            (uint16_t)LastRect.iTop, usWidth, usHeight);
+      BlitBufferToBuffer(vsSaveBuffer, vsFB, (uint16_t)LastRect.iLeft, (uint16_t)LastRect.iTop,
+                         usWidth, usHeight);
     }
 
     // Save rectangle
     if (ubCount < AIM_MEMBER_VIDEO_TITLE_ITERATIONS - 1) {
       usWidth = (uint16_t)(DestRect.iRight - DestRect.iLeft);
       usHeight = (uint16_t)(DestRect.iBottom - DestRect.iTop);
-      BlitBufferToBufferOld(vsIndexFB, vsSaveBufferID, (uint16_t)DestRect.iLeft,
-                            (uint16_t)DestRect.iTop, usWidth, usHeight);
+      BlitBufferToBuffer(vsFB, vsSaveBuffer, (uint16_t)DestRect.iLeft, (uint16_t)DestRect.iTop,
+                         usWidth, usHeight);
     }
   }
 
