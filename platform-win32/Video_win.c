@@ -2706,7 +2706,7 @@ BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_t usRegionIndex,
-                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_vs_fx *pBltFx) {
+                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, SGPRect *srcRect) {
   struct VSurface *hDestVSurface;
   struct VSurface *hSrcVSurface;
 
@@ -2723,7 +2723,7 @@ BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_
     return FALSE;
   }
   if (!BltVSurfaceToVSurface(hDestVSurface, hSrcVSurface, usRegionIndex, iDestX, iDestY, fBltFlags,
-                             pBltFx)) {
+                             srcRect)) {
     // VO Blitter will set debug messages for error conditions
     return FALSE;
   }
@@ -3362,7 +3362,7 @@ BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                               uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
-                              blt_vs_fx *pBltFx) {
+                              SGPRect *srcRect) {
   RECT SrcRect, DestRect;
   uint8_t *pSrcSurface8, *pDestSurface8;
   uint32_t uiSrcPitch, uiDestPitch, uiWidth, uiHeight;
@@ -3374,16 +3374,10 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
   do {
     // Use SUBRECT if specified
     if (fBltFlags & VS_BLT_SRCSUBRECT) {
-      SGPRect aSubRect;
-
-      CHECKF(pBltFx != NULL);
-
-      aSubRect = pBltFx->SrcRect;
-
-      SrcRect.top = (int)aSubRect.iTop;
-      SrcRect.left = (int)aSubRect.iLeft;
-      SrcRect.bottom = (int)aSubRect.iBottom;
-      SrcRect.right = (int)aSubRect.iRight;
+      SrcRect.top = srcRect->iTop;
+      SrcRect.left = srcRect->iLeft;
+      SrcRect.bottom = srcRect->iBottom;
+      SrcRect.right = srcRect->iRight;
 
       break;
     }

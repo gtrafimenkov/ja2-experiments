@@ -260,7 +260,7 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) { ret
 BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) { return FALSE; }
 
 BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_t usRegionIndex,
-                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, blt_vs_fx *pBltFx) {
+                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, SGPRect *srcRect) {
   return FALSE;
 }
 
@@ -294,7 +294,7 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) { return FALSE; }
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                               uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
-                              blt_vs_fx *pBltFx) {
+                              SGPRect *srcRect) {
   return FALSE;
 }
 
