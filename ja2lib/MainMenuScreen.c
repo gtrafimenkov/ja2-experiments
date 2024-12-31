@@ -556,12 +556,12 @@ void RenderMainMenu() {
 
   // Get and display the background image
   GetVideoObject(&hPixHandle, guiMainMenuBackGroundImage);
-  BltVideoObject(vsSB, hPixHandle, 0, 0, 0);
+  BltVideoObject(vsSaveBufferID, hPixHandle, 0, 0, 0);
   BltVideoObject(vsIndexFB, hPixHandle, 0, 0, 0);
 
   GetVideoObject(&hPixHandle, guiJa2LogoImage);
   BltVideoObject(vsIndexFB, hPixHandle, 0, 188, 15);
-  BltVideoObject(vsSB, hPixHandle, 0, 188, 15);
+  BltVideoObject(vsSaveBufferID, hPixHandle, 0, 188, 15);
 
 #ifdef TESTFOREIGNFONTS
   DrawTextToScreen(L"LARGEFONT1: ����������������������������������������" /*gzCopyrightText[ 0 ]*/,

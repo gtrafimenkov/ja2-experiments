@@ -395,7 +395,7 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
 
   UnlockVSurfaceByID(uiBuffer);
 
-  if (uiBuffer == vsSB) {
+  if (uiBuffer == vsSaveBufferID) {
     RestoreExternBackgroundRect(sXPos, (int16_t)(sYPos - sHeight), sWidth, (int16_t)(sHeight + 1));
   } else {
     InvalidateRegion(sXPos, (int16_t)(sYPos - sHeight), sXPos + sWidth, (int16_t)(sYPos + 1));
@@ -413,7 +413,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       ubVehicleType = pVehicleList[pSoldier->bVehicleID].ubVehicleType;
 
       // just draw the vehicle
-      BltVObjectFromIndex(vsSB, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY);
+      BltVObjectFromIndex(vsSaveBufferID, giCarPortraits[ubVehicleType], 0, sFaceX, sFaceY);
       RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
 
       return;
@@ -425,7 +425,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
         // Render as an extern face...
         fAutoFace = FALSE;
       } else {
-        SetAutoFaceActiveFromSoldier(vsIndexFB, vsSB, GetSolID(pSoldier), sFaceX, sFaceY);
+        SetAutoFaceActiveFromSoldier(vsIndexFB, vsSaveBufferID, GetSolID(pSoldier), sFaceX, sFaceY);
         //	SetAutoFaceActiveFromSoldier( vsIndexFB, FACE_AUTO_RESTORE_BUFFER,
         // GetSolID(pSoldier) , sFaceX, sFaceY );
       }
@@ -437,11 +437,11 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
       if (fAutoFace) {
         RenderAutoFaceFromSoldier(pSoldier->ubID);
       } else {
-        ExternRenderFaceFromSoldier(vsSB, GetSolID(pSoldier), sFaceX, sFaceY);
+        ExternRenderFaceFromSoldier(vsSaveBufferID, GetSolID(pSoldier), sFaceX, sFaceY);
       }
     }
   } else {
-    BltVObjectFromIndex(vsSB, guiCLOSE, 5, sFaceX, sFaceY);
+    BltVObjectFromIndex(vsSaveBufferID, guiCLOSE, 5, sFaceX, sFaceY);
     RestoreExternBackgroundRect(sFaceX, sFaceY, FACE_WIDTH, FACE_HEIGHT);
   }
 }

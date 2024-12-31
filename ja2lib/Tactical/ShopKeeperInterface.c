@@ -1341,13 +1341,13 @@ BOOLEAN RenderShopKeeperInterface() {
                    SKI_PLAYERS_CURRENT_BALANCE_OFFSET_TO_VALUE, SKI_PLAYERS_CURRENT_BALANCE_WIDTH,
                    FONT10ARIAL, SKI_ITEM_PRICE_COLOR, FONT_MCOLOR_BLACK, TRUE, CENTER_JUSTIFIED);
 
-  BlitBufferToBuffer(vsIndexFB, vsSB, 0, 0, SKI_TACTICAL_BACKGROUND_START_X,
+  BlitBufferToBuffer(vsIndexFB, vsSaveBufferID, 0, 0, SKI_TACTICAL_BACKGROUND_START_X,
                      SKI_TACTICAL_BACKGROUND_START_HEIGHT);
 
   // At this point the background is pure, copy it to the save buffer
   if (gfRenderScreenOnNextLoop) {
     GetVSurfaceByIndexOld(&hDestVSurface, guiCornerWhereTacticalIsStillSeenImage);
-    GetVSurfaceByIndexOld(&hSrcVSurface, vsSB);
+    GetVSurfaceByIndexOld(&hSrcVSurface, vsSaveBufferID);
 
     SrcRect.left = SKI_TACTICAL_BACKGROUND_START_X;
     SrcRect.top = SKI_TACTICAL_BACKGROUND_START_Y;
@@ -2391,7 +2391,7 @@ uint32_t DisplayInvSlot(uint8_t ubSlotNum, uint16_t usItemIndex, uint16_t usPosX
   // Display the status of the item
   DrawItemUIBarEx(pItemObject, 0, (int16_t)(usPosX + 2), (int16_t)(usPosY + 2 + 20), 2, 20,
                   Get16BPPColor(FROMRGB(140, 136, 119)), Get16BPPColor(FROMRGB(140, 136, 119)),
-                  TRUE, vsIndexFB);  // vsSB
+                  TRUE, vsIndexFB);  // vsSaveBufferID
 
   // Display the Items Cost
   if (ubItemArea == PLAYERS_OFFER_AREA) {

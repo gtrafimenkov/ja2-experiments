@@ -940,13 +940,13 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       GetCurrentVideoSettings(&usWidth, &usHeight);
 
       pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
-      pDestBuf = LockVideoSurface(vsSB, &uiDestPitchBYTES);
+      pDestBuf = LockVideoSurface(vsSaveBufferID, &uiDestPitchBYTES);
 
       Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                       0, 0, 0, 0, usWidth, usHeight);
 
       UnlockVSurface(vsFB);
-      UnlockVSurfaceByID(vsSB);
+      UnlockVSurfaceByID(vsSaveBufferID);
     }
   }
 }
