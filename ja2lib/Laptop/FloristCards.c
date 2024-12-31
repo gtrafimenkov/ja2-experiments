@@ -139,7 +139,7 @@ void RenderFloristCards() {
     usPosX = FLORIST_CARD_FIRST_POS_X;
     for (i = 0; i < 3; i++) {
       // The flowe account box
-      BltVideoObjectOld(vsIndexFB, hPixHandle, 0, usPosX, usPosY);
+      BltVideoObject(vsFB, hPixHandle, 0, usPosX, usPosY);
 
       // Get and display the card saying
       uiStartLoc = FLOR_CARD_TEXT_TITLE_SIZE * ubCount;

@@ -476,7 +476,7 @@ void RenderFinances(void) {
 
   // display border
   GetVideoObject(&hHandle, guiLaptopBACKGROUND);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, 108, 23);
+  BltVideoObject(vsFB, hHandle, 0, 108, 23);
 
   // title bar icon
   BlitTitleBarIcons();
@@ -533,11 +533,11 @@ void RenderBackGround(void) {
 
   // get title bar object
   GetVideoObject(&hHandle, guiTITLE);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, TOP_X, TOP_Y - 2);
+  BltVideoObject(vsFB, hHandle, 0, TOP_X, TOP_Y - 2);
 
   // get and blt the top part of the screen, video object and blt to screen
   GetVideoObject(&hHandle, guiTOP);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, TOP_X, TOP_Y + 22);
+  BltVideoObject(vsFB, hHandle, 0, TOP_X, TOP_Y + 22);
   DrawFinanceTitleText();
   return;
 }
@@ -558,10 +558,10 @@ void DrawSummaryLines(void) {
   GetVideoObject(&hHandle, guiLINE);
 
   // blit summary LINE object to screen
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, DIVLINE_X, TOP_DIVLINE_Y);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, DIVLINE_X, TOP_DIVLINE_Y + 2);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, DIVLINE_X, BOT_DIVLINE_Y);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, DIVLINE_X, MID_DIVLINE_Y2);
+  BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, TOP_DIVLINE_Y);
+  BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, TOP_DIVLINE_Y + 2);
+  BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, BOT_DIVLINE_Y);
+  BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, MID_DIVLINE_Y2);
 
   return;
 }
@@ -594,17 +594,16 @@ void DrawRecordsBackGround(void) {
   for (int iCounter = 0; iCounter < 35; iCounter++) {
     // get and blt middle background to screen
     GetVideoObject(&hHandle, guiLISTCOLUMNS);
-    BltVideoObjectOld(vsIndexFB, hHandle, 0, TOP_X + 10,
-                      TOP_Y + 18 + (iCounter * BLOCK_HEIGHT) + 1);
+    BltVideoObject(vsFB, hHandle, 0, TOP_X + 10, TOP_Y + 18 + (iCounter * BLOCK_HEIGHT) + 1);
   }
 
   // the divisorLines
   GetVideoObject(&hHandle, guiLONGLINE);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, TOP_X + 10, TOP_Y + 17 + (6 * (BLOCK_HEIGHT)));
+  BltVideoObject(vsFB, hHandle, 0, TOP_X + 10, TOP_Y + 17 + (6 * (BLOCK_HEIGHT)));
   GetVideoObject(&hHandle, guiLONGLINE);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, TOP_X + 10, TOP_Y + 19 + (6 * (BLOCK_HEIGHT)));
+  BltVideoObject(vsFB, hHandle, 0, TOP_X + 10, TOP_Y + 19 + (6 * (BLOCK_HEIGHT)));
   GetVideoObject(&hHandle, guiLONGLINE);
-  BltVideoObjectOld(vsIndexFB, hHandle, 0, TOP_X + 10, TOP_Y + 19 + ((iCounter) * (BLOCK_HEIGHT)));
+  BltVideoObject(vsFB, hHandle, 0, TOP_X + 10, TOP_Y + 19 + ((iCounter) * (BLOCK_HEIGHT)));
 
   // the header text
   DrawRecordsColumnHeadersText();

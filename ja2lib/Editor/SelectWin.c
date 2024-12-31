@@ -1469,8 +1469,8 @@ BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBotto
     if (pNode->fChosen) sCount = pSelList[FindInSelectionList(pNode)].sCount;
 
     SetObjectShade(pNode->hObj, DEFAULT_SHADE_LEVEL);
-    fReturnVal = BltVideoObjectOld(vsIndexFB, pNode->hObj, pNode->uiIndex, (uint16_t)pNode->iX,
-                                   (uint16_t)iCurrY);
+    fReturnVal =
+        BltVideoObject(vsFB, pNode->hObj, pNode->uiIndex, (uint16_t)pNode->iX, (uint16_t)iCurrY);
 
     if (sCount != 0) {
       gprintf(pNode->iX, iCurrY, L"%d", sCount);
