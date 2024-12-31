@@ -1417,7 +1417,7 @@ void RenderAutoResolve() {
 
   GetVideoSurface(&hVSurface, gpAR->iInterfaceBuffer);
   BltVSurfaceToVSurface(ghFrameBuffer, hVSurface, 0, gpAR->Rect.iLeft, gpAR->Rect.iTop,
-                        VO_BLT_SRCTRANSPARENCY, 0);
+                        VS_BLT_USECOLORKEY, 0);
 
   for (i = 0; i < gpAR->ubMercs; i++) {
     RenderSoldierCell(&gpMercs[i]);
