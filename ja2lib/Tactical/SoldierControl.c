@@ -22,6 +22,7 @@
 #include "SGP/SoundMan.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "ScreenIDs.h"
@@ -7679,7 +7680,7 @@ void ReLoadSoldierAnimationDueToHandItemChange(struct SOLDIERTYPE *pSoldier, uin
 
 uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t rscale,
                                       uint32_t gscale, BOOLEAN fAdjustGreen) {
-  uint16_t *p16BPPPalette, r16, g16, b16, usColor;
+  uint16_t *p16BPPPalette, usColor;
   uint32_t cnt;
   uint32_t rmod, gmod, bmod;
   uint8_t r, g, b;
@@ -7702,23 +7703,7 @@ uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    if (gusRedShift < 0)
-      r16 = ((uint16_t)r >> (-gusRedShift));
-    else
-      r16 = ((uint16_t)r << gusRedShift);
-
-    if (gusGreenShift < 0)
-      g16 = ((uint16_t)g >> (-gusGreenShift));
-    else
-      g16 = ((uint16_t)g << gusGreenShift);
-
-    if (gusBlueShift < 0)
-      b16 = ((uint16_t)b >> (-gusBlueShift));
-    else
-      b16 = ((uint16_t)b << gusBlueShift);
-
-    // Prevent creation of pure black color
-    usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
+    usColor = PackColorsToRGB16(r, g, b);
 
     if ((usColor == 0) && ((r + g + b) != 0)) usColor = 0x0001;
 
@@ -7729,7 +7714,7 @@ uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t
 
 uint16_t *CreateEnemyGreyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t rscale,
                                           uint32_t gscale, BOOLEAN fAdjustGreen) {
-  uint16_t *p16BPPPalette, r16, g16, b16, usColor;
+  uint16_t *p16BPPPalette, usColor;
   uint32_t cnt, lumin;
   uint32_t rmod, gmod, bmod;
   uint8_t r, g, b;
@@ -7755,24 +7740,9 @@ uint16_t *CreateEnemyGreyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    if (gusRedShift < 0)
-      r16 = ((uint16_t)r >> (-gusRedShift));
-    else
-      r16 = ((uint16_t)r << gusRedShift);
-
-    if (gusGreenShift < 0)
-      g16 = ((uint16_t)g >> (-gusGreenShift));
-    else
-      g16 = ((uint16_t)g << gusGreenShift);
-
-    if (gusBlueShift < 0)
-      b16 = ((uint16_t)b >> (-gusBlueShift));
-    else
-      b16 = ((uint16_t)b << gusBlueShift);
+    usColor = PackColorsToRGB16(r, g, b);
 
     // Prevent creation of pure black color
-    usColor = (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
-
     if ((usColor == 0) && ((r + g + b) != 0)) usColor = 0x0001;
 
     p16BPPPalette[cnt] = usColor;
