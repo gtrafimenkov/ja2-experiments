@@ -2361,13 +2361,9 @@ extern void GetClippingRect(SGPRect *clip);
 #define DEFAULT_NUM_REGIONS 5
 #define DEFAULT_VIDEO_SURFACE_LIST_SIZE 10
 
-BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
-                                         struct VSurface *hSrcVSurface, RECT *DestRect,
-                                         RECT *SrcRect);
 BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                            uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
                            struct Rect *SrcRect);
-BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect);
 
 void DeletePrimaryVideoSurfaces();
 
@@ -3035,13 +3031,7 @@ BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
   return (TRUE);
 }
 
-// ********************************************************
-//
-// Region manipulation functions
-//
-// ********************************************************
-
-BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
+static BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
   Assert(hVSurface != NULL);
   Assert(pRect != NULL);
 
@@ -3177,12 +3167,6 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
 //
 // *****************************************************************************
 
-LPDIRECTDRAWSURFACE2 GetVideoSurfaceDDSurface(struct VSurface *hVSurface) {
-  Assert(hVSurface != NULL);
-
-  return ((LPDIRECTDRAWSURFACE2)hVSurface->_platformData2);
-}
-
 struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface) {
   // Create Video Surface
   DDPIXELFORMAT PixelFormat;
@@ -3229,9 +3213,9 @@ struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurfac
 
 // UTILITY FUNCTIONS FOR BLITTING
 
-BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
-                                         struct VSurface *hSrcVSurface, RECT *DestRect,
-                                         RECT *SrcRect) {
+static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
+                                                struct VSurface *hSrcVSurface, RECT *DestRect,
+                                                RECT *SrcRect) {
   Assert(hDestVSurface != NULL);
   Assert(hSrcVSurface != NULL);
 
@@ -3361,94 +3345,6 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
   }
 
   return (TRUE);
-}
-
-BOOLEAN Blt16BPPBufferShadowRectAlternateTable(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                               SGPRect *area);
-
-BOOLEAN InternalShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
-                                       int32_t Y2, BOOLEAN fLowPercentShadeTable) {
-  uint16_t *pBuffer;
-  uint32_t uiPitch;
-  SGPRect area;
-  struct VSurface *hVSurface;
-
-  // CLIP IT!
-  // FIRST GET SURFACE
-
-  //
-  // Get Video Surface
-  //
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_SHADOWVIDEOSURFACERECT;
-#endif
-  CHECKF(GetVideoSurface(&hVSurface, uiDestVSurface));
-
-  if (X1 < 0) X1 = 0;
-
-  if (X2 < 0) return (FALSE);
-
-  if (Y2 < 0) return (FALSE);
-
-  if (Y1 < 0) Y1 = 0;
-
-  if (X2 >= hVSurface->usWidth) X2 = hVSurface->usWidth - 1;
-
-  if (Y2 >= hVSurface->usHeight) Y2 = hVSurface->usHeight - 1;
-
-  if (X1 >= hVSurface->usWidth) return (FALSE);
-
-  if (Y1 >= hVSurface->usHeight) return (FALSE);
-
-  if ((X2 - X1) <= 0) return (FALSE);
-
-  if ((Y2 - Y1) <= 0) return (FALSE);
-
-  area.iTop = Y1;
-  area.iBottom = Y2;
-  area.iLeft = X1;
-  area.iRight = X2;
-
-  // Lock video surface
-  pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
-  // UnLockVideoSurface( uiDestVSurface );
-
-  if (pBuffer == NULL) {
-    return (FALSE);
-  }
-
-  if (!fLowPercentShadeTable) {
-    // Now we have the video object and surface, call the shadow function
-    if (!Blt16BPPBufferShadowRect(pBuffer, uiPitch, &area)) {
-      // Blit has failed if false returned
-      return (FALSE);
-    }
-  } else {
-    // Now we have the video object and surface, call the shadow function
-    if (!Blt16BPPBufferShadowRectAlternateTable(pBuffer, uiPitch, &area)) {
-      // Blit has failed if false returned
-      return (FALSE);
-    }
-  }
-
-  // Mark as dirty if it's the backbuffer
-  // if ( uiDestVSurface == BACKBUFFER )
-  //{
-  //	InvalidateBackbuffer( );
-  //}
-
-  UnLockVideoSurface(uiDestVSurface);
-  return (TRUE);
-}
-
-BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
-                               int32_t Y2) {
-  return (InternalShadowVideoSurfaceRect(uiDestVSurface, X1, Y1, X2, Y2, FALSE));
-}
-
-BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
-                                                   int32_t X2, int32_t Y2) {
-  return (InternalShadowVideoSurfaceRect(uiDestVSurface, X1, Y1, X2, Y2, TRUE));
 }
 
 static BOOLEAN BltVSurfaceUsingDDBlt(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
@@ -3820,11 +3716,8 @@ void SmkSetupVideo(void) {
   uint16_t usRed, usGreen, usBlue;
   struct VSurface *hVSurface;
 
-  // DEF:
-  //	lpVideoPlayback2=CinematicModeOn();
-
   GetVideoSurface(&hVSurface, vsFB);
-  lpVideoPlayback2 = GetVideoSurfaceDDSurface(hVSurface);
+  lpVideoPlayback2 = (LPDIRECTDRAWSURFACE2)hVSurface->_platformData2;
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
