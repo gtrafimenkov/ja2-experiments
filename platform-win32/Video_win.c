@@ -2528,7 +2528,6 @@ BOOLEAN SetBackbufferInterface(LPDIRECTDRAWSURFACE2 pSurface);
 BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
                                          struct VSurface *hSrcVSurface, RECT *DestRect,
                                          RECT *SrcRect);
-BOOLEAN FillSurface(struct VSurface *hDestVSurface, blt_vs_fx *pBltFx);
 BOOLEAN FillSurfaceRect(struct VSurface *hDestVSurface, blt_vs_fx *pBltFx);
 BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                            uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
@@ -3375,11 +3374,6 @@ BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSu
   // Assertions
   Assert(hDestVSurface != NULL);
 
-  // Check for fill, if true, fill entire region with color
-  if (fBltFlags & VS_BLT_COLORFILL) {
-    return (FillSurface(hDestVSurface, pBltFx));
-  }
-
   // Check for colorfill rectangle
   if (fBltFlags & VS_BLT_COLORFILLRECT) {
     return (FillSurfaceRect(hDestVSurface, pBltFx));
@@ -3639,21 +3633,6 @@ BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
     SrcRect->top = 0;
     DestRect->top = DestRect->bottom - (SrcRect->bottom - SrcRect->top);
   }
-
-  return (TRUE);
-}
-
-BOOLEAN FillSurface(struct VSurface *hDestVSurface, blt_vs_fx *pBltFx) {
-  DDBLTFX BlitterFX;
-
-  Assert(hDestVSurface != NULL);
-  CHECKF(pBltFx != NULL);
-
-  BlitterFX.dwSize = sizeof(DDBLTFX);
-  BlitterFX.dwFillColor = pBltFx->ColorFill;
-
-  DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->pSurfaceData, NULL, NULL, NULL, DDBLT_COLORFILL,
-               &BlitterFX);
 
   return (TRUE);
 }
