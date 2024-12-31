@@ -342,3 +342,17 @@ BOOLEAN GetVSurfaceByIndexOld(struct VSurface **pvs, VSurfID id) {
   *pvs = GetVSurfaceByID(id);
   return *pvs != NULL;
 }
+
+BOOLEAN ShadowVideoSurfaceImage(uint32_t uiDestVSurface, struct VObject *hImageHandle,
+                                int32_t iPosX, int32_t iPosY) {
+  // Horizontal shadow
+  ShadowVideoSurfaceRect(uiDestVSurface, iPosX + 3, iPosY + hImageHandle->pETRLEObject->usHeight,
+                         iPosX + hImageHandle->pETRLEObject->usWidth,
+                         iPosY + hImageHandle->pETRLEObject->usHeight + 3);
+
+  // vertical shadow
+  ShadowVideoSurfaceRect(uiDestVSurface, iPosX + hImageHandle->pETRLEObject->usWidth, iPosY + 3,
+                         iPosX + hImageHandle->pETRLEObject->usWidth + 3,
+                         iPosY + hImageHandle->pETRLEObject->usHeight);
+  return (TRUE);
+}
