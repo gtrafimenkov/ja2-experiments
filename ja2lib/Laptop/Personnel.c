@@ -2027,12 +2027,11 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
         SetObjectHandleShade(guiFACE, 0);
       }
 
-      BltVideoObjectOld(
-          vsIndexFB, hFaceHandle, 0,
-          (int16_t)(SMALL_PORTRAIT_START_X +
-                    (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
-          (int16_t)(SMALL_PORTRAIT_START_Y +
-                    (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT));
+      BltVideoObject(vsFB, hFaceHandle, 0,
+                     (int16_t)(SMALL_PORTRAIT_START_X +
+                               (iCounter % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH),
+                     (int16_t)(SMALL_PORTRAIT_START_Y +
+                               (iCounter / PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_HEIGHT));
 
       if (Menptr[iId + iCnt].bLife <= 0) {
         // if the merc is dead, display it
@@ -4759,8 +4758,8 @@ BOOLEAN DisplayHighLightBox(void) {
 
   // blit it
   GetVideoObject(&hHandle, uiBox);
-  BltVideoObjectOld(
-      vsIndexFB, hHandle, 0,
+  BltVideoObject(
+      vsFB, hHandle, 0,
       (int16_t)(SMALL_PORTRAIT_START_X +
                 (iCurrentPersonSelectedId % PERSONNEL_PORTRAIT_NUMBER_WIDTH) * SMALL_PORT_WIDTH -
                 2),
