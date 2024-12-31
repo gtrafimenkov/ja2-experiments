@@ -168,8 +168,8 @@ uint32_t MapUtilScreenHandle() {
   dX = dStartX;
   dY = dStartY;
 
-  pDestBuf = (uint16_t *)LockVideoSurface(giMiniMap, &uiDestPitchBYTES);
-  pSrcBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
+  pDestBuf = (uint16_t *)LockVSurfaceByID(giMiniMap, &uiDestPitchBYTES);
+  pSrcBuf = (uint16_t *)LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
 
   for (iX = 0; iX < 88; iX++) {
     dY = dStartY;
@@ -234,8 +234,8 @@ uint32_t MapUtilScreenHandle() {
   BltVideoSurface(vsIndexFB, giMiniMap, 0, 20, 360, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
   // QUantize!
-  pDataPtr = (uint8_t *)LockVideoSurface(gi8BitMiniMap, &uiSrcPitchBYTES);
-  pDestBuf = (uint16_t *)LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDataPtr = (uint8_t *)LockVSurfaceByID(gi8BitMiniMap, &uiSrcPitchBYTES);
+  pDestBuf = (uint16_t *)LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   QuantizeImage(pDataPtr, p24BitDest, MINIMAP_X_SIZE, MINIMAP_Y_SIZE, pPalette);
   SetVideoSurfacePalette(ghvSurface, pPalette);
   // Blit!

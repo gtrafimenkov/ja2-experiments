@@ -125,7 +125,7 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
     return;
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO MAX LIFE
@@ -234,7 +234,7 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
     BltVideoObject(uiBuffer, hHandle, 0, sXPos, (int16_t)(sYPos - sHeight));
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   if (pSoldier->bBreathMax <= 97) {
@@ -311,7 +311,7 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
     return;
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO BREATH
@@ -376,7 +376,7 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
     // );
   }
 
-  pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO BREATH

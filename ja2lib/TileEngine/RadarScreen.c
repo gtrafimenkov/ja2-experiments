@@ -317,7 +317,7 @@ void RenderRadarScreen() {
   sRadarBRX = (int16_t)((sBottomRightWorldX * gdScaleX) - sRadarCX + sX + (sWidth / 2));
   sRadarBRY = (int16_t)((sBottomRightWorldY * gdScaleY) - sRadarCY + gsRadarY + (sHeight / 2));
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
 
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, RADAR_WINDOW_X, gsRadarY,
                                  (RADAR_WINDOW_X + RADAR_WINDOW_WIDTH - 1),

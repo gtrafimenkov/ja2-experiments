@@ -213,10 +213,10 @@ BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, uint32_t uiBuffer) {
   BOOLEAN fReturnValue = TRUE;
 
   // grab the destination buffer
-  //	pDestBuf = ( uint16_t* )LockVideoSurface( uiBuffer, &uiDestPitchBYTES );
+  //	pDestBuf = ( uint16_t* )LockVSurfaceByID( uiBuffer, &uiDestPitchBYTES );
 
   // now lock it
-  //	pSrcBuf = ( uint16_t* )LockVideoSurface( gPopUpTextBox->uiSourceBufferIndex,
+  //	pSrcBuf = ( uint16_t* )LockVSurfaceByID( gPopUpTextBox->uiSourceBufferIndex,
   //&uiSrcPitchBYTES);
 
   // check to see if we are wanting to blit a transparent background
@@ -401,7 +401,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
     // Set source transparcenty
     SetVideoSurfaceTransparency(pPopUpTextBox->uiSourceBufferIndex, FROMRGB(255, 255, 0));
 
-    pDestBuf = (uint16_t *)LockVideoSurface(pPopUpTextBox->uiSourceBufferIndex, &uiDestPitchBYTES);
+    pDestBuf = (uint16_t *)LockVSurfaceByID(pPopUpTextBox->uiSourceBufferIndex, &uiDestPitchBYTES);
 
     usColorVal = Get16BPPColor(FROMRGB(255, 255, 0));
     usLoopEnd = (usWidth * usHeight);
@@ -419,8 +419,8 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
                        pPopUpTextBox->uiMercTextPopUpBackground));
     }
 
-    pDestBuf = (uint16_t *)LockVideoSurface(pPopUpTextBox->uiSourceBufferIndex, &uiDestPitchBYTES);
-    pSrcBuf = LockVideoSurface(pPopUpTextBox->uiMercTextPopUpBackground, &uiSrcPitchBYTES);
+    pDestBuf = (uint16_t *)LockVSurfaceByID(pPopUpTextBox->uiSourceBufferIndex, &uiDestPitchBYTES);
+    pSrcBuf = LockVSurfaceByID(pPopUpTextBox->uiMercTextPopUpBackground, &uiSrcPitchBYTES);
 
     Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
                                 0, 0, &DestRect);

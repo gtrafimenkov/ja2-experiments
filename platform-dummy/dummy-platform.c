@@ -245,7 +245,7 @@ BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) { return FALSE; }
 
 void FatalError(char *pError, ...) {}
 
-uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) { return NULL; }
+uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) { return NULL; }
 BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) { return FALSE; }
 
 void UnlockVSurfaceByID(VSurfID id) {}

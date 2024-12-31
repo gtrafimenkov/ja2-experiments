@@ -710,7 +710,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
       // If we are highlighted, do this now!
       if ((pFace->uiFlags & FACE_SHOW_WHITE_HILIGHT)) {
         // Lock buffer
-        pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+        pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
         SetClippingRegionAndImageWidth(uiDestPitchBYTES, sFaceX - 2, sFaceY - 1,
                                        sFaceX + pFace->usFaceWidth + 4,
                                        sFaceY + pFace->usFaceHeight + 4);
@@ -726,7 +726,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
         if (pFace->ubSoldierID != NOBODY) {
           if (MercPtrs[pFace->ubSoldierID]->bLife >= OKLIFE) {
             // Lock buffer
-            pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+            pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
             SetClippingRegionAndImageWidth(uiDestPitchBYTES, sFaceX - 2, sFaceY - 1,
                                            sFaceX + pFace->usFaceWidth + 4,
                                            sFaceY + pFace->usFaceHeight + 4);
@@ -747,7 +747,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
       } else {
         // ATE: Zero out any highlight boxzes....
         // Lock buffer
-        pDestBuf = LockVideoSurface(pFace->uiAutoDisplayBuffer, &uiDestPitchBYTES);
+        pDestBuf = LockVSurfaceByID(pFace->uiAutoDisplayBuffer, &uiDestPitchBYTES);
         SetClippingRegionAndImageWidth(uiDestPitchBYTES, pFace->usFaceX - 2, pFace->usFaceY - 1,
                                        pFace->usFaceX + pFace->usFaceWidth + 4,
                                        pFace->usFaceY + pFace->usFaceHeight + 4);
@@ -766,7 +766,7 @@ void HandleFaceHilights(FACETYPE *pFace, uint32_t uiBuffer, int16_t sFaceX, int1
 
   if ((pFace->fCompatibleItems && !gFacesData[iFaceIndex].fDisabled)) {
     // Lock buffer
-    pDestBuf = LockVideoSurface(uiBuffer, &uiDestPitchBYTES);
+    pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, sFaceX - 2, sFaceY - 1,
                                    sFaceX + pFace->usFaceWidth + 4,
                                    sFaceY + pFace->usFaceHeight + 4);
@@ -1103,7 +1103,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
         SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
 
         // Draw box
-        pDestBuf = LockVideoSurface(uiRenderBuffer, &uiDestPitchBYTES);
+        pDestBuf = LockVSurfaceByID(uiRenderBuffer, &uiDestPitchBYTES);
         SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
         usLineColor = Get16BPPColor(FROMRGB(105, 8, 9));
@@ -1747,8 +1747,8 @@ BOOLEAN FaceRestoreSavedBackgroundRect(int32_t iFaceIndex, int16_t sDestLeft, in
     return (FALSE);
   }
 
-  pDestBuf = LockVideoSurface(pFace->uiAutoDisplayBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(pFace->uiAutoRestoreBuffer, &uiSrcPitchBYTES);
+  pDestBuf = LockVSurfaceByID(pFace->uiAutoDisplayBuffer, &uiDestPitchBYTES);
+  pSrcBuf = LockVSurfaceByID(pFace->uiAutoRestoreBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sDestLeft, sDestTop, sSrcLeft, sSrcTop, sWidth, sHeight);

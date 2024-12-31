@@ -243,7 +243,7 @@ BOOLEAN RestoreBackgroundRects(void) {
   uint32_t uiCount, uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumBackSaves; uiCount++) {
@@ -339,7 +339,7 @@ BOOLEAN SaveBackgroundRects(void) {
   uint32_t uiCount, uiDestPitchBYTES;
   uint8_t *pSrcBuf;
 
-  pSrcBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumBackSaves; uiCount++) {
     if (gBackSaves[uiCount].fAllocated && (!gBackSaves[uiCount].fDisabled)) {
@@ -461,7 +461,7 @@ BOOLEAN UpdateSaveBuffer(void) {
   // Update saved buffer - do for the viewport size ony!
   GetCurrentVideoSettings(&usWidth, &usHeight);
 
-  pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
   pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
@@ -480,7 +480,7 @@ BOOLEAN RestoreExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth,
 
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
@@ -510,7 +510,7 @@ BOOLEAN RestoreExternBackgroundRectGivenID(int32_t iBack) {
 
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
@@ -531,7 +531,7 @@ BOOLEAN CopyExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth, in
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
   pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(vsIndexFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
@@ -908,7 +908,7 @@ void SaveVideoOverlaysArea(uint32_t uiSrcBuffer) {
   uint32_t uiSrcPitchBYTES;
   uint8_t *pSrcBuf;
 
-  pSrcBuf = LockVideoSurface(uiSrcBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurfaceByID(uiSrcBuffer, &uiSrcPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumVideoOverlays; uiCount++) {
     if (gVideoOverlays[uiCount].fAllocated && !gVideoOverlays[uiCount].fDisabled) {
@@ -937,7 +937,7 @@ void SaveVideoOverlayArea(uint32_t uiSrcBuffer, uint32_t uiCount) {
   uint32_t uiSrcPitchBYTES;
   uint8_t *pSrcBuf;
 
-  pSrcBuf = LockVideoSurface(uiSrcBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurfaceByID(uiSrcBuffer, &uiSrcPitchBYTES);
 
   if (gVideoOverlays[uiCount].fAllocated && !gVideoOverlays[uiCount].fDisabled) {
     // OK, if our saved area is null, allocate it here!
@@ -999,7 +999,7 @@ BOOLEAN RestoreShiftedVideoOverlays(int16_t sShiftX, int16_t sShiftY) {
   ClipX2 = 640;
   ClipY2 = gsVIEWPORT_WINDOW_END_Y - 1;
 
-  pDestBuf = LockVideoSurface(BACKBUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(BACKBUFFER, &uiDestPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumVideoOverlays; uiCount++) {
     if (gVideoOverlays[uiCount].fAllocated && !gVideoOverlays[uiCount].fDisabled) {
@@ -1076,7 +1076,7 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
 
-  pDestBuf = LockVideoSurface(pBlitter->uiDestBuff, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(pBlitter->uiDestBuff, &uiDestPitchBYTES);
 
   SetFont(pBlitter->uiFontID);
   SetFontBackground(pBlitter->ubFontBack);
@@ -1094,8 +1094,8 @@ BOOLEAN BlitBufferToBuffer(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t
   uint8_t *pDestBuf, *pSrcBuf;
   BOOLEAN fRetVal;
 
-  pDestBuf = LockVideoSurface(uiDestBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVideoSurface(uiSrcBuffer, &uiSrcPitchBYTES);
+  pDestBuf = LockVSurfaceByID(uiDestBuffer, &uiDestPitchBYTES);
+  pSrcBuf = LockVSurfaceByID(uiSrcBuffer, &uiSrcPitchBYTES);
 
   fRetVal = Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf,
                             uiSrcPitchBYTES, usSrcX, usSrcY, usSrcX, usSrcY, usWidth, usHeight);

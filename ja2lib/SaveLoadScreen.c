@@ -611,12 +611,12 @@ BOOLEAN EnterSaveLoadScreen() {
     ButtonList[guiSlgSaveLoadBtn]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
     // CLEAR THE FRAME BUFFER
-    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
     UnlockVSurface(vsFB);
 
     // CLEAR THE vsIndexFB
-    pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
     UnlockVSurface(vsFB);
   }

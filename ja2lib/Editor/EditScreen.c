@@ -934,7 +934,7 @@ void ShowCurrentDrawingMode(void) {
 
   // Set the color for the window's border. Blueish color = Normal, Red = Fake lighting is turned on
   usFillColor = GenericButtonFillColors[0];
-  pDestBuf = LockVideoSurface(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   RectangleDraw(FALSE, 0, 400, 99, 458, usFillColor, pDestBuf);
 
   UnlockVSurface(vsFB);
