@@ -2435,7 +2435,7 @@ uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *puiPitch) {
     return FALSE;
   }
 
-  return LockVideoSurfaceBuffer(vs, puiPitch);
+  return LockVSurface(vs, puiPitch);
 }
 
 void UnLockVideoSurface(uint32_t uiVSurface) {
@@ -2881,19 +2881,18 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
 // Lock must be followed by release
 // Pitch MUST be used for all width calculations ( Pitch is in bytes )
 // The time between Locking and unlocking must be minimal
-uint8_t *LockVideoSurfaceBuffer(struct VSurface *hVSurface, uint32_t *pPitch) {
+uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
   DDSURFACEDESC SurfaceDescription;
 
   // Assertions
-  if (hVSurface == NULL) {
+  if (vs == NULL) {
     int i = 0;
   }
 
-  Assert(hVSurface != NULL);
+  Assert(vs != NULL);
   Assert(pPitch != NULL);
 
-  DDLockSurface((LPDIRECTDRAWSURFACE2)hVSurface->_platformData2, NULL, &SurfaceDescription, 0,
-                NULL);
+  DDLockSurface((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL, &SurfaceDescription, 0, NULL);
 
   *pPitch = SurfaceDescription.lPitch;
 
@@ -3123,13 +3122,13 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
     CHECKF(BltVSurfaceUsingDD(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &srcRect));
 
   } else if (hDestVSurface->ubBitDepth == 8 && hSrcVSurface->ubBitDepth == 8) {
-    if ((pSrcSurface8 = (uint8_t *)LockVideoSurfaceBuffer(hSrcVSurface, &uiSrcPitch)) == NULL) {
+    if ((pSrcSurface8 = (uint8_t *)LockVSurface(hSrcVSurface, &uiSrcPitch)) == NULL) {
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                  String("Failed on lock of 8BPP surface for blitting"));
       return (FALSE);
     }
 
-    if ((pDestSurface8 = (uint8_t *)LockVideoSurfaceBuffer(hDestVSurface, &uiDestPitch)) == NULL) {
+    if ((pDestSurface8 = (uint8_t *)LockVSurface(hDestVSurface, &uiDestPitch)) == NULL) {
       UnLockVideoSurfaceBuffer(hSrcVSurface);
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                  String("Failed on lock of 8BPP dest surface for blitting"));

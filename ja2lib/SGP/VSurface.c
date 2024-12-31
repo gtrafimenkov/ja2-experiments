@@ -180,7 +180,7 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   Assert(fBufferBPP != 0);
 
   // Get surface buffer data
-  pDest = LockVideoSurfaceBuffer(hVSurface, &uiPitch);
+  pDest = LockVSurface(hVSurface, &uiPitch);
 
   // Effective width ( in PIXELS ) is Pitch ( in bytes ) converted to pitch ( IN PIXELS )
   usEffectiveWidth = (uint16_t)(uiPitch / (hVSurface->ubBitDepth / 8));
