@@ -161,7 +161,7 @@ void RenderMapBorder(void) {
 
   // get and blt border
   GetVideoObject(&hHandle, guiMapBorder);
-  BltVideoObjectOld(vsSaveBufferID, hHandle, 0, MAP_BORDER_X, MAP_BORDER_Y);
+  BltVideoObject(vsSaveBuffer, hHandle, 0, MAP_BORDER_X, MAP_BORDER_Y);
 
   // show the level marker
   DisplayCurrentLevelMarker();
@@ -986,8 +986,8 @@ void DisplayCurrentLevelMarker(void) {
 
   // it's actually a white rectangle, not a green arrow!
   GetVideoObject(&hHandle, guiLEVELMARKER);
-  BltVideoObjectOld(vsSaveBufferID, hHandle, 0, MAP_LEVEL_MARKER_X + 1,
-                    MAP_LEVEL_MARKER_Y + (MAP_LEVEL_MARKER_DELTA * (int16_t)iCurrentMapSectorZ));
+  BltVideoObject(vsSaveBuffer, hHandle, 0, MAP_LEVEL_MARKER_X + 1,
+                 MAP_LEVEL_MARKER_Y + (MAP_LEVEL_MARKER_DELTA * (int16_t)iCurrentMapSectorZ));
 
   return;
 }

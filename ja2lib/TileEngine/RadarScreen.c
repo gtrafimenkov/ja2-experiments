@@ -531,7 +531,7 @@ BOOLEAN CreateDestroyMouseRegionsForSquadList(void) {
     CHECKF(AddStandardVideoObject(&VObjectDesc, &uiHandle));
 
     GetVideoObject(&hHandle, uiHandle);
-    BltVideoObjectOld(vsSaveBufferID, hHandle, 0, 538, 0 + gsVIEWPORT_END_Y);
+    BltVideoObject(vsSaveBuffer, hHandle, 0, 538, 0 + gsVIEWPORT_END_Y);
 
     RestoreExternBackgroundRect(538, gsVIEWPORT_END_Y, (640 - 538),
                                 (int16_t)(480 - gsVIEWPORT_END_Y));
