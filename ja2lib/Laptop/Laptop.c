@@ -1601,8 +1601,6 @@ void HandleLapTopHandles() {
   }
 }
 
-extern BOOLEAN gfPrintFrameBuffer;
-
 uint32_t LaptopScreenHandle() {
   // User just changed modes.  This is determined by the button callbacks
   // created in LaptopScreenInit()
