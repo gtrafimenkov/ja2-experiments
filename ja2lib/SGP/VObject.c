@@ -223,6 +223,33 @@ static BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYT
                                       struct VObject *vsSrc, uint16_t usIndex, int32_t iDestX,
                                       int32_t iDestY);
 
+BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16_t usRegionIndex,
+                            int32_t iDestX, int32_t iDestY) {
+  uint16_t *pBuffer;
+  uint32_t uiPitch;
+  struct VObject *hSrcVObject;
+
+  // Lock video surface
+  pBuffer = (uint16_t *)LockVSurface(dest, &uiPitch);
+
+  if (pBuffer == NULL) {
+    return (FALSE);
+  }
+
+  if (!GetVideoObject(&hSrcVObject, uiSrcVObject)) {
+    UnlockVSurface(dest);
+    return FALSE;
+  }
+
+  if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY)) {
+    UnlockVSurface(dest);
+    return FALSE;
+  }
+
+  UnlockVSurface(dest);
+  return (TRUE);
+}
+
 BOOLEAN BltVObjectFromIndexOld(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
                                uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;

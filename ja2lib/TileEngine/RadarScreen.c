@@ -273,7 +273,7 @@ void RenderRadarScreen() {
       }
     }
 
-    BltVObjectFromIndexOld(vsSaveBufferID, gusRadarImage, 0, RADAR_WINDOW_X, gsRadarY);
+    BltVObjectFromIndex(vsSaveBuffer, gusRadarImage, 0, RADAR_WINDOW_X, gsRadarY);
   }
 
   // FIRST DELETE WHAT'S THERE
