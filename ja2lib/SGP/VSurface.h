@@ -66,9 +66,6 @@ BOOLEAN InitializeVideoSurfaceManager();
 // Deletes any video Surface placed into list
 BOOLEAN ShutdownVideoSurfaceManager();
 
-// Restores all video Surfaces in list
-BOOLEAN RestoreVideoSurfaces();
-
 // Adds a video Surface to list
 BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *uiIndex);
 
@@ -108,8 +105,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath);
 
 // Gets the RGB palette entry values
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteEntry *pPalette);
-
-BOOLEAN RestoreVideoSurface(struct VSurface *hVSurface);
 
 // Returns a flat pointer for direct manipulation of data
 uint8_t *LockVideoSurfaceBuffer(struct VSurface *hVSurface, uint32_t *pPitch);
