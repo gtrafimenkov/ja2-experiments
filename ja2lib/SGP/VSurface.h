@@ -67,7 +67,7 @@ BOOLEAN ShutdownVideoSurfaceManager();
 BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *uiIndex);
 
 // Returns a HVSurface for the specified index
-BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex);
+BOOLEAN GetVSurfaceByIndexOld(struct VSurface **hVSurface, uint32_t uiIndex);
 
 uint8_t *LockVideoSurface(uint32_t uiVSurface, uint32_t *uiPitch);
 void UnLockVideoSurface(uint32_t uiVSurface);

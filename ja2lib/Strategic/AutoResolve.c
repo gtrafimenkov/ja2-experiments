@@ -1410,7 +1410,7 @@ void RenderAutoResolve() {
   }
   gpAR->fRenderAutoResolve = FALSE;
 
-  GetVideoSurface(&hVSurface, gpAR->iInterfaceBuffer);
+  GetVSurfaceByIndexOld(&hVSurface, gpAR->iInterfaceBuffer);
   BltVSurfaceToVSurface(vsFB, hVSurface, 0, gpAR->Rect.iLeft, gpAR->Rect.iTop, VS_BLT_USECOLORKEY,
                         0);
 

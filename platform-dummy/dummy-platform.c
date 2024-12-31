@@ -259,7 +259,7 @@ void UnLockVideoSurface(uint32_t uiVSurface) {}
 
 BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) { return FALSE; }
 
-BOOLEAN GetVideoSurface(struct VSurface **hVSurface, uint32_t uiIndex) { return FALSE; }
+BOOLEAN GetVSurfaceByIndexOld(struct VSurface **hVSurface, uint32_t uiIndex) { return FALSE; }
 
 BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                     uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect,

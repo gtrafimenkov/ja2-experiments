@@ -224,7 +224,7 @@ static BOOLEAN InternalShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X
   SGPRect area;
   struct VSurface *hVSurface;
 
-  CHECKF(GetVideoSurface(&hVSurface, uiDestVSurface));
+  CHECKF(GetVSurfaceByIndexOld(&hVSurface, uiDestVSurface));
 
   if (X1 < 0) X1 = 0;
 
@@ -304,10 +304,10 @@ BOOLEAN BltStretchVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, 
   struct VSurface *hDestVSurface;
   struct VSurface *hSrcVSurface;
 
-  if (!GetVideoSurface(&hDestVSurface, uiDestVSurface)) {
+  if (!GetVSurfaceByIndexOld(&hDestVSurface, uiDestVSurface)) {
     return FALSE;
   }
-  if (!GetVideoSurface(&hSrcVSurface, uiSrcVSurface)) {
+  if (!GetVSurfaceByIndexOld(&hSrcVSurface, uiSrcVSurface)) {
     return FALSE;
   }
 
