@@ -219,14 +219,15 @@ BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex) {
   return FALSE;
 }
 
+static BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
+                                      struct VObject *hSrcVObject, uint16_t usIndex, int32_t iDestX,
+                                      int32_t iDestY);
+
 BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint16_t usRegionIndex,
                             int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
   struct VObject *hSrcVObject;
-
-  uint32_t fBltFlags = VO_BLT_SRCTRANSPARENCY;
-  blt_fx *pBltFx = NULL;
 
   // Lock video surface
   pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
@@ -245,8 +246,7 @@ BOOLEAN BltVObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject, uint
   }
 
   // Now we have the video object and surface, call the VO blitter function
-  if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY,
-                              fBltFlags, pBltFx)) {
+  if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY)) {
     UnLockVideoSurface(uiDestVSurface);
     // VO Blitter will set debug messages for error conditions
     return FALSE;
@@ -311,9 +311,6 @@ BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hSrcVObject, uin
   uint16_t *pBuffer;
   uint32_t uiPitch;
 
-  uint32_t fBltFlags = VO_BLT_SRCTRANSPARENCY;
-  blt_fx *pBltFx = NULL;
-
   // Lock video surface
   pBuffer = (uint16_t *)LockVideoSurface(uiDestVSurface, &uiPitch);
 
@@ -322,8 +319,7 @@ BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hSrcVObject, uin
   }
 
   // Now we have the video object and surface, call the VO blitter function
-  if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY,
-                              fBltFlags, pBltFx)) {
+  if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY)) {
     UnLockVideoSurface(uiDestVSurface);
     // VO Blitter will set debug messages for error conditions
     return (FALSE);
@@ -604,29 +600,23 @@ uint16_t CreateObjectPaletteTables(struct VObject *pObj, uint32_t uiType) {
 // *******************************************************************
 
 // High level blit function encapsolates ALL effects and BPP
-BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                               struct VObject *hSrcVObject, uint16_t usIndex, int32_t iDestX,
-                               int32_t iDestY, int32_t fBltFlags, blt_fx *pBltFx) {
-  // Assertions
+static BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
+                                      struct VObject *hSrcVObject, uint16_t usIndex, int32_t iDestX,
+                                      int32_t iDestY) {
   Assert(pBuffer != NULL);
-
   Assert(hSrcVObject != NULL);
 
-  // Check For Flags and bit depths
   switch (hSrcVObject->ubBitDepth) {
     case 16:
-
       break;
 
     case 8:
-      if (fBltFlags & VO_BLT_SRCTRANSPARENCY) {
-        if (BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect))
-          Blt8BPPDataTo16BPPBufferTransparentClip(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
-                                                  iDestY, usIndex, &ClippingRect);
-        else
-          Blt8BPPDataTo16BPPBufferTransparent(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
-                                              iDestY, usIndex);
-      }
+      if (BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect))
+        Blt8BPPDataTo16BPPBufferTransparentClip(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX,
+                                                iDestY, usIndex, &ClippingRect);
+      else
+        Blt8BPPDataTo16BPPBufferTransparent(pBuffer, uiDestPitchBYTES, hSrcVObject, iDestX, iDestY,
+                                            usIndex);
       break;
   }
 
