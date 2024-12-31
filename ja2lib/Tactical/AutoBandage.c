@@ -740,11 +740,11 @@ void DisplayAutoBandageUpdatePanel(void) {
 
   // bordering patients squares
   for (iCounterA = 0; iCounterA < iNumberPatientsHigh; iCounterA++) {
-    BltVideoObjectOld(
-        vsIndexFB, hBackGroundHandle, 3, sXPosition - 4,
+    BltVideoObject(
+        vsFB, hBackGroundHandle, 3, sXPosition - 4,
         sYPosition + ((iCounterA + iNumberDoctorsHigh) * TACT_UPDATE_MERC_FACE_X_HEIGHT));
-    BltVideoObjectOld(
-        vsIndexFB, hBackGroundHandle, 5, sXPosition + iTotalPixelsWide,
+    BltVideoObject(
+        vsFB, hBackGroundHandle, 5, sXPosition + iTotalPixelsWide,
         sYPosition + ((iCounterA + iNumberDoctorsHigh) * TACT_UPDATE_MERC_FACE_X_HEIGHT));
   }
 

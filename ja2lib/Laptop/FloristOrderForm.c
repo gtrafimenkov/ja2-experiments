@@ -1122,8 +1122,8 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(uint8_t ubDropDownMode) {
       for (i = 10; i < usHeight - 10; i += 10) {
         BltVideoObject(vsFB, hImageHandle, 3, usPosX + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
                        i + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
-        BltVideoObjectOld(
-            vsIndexFB, hImageHandle, 4,
+        BltVideoObject(
+            vsFB, hImageHandle, 4,
             usPosX + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 4 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
             i + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       }
@@ -1133,18 +1133,16 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(uint8_t ubDropDownMode) {
       BltVideoObject(vsFB, hImageHandle, 0, 0 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
                      usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       // top right
-      BltVideoObjectOld(
-          vsIndexFB, hImageHandle, 2,
-          FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-          usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
+      BltVideoObject(vsFB, hImageHandle, 2,
+                     FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
+                     usPosY + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       // bottom left
       BltVideoObject(vsFB, hImageHandle, 5, 0 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
                      usHeight - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
       // bottom right
-      BltVideoObjectOld(
-          vsIndexFB, hImageHandle, 7,
-          FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
-          usHeight - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
+      BltVideoObject(vsFB, hImageHandle, 7,
+                     FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_X,
+                     usHeight - 10 + FLOWER_ORDER_DROP_DOWN_LOCATION_Y);
 
       // Display the list of cities
       usPosY = FLOWER_ORDER_DROP_DOWN_CITY_START_Y + 3;

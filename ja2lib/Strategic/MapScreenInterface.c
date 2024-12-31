@@ -3893,8 +3893,8 @@ void DisplaySoldierUpdateBox() {
   // the button container box
   if (fFourWideMode) {
     // def: 3/1/99 WAS SUBINDEX 6,
-    BltVideoObjectOld(
-        vsSaveBufferID, hBackGroundHandle, 19, iX - 4 + TACT_UPDATE_MERC_FACE_X_WIDTH,
+    BltVideoObject(
+        vsSaveBuffer, hBackGroundHandle, 19, iX - 4 + TACT_UPDATE_MERC_FACE_X_WIDTH,
         iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3);
 
     // ATE: Display string for time compression
@@ -3905,8 +3905,8 @@ void DisplaySoldierUpdateBox() {
                          gzLateLocalizedString[49], FONT_BLACK, 0, CENTER_JUSTIFIED);
   } else {
     // def: 3/1/99 WAS SUBINDEX 6,
-    BltVideoObjectOld(
-        vsSaveBufferID, hBackGroundHandle, 19, iX - 4,
+    BltVideoObject(
+        vsSaveBuffer, hBackGroundHandle, 19, iX - 4,
         iY + iNumberHigh * TACT_UPDATE_MERC_FACE_X_HEIGHT + REASON_FOR_SOLDIER_UPDATE_OFFSET_Y + 3);
 
     // ATE: Display string for time compression
