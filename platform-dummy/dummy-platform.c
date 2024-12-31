@@ -309,7 +309,7 @@ BOOLEAN ShadowVideoSurfaceImage(uint32_t uiDestVSurface, struct VObject *hImageH
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
 
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch) { return NULL; }
-void UnLockVideoSurfaceBuffer(struct VSurface *hVSurface) {}
+void UnlockVSurface(struct VSurface *hVSurface) {}
 
 BOOLEAN SmkPollFlics(void) { return FALSE; }
 
