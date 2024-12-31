@@ -1015,20 +1015,17 @@ uint32_t mprintf_coded(int32_t x, int32_t y, wchar_t *pFontString, ...) {
 BOOLEAN InitializeFontManager(uint16_t usDefaultPixelDepth) {
   int count;
   uint16_t uiRight, uiBottom;
-  uint8_t uiPixelDepth;
 
   FontDefault = (-1);
   FontDestBuffer = BACKBUFFER;
   FontDestPitch = 0;
 
-  //	FontDestBPP=0;
-
-  GetCurrentVideoSettings(&uiRight, &uiBottom, &uiPixelDepth);
+  GetCurrentVideoSettings(&uiRight, &uiBottom);
   FontDestRegion.iLeft = 0;
   FontDestRegion.iTop = 0;
   FontDestRegion.iRight = (int32_t)uiRight;
   FontDestRegion.iBottom = (int32_t)uiBottom;
-  FontDestBPP = (uint32_t)uiPixelDepth;
+  FontDestBPP = 16;
 
   FontDestWrap = FALSE;
 

@@ -64,7 +64,6 @@ uint32_t MapUtilScreenHandle() {
   char zFilename[260], zFilename2[260];
   uint16_t usWidth;
   uint16_t usHeight;
-  uint8_t ubBitDepth;
   uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
   uint16_t *pDestBuf, *pSrcBuf;
   uint8_t *pDataPtr;
@@ -95,8 +94,8 @@ uint32_t MapUtilScreenHandle() {
     fNewMap = FALSE;
 
     // Create render buffer
-    GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
-    if (AddVSurface(CreateVSurfaceBlank(88, 44, ubBitDepth), &giMiniMap) == FALSE) {
+    GetCurrentVideoSettings(&usWidth, &usHeight);
+    if (AddVSurface(CreateVSurfaceBlank16(88, 44), &giMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
 
