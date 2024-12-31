@@ -593,10 +593,6 @@ void PopupMovementMenu(UI_EVENT *pUIEvent) {
     pSoldier = MercPtrs[gusSelectedSoldier];
   }
 
-  // Blit background!
-  // BltVObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
-  // VO_BLT_SRCTRANSPARENCY, NULL );
-
   iMenuAnchorX = giMenuAnchorX + 9;
   iMenuAnchorY = giMenuAnchorY + 8;
 
@@ -1813,9 +1809,6 @@ void PopupDoorOpenMenu(BOOLEAN fClosingDoor) {
   iMenuAnchorX = gOpenDoorMenu.sX;
   iMenuAnchorY = gOpenDoorMenu.sY;
 
-  // Blit background!
-  // BltVObjectFromIndex( vsFB, guiBUTTONBORDER, 0, iMenuAnchorX, iMenuAnchorY,
-  // VO_BLT_SRCTRANSPARENCY, NULL );
   iMenuAnchorX = gOpenDoorMenu.sX + 9;
   iMenuAnchorY = gOpenDoorMenu.sY + 8;
 
@@ -2518,58 +2511,6 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
       uiBarToUseInUpDate = uiPLAYERBAR;
       break;
   }
-
-    // Update progress bar!
-#if 0
-	if ( ubType == COMPUTER_TURN_MESSAGE )
-	{
-		int32_t		cnt1, iLength;
-		int16_t		usNumStepsPerEnemy;
-
-		if ( gfProgBarActive )
-		{
-			//usNumStepsPerEnemy = ( PROG_BAR_LENGTH / gubProgNumEnemies );
-
-			// Alrighty, do some fun stuff!
-
-			// Render end peice
-			sBarX = PROG_BAR_START_X;
-			BltVObjectFromIndex( uiSurface, uiBAR, 3, sBarX, PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL );
-
-			// Determine Length
-		//	iLength   = (gubProgCurEnemy ) * usNumStepsPerEnemy;
-
-			cnt1 = 0;
-			cnt2 = 0;
-
-			while( cnt1 < iLength )
-			{
-				sBarX++;
-
-				// Check sBarX, ( just as a precaution )
-				if ( sBarX > 640 )
-				{
-					break;
-				}
-
-				BltVObjectFromIndex( uiSurface, uiBAR, (int16_t)( 4 + cnt2 ), sBarX, PROG_BAR_START_Y, VO_BLT_SRCTRANSPARENCY, NULL );
-
-				cnt1++;
-				cnt2++;
-
-				if ( cnt2 == 10 )
-				{
-					cnt2 = 0;
-				}
-			}
-
-			//gubProgNumEnemies = ubNum;
-			//gubProgCurEnemy		= 0;
-
-
-		}
-	}
-#endif
 
   if (gGameOptions.fTurnTimeLimit) {
     if (ubType == PLAYER_TURN_MESSAGE || ubType == PLAYER_INTERRUPT_MESSAGE) {

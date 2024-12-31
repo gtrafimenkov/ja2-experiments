@@ -560,11 +560,8 @@ void DrawSummaryLines(void) {
   // blit summary LINE object to screen
   BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, TOP_DIVLINE_Y);
   BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, TOP_DIVLINE_Y + 2);
-  // BltVideoObject(vsFB, hHandle, 0,DIVLINE_X, MID_DIVLINE_Y, VO_BLT_SRCTRANSPARENCY,NULL);
   BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, BOT_DIVLINE_Y);
   BltVideoObject(vsFB, hHandle, 0, DIVLINE_X, MID_DIVLINE_Y2);
-  // BltVideoObject(vsFB, hHandle, 0,DIVLINE_X, BOT_DIVLINE_Y2,
-  // VO_BLT_SRCTRANSPARENCY,NULL);
 
   return;
 }
