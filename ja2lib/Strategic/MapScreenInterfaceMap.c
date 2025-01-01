@@ -547,7 +547,7 @@ void DrawMapIndexBigMap(BOOLEAN fSelectedCursorIsYellow) {
   int32_t iCount = 0;
   BOOLEAN fDrawCursors;
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
   // SetFontColors(FONT_FCOLOR_GREEN)
   SetFont(MAP_FONT);
   SetFontForeground(MAP_INDEX_COLOR);
@@ -589,7 +589,7 @@ void DrawMapIndexBigMap(BOOLEAN fSelectedCursorIsYellow) {
   InvalidateRegion(MAP_HORT_INDEX_X, MAP_HORT_INDEX_Y, MAP_HORT_INDEX_X + (iCount - 1) * MAP_GRID_X,
                    MAP_HORT_INDEX_Y + MAP_HORT_HEIGHT);
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 }
 
 void HandleShowingOfEnemiesWithMilitiaOn(void) {
@@ -862,8 +862,8 @@ void DrawTownLabels(wchar_t *pString, wchar_t *pStringA, uint16_t usFirstX, uint
     return;
   }
 
-  SetFontDestBuffer(vsSaveBufferID, MapScreenRect.iLeft + 2, MapScreenRect.iTop,
-                    MapScreenRect.iRight, MapScreenRect.iBottom, FALSE);
+  SetFontDestBuffer(vsSaveBuffer, MapScreenRect.iLeft + 2, MapScreenRect.iTop, MapScreenRect.iRight,
+                    MapScreenRect.iBottom, FALSE);
 
   // clip blits to mapscreen region
   ClipBlitsToMapViewRegion();
@@ -2408,7 +2408,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
 
 void AnimateRoute(struct path *pPath) {
   // set buffer
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   // the animated path
   if (TraceCharAnimatedRoute(pPath, FALSE, FALSE)) {
@@ -3508,7 +3508,7 @@ void ShowPeopleInMotion(uint8_t sX, uint8_t sY) {
 
         FindFontCenterCoordinates((int16_t)(iX + sTextXOffset), 0, ICON_WIDTH, 0, sString, MAP_FONT,
                                   &usX, &usY);
-        SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
         mprintf(usX, iY + sTextYOffset, sString);
 
         switch (iCounter % 2) {
@@ -3545,7 +3545,7 @@ void ShowPeopleInMotion(uint8_t sX, uint8_t sY) {
   }
 
   // restore buffer
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 }
 
 void DisplayDistancesForHelicopter(void) {
@@ -3989,7 +3989,7 @@ void BlitMineText(uint8_t sMapX, uint8_t sMapY) {
 
   // show detailed mine info (name, production rate, daily production)
 
-  SetFontDestBuffer(vsSaveBufferID, MAP_VIEW_START_X, MAP_VIEW_START_Y,
+  SetFontDestBuffer(vsSaveBuffer, MAP_VIEW_START_X, MAP_VIEW_START_Y,
                     MAP_VIEW_START_X + MAP_VIEW_WIDTH + MAP_GRID_X,
                     MAP_VIEW_START_Y + MAP_VIEW_HEIGHT + 7, FALSE);
 
@@ -4060,7 +4060,7 @@ void BlitMineText(uint8_t sMapX, uint8_t sMapY) {
     ubLineCnt++;
   }
 
-  SetFontDestBuffer(vsIndexFB, MAP_VIEW_START_X, MAP_VIEW_START_Y,
+  SetFontDestBuffer(vsFB, MAP_VIEW_START_X, MAP_VIEW_START_Y,
                     MAP_VIEW_START_X + MAP_VIEW_WIDTH + MAP_GRID_X,
                     MAP_VIEW_START_Y + MAP_VIEW_HEIGHT + 7, FALSE);
 }
@@ -4215,7 +4215,7 @@ void DisplayLevelString(void) {
 
   // otherwise we will have to display the string with the level number
 
-  SetFontDestBuffer(vsSaveBufferID, MAP_VIEW_START_X, MAP_VIEW_START_Y,
+  SetFontDestBuffer(vsSaveBuffer, MAP_VIEW_START_X, MAP_VIEW_START_Y,
                     MAP_VIEW_START_X + MAP_VIEW_WIDTH + MAP_GRID_X,
                     MAP_VIEW_START_Y + MAP_VIEW_HEIGHT + 7, FALSE);
 
@@ -4226,7 +4226,7 @@ void DisplayLevelString(void) {
 
   mprintf(MAP_LEVEL_STRING_X, MAP_LEVEL_STRING_Y, sString);
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   return;
 }
@@ -5661,7 +5661,7 @@ void ShowSAMSitesOnStrategicMap(void) {
         continue;
       }
 
-      SetFontDestBuffer(vsSaveBufferID, MapScreenRect.iLeft + 2, MapScreenRect.iTop,
+      SetFontDestBuffer(vsSaveBuffer, MapScreenRect.iLeft + 2, MapScreenRect.iTop,
                         MapScreenRect.iRight, MapScreenRect.iBottom, FALSE);
 
       // clip blits to mapscreen region
@@ -5787,8 +5787,8 @@ void ShowItemsOnMap(void) {
   // clip blits to mapscreen region
   ClipBlitsToMapViewRegion();
 
-  SetFontDestBuffer(vsSaveBufferID, MapScreenRect.iLeft + 2, MapScreenRect.iTop,
-                    MapScreenRect.iRight, MapScreenRect.iBottom, FALSE);
+  SetFontDestBuffer(vsSaveBuffer, MapScreenRect.iLeft + 2, MapScreenRect.iTop, MapScreenRect.iRight,
+                    MapScreenRect.iBottom, FALSE);
 
   SetFont(MAP_FONT);
   SetFontForeground(FONT_MCOLOR_LTGREEN);

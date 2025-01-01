@@ -4711,7 +4711,7 @@ void DrawMouseText() {
 
   if (gfUIBodyHitLocation) {
     // Set dest for gprintf to be different
-    SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+    SetFontDestBuffer(vsMouseBufferOriginal, 0, 0, 64, 64, FALSE);
 
     FindFontCenterCoordinates(0, 0, gsCurMouseWidth, gsCurMouseHeight, gzLocation, TINYFONT1, &sX,
                               &sY);
@@ -4722,12 +4722,12 @@ void DrawMouseText() {
 
     mprintf(sX, sY + 12, gzLocation);
     // reset
-    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
   }
 
   if (gfUIIntTileLocation) {
     // Set dest for gprintf to be different
-    SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+    SetFontDestBuffer(vsMouseBufferOriginal, 0, 0, 64, 64, FALSE);
 
     FindFontCenterCoordinates(0, 0, gsCurMouseWidth, gsCurMouseHeight, gzIntTileLocation, TINYFONT1,
                               &sX, &sY);
@@ -4738,12 +4738,12 @@ void DrawMouseText() {
 
     mprintf(sX, sY + 6, gzIntTileLocation);
     // reset
-    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
   }
 
   if (gfUIIntTileLocation2) {
     // Set dest for gprintf to be different
-    SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+    SetFontDestBuffer(vsMouseBufferOriginal, 0, 0, 64, 64, FALSE);
 
     FindFontCenterCoordinates(0, 0, gsCurMouseWidth, gsCurMouseHeight, gzIntTileLocation2,
                               TINYFONT1, &sX, &sY);
@@ -4754,7 +4754,7 @@ void DrawMouseText() {
 
     mprintf(sX, sY - 2, gzIntTileLocation2);
     // reset
-    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
   }
 
   // if ( ( ( gTacticalStatus.uiFlags & TURNBASED ) && ( gTacticalStatus.uiFlags & INCOMBAT ) ) )
@@ -4785,7 +4785,7 @@ void DrawMouseText() {
       }
 
       // Set dest for gprintf to be different
-      SetFontDestBuffer(MOUSE_BUFFER, 0, 0, 64, 64, FALSE);
+      SetFontDestBuffer(vsMouseBufferOriginal, 0, 0, 64, 64, FALSE);
 
       swprintf(pStr, ARR_SIZE(pStr), L"%d", gsCurrentActionPoints);
 
@@ -4825,7 +4825,7 @@ void DrawMouseText() {
       SetFontShadow(DEFAULT_SHADOW);
 
       // reset
-      SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
     }
   }
 

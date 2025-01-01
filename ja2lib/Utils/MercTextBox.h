@@ -36,7 +36,7 @@ BOOLEAN RenderMercPopUpBoxFromIndex(int32_t iBoxId, int16_t sDestX, int16_t sDes
 void RemoveTextMercPopupImages();
 
 typedef struct {
-  uint32_t uiSourceBufferIndex;
+  struct VSurface *sourceBuffer;  // uiSourceBufferIndex;
   uint16_t sWidth;
   uint16_t sHeight;
   uint8_t ubBackgroundIndex;

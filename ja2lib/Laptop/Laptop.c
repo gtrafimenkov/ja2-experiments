@@ -2800,7 +2800,7 @@ void DisplayBookMarks(void) {
   //	mprintf(sX, sY,pBookmarkTitle[0] );
 
   // set buffer
-  SetFontDestBuffer(vsIndexFB, BOOK_X, BOOK_TOP_Y, BOOK_X + BOOK_WIDTH - 10, 480, FALSE);
+  SetFontDestBuffer(vsFB, BOOK_X, BOOK_TOP_Y, BOOK_X + BOOK_WIDTH - 10, 480, FALSE);
 
   // blt in book mark background
   while (LaptopSaveInfo.iBookMarkList[iCounter - 1] != -1) {
@@ -2860,7 +2860,7 @@ void DisplayBookMarks(void) {
   mprintf(sX, sY, pBookMarkStrings[CANCEL_STRING]);
   iCounter++;
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   InvalidateRegion(BOOK_X, BOOK_TOP_Y + ((iCounter)*BOOK_HEIGHT) + 12, BOOK_X + BOOK_WIDTH,
                    BOOK_TOP_Y + ((iCounter + 1) * BOOK_HEIGHT) + 16);
@@ -2919,7 +2919,7 @@ void ScrollDisplayText(int32_t iY) {
   }
 
   // font stuff
-  SetFontDestBuffer(vsIndexFB, BOOK_X, 0, BOOK_X + BOOK_WIDTH, 480, FALSE);
+  SetFontDestBuffer(vsFB, BOOK_X, 0, BOOK_X + BOOK_WIDTH, 480, FALSE);
   SetFontForeground(FONT_BLACK);
   SetFontBackground(FONT_BLACK);
 
@@ -2927,7 +2927,7 @@ void ScrollDisplayText(int32_t iY) {
   mprintf(sCurX, iY, pBookmarkTitle[1]);
 
   // reset buffer
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   // invalidate region
   InvalidateRegion(BOOK_X, iY, BOOK_X + BOOK_WIDTH, iY + BOOK_HEIGHT);
@@ -3772,11 +3772,11 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
   BltVideoObjectOld(guiTitleBarSurface, hImageHandle, usIconGraphicIndex,
                     LAPTOP_TITLE_BAR_ICON_OFFSET_X, LAPTOP_TITLE_BAR_ICON_OFFSET_Y);
 
-  SetFontDestBuffer(guiTitleBarSurface, 0, 0, LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT,
-                    FALSE);
+  SetFontDestBuffer(GetVSurfaceByID(guiTitleBarSurface), 0, 0, LAPTOP_TITLE_BAR_WIDTH,
+                    LAPTOP_TITLE_BAR_HEIGHT, FALSE);
   DrawTextToScreen(pTitle, LAPTOP_TITLE_BAR_TEXT_OFFSET_X, LAPTOP_TITLE_BAR_TEXT_OFFSET_Y, 0,
                    FONT14ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   return (TRUE);
 }

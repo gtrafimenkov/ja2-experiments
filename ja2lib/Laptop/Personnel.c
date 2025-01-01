@@ -2259,7 +2259,7 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
         SetFont(FONT10ARIAL);
         SetFontForeground(FONT_WHITE);
         SetFontBackground(FONT_BLACK);
-        SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
         // grab item name
         LoadItemInfo(sIndex, sString, NULL);

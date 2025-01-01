@@ -1968,14 +1968,14 @@ void DisplayCharacterInfo(void) {
   Assert(gCharactersList[bSelectedInfoChar].fValid);
 
   // set font buffer
-  SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
 
   // draw character info and face
   DrawCharacterInfo(bSelectedInfoChar);
 
   RenderHandPosItem();
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   RenderIconsForUpperLeftCornerPiece(bSelectedInfoChar);
 
@@ -2464,12 +2464,12 @@ void DisplayCharacterList() {
   uint8_t ubForegroundColor = 0;
 
   if ((fShowAssignmentMenu == TRUE) && (fTeamPanelDirty == FALSE)) {
-    SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+    SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
     return;
   }
 
   // set dest buffer
-  SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
   SetFont(MAP_SCREEN_FONT);
   SetFontBackground(FONT_BLACK);
 
@@ -2511,7 +2511,7 @@ void DisplayCharacterList() {
   }
 
   HandleDisplayOfSelectedMercArrows();
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   EnableDisableTeamListRegionsAndHelpText();
 
@@ -5567,19 +5567,19 @@ void BltCharInvPanel() {
   RenderInvBodyPanel(pSoldier, INV_BODY_X, INV_BODY_Y);
 
   // reset font destination buffer to the save buffer
-  SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
 
   // render items in each of chars slots
   HandleRenderInvSlots(pSoldier, DIRTYLEVEL2);
 
   // reset font destination buffer
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   SetFont(BLOCKFONT2);
 
   // Render Values for stats!
   // Set font drawing to saved buffer
-  SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
 
   SetFontBackground(FONT_MCOLOR_BLACK);
   SetFontForeground(MAP_INV_STATS_TITLE_FONT_COLOR);
@@ -5620,7 +5620,7 @@ void BltCharInvPanel() {
     // blit gold key on top of key ring if key ring is not empty
   }
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 }
 
 // check for and highlight any ammo
@@ -5981,7 +5981,7 @@ void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo) {
   SetFont(CHAR_FONT);
   SetFontForeground(CHAR_TITLE_FONT_COLOR);
   SetFontBackground(FONT_BLACK);
-  SetFontDestBuffer(uiBufferToRenderTo, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(GetVSurfaceByID(uiBufferToRenderTo), 0, 0, 640, 480, FALSE);
 
   // assignment strings
   DrawString(pUpperLeftMapScreenStrings[0],
@@ -6011,7 +6011,7 @@ void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo) {
   }
 
   // restore buffer
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 }
 
 void DisplayThePotentialPathForCurrentDestinationCharacterForMapScreenInterface(int16_t sMapX,

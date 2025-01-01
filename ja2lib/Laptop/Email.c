@@ -1168,7 +1168,7 @@ void DrawSubject(int32_t iCounter, wchar_t *pSubject, BOOLEAN fRead) {
   // draw subject line of mail being viewed in viewer
 
   // lock buffer to prevent overwrite
-  SetFontDestBuffer(vsIndexFB, SUBJECT_X, ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)),
+  SetFontDestBuffer(vsFB, SUBJECT_X, ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)),
                     SUBJECT_X + SUBJECT_WIDTH,
                     ((uint16_t)(MIDDLE_Y + iCounter * MIDDLE_WIDTH)) + MIDDLE_WIDTH, FALSE);
   SetFontShadow(NO_SHADOW);
@@ -1200,7 +1200,7 @@ void DrawSubject(int32_t iCounter, wchar_t *pSubject, BOOLEAN fRead) {
   }
   SetFontShadow(DEFAULT_SHADOW);
   // reset font dest buffer
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   return;
 }
@@ -4150,7 +4150,7 @@ BOOLEAN DisplayNumberOfPagesToThisEmail(int32_t iViewerY) {
   // turn off the shadows
   SetFontShadow(NO_SHADOW);
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   FindFontCenterCoordinates(VIEWER_X + INDENT_X_OFFSET, 0, INDENT_X_WIDTH, 0, sString, FONT12ARIAL,
                             &sX, &sY);
