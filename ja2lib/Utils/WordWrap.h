@@ -8,6 +8,7 @@
 #include "Laptop/Email.h"
 #include "Laptop/Files.h"
 #include "SGP/Types.h"
+#include "SGP/VSurface.h"
 
 // Flags for DrawTextToScreen()
 
