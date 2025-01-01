@@ -45,21 +45,7 @@ typedef struct {
 } FontTranslationTable;
 
 extern int32_t FontDefault;
-extern uint32_t FontDestBuffer;
-extern uint32_t FontDestPitch;
-extern uint32_t FontDestBPP;
-extern SGPRect FontDestRegion;
-extern BOOLEAN FontDestWrap;
 
-#define SetFontDestObject(x)                                                           \
-  (SetFontDestBuffer(x, FontDestRegion.left, FontDestRegion.top, FontDestRegion.right, \
-                     FontDestRegion.bottom, FontDestWrap))
-
-#define SetFontDestClip(x1, y1, x2, y2) \
-  (SetFontDestBuffer(FontDestBuffer, x1, y1, x2, y2, FontDestWrap))
-#define SetFontDestWrap(x)                                                    \
-  (SetFontDestBuffer(FontDestBuffer, FontDestRegion.left, FontDestRegion.top, \
-                     FontDestRegion.right, FontDestRegion.bottom, x))
 // functions
 
 void SetFontColors(uint16_t usColors);
