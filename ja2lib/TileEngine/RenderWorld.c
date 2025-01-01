@@ -1557,13 +1557,13 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                   }
 
                   SetFont(TINYFONT1);
-                  SetFontDestBuffer(vsSaveBufferID, 0, gsVIEWPORT_WINDOW_START_Y, 640,
+                  SetFontDestBuffer(vsSaveBuffer, 0, gsVIEWPORT_WINDOW_START_Y, 640,
                                     gsVIEWPORT_WINDOW_END_Y, FALSE);
                   VarFindFontCenterCoordinates(sXPos, sYPos, 1, 1, TINYFONT1, &sX, &sY, L"%d",
                                                pNode->uiAPCost);
                   mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                                  pNode->uiAPCost);
-                  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+                  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
                 } else if ((uiLevelNodeFlags & LEVELNODE_ERASEZ) && !(uiFlags & TILES_DIRTY)) {
                   Zero8BPPDataTo16BPPBufferTransparent((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                        hVObject, sXPos, sYPos, usImageIndex);
@@ -1985,13 +1985,13 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                   if (fMerc) {
                     if (pSoldier != NULL && GetSolID(pSoldier) >= MAX_NUM_SOLDIERS) {
                       SetFont(TINYFONT1);
-                      SetFontDestBuffer(vsSaveBufferID, 0, gsVIEWPORT_WINDOW_START_Y, 640,
+                      SetFontDestBuffer(vsSaveBuffer, 0, gsVIEWPORT_WINDOW_START_Y, 640,
                                         gsVIEWPORT_WINDOW_END_Y, FALSE);
                       VarFindFontCenterCoordinates(sXPos, sYPos, 1, 1, TINYFONT1, &sX, &sY, L"%d",
                                                    pSoldier->ubPlannedUIAPCost);
                       mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                                      pSoldier->ubPlannedUIAPCost);
-                      SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+                      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
                     }
                   }
                 }
@@ -5553,7 +5553,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
 
         if (gubWorldRoomInfo[usTileIndex] != NO_ROOM) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           switch (gubWorldRoomInfo[usTileIndex] % 5) {
             case 0:
               SetFontForeground(FONT_GRAY3);
@@ -5573,7 +5573,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
           }
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gubWorldRoomInfo[usTileIndex]);
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5650,11 +5650,11 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
         if (gubFOVDebugInfoInfo[usTileIndex] != 0) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           SetFontForeground(FONT_GRAY3);
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gubFOVDebugInfoInfo[usTileIndex]);
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
           Blt8BPPDataTo16BPPBufferTransparentClip((uint16_t *)pDestBuf, uiDestPitchBYTES,
                                                   gTileDatabase[0].hTileSurface, sTempPosX_S,
@@ -5663,10 +5663,10 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
 
         if (gubGridNoMarkers[usTileIndex] == gubGridNoValue) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           SetFontForeground(FONT_FCOLOR_YELLOW);
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY + 4, L"x");
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5741,7 +5741,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
 
         if (gsCoverValue[usTileIndex] != 0x7F7F) {
           SetFont(SMALLCOMPFONT);
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
           if (usTileIndex == gsBestCover) {
             SetFontForeground(FONT_MCOLOR_RED);
           } else if (gsCoverValue[usTileIndex] < 0) {
@@ -5751,7 +5751,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
           }
           mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d",
                          gsCoverValue[usTileIndex]);
-          SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+          SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
         }
       }
 
@@ -5826,7 +5826,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
         sY += gsRenderHeight;
 
         SetFont(SMALLCOMPFONT);
-        SetFontDestBuffer(vsIndexFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
+        SetFontDestBuffer(vsFB, 0, 0, 640, gsVIEWPORT_END_Y, FALSE);
 
         if (!GridNoOnVisibleWorldTile(usTileIndex)) {
           SetFontForeground(FONT_MCOLOR_RED);
@@ -5834,7 +5834,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
           SetFontForeground(FONT_GRAY3);
         }
         mprintf_buffer(pDestBuf, uiDestPitchBYTES, TINYFONT1, sX, sY, L"%d", usTileIndex);
-        SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
       }
 
       sTempPosX_S += 40;
