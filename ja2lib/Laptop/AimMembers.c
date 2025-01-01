@@ -1337,21 +1337,21 @@ BOOLEAN DisplayMercsFace() {
   // else if the merc is currently a POW or, the merc was fired as a pow
   else if (gMercProfiles[gbCurrentSoldier].bMercStatus == MERC_FIRED_AS_A_POW ||
            (pSoldier && GetSolAssignment(pSoldier) == ASSIGNMENT_POW)) {
-    ShadowVideoSurfaceRect(vsIndexFB, FACE_X, FACE_Y, FACE_X + FACE_WIDTH, FACE_Y + FACE_HEIGHT);
+    ShadowVideoSurfaceRect(vsFB, FACE_X, FACE_Y, FACE_X + FACE_WIDTH, FACE_Y + FACE_HEIGHT);
     DrawTextToScreen(pPOWStrings[0], FACE_X + 1, FACE_Y + 107, FACE_WIDTH, FONT14ARIAL, 145,
                      FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
   }
 
   // else if the merc has already been hired
   else if (FindSoldierByProfileID(gbCurrentSoldier, TRUE)) {
-    ShadowVideoSurfaceRect(vsIndexFB, FACE_X, FACE_Y, FACE_X + FACE_WIDTH, FACE_Y + FACE_HEIGHT);
+    ShadowVideoSurfaceRect(vsFB, FACE_X, FACE_Y, FACE_X + FACE_WIDTH, FACE_Y + FACE_HEIGHT);
     DrawTextToScreen(MercInfo[MERC_FILES_ALREADY_HIRED], FACE_X + 1, FACE_Y + 107, FACE_WIDTH,
                      FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
   }
 
   else if (!IsMercHireable(gbCurrentSoldier)) {
     // else if the merc has a text file and the merc is not away
-    ShadowVideoSurfaceRect(vsIndexFB, FACE_X, FACE_Y, FACE_X + FACE_WIDTH, FACE_Y + FACE_HEIGHT);
+    ShadowVideoSurfaceRect(vsFB, FACE_X, FACE_Y, FACE_X + FACE_WIDTH, FACE_Y + FACE_HEIGHT);
     DrawTextToScreen(AimPopUpText[AIM_MEMBER_ON_ASSIGNMENT], FACE_X + 1, FACE_Y + 107, FACE_WIDTH,
                      FONT14ARIAL, 145, FONT_MCOLOR_BLACK, FALSE, CENTER_JUSTIFIED);
   }
@@ -1797,7 +1797,7 @@ BOOLEAN DisplayMercsVideoFace() {
 
   // Get and Blt Terminal Frame
   GetVideoObject(&hTerminalHandle, guiVideoConfTerminal);
-  ShadowVideoSurfaceImage(vsIndexFB, hTerminalHandle, AIM_MEMBER_VIDEO_CONF_TERMINAL_X,
+  ShadowVideoSurfaceImage(vsFB, hTerminalHandle, AIM_MEMBER_VIDEO_CONF_TERMINAL_X,
                           AIM_MEMBER_VIDEO_CONF_TERMINAL_Y);
   BltVideoObject(vsFB, hTerminalHandle, 0, AIM_MEMBER_VIDEO_CONF_TERMINAL_X,
                  AIM_MEMBER_VIDEO_CONF_TERMINAL_Y);
@@ -2252,7 +2252,7 @@ BOOLEAN DisplayTalkingMercFaceForVideoPopUp(int32_t iFaceIndex) {
 
     // if the merc is not at home and the players is leaving a message, shade the players face
     if (gfIsAnsweringMachineActive)
-      ShadowVideoSurfaceRect(vsIndexFB, DestRect.iLeft, DestRect.iTop, DestRect.iRight - 1,
+      ShadowVideoSurfaceRect(vsFB, DestRect.iLeft, DestRect.iTop, DestRect.iRight - 1,
                              DestRect.iBottom - 1);
 
     // If the answering machine graphics is up, place a message on the screen
@@ -2738,7 +2738,7 @@ uint8_t DisplayPixelatedImage(uint8_t ubMaxImages) {
   //	PixelateVideoObjectRect(  vsIndexFB, AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y,
   // AIM_MEMBER_VIDEO_FACE_X+AIM_MEMBER_VIDEO_FACE_WIDTH-1,
   // AIM_MEMBER_VIDEO_FACE_Y+AIM_MEMBER_VIDEO_FACE_HEIGHT-1);
-  ShadowVideoSurfaceRect(vsIndexFB, AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y,
+  ShadowVideoSurfaceRect(vsFB, AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y,
                          AIM_MEMBER_VIDEO_FACE_X + AIM_MEMBER_VIDEO_FACE_WIDTH - 1,
                          AIM_MEMBER_VIDEO_FACE_Y + AIM_MEMBER_VIDEO_FACE_HEIGHT - 1);
 

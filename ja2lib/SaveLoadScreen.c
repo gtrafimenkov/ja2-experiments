@@ -1076,7 +1076,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
 
     // Shadow the slot
     //		if( !gbSaveGameArray[ bEntryID ] )
-    ShadowVideoSurfaceRect(vsIndexFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+    ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                            usPosY + SLG_SAVELOCATION_HEIGHT);
   }
 
@@ -1103,7 +1103,7 @@ BOOLEAN DisplaySaveGameEntry(int8_t bEntryID)  //, uint16_t usPosY )
       uiFont = SAVE_LOAD_QUICKSAVE_FONT;
 
       // Shadow the surface
-      ShadowVideoSurfaceRect(vsIndexFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
+      ShadowVideoSurfaceRect(vsFB, usPosX, usPosY, usPosX + SLG_SAVELOCATION_WIDTH,
                              usPosY + SLG_SAVELOCATION_HEIGHT);
     } else {
       SetFontShadow(SAVE_LOAD_EMPTYSLOT_SHADOW_COLOR);

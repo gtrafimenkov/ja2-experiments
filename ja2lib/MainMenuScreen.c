@@ -111,7 +111,7 @@ uint32_t MainMenuScreenHandle() {
   }
   if (guiSplashFrameFade) {  // Fade the splash screen.
     if (guiSplashFrameFade > 2)
-      ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 0, 0, 640, 480);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
     else if (guiSplashFrameFade > 1)
       ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, 0);
     else {

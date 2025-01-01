@@ -4235,7 +4235,7 @@ void KeyRingItemPanelButtonCallback(struct MOUSE_REGION *pRegion, int32_t iReaso
       // want the inv done button shutdown and the region behind the keyring shaded
       // ForceButtonUnDirty( giMapInvDoneButton );
       // shade the background
-      ShadowVideoSurfaceRect(vsIndexFB, 0, 107, 261, 359);
+      ShadowVideoSurfaceRect(vsFB, 0, 107, 261, 359);
       InvalidateRegion(0, 107, 261, 359);
     }
 

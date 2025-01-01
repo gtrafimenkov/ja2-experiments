@@ -468,24 +468,21 @@ void DisplayAlumniOldMercPopUp() {
   usPosY = AIM_POPUP_Y;
 
   // draw top line of the popup background
-  ShadowVideoSurfaceRect(vsIndexFB, AIM_POPUP_X + AIM_POPUP_SHADOW_GAP,
-                         usPosY + AIM_POPUP_SHADOW_GAP,
+  ShadowVideoSurfaceRect(vsFB, AIM_POPUP_X + AIM_POPUP_SHADOW_GAP, usPosY + AIM_POPUP_SHADOW_GAP,
                          AIM_POPUP_X + AIM_POPUP_WIDTH + AIM_POPUP_SHADOW_GAP,
                          usPosY + AIM_POPUP_SECTION_HEIGHT + AIM_POPUP_SHADOW_GAP - 1);
   BltVideoObject(vsFB, hAlumniPopUpHandle, 0, AIM_POPUP_X, usPosY);
   // draw mid section of the popup background
   usPosY += AIM_POPUP_SECTION_HEIGHT;
   for (i = 0; i < ubNumLines; i++) {
-    ShadowVideoSurfaceRect(vsIndexFB, AIM_POPUP_X + AIM_POPUP_SHADOW_GAP,
-                           usPosY + AIM_POPUP_SHADOW_GAP,
+    ShadowVideoSurfaceRect(vsFB, AIM_POPUP_X + AIM_POPUP_SHADOW_GAP, usPosY + AIM_POPUP_SHADOW_GAP,
                            AIM_POPUP_X + AIM_POPUP_WIDTH + AIM_POPUP_SHADOW_GAP,
                            usPosY + AIM_POPUP_SECTION_HEIGHT + AIM_POPUP_SHADOW_GAP - 1);
     BltVideoObject(vsFB, hAlumniPopUpHandle, 1, AIM_POPUP_X, usPosY);
     usPosY += AIM_POPUP_SECTION_HEIGHT;
   }
   // draw the bottom line and done button
-  ShadowVideoSurfaceRect(vsIndexFB, AIM_POPUP_X + AIM_POPUP_SHADOW_GAP,
-                         usPosY + AIM_POPUP_SHADOW_GAP,
+  ShadowVideoSurfaceRect(vsFB, AIM_POPUP_X + AIM_POPUP_SHADOW_GAP, usPosY + AIM_POPUP_SHADOW_GAP,
                          AIM_POPUP_X + AIM_POPUP_WIDTH + AIM_POPUP_SHADOW_GAP,
                          usPosY + AIM_POPUP_SECTION_HEIGHT + AIM_POPUP_SHADOW_GAP - 1);
   BltVideoObject(vsFB, hAlumniPopUpHandle, 2, AIM_POPUP_X, usPosY);

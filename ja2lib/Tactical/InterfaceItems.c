@@ -4720,7 +4720,7 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(vsIndexFB, gsItemPopupInvX, gsItemPopupInvY,
+      ShadowVideoSurfaceRect(vsFB, gsItemPopupInvX, gsItemPopupInvY,
                              gsItemPopupInvX + gsItemPopupInvWidth,
                              gsItemPopupInvY + gsItemPopupInvHeight);
     }
@@ -4898,7 +4898,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
 
     // Shadow Area
     if (fFullRender) {
-      ShadowVideoSurfaceRect(vsIndexFB, 0, gsKeyRingPopupInvY,
+      ShadowVideoSurfaceRect(vsFB, 0, gsKeyRingPopupInvY,
                              gsKeyRingPopupInvX + gsKeyRingPopupInvWidth,
                              gsKeyRingPopupInvY + gsKeyRingPopupInvHeight);
     }

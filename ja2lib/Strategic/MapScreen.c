@@ -3409,7 +3409,7 @@ uint32_t MapScreenHandle(void) {
     SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
 
     // Shadow area
-    ShadowVideoSurfaceRect(vsIndexFB, 0, 0, 640, 480);
+    ShadowVideoSurfaceRect(vsFB, 0, 0, 640, 480);
     InvalidateScreen();
   }
 
@@ -5610,7 +5610,7 @@ void BltCharInvPanel() {
 
   if (InKeyRingPopup()) {
     // shade the background
-    ShadowVideoSurfaceRect(vsSaveBufferID, PLAYER_INFO_X, PLAYER_INFO_Y, PLAYER_INFO_X + 261,
+    ShadowVideoSurfaceRect(vsSaveBuffer, PLAYER_INFO_X, PLAYER_INFO_Y, PLAYER_INFO_X + 261,
                            PLAYER_INFO_Y + (359 - 107));
   } else {
     // blit gold key on top of key ring if key ring is not empty

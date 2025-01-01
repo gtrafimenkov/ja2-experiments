@@ -352,19 +352,7 @@ void BeginLoadScreen() {
         iPercentage = (uint32_t)(iPercentage + (100 - iPercentage) * iFactor * 0.01 + 0.05);
 
       if (iPercentage > 50) {
-        // iFactor = (iPercentage - 50) * 2;
-        // if( iFactor > iLastShadePercentage )
-        //	{
-        // Calculate the difference from last shade % to the new one.  Ex:  Going from
-        // 50% shade value to 60% shade value requires applying 20% to the 50% to achieve 60%.
-        // if( iLastShadePercentage )
-        //	iReqShadePercentage = 100 - (iFactor * 100 / iLastShadePercentage);
-        // else
-        //	iReqShadePercentage = iFactor;
-        // Record the new final shade percentage.
-        // iLastShadePercentage = iFactor;
-        ShadowVideoSurfaceRectUsingLowPercentTable(vsSaveBufferID, 0, 0, 640, 480);
-        //	}
+        ShadowVideoSurfaceRectUsingLowPercentTable(vsSaveBuffer, 0, 0, 640, 480);
       }
 
       SrcRect.iLeft = 536 * iPercentage / 100;
