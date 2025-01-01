@@ -77,7 +77,7 @@ FileStringPtr GetFirstStringOnThisPage(FileStringPtr RecordList, uint32_t uiFont
                                        FileRecordWidthPtr iWidthArray);
 
 // Places a shadow the width an height of the string, to PosX, posY
-void ShadowText(uint32_t uiDestVSurface, wchar_t* pString, uint32_t uiFont, uint16_t usPosX,
+void ShadowText(struct VSurface* dest, wchar_t* pString, uint32_t uiFont, uint16_t usPosX,
                 uint16_t usPosY);
 
 BOOLEAN ReduceStringLength(wchar_t* pString, size_t bufSize, uint32_t uiWidth, uint32_t uiFont);

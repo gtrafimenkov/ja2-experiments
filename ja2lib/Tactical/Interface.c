@@ -2246,7 +2246,7 @@ BOOLEAN HandleOpenDoorMenu() {
 
 void RenderUIMessage(VIDEO_OVERLAY *pBlitter) {
   // Shade area first...
-  ShadowVideoSurfaceRect(pBlitter->uiDestBuff, pBlitter->sX, pBlitter->sY,
+  ShadowVideoSurfaceRect(GetVSurfaceByID(pBlitter->uiDestBuff), pBlitter->sX, pBlitter->sY,
                          pBlitter->sX + gusUIMessageWidth - 2,
                          pBlitter->sY + gusUIMessageHeight - 2);
 
