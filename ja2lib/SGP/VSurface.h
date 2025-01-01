@@ -42,7 +42,7 @@ extern BOOLEAN gfExtraBuffer;
 #define PRIMARY_SURFACE 0xFFFFFFF0
 #define BACKBUFFER 0xFFFFFFF1
 #define vsIndexFB 0xFFFFFFF2
-#define MOUSE_BUFFER 0xFFFFFFF3
+#define MOUSE_BUFFER 0xFFFFFFF3  // corresponds vsMouseBufferOriginal
 
 //
 // Defines for blitting
