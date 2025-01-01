@@ -2253,8 +2253,8 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
         // pItem->ubGraphicNum, sCenX-2, sCenY+2);
 
         // blt the item
-        BltVideoObjectOutlineFromIndex(vsIndexFB, GetInterfaceGraphicForItem(pItem),
-                                       pItem->ubGraphicNum, sCenX, sCenY, 0, FALSE);
+        BltVideoObjectOutlineFromIndex(vsFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
+                                       sCenX, sCenY, 0, FALSE);
 
         SetFont(FONT10ARIAL);
         SetFontForeground(FONT_WHITE);

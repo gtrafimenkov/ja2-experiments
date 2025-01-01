@@ -1727,8 +1727,8 @@ void INVRenderItem(uint32_t uiBuffer, struct SOLDIERTYPE *pSoldier, struct OBJEC
     BltVideoObjectOutlineShadowFromIndex(uiBuffer, GetInterfaceGraphicForItem(pItem),
                                          pItem->ubGraphicNum, sCenX - 2, sCenY + 2);
 
-    BltVideoObjectOutlineFromIndex(uiBuffer, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
-                                   sCenX, sCenY, sOutlineColor, fOutline);
+    BltVideoObjectOutlineFromIndex(GetVSurfaceByID(uiBuffer), GetInterfaceGraphicForItem(pItem),
+                                   pItem->ubGraphicNum, sCenX, sCenY, sOutlineColor, fOutline);
 
     if (uiBuffer == vsIndexFB) {
       InvalidateRegion(sX, sY, (int16_t)(sX + sWidth), (int16_t)(sY + sHeight));
