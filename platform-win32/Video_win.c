@@ -2103,48 +2103,27 @@ static void RefreshMovieCache() {
 static void DeletePrimaryVideoSurfaces();
 
 BOOLEAN SetPrimaryVideoSurfaces() {
-  LPDIRECTDRAWSURFACE2 pSurface;
-
-  // Delete surfaces if they exist
   DeletePrimaryVideoSurfaces();
 
-  //
-  // Get Primary surface
-  //
-  pSurface = gpPrimarySurface;
-  CHECKF(pSurface != NULL);
+  vsPrimary = CreateVideoSurfaceFromDDSurface(gpPrimarySurface);
+  if (!vsPrimary) {
+    return FALSE;
+  }
 
-  vsPrimary = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(vsPrimary != NULL);
+  vsBackBuffer = CreateVideoSurfaceFromDDSurface(gpBackBuffer);
+  if (!vsBackBuffer) {
+    return FALSE;
+  }
 
-  //
-  // Get Backbuffer surface
-  //
+  vsMouseBuffer = CreateVideoSurfaceFromDDSurface(gpMouseCursor);
+  if (!vsMouseBuffer) {
+    return FALSE;
+  }
 
-  pSurface = gpBackBuffer;
-  CHECKF(pSurface != NULL);
-
-  vsBackBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(vsBackBuffer != NULL);
-
-  //
-  // Get mouse buffer surface
-  //
-  pSurface = gpMouseCursor;
-  CHECKF(pSurface != NULL);
-
-  vsMouseBuffer = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(vsMouseBuffer != NULL);
-
-  //
-  // Get frame buffer surface
-  //
-
-  pSurface = gpFrameBuffer;
-  CHECKF(pSurface != NULL);
-
-  vsFB = CreateVideoSurfaceFromDDSurface(pSurface);
-  CHECKF(vsFB != NULL);
+  vsFB = CreateVideoSurfaceFromDDSurface(gpFrameBuffer);
+  if (!vsFB) {
+    return FALSE;
+  }
 
   return (TRUE);
 }
