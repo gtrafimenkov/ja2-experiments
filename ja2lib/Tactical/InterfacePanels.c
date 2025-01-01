@@ -1527,7 +1527,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
 
       // Render Values for stats!
       // Set font drawing to saved buffer
-      SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
 
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(STATS_TITLE_FONT_COLOR);
@@ -1655,7 +1655,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
       mprintf(usX, usY, sString);
 
       // reset to frame buffer!
-      SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
       RestoreExternBackgroundRect(INTERFACE_START_X, INV_INTERFACE_START_Y,
                                   (640 - INTERFACE_START_X), (480 - INV_INTERFACE_START_Y));
@@ -3019,14 +3019,14 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
         }
 
         // RENDER ON SAVE BUFFER!
-        SetFontDestBuffer(vsSaveBufferID, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
         VarFindFontCenterCoordinates(
             (int16_t)(sTEAMNamesXY[posIndex] + 2), (int16_t)(sTEAMNamesXY[posIndex + 1]),
             TM_NAME_WIDTH, TM_NAME_HEIGHT, BLOCKFONT2, &sFontX, &sFontY, L"%s", pSoldier->name);
         mprintf(sFontX, sFontY, L"%s", pSoldier->name);
         gprintfRestore(sFontX, sFontY, L"%s", pSoldier->name);
         // reset to frame buffer!
-        SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+        SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
       }
     }
 

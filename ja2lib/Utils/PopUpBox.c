@@ -1144,7 +1144,7 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
   // clip text?
   if (PopUpBoxList[uiCounter]->uiFlags & POPUP_BOX_FLAG_CLIP_TEXT) {
     SetFontDestBuffer(
-        PopUpBoxList[uiCounter]->uiBuffer,
+        GetVSurfaceByID(PopUpBoxList[uiCounter]->uiBuffer),
         PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin - 1,
         PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->uiTopMargin,
         PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->Dimensions.iRight -
@@ -1281,7 +1281,7 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
             PopUpBoxList[uiCounter]->uiBottomMargin);
   }
 
-  SetFontDestBuffer(vsIndexFB, 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
 
   return TRUE;
 }
