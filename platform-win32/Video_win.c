@@ -1870,7 +1870,7 @@ BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uin
   // Get new cursor data
   //
 
-  ReturnValue = BltVideoObjectOld(MOUSE_BUFFER, gpCursorStore, usVideoObjectSubIndex, 0, 0);
+  ReturnValue = BltVideoObject(vsMouseBufferOriginal, gpCursorStore, usVideoObjectSubIndex, 0, 0);
   guiMouseBufferState = BUFFER_DIRTY;
 
   if (GetVideoObjectETRLEProperties(gpCursorStore, &pETRLEPointer, usVideoObjectSubIndex)) {
@@ -2252,10 +2252,6 @@ uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
     return (uint8_t *)LockPrimarySurface(gpFrameBuffer, puiPitch);
   }
 
-  if (uiVSurface == MOUSE_BUFFER) {
-    return (uint8_t *)LockPrimarySurface(gpMouseCursorOriginal, puiPitch);
-  }
-
   struct VSurface *vs = FindVSurface(uiVSurface);
   if (!vs) {
     return FALSE;
@@ -2274,9 +2270,6 @@ void UnlockVSurfaceByID(VSurfID id) {
       break;
     case vsIndexFB:
       IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
-      break;
-    case MOUSE_BUFFER:
-      IDirectDrawSurface2_Unlock(gpMouseCursorOriginal, NULL);
       break;
     default: {
       struct VSurface *vs = FindVSurface(id);

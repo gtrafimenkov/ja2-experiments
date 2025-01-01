@@ -2385,7 +2385,7 @@ uint32_t DisplayInvSlot(uint8_t ubSlotNum, uint16_t usItemIndex, uint16_t usPosX
                                        pItem->ubGraphicNum, sCenX - 2, sCenY + 2);
 
   // blt the item
-  BltVideoObjectOutlineFromIndex(vsIndexFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
+  BltVideoObjectOutlineFromIndex(vsFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
                                  sCenX, sCenY, Get16BPPColor(FROMRGB(255, 255, 255)), fHighlighted);
 
   // Display the status of the item

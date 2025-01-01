@@ -1276,8 +1276,8 @@ BOOLEAN DisplayMercsInventory(uint8_t ubMercID) {
       BltVideoObjectOutlineShadowFromIndex(vsIndexFB, GetInterfaceGraphicForItem(pItem),
                                            pItem->ubGraphicNum, sCenX - 2, sCenY + 2);
       // blt the item
-      BltVideoObjectOutlineFromIndex(vsIndexFB, GetInterfaceGraphicForItem(pItem),
-                                     pItem->ubGraphicNum, sCenX, sCenY, 0, FALSE);
+      BltVideoObjectOutlineFromIndex(vsFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
+                                     sCenX, sCenY, 0, FALSE);
 
       // if there are more then 1 piece of equipment in the current slot, display how many there are
       if (gMercProfiles[ubMercID].bInvNumber[i] > 1) {
