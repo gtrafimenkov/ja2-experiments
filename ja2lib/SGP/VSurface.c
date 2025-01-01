@@ -327,8 +327,6 @@ struct VSurface *GetVSurfaceByID(VSurfID id) {
       return vsBackBuffer;
     case vsIndexFB:
       return vsFB;
-    case MOUSE_BUFFER:
-      return vsMouseBufferOriginal;
     default:
       return FindVSurface(id);
   }

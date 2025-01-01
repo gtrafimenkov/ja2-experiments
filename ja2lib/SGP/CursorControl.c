@@ -40,7 +40,8 @@ BOOLEAN BltToMouseCursorFromVObject(struct VObject *hVObject, uint16_t usVideoOb
                                     uint16_t usXPos, uint16_t usYPos) {
   BOOLEAN ReturnValue;
 
-  ReturnValue = BltVideoObjectOld(MOUSE_BUFFER, hVObject, usVideoObjectSubIndex, usXPos, usYPos);
+  ReturnValue =
+      BltVideoObject(vsMouseBufferOriginal, hVObject, usVideoObjectSubIndex, usXPos, usYPos);
 
   return ReturnValue;
 }
@@ -66,8 +67,8 @@ BOOLEAN BltToMouseCursorFromVObjectWithOutline(struct VObject *hVObject,
   sXPos += ((gsCurMouseWidth - pTrav->usWidth) / 2);
   sYPos += ((gsCurMouseHeight - pTrav->usHeight) / 2);
 
-  ReturnValue = BltVideoObjectOutline(MOUSE_BUFFER, hVObject, usVideoObjectSubIndex, sXPos, sYPos,
-                                      Get16BPPColor(FROMRGB(0, 255, 0)), TRUE);
+  ReturnValue = BltVideoObjectOutline(vsMouseBufferOriginal, hVObject, usVideoObjectSubIndex, sXPos,
+                                      sYPos, Get16BPPColor(FROMRGB(0, 255, 0)), TRUE);
 
   return ReturnValue;
 }
@@ -326,8 +327,8 @@ BOOLEAN SetCurrentCursorFromDatabase(uint32_t uiCursorIndex) {
 
         // ATE: Check for extern 2nd...
         if (uiCursorIndex == EXTERN2_CURSOR) {
-          BltVideoObjectOutlineFromIndex(MOUSE_BUFFER, guiExtern2Vo, gusExtern2VoSubIndex, 0, 0, 0,
-                                         FALSE);
+          BltVideoObjectOutlineFromIndex(vsMouseBufferOriginal, guiExtern2Vo, gusExtern2VoSubIndex,
+                                         0, 0, 0, FALSE);
 
           // Get ETRLE values
           GetVideoObject(&hVObjectTemp, guiExternVo);
@@ -336,12 +337,12 @@ BOOLEAN SetCurrentCursorFromDatabase(uint32_t uiCursorIndex) {
           sSubX = (pTrav->usWidth - pTravTemp->usWidth - pTravTemp->sOffsetX) / 2;
           sSubY = (pTrav->usHeight - pTravTemp->usHeight - pTravTemp->sOffsetY) / 2;
 
-          BltVideoObjectOutlineFromIndex(MOUSE_BUFFER, guiExternVo, gusExternVoSubIndex, sSubX,
-                                         sSubY, 0, FALSE);
+          BltVideoObjectOutlineFromIndex(vsMouseBufferOriginal, guiExternVo, gusExternVoSubIndex,
+                                         sSubX, sSubY, 0, FALSE);
 
         } else {
-          BltVideoObjectOutlineFromIndex(MOUSE_BUFFER, guiExternVo, gusExternVoSubIndex, 0, 0, 0,
-                                         FALSE);
+          BltVideoObjectOutlineFromIndex(vsMouseBufferOriginal, guiExternVo, gusExternVoSubIndex, 0,
+                                         0, 0, FALSE);
         }
 
         // Hook into hook function
