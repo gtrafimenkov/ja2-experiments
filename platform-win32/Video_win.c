@@ -2120,6 +2120,11 @@ BOOLEAN SetPrimaryVideoSurfaces() {
     return FALSE;
   }
 
+  vsMouseBufferOriginal = CreateVideoSurfaceFromDDSurface(gpMouseCursorOriginal);
+  if (!vsMouseBufferOriginal) {
+    return FALSE;
+  }
+
   vsFB = CreateVideoSurfaceFromDDSurface(gpFrameBuffer);
   if (!vsFB) {
     return FALSE;
@@ -2151,6 +2156,11 @@ static void DeletePrimaryVideoSurfaces() {
   if (vsMouseBuffer != NULL) {
     DeleteVideoSurface(vsMouseBuffer);
     vsMouseBuffer = NULL;
+  }
+
+  if (vsMouseBufferOriginal != NULL) {
+    DeleteVideoSurface(vsMouseBufferOriginal);
+    vsMouseBufferOriginal = NULL;
   }
 }
 
@@ -2678,6 +2688,10 @@ void UnlockVSurface(struct VSurface *vs) {
     IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
   } else if (vs == vsMouseBuffer) {
     IDirectDrawSurface2_Unlock(gpMouseCursor, NULL);
+  } else if (vs == vsMouseBufferOriginal) {
+    IDirectDrawSurface2_Unlock(gpMouseCursorOriginal, NULL);
+  } else if (vs == vsMouseBufferOriginal) {
+    IDirectDrawSurface2_Unlock(gpMouseCursorOriginal, NULL);
   } else {
     IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL);
   }

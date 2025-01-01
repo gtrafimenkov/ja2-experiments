@@ -19,6 +19,7 @@ extern struct VSurface *vsPrimary;
 extern struct VSurface *vsBackBuffer;
 extern struct VSurface *vsFB;
 extern struct VSurface *vsMouseBuffer;
+extern struct VSurface *vsMouseBufferOriginal;
 
 // Global variables for video objects
 extern uint32_t vsSaveBufferID;
