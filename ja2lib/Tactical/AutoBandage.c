@@ -219,7 +219,7 @@ BOOLEAN HandleAutoBandage() {
   if (gTacticalStatus.fAutoBandageMode) {
     if (gfBeginningAutoBandage) {
       // Shadow area
-      ShadowVideoSurfaceRect(vsIndexFB, 0, 0, 640, 480);
+      ShadowVideoSurfaceRect(vsFB, 0, 0, 640, 480);
       InvalidateScreen();
       RefreshScreen(NULL);
     }

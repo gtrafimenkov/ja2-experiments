@@ -679,7 +679,7 @@ void RenderTalkingMenu() {
     // If guy is talking.... shadow area
     if (pFace->fTalking || !DialogueQueueIsEmpty()) {
       ShadowVideoSurfaceRect(
-          vsIndexFB, (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X),
+          vsFB, (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X),
           (int16_t)(gTalkPanel.sY + TALK_PANEL_SHADOW_AREA_Y),
           (int16_t)(gTalkPanel.sX + TALK_PANEL_SHADOW_AREA_X + TALK_PANEL_SHADOW_AREA_WIDTH),
           (int16_t)(gTalkPanel.sY + TALK_PANEL_SHADOW_AREA_Y + TALK_PANEL_SHADOW_AREA_HEIGHT));

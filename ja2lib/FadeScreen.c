@@ -543,7 +543,7 @@ void FadeInBackBufferSquare() {
 
 void FadeFrameBufferRealFade() {
   if (gsFadeRealCount != gsFadeCount) {
-    ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 0, 0, 640, 480);
+    ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
 
     gsFadeRealCount = gsFadeCount;
   }
@@ -554,7 +554,7 @@ void FadeInFrameBufferRealFade() {
 
   if (gsFadeRealCount != gsFadeCount) {
     for (cnt = 0; cnt < (gsFadeLimit - gsFadeCount); cnt++) {
-      ShadowVideoSurfaceRectUsingLowPercentTable(vsIndexFB, 0, 0, 640, 480);
+      ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
     }
 
     // Refresh Screen

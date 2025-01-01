@@ -422,7 +422,7 @@ BOOLEAN DrawTextToScreen(wchar_t *pStr, uint16_t usLocX, uint16_t usLocY, uint16
   SetFontBackground(ubBackGroundColor);
 
   if (ulFlags & TEXT_SHADOWED)
-    ShadowText(vsIndexFB, pStr, ulFont, (uint16_t)(usPosX - 1), (uint16_t)(usPosY - 1));
+    ShadowText(vsFB, pStr, ulFont, (uint16_t)(usPosX - 1), (uint16_t)(usPosY - 1));
 
   if (fDirty) {
     gprintfdirty(usPosX, usPosY, pStr);
@@ -1549,13 +1549,11 @@ int32_t GetNewTotalYPositionOfThisString(int32_t iTotalYPosition, int32_t iPageS
   return (iNewYPosition);
 }
 
-void ShadowText(uint32_t uiDestVSurface, wchar_t *pString, uint32_t uiFont, uint16_t usPosX,
+void ShadowText(struct VSurface *dest, wchar_t *pString, uint32_t uiFont, uint16_t usPosX,
                 uint16_t usPosY) {
   uint32_t uiLength = StringPixLength(pString, uiFont);
   uint16_t usFontHeight = WFGetFontHeight(uiFont);
-
-  ShadowVideoSurfaceRect(uiDestVSurface, usPosX, usPosY, usPosX + uiLength + 1,
-                         usPosY + usFontHeight + 1);
+  ShadowVideoSurfaceRect(dest, usPosX, usPosY, usPosX + uiLength + 1, usPosY + usFontHeight + 1);
 }
 
 // for email

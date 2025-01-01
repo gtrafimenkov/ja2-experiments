@@ -323,8 +323,6 @@ void RenderBobbyR() {
 
   if (LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
     // Bobbys first sentence
-    //	ShadowText( vsIndexFB, BobbyRaysFrontText[BOBBYR_ADVERTISMENT_1], BOBBIES_SENTENCE_FONT,
-    // BOBBIES_FIRST_SENTENCE_X, BOBBIES_FIRST_SENTENCE_Y );
     DrawTextToScreen(BobbyRaysFrontText[BOBBYR_ADVERTISMENT_1], BOBBIES_FIRST_SENTENCE_X,
                      BOBBIES_FIRST_SENTENCE_Y, BOBBIES_FIRST_SENTENCE_WIDTH, BOBBIES_SENTENCE_FONT,
                      BOBBIES_SENTENCE_COLOR, BOBBIES_SIGN_BACKCOLOR, FALSE,
@@ -375,8 +373,8 @@ void RenderBobbyR() {
 
   // if we cant go to any sub pages, darken the page out
   if (!LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
-    ShadowVideoSurfaceRect(vsIndexFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y,
-                           LAPTOP_SCREEN_LR_X, LAPTOP_SCREEN_WEB_LR_Y);
+    ShadowVideoSurfaceRect(vsFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
+                           LAPTOP_SCREEN_WEB_LR_Y);
   }
 
   RenderWWWProgramTitleBar();
