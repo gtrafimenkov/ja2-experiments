@@ -5,6 +5,7 @@
 #ifndef __VSURFACE_H
 #define __VSURFACE_H
 
+#include "Rect.h"
 #include "SGP/Container.h"
 #include "SGP/HImage.h"
 #include "SGP/Types.h"

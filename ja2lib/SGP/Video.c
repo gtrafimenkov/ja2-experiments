@@ -4,6 +4,8 @@
 
 #include "SGP/Video.h"
 
+#include <string.h>
+
 #include "SGP/VSurface.h"
 #include "SGP/VideoInternal.h"
 

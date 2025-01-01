@@ -1,4 +1,5 @@
 *~
 .vs
+/build
 /build-*
 debug-log-*.txt
