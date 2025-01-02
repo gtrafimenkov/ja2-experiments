@@ -481,7 +481,7 @@ void DoTransitionFromPreBattleInterfaceToAutoResolve() {
   sEndTop = SrcRect.iTop + gpAR->sHeight / 2;
 
   // save the prebattle/mapscreen interface background
-  BlitBufferToBufferOld(vsIndexFB, guiEXTRABUFFER, 0, 0, 640, 480);
+  BlitBufferToBuffer(vsFB, vsExtraBuffer, 0, 0, 640, 480);
 
   // render the autoresolve panel
   RenderAutoResolve();
@@ -492,8 +492,8 @@ void DoTransitionFromPreBattleInterfaceToAutoResolve() {
                      (uint16_t)SrcRect.iRight, (uint16_t)SrcRect.iBottom);
 
   // hide the autoresolve
-  BlitBufferToBufferOld(guiEXTRABUFFER, vsIndexFB, (uint16_t)SrcRect.iLeft, (uint16_t)SrcRect.iTop,
-                        (uint16_t)SrcRect.iRight, (uint16_t)SrcRect.iBottom);
+  BlitBufferToBuffer(vsExtraBuffer, vsFB, (uint16_t)SrcRect.iLeft, (uint16_t)SrcRect.iTop,
+                     (uint16_t)SrcRect.iRight, (uint16_t)SrcRect.iBottom);
 
   PlayJA2SampleFromFile("SOUNDS\\Laptop power up (8-11).wav", RATE_11025, HIGHVOLUME, 1, MIDDLEPAN);
   while (iPercentage < 100) {
@@ -522,11 +522,10 @@ void DoTransitionFromPreBattleInterfaceToAutoResolve() {
     RefreshScreen(NULL);
 
     // Restore the previous rect.
-    BlitBufferToBufferOld(guiEXTRABUFFER, vsIndexFB, (uint16_t)DstRect.iLeft,
-                          (uint16_t)DstRect.iTop, (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
-                          (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
+    BlitBufferToBuffer(vsExtraBuffer, vsFB, (uint16_t)DstRect.iLeft, (uint16_t)DstRect.iTop,
+                       (uint16_t)(DstRect.iRight - DstRect.iLeft + 1),
+                       (uint16_t)(DstRect.iBottom - DstRect.iTop + 1));
   }
-  // BlitBufferToBufferOld( vsIndexFB, vsSaveBufferID, 0, 0, 640, 480 );
 }
 
 void EnterAutoResolveMode(uint8_t ubSectorX, uint8_t ubSectorY) {

@@ -23,9 +23,9 @@ extern struct VSurface *vsMouseBufferOriginal;
 
 // Global variables for video objects
 extern uint32_t vsSaveBufferID;
-extern uint32_t guiEXTRABUFFER;
 
 extern struct VSurface *vsSaveBuffer;
+extern struct VSurface *vsExtraBuffer;
 
 extern BOOLEAN gfExtraBuffer;
 
