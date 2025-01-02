@@ -902,13 +902,16 @@ void AllocateVideoOverlayArea(uint32_t uiCount) {
   }
 }
 
-void SaveVideoOverlaysArea(uint32_t uiSrcBuffer) {
+void SaveVideoOverlaysArea(struct VSurface *src) {
+  if (src == NULL) {
+    return;
+  }
   uint32_t uiCount;
   uint32_t iBackIndex;
   uint32_t uiSrcPitchBYTES;
   uint8_t *pSrcBuf;
 
-  pSrcBuf = LockVSurfaceByID(uiSrcBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(src, &uiSrcPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumVideoOverlays; uiCount++) {
     if (gVideoOverlays[uiCount].fAllocated && !gVideoOverlays[uiCount].fDisabled) {
@@ -929,7 +932,7 @@ void SaveVideoOverlaysArea(uint32_t uiSrcBuffer) {
     }
   }
 
-  UnlockVSurfaceByID(uiSrcBuffer);
+  UnlockVSurface(src);
 }
 
 void SaveVideoOverlayArea(uint32_t uiSrcBuffer, uint32_t uiCount) {
@@ -999,7 +1002,7 @@ BOOLEAN RestoreShiftedVideoOverlays(int16_t sShiftX, int16_t sShiftY) {
   ClipX2 = 640;
   ClipY2 = gsVIEWPORT_WINDOW_END_Y - 1;
 
-  pDestBuf = LockVSurfaceByID(BACKBUFFER, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsBackBuffer, &uiDestPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumVideoOverlays; uiCount++) {
     if (gVideoOverlays[uiCount].fAllocated && !gVideoOverlays[uiCount].fDisabled) {
