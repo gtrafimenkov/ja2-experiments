@@ -1277,8 +1277,8 @@ BOOLEAN DisplayMercVideoIntro(uint16_t usTimeTillFinish) {
   // init variable
   if (uiLastTime == 0) uiLastTime = uiCurTime;
 
-  ColorFillVideoSurfaceArea(
-      vsIndexFB, MERC_VIDEO_FACE_X, MERC_VIDEO_FACE_Y, MERC_VIDEO_FACE_X + MERC_VIDEO_FACE_WIDTH,
+  ColorFillVSurfaceArea(
+      vsFB, MERC_VIDEO_FACE_X, MERC_VIDEO_FACE_Y, MERC_VIDEO_FACE_X + MERC_VIDEO_FACE_WIDTH,
       MERC_VIDEO_FACE_Y + MERC_VIDEO_FACE_HEIGHT, Get16BPPColor(FROMRGB(0, 0, 0)));
 
   // if the intro is done

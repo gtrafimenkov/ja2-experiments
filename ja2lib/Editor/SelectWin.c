@@ -814,7 +814,7 @@ void RenderSelectionWindow(void) {
 
   if (!fButtonsPresent) return;
 
-  ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 600, 400, GenericButtonFillColors[0]);
+  ColorFillVSurfaceArea(vsFB, 0, 0, 600, 400, GenericButtonFillColors[0]);
   DrawSelections();
   MarkButtonsDirty();
   RenderButtons();
@@ -861,10 +861,10 @@ void RenderSelectionWindow(void) {
       else if (usFillGreen < 5)
         usDir = 5;
 
-      ColorFillVideoSurfaceArea(vsIndexFB, iSX, iSY, iEX, iSY + 1, usFillColor);
-      ColorFillVideoSurfaceArea(vsIndexFB, iSX, iEY, iEX, iEY + 1, usFillColor);
-      ColorFillVideoSurfaceArea(vsIndexFB, iSX, iSY, iSX + 1, iEY, usFillColor);
-      ColorFillVideoSurfaceArea(vsIndexFB, iEX, iSY, iEX + 1, iEY, usFillColor);
+      ColorFillVSurfaceArea(vsFB, iSX, iSY, iEX, iSY + 1, usFillColor);
+      ColorFillVSurfaceArea(vsFB, iSX, iEY, iEX, iEY + 1, usFillColor);
+      ColorFillVSurfaceArea(vsFB, iSX, iSY, iSX + 1, iEY, usFillColor);
+      ColorFillVSurfaceArea(vsFB, iEX, iSY, iEX + 1, iEY, usFillColor);
     }
   }
 }
@@ -1461,8 +1461,8 @@ BOOLEAN DisplayWindowFunc(DisplayList *pNode, int16_t iTopCutOff, int16_t iBotto
       usFillColor = SelWinFillColor;
       if (pNode->fChosen) usFillColor = SelWinHilightFillColor;
 
-      ColorFillVideoSurfaceArea(vsIndexFB, pNode->iX, iCurrY, pNode->iX + pNode->iWidth,
-                                iCurrY + pNode->iHeight, usFillColor);
+      ColorFillVSurfaceArea(vsFB, pNode->iX, iCurrY, pNode->iX + pNode->iWidth,
+                            iCurrY + pNode->iHeight, usFillColor);
     }
 
     sCount = 0;

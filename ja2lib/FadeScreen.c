@@ -151,7 +151,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       UpdateSaveBufferWithBackbuffer();
 
       // Clear framebuffer
-      ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
       break;
 
     case FADE_OUT_REALFADE:
@@ -160,17 +160,9 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       gsFadeLimit = 10;
       gFadeFunction = (FADE_FUNCTION)FadeFrameBufferRealFade;
       gfFadeInVideo = FALSE;
-
-      // Clear framebuffer
-      // ColorFillVideoSurfaceArea( vsIndexFB, 0, 0, 640, 480, Get16BPPColor( FROMRGB( 0, 0, 0 )
-      // ) );
       break;
 
     case FADE_OUT_VERSION_ONE:
-      // gsFadeLimit = 255 / bFadeValue;
-      // gFadeFunction = (FADE_FUNCTION)FadeFrameBufferVersionOne;
-      // SetMusicFadeSpeed( 25 );
-      // SetMusicMode( MUSIC_NONE );
       break;
 
     case FADE_OUT_SQUARE:
@@ -182,12 +174,7 @@ void BeginFade(uint32_t uiExitScreen, int8_t bFadeValue, int8_t bType, uint32_t 
       gFadeFunction = (FADE_FUNCTION)FadeFrameBufferSquare;
 
       // Zero frame buffer
-      ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
-      // ColorFillVideoSurfaceArea( vsSaveBufferID, 0, 0, 640,	480, Get16BPPColor( FROMRGB( 0, 0, 0
-      // ) ) );
-
-      //	SetMusicFadeSpeed( 25 );
-      // SetMusicMode( MUSIC_NONE );
+      ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
       break;
 
     case FADE_IN_VERSION_ONE:
@@ -275,7 +262,7 @@ uint32_t FadeScreenHandle() {
         case FADE_OUT_REALFADE:
 
           // Clear framebuffer
-          ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+          ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
           break;
       }
 
@@ -430,12 +417,12 @@ void FadeFrameBufferSide() {
   iX1 = 0;
   iX2 = sFadeMove;
 
-  ColorFillVideoSurfaceArea(vsIndexFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
 
   iX1 = 640 - sFadeMove;
   iX2 = 640;
 
-  ColorFillVideoSurfaceArea(vsIndexFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsFB, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
 }
 
 void FadeFrameBufferSquare() {
@@ -450,16 +437,16 @@ void FadeFrameBufferSquare() {
   iY1 = giY1;
   iY2 = giY1 + sFadeYMove;
 
-  ColorFillVideoSurfaceArea(BACKBUFFER, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
-  ColorFillVideoSurfaceArea(BACKBUFFER, 0, iY1, 640, iY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsBackBuffer, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsBackBuffer, 0, iY1, 640, iY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
   iX1 = giX2 - sFadeXMove;
   iX2 = giX2;
   iY1 = giY2 - sFadeYMove;
   iY2 = giY2;
 
-  ColorFillVideoSurfaceArea(BACKBUFFER, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
-  ColorFillVideoSurfaceArea(BACKBUFFER, 0, iY1, 640, iY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsBackBuffer, iX1, 0, iX2, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsBackBuffer, 0, iY1, 640, iY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
   giX1 += sFadeXMove;
   giX2 -= sFadeXMove;
@@ -475,7 +462,7 @@ void FadeInBackBufferSquare() {
   sFadeYMove = (int16_t)(sFadeXMove * .75);
 
   if (gsFadeCount == 0) {
-    ColorFillVideoSurfaceArea(BACKBUFFER, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+    ColorFillVSurfaceArea(vsBackBuffer, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
   }
 
   iX1 = giX1 - sFadeXMove;

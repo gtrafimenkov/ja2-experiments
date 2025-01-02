@@ -741,7 +741,7 @@ void ShowCurrentDrawingMode(void) {
   SetClippingRect(&NewRect);
 
   // Clear it out
-  ColorFillVideoSurfaceArea(vsIndexFB, 0, 400, 100, 458, 0);
+  ColorFillVSurfaceArea(vsFB, 0, 400, 100, 458, 0);
 
   iShowMode = iDrawMode;
   if (iDrawMode >= DRAW_MODE_ERASE) iShowMode -= DRAW_MODE_ERASE;
@@ -2204,9 +2204,9 @@ uint32_t WaitForHelpScreenResponse(void) {
   InputAtom DummyEvent;
   BOOLEAN fLeaveScreen;
 
-  ColorFillVideoSurfaceArea(vsIndexFB, 50, 50, 590, 310, Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVideoSurfaceArea(vsIndexFB, 51, 51, 590, 310, Get16BPPColor(FROMRGB(24, 61, 81)));
-  ColorFillVideoSurfaceArea(vsIndexFB, 51, 51, 589, 309, GenericButtonFillColors[0]);
+  ColorFillVSurfaceArea(vsFB, 50, 50, 590, 310, Get16BPPColor(FROMRGB(136, 138, 135)));
+  ColorFillVSurfaceArea(vsFB, 51, 51, 590, 310, Get16BPPColor(FROMRGB(24, 61, 81)));
+  ColorFillVSurfaceArea(vsFB, 51, 51, 589, 309, GenericButtonFillColors[0]);
 
   SetFont(gp12PointFont1);
 
@@ -2392,8 +2392,8 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
   WinRect.iRight = (iWindow == 0) ? (485) : (637);
   WinRect.iBottom = 399;
 
-  ColorFillVideoSurfaceArea(vsIndexFB, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
-                            WinRect.iBottom + 1, Get16BPPColor(FROMRGB(128, 0, 0)));
+  ColorFillVSurfaceArea(vsFB, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
+                        WinRect.iBottom + 1, Get16BPPColor(FROMRGB(128, 0, 0)));
 
   iWinWidth = WinRect.iRight - WinRect.iLeft;
   iWinHeight = WinRect.iBottom - WinRect.iTop;

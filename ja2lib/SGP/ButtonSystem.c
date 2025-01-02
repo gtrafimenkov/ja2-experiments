@@ -3143,9 +3143,9 @@ void DrawGenericButton(GUI_BUTTON *b) {
   cy = (b->YLoc + ((NumChunksHigh - 1) * iBorderHeight) + hremain);
 
   // Fill the button's area with the button's background color
-  ColorFillVideoSurfaceArea(ButtonDestBuffer, b->Area.RegionTopLeftX, b->Area.RegionTopLeftY,
-                            b->Area.RegionBottomRightX, b->Area.RegionBottomRightY,
-                            GenericButtonFillColors[b->ImageNum]);
+  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), b->Area.RegionTopLeftX,
+                        b->Area.RegionTopLeftY, b->Area.RegionBottomRightX,
+                        b->Area.RegionBottomRightY, GenericButtonFillColors[b->ImageNum]);
 
   // If there is a background image, fill the button's area with it
   if (GenericButtonBackground[b->ImageNum] != NULL) {

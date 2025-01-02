@@ -233,8 +233,8 @@ void RenderPopupMenu() {
   uint16_t usStart;
 
   // Draw the menu
-  ColorFillVideoSurfaceArea(vsIndexFB, gPopup.usLeft, gPopup.usTop, gPopup.usRight, gPopup.usBottom,
-                            Get16BPPColor(FROMRGB(128, 128, 128)));
+  ColorFillVSurfaceArea(vsFB, gPopup.usLeft, gPopup.usTop, gPopup.usRight, gPopup.usBottom,
+                        Get16BPPColor(FROMRGB(128, 128, 128)));
   pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   usLineColor = Get16BPPColor(FROMRGB(64, 64, 64));

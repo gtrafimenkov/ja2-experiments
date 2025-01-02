@@ -2341,17 +2341,8 @@ BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int32_t iDestY1,
-                                  int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
-  struct VSurface *hDestVSurface;
-
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_COLORFILLVIDEOSURFACEAREA;
-#endif
-  if (!GetVSurfaceByIndexOld(&hDestVSurface, uiDestVSurface)) {
-    return FALSE;
-  }
-
+BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
+                              int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
   SGPRect Clip;
   GetClippingRect(&Clip);
 
@@ -2383,8 +2374,8 @@ BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
     DDBLTFX BlitterFX;
     BlitterFX.dwSize = sizeof(DDBLTFX);
     BlitterFX.dwFillColor = Color16BPP;
-    DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &r, NULL, NULL,
-                 DDBLT_COLORFILL, &BlitterFX);
+    DDBltSurface((LPDIRECTDRAWSURFACE2)dest->_platformData2, &r, NULL, NULL, DDBLT_COLORFILL,
+                 &BlitterFX);
   }
   return TRUE;
 }
@@ -3169,7 +3160,7 @@ void CheckValidVSurfaceIndex(uint32_t uiIndex) {
         sprintf(str, "BltVideoSurface (src)");
         break;
       case DEBUGSTR_COLORFILLVIDEOSURFACEAREA:
-        sprintf(str, "ColorFillVideoSurfaceArea");
+        sprintf(str, "ColorFillVSurfaceArea");
         break;
       case DEBUGSTR_SHADOWVIDEOSURFACERECT:
         sprintf(str, "ShadowVideoSurfaceRect");

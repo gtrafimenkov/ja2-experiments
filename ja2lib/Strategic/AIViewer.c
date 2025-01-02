@@ -393,21 +393,21 @@ void DestroyAIViewer() {
 }
 
 void ClearViewerRegion(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom) {
-  ColorFillVideoSurfaceArea(ButtonDestBuffer, sLeft, sTop, sRight, sBottom, gusBlue);
+  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), sLeft, sTop, sRight, sBottom, gusBlue);
   InvalidateRegion(sLeft, sTop, sRight, sBottom);
 
   if (!sLeft) {
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, 0, sTop, 1, sBottom, gusLtBlue);
+    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), 0, sTop, 1, sBottom, gusLtBlue);
     sLeft++;
   }
   if (!sTop) {
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, sLeft, 0, sRight, 1, gusLtBlue);
+    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), sLeft, 0, sRight, 1, gusLtBlue);
     sTop++;
   }
   if (sBottom == 480)
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, sLeft, 479, sRight, 480, gusDkBlue);
+    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), sLeft, 479, sRight, 480, gusDkBlue);
   if (sRight == 640)
-    ColorFillVideoSurfaceArea(ButtonDestBuffer, 639, sTop, 640, sBottom, gusDkBlue);
+    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), 639, sTop, 640, sBottom, gusDkBlue);
 }
 
 void RenderStationaryGroups() {

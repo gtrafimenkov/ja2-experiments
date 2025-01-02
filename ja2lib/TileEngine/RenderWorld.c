@@ -2013,7 +2013,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               //  failures,
               //	and eventual crashes, so if it reaches this code, the buffer needs to be
               // unlocked first, as
-              //  it gets locked and unlocked internally within ColorFillVideoSurfaceArea().  I'm
+              //  it gets locked and unlocked internally within ColorFillVSurfaceArea().  I'm
               //  surprised
               //	this problem didn't surface a long time ago.  Anyway, it seems that
               // scrolling to the bottom 	right hand corner of the map, would cause the end of
@@ -2025,9 +2025,9 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               // be drawn on the editor's taskbar.
               if (iTempPosY_S < 360) {
                 if (!(uiFlags & TILES_DIRTY)) UnlockVSurface(vsFB);
-                ColorFillVideoSurfaceArea(
-                    vsIndexFB, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
-                    (int16_t)(min(iTempPosY_S + 20, 360)), Get16BPPColor(FROMRGB(0, 0, 0)));
+                ColorFillVSurfaceArea(vsFB, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
+                                      (int16_t)(min(iTempPosY_S + 20, 360)),
+                                      Get16BPPColor(FROMRGB(0, 0, 0)));
                 if (!(uiFlags & TILES_DIRTY))
                   pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
               }
@@ -2141,8 +2141,8 @@ void RenderWorld() {
 
   // If we are testing renderer, set background to pink!
   if (gTacticalStatus.uiFlags & DEBUGCLIFFS) {
-    ColorFillVideoSurfaceArea(vsIndexFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
-                              Get16BPPColor(FROMRGB(0, 255, 0)));
+    ColorFillVSurfaceArea(vsFB, 0, gsVIEWPORT_WINDOW_START_Y, 640, gsVIEWPORT_WINDOW_END_Y,
+                          Get16BPPColor(FROMRGB(0, 255, 0)));
     SetRenderFlags(RENDER_FLAG_FULL);
   }
 
