@@ -849,7 +849,7 @@ void PopDownMovementMenu() {
 
 void RenderMovementMenu() {
   if (gfInMovementMenu) {
-    BltVObjectFromIndexOld(vsIndexFB, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY);
+    BltVObjectFromIndex(vsFB, guiBUTTONBORDER, 0, giMenuAnchorX, giMenuAnchorY);
 
     // Mark buttons dirty!
     MarkAButtonDirty(iActionIcons[WALK_ICON]);
@@ -1322,9 +1322,9 @@ void DrawSelectedUIAboveGuy(uint16_t usSoldierID) {
         }
 
         if ((!pSoldier->bNeutral && (pSoldier->bSide != gbPlayerNum))) {
-          BltVObjectFromIndexOld(vsIndexFB, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos);
+          BltVObjectFromIndex(vsFB, guiRADIO2, pSoldier->sLocatorFrame, sXPos, sYPos);
         } else {
-          BltVObjectFromIndexOld(vsIndexFB, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos);
+          BltVObjectFromIndex(vsFB, guiRADIO, pSoldier->sLocatorFrame, sXPos, sYPos);
         }
       }
     }
@@ -2076,7 +2076,7 @@ void PopDownOpenDoorMenu() {
 
 void RenderOpenDoorMenu() {
   if (gfInOpenDoorMenu) {
-    BltVObjectFromIndexOld(vsIndexFB, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY);
+    BltVObjectFromIndex(vsFB, guiBUTTONBORDER, 0, gOpenDoorMenu.sX, gOpenDoorMenu.sY);
 
     // Mark buttons dirty!
     MarkAButtonDirty(iActionIcons[USE_KEYRING_ICON]);
@@ -3073,34 +3073,28 @@ void RenderAimCubeUI() {
       }
 
       // Do first level....
-      BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
-                             (sScreenY + sBarHeight));
+      BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
       sBarHeight -= 3;
-      BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
-                             (sScreenY + sBarHeight));
+      BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
 
       // Loop through height.....
       for (cnt = 1; cnt <= gCubeUIData.bHeight; cnt++) {
         sBarHeight -= 3;
-        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
-                               (sScreenY + sBarHeight));
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
         sBarHeight -= 3;
-        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
-                               (sScreenY + sBarHeight));
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
         sBarHeight -= 3;
-        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
-                               (sScreenY + sBarHeight));
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
         sBarHeight -= 3;
-        BltVObjectFromIndexOld(vsIndexFB, guiAIMCUBES, bGraphicNum, sScreenX,
-                               (sScreenY + sBarHeight));
+        BltVObjectFromIndex(vsFB, guiAIMCUBES, bGraphicNum, sScreenX, (sScreenY + sBarHeight));
       }
     }
 
     if (gCubeUIData.fShowPower) {
       sBarHeight = -50;
 
-      BltVObjectFromIndexOld(vsIndexFB, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
-                             (sScreenY + sBarHeight));
+      BltVObjectFromIndex(vsFB, guiAIMBARS, gCubeUIData.ubPowerIndex, sScreenX,
+                          (sScreenY + sBarHeight));
     }
   }
 }
@@ -3264,5 +3258,5 @@ void RenderTopmostMultiPurposeLocator() {
     SetBackgroundRectFilled(iBack);
   }
 
-  BltVObjectFromIndexOld(vsIndexFB, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos);
+  BltVObjectFromIndex(vsFB, guiRADIO, gbMultiPurposeLocatorFrame, sXPos, sYPos);
 }

@@ -696,9 +696,9 @@ uint32_t SexScreenHandle(void) {
   sY = (int16_t)((480 - pTrav->usHeight) / 2);
 
   if (bCurFrame < 24) {
-    BltVObjectFromIndexOld(vsIndexFB, guiSMILY, 0, sX, sY);
+    BltVObjectFromIndex(vsFB, guiSMILY, 0, sX, sY);
   } else {
-    BltVObjectFromIndexOld(vsIndexFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY);
+    BltVObjectFromIndex(vsFB, guiSMILY, (int8_t)(bCurFrame % 8), sX, sY);
   }
 
   InvalidateRegion(sX, sY, (int16_t)(sX + pTrav->usWidth), (int16_t)(sY + pTrav->usHeight));
@@ -740,8 +740,8 @@ void DisplayTopwareGermanyAddress() {
   UnlockVSurface(vsFB);
 
   // Draw the anti-aliased address now.
-  BltVObjectFromIndexOld(vsIndexFB, uiTempID, 0, 218, 400);
-  BltVObjectFromIndexOld(vsIndexFB, uiTempID, 0, 218, 400);
+  BltVObjectFromIndex(vsFB, uiTempID, 0, 218, 400);
+  BltVObjectFromIndex(vsFB, uiTempID, 0, 218, 400);
   InvalidateRegion(208, 390, 431, 475);
   DeleteVideoObjectFromIndex(uiTempID);
   ExecuteBaseDirtyRectQueue();
