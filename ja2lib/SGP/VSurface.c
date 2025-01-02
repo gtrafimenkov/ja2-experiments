@@ -321,8 +321,6 @@ BOOLEAN BltStretchVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, 
 
 struct VSurface *GetVSurfaceByID(VSurfID id) {
   switch (id) {
-    case PRIMARY_SURFACE:
-      return vsPrimary;
     case vsIndexFB:
       return vsFB;
     default:

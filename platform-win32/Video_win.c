@@ -2237,13 +2237,6 @@ BOOLEAN ShutdownVideoSurfaceManager() {
 }
 
 uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
-  //
-  // Check if given backbuffer or primary buffer
-  //
-  if (uiVSurface == PRIMARY_SURFACE) {
-    return (uint8_t *)LockPrimarySurface(gpPrimarySurface, puiPitch);
-  }
-
   if (uiVSurface == vsIndexFB) {
     return (uint8_t *)LockPrimarySurface(gpFrameBuffer, puiPitch);
   }
@@ -2258,9 +2251,6 @@ uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
 
 void UnlockVSurfaceByID(VSurfID id) {
   switch (id) {
-    case PRIMARY_SURFACE:
-      IDirectDrawSurface2_Unlock(gpPrimarySurface, NULL);
-      break;
     case vsIndexFB:
       IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
       break;
