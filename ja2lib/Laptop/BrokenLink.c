@@ -56,7 +56,6 @@ void RenderBrokenLink() {
 }
 
 void DrawBrokenLinkWhiteBackground() {
-  ColorFillVideoSurfaceArea(vsIndexFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y,
-                            LAPTOP_SCREEN_LR_X, LAPTOP_SCREEN_WEB_LR_Y,
-                            Get16BPPColor(FROMRGB(255, 255, 255)));
+  ColorFillVSurfaceArea(vsFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
+                        LAPTOP_SCREEN_WEB_LR_Y, Get16BPPColor(FROMRGB(255, 255, 255)));
 }

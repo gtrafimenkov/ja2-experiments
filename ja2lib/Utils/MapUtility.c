@@ -87,8 +87,8 @@ uint32_t MapUtilScreenHandle() {
   bAvR = bAvG = bAvB = 0;
 
   // Zero out area!
-  ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, (int16_t)(640), (int16_t)(480),
-                            Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsFB, 0, 0, (int16_t)(640), (int16_t)(480),
+                        Get16BPPColor(FROMRGB(0, 0, 0)));
 
   if (fNewMap) {
     fNewMap = FALSE;

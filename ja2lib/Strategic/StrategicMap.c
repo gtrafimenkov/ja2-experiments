@@ -371,7 +371,7 @@ void BeginLoadScreen() {
       RefreshScreen(NULL);
     }
   }
-  ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
+  ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(FROMRGB(0, 0, 0)));
   InvalidateScreen();
   RefreshScreen(NULL);
 

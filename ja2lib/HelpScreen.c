@@ -2120,12 +2120,11 @@ void DisplayHelpScreenTextBufferScrollBox() {
   // if there ARE scroll bars, draw the
   if (!(gHelpScreen.usTotalNumberOfLinesInBuffer <=
         HLP_SCRN__MAX_NUMBER_DISPLAYED_LINES_IN_BUFFER)) {
-    ColorFillVideoSurfaceArea(
-        vsIndexFB, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
-        iTopPosScrollBox + iSizeOfBox - 1, Get16BPPColor(FROMRGB(227, 198, 88)));
+    ColorFillVSurfaceArea(vsFB, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
+                          iTopPosScrollBox + iSizeOfBox - 1, Get16BPPColor(FROMRGB(227, 198, 88)));
 
     // display the line
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
     // draw the gold highlite line on the top and left

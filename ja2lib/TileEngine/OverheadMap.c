@@ -626,7 +626,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
 
   if (gfOverheadMapDirty) {
     // Black out.......
-    ColorFillVideoSurfaceArea(vsIndexFB, sStartPointX_S, sStartPointY_S, sEndXS, sEndYS, 0);
+    ColorFillVSurfaceArea(vsFB, sStartPointX_S, sStartPointY_S, sEndXS, sEndYS, 0);
 
     InvalidateScreen();
     gfOverheadMapDirty = FALSE;
@@ -638,7 +638,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
     sAnchorPosY_S = sStartPointY_S;
 
     // Zero out area!
-    // ColorFillVideoSurfaceArea( vsIndexFB, 0, 0, (int16_t)(640),
+    // ColorFillVSurfaceArea( vsIndexFB, 0, 0, (int16_t)(640),
     // (int16_t)(gsVIEWPORT_WINDOW_END_Y), Get16BPPColor( FROMRGB( 0, 0, 0 ) ) );
 
     pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
@@ -913,16 +913,16 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
     // OK, blacken out edges of smaller maps...
     if (gMapInformation.ubRestrictedScrollID != 0) {
       CalculateRestrictedMapCoords(NORTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(WEST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(SOUTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(EAST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVideoSurfaceArea(vsIndexFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
     }
 
     if (!fFromMapUtility) {

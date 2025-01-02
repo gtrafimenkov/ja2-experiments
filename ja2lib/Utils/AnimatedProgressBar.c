@@ -168,12 +168,12 @@ void SetRelativeStartAndEndPercentage(uint8_t ubID, uint32_t uiRelStartPerc, uin
   // Render the entire panel now, as it doesn't need update during the normal rendering
   if (pCurr->fPanel) {
     // Draw panel
-    ColorFillVideoSurfaceArea(vsIndexFB, pCurr->usPanelLeft, pCurr->usPanelTop, pCurr->usPanelRight,
-                              pCurr->usPanelBottom, pCurr->usLtColor);
-    ColorFillVideoSurfaceArea(vsIndexFB, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1,
-                              pCurr->usPanelRight, pCurr->usPanelBottom, pCurr->usDkColor);
-    ColorFillVideoSurfaceArea(vsIndexFB, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1,
-                              pCurr->usPanelRight - 1, pCurr->usPanelBottom - 1, pCurr->usColor);
+    ColorFillVSurfaceArea(vsFB, pCurr->usPanelLeft, pCurr->usPanelTop, pCurr->usPanelRight,
+                          pCurr->usPanelBottom, pCurr->usLtColor);
+    ColorFillVSurfaceArea(vsFB, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1, pCurr->usPanelRight,
+                          pCurr->usPanelBottom, pCurr->usDkColor);
+    ColorFillVSurfaceArea(vsFB, pCurr->usPanelLeft + 1, pCurr->usPanelTop + 1,
+                          pCurr->usPanelRight - 1, pCurr->usPanelBottom - 1, pCurr->usColor);
     InvalidateRegion(pCurr->usPanelLeft, pCurr->usPanelTop, pCurr->usPanelRight,
                      pCurr->usPanelBottom);
     // Draw title
@@ -241,20 +241,18 @@ void RenderProgressBar(uint8_t ubID, uint32_t uiPercentage) {
       return;
     }
     if (gfUseLoadScreenProgressBar) {
-      ColorFillVideoSurfaceArea(
-          vsIndexFB, pCurr->usBarLeft, pCurr->usBarTop, end, pCurr->usBarBottom,
-          Get16BPPColor(
-              FROMRGB(pCurr->ubColorFillRed, pCurr->ubColorFillGreen, pCurr->ubColorFillBlue)));
+      ColorFillVSurfaceArea(vsFB, pCurr->usBarLeft, pCurr->usBarTop, end, pCurr->usBarBottom,
+                            Get16BPPColor(FROMRGB(pCurr->ubColorFillRed, pCurr->ubColorFillGreen,
+                                                  pCurr->ubColorFillBlue)));
     } else {
       // Border edge of the progress bar itself in gray
-      ColorFillVideoSurfaceArea(vsIndexFB, pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight,
-                                pCurr->usBarBottom, Get16BPPColor(FROMRGB(160, 160, 160)));
+      ColorFillVSurfaceArea(vsFB, pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight,
+                            pCurr->usBarBottom, Get16BPPColor(FROMRGB(160, 160, 160)));
       // Interior of progress bar in black
-      ColorFillVideoSurfaceArea(vsIndexFB, pCurr->usBarLeft + 2, pCurr->usBarTop + 2,
-                                pCurr->usBarRight - 2, pCurr->usBarBottom - 2,
-                                Get16BPPColor(FROMRGB(0, 0, 0)));
-      ColorFillVideoSurfaceArea(vsIndexFB, pCurr->usBarLeft + 2, pCurr->usBarTop + 2, end,
-                                pCurr->usBarBottom - 2, Get16BPPColor(FROMRGB(72, 155, 24)));
+      ColorFillVSurfaceArea(vsFB, pCurr->usBarLeft + 2, pCurr->usBarTop + 2, pCurr->usBarRight - 2,
+                            pCurr->usBarBottom - 2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, pCurr->usBarLeft + 2, pCurr->usBarTop + 2, end,
+                            pCurr->usBarBottom - 2, Get16BPPColor(FROMRGB(72, 155, 24)));
     }
     InvalidateRegion(pCurr->usBarLeft, pCurr->usBarTop, pCurr->usBarRight, pCurr->usBarBottom);
     ExecuteBaseDirtyRectQueue();

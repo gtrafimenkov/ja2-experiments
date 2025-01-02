@@ -263,8 +263,8 @@ BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_
   return FALSE;
 }
 
-BOOLEAN ColorFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int32_t iDestY1,
-                                  int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
+BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
+                              int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
   return FALSE;
 }
 
