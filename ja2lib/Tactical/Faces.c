@@ -700,7 +700,7 @@ void BlinkAutoFace(int32_t iFaceIndex) {
           }
         }
 
-        HandleRenderFaceAdjustments(pFace, TRUE, FALSE, 0, pFace->usFaceX, pFace->usFaceY,
+        HandleRenderFaceAdjustments(pFace, TRUE, FALSE, NULL, pFace->usFaceX, pFace->usFaceY,
                                     pFace->usEyesX, pFace->usEyesY);
       }
     }
@@ -870,7 +870,7 @@ void MouthAutoFace(int32_t iFaceIndex) {
                 }
               }
 
-              HandleRenderFaceAdjustments(pFace, TRUE, FALSE, 0, pFace->usFaceX, pFace->usFaceY,
+              HandleRenderFaceAdjustments(pFace, TRUE, FALSE, NULL, pFace->usFaceX, pFace->usFaceY,
                                           pFace->usEyesX, pFace->usEyesY);
             }
           }
