@@ -268,12 +268,6 @@ BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iD
   return FALSE;
 }
 
-BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int32_t iDestY1,
-                                  int32_t iDestX2, int32_t iDestY2, struct VObject *BkgrndImg,
-                                  uint16_t Index, int16_t Ox, int16_t Oy) {
-  return FALSE;
-}
-
 struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bitDepth) {
   return NULL;
 };

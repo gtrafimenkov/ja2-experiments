@@ -546,7 +546,6 @@ void RenderQuestDebugSystem();
 void ExitQuestDebugSystem();
 void HandleQuestDebugSystem();
 void GetUserInput();
-void ColorFillQuestDebugScreenScreen(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom);
 void QuestDebug_ExitTactical();
 void QuestDebug_EnterTactical();
 void DisplayQuestInformation();
@@ -1073,7 +1072,7 @@ void HandleQuestDebugSystem() {
 }
 
 void RenderQuestDebugSystem() {
-  ColorFillQuestDebugScreenScreen(0, 0, 640, 480);
+  ColorFillVSurfaceArea(vsButtonDest, 0, 0, 640, 480, gusQuestDebugBlue);
 
   // display the title
   DisplayWrappedString(0, 5, 640, 2, QUEST_DBS_FONT_TITLE, QUEST_DBS_COLOR_TITLE,
@@ -1315,11 +1314,6 @@ void GetUserInput() {
       }
     }
   }
-}
-
-void ColorFillQuestDebugScreenScreen(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom) {
-  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), sLeft, sTop, sRight, sBottom,
-                        gusQuestDebugBlue);
 }
 
 void QuestDebug_ExitTactical() {}
