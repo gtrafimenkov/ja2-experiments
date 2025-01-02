@@ -442,25 +442,20 @@ void mprintfEditor(int16_t x, int16_t y, wchar_t *pFontString, ...) {
 }
 
 void ClearTaskbarRegion(int16_t sLeft, int16_t sTop, int16_t sRight, int16_t sBottom) {
-  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), sLeft, sTop, sRight, sBottom,
-                        gusEditorTaskbarColor);
+  ColorFillVSurfaceArea(vsButtonDest, sLeft, sTop, sRight, sBottom, gusEditorTaskbarColor);
 
   if (!sLeft) {
-    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), 0, sTop, 1, sBottom,
-                          gusEditorTaskbarHiColor);
+    ColorFillVSurfaceArea(vsButtonDest, 0, sTop, 1, sBottom, gusEditorTaskbarHiColor);
     sLeft++;
   }
   if (sTop == 360) {
-    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), sLeft, 360, sRight, 361,
-                          gusEditorTaskbarHiColor);
+    ColorFillVSurfaceArea(vsButtonDest, sLeft, 360, sRight, 361, gusEditorTaskbarHiColor);
     sTop++;
   }
   if (sBottom == 480)
-    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), sLeft, 479, sRight, 480,
-                          gusEditorTaskbarLoColor);
+    ColorFillVSurfaceArea(vsButtonDest, sLeft, 479, sRight, 480, gusEditorTaskbarLoColor);
   if (sRight == 640)
-    ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), 639, sTop, 640, sBottom,
-                          gusEditorTaskbarLoColor);
+    ColorFillVSurfaceArea(vsButtonDest, 639, sTop, 640, sBottom, gusEditorTaskbarLoColor);
 
   InvalidateRegion(sLeft, sTop, sRight, sBottom);
 }
@@ -482,10 +477,9 @@ void DrawEditorInfoBox(wchar_t *str, uint32_t uiFont, uint16_t x, uint16_t y, ui
   usFillColorLight = Get16BPPColor(FROMRGB(136, 138, 135));
   usFillColorBack = Get16BPPColor(FROMRGB(250, 240, 188));
 
-  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), x, y, x2, y2, usFillColorDark);
-  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), x + 1, y + 1, x2, y2, usFillColorLight);
-  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), x + 1, y + 1, x2 - 1, y2 - 1,
-                        usFillColorBack);
+  ColorFillVSurfaceArea(vsButtonDest, x, y, x2, y2, usFillColorDark);
+  ColorFillVSurfaceArea(vsButtonDest, x + 1, y + 1, x2, y2, usFillColorLight);
+  ColorFillVSurfaceArea(vsButtonDest, x + 1, y + 1, x2 - 1, y2 - 1, usFillColorBack);
 
   usStrWidth = StringPixLength(str, uiFont);
   if (usStrWidth > w) {  // the string is too long, so use the wrapped method
