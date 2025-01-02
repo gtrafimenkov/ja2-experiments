@@ -40,7 +40,6 @@ extern BOOLEAN gfExtraBuffer;
 //
 
 #define PRIMARY_SURFACE 0xFFFFFFF0
-#define BACKBUFFER 0xFFFFFFF1
 #define vsIndexFB 0xFFFFFFF2
 
 //

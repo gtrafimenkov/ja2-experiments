@@ -2244,10 +2244,6 @@ uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
     return (uint8_t *)LockPrimarySurface(gpPrimarySurface, puiPitch);
   }
 
-  if (uiVSurface == BACKBUFFER) {
-    return (uint8_t *)LockPrimarySurface(gpBackBuffer, puiPitch);
-  }
-
   if (uiVSurface == vsIndexFB) {
     return (uint8_t *)LockPrimarySurface(gpFrameBuffer, puiPitch);
   }
@@ -2264,9 +2260,6 @@ void UnlockVSurfaceByID(VSurfID id) {
   switch (id) {
     case PRIMARY_SURFACE:
       IDirectDrawSurface2_Unlock(gpPrimarySurface, NULL);
-      break;
-    case BACKBUFFER:
-      IDirectDrawSurface2_Unlock(gpBackBuffer, NULL);
       break;
     case vsIndexFB:
       IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
