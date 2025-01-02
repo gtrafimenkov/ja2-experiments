@@ -855,21 +855,19 @@ void RenderSoldierCell(SOLDIERCELL *pCell) {
   uint8_t x;
   if (pCell->uiFlags & CELL_MERC) {
     ColorFillVSurfaceArea(vsFB, pCell->xp + 36, pCell->yp + 2, pCell->xp + 44, pCell->yp + 30, 0);
-    BltVObjectFromIndexOld(vsIndexFB, gpAR->iPanelImages, MERC_PANEL, pCell->xp, pCell->yp);
+    BltVObjectFromIndex(vsFB, gpAR->iPanelImages, MERC_PANEL, pCell->xp, pCell->yp);
     RenderSoldierCellBars(pCell);
     x = 0;
   } else {
-    BltVObjectFromIndexOld(vsIndexFB, gpAR->iPanelImages, OTHER_PANEL, pCell->xp, pCell->yp);
+    BltVObjectFromIndex(vsFB, gpAR->iPanelImages, OTHER_PANEL, pCell->xp, pCell->yp);
     x = 6;
   }
   if (!pCell->pSoldier->bLife) {
     SetObjectHandleShade(pCell->uiVObjectID, 0);
     if (!(pCell->uiFlags & CELL_CREATURE))
-      BltVObjectFromIndexOld(vsIndexFB, gpAR->iFaces, HUMAN_SKULL, pCell->xp + 3 + x,
-                             pCell->yp + 3);
+      BltVObjectFromIndex(vsFB, gpAR->iFaces, HUMAN_SKULL, pCell->xp + 3 + x, pCell->yp + 3);
     else
-      BltVObjectFromIndexOld(vsIndexFB, gpAR->iFaces, CREATURE_SKULL, pCell->xp + 3 + x,
-                             pCell->yp + 3);
+      BltVObjectFromIndex(vsFB, gpAR->iFaces, CREATURE_SKULL, pCell->xp + 3 + x, pCell->yp + 3);
   } else {
     if (pCell->uiFlags & CELL_HITBYATTACKER) {
       ColorFillVSurfaceArea(vsFB, pCell->xp + 3 + x, pCell->yp + 3, pCell->xp + 33 + x,
@@ -878,12 +876,12 @@ void RenderSoldierCell(SOLDIERCELL *pCell) {
       ColorFillVSurfaceArea(vsFB, pCell->xp + 3 + x, pCell->yp + 3, pCell->xp + 33 + x,
                             pCell->yp + 29, 0);
       SetObjectHandleShade(pCell->uiVObjectID, 1);
-      BltVObjectFromIndexOld(vsIndexFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
-                             pCell->yp + 3);
+      BltVObjectFromIndex(vsFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
+                          pCell->yp + 3);
     } else {
       SetObjectHandleShade(pCell->uiVObjectID, 0);
-      BltVObjectFromIndexOld(vsIndexFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
-                             pCell->yp + 3);
+      BltVObjectFromIndex(vsFB, pCell->uiVObjectID, pCell->usIndex, pCell->xp + 3 + x,
+                          pCell->yp + 3);
     }
   }
 
@@ -1592,7 +1590,7 @@ void RenderAutoResolve() {
     SetFont(BLOCKFONT2);
     xp = gpAR->sCenterStartX + 12;
     yp = 218 + gpAR->bVerticalOffset;
-    BltVObjectFromIndexOld(vsIndexFB, gpAR->iIndent, 0, xp, yp);
+    BltVObjectFromIndex(vsFB, gpAR->iIndent, 0, xp, yp);
     xp = gpAR->sCenterStartX + 70 - StringPixLength(str, BLOCKFONT2) / 2;
     yp = 227 + gpAR->bVerticalOffset;
     mprintf(xp, yp, str);
