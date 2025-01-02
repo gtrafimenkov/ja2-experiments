@@ -243,7 +243,7 @@ BOOLEAN RestoreBackgroundRects(void) {
   uint32_t uiCount, uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumBackSaves; uiCount++) {
@@ -339,7 +339,7 @@ BOOLEAN SaveBackgroundRects(void) {
   uint32_t uiCount, uiDestPitchBYTES;
   uint8_t *pSrcBuf;
 
-  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pSrcBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
   for (uiCount = 0; uiCount < guiNumBackSaves; uiCount++) {
     if (gBackSaves[uiCount].fAllocated && (!gBackSaves[uiCount].fDisabled)) {
@@ -461,7 +461,7 @@ BOOLEAN UpdateSaveBuffer(void) {
   // Update saved buffer - do for the viewport size ony!
   GetCurrentVideoSettings(&usWidth, &usHeight);
 
-  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
   pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
@@ -480,7 +480,7 @@ BOOLEAN RestoreExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth,
 
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
@@ -510,7 +510,7 @@ BOOLEAN RestoreExternBackgroundRectGivenID(int32_t iBack) {
 
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsSaveBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
@@ -531,7 +531,7 @@ BOOLEAN CopyExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth, in
   Assert((sLeft >= 0) && (sTop >= 0) && (sLeft + sWidth <= 640) && (sTop + sHeight <= 480));
 
   pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);

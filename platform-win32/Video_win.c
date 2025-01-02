@@ -360,7 +360,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // Blank out the frame buffer
   //
 
-  pTmpPointer = LockVSurfaceByID(vsIndexFB, &uiPitch);
+  pTmpPointer = LockVSurface(vsFB, &uiPitch);
   memset(pTmpPointer, 0, 480 * uiPitch);
   UnlockVSurface(vsFB);
 
@@ -2648,6 +2648,7 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
 
 uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
   if (vs == NULL) {
+    *pPitch = 0;
     return NULL;
   }
 

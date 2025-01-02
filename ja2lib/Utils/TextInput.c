@@ -1170,7 +1170,7 @@ void RenderInactiveTextFieldNode(TEXTINPUTNODE *pNode) {
     ClipRect.iRight = pNode->region.RegionBottomRightX;
     ClipRect.iTop = pNode->region.RegionTopLeftY;
     ClipRect.iBottom = pNode->region.RegionBottomRightY;
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
     UnlockVSurface(vsFB);
   }

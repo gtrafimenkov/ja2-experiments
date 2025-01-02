@@ -4370,7 +4370,7 @@ BOOLEAN DrawDeskTopBackground(void) {
   clip.iTop = 0;
   clip.iBottom = 408 + 19;
   // get surfaces
-  pDestBuf = (uint16_t *)LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);
   CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiDESKTOP));
   pSrcBuf = LockVSurfaceByID(guiDESKTOP, &uiSrcPitchBYTES);
 

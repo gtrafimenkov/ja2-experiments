@@ -283,7 +283,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   }
 
   pDestBuf = LockVSurfaceByID(eInfo.uiBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
 
   // copy a blank chunk of the editor interface to the new buffer.
   for (i = 0; i < eInfo.sWidth; i += 60) {
@@ -495,7 +495,7 @@ void RenderEditorItemsInfo() {
                              // highlighted.
     eInfo.sHilitedItemIndex = -1;
   }
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurfaceByID(eInfo.uiBuffer, &uiSrcPitchBYTES);
 
   // copy the items buffer to the editor bar

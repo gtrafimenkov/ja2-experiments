@@ -287,7 +287,7 @@ void FadeFrameBufferVersionOne() {
   uint32_t uiRGBColor;
   uint16_t s16BPPSrc;
 
-  pBuf = (uint16_t *)LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);
 
   // LOCK FRAME BUFFER
   for (cX = 0; cX < 640; cX++) {
@@ -328,7 +328,7 @@ void FadeInBackBufferVersionOne() {
   int16_t bFadeVal = (gsFadeLimit - gsFadeCount) * gbFadeValue;
 
   pDestBuf = (uint16_t *)LockVSurfaceByID(BACKBUFFER, &uiDestPitchBYTES);
-  pSrcBuf = (uint16_t *)LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
+  pSrcBuf = (uint16_t *)LockVSurface(vsFB, &uiSrcPitchBYTES);
 
   // LOCK FRAME BUFFER
   for (cX = 0; cX < 640; cX++) {
@@ -368,7 +368,7 @@ void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
   uint32_t uiRGBColor;
   uint16_t s16BPPSrc;
 
-  pBuf = (uint16_t *)LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);
 
   iStartX = gsFadeCount % 2;
   iStartY = 0;
@@ -558,7 +558,7 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
   uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;
 
-  pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
   pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
