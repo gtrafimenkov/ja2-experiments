@@ -698,7 +698,7 @@ int32_t RegisterVideoOverlay(uint32_t uiFlags, VIDEO_OVERLAY_DESC *pTopmostDesc)
     DisableBackgroundRect(gVideoOverlays[iBlitterIndex].uiBackground, TRUE);
   }
 
-  gVideoOverlays[iBlitterIndex].uiDestBuff = vsIndexFB;
+  gVideoOverlays[iBlitterIndex].vsDestBuff = vsFB;
 
   // DebugMsg( TOPIC_JA2, DBG_LEVEL_0, String( "Register Overlay %d %S", iBlitterIndex,
   // gVideoOverlays[ iBlitterIndex ].zText ) );
@@ -834,21 +834,20 @@ void ExecuteVideoOverlays() {
   }
 }
 
-void ExecuteVideoOverlaysToAlternateBuffer(uint32_t uiNewDestBuffer) {
+void ExecuteVideoOverlaysToAlternateBuffer(struct VSurface *dest) {
   uint32_t uiCount;
-  uint32_t uiOldDestBuffer;
 
   for (uiCount = 0; uiCount < guiNumVideoOverlays; uiCount++) {
     if (gVideoOverlays[uiCount].fAllocated && !gVideoOverlays[uiCount].fDisabled) {
       if (gVideoOverlays[uiCount].fActivelySaving) {
-        uiOldDestBuffer = gVideoOverlays[uiCount].uiDestBuff;
+        struct VSurface *old = gVideoOverlays[uiCount].vsDestBuff;
 
-        gVideoOverlays[uiCount].uiDestBuff = uiNewDestBuffer;
+        gVideoOverlays[uiCount].vsDestBuff = dest;
 
         // Call Blit Function
         (*(gVideoOverlays[uiCount].BltCallback))(&(gVideoOverlays[uiCount]));
 
-        gVideoOverlays[uiCount].uiDestBuff = uiOldDestBuffer;
+        gVideoOverlays[uiCount].vsDestBuff = old;
       }
     }
   }
@@ -1079,7 +1078,7 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
 
-  pDestBuf = LockVSurfaceByID(pBlitter->uiDestBuff, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
 
   SetFont(pBlitter->uiFontID);
   SetFontBackground(pBlitter->ubFontBack);
@@ -1088,7 +1087,7 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter) {
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                  pBlitter->zText);
 
-  UnlockVSurfaceByID(pBlitter->uiDestBuff);
+  UnlockVSurface(pBlitter->vsDestBuff);
 }
 
 BOOLEAN BlitBufferToBuffer(struct VSurface *src, struct VSurface *dest, uint16_t usSrcX,

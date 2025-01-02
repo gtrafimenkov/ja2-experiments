@@ -932,7 +932,7 @@ uint32_t MessageBoxScreenHandle() {
       MarkAButtonDirty(gMsgBox.uiNOButton);
     }
 
-    RenderMercPopUpBoxFromIndex(gMsgBox.iBoxId, gMsgBox.sX, gMsgBox.sY, vsIndexFB);
+    RenderMercPopUpBoxFromIndex(gMsgBox.iBoxId, gMsgBox.sX, gMsgBox.sY, vsFB);
     // gMsgBox.fRenderBox = FALSE;
     // ATE: Render each frame...
   }

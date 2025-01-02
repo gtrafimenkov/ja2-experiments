@@ -1746,13 +1746,13 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
 
       // Display bars
       DrawLifeUIBarEx(gpSMCurrentMerc, SM_SELMERC_HEALTH_X, SM_SELMERC_HEALTH_Y,
-                      SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, vsIndexFB);
+                      SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, vsFB);
 
       if (!(gpSMCurrentMerc->uiStatusFlags & SOLDIER_ROBOT)) {
         DrawBreathUIBarEx(gpSMCurrentMerc, SM_SELMERC_BREATH_X, SM_SELMERC_BREATH_Y,
-                          SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, vsIndexFB);
+                          SM_SELMERC_HEALTH_WIDTH, SM_SELMERC_HEALTH_HEIGHT, TRUE, vsFB);
         DrawMoraleUIBarEx(gpSMCurrentMerc, SM_SELMERC_MORALE_X, SM_SELMERC_MORALE_Y,
-                          SM_SELMERC_MORALE_WIDTH, SM_SELMERC_MORALE_HEIGHT, TRUE, vsIndexFB);
+                          SM_SELMERC_MORALE_WIDTH, SM_SELMERC_MORALE_HEIGHT, TRUE, vsFB);
       }
     }
   }
@@ -3072,13 +3072,13 @@ void RenderTEAMPanel(BOOLEAN fDirty) {
 
         if (!(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
           DrawLifeUIBarEx(pSoldier, sTEAMLifeXY[posIndex], sTEAMLifeXY[posIndex + 1],
-                          TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsIndexFB);
+                          TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsFB);
 
           if (!(pSoldier->uiStatusFlags & SOLDIER_ROBOT)) {
             DrawBreathUIBarEx(pSoldier, sTEAMBreathXY[posIndex], sTEAMBreathXY[posIndex + 1],
-                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsIndexFB);
+                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsFB);
             DrawMoraleUIBarEx(pSoldier, sTEAMMoraleXY[posIndex], sTEAMMoraleXY[posIndex + 1],
-                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsIndexFB);
+                              TM_LIFEBAR_WIDTH, TM_LIFEBAR_HEIGHT, TRUE, vsFB);
           }
 
           if (gTacticalStatus.uiFlags & TURNBASED && pSoldier->bLife >= OKLIFE) {

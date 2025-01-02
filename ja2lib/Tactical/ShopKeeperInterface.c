@@ -1275,7 +1275,7 @@ void HandleShopKeeperInterface() {
   if (gfIsTheShopKeeperTalking)
     if (gpHighLightedItemObject != NULL || gubSkiDirtyLevel != SKI_DIRTY_LEVEL0)
       RenderMercPopUpBoxFromIndex(giPopUpBoxId, gusPositionOfSubTitlesX, SKI_POSITION_SUBTITLES_Y,
-                                  vsIndexFB);
+                                  vsFB);
 
   // if we are to display the drop item to ground text
   if (gfSkiDisplayDropItemToGroundText) {
@@ -1368,7 +1368,7 @@ BOOLEAN RenderShopKeeperInterface() {
   // if the merc is talking and the screen has been dirtied
   if (gfIsTheShopKeeperTalking)
     RenderMercPopUpBoxFromIndex(giPopUpBoxId, gusPositionOfSubTitlesX, SKI_POSITION_SUBTITLES_Y,
-                                vsIndexFB);
+                                vsFB);
 
   CrossOutUnwantedItems();
 
@@ -4278,7 +4278,7 @@ void InitShopKeeperSubTitledText(wchar_t *pString) {
     gusPositionOfSubTitlesX = 13;
 
     RenderMercPopUpBoxFromIndex(giPopUpBoxId, gusPositionOfSubTitlesX, SKI_POSITION_SUBTITLES_Y,
-                                vsIndexFB);
+                                vsFB);
 
     // check to make sure the region is not already initialized
     if (!(gShopKeeperSubTitleMouseRegion.uiFlags & MSYS_REGION_EXISTS)) {

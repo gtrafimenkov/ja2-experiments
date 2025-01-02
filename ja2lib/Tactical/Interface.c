@@ -1520,7 +1520,7 @@ void RenderOverlayMessage(VIDEO_OVERLAY *pBlitter) {
   // Override it!
   OverrideMercPopupBox(&gpOverrideMercBox);
 
-  RenderMercPopupBox(pBlitter->sX, pBlitter->sY, pBlitter->uiDestBuff);
+  RenderMercPopupBox(pBlitter->sX, pBlitter->sY, pBlitter->vsDestBuff);
 
   // Set it back!
   ResetOverrideMercPopupBox();
@@ -1709,10 +1709,11 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
 
-  BltVideoSurface(pBlitter->uiDestBuff, guiINTEXT, 0, pBlitter->pBackground->sLeft,
-                  pBlitter->pBackground->sTop, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVSurfaceToVSurface(pBlitter->vsDestBuff, GetVSurfaceByID(guiINTEXT), 0,
+                        pBlitter->pBackground->sLeft, pBlitter->pBackground->sTop,
+                        VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
-  pDestBuf = LockVSurfaceByID(pBlitter->uiDestBuff, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
 
   SetFont(pBlitter->uiFontID);
   SetFontBackground(pBlitter->ubFontBack);
@@ -1721,7 +1722,7 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                  pBlitter->zText);
 
-  UnlockVSurfaceByID(pBlitter->uiDestBuff);
+  UnlockVSurface(pBlitter->vsDestBuff);
 }
 
 void DirtyMercPanelInterface(struct SOLDIERTYPE *pSoldier, uint8_t ubDirtyLevel) {
@@ -2246,11 +2247,11 @@ BOOLEAN HandleOpenDoorMenu() {
 
 void RenderUIMessage(VIDEO_OVERLAY *pBlitter) {
   // Shade area first...
-  ShadowVideoSurfaceRect(GetVSurfaceByID(pBlitter->uiDestBuff), pBlitter->sX, pBlitter->sY,
+  ShadowVideoSurfaceRect(pBlitter->vsDestBuff, pBlitter->sX, pBlitter->sY,
                          pBlitter->sX + gusUIMessageWidth - 2,
                          pBlitter->sY + gusUIMessageHeight - 2);
 
-  RenderMercPopUpBoxFromIndex(iUIMessageBox, pBlitter->sX, pBlitter->sY, pBlitter->uiDestBuff);
+  RenderMercPopUpBoxFromIndex(iUIMessageBox, pBlitter->sX, pBlitter->sY, pBlitter->vsDestBuff);
 
   InvalidateRegion(pBlitter->sX, pBlitter->sY, pBlitter->sX + gusUIMessageWidth,
                    pBlitter->sY + gusUIMessageHeight);

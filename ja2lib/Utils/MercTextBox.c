@@ -192,35 +192,34 @@ void RemoveTextMercPopupImages() {
 }
 
 BOOLEAN RenderMercPopUpBoxFromIndex(int32_t iBoxId, int16_t sDestX, int16_t sDestY,
-                                    uint32_t uiBuffer) {
+                                    struct VSurface *dest) {
   // set the current box
   if (SetCurrentPopUpBox(iBoxId) == FALSE) {
     return (FALSE);
   }
 
   // now attempt to render the box
-  return (RenderMercPopupBox(sDestX, sDestY, uiBuffer));
+  return (RenderMercPopupBox(sDestX, sDestY, dest));
 }
 
-BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, uint32_t uiBuffer) {
+BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, struct VSurface *dest) {
   // will render/transfer the image from the buffer in the data structure to the buffer specified by
   // user
   BOOLEAN fReturnValue = TRUE;
 
   // check to see if we are wanting to blit a transparent background
   if (gPopUpTextBox->uiFlags & MERC_POPUP_PREPARE_FLAGS_TRANS_BACK)
-    BltVSurfaceToVSurface(GetVSurfaceByID(uiBuffer), gPopUpTextBox->sourceBuffer, 0, sDestX, sDestY,
+    BltVSurfaceToVSurface(dest, gPopUpTextBox->sourceBuffer, 0, sDestX, sDestY,
                           VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
   else
-    BltVSurfaceToVSurface(GetVSurfaceByID(uiBuffer), gPopUpTextBox->sourceBuffer, 0, sDestX, sDestY,
-                          VS_BLT_FAST, NULL);
+    BltVSurfaceToVSurface(dest, gPopUpTextBox->sourceBuffer, 0, sDestX, sDestY, VS_BLT_FAST, NULL);
 
   // blt, and grab return value
   //	fReturnValue = Blt16BPPTo16BPP(pDestBuf, uiDestPitchBYTES, pSrcBuf, uiSrcPitchBYTES, sDestX,
   // sDestY, 0, 0, gPopUpTextBox->sWidth, gPopUpTextBox->sHeight);
 
   // Invalidate!
-  if (uiBuffer == vsIndexFB) {
+  if (dest == vsFB) {
     InvalidateRegion(sDestX, sDestY, (int16_t)(sDestX + gPopUpTextBox->sWidth),
                      (int16_t)(sDestY + gPopUpTextBox->sHeight));
   }

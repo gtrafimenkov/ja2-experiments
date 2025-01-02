@@ -1964,9 +1964,9 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
 
     // a living soldier?..or external NPC?..choose panel based on this
     if (pSoldier) {
-      BltVObjectFromIndexOld(pBlitter->uiDestBuff, guiCOMPANEL, 0, pBlitter->sX, pBlitter->sY);
+      BltVObjectFromIndex(pBlitter->vsDestBuff, guiCOMPANEL, 0, pBlitter->sX, pBlitter->sY);
     } else {
-      BltVObjectFromIndexOld(pBlitter->uiDestBuff, guiCOMPANELB, 0, pBlitter->sX, pBlitter->sY);
+      BltVObjectFromIndex(pBlitter->vsDestBuff, guiCOMPANELB, 0, pBlitter->sX, pBlitter->sY);
     }
 
     // Display name, location ( if not current )
@@ -1976,7 +1976,7 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
 
     if (pSoldier) {
       // reset the font dest buffer
-      SetFontDestBuffer(GetVSurfaceByID(pBlitter->uiDestBuff), 0, 0, 640, 480, FALSE);
+      SetFontDestBuffer(pBlitter->vsDestBuff, 0, 0, 640, 480, FALSE);
 
       VarFindFontCenterCoordinates((int16_t)(pBlitter->sX + 12), (int16_t)(pBlitter->sY + 55), 73,
                                    9, BLOCKFONT2, &sFontX, &sFontY, L"%s", pSoldier->name);
@@ -2000,11 +2000,11 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
 
       // Display bars
       DrawLifeUIBarEx(pSoldier, (int16_t)(pBlitter->sX + 69), (int16_t)(pBlitter->sY + 47), 3, 42,
-                      FALSE, pBlitter->uiDestBuff);
+                      FALSE, pBlitter->vsDestBuff);
       DrawBreathUIBarEx(pSoldier, (int16_t)(pBlitter->sX + 75), (int16_t)(pBlitter->sY + 47), 3, 42,
-                        FALSE, pBlitter->uiDestBuff);
+                        FALSE, pBlitter->vsDestBuff);
       DrawMoraleUIBarEx(pSoldier, (int16_t)(pBlitter->sX + 81), (int16_t)(pBlitter->sY + 47), 3, 42,
-                        FALSE, pBlitter->uiDestBuff);
+                        FALSE, pBlitter->vsDestBuff);
 
     } else {
       VarFindFontCenterCoordinates((int16_t)(pBlitter->sX + 9), (int16_t)(pBlitter->sY + 55), 73, 9,
@@ -2017,14 +2017,14 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
     // BlinkAutoFace( gpCurrentTalkingFace->iID );
     // MouthAutoFace( gpCurrentTalkingFace->iID );
 
-    pDestBuf = LockVSurfaceByID(pBlitter->uiDestBuff, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
     pSrcBuf = LockVSurfaceByID(gpCurrentTalkingFace->uiAutoDisplayBuffer, &uiSrcPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                     (int16_t)(pBlitter->sX + 14), (int16_t)(pBlitter->sY + 6), 0, 0,
                     gpCurrentTalkingFace->usFaceWidth, gpCurrentTalkingFace->usFaceHeight);
 
-    UnlockVSurfaceByID(pBlitter->uiDestBuff);
+    UnlockVSurface(pBlitter->vsDestBuff);
     UnlockVSurfaceByID(gpCurrentTalkingFace->uiAutoDisplayBuffer);
 
     InvalidateRegion(pBlitter->sX, pBlitter->sY, pBlitter->sX + 99, pBlitter->sY + 98);
@@ -2033,7 +2033,7 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
 
 void RenderSubtitleBoxOverlay(VIDEO_OVERLAY *pBlitter) {
   if (giTextBoxOverlay != -1) {
-    RenderMercPopUpBoxFromIndex(iDialogueBox, pBlitter->sX, pBlitter->sY, pBlitter->uiDestBuff);
+    RenderMercPopUpBoxFromIndex(iDialogueBox, pBlitter->sX, pBlitter->sY, pBlitter->vsDestBuff);
 
     InvalidateRegion(pBlitter->sX, pBlitter->sY, pBlitter->sX + gusSubtitleBoxWidth,
                      pBlitter->sY + gusSubtitleBoxHeight);
