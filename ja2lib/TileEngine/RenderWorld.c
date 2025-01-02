@@ -723,7 +723,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
   iAnchorPosX_S = iStartPointX_S;
   iAnchorPosY_S = iStartPointY_S;
 
-  if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
   if (uiFlags & TILES_DYNAMIC_CHECKFOR_INT_TILE) {
     if (ShouldCheckForMouseDetections()) {
@@ -2028,8 +2028,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
                 ColorFillVSurfaceArea(vsFB, iTempPosX_S, iTempPosY_S, (int16_t)(iTempPosX_S + 40),
                                       (int16_t)(min(iTempPosY_S + 20, 360)),
                                       Get16BPPColor(FROMRGB(0, 0, 0)));
-                if (!(uiFlags & TILES_DIRTY))
-                  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+                if (!(uiFlags & TILES_DIRTY)) pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
               }
             }
           }
@@ -2271,7 +2270,7 @@ void RenderWorld() {
     uint32_t cnt;
     wchar_t zVal;
 
-    pDestBuf = (uint16_t *)LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);
 
     for (cnt = 0; cnt < (640 * 480); cnt++) {
       // Get Z value
@@ -5528,7 +5527,7 @@ void RenderRoomInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t sSta
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5626,7 +5625,7 @@ void RenderFOVDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t 
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5717,7 +5716,7 @@ void RenderCoverDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5803,7 +5802,7 @@ void RenderGridNoVisibleDebugInfo(int16_t sStartPointX_M, int16_t sStartPointY_M
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
   do {
     fEndRenderRow = FALSE;
@@ -5897,7 +5896,7 @@ void ExamineZBufferForHiddenTiles(int16_t sStartPointX_M, int16_t sStartPointY_M
   sAnchorPosX_S = sStartPointX_S;
   sAnchorPosY_S = sStartPointY_S;
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
   // Get VObject for firt land peice!
   TileElem = &(gTileDatabase[FIRSTTEXTURE1]);

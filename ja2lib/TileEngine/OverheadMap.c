@@ -641,7 +641,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
     // ColorFillVSurfaceArea( vsIndexFB, 0, 0, (int16_t)(640),
     // (int16_t)(gsVIEWPORT_WINDOW_END_Y), Get16BPPColor( FROMRGB( 0, 0, 0 ) ) );
 
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
     do {
       fEndRenderRow = FALSE;
@@ -939,7 +939,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       // Update saved buffer - do for the viewport size ony!
       GetCurrentVideoSettings(&usWidth, &usHeight);
 
-      pSrcBuf = LockVSurfaceByID(vsIndexFB, &uiSrcPitchBYTES);
+      pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
       pDestBuf = LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
 
       Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
@@ -963,7 +963,7 @@ void RenderOverheadOverlays() {
   uint8_t *pDestBuf;
   uint8_t ubPassengers = 0;
 
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   GetVideoObject(&hVObject, uiPERSONS);
 
   // SOLDIER OVERLAY
