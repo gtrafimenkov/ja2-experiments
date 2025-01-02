@@ -699,12 +699,6 @@ BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1,
     return (FALSE);
   }
 
-  // Mark as dirty if it's the backbuffer
-  // if ( uiDestVSurface == BACKBUFFER )
-  //{
-  //	InvalidateBackbuffer( );
-  //}
-
   UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }

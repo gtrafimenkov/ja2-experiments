@@ -3467,7 +3467,7 @@ uint32_t EditScreenHandle(void) {
   // Handle video overlays, for FPS and screen message stuff
   if (gfScrollPending) {
     AllocateVideoOverlaysArea();
-    SaveVideoOverlaysArea(vsIndexFB);
+    SaveVideoOverlaysArea(vsFB);
   }
   ExecuteVideoOverlays();
 
