@@ -359,7 +359,7 @@ void BeginLoadScreen() {
       SrcRect.iRight = 640 - iPercentage / 20;
       SrcRect.iTop = 367 * iPercentage / 100;
       SrcRect.iBottom = 480 - 39 * iPercentage / 100;
-      BltStretchVideoSurface(vsIndexFB, vsSaveBufferID, 0, 0, 0, &SrcRect, &DstRect);
+      BltStretchVSurface(vsFB, vsSaveBuffer, 0, 0, 0, &SrcRect, &DstRect);
       InvalidateScreen();
       RefreshScreen(NULL);
     }
