@@ -68,7 +68,7 @@ typedef struct _VIDEO_OVERLAY {
   uint8_t ubFontBack;
   uint8_t ubFontFore;
   wchar_t zText[200];
-  uint32_t uiDestBuff;
+  struct VSurface *vsDestBuff;
   OVERLAY_CALLBACK BltCallback;
 
 } VIDEO_OVERLAY;
@@ -136,7 +136,7 @@ BOOLEAN UpdateVideoOverlay(VIDEO_OVERLAY_DESC *pTopmostDesc, uint32_t iBlitterIn
 void SaveVideoOverlaysArea(struct VSurface *src);
 void DeleteVideoOverlaysArea();
 void AllocateVideoOverlaysArea();
-void ExecuteVideoOverlaysToAlternateBuffer(uint32_t uiNewDestBuffer);
+void ExecuteVideoOverlaysToAlternateBuffer(struct VSurface *dest);
 void RemoveVideoOverlay(int32_t iVideoOverlay);
 BOOLEAN RestoreShiftedVideoOverlays(int16_t sShiftX, int16_t sShiftY);
 BOOLEAN SetOverlayUserData(int32_t iVideoOverlay, uint8_t ubNum, uint32_t uiData);

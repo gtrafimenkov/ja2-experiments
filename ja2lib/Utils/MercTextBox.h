@@ -6,6 +6,7 @@
 #define __MERCTEXTBOX_H_
 
 #include "SGP/Types.h"
+#include "SGP/VSurface.h"
 
 #define MERC_POPUP_PREPARE_FLAGS_TRANS_BACK 0x00000001
 #define MERC_POPUP_PREPARE_FLAGS_MARGINS 0x00000002
@@ -27,11 +28,11 @@ BOOLEAN RemoveMercPopupBox();
 BOOLEAN RemoveMercPopupBoxFromIndex(uint32_t uiId);
 
 // render the current pop up box
-BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, uint32_t uiBuffer);
+BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, struct VSurface *dest);
 
 // render pop up box with this index value
 BOOLEAN RenderMercPopUpBoxFromIndex(int32_t iBoxId, int16_t sDestX, int16_t sDestY,
-                                    uint32_t uiBuffer);
+                                    struct VSurface *dest);
 
 void RemoveTextMercPopupImages();
 

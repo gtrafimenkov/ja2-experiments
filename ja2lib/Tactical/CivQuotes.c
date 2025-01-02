@@ -246,7 +246,7 @@ int8_t GetCivType(struct SOLDIERTYPE *pCiv) {
 void RenderCivQuoteBoxOverlay(VIDEO_OVERLAY *pBlitter) {
   if (gCivQuoteData.iVideoOverlay != -1) {
     RenderMercPopUpBoxFromIndex(gCivQuoteData.iDialogueBox, pBlitter->sX, pBlitter->sY,
-                                pBlitter->uiDestBuff);
+                                pBlitter->vsDestBuff);
 
     InvalidateRegion(pBlitter->sX, pBlitter->sY, pBlitter->sX + gusCivQuoteBoxWidth,
                      pBlitter->sY + gusCivQuoteBoxHeight);

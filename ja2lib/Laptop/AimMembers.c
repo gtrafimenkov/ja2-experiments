@@ -1779,7 +1779,7 @@ BOOLEAN DisplayVideoConferencingDisplay() {
 
     usPosX = (LAPTOP_SCREEN_LR_X - usActualWidth) / 2;
 
-    RenderMercPopUpBoxFromIndex(iAimMembersBoxId, usPosX, TEXT_POPUP_WINDOW_Y, vsIndexFB);
+    RenderMercPopUpBoxFromIndex(iAimMembersBoxId, usPosX, TEXT_POPUP_WINDOW_Y, vsFB);
 
     if (RemoveMercPopupBoxFromIndex(iAimMembersBoxId)) {
       iAimMembersBoxId = -1;

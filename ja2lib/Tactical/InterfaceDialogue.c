@@ -747,7 +747,7 @@ void RenderTalkingMenu() {
 
     if (gTalkPanel.fRenderSubTitlesNow) {
       RenderMercPopUpBoxFromIndex(iInterfaceDialogueBox, gTalkPanel.sPopupX, gTalkPanel.sPopupY,
-                                  vsIndexFB);
+                                  vsFB);
     }
   }
 
