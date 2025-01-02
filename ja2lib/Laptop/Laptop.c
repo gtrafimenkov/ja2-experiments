@@ -1640,7 +1640,7 @@ uint32_t LaptopScreenHandle() {
     iPercentage = iRealPercentage = 0;
     uiStartTime = GetJA2Clock();
     BlitBufferToBuffer(vsFB, vsSaveBuffer, 0, 0, 640, 480);
-    BlitBufferToBufferOld(guiEXTRABUFFER, vsIndexFB, 0, 0, 640, 480);
+    BlitBufferToBuffer(vsExtraBuffer, vsFB, 0, 0, 640, 480);
     PlayJA2SampleFromFile("SOUNDS\\Laptop power up (8-11).wav", RATE_11025, HIGHVOLUME, 1,
                           MIDDLEPAN);
     while (iRealPercentage < 100) {
@@ -2203,7 +2203,7 @@ BOOLEAN LeaveLapTopScreen(void) {
       PlayJA2SampleFromFile("SOUNDS\\Laptop power down (8-11).wav", RATE_11025, HIGHVOLUME, 1,
                             MIDDLEPAN);
       while (iRealPercentage > 0) {
-        BlitBufferToBufferOld(guiEXTRABUFFER, vsIndexFB, 0, 0, 640, 480);
+        BlitBufferToBuffer(vsExtraBuffer, vsFB, 0, 0, 640, 480);
 
         uiCurrTime = GetJA2Clock();
         iPercentage = (uiCurrTime - uiStartTime) * 100 / uiTimeRange;
