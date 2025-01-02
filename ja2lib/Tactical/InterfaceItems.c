@@ -4731,8 +4731,7 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
   usWidth = (uint32_t)pTrav->usWidth;
 
   for (cnt = 0; cnt < gubNumItemPopups; cnt++) {
-    BltVObjectFromIndexOld(vsIndexFB, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth),
-                           gsItemPopupY);
+    BltVObjectFromIndex(vsFB, guiItemPopupBoxes, 0, gsItemPopupX + (cnt * usWidth), gsItemPopupY);
 
     if (cnt < gpItemPopupObject->ubNumberOfObjects) {
       sX = (int16_t)(gsItemPopupX + (cnt * usWidth) + 11);
@@ -5700,7 +5699,7 @@ void RenderItemPickupMenu() {
         usSubRegion = 1;
       }
 
-      BltVObjectFromIndexOld(vsIndexFB, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY);
+      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, usSubRegion, sX, sY);
 
       // Add hieght of object
       GetVideoObjectETRLESubregionProperties(gItemPickupMenu.uiPanelVo, usSubRegion, &usWidth,
@@ -5712,9 +5711,9 @@ void RenderItemPickupMenu() {
     // Do end
     if (gItemPickupMenu.bNumSlotsPerPage == NUM_PICKUP_SLOTS &&
         gItemPickupMenu.ubTotalItems > NUM_PICKUP_SLOTS) {
-      BltVObjectFromIndexOld(vsIndexFB, gItemPickupMenu.uiPanelVo, 2, sX, sY);
+      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 2, sX, sY);
     } else {
-      BltVObjectFromIndexOld(vsIndexFB, gItemPickupMenu.uiPanelVo, 3, sX, sY);
+      BltVObjectFromIndex(vsFB, gItemPickupMenu.uiPanelVo, 3, sX, sY);
     }
 
     // Render items....

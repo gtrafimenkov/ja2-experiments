@@ -1289,7 +1289,7 @@ void RenderSummaryWindow() {
 
   if (gfRenderMap) {
     gfRenderMap = FALSE;
-    BltVObjectFromIndexOld(vsIndexFB, guiOmertaMap, 0, MAP_LEFT - 2, MAP_TOP - 2);
+    BltVObjectFromIndex(vsFB, guiOmertaMap, 0, MAP_LEFT - 2, MAP_TOP - 2);
     InvalidateRegion(MAP_LEFT - 1, MAP_TOP - 1, MAP_RIGHT + 1, MAP_BOTTOM + 1);
     // Draw the coordinates
     SetFont(SMALLCOMPFONT);

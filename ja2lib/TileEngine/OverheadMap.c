@@ -927,7 +927,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
 
     if (!fFromMapUtility) {
       // Render border!
-      BltVObjectFromIndexOld(vsIndexFB, uiOVERMAP, 0, 0, 0);
+      BltVObjectFromIndex(vsFB, uiOVERMAP, 0, 0, 0);
     }
 
     // Update the save buffer

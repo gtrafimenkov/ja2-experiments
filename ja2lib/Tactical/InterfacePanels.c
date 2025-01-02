@@ -3689,8 +3689,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
       RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                   TM_FACE_HEIGHT);
-      BltVObjectFromIndexOld(vsIndexFB, guiCLOSE, pSoldier->ubClosePanelFrame,
-                             pSoldier->sPanelFaceX, pSoldier->sPanelFaceY);
+      BltVObjectFromIndex(vsFB, guiCLOSE, pSoldier->ubClosePanelFrame, pSoldier->sPanelFaceX,
+                          pSoldier->sPanelFaceY);
       InvalidateRegion(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY,
                        pSoldier->sPanelFaceX + TM_FACE_WIDTH,
                        pSoldier->sPanelFaceY + TM_FACE_HEIGHT);
@@ -3733,8 +3733,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
 
   if (pSoldier->fDeadPanel) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
-      BltVObjectFromIndexOld(vsIndexFB, guiDEAD, pSoldier->ubDeadPanelFrame, pSoldier->sPanelFaceX,
-                             pSoldier->sPanelFaceY);
+      BltVObjectFromIndex(vsFB, guiDEAD, pSoldier->ubDeadPanelFrame, pSoldier->sPanelFaceX,
+                          pSoldier->sPanelFaceY);
 
       // Blit hatch!
       BltVObjectFromIndex(vsSaveBuffer, guiHATCH, 0, pSoldier->sPanelFaceX, pSoldier->sPanelFaceY);
@@ -3766,8 +3766,8 @@ void HandlePanelFaceAnimations(struct SOLDIERTYPE *pSoldier) {
     if (!gFacesData[pSoldier->iFaceIndex].fDisabled) {
       RestoreExternBackgroundRect(pSoldier->sPanelFaceX, pSoldier->sPanelFaceY, TM_FACE_WIDTH,
                                   TM_FACE_HEIGHT);
-      BltVObjectFromIndexOld(vsIndexFB, guiCLOSE, pSoldier->bOpenPanelFrame, pSoldier->sPanelFaceX,
-                             pSoldier->sPanelFaceY);
+      BltVObjectFromIndex(vsFB, guiCLOSE, pSoldier->bOpenPanelFrame, pSoldier->sPanelFaceX,
+                          pSoldier->sPanelFaceY);
     }
   }
 }
