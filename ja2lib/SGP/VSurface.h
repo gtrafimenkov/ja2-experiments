@@ -39,7 +39,6 @@ extern BOOLEAN gfExtraBuffer;
 // Defines for special video object handles given to blit function
 //
 
-#define PRIMARY_SURFACE 0xFFFFFFF0
 #define vsIndexFB 0xFFFFFFF2
 
 //
