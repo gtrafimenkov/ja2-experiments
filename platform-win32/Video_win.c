@@ -1100,7 +1100,7 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
     RestoreShiftedVideoOverlays(sShiftX, sShiftY);
 
     // SAVE NEW
-    SaveVideoOverlaysArea(BACKBUFFER);
+    SaveVideoOverlaysArea(vsBackBuffer);
 
     // BLIT NEW
     ExecuteVideoOverlaysToAlternateBuffer(BACKBUFFER);
