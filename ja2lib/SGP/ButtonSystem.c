@@ -109,7 +109,7 @@ BOOLEAN gfRenderHilights = TRUE;
 BUTTON_PICS ButtonPictures[MAX_BUTTON_PICS];
 int32_t ButtonPicsLoaded;
 
-uint32_t ButtonDestBuffer = BACKBUFFER;
+struct VSurface *vsButtonDest;
 uint32_t ButtonDestPitch = 640 * 2;
 uint32_t ButtonDestBPP = 16;
 
@@ -485,17 +485,6 @@ int32_t UseVObjAsButtonImage(struct VObject *hVObject, int32_t Grayed, int32_t O
   return (UseSlot);
 }
 
-//=============================================================================
-//	SetButtonDestBuffer
-//
-//	Sets the destination buffer for all button blits.
-//
-BOOLEAN SetButtonDestBuffer(uint32_t DestBuffer) {
-  if (DestBuffer != BUTTON_USE_DEFAULT) ButtonDestBuffer = DestBuffer;
-
-  return (TRUE);
-}
-
 // Removes a QuickButton image from the system.
 void UnloadButtonImage(int32_t Index) {
   int32_t x;
@@ -614,27 +603,14 @@ BOOLEAN DisableButton(int32_t iButtonID) {
 //	Initializes the button image sub-system. This function is called by
 //	InitButtonSystem.
 //
-BOOLEAN InitializeButtonImageManager(int32_t DefaultBuffer, int32_t DefaultPitch,
-                                     int32_t DefaultBPP) {
+BOOLEAN InitializeButtonImageManager() {
   VOBJECT_DESC vo_desc;
   uint8_t Pix;
   int x;
 
-  // Set up the default settings
-  if (DefaultBuffer != BUTTON_USE_DEFAULT)
-    ButtonDestBuffer = (uint32_t)DefaultBuffer;
-  else
-    ButtonDestBuffer = vsIndexFB;
-
-  if (DefaultPitch != BUTTON_USE_DEFAULT)
-    ButtonDestPitch = (uint32_t)DefaultPitch;
-  else
-    ButtonDestPitch = 640 * 2;
-
-  if (DefaultBPP != BUTTON_USE_DEFAULT)
-    ButtonDestBPP = (uint32_t)DefaultBPP;
-  else
-    ButtonDestBPP = 16;
+  vsButtonDest = vsFB;
+  ButtonDestPitch = 640 * 2;
+  ButtonDestBPP = 16;
 
   // Blank out all QuickButton images
   for (x = 0; x < MAX_BUTTON_PICS; x++) {
@@ -1049,7 +1025,7 @@ BOOLEAN InitButtonSystem(void) {
   }
 
   // Initialize the button image manager sub-system
-  if (InitializeButtonImageManager(-1, -1, -1) == FALSE) {
+  if (InitializeButtonImageManager() == FALSE) {
     DbgMessage(TOPIC_BUTTON_HANDLER, DBG_LEVEL_0, "Failed button image manager init\n");
     return (FALSE);
   }
@@ -2688,8 +2664,8 @@ void DrawQuickButton(GUI_BUTTON *b) {
   }
 
   // Display the button image
-  BltVideoObjectOld(ButtonDestBuffer, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc,
-                    b->YLoc);
+  BltVideoObject(vsButtonDest, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc,
+                 b->YLoc);
 }
 
 void DrawHatchOnButton(GUI_BUTTON *b) {
@@ -2700,9 +2676,9 @@ void DrawHatchOnButton(GUI_BUTTON *b) {
   ClipRect.iRight = b->Area.RegionBottomRightX - 1;
   ClipRect.iTop = b->Area.RegionTopLeftY;
   ClipRect.iBottom = b->Area.RegionBottomRightY - 1;
-  pDestBuf = LockVSurfaceByID(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsButtonDest, &uiDestPitchBYTES);
   Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnlockVSurfaceByID(ButtonDestBuffer);
+  UnlockVSurface(vsButtonDest);
 }
 
 void DrawShadeOnButton(GUI_BUTTON *b) {
@@ -2713,15 +2689,15 @@ void DrawShadeOnButton(GUI_BUTTON *b) {
   ClipRect.iRight = b->Area.RegionBottomRightX - 1;
   ClipRect.iTop = b->Area.RegionTopLeftY;
   ClipRect.iBottom = b->Area.RegionBottomRightY - 1;
-  pDestBuf = LockVSurfaceByID(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsButtonDest, &uiDestPitchBYTES);
   Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnlockVSurfaceByID(ButtonDestBuffer);
+  UnlockVSurface(vsButtonDest);
 }
 
 void DrawDefaultOnButton(GUI_BUTTON *b) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
-  pDestBuf = LockVSurfaceByID(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsButtonDest, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   if (b->bDefaultStatus == DEFAULT_STATUS_DARKBORDER ||
       b->bDefaultStatus == DEFAULT_STATUS_WINDOWS95) {
@@ -2747,7 +2723,7 @@ void DrawDefaultOnButton(GUI_BUTTON *b) {
   if (b->bDefaultStatus == DEFAULT_STATUS_DOTTEDINTERIOR ||
       b->bDefaultStatus == DEFAULT_STATUS_WINDOWS95) {  // Draw an internal dotted rectangle.
   }
-  UnlockVSurfaceByID(ButtonDestBuffer);
+  UnlockVSurface(vsButtonDest);
 }
 
 void DrawCheckBoxButtonOn(int32_t iButtonID) {
@@ -2827,8 +2803,8 @@ void DrawCheckBoxButton(GUI_BUTTON *b) {
   }
 
   // Display the button image
-  BltVideoObjectOld(ButtonDestBuffer, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc,
-                    b->YLoc);
+  BltVideoObject(vsButtonDest, ButtonPictures[b->ImageNum].vobj, (uint16_t)UseImage, b->XLoc,
+                 b->YLoc);
 }
 
 void DrawIconOnButton(GUI_BUTTON *b) {
@@ -2913,10 +2889,10 @@ void DrawIconOnButton(GUI_BUTTON *b) {
     SetClippingRect(&NewClip);
     // Blit the icon
     if (b->uiFlags & BUTTON_GENERIC)
-      BltVideoObjectOld(ButtonDestBuffer, GenericButtonIcons[b->iIconID], b->usIconIndex,
-                        (int16_t)xp, (int16_t)yp);
+      BltVideoObject(vsButtonDest, GenericButtonIcons[b->iIconID], b->usIconIndex, (int16_t)xp,
+                     (int16_t)yp);
     else
-      BltVideoObjectOld(ButtonDestBuffer, hvObject, b->usIconIndex, (int16_t)xp, (int16_t)yp);
+      BltVideoObject(vsButtonDest, hvObject, b->usIconIndex, (int16_t)xp, (int16_t)yp);
     // Restore previous clip region
     SetClippingRect(&OldClip);
   }
@@ -2972,8 +2948,8 @@ void DrawTextOnButton(GUI_BUTTON *b) {
     if ((NewClip.iRight <= NewClip.iLeft) || (NewClip.iBottom <= NewClip.iTop)) return;
 
     // Set the font printing settings to the buttons viewable area
-    SetFontDestBuffer(GetVSurfaceByID(ButtonDestBuffer), NewClip.iLeft, NewClip.iTop,
-                      NewClip.iRight, NewClip.iBottom, FALSE);
+    SetFontDestBuffer(vsButtonDest, NewClip.iLeft, NewClip.iTop, NewClip.iRight, NewClip.iBottom,
+                      FALSE);
 
     // Compute the coordinates to center the text
     if (b->bTextYOffset == -1)
@@ -3143,9 +3119,9 @@ void DrawGenericButton(GUI_BUTTON *b) {
   cy = (b->YLoc + ((NumChunksHigh - 1) * iBorderHeight) + hremain);
 
   // Fill the button's area with the button's background color
-  ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), b->Area.RegionTopLeftX,
-                        b->Area.RegionTopLeftY, b->Area.RegionBottomRightX,
-                        b->Area.RegionBottomRightY, GenericButtonFillColors[b->ImageNum]);
+  ColorFillVSurfaceArea(vsButtonDest, b->Area.RegionTopLeftX, b->Area.RegionTopLeftY,
+                        b->Area.RegionBottomRightX, b->Area.RegionBottomRightY,
+                        GenericButtonFillColors[b->ImageNum]);
 
   // If there is a background image, fill the button's area with it
   if (GenericButtonBackground[b->ImageNum] != NULL) {
@@ -3155,7 +3131,7 @@ void DrawGenericButton(GUI_BUTTON *b) {
     if (b->uiFlags & BUTTON_CLICKED_ON) ox = oy = 1;
 
     // Fill the area with the image, tilling it if need be.
-    ImageFillVideoSurfaceArea(ButtonDestBuffer, b->Area.RegionTopLeftX + ox,
+    ImageFillVideoSurfaceArea(vsButtonDest, b->Area.RegionTopLeftX + ox,
                               b->Area.RegionTopLeftY + oy, b->Area.RegionBottomRightX,
                               b->Area.RegionBottomRightY, GenericButtonBackground[b->ImageNum],
                               GenericButtonBackgroundIndex[b->ImageNum],
@@ -3163,7 +3139,7 @@ void DrawGenericButton(GUI_BUTTON *b) {
   }
 
   // Lock the dest buffer
-  pDestBuf = LockVSurfaceByID(ButtonDestBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsButtonDest, &uiDestPitchBYTES);
 
   GetClippingRect(&ClipRect);
 
@@ -3215,7 +3191,7 @@ void DrawGenericButton(GUI_BUTTON *b) {
   }
 
   // Unlock buffer
-  UnlockVSurfaceByID(ButtonDestBuffer);
+  UnlockVSurface(vsButtonDest);
 }
 
 //=======================================================================================================

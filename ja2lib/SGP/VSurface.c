@@ -350,3 +350,91 @@ BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHan
                          iPosY + hImageHandle->pETRLEObject->usHeight);
   return (TRUE);
 }
+
+// Fills an rectangular area with a specified image value.
+BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
+                                  int32_t iDestX2, int32_t iDestY2, struct VObject *BkgrndImg,
+                                  uint16_t Index, int16_t Ox, int16_t Oy) {
+  int16_t xc, yc, hblits, wblits, aw, pw, ah, ph, w, h, xo, yo;
+  ETRLEObject *pTrav;
+  SGPRect NewClip, OldClip;
+
+  pTrav = &(BkgrndImg->pETRLEObject[Index]);
+  ph = (int16_t)(pTrav->usHeight + pTrav->sOffsetY);
+  pw = (int16_t)(pTrav->usWidth + pTrav->sOffsetX);
+
+  ah = (int16_t)(iDestY2 - iDestY1);
+  aw = (int16_t)(iDestX2 - iDestX1);
+
+  Ox %= pw;
+  Oy %= ph;
+
+  if (Ox > 0) Ox -= pw;
+  xo = (-Ox) % pw;
+
+  if (Oy > 0) Oy -= ph;
+  yo = (-Oy) % ph;
+
+  if (Ox < 0)
+    xo = (-Ox) % pw;
+  else {
+    xo = pw - (Ox % pw);
+    Ox -= pw;
+  }
+
+  if (Oy < 0)
+    yo = (-Oy) % ph;
+  else {
+    yo = ph - (Oy % pw);
+    Oy -= ph;
+  }
+
+  hblits = ((ah + yo) / ph) + (((ah + yo) % ph) ? 1 : 0);
+  wblits = ((aw + xo) / pw) + (((aw + xo) % pw) ? 1 : 0);
+
+  if ((hblits == 0) || (wblits == 0)) return (FALSE);
+
+  //
+  // Clip fill region coords
+  //
+
+  GetClippingRect(&OldClip);
+
+  NewClip.iLeft = iDestX1;
+  NewClip.iTop = iDestY1;
+  NewClip.iRight = iDestX2;
+  NewClip.iBottom = iDestY2;
+
+  if (NewClip.iLeft < OldClip.iLeft) NewClip.iLeft = OldClip.iLeft;
+
+  if (NewClip.iLeft > OldClip.iRight) return (FALSE);
+
+  if (NewClip.iRight > OldClip.iRight) NewClip.iRight = OldClip.iRight;
+
+  if (NewClip.iRight < OldClip.iLeft) return (FALSE);
+
+  if (NewClip.iTop < OldClip.iTop) NewClip.iTop = OldClip.iTop;
+
+  if (NewClip.iTop > OldClip.iBottom) return (FALSE);
+
+  if (NewClip.iBottom > OldClip.iBottom) NewClip.iBottom = OldClip.iBottom;
+
+  if (NewClip.iBottom < OldClip.iTop) return (FALSE);
+
+  if ((NewClip.iRight <= NewClip.iLeft) || (NewClip.iBottom <= NewClip.iTop)) return (FALSE);
+
+  SetClippingRect(&NewClip);
+
+  yc = (int16_t)iDestY1;
+  for (h = 0; h < hblits; h++) {
+    xc = (int16_t)iDestX1;
+    for (w = 0; w < wblits; w++) {
+      BltVideoObject(dest, BkgrndImg, Index, xc + Ox, yc + Oy);
+      xc += pw;
+    }
+    yc += ph;
+  }
+
+  SetClippingRect(&OldClip);
+  return (TRUE);
+}

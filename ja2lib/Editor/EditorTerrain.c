@@ -95,20 +95,16 @@ void RenderTerrainTileButtons() {
       usX2 = usX + 42;
 
       if (x == CurrentPaste && !fUseTerrainWeights) {
-        ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), usX, usY, usX2, usY2,
-                              usFillColorRed);
+        ColorFillVSurfaceArea(vsButtonDest, usX, usY, usX2, usY2, usFillColorRed);
       } else {
-        ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), usX, usY, usX2, usY2,
-                              usFillColorDark);
-        ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), usX + 1, usY + 1, usX2, usY2,
-                              usFillColorLight);
+        ColorFillVSurfaceArea(vsButtonDest, usX, usY, usX2, usY2, usFillColorDark);
+        ColorFillVSurfaceArea(vsButtonDest, usX + 1, usY + 1, usX2, usY2, usFillColorLight);
       }
-      ColorFillVSurfaceArea(GetVSurfaceByID(ButtonDestBuffer), usX + 1, usY + 1, usX2 - 1, usY2 - 1,
-                            0);
+      ColorFillVSurfaceArea(vsButtonDest, usX + 1, usY + 1, usX2 - 1, usY2 - 1, 0);
 
       SetObjectShade(gTileDatabase[gTileTypeStartIndex[x]].hTileSurface, DEFAULT_SHADE_LEVEL);
-      BltVideoObjectOld(ButtonDestBuffer, gTileDatabase[gTileTypeStartIndex[x]].hTileSurface, 0,
-                        (usX + 1), (usY + 1));
+      BltVideoObject(vsButtonDest, gTileDatabase[gTileTypeStartIndex[x]].hTileSurface, 0, (usX + 1),
+                     (usY + 1));
 
       if (fUseTerrainWeights) {
         mprintf(usX + 2, usY + 2, L"%d", ubTerrainTileButtonWeight[x]);
