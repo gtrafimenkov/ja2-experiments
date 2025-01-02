@@ -3057,10 +3057,10 @@ void CheckValidVSurfaceIndex(uint32_t uiIndex) {
         sprintf(str, "ShadowVideoSurfaceRect");
         break;
       case DEBUGSTR_BLTSTRETCHVIDEOSURFACE_DST:
-        sprintf(str, "BltStretchVideoSurface (dest)");
+        sprintf(str, "BltStretchVSurface (dest)");
         break;
       case DEBUGSTR_BLTSTRETCHVIDEOSURFACE_SRC:
-        sprintf(str, "BltStretchVideoSurface (src)");
+        sprintf(str, "BltStretchVSurface (src)");
         break;
       case DEBUGSTR_DeleteVSurfaceByIndex:
         sprintf(str, "DeleteVSurfaceByIndex");
