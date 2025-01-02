@@ -614,7 +614,7 @@ uint32_t AutoResolveScreenHandle() {
     ClipRect.iTop = 0;
     ClipRect.iRight = 640;
     ClipRect.iBottom = 480;
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
     UnlockVSurface(vsFB);
     BlitBufferToBuffer(vsFB, vsSaveBuffer, 0, 0, 640, 480);
@@ -899,7 +899,7 @@ void RenderSoldierCell(SOLDIERCELL *pCell) {
     ClipRect.iTop = pCell->yp + 3;
     ClipRect.iRight = pCell->xp + 33 + x;
     ClipRect.iBottom = pCell->yp + 29;
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
     UnlockVSurface(vsFB);
   }
@@ -1119,7 +1119,7 @@ void ExpandWindow() {
   }
 
   // The new rect now determines the state of the current rectangle.
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, gpAR->ExRect.iLeft, gpAR->ExRect.iTop, gpAR->ExRect.iRight,
                 gpAR->ExRect.iBottom, Get16BPPColor(FROMRGB(200, 200, 100)), pDestBuf);
@@ -2746,7 +2746,7 @@ void RenderSoldierCellHealth(SOLDIERCELL *pCell) {
 
   SetFont(SMALLCOMPFONT);
   // Restore the background before drawing text.
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   pSrcBuf = LockVSurfaceByID(gpAR->iInterfaceBuffer, &uiSrcPitchBYTES);
   xp = pCell->xp + 2;
   yp = pCell->yp + 32;

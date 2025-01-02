@@ -1253,7 +1253,7 @@ void RenderSummaryWindow() {
     // Draw the mode tabs
     SetFontForeground(FONT_YELLOW);
     mprintf(354, 18, L"Summary");
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 15, 405, 28, 0, pDestBuf);
     UnlockVSurface(vsFB);
@@ -1268,7 +1268,7 @@ void RenderSummaryWindow() {
       SetFontForeground(FONT_RED);
     }
     mprintf(354, 33, L"Items");
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     RectangleDraw(TRUE, 350, 30, 405, 43, 0, pDestBuf);
     UnlockVSurface(vsFB);
@@ -1304,7 +1304,7 @@ void RenderSummaryWindow() {
     }
     if (gfRenderGrid) {
       uint16_t pos;
-      pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+      pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
       SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
       for (i = 1; i <= 15; i++) {
         // draw vertical lines
@@ -1364,7 +1364,7 @@ void RenderSummaryWindow() {
           }
           ClipRect.iLeft = MAP_LEFT + x * 13;
           ClipRect.iRight = ClipRect.iLeft + 12;
-          pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+          pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
           Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
           if (giCurrentViewLevel == BASEMENT1_LEVEL_MASK ||
               giCurrentViewLevel == BASEMENT2_LEVEL_MASK ||
@@ -1379,7 +1379,7 @@ void RenderSummaryWindow() {
   }
 
   if (gfGlobalSummaryExists) {
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
     // Render the grid for the map currently residing in memory (blue).
     if (gfWorldLoaded && !gfTempFile && gsSectorX) {

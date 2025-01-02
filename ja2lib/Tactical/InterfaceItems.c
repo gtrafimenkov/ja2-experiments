@@ -5721,7 +5721,7 @@ void RenderItemPickupMenu() {
     sX = ITEMPICK_GRAPHIC_X + gItemPickupMenu.sX;
     sY = ITEMPICK_GRAPHIC_Y + gItemPickupMenu.sY;
 
-    pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+    pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
     SetFont(ITEMDESC_FONT);
     SetFontBackground(FONT_MCOLOR_BLACK);

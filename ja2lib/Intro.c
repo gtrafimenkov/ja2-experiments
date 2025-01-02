@@ -417,7 +417,7 @@ void DisplaySirtechSplashScreen() {
   // return;
 
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVSurfaceByID(vsIndexFB, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
   UnlockVSurface(vsFB);
 
