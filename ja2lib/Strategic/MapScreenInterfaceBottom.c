@@ -1439,7 +1439,7 @@ void HandleExitsFromMapScreen(void) {
 
           if (gfExtraBuffer) {  // Then initiate the transition animation from the mapscreen to
                                 // laptop...
-            BlitBufferToBufferOld(vsIndexFB, guiEXTRABUFFER, 0, 0, 640, 480);
+            BlitBufferToBuffer(vsFB, vsExtraBuffer, 0, 0, 640, 480);
             gfStartMapScreenToLaptopTransition = TRUE;
           }
           break;
