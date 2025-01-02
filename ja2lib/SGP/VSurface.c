@@ -323,8 +323,6 @@ struct VSurface *GetVSurfaceByID(VSurfID id) {
   switch (id) {
     case PRIMARY_SURFACE:
       return vsPrimary;
-    case BACKBUFFER:
-      return vsBackBuffer;
     case vsIndexFB:
       return vsFB;
     default:
