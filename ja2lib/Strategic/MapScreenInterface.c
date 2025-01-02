@@ -2146,11 +2146,6 @@ void DisplayUserDefineHelpTextRegions(FASTHELPREGION *pRegion) {
   ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
   ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
 
-  // fillt he video surface areas
-  // ColorFillVideoSurfaceArea(vsIndexFB, iX, iY, (iX + iW), (iY + iH), 0);
-  // ColorFillVideoSurfaceArea(vsIndexFB, (iX + 1), (iY + 1), (iX + iW - 1), (iY + iH - 1),
-  // usFillColor);
-
   SetFont(FONT10ARIAL);
   SetFontForeground(FONT_BEIGE);
 
@@ -4093,7 +4088,7 @@ void RenderSoldierSmallFaceForUpdatePanel(int32_t iIndex, int32_t iX, int32_t iY
   struct SOLDIERTYPE *pSoldier = NULL;
 
   // fill the background for the info bars black
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 36, iY + 2, iX + 44, iY + 30, 0);
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 36, iY + 2, iX + 44, iY + 30, 0);
 
   // put down the background
   BltVObjectFromIndex(vsSaveBuffer, giMercPanelImage, 0, iX, iY);
@@ -4109,38 +4104,38 @@ void RenderSoldierSmallFaceForUpdatePanel(int32_t iIndex, int32_t iX, int32_t iY
 
   // yellow one for bleeding
   iStartY = iY + 29 - 27 * pSoldier->bLifeMax / 100;
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 36, iStartY, iX + 37, iY + 29,
-                            Get16BPPColor(FROMRGB(107, 107, 57)));
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 37, iStartY, iX + 38, iY + 29,
-                            Get16BPPColor(FROMRGB(222, 181, 115)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 36, iStartY, iX + 37, iY + 29,
+                        Get16BPPColor(FROMRGB(107, 107, 57)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 37, iStartY, iX + 38, iY + 29,
+                        Get16BPPColor(FROMRGB(222, 181, 115)));
 
   // pink one for bandaged.
   iStartY += 27 * pSoldier->bBleeding / 100;
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 36, iStartY, iX + 37, iY + 29,
-                            Get16BPPColor(FROMRGB(156, 57, 57)));
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 37, iStartY, iX + 38, iY + 29,
-                            Get16BPPColor(FROMRGB(222, 132, 132)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 36, iStartY, iX + 37, iY + 29,
+                        Get16BPPColor(FROMRGB(156, 57, 57)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 37, iStartY, iX + 38, iY + 29,
+                        Get16BPPColor(FROMRGB(222, 132, 132)));
 
   // red one for actual health
   iStartY = iY + 29 - 27 * pSoldier->bLife / 100;
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 36, iStartY, iX + 37, iY + 29,
-                            Get16BPPColor(FROMRGB(107, 8, 8)));
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 37, iStartY, iX + 38, iY + 29,
-                            Get16BPPColor(FROMRGB(206, 0, 0)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 36, iStartY, iX + 37, iY + 29,
+                        Get16BPPColor(FROMRGB(107, 8, 8)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 37, iStartY, iX + 38, iY + 29,
+                        Get16BPPColor(FROMRGB(206, 0, 0)));
 
   // BREATH BAR
   iStartY = iY + 29 - 27 * pSoldier->bBreathMax / 100;
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 39, iStartY, iX + 40, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 8, 132)));
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 40, iStartY, iX + 41, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 8, 107)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 39, iStartY, iX + 40, iY + 29,
+                        Get16BPPColor(FROMRGB(8, 8, 132)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 40, iStartY, iX + 41, iY + 29,
+                        Get16BPPColor(FROMRGB(8, 8, 107)));
 
   // MORALE BAR
   iStartY = iY + 29 - 27 * pSoldier->bMorale / 100;
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 42, iStartY, iX + 43, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 156, 8)));
-  ColorFillVideoSurfaceArea(vsSaveBufferID, iX + 43, iStartY, iX + 44, iY + 29,
-                            Get16BPPColor(FROMRGB(8, 107, 8)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 42, iStartY, iX + 43, iY + 29,
+                        Get16BPPColor(FROMRGB(8, 156, 8)));
+  ColorFillVSurfaceArea(vsSaveBuffer, iX + 43, iStartY, iX + 44, iY + 29,
+                        Get16BPPColor(FROMRGB(8, 107, 8)));
 
   return;
 }

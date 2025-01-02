@@ -51,7 +51,7 @@ typedef struct _CRDT_NODE {
 
   uint32_t uiLastTime;  // The last time the node was udated
 
-  uint32_t uiVideoSurfaceImage;
+  struct VSurface *vsImage;
 
   struct _CRDT_NODE *pPrev;
   struct _CRDT_NODE *pNext;
@@ -643,8 +643,8 @@ BOOLEAN DeleteNode(CRDT_NODE *pNodeToDelete) {
 
   // if the node had something to display, delete a surface for it
   if (pTempNode->uiType == CRDT_NODE_DEFAULT) {
-    DeleteVSurfaceByIndex(pTempNode->uiVideoSurfaceImage);
-    pTempNode->uiVideoSurfaceImage = 0;
+    DeleteVideoSurface(pTempNode->vsImage);
+    pTempNode->vsImage = 0;
   }
 
   // Free the node
@@ -730,21 +730,19 @@ BOOLEAN AddCreditNode(uint32_t uiType, uint32_t uiFlags, wchar_t *pString) {
   // if the node can have something to display, Create a surface for it
   if (pNodeToAdd->uiType == CRDT_NODE_DEFAULT) {
     // Create a background video surface to blt the face onto
-    if (AddVSurface(CreateVSurfaceBlank16(CRDT_WIDTH_OF_TEXT_AREA, pNodeToAdd->sHeightOfString),
-                    &pNodeToAdd->uiVideoSurfaceImage) == 0) {
-      return (FALSE);
-    }
+    pNodeToAdd->vsImage =
+        CreateVSurfaceBlank16(CRDT_WIDTH_OF_TEXT_AREA, pNodeToAdd->sHeightOfString);
 
     // Set transparency
-    SetVideoSurfaceTransparency(pNodeToAdd->uiVideoSurfaceImage, 0);
+    SetVideoSurfaceTransparencyColor(pNodeToAdd->vsImage, 0);
 
     // fill the surface with a transparent color
-    ColorFillVideoSurfaceArea(pNodeToAdd->uiVideoSurfaceImage, 0, 0, CRDT_WIDTH_OF_TEXT_AREA,
-                              pNodeToAdd->sHeightOfString, 0);
+    ColorFillVSurfaceArea(pNodeToAdd->vsImage, 0, 0, CRDT_WIDTH_OF_TEXT_AREA,
+                          pNodeToAdd->sHeightOfString, 0);
 
     // set the font dest buffer to be the surface
-    SetFontDestBuffer(GetVSurfaceByID(pNodeToAdd->uiVideoSurfaceImage), 0, 0,
-                      CRDT_WIDTH_OF_TEXT_AREA, pNodeToAdd->sHeightOfString, FALSE);
+    SetFontDestBuffer(pNodeToAdd->vsImage, 0, 0, CRDT_WIDTH_OF_TEXT_AREA,
+                      pNodeToAdd->sHeightOfString, FALSE);
 
     // write the string onto the surface
     DisplayWrappedString(0, 1, CRDT_WIDTH_OF_TEXT_AREA, 2, uiFontToUse, uiColorToUse,
@@ -865,8 +863,6 @@ void HandleNode_Default(CRDT_NODE *pCurrent) {
 }
 
 BOOLEAN DisplayCreditNode(CRDT_NODE *pCurrent) {
-  struct VSurface *hVSurface;
-
   // Currently, we have no need to display a node that doesnt have a string
   if (pCurrent->pString == NULL) return (FALSE);
 
@@ -899,10 +895,8 @@ BOOLEAN DisplayCreditNode(CRDT_NODE *pCurrent) {
     }
   }
 
-  GetVSurfaceByIndexOld(&hVSurface, pCurrent->uiVideoSurfaceImage);
-
-  BltVSurfaceToVSurface(vsFB, hVSurface, 0, pCurrent->sPosX, pCurrent->sPosY, VS_BLT_USECOLORKEY,
-                        NULL);
+  BltVSurfaceToVSurface(vsFB, pCurrent->vsImage, 0, pCurrent->sPosX, pCurrent->sPosY,
+                        VS_BLT_USECOLORKEY, NULL);
 
   return (TRUE);
 }

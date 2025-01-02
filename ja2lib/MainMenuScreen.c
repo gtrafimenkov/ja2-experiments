@@ -113,7 +113,7 @@ uint32_t MainMenuScreenHandle() {
     if (guiSplashFrameFade > 2)
       ShadowVideoSurfaceRectUsingLowPercentTable(vsFB, 0, 0, 640, 480);
     else if (guiSplashFrameFade > 1)
-      ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, 0);
+      ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     else {
       SetMusicMode(MUSIC_MAIN_MENU);
     }

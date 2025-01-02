@@ -2919,8 +2919,8 @@ uint32_t MapScreenHandle(void) {
     // TestMessageSystem( );
 
     // fill in
-    ColorFillVideoSurfaceArea(vsSaveBufferID, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
-    ColorFillVideoSurfaceArea(vsIndexFB, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
+    ColorFillVSurfaceArea(vsSaveBuffer, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
+    ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, Get16BPPColor(RGB_NEAR_BLACK));
 
     if ((fFirstTimeInMapScreen == TRUE) && (AnyMercsHired() == FALSE)) {
       // render both panels for the restore

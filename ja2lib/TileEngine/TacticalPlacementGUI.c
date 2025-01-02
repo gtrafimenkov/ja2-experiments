@@ -398,41 +398,41 @@ void RenderTacticalPlacementGUI() {
       pSoldier = gMercPlacement[i].pSoldier;
       xp = 95 + (i / 2) * 54;
       yp = (i % 2) ? 422 : 371;
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 36, yp + 2, xp + 44, yp + 30, 0);
+      ColorFillVSurfaceArea(vsFB, xp + 36, yp + 2, xp + 44, yp + 30, 0);
       BltVObjectFromIndexOld(vsIndexFB, giMercPanelImage, 0, xp, yp);
       BltVObjectFromIndexOld(vsIndexFB, gMercPlacement[i].uiVObjectID, 0, xp + 2, yp + 2);
       // HEALTH BAR
       if (!pSoldier->bLife) continue;
       // yellow one for bleeding
       iStartY = yp + 29 - 27 * pSoldier->bLifeMax / 100;
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 36, iStartY, xp + 37, yp + 29,
-                                Get16BPPColor(FROMRGB(107, 107, 57)));
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 37, iStartY, xp + 38, yp + 29,
-                                Get16BPPColor(FROMRGB(222, 181, 115)));
+      ColorFillVSurfaceArea(vsFB, xp + 36, iStartY, xp + 37, yp + 29,
+                            Get16BPPColor(FROMRGB(107, 107, 57)));
+      ColorFillVSurfaceArea(vsFB, xp + 37, iStartY, xp + 38, yp + 29,
+                            Get16BPPColor(FROMRGB(222, 181, 115)));
       // pink one for bandaged.
       iStartY += 27 * pSoldier->bBleeding / 100;
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 36, iStartY, xp + 37, yp + 29,
-                                Get16BPPColor(FROMRGB(156, 57, 57)));
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 37, iStartY, xp + 38, yp + 29,
-                                Get16BPPColor(FROMRGB(222, 132, 132)));
+      ColorFillVSurfaceArea(vsFB, xp + 36, iStartY, xp + 37, yp + 29,
+                            Get16BPPColor(FROMRGB(156, 57, 57)));
+      ColorFillVSurfaceArea(vsFB, xp + 37, iStartY, xp + 38, yp + 29,
+                            Get16BPPColor(FROMRGB(222, 132, 132)));
       // red one for actual health
       iStartY = yp + 29 - 27 * pSoldier->bLife / 100;
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 36, iStartY, xp + 37, yp + 29,
-                                Get16BPPColor(FROMRGB(107, 8, 8)));
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 37, iStartY, xp + 38, yp + 29,
-                                Get16BPPColor(FROMRGB(206, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, xp + 36, iStartY, xp + 37, yp + 29,
+                            Get16BPPColor(FROMRGB(107, 8, 8)));
+      ColorFillVSurfaceArea(vsFB, xp + 37, iStartY, xp + 38, yp + 29,
+                            Get16BPPColor(FROMRGB(206, 0, 0)));
       // BREATH BAR
       iStartY = yp + 29 - 27 * pSoldier->bBreathMax / 100;
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 39, iStartY, xp + 40, yp + 29,
-                                Get16BPPColor(FROMRGB(8, 8, 132)));
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 40, iStartY, xp + 41, yp + 29,
-                                Get16BPPColor(FROMRGB(8, 8, 107)));
+      ColorFillVSurfaceArea(vsFB, xp + 39, iStartY, xp + 40, yp + 29,
+                            Get16BPPColor(FROMRGB(8, 8, 132)));
+      ColorFillVSurfaceArea(vsFB, xp + 40, iStartY, xp + 41, yp + 29,
+                            Get16BPPColor(FROMRGB(8, 8, 107)));
       // MORALE BAR
       iStartY = yp + 29 - 27 * pSoldier->bMorale / 100;
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 42, iStartY, xp + 43, yp + 29,
-                                Get16BPPColor(FROMRGB(8, 156, 8)));
-      ColorFillVideoSurfaceArea(vsIndexFB, xp + 43, iStartY, xp + 44, yp + 29,
-                                Get16BPPColor(FROMRGB(8, 107, 8)));
+      ColorFillVSurfaceArea(vsFB, xp + 42, iStartY, xp + 43, yp + 29,
+                            Get16BPPColor(FROMRGB(8, 156, 8)));
+      ColorFillVSurfaceArea(vsFB, xp + 43, iStartY, xp + 44, yp + 29,
+                            Get16BPPColor(FROMRGB(8, 107, 8)));
     }
     SetFont(BLOCKFONT);
     SetFontForeground(FONT_BEIGE);

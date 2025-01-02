@@ -1066,8 +1066,8 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(uint8_t ubDropDownMode) {
         MSYS_RemoveRegion(&gSelectedFlowerDropDownRegion[i]);
 
       // display the name on the title bar
-      ColorFillVideoSurfaceArea(
-          vsIndexFB, FLOWER_ORDER_DROP_DOWN_LOCATION_X + 3, FLOWER_ORDER_DELIVERY_LOCATION_Y + 3,
+      ColorFillVSurfaceArea(
+          vsFB, FLOWER_ORDER_DROP_DOWN_LOCATION_X + 3, FLOWER_ORDER_DELIVERY_LOCATION_Y + 3,
           FLOWER_ORDER_DROP_DOWN_LOCATION_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH,
           FLOWER_ORDER_DELIVERY_LOCATION_Y + FLOWER_ORDER_DELIVERY_LOCATION_HEIGHT - 2,
           Get16BPPColor(FROMRGB(0, 0, 0)));
@@ -1094,8 +1094,8 @@ BOOLEAN CreateDestroyFlowerOrderDestDropDown(uint8_t ubDropDownMode) {
       struct VObject *hImageHandle;
 
       // Display the background for the drop down window
-      ColorFillVideoSurfaceArea(
-          vsIndexFB, FLOWER_ORDER_DROP_DOWN_LOCATION_X, FLOWER_ORDER_DROP_DOWN_LOCATION_Y,
+      ColorFillVSurfaceArea(
+          vsFB, FLOWER_ORDER_DROP_DOWN_LOCATION_X, FLOWER_ORDER_DROP_DOWN_LOCATION_Y,
           FLOWER_ORDER_DROP_DOWN_LOCATION_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH,
           FLOWER_ORDER_DROP_DOWN_LOCATION_Y + usHeight, Get16BPPColor(FROMRGB(0, 0, 0)));
 
@@ -1169,8 +1169,8 @@ void FlowerOrderDrawSelectedCity(uint8_t ubNumber) {
   usPosY = (usFontHeight + 2) * ubNumber + FLOWER_ORDER_DROP_DOWN_CITY_START_Y;
 
   // display the name in the list
-  ColorFillVideoSurfaceArea(
-      vsIndexFB, FLOWER_ORDER_DROP_DOWN_CITY_START_X, usPosY + 2,
+  ColorFillVSurfaceArea(
+      vsFB, FLOWER_ORDER_DROP_DOWN_CITY_START_X, usPosY + 2,
       FLOWER_ORDER_DROP_DOWN_CITY_START_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH - 9,
       usPosY + usFontHeight + 4, Get16BPPColor(FROMRGB(255, 255, 255)));
 
@@ -1186,8 +1186,8 @@ void FlowerOrderDrawSelectedCity(uint8_t ubNumber) {
 
 void FlowerOrderDisplayShippingLocationCity() {
   // display the name on the title bar
-  ColorFillVideoSurfaceArea(
-      vsIndexFB, FLOWER_ORDER_DROP_DOWN_LOCATION_X + 3, FLOWER_ORDER_DELIVERY_LOCATION_Y + 3,
+  ColorFillVSurfaceArea(
+      vsFB, FLOWER_ORDER_DROP_DOWN_LOCATION_X + 3, FLOWER_ORDER_DELIVERY_LOCATION_Y + 3,
       FLOWER_ORDER_DROP_DOWN_LOCATION_X + FLOWER_ORDER_DROP_DOWN_LOCATION_WIDTH,
       FLOWER_ORDER_DELIVERY_LOCATION_Y + FLOWER_ORDER_DELIVERY_LOCATION_HEIGHT - 2,
       Get16BPPColor(FROMRGB(0, 0, 0)));

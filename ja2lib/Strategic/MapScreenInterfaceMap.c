@@ -5925,8 +5925,8 @@ void HideExistenceOfUndergroundMapSector(uint8_t ubSectorX, uint8_t ubSectorY) {
   GetScreenXYFromMapXY(ubSectorX, ubSectorY, &sScreenX, &sScreenY);
 
   // fill it with near black
-  ColorFillVideoSurfaceArea(vsSaveBufferID, sScreenX + 1, sScreenY, sScreenX + MAP_GRID_X,
-                            sScreenY + MAP_GRID_Y - 1, gusUndergroundNearBlack);
+  ColorFillVSurfaceArea(vsSaveBuffer, sScreenX + 1, sScreenY, sScreenX + MAP_GRID_X,
+                        sScreenY + MAP_GRID_Y - 1, gusUndergroundNearBlack);
 }
 
 void InitMapSecrets(void) {
