@@ -578,7 +578,7 @@ void RenderMercs() {
     DrawButton(guiAccountBoxButton);
     ButtonList[guiAccountBoxButton]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
-    RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsIndexFB);
+    RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsFB);
   }
 
   MarkButtonsDirty();
@@ -633,8 +633,7 @@ void BtnAccountBoxButtonCallback(GUI_BUTTON *btn, int32_t reason) {
       if (iMercPopUpBox != -1) {
         ButtonList[guiAccountBoxButton]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
-        RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y,
-                                    vsIndexFB);
+        RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsFB);
       }
 
       InvalidateRegion(btn->Area.RegionTopLeftX, btn->Area.RegionTopLeftY,
@@ -1353,7 +1352,7 @@ void HandleTalkingSpeck() {
             ButtonList[guiAccountBoxButton]->uiFlags |= BUTTON_FORCE_UNDIRTY;
 
             RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y,
-                                        vsIndexFB);
+                                        vsFB);
           }
         }
       }
@@ -1430,7 +1429,7 @@ void DisplayTextForSpeckVideoPopUp(wchar_t *pString) {
                       LAPTOP_SCREEN_UL_X;
 
   // Render the pop box
-  RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsIndexFB);
+  RenderMercPopUpBoxFromIndex(iMercPopUpBox, gusSpeckDialogueX, MERC_TEXT_BOX_POS_Y, vsFB);
 
   // check to make sure the region is not already initialized
   if (!(gMercSiteSubTitleMouseRegion.uiFlags & MSYS_REGION_EXISTS)) {

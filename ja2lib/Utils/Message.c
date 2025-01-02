@@ -257,7 +257,7 @@ void BlitString(VIDEO_OVERLAY *pBlitter) {
     return;
   }
 
-  pDestBuf = LockVSurfaceByID(pBlitter->uiDestBuff, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
   SetFont(pBlitter->uiFontID);
 
   SetFontBackground(pBlitter->ubFontBack);
@@ -265,7 +265,7 @@ void BlitString(VIDEO_OVERLAY *pBlitter) {
   SetFontShadow(DEFAULT_SHADOW);
   mprintf_buffer_coded(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                        pBlitter->zText);
-  UnlockVSurfaceByID(pBlitter->uiDestBuff);
+  UnlockVSurface(pBlitter->vsDestBuff);
 }
 
 void EnableStringVideoOverlay(ScrollStringStPtr pStringSt, BOOLEAN fEnable) {

@@ -106,7 +106,7 @@ void UnLoadCarPortraits(void) {
 }
 
 void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
-                     int16_t sHeight, BOOLEAN fErase, uint32_t uiBuffer) {
+                     int16_t sHeight, BOOLEAN fErase, struct VSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -125,7 +125,7 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
     return;
   }
 
-  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(dest, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO MAX LIFE
@@ -187,11 +187,11 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
                   usLineColor, pDestBuf);
   }
 
-  UnlockVSurfaceByID(uiBuffer);
+  UnlockVSurface(dest);
 }
 
 void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
-                       int16_t sHeight, BOOLEAN fErase, uint32_t uiBuffer) {
+                       int16_t sHeight, BOOLEAN fErase, struct VSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -223,18 +223,18 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
     if (gusSelectedSoldier == GetSolID(pSoldier) && gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
         OK_INTERRUPT_MERC(pSoldier)) {
       // gold, the second entry in the .sti
-      BltVideoObjectOld(uiBuffer, hHandle, 1, sXPos, (int16_t)(sYPos - sHeight));
+      BltVideoObject(dest, hHandle, 1, sXPos, (int16_t)(sYPos - sHeight));
 
     } else {
       // brown, first entry
-      BltVideoObjectOld(uiBuffer, hHandle, 0, sXPos, (int16_t)(sYPos - sHeight));
+      BltVideoObject(dest, hHandle, 0, sXPos, (int16_t)(sYPos - sHeight));
     }
   } else {
     // brown, first entry
-    BltVideoObjectOld(uiBuffer, hHandle, 0, sXPos, (int16_t)(sYPos - sHeight));
+    BltVideoObject(dest, hHandle, 0, sXPos, (int16_t)(sYPos - sHeight));
   }
 
-  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(dest, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   if (pSoldier->bBreathMax <= 97) {
@@ -289,11 +289,11 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  UnlockVSurfaceByID(uiBuffer);
+  UnlockVSurface(dest);
 }
 
 void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
-                       int16_t sHeight, BOOLEAN fErase, uint32_t uiBuffer) {
+                       int16_t sHeight, BOOLEAN fErase, struct VSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -311,7 +311,7 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
     return;
   }
 
-  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(dest, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO BREATH
@@ -331,7 +331,7 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
   RectangleDraw(TRUE, sXPos + 2, (int32_t)dStart, sXPos + 2, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  UnlockVSurfaceByID(uiBuffer);
+  UnlockVSurface(dest);
 }
 
 void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos, int16_t sYPos,
