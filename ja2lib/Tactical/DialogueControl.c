@@ -1729,7 +1729,7 @@ void HandleExternNPCSpeechFace(int32_t iIndex) {
   iFaceIndex = iIndex;
 
   // Enable it!
-  SetAutoFaceActive(FACE_AUTO_DISPLAY_BUFFER, FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0, 0);
+  SetAutoFaceActive(NULL, FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0, 0);
 
   // Set flag to say WE control when to set inactive!
   gFacesData[iFaceIndex].uiFlags |= FACE_INACTIVE_HANDLED_ELSEWHERE;
@@ -1803,7 +1803,7 @@ void HandleTacticalSpeechUI(uint8_t ubCharacterNum, int32_t iFaceIndex) {
 
   if (fDoExternPanel) {
     // Enable it!
-    SetAutoFaceActive(FACE_AUTO_DISPLAY_BUFFER, FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0, 0);
+    SetAutoFaceActive(NULL, FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0, 0);
 
     // Set flag to say WE control when to set inactive!
     gFacesData[iFaceIndex].uiFlags |= (FACE_INACTIVE_HANDLED_ELSEWHERE | FACE_MAKEACTIVE_ONCE_DONE);
@@ -2018,14 +2018,14 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
     // MouthAutoFace( gpCurrentTalkingFace->iID );
 
     pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
-    pSrcBuf = LockVSurfaceByID(gpCurrentTalkingFace->uiAutoDisplayBuffer, &uiSrcPitchBYTES);
+    pSrcBuf = LockVSurface(gpCurrentTalkingFace->autoDisplayBuffer, &uiSrcPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                     (int16_t)(pBlitter->sX + 14), (int16_t)(pBlitter->sY + 6), 0, 0,
                     gpCurrentTalkingFace->usFaceWidth, gpCurrentTalkingFace->usFaceHeight);
 
     UnlockVSurface(pBlitter->vsDestBuff);
-    UnlockVSurfaceByID(gpCurrentTalkingFace->uiAutoDisplayBuffer);
+    UnlockVSurface(gpCurrentTalkingFace->autoDisplayBuffer);
 
     InvalidateRegion(pBlitter->sX, pBlitter->sY, pBlitter->sX + 99, pBlitter->sY + 98);
   }

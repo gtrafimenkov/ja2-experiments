@@ -22,7 +22,6 @@ struct audio_gap {
   struct audio_gap *pNext;
 };
 
-#define FACE_AUTO_DISPLAY_BUFFER 0xFFFFF000
 #define FACE_AUTO_RESTORE_BUFFER 0xFFFFFF00
 #define FACE_NO_RESTORE_BUFFER 0xFFFFFFF0
 
@@ -93,12 +92,12 @@ typedef struct {
   uint16_t usFaceY;  // Y location to render face
   uint16_t usFaceWidth;
   uint16_t usFaceHeight;
-  uint32_t uiAutoDisplayBuffer;  // Display buffer for face
-  uint32_t uiAutoRestoreBuffer;  // Restore buffer
-  BOOLEAN fAutoRestoreBuffer;    // Flag to indicate our own restorebuffer or not
-  BOOLEAN fAutoDisplayBuffer;    // Flag to indicate our own display buffer or not
-  BOOLEAN fDisplayTextOver;      // Boolean indicating to display text on face
-  BOOLEAN fOldDisplayTextOver;   // OLD Boolean indicating to display text on face
+  struct VSurface *autoDisplayBuffer;  // Display buffer for face
+  uint32_t uiAutoRestoreBuffer;        // Restore buffer
+  BOOLEAN fAutoRestoreBuffer;          // Flag to indicate our own restorebuffer or not
+  BOOLEAN fAutoDisplayBuffer;          // Flag to indicate our own display buffer or not
+  BOOLEAN fDisplayTextOver;            // Boolean indicating to display text on face
+  BOOLEAN fOldDisplayTextOver;         // OLD Boolean indicating to display text on face
   BOOLEAN fCanHandleInactiveNow;
   wchar_t zDisplayText[30];  // String of text that can be displayed
 
@@ -179,20 +178,13 @@ int32_t InternalInitFace(uint8_t usMercProfileID, uint8_t ubSoldierID, uint32_t 
 void DeleteFace(int32_t iFaceIndex);
 
 // IF you want to setup the face for automatic eye blinking, mouth movement, you need to call
-void SetAutoFaceActive(uint32_t uiDisplayBuffer, uint32_t uiRestoreBuffer, int32_t iFaceIndex,
+void SetAutoFaceActive(struct VSurface *displayBuffer, uint32_t uiRestoreBuffer, int32_t iFaceIndex,
                        uint16_t usFaceX, uint16_t usFaceY);
 // The first paramter is the display buffer you wish the face to be rendered on. The second is the
 // Internal savebuffer which is used to facilitate the rendering of only things which have changed
 // when blinking. IF the value of FACE_AUTO_RESTORE_BUFFER is given, the system will allocate it's
 // own memory for a saved buffer and will delete it when finished with it. This function also takes
 // an XY location
-
-// Same as above, yet used mostly internally. Is compatible with the fact that a soldier profile ID
-// is not required...
-void InternalSetAutoFaceActive(uint32_t uiDisplayBuffer, uint32_t uiRestoreBuffer,
-                               int32_t iFaceIndex, uint16_t usFaceX, uint16_t usFaceY,
-                               uint16_t usEyesX, uint16_t usEyesY, uint16_t usMouthX,
-                               uint16_t usMouthY);
 
 // To begin rendering of the face sprite, call this function once:
 BOOLEAN RenderAutoFace(int32_t iFaceIndex);
@@ -234,7 +226,7 @@ void SetAllAutoFacesInactive();
 
 // To render an allocated face but one that is indipendent of it's active status, ant does not
 // require eye blinking or mouth movements, call
-BOOLEAN ExternRenderFace(uint32_t uiBuffer, int32_t iFaceIndex, int16_t sX, int16_t sY);
+BOOLEAN ExternRenderFace(struct VSurface *buffer, int32_t iFaceIndex, int16_t sX, int16_t sY);
 
 // FUnctions usually not needed for most uses, but give a finer control over rendering if needed
 void BlinkAutoFace(int32_t iFaceIndex);
@@ -245,10 +237,11 @@ void HandleTalkingAutoFaces();
 // Same Functions but taking soldier ID first to get profile ID
 int32_t InitSoldierFace(struct SOLDIERTYPE *pSoldier);
 void DeleteSoldierFace(struct SOLDIERTYPE *pSoldier);
-void SetAutoFaceActiveFromSoldier(uint32_t uiDisplayBuffer, uint32_t uiRestoreBuffer,
+void SetAutoFaceActiveFromSoldier(struct VSurface *buffer, uint32_t uiRestoreBuffer,
                                   uint8_t ubSoldierID, uint16_t usFaceX, uint16_t usFaceY);
 void SetAutoFaceInActiveFromSoldier(uint8_t ubSoldierID);
 BOOLEAN RenderAutoFaceFromSoldier(uint8_t ubSoldierID);
-BOOLEAN ExternRenderFaceFromSoldier(uint32_t uiBuffer, uint8_t ubSoldierID, int16_t sX, int16_t sY);
+BOOLEAN ExternRenderFaceFromSoldier(struct VSurface *buffer, uint8_t ubSoldierID, int16_t sX,
+                                    int16_t sY);
 
 #endif
