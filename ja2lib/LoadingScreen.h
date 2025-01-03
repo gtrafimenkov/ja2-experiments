@@ -59,7 +59,7 @@ extern uint8_t gubLastLoadingScreenID;
 // returns the uint8_t ID for the specified sector.
 uint8_t GetLoadScreenID(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ);
 
-// sets up the loadscreen with specified ID, and draws it to the vsIndexFB,
+// sets up the loadscreen with specified ID, and draws it to the vsFB,
 // and refreshing the screen with it.
 void DisplayLoadScreenWithID(uint8_t ubLoadScreenID);
 

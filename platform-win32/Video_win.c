@@ -200,8 +200,6 @@ static void SnapshotSmall(void);
 static void VideoMovieCapture(BOOLEAN fEnable);
 static void RefreshMovieCache();
 
-static void *LockPrimarySurface(LPDIRECTDRAWSURFACE2 _surf, uint32_t *uiPitch);
-
 BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   uint32_t uiIndex, uiPitch;
   HRESULT ReturnCode;
@@ -1755,27 +1753,6 @@ ENDOFLOOP:
   fFirstTime = FALSE;
 }
 
-static void *LockPrimarySurface(LPDIRECTDRAWSURFACE2 _surf, uint32_t *uiPitch) {
-  HRESULT ReturnCode;
-  DDSURFACEDESC SurfaceDescription;
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-
-  do {
-    ReturnCode = IDirectDrawSurface2_Lock(_surf, NULL, &SurfaceDescription, 0, NULL);
-    if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-      DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, "Failed to lock");
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-      return NULL;
-    }
-
-  } while (ReturnCode != DD_OK);
-
-  *uiPitch = SurfaceDescription.lPitch;
-  return SurfaceDescription.lpSurface;
-}
-
 BOOLEAN GetRGBDistribution(void) {
   DDSURFACEDESC SurfaceDescription;
   uint16_t usBit;
@@ -2237,10 +2214,6 @@ BOOLEAN ShutdownVideoSurfaceManager() {
 }
 
 uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
-  if (uiVSurface == vsIndexFB) {
-    return (uint8_t *)LockPrimarySurface(gpFrameBuffer, puiPitch);
-  }
-
   struct VSurface *vs = FindVSurface(uiVSurface);
   if (!vs) {
     return FALSE;
@@ -2250,16 +2223,9 @@ uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
 }
 
 void UnlockVSurfaceByID(VSurfID id) {
-  switch (id) {
-    case vsIndexFB:
-      IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
-      break;
-    default: {
-      struct VSurface *vs = FindVSurface(id);
-      if (vs) {
-        UnlockVSurface(vs);
-      }
-    }
+  struct VSurface *vs = FindVSurface(id);
+  if (vs) {
+    UnlockVSurface(vs);
   }
 }
 
