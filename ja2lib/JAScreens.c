@@ -369,10 +369,10 @@ void PalEditRenderHook() {
     // Set to current
     GetSoldier(&pSoldier, gusSelectedSoldier);
 
-    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, vsIndexFB);
-    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, vsIndexFB);
-    DisplayPaletteRep(pSoldier->VestPal, 50, 90, vsIndexFB);
-    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, vsIndexFB);
+    DisplayPaletteRep(pSoldier->HeadPal, 50, 10, vsFB);
+    DisplayPaletteRep(pSoldier->PantsPal, 50, 50, vsFB);
+    DisplayPaletteRep(pSoldier->VestPal, 50, 90, vsFB);
+    DisplayPaletteRep(pSoldier->SkinPal, 50, 130, vsFB);
   }
 }
 

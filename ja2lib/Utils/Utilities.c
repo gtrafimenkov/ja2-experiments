@@ -58,7 +58,7 @@ BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry* pPalette, SGPFILENAM
 }
 
 BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
-                          uint32_t uiDestSurface) {
+                          struct VSurface* dest) {
   uint16_t us16BPPColor;
   uint32_t cnt1;
   uint8_t ubSize;
@@ -82,7 +82,7 @@ BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
         Get16BPPColor(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
                               gpPalRep[ubPaletteRep].b[cnt1]));
 
-    ColorFillVSurfaceArea(GetVSurfaceByID(uiDestSurface), sTLX, sTLY, sBRX, sBRY, us16BPPColor);
+    ColorFillVSurfaceArea(dest, sTLX, sTLY, sBRX, sBRY, us16BPPColor);
   }
 
   gprintf(ubXPos + (16 * 20), ubYPos, L"%S", gpPalRep[ubPaletteRep].ID);
