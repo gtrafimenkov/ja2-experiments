@@ -12,7 +12,7 @@ struct SGPPaletteEntry;
 
 BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry* pPalette, SGPFILENAME ColFile);
 BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
-                          uint32_t uiDestSurface);
+                          struct VSurface* dest);
 
 void FilenameForBPP(char* pFilename, char* pDestination);
 

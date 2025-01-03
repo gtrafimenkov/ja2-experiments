@@ -336,7 +336,7 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
 
 void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos, int16_t sYPos,
                      int16_t sWidth, int16_t sHeight, int16_t sColor1, int16_t sColor2,
-                     BOOLEAN fErase, uint32_t uiBuffer) {
+                     struct VSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -369,14 +369,7 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
     sValue--;
   }
 
-  // Erase what was there
-  if (fErase) {
-    // RestoreExternBackgroundRect( sXPos, (int16_t)(sYPos - sHeight), sWidth, (int16_t)(sHeight + 1
-    // )
-    // );
-  }
-
-  pDestBuf = LockVSurfaceByID(uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(dest, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // FIRST DO BREATH
@@ -393,9 +386,9 @@ void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos
   RectangleDraw(TRUE, sXPos + 1, (int32_t)dStart, sXPos + 1, (int32_t)(dStart - dEnd), usLineColor,
                 pDestBuf);
 
-  UnlockVSurfaceByID(uiBuffer);
+  UnlockVSurface(dest);
 
-  if (uiBuffer == vsSaveBufferID) {
+  if (dest == vsSaveBuffer) {
     RestoreExternBackgroundRect(sXPos, (int16_t)(sYPos - sHeight), sWidth, (int16_t)(sHeight + 1));
   } else {
     InvalidateRegion(sXPos, (int16_t)(sYPos - sHeight), sXPos + sWidth, (int16_t)(sYPos + 1));

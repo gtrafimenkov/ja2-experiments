@@ -1102,8 +1102,7 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
     sBarX = sX - gSMInvData[sPocket].sBarDx;
     sBarY = sY + gSMInvData[sPocket].sBarDy;
     DrawItemUIBarEx(pObject, 0, sBarX, sBarY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT,
-                    Get16BPPColor(STATUS_BAR), Get16BPPColor(STATUS_BAR_SHADOW), TRUE,
-                    vsSaveBufferID);
+                    Get16BPPColor(STATUS_BAR), Get16BPPColor(STATUS_BAR_SHADOW), vsSaveBuffer);
   }
 }
 
@@ -2621,7 +2620,7 @@ void RenderItemDescriptionBox() {
     DrawItemUIBarEx(gpItemDescObject, gubItemDescStatusIndex, (int16_t)MAP_ITEMDESC_ITEM_STATUS_X,
                     (int16_t)MAP_ITEMDESC_ITEM_STATUS_Y, ITEMDESC_ITEM_STATUS_WIDTH,
                     ITEMDESC_ITEM_STATUS_HEIGHT_MAP, Get16BPPColor(DESC_STATUS_BAR),
-                    Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE, vsSaveBufferID);
+                    Get16BPPColor(DESC_STATUS_BAR_SHADOW), vsSaveBuffer);
 
     if (gpItemPointer) {
       if ((Item[gpItemPointer->usItem].fFlags & ITEM_HIDDEN_ADDON) ||
@@ -2650,7 +2649,7 @@ void RenderItemDescriptionBox() {
           sCenY = sCenY + gMapItemDescAttachmentsXY[cnt].sBarDy;
           DrawItemUIBarEx(gpItemDescObject, (uint8_t)(DRAW_ITEM_STATUS_ATTACHMENT1 + cnt), sCenX,
                           sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-                          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, vsSaveBufferID);
+                          Get16BPPColor(STATUS_BAR_SHADOW), vsSaveBuffer);
 
         } else {
           sCenX = (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX + 5);
@@ -2665,7 +2664,7 @@ void RenderItemDescriptionBox() {
           sCenY = sCenY + gItemDescAttachmentsXY[cnt].sBarDy;
           DrawItemUIBarEx(gpItemDescObject, (uint8_t)(DRAW_ITEM_STATUS_ATTACHMENT1 + cnt), sCenX,
                           sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-                          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, vsSaveBufferID);
+                          Get16BPPColor(STATUS_BAR_SHADOW), vsSaveBuffer);
         }
       }
 
@@ -3129,7 +3128,7 @@ void RenderItemDescriptionBox() {
     DrawItemUIBarEx(gpItemDescObject, gubItemDescStatusIndex, (int16_t)ITEMDESC_ITEM_STATUS_X,
                     (int16_t)ITEMDESC_ITEM_STATUS_Y, ITEMDESC_ITEM_STATUS_WIDTH,
                     ITEMDESC_ITEM_STATUS_HEIGHT, Get16BPPColor(DESC_STATUS_BAR),
-                    Get16BPPColor(DESC_STATUS_BAR_SHADOW), TRUE, vsSaveBufferID);
+                    Get16BPPColor(DESC_STATUS_BAR_SHADOW), vsSaveBuffer);
 
     if (gpItemPointer) {
       if ((Item[gpItemPointer->usItem].fFlags & ITEM_HIDDEN_ADDON) ||
@@ -3156,7 +3155,7 @@ void RenderItemDescriptionBox() {
         sCenY = sCenY + gItemDescAttachmentsXY[cnt].sBarDy;
         DrawItemUIBarEx(gpItemDescObject, (uint8_t)(DRAW_ITEM_STATUS_ATTACHMENT1 + cnt), sCenX,
                         sCenY, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-                        Get16BPPColor(STATUS_BAR_SHADOW), TRUE, vsSaveBufferID);
+                        Get16BPPColor(STATUS_BAR_SHADOW), vsSaveBuffer);
 
         SetRegionFastHelpText(&(gItemDescAttachmentRegions[cnt]),
                               ItemNames[gpItemDescObject->usAttachItem[cnt]]);
@@ -4739,7 +4738,7 @@ void RenderItemStackPopup(BOOLEAN fFullRender) {
       sNewY = gsItemPopupY + INV_BAR_DY + 3;
       DrawItemUIBarEx(gpItemPopupObject, (uint8_t)cnt, sNewX, sNewY, ITEM_BAR_WIDTH,
                       ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR), Get16BPPColor(STATUS_BAR_SHADOW),
-                      TRUE, vsIndexFB);
+                      vsFB);
     }
   }
 
@@ -4916,8 +4915,8 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
   }
 
   for (cnt = 0; cnt < NUMBER_KEYS_ON_KEYRING; cnt++) {
-    BltVObjectFromIndexOld(
-        vsIndexFB, guiItemPopupBoxes, 0,
+    BltVObjectFromIndex(
+        vsFB, guiItemPopupBoxes, 0,
         (int16_t)(gsKeyRingPopupInvX + (cnt % sKeyRingItemWidth * usWidth) + sOffSetX),
         (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight)));
 
@@ -4932,7 +4931,7 @@ void RenderKeyRingPopup(BOOLEAN fFullRender) {
           (int16_t)(gsKeyRingPopupInvX + sOffSetX + (cnt % sKeyRingItemWidth * usWidth) + 7),
           (int16_t)(gsKeyRingPopupInvY + sOffSetY + (cnt / sKeyRingItemWidth * usHeight) + 24),
           ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, Get16BPPColor(STATUS_BAR),
-          Get16BPPColor(STATUS_BAR_SHADOW), TRUE, vsIndexFB);
+          Get16BPPColor(STATUS_BAR_SHADOW), vsFB);
 
       // set item type
       pObject.usItem = FIRST_KEY + LockTable[gpItemPopupSoldier->pKeyRing[cnt].ubKeyID].usKeyItem;

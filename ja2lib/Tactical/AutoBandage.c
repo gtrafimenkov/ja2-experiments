@@ -226,10 +226,6 @@ BOOLEAN HandleAutoBandage() {
 
     DisplayAutoBandageUpdatePanel();
 
-    // RenderMercPopUpBoxFromIndex( giBoxId, gsX, gsY,  vsIndexFB );
-
-    // InvalidateRegion( gsX, gsY, gsX + gusTextBoxWidth, gsY + gusTextBoxHeight );
-
     EndFrameBufferRender();
 
     // Handle strategic engine
