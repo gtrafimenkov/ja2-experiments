@@ -559,8 +559,8 @@ void HandleBobbyRMailOrder() {
 
     // Bobbyray title
     GetVideoObject(&hPixHandle, guiConfirmGraphic);
-    BltVideoObjectOutlineShadowFromIndex(vsIndexFB, guiConfirmGraphic, 0,
-                                         BOBBYR_CONFIRM_ORDER_X + 3, BOBBYR_CONFIRM_ORDER_Y + 3);
+    BltVideoObjectOutlineShadowFromIndex(vsFB, guiConfirmGraphic, 0, BOBBYR_CONFIRM_ORDER_X + 3,
+                                         BOBBYR_CONFIRM_ORDER_Y + 3);
 
     BltVideoObject(vsFB, hPixHandle, 0, BOBBYR_CONFIRM_ORDER_X, BOBBYR_CONFIRM_ORDER_Y);
     InvalidateRegion(LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
