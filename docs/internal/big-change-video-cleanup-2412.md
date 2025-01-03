@@ -1,5 +1,10 @@
 # Big change: video cleanup started in Dec 2024
 
+## Goals
+
+- remove unused code
+- clearly separate platform-dependent and platform-independent code
+
 ## Potential transparency bugs
 
 During the refactoring I was removing code that adds a new video surface
