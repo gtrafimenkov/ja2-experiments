@@ -2423,7 +2423,8 @@ void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
     iStartY = ((iWinHeight - iPicHeight) / 2) + WinRect.iTop;
   }
 
-  BltVideoSurface(vsIndexFB, vSurface, 0, iStartX, iStartY, VS_BLT_SRCSUBRECT, &ClipRect);
+  BltVSurfaceToVSurface(vsFB, GetVSurfaceByID(vSurface), 0, iStartX, iStartY, VS_BLT_SRCSUBRECT,
+                        &ClipRect);
 }
 
 //----------------------------------------------------------------------------------------------
