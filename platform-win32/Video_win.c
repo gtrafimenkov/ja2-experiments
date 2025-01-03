@@ -3316,10 +3316,8 @@ void SmkSetupVideo(void) {
   DDSURFACEDESC SurfaceDescription;
   HRESULT ReturnCode;
   uint16_t usRed, usGreen, usBlue;
-  struct VSurface *hVSurface;
 
-  GetVSurfaceByIndexOld(&hVSurface, vsIndexFB);
-  lpVideoPlayback2 = (LPDIRECTDRAWSURFACE2)hVSurface->_platformData2;
+  lpVideoPlayback2 = (LPDIRECTDRAWSURFACE2)vsFB->_platformData2;
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);

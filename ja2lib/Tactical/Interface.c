@@ -2721,7 +2721,8 @@ void HandleTopMessages() {
       SrcRect.iRight = 640;
       SrcRect.iBottom = 20;
 
-      BltVideoSurface(vsIndexFB, gTopMessage.uiSurface, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
+      BltVSurfaceToVSurface(vsFB, GetVSurfaceByID(gTopMessage.uiSurface), 0, 0, 0,
+                            VS_BLT_SRCSUBRECT, &SrcRect);
 
       // Save to save buffer....
       SrcRect.iLeft = 0;

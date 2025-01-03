@@ -2008,10 +2008,9 @@ void RenderCurrentHelpScreenTextToBuffer() {
 }
 
 void RenderTextBufferToScreen() {
-  struct VSurface *hDestVSurface, *hSrcVSurface;
+  struct VSurface *hSrcVSurface;
   struct Rect SrcRect;
 
-  GetVSurfaceByIndexOld(&hDestVSurface, vsIndexFB);
   GetVSurfaceByIndexOld(&hSrcVSurface, guiHelpScreenTextBufferSurface);
 
   SrcRect.left = 0;
@@ -2019,7 +2018,7 @@ void RenderTextBufferToScreen() {
   SrcRect.right = HLP_SCRN__WIDTH_OF_TEXT_BUFFER;
   SrcRect.bottom = SrcRect.top + HLP_SCRN__HEIGHT_OF_TEXT_AREA - (2 * 8);
 
-  BltVSurfaceUsingDD(hDestVSurface, hSrcVSurface, VS_BLT_USECOLORKEY, gHelpScreen.usLeftMarginPosX,
+  BltVSurfaceUsingDD(vsFB, hSrcVSurface, VS_BLT_USECOLORKEY, gHelpScreen.usLeftMarginPosX,
                      (gHelpScreen.usScreenLocY + HELP_SCREEN_TEXT_OFFSET_Y), &SrcRect);
 
   DisplayHelpScreenTextBufferScrollBox();
