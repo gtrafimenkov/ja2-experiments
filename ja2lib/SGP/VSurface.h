@@ -137,7 +137,7 @@ BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColo
 BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette);
 
 // Deletes all data, including palettes, regions, DD Surfaces
-BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface);
+BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
