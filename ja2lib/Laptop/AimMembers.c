@@ -375,7 +375,7 @@ uint32_t guiFace;
 uint32_t guiVideoConfPopup;
 uint32_t guiVideoConfTerminal;
 uint32_t guiPopUpBox;
-uint32_t guiVideoFaceBackground;
+static struct VSurface *vsVideoFaceBackground;
 uint32_t guiBWSnow;
 uint32_t guiFuzzLine;
 uint32_t guiStraightLine;
@@ -593,9 +593,11 @@ BOOLEAN EnterAIMMembers() {
   VOBJECT_DESC VObjectDesc;
 
   // Create a background video surface to blt the face onto
-  CHECKF(
-      AddVSurface(CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_FACE_WIDTH, AIM_MEMBER_VIDEO_FACE_HEIGHT),
-                  &guiVideoFaceBackground));
+  vsVideoFaceBackground =
+      CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_FACE_WIDTH, AIM_MEMBER_VIDEO_FACE_HEIGHT);
+  if (vsVideoFaceBackground == NULL) {
+    return FALSE;
+  }
 
   // load the stats graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
@@ -740,7 +742,7 @@ void ExitAIMMembers() {
   gubVideoConferencingMode = AIM_VIDEO_NOT_DISPLAYED_MODE;
   InitDeleteVideoConferencePopUp();
 
-  DeleteVSurfaceByIndex(guiVideoFaceBackground);
+  DeleteVSurface(vsVideoFaceBackground);
 
   DeleteVideoObjectFromIndex(guiStats);
   DeleteVideoObjectFromIndex(guiPrice);
@@ -2310,8 +2312,7 @@ BOOLEAN InitVideoFace(uint8_t ubMercID) {
   // Create the facial index
   giMercFaceIndex = InitFace(ubMercID, NOBODY, 0);
 
-  SetAutoFaceActive(GetVSurfaceByID(guiVideoFaceBackground), FACE_AUTO_RESTORE_BUFFER,
-                    giMercFaceIndex, 0, 0);
+  SetAutoFaceActive(vsVideoFaceBackground, FACE_AUTO_RESTORE_BUFFER, giMercFaceIndex, 0, 0);
 
   RenderAutoFace(giMercFaceIndex);
 
@@ -2371,8 +2372,8 @@ BOOLEAN DisplayTalkingMercFaceForVideoPopUp(int32_t iFaceIndex) {
   //	if( !gfIsAnsweringMachineActive )
   {
     // Blt the face surface to the video background surface
-    if (!BltStretchVSurface(vsFB, GetVSurfaceByID(guiVideoFaceBackground), 0, 0, VS_BLT_USECOLORKEY,
-                            &SrcRect, &DestRect))
+    if (!BltStretchVSurface(vsFB, vsVideoFaceBackground, 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
+                            &DestRect))
       return (FALSE);
 
     // if the merc is not at home and the players is leaving a message, shade the players face
