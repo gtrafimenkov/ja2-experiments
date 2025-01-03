@@ -3760,7 +3760,7 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
   BltVideoObjectOld(guiTitleBarSurface, hImageHandle, usIconGraphicIndex,
                     LAPTOP_TITLE_BAR_ICON_OFFSET_X, LAPTOP_TITLE_BAR_ICON_OFFSET_Y);
 
-  SetFontDestBuffer(GetVSurfaceByID(guiTitleBarSurface), 0, 0, LAPTOP_TITLE_BAR_WIDTH,
+  SetFontDestBuffer(FindVSurface(guiTitleBarSurface), 0, 0, LAPTOP_TITLE_BAR_WIDTH,
                     LAPTOP_TITLE_BAR_HEIGHT, FALSE);
   DrawTextToScreen(pTitle, LAPTOP_TITLE_BAR_TEXT_OFFSET_X, LAPTOP_TITLE_BAR_TEXT_OFFSET_Y, 0,
                    FONT14ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
@@ -3853,7 +3853,7 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
     }
   }
 
-  BltStretchVSurface(vsFB, GetVSurfaceByID(guiTitleBarSurface), 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
+  BltStretchVSurface(vsFB, FindVSurface(guiTitleBarSurface), 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
                      &DestRect);
 
   InvalidateRegion(DestRect.iLeft, DestRect.iTop, DestRect.iRight, DestRect.iBottom);
