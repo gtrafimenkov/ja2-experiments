@@ -175,7 +175,7 @@ uint8_t GetLoadScreenID(uint8_t sSectorX, uint8_t sSectorY, int8_t bSectorZ) {
 
 extern BOOLEAN gfSchedulesHosed;
 
-// sets up the loadscreen with specified ID, and draws it to the vsIndexFB,
+// sets up the loadscreen with specified ID, and draws it to the vsFB,
 // and refreshing the screen with it.
 void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
   char* filepath = NULL;

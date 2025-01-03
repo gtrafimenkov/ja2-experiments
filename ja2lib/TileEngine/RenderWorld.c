@@ -2009,7 +2009,7 @@ void RenderTiles(uint32_t uiFlags, int32_t iStartPointX_M, int32_t iStartPointY_
               // ATE: Used here in the editor to denote then an area is not in the world
 
               // Kris:  Fixed a couple things here...
-              //  First, there was a problem with the vsIndexFB already being locked which caused
+              //  First, there was a problem with the vsFB already being locked which caused
               //  failures,
               //	and eventual crashes, so if it reaches this code, the buffer needs to be
               // unlocked first, as
