@@ -87,7 +87,7 @@ uint8_t gubProgNumEnemies = 0;
 uint8_t gubProgCurEnemy = 0;
 
 typedef struct {
-  uint32_t uiSurface;
+  struct VSurface *dest;
   int8_t bCurrentMessage;
   uint32_t uiTimeOfLastUpdate;
   uint32_t uiTimeSinceLastBeep;
@@ -99,10 +99,10 @@ typedef struct {
 
 } TOP_MESSAGE;
 
-TOP_MESSAGE gTopMessage;
+static TOP_MESSAGE gTopMessage;
 BOOLEAN gfTopMessageDirty = FALSE;
 
-void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString);
+void CreateTopMessage(struct VSurface *dest, uint8_t ubType, wchar_t *psString);
 extern uint16_t GetAnimStateForInteraction(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor,
                                            uint16_t usAnimState);
 
@@ -400,7 +400,12 @@ BOOLEAN InitializeTacticalInterface() {
     AssertMsg(0, "Missing INTERFACE\\communicationpopup_2.sti");
 
   // Alocate message surfaces
-  CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(640, 20), &(gTopMessage.uiSurface)));
+  gTopMessage.dest = CreateVSurfaceBlank16(640, 20);
+  if (gTopMessage.dest == NULL) {
+    return FALSE;
+  }
+  // CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(640, 20),
+  // &(gTopMessage.uiSurface)));
 
   InitItemInterface();
   InitRadarScreen();
@@ -2437,7 +2442,7 @@ BOOLEAN AddTopMessage(uint8_t ubType, wchar_t *pzString) {
     // Copy string
     wcscpy(gTacticalStatus.zTopMessageString, pzString);
 
-    CreateTopMessage(gTopMessage.uiSurface, ubType, pzString);
+    CreateTopMessage(gTopMessage.dest, ubType, pzString);
 
     return (TRUE);
   }
@@ -2445,7 +2450,7 @@ BOOLEAN AddTopMessage(uint8_t ubType, wchar_t *pzString) {
   return (FALSE);
 }
 
-void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
+void CreateTopMessage(struct VSurface *dest, uint8_t ubType, wchar_t *psString) {
   uint32_t uiBAR, uiPLAYERBAR, uiINTBAR;
   VOBJECT_DESC VObjectDesc;
   int16_t sX, sY;
@@ -2475,7 +2480,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     AssertMsg(0, "Missing INTERFACE\\timebaryellow.sti");
 
   // Change dest buffer
-  SetFontDestBuffer(FindVSurface(uiSurface), 0, 0, 640, 20, FALSE);
+  SetFontDestBuffer(dest, 0, 0, 640, 20, FALSE);
   SetFont(TINYFONT1);
 
   switch (ubType) {
@@ -2485,7 +2490,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case AIR_RAID_TURN_MESSAGE:
 
       // Render rect into surface
-      BltVObjectFromIndexOld(uiSurface, uiBAR, 0, 0, 0);
+      BltVObjectFromIndex(dest, uiBAR, 0, 0, 0);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_WHITE);
       uiBarToUseInUpDate = uiBAR;
@@ -2495,7 +2500,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case PLAYER_INTERRUPT_MESSAGE:
 
       // Render rect into surface
-      BltVObjectFromIndexOld(uiSurface, uiINTBAR, 0, 0, 0);
+      BltVObjectFromIndex(dest, uiINTBAR, 0, 0, 0);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_BLACK);
       SetFontShadow(NO_SHADOW);
@@ -2505,7 +2510,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     case PLAYER_TURN_MESSAGE:
 
       // Render rect into surface
-      BltVObjectFromIndexOld(uiSurface, uiPLAYERBAR, 0, 0, 0);
+      BltVObjectFromIndex(dest, uiPLAYERBAR, 0, 0, 0);
       SetFontBackground(FONT_MCOLOR_BLACK);
       SetFontForeground(FONT_MCOLOR_BLACK);
       SetFontShadow(NO_SHADOW);
@@ -2527,7 +2532,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
 
     // Render end peice
     sBarX = PROG_BAR_START_X;
-    BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, 1, sBarX, PROG_BAR_START_Y);
+    BltVObjectFromIndex(dest, uiBarToUseInUpDate, 1, sBarX, PROG_BAR_START_Y);
 
     // Determine Length
     dLength = (gTacticalStatus.usTactialTurnLimitCounter) * dNumStepsPerEnemy;
@@ -2543,8 +2548,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
         break;
       }
 
-      BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
-                             PROG_BAR_START_Y);
+      BltVObjectFromIndex(dest, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX, PROG_BAR_START_Y);
 
       dCurSize++;
       cnt2++;
@@ -2557,10 +2561,9 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     // Do end...
     if (gTacticalStatus.usTactialTurnLimitCounter == gTacticalStatus.usTactialTurnLimitMax) {
       sBarX++;
-      BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX,
-                             PROG_BAR_START_Y);
+      BltVObjectFromIndex(dest, uiBarToUseInUpDate, (int16_t)(2 + cnt2), sBarX, PROG_BAR_START_Y);
       sBarX++;
-      BltVObjectFromIndexOld(uiSurface, uiBarToUseInUpDate, (int16_t)(12), sBarX, PROG_BAR_START_Y);
+      BltVObjectFromIndex(dest, uiBarToUseInUpDate, (int16_t)(12), sBarX, PROG_BAR_START_Y);
     }
   }
 
@@ -2644,7 +2647,7 @@ void HandleTopMessages() {
               ((gubProgCurEnemy)*PLAYER_TEAM_TIMER_TICKS_PER_ENEMY);
         }
 
-        CreateTopMessage(gTopMessage.uiSurface, gTacticalStatus.ubTopMessageType,
+        CreateTopMessage(gTopMessage.dest, gTacticalStatus.ubTopMessageType,
                          gTacticalStatus.zTopMessageString);
       }
     } else if (gGameOptions.fTurnTimeLimit) {
@@ -2686,7 +2689,7 @@ void HandleTopMessages() {
                 gTacticalStatus.usTactialTurnLimitCounter++;
               }
 
-              CreateTopMessage(gTopMessage.uiSurface, gTacticalStatus.ubTopMessageType,
+              CreateTopMessage(gTopMessage.dest, gTacticalStatus.ubTopMessageType,
                                gTacticalStatus.zTopMessageString);
 
               // Have we reached max?
@@ -2721,8 +2724,7 @@ void HandleTopMessages() {
       SrcRect.iRight = 640;
       SrcRect.iBottom = 20;
 
-      BltVSurfaceToVSurface(vsFB, FindVSurface(gTopMessage.uiSurface), 0, 0, 0, VS_BLT_SRCSUBRECT,
-                            &SrcRect);
+      BltVSurfaceToVSurface(vsFB, gTopMessage.dest, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
 
       // Save to save buffer....
       SrcRect.iLeft = 0;
@@ -2806,8 +2808,7 @@ void UpdateEnemyUIBar() {
   if (gTacticalStatus.fInTopMessage) {
     if (gTacticalStatus.ubTopMessageType == COMPUTER_TURN_MESSAGE) {
       // Update message!
-      CreateTopMessage(gTopMessage.uiSurface, COMPUTER_TURN_MESSAGE,
-                       gTacticalStatus.zTopMessageString);
+      CreateTopMessage(gTopMessage.dest, COMPUTER_TURN_MESSAGE, gTacticalStatus.zTopMessageString);
     }
   }
 }
