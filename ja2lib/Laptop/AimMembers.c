@@ -599,6 +599,7 @@ BOOLEAN EnterAIMMembers() {
   if (vsVideoFaceBackground == NULL) {
     return FALSE;
   }
+  SetVideoSurfaceTransparencyColor(vsVideoFaceBackground, FROMRGB(0, 0, 0));
 
   // load the stats graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
