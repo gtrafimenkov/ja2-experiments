@@ -2248,10 +2248,6 @@ void RenderInventoryForCharacter(int32_t iId, int32_t iSlot) {
         sCenX = PosX + (abs((int32_t)(57 - usWidth)) / 2) - pTrav->sOffsetX;
         sCenY = PosY + (abs((int32_t)(22 - usHeight)) / 2) - pTrav->sOffsetY;
 
-        // shadow
-        // BltVideoObjectOutlineShadowFromIndex( vsIndexFB, GetInterfaceGraphicForItem( pItem ),
-        // pItem->ubGraphicNum, sCenX-2, sCenY+2);
-
         // blt the item
         BltVideoObjectOutlineFromIndex(vsFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
                                        sCenX, sCenY, 0, FALSE);
