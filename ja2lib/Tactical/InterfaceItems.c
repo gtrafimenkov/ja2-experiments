@@ -3173,8 +3173,6 @@ void RenderItemDescriptionBox() {
         SetRegionHelpEndCallback(&(gItemDescAttachmentRegions[cnt]), HelpTextDoneCallback);
       }
       if (fHatchOutAttachments) {
-        // uint32_t uiWhichBuffer = ( guiCurrentItemDescriptionScreen == MAP_SCREEN ) ?
-        // vsSaveBufferID : vsIndexFB;
         DrawHatchOnInventory(
             vsSaveBufferID, (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX),
             (int16_t)(gsInvDescY + gItemDescAttachmentsXY[cnt].sY - 2),
