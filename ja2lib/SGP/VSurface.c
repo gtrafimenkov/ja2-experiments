@@ -19,7 +19,7 @@ struct VSurface *vsMouseBuffer = NULL;
 struct VSurface *vsMouseBufferOriginal = NULL;
 
 bool AddVSurfaceFromFile(const char *filepath, VSurfID *index) {
-  return AddVSurface(CreateVSurfaceFromFile(filepath), index);
+  return AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile(filepath), index);
 }
 
 typedef struct VSURFACE_NODE {
@@ -124,7 +124,7 @@ bool DeleteVSurfaceByIndex(VSurfID id) {
   return false;
 }
 
-BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *puiIndex) {
+BOOLEAN AddVSurfaceAndSetTransparency(struct VSurface *vs, uint32_t *puiIndex) {
   if (!vs) {
     return FALSE;
   }

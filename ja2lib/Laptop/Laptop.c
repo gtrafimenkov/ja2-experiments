@@ -3756,8 +3756,8 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
   Assert(uiBackgroundGraphic);
 
   // Create a background video surface to blt the title bar onto
-  CHECKF(AddVSurface(CreateVSurfaceBlank16(LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT),
-                     &guiTitleBarSurface));
+  CHECKF(AddVSurfaceAndSetTransparency(
+      CreateVSurfaceBlank16(LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT), &guiTitleBarSurface));
 
   // blit the toolbar grapgucs onto the surface
   GetVideoObject(&hImageHandle, uiBackgroundGraphic);

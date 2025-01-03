@@ -31,7 +31,7 @@ BOOLEAN InitializeGameVideoObjects() {
 
   vsSaveBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
   vsExtraBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
-  CHECKF(AddVSurface(vsSaveBuffer, &vsSaveBufferID));
+  CHECKF(AddVSurfaceAndSetTransparency(vsSaveBuffer, &vsSaveBufferID));
   gfExtraBuffer = TRUE;
 
   return (TRUE);

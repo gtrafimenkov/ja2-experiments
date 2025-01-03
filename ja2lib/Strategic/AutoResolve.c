@@ -976,7 +976,8 @@ void BuildInterfaceBuffer() {
   DestRect.iRight = gpAR->sWidth;
   DestRect.iBottom = gpAR->sHeight;
 
-  if (!AddVSurface(CreateVSurfaceBlank16(gpAR->sWidth, gpAR->sHeight), &gpAR->iInterfaceBuffer))
+  if (!AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(gpAR->sWidth, gpAR->sHeight),
+                                     &gpAR->iInterfaceBuffer))
     AssertMsg(0, "Failed to allocate memory for autoresolve interface buffer.");
 
   GetClippingRect(&ClipRect);

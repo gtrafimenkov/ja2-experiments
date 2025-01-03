@@ -393,8 +393,9 @@ BOOLEAN EnterMercs() {
   //
 
   // Create a background video surface to blt the face onto
-  CHECKF(AddVSurface(CreateVSurfaceBlank16(MERC_VIDEO_FACE_WIDTH, MERC_VIDEO_FACE_HEIGHT),
-                     &guiMercVideoFaceBackground));
+  CHECKF(AddVSurfaceAndSetTransparency(
+      CreateVSurfaceBlank16(MERC_VIDEO_FACE_WIDTH, MERC_VIDEO_FACE_HEIGHT),
+      &guiMercVideoFaceBackground));
 
   RenderMercs();
 

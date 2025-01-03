@@ -95,7 +95,7 @@ uint32_t MapUtilScreenHandle() {
 
     // Create render buffer
     GetCurrentVideoSettings(&usWidth, &usHeight);
-    if (AddVSurface(CreateVSurfaceBlank16(88, 44), &giMiniMap) == FALSE) {
+    if (AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(88, 44), &giMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
 
@@ -116,7 +116,7 @@ uint32_t MapUtilScreenHandle() {
     p24BitValues = (RGBValues *)MemAlloc(MINIMAP_X_SIZE * MINIMAP_Y_SIZE * sizeof(RGBValues));
     p24BitDest = (uint8_t *)p24BitValues;
 
-    if (AddVSurface(CreateVSurfaceBlank8(88, 44), &gi8BitMiniMap) == FALSE) {
+    if (AddVSurfaceAndSetTransparency(CreateVSurfaceBlank8(88, 44), &gi8BitMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
     GetVSurfaceByIndexOld(&ghvSurface, gi8BitMiniMap);

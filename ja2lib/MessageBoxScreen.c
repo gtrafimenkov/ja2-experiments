@@ -249,8 +249,8 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   SetPendingNewScreen(MSG_BOX_SCREEN);
 
   // Init save buffer
-  if (AddVSurface(CreateVSurfaceBlank16(usTextBoxWidth, usTextBoxHeight), &gMsgBox.uiSaveBuffer) ==
-      FALSE) {
+  if (AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(usTextBoxWidth, usTextBoxHeight),
+                                    &gMsgBox.uiSaveBuffer) == FALSE) {
     return (-1);
   }
 
