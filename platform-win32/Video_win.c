@@ -2139,27 +2139,27 @@ static void DeletePrimaryVideoSurfaces() {
   //
 
   if (vsPrimary != NULL) {
-    DeleteVideoSurface(vsPrimary);
+    DeleteVSurface(vsPrimary);
     vsPrimary = NULL;
   }
 
   if (vsBackBuffer != NULL) {
-    DeleteVideoSurface(vsBackBuffer);
+    DeleteVSurface(vsBackBuffer);
     vsBackBuffer = NULL;
   }
 
   if (vsFB != NULL) {
-    DeleteVideoSurface(vsFB);
+    DeleteVSurface(vsFB);
     vsFB = NULL;
   }
 
   if (vsMouseBuffer != NULL) {
-    DeleteVideoSurface(vsMouseBuffer);
+    DeleteVSurface(vsMouseBuffer);
     vsMouseBuffer = NULL;
   }
 
   if (vsMouseBufferOriginal != NULL) {
-    DeleteVideoSurface(vsMouseBufferOriginal);
+    DeleteVSurface(vsMouseBufferOriginal);
     vsMouseBufferOriginal = NULL;
   }
 }
@@ -2652,7 +2652,7 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 }
 
 // Deletes all palettes, surfaces and region data
-BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) {
+BOOLEAN DeleteVSurface(struct VSurface *hVSurface) {
   LPDIRECTDRAWSURFACE2 lpDDSurface;
 
   // Assertions

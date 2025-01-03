@@ -643,7 +643,7 @@ BOOLEAN DeleteNode(CRDT_NODE *pNodeToDelete) {
 
   // if the node had something to display, delete a surface for it
   if (pTempNode->uiType == CRDT_NODE_DEFAULT) {
-    DeleteVideoSurface(pTempNode->vsImage);
+    DeleteVSurface(pTempNode->vsImage);
     pTempNode->vsImage = 0;
   }
 

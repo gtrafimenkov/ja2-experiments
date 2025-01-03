@@ -585,7 +585,7 @@ void SetAutoFaceInActive(int32_t iFaceIndex) {
   }
 
   if (pFace->fAutoDisplayBuffer) {
-    DeleteVideoSurface(pFace->autoDisplayBuffer);
+    DeleteVSurface(pFace->autoDisplayBuffer);
     pFace->autoDisplayBuffer = NULL;
   }
 

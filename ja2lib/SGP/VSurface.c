@@ -44,7 +44,7 @@ void DeinitVSurfaceList() {
   while (gpVSurfaceHead) {
     VSURFACE_NODE *curr = gpVSurfaceHead;
     gpVSurfaceHead = gpVSurfaceHead->next;
-    DeleteVideoSurface(curr->hVSurface);
+    DeleteVSurface(curr->hVSurface);
     MemFree(curr);
   }
   gpVSurfaceHead = NULL;
@@ -97,7 +97,7 @@ bool DeleteVSurfaceByIndex(VSurfID id) {
     if (curr->uiIndex == id) {  // Found the node, so detach it and delete it.
 
       // Deallocate the memory for the video surface
-      DeleteVideoSurface(curr->hVSurface);
+      DeleteVSurface(curr->hVSurface);
 
       if (curr ==
           gpVSurfaceHead) {  // Advance the head, because we are going to remove the head node.
