@@ -2774,7 +2774,7 @@ BOOLEAN RepairIsDone(uint16_t usItemIndex, uint8_t ubElement) {
   return (TRUE);
 }
 
-void DrawHatchOnInventory(uint32_t uiSurface, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
+void DrawHatchOnInventory(struct VSurface *vs, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
                           uint16_t usHeight) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
@@ -2789,9 +2789,9 @@ void DrawHatchOnInventory(uint32_t uiSurface, uint16_t usPosX, uint16_t usPosY, 
   ClipRect.iTop = usPosY;
   ClipRect.iBottom = usPosY + usHeight;
 
-  pDestBuf = LockVSurfaceByID(uiSurface, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vs, &uiDestPitchBYTES);
   Blt16BPPBufferPixelateRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect, Pattern);
-  UnlockVSurfaceByID(uiSurface);
+  UnlockVSurface(vs);
 }
 
 uint32_t CalcShopKeeperItemPrice(BOOLEAN fDealerSelling, BOOLEAN fUnitPriceOnly, uint16_t usItemID,
@@ -5655,9 +5655,9 @@ void StartSKIDescriptionBox(void) {
 
   // if the current merc is too far away, dont shade the SM panel because it is already shaded
   if (gfSMDisableForItems)
-    DrawHatchOnInventory(vsIndexFB, 0, 0, 640, 338);
+    DrawHatchOnInventory(vsFB, 0, 0, 640, 338);
   else
-    DrawHatchOnInventory(vsIndexFB, 0, 0, 640, 480);
+    DrawHatchOnInventory(vsFB, 0, 0, 640, 480);
 
   InvalidateRegion(0, 0, 640, 480);
 
@@ -6885,6 +6885,6 @@ void HatchOutInvSlot(uint16_t usPosX, uint16_t usPosY) {
   usSlotHeight = SKI_INV_SLOT_HEIGHT;
 
   // Hatch it out
-  DrawHatchOnInventory(vsIndexFB, usSlotX, usSlotY, usSlotWidth, usSlotHeight);
+  DrawHatchOnInventory(vsFB, usSlotX, usSlotY, usSlotWidth, usSlotHeight);
   InvalidateRegion(usSlotX, usSlotY, usSlotX + usSlotWidth, usSlotY + usSlotHeight);
 }

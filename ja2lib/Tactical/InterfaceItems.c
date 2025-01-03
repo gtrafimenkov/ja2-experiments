@@ -1094,9 +1094,8 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
   }
 
   if (fHatchItOut) {
-    uint32_t uiWhichBuffer =
-        (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? vsSaveBufferID : vsIndexFB;
-    DrawHatchOnInventory(uiWhichBuffer, sX, sY, (uint16_t)(gSMInvData[sPocket].sWidth - 1),
+    struct VSurface *buffer = (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? vsSaveBuffer : vsFB;
+    DrawHatchOnInventory(buffer, sX, sY, (uint16_t)(gSMInvData[sPocket].sWidth - 1),
                          (uint16_t)(gSMInvData[sPocket].sHeight - 1));
   }
 
@@ -2674,7 +2673,7 @@ void RenderItemDescriptionBox() {
       }
 
       if (fHatchOutAttachments) {
-        DrawHatchOnInventory(vsSaveBufferID,
+        DrawHatchOnInventory(vsSaveBuffer,
                              (int16_t)(gsInvDescX + gMapItemDescAttachmentsXY[cnt].sX),
                              (int16_t)(gsInvDescY + gMapItemDescAttachmentsXY[cnt].sY - 2),
                              (int16_t)(gMapItemDescAttachmentsXY[cnt].sWidth +
@@ -3171,7 +3170,7 @@ void RenderItemDescriptionBox() {
       }
       if (fHatchOutAttachments) {
         DrawHatchOnInventory(
-            vsSaveBufferID, (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX),
+            vsSaveBuffer, (int16_t)(gsInvDescX + gItemDescAttachmentsXY[cnt].sX),
             (int16_t)(gsInvDescY + gItemDescAttachmentsXY[cnt].sY - 2),
             (int16_t)(gItemDescAttachmentsXY[cnt].sWidth + gItemDescAttachmentsXY[cnt].sBarDx),
             (int16_t)(gItemDescAttachmentsXY[cnt].sHeight + 2));
