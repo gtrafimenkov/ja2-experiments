@@ -305,7 +305,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
 
   SetFontDestBuffer(vsSaveBuffer, 0, 0, 640, 480, FALSE);
 
-  INVRenderItem(vsSaveBufferID, NULL, &(pInventoryPoolList[iCurrentSlot + iFirstSlotOnPage].o),
+  INVRenderItem(vsSaveBuffer, NULL, &(pInventoryPoolList[iCurrentSlot + iFirstSlotOnPage].o),
                 (int16_t)(sX + 7), sY, 60, 25, DIRTYLEVEL2, NULL, 0, fOutLine, sOutLine);  // 67
 
   SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);

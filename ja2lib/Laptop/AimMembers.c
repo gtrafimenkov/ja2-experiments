@@ -1150,7 +1150,7 @@ BOOLEAN DisplayMercsInventory(uint8_t ubMercID) {
       sCenY = PosY + (abs((int32_t)((int32_t)WEAPONBOX_SIZE_Y - usHeight)) / 2) - pTrav->sOffsetY;
 
       // blt the shadow of the item
-      BltVideoObjectOutlineShadowFromIndex(vsIndexFB, GetInterfaceGraphicForItem(pItem),
+      BltVideoObjectOutlineShadowFromIndex(vsFB, GetInterfaceGraphicForItem(pItem),
                                            pItem->ubGraphicNum, sCenX - 2, sCenY + 2);
       // blt the item
       BltVideoObjectOutlineFromIndex(vsFB, GetInterfaceGraphicForItem(pItem), pItem->ubGraphicNum,
@@ -2736,9 +2736,6 @@ uint8_t DisplayPixelatedImage(uint8_t ubMaxImages) {
     uiLastTime = uiCurrentTime;
   }
 
-  //	PixelateVideoObjectRect(  vsIndexFB, AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y,
-  // AIM_MEMBER_VIDEO_FACE_X+AIM_MEMBER_VIDEO_FACE_WIDTH-1,
-  // AIM_MEMBER_VIDEO_FACE_Y+AIM_MEMBER_VIDEO_FACE_HEIGHT-1);
   ShadowVideoSurfaceRect(vsFB, AIM_MEMBER_VIDEO_FACE_X, AIM_MEMBER_VIDEO_FACE_Y,
                          AIM_MEMBER_VIDEO_FACE_X + AIM_MEMBER_VIDEO_FACE_WIDTH - 1,
                          AIM_MEMBER_VIDEO_FACE_Y + AIM_MEMBER_VIDEO_FACE_HEIGHT - 1);

@@ -1128,14 +1128,14 @@ BOOLEAN BltVideoObjectOutline(struct VSurface *dest, struct VObject *hSrcVObject
   return (TRUE);
 }
 
-BOOLEAN BltVideoObjectOutlineShadowFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
+BOOLEAN BltVideoObjectOutlineShadowFromIndex(struct VSurface *dest, uint32_t uiSrcVObject,
                                              uint16_t usIndex, int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
   struct VObject *hSrcVObject;
 
   // Lock video surface
-  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
+  pBuffer = (uint16_t *)LockVSurface(dest, &uiPitch);
 
   if (pBuffer == NULL) {
     return (FALSE);
@@ -1157,7 +1157,7 @@ BOOLEAN BltVideoObjectOutlineShadowFromIndex(uint32_t uiDestVSurface, uint32_t u
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnlockVSurfaceByID(uiDestVSurface);
+  UnlockVSurface(dest);
   return (TRUE);
 }
 

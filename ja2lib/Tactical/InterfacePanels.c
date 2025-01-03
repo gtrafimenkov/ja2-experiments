@@ -3782,7 +3782,7 @@ void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY, 
       RestoreExternBackgroundRect(sX, sY, (int16_t)(TM_INV_WIDTH), (int16_t)(TM_INV_HEIGHT));
     } else {
       // Look in primary hand
-      INVRenderItem(vsSaveBufferID, pSoldier, &(pSoldier->inv[HANDPOS]), sX, sY, TM_INV_WIDTH,
+      INVRenderItem(vsSaveBuffer, pSoldier, &(pSoldier->inv[HANDPOS]), sX, sY, TM_INV_WIDTH,
                     TM_INV_HEIGHT, fDirty, &(gfTEAM_HandInvDispText[ubPanelNum][HANDPOS]), 0, FALSE,
                     0);
     }
@@ -3793,7 +3793,7 @@ void RenderSoldierTeamInv(struct SOLDIERTYPE *pSoldier, int16_t sX, int16_t sY, 
                                   (int16_t)(TM_INV_HEIGHT));
     } else {
       // Do secondary hand
-      INVRenderItem(vsSaveBufferID, pSoldier, &(pSoldier->inv[SECONDHANDPOS]), sX,
+      INVRenderItem(vsSaveBuffer, pSoldier, &(pSoldier->inv[SECONDHANDPOS]), sX,
                     (int16_t)(sY + TM_INV_HAND_SEPY), TM_INV_WIDTH, TM_INV_HEIGHT, fDirty,
                     &(gfTEAM_HandInvDispText[ubPanelNum][SECONDHANDPOS]), 0, FALSE, 0);
     }
