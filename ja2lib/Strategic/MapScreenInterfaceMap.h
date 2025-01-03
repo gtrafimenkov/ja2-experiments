@@ -199,7 +199,7 @@ extern uint8_t gsHighlightSectorX;
 extern uint8_t gsHighlightSectorY;
 
 // the big map
-extern uint32_t guiBIGMAP;
+extern struct VSurface *vsBigMap;
 
 // the orta icon
 extern uint32_t guiORTAICON;

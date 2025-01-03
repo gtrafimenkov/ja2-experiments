@@ -109,6 +109,9 @@ BOOLEAN InitializeGame(void) {
   // Deletes all the Temp files in the Maps\Temp directory
   InitTacticalSave(TRUE);
 
+  // preload mapscreen graphics
+  HandlePreloadOfMapGraphics();
+
   // Initialize Game Screens.
   for (uiIndex = 0; uiIndex < MAX_SCREENS; uiIndex++) {
     if ((*(GameScreens[uiIndex].InitializeScreen))() ==
@@ -125,9 +128,6 @@ BOOLEAN InitializeGame(void) {
 
   // Initialize the Game options ( Gun nut, scifi and dif. levels
   InitGameOptions();
-
-  // preload mapscreen graphics
-  HandlePreloadOfMapGraphics();
 
   guiCurrentScreen = INIT_SCREEN;
 
