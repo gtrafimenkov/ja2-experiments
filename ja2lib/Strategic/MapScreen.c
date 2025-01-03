@@ -2650,7 +2650,6 @@ uint32_t MapScreenHandle(void) {
       // load border graphics
       LoadMapBorderGraphics();
 
-      CHECKF(AddVSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
       CHECKF(AddVSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
@@ -5034,7 +5033,6 @@ void EndMapScreen(BOOLEAN fDuringFade) {
     DeleteVideoObjectFromIndex(guiCHARINFO);
     DeleteVideoObjectFromIndex(guiCHARICONS);
     DeleteVideoObjectFromIndex(guiCROSS);
-    DeleteVSurfaceByIndex(guiBIGMAP);
     DeleteVideoObjectFromIndex(guiSAMICON);
     DeleteVideoObjectFromIndex(guiMAPINV);
     DeleteVideoObjectFromIndex(guiMapInvSecondHandBlockout);
@@ -8331,7 +8329,10 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
 
   fPreLoadedMapGraphics = TRUE;
 
-  CHECKF(AddVSurfaceFromFile("INTERFACE\\b_map.pcx", &guiBIGMAP));
+  vsBigMap = CreateVSurfaceFromFile("INTERFACE\\b_map.pcx");
+  if (vsBigMap == NULL) {
+    return FALSE;
+  }
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
@@ -8475,7 +8476,6 @@ void HandleRemovalOfPreLoadedMapGraphics(void) {
     DeleteVideoObjectFromIndex(guiCHARINFO);
     DeleteVideoObjectFromIndex(guiCHARICONS);
     DeleteVideoObjectFromIndex(guiCROSS);
-    DeleteVSurfaceByIndex(guiBIGMAP);
     DeleteVideoObjectFromIndex(guiSubLevel1);
     DeleteVideoObjectFromIndex(guiSubLevel2);
     DeleteVideoObjectFromIndex(guiSubLevel3);
