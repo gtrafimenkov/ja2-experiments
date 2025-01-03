@@ -230,16 +230,13 @@ void UnSecondaryShadeStringInBox(int32_t hBoxHandle, int32_t iLineNumber) {
   return;
 }
 
-void SetBoxBuffer(int32_t hBoxHandle, uint32_t uiBuffer) {
+void SetBoxBuffer(int32_t hBoxHandle, struct VSurface *vsBuffer) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
 
-  PopUpBoxList[hBoxHandle]->uiBuffer = uiBuffer;
-
+  PopUpBoxList[hBoxHandle]->vsBuffer = vsBuffer;
   PopUpBoxList[hBoxHandle]->fUpdated = FALSE;
-
-  return;
 }
 
 void SetBoxPosition(int32_t hBoxHandle, SGPPoint Position) {
@@ -990,20 +987,20 @@ void SetCurrentBox(int32_t hBoxHandle) {
 
 void GetCurrentBox(int32_t *hBoxHandle) { *hBoxHandle = guiCurrentBox; }
 
-void DisplayBoxes(uint32_t uiBuffer) {
+void DisplayBoxes(struct VSurface *vsBuffer) {
   uint32_t uiCounter;
 
   for (uiCounter = 0; uiCounter < MAX_POPUP_BOX_COUNT; uiCounter++) {
-    DisplayOnePopupBox(uiCounter, uiBuffer);
+    DisplayOnePopupBox(uiCounter, vsBuffer);
   }
   return;
 }
 
-void DisplayOnePopupBox(uint32_t uiIndex, uint32_t uiBuffer) {
+void DisplayOnePopupBox(uint32_t uiIndex, struct VSurface *vsBuffer) {
   if ((uiIndex < 0) || (uiIndex >= MAX_POPUP_BOX_COUNT)) return;
 
   if (PopUpBoxList[uiIndex] != NULL) {
-    if ((PopUpBoxList[uiIndex]->uiBuffer == uiBuffer) && (PopUpBoxList[uiIndex]->fShowBox)) {
+    if ((PopUpBoxList[uiIndex]->vsBuffer == vsBuffer) && (PopUpBoxList[uiIndex]->fShowBox)) {
       DrawBox(uiIndex);
       DrawBoxText(uiIndex);
     }
@@ -1078,54 +1075,54 @@ BOOLEAN DrawBox(uint32_t uiCounter) {
 
   // blit in texture first, then borders
   // blit in surface
-  pDestBuf = (uint16_t *)LockVSurfaceByID(PopUpBoxList[uiCounter]->uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = (uint16_t *)LockVSurface(PopUpBoxList[uiCounter]->vsBuffer, &uiDestPitchBYTES);
   CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, PopUpBoxList[uiCounter]->iBackGroundSurface));
   pSrcBuf = LockVSurfaceByID(PopUpBoxList[uiCounter]->iBackGroundSurface, &uiSrcPitchBYTES);
   Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
                               usTopX, usTopY, &clip);
   UnlockVSurfaceByID(PopUpBoxList[uiCounter]->iBackGroundSurface);
-  UnlockVSurfaceByID(PopUpBoxList[uiCounter]->uiBuffer);
+  UnlockVSurface(PopUpBoxList[uiCounter]->vsBuffer);
   GetVideoObject(&hBoxHandle, PopUpBoxList[uiCounter]->iBorderObjectIndex);
 
   // blit in 4 corners (they're 2x2 pixels)
-  BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_LEFT_CORNER, usTopX, usTopY);
-  BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_RIGHT_CORNER,
-                    usTopX + usWidth - 2, usTopY);
-  BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_RIGHT_CORNER,
-                    usTopX + usWidth - 2, usTopY + usHeight - 2);
-  BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_LEFT_CORNER, usTopX,
-                    usTopY + usHeight - 2);
+  BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, TOP_LEFT_CORNER, usTopX, usTopY);
+  BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, TOP_RIGHT_CORNER,
+                 usTopX + usWidth - 2, usTopY);
+  BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, BOTTOM_RIGHT_CORNER,
+                 usTopX + usWidth - 2, usTopY + usHeight - 2);
+  BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, BOTTOM_LEFT_CORNER, usTopX,
+                 usTopY + usHeight - 2);
 
   // blit in edges
   if (uiNumTilesWide > 0) {
     // full pieces
     for (uiCount = 0; uiCount < uiNumTilesWide; uiCount++) {
-      BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_EDGE,
-                        usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY);
-      BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_EDGE,
-                        usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY + usHeight - 2);
+      BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, TOP_EDGE,
+                     usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY);
+      BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, BOTTOM_EDGE,
+                     usTopX + 2 + (uiCount * BORDER_WIDTH), usTopY + usHeight - 2);
     }
 
     // partial pieces
-    BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, TOP_EDGE,
-                      usTopX + usWidth - 2 - BORDER_WIDTH, usTopY);
-    BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, BOTTOM_EDGE,
-                      usTopX + usWidth - 2 - BORDER_WIDTH, usTopY + usHeight - 2);
+    BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, TOP_EDGE,
+                   usTopX + usWidth - 2 - BORDER_WIDTH, usTopY);
+    BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, BOTTOM_EDGE,
+                   usTopX + usWidth - 2 - BORDER_WIDTH, usTopY + usHeight - 2);
   }
   if (uiNumTilesHigh > 0) {
     // full pieces
     for (uiCount = 0; uiCount < uiNumTilesHigh; uiCount++) {
-      BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE, usTopX,
-                        usTopY + 2 + (uiCount * BORDER_HEIGHT));
-      BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE,
-                        usTopX + usWidth - 2, usTopY + 2 + (uiCount * BORDER_HEIGHT));
+      BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, SIDE_EDGE, usTopX,
+                     usTopY + 2 + (uiCount * BORDER_HEIGHT));
+      BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, SIDE_EDGE, usTopX + usWidth - 2,
+                     usTopY + 2 + (uiCount * BORDER_HEIGHT));
     }
 
     // partial pieces
-    BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE, usTopX,
-                      usTopY + usHeight - 2 - BORDER_HEIGHT);
-    BltVideoObjectOld(PopUpBoxList[uiCounter]->uiBuffer, hBoxHandle, SIDE_EDGE,
-                      usTopX + usWidth - 2, usTopY + usHeight - 2 - BORDER_HEIGHT);
+    BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, SIDE_EDGE, usTopX,
+                   usTopY + usHeight - 2 - BORDER_HEIGHT);
+    BltVideoObject(PopUpBoxList[uiCounter]->vsBuffer, hBoxHandle, SIDE_EDGE, usTopX + usWidth - 2,
+                   usTopY + usHeight - 2 - BORDER_HEIGHT);
   }
 
   InvalidateRegion(usTopX, usTopY, usTopX + usWidth, usTopY + usHeight);
@@ -1144,7 +1141,7 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
   // clip text?
   if (PopUpBoxList[uiCounter]->uiFlags & POPUP_BOX_FLAG_CLIP_TEXT) {
     SetFontDestBuffer(
-        GetVSurfaceByID(PopUpBoxList[uiCounter]->uiBuffer),
+        PopUpBoxList[uiCounter]->vsBuffer,
         PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin - 1,
         PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->uiTopMargin,
         PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->Dimensions.iRight -
@@ -1271,7 +1268,7 @@ BOOLEAN DrawBoxText(uint32_t uiCounter) {
     }
   }
 
-  if (PopUpBoxList[uiCounter]->uiBuffer != vsSaveBufferID) {
+  if (PopUpBoxList[uiCounter]->vsBuffer != vsSaveBuffer) {
     InvalidateRegion(
         PopUpBoxList[uiCounter]->Position.iX + PopUpBoxList[uiCounter]->uiLeftMargin - 1,
         PopUpBoxList[uiCounter]->Position.iY + PopUpBoxList[uiCounter]->uiTopMargin,

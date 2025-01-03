@@ -6,6 +6,7 @@
 #define __POPUP_BOX
 
 #include "SGP/Types.h"
+#include "SGP/VSurface.h"
 
 #define MAX_POPUP_BOX_COUNT 20
 #define MAX_POPUP_BOX_STRING_COUNT \
@@ -47,7 +48,7 @@ struct popupbox {
   int32_t iBorderObjectIndex;
   int32_t iBackGroundSurface;
   uint32_t uiFlags;
-  uint32_t uiBuffer;
+  struct VSurface *vsBuffer;
   uint32_t uiSecondColumnMinimunOffset;
   uint32_t uiSecondColumnCurrentOffset;
   uint32_t uiBoxMinWidth;
@@ -71,7 +72,7 @@ void SetMargins(int32_t hBoxHandle, uint32_t uiLeft, uint32_t uiTop, uint32_t ui
 uint32_t GetTopMarginSize(int32_t hBoxHandle);
 void SetLineSpace(int32_t hBoxHandle, uint32_t uiLineSpace);
 uint32_t GetLineSpace(int32_t hBoxHandle);
-void SetBoxBuffer(int32_t hBoxHandle, uint32_t uiBuffer);
+void SetBoxBuffer(int32_t hBoxHandle, struct VSurface *vsBuffer);
 void SetBoxPosition(int32_t hBoxHandle, SGPPoint Position);
 void GetBoxPosition(int32_t hBoxHandle, SGPPoint *Position);
 uint32_t GetNumberOfLinesOfTextInBox(int32_t hBoxHandle);
@@ -104,8 +105,8 @@ void RemoveAllCurrentBoxStrings(void);
 void RemoveBox(int32_t hBoxHandle);
 void ShowBox(int32_t hBoxHandle);
 void HideBox(int32_t hBoxHandle);
-void DisplayBoxes(uint32_t uiBuffer);
-void DisplayOnePopupBox(uint32_t uiIndex, uint32_t uiBuffer);
+void DisplayBoxes(struct VSurface *vsBuffer);
+void DisplayOnePopupBox(uint32_t uiIndex, struct VSurface *vsBuffer);
 void SetCurrentBox(int32_t hBoxHandle);
 void GetCurrentBox(int32_t *hBoxHandle);
 
