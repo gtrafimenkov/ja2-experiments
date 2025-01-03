@@ -400,7 +400,7 @@ BOOLEAN InitializeTacticalInterface() {
     AssertMsg(0, "Missing INTERFACE\\communicationpopup_2.sti");
 
   // Alocate message surfaces
-  CHECKF(AddVSurface(CreateVSurfaceBlank16(640, 20), &(gTopMessage.uiSurface)));
+  CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(640, 20), &(gTopMessage.uiSurface)));
 
   InitItemInterface();
   InitRadarScreen();

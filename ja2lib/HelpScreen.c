@@ -1986,7 +1986,7 @@ int8_t HelpScreenDetermineWhichMapScreenHelpToShow() {
 
 BOOLEAN CreateHelpScreenTextBuffer() {
   // Create a background video surface to blt the face onto
-  CHECKF(AddVSurface(
+  CHECKF(AddVSurfaceAndSetTransparency(
       CreateVSurfaceBlank16(HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER),
       &guiHelpScreenTextBufferSurface));
 

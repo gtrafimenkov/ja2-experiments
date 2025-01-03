@@ -490,8 +490,9 @@ static void InternalSetAutoFaceActive(struct VSurface *displayBuffer, uint32_t u
 
   if (uiRestoreBuffer == FACE_AUTO_RESTORE_BUFFER) {
     pFace->fAutoRestoreBuffer = TRUE;
-    CHECKV(AddVSurface(CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight),
-                       &(pFace->uiAutoRestoreBuffer)));
+    CHECKV(AddVSurfaceAndSetTransparency(
+        CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight),
+        &(pFace->uiAutoRestoreBuffer)));
   } else {
     pFace->fAutoRestoreBuffer = FALSE;
     pFace->uiAutoRestoreBuffer = uiRestoreBuffer;

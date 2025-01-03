@@ -79,7 +79,7 @@ BOOLEAN InitializeVideoSurfaceManager();
 BOOLEAN ShutdownVideoSurfaceManager();
 
 // Adds a video Surface to list
-BOOLEAN AddVSurface(struct VSurface *vs, uint32_t *uiIndex);
+BOOLEAN AddVSurfaceAndSetTransparency(struct VSurface *vs, uint32_t *uiIndex);
 
 struct VSurface *GetVSurfaceByID(VSurfID id);
 
