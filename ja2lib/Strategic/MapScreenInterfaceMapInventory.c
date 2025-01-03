@@ -329,7 +329,7 @@ BOOLEAN RenderItemInPoolSlot(int32_t iCurrentSlot, int32_t iFirstSlotOnPage) {
         (Menptr[gCharactersList[bSelectedInfoChar].usSolID].sSectorY == sSelMapY) &&
         (Menptr[gCharactersList[bSelectedInfoChar].usSolID].bSectorZ == iCurrentMapSectorZ))) {
     // Shade the item
-    DrawHatchOnInventory(vsSaveBufferID, sX, sY, MAP_INVEN_SLOT_WIDTH, MAP_INVEN_SLOT_IMAGE_HEIGHT);
+    DrawHatchOnInventory(vsSaveBuffer, sX, sY, MAP_INVEN_SLOT_WIDTH, MAP_INVEN_SLOT_IMAGE_HEIGHT);
   }
 
   // the name
