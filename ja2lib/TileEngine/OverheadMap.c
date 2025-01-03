@@ -637,10 +637,6 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
     sAnchorPosX_S = sStartPointX_S;
     sAnchorPosY_S = sStartPointY_S;
 
-    // Zero out area!
-    // ColorFillVSurfaceArea( vsIndexFB, 0, 0, (int16_t)(640),
-    // (int16_t)(gsVIEWPORT_WINDOW_END_Y), Get16BPPColor( FROMRGB( 0, 0, 0 ) ) );
-
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
     do {
