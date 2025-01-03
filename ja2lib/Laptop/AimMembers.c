@@ -2914,9 +2914,9 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
       CHECKF(AddStandardVideoObject(&VObjectDesc, &uiVideoBackgroundGraphic));
 
       // Create a background video surface to blt the face onto
-      CHECKF(AddVSurface(CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH,
-                                               AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT),
-                         &guiVideoTitleBar));
+      CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH,
+                                                                 AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT),
+                                           &guiVideoTitleBar));
 
       gfAimMemberCanMercSayOpeningQuote = TRUE;
 
@@ -3139,7 +3139,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
     CHECKF(AddStandardVideoObject(&VObjectDesc, &uiVideoBackgroundGraphic));
 
     // Create a background video surface to blt the face onto
-    CHECKF(AddVSurface(
+    CHECKF(AddVSurfaceAndSetTransparency(
         CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT),
         &guiVideoTitleBar));
 

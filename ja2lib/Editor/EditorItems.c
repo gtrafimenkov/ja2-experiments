@@ -276,7 +276,8 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   eInfo.sHeight = 80;
   // Create item buffer
   //!!!Memory check.  Create the item buffer
-  if (!AddVSurface(CreateVSurfaceBlank16(eInfo.sWidth, eInfo.sHeight), &eInfo.uiBuffer)) {
+  if (!AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(eInfo.sWidth, eInfo.sHeight),
+                                     &eInfo.uiBuffer)) {
     eInfo.fKill = TRUE;
     eInfo.fActive = FALSE;
     return;

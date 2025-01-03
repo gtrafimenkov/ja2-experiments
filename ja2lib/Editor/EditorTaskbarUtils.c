@@ -193,14 +193,15 @@ void DeleteEditorImages() {
 
 void CreateEditorBuffers() {
   int32_t i;
-  if (!AddVSurface(CreateVSurfaceBlank16(60, 25), &guiMercTempBuffer))
+  if (!AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(60, 25), &guiMercTempBuffer))
     AssertMsg(0, "Failed to allocate memory for merc tempitem buffer.");
 
   // create the nine buffers for the merc's inventory slots.
   for (i = 0; i < 9; i++) {
-    if (!AddVSurface(CreateVSurfaceBlank16(MERCINV_SLOT_HEIGHT,
-                                           i < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH),
-                     &guiMercInvPanelBuffers[i]))
+    if (!AddVSurfaceAndSetTransparency(
+            CreateVSurfaceBlank16(MERCINV_SLOT_HEIGHT,
+                                  i < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH),
+            &guiMercInvPanelBuffers[i]))
       AssertMsg(0, "Failed to allocate memory for merc item[] buffers.");
   }
 }
