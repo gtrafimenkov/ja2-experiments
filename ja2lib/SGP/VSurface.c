@@ -305,14 +305,7 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, int32_t 
   return BltVSurface(dest, src, fBltFlags, iDestX, iDestY, &srcRect, &destRect);
 }
 
-struct VSurface *GetVSurfaceByID(VSurfID id) {
-  switch (id) {
-    case vsIndexFB:
-      return vsFB;
-    default:
-      return FindVSurface(id);
-  }
-}
+struct VSurface *GetVSurfaceByID(VSurfID id) { return FindVSurface(id); }
 
 BOOLEAN GetVSurfaceByIndexOld(struct VSurface **pvs, VSurfID id) {
   *pvs = GetVSurfaceByID(id);

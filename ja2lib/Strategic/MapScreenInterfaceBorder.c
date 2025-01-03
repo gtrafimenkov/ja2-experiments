@@ -170,7 +170,7 @@ void RenderMapBorder(void) {
 }
 
 void RenderMapBorderEtaPopUp(void) {
-  // renders map border corner to the vsIndexFB
+  // renders map border corner to the vsFB
   struct VObject *hHandle;
 
   /*

@@ -615,7 +615,7 @@ BOOLEAN EnterSaveLoadScreen() {
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
     UnlockVSurface(vsFB);
 
-    // CLEAR THE vsIndexFB
+    // CLEAR THE vsFB
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
     UnlockVSurface(vsFB);
