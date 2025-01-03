@@ -3332,7 +3332,7 @@ uint32_t MapScreenHandle(void) {
   }
 
   // pop up display boxes
-  DisplayBoxes(vsIndexFB);
+  DisplayBoxes(vsFB);
 
   // render buttons
   RenderButtons();
@@ -3341,13 +3341,13 @@ uint32_t MapScreenHandle(void) {
     // redisplay Movement box to blit it over any border buttons, since if long enough it can
     // overlap them
     ForceUpDateOfBox(ghMoveBox);
-    DisplayOnePopupBox(ghMoveBox, vsIndexFB);
+    DisplayOnePopupBox(ghMoveBox, vsFB);
   }
 
   if (fShowContractMenu) {
     // redisplay Contract box to blit it over any map sort buttons, since they overlap
     ForceUpDateOfBox(ghContractBox);
-    DisplayOnePopupBox(ghContractBox, vsIndexFB);
+    DisplayOnePopupBox(ghContractBox, vsFB);
   }
 
   // If we have new email, blink the email icon on top of the laptop button.

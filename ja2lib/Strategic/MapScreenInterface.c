@@ -2727,7 +2727,7 @@ void CreatePopUpBoxForMovementBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_RESIZE));
 
   // which buffer will box render to
-  SetBoxBuffer(ghMoveBox, vsIndexFB);
+  SetBoxBuffer(ghMoveBox, vsFB);
 
   // border type?
   SetBorderType(ghMoveBox, guiPOPUPBORDERS);

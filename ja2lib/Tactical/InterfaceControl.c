@@ -744,7 +744,7 @@ void RenderTopmostTacticalInterface() {
   HandleShowingOfTacticalInterfaceFastHelpText();
   HandleShadingOfLinesForAssignmentMenus();
   DetermineBoxPositions();
-  DisplayBoxes(vsIndexFB);
+  DisplayBoxes(vsFB);
 }
 
 void StartViewportOverlays() {
