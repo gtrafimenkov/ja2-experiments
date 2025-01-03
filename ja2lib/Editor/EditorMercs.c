@@ -2711,8 +2711,8 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   // offsets, etc. Each slot has it's own smaller version buffer, and this is what gets drawn when
   // the rendering happens.
 
-  struct VSurface *src = GetVSurfaceByID(guiMercTempBuffer);
-  struct VSurface *dest = GetVSurfaceByID(guiMercInvPanelBuffers[gbCurrSelect]);
+  struct VSurface *src = FindVSurface(guiMercTempBuffer);
+  struct VSurface *dest = FindVSurface(guiMercInvPanelBuffers[gbCurrSelect]);
 
   // build the rects
   iDstWidth = gbCurrSelect < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH;

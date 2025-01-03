@@ -478,8 +478,8 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
       CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight), &(gTalkPanel.uiSaveBuffer)));
 
   // Set face to auto
-  SetAutoFaceActive(GetVSurfaceByID(gTalkPanel.uiSaveBuffer), FACE_AUTO_RESTORE_BUFFER, iFaceIndex,
-                    0, 0);
+  SetAutoFaceActive(FindVSurface(gTalkPanel.uiSaveBuffer), FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0,
+                    0);
   gFacesData[iFaceIndex].uiFlags |= FACE_INACTIVE_HANDLED_ELSEWHERE;
 
   // Load buttons, create button

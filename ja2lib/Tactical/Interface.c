@@ -1709,7 +1709,7 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
 
-  BltVSurfaceToVSurface(pBlitter->vsDestBuff, GetVSurfaceByID(guiINTEXT), 0,
+  BltVSurfaceToVSurface(pBlitter->vsDestBuff, FindVSurface(guiINTEXT), 0,
                         pBlitter->pBackground->sLeft, pBlitter->pBackground->sTop,
                         VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
@@ -2475,7 +2475,7 @@ void CreateTopMessage(uint32_t uiSurface, uint8_t ubType, wchar_t *psString) {
     AssertMsg(0, "Missing INTERFACE\\timebaryellow.sti");
 
   // Change dest buffer
-  SetFontDestBuffer(GetVSurfaceByID(uiSurface), 0, 0, 640, 20, FALSE);
+  SetFontDestBuffer(FindVSurface(uiSurface), 0, 0, 640, 20, FALSE);
   SetFont(TINYFONT1);
 
   switch (ubType) {
@@ -2721,8 +2721,8 @@ void HandleTopMessages() {
       SrcRect.iRight = 640;
       SrcRect.iBottom = 20;
 
-      BltVSurfaceToVSurface(vsFB, GetVSurfaceByID(gTopMessage.uiSurface), 0, 0, 0,
-                            VS_BLT_SRCSUBRECT, &SrcRect);
+      BltVSurfaceToVSurface(vsFB, FindVSurface(gTopMessage.uiSurface), 0, 0, 0, VS_BLT_SRCSUBRECT,
+                            &SrcRect);
 
       // Save to save buffer....
       SrcRect.iLeft = 0;

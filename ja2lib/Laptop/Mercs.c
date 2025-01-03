@@ -917,7 +917,7 @@ void InitMercVideoFace() {
   giVideoSpeckFaceIndex = InitFace(MERC_VIDEO_MERC_ID_FOR_SPECKS, NOBODY, 0);
 
   // Sets up the eyes blinking and the mouth moving
-  SetAutoFaceActive(GetVSurfaceByID(guiMercVideoFaceBackground), FACE_AUTO_RESTORE_BUFFER,
+  SetAutoFaceActive(FindVSurface(guiMercVideoFaceBackground), FACE_AUTO_RESTORE_BUFFER,
                     giVideoSpeckFaceIndex, 0, 0);
 
   // Renders the face to the background
@@ -974,8 +974,8 @@ BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
   HandleTalkingAutoFaces();
 
   // Blt the face surface to the video background surface
-  if (!BltStretchVSurface(vsFB, GetVSurfaceByID(guiMercVideoFaceBackground), 0, 0,
-                          VS_BLT_USECOLORKEY, &SrcRect, &DestRect))
+  if (!BltStretchVSurface(vsFB, FindVSurface(guiMercVideoFaceBackground), 0, 0, VS_BLT_USECOLORKEY,
+                          &SrcRect, &DestRect))
     return (FALSE);
 
   // HandleCurrentMercDistortion();

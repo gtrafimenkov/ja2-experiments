@@ -1041,7 +1041,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
     if (fDisplayBuffer) {
       renderBuffer = pFace->autoDisplayBuffer;
     } else {
-      renderBuffer = GetVSurfaceByID(pFace->uiAutoRestoreBuffer);
+      renderBuffer = FindVSurface(pFace->uiAutoRestoreBuffer);
 
       if (pFace->uiAutoRestoreBuffer == FACE_NO_RESTORE_BUFFER) {
         return;

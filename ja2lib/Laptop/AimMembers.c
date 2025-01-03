@@ -3611,7 +3611,7 @@ BOOLEAN DisplayMovingTitleBar(BOOLEAN fForward, BOOLEAN fInit) {
     }
   }
 
-  BltStretchVSurface(vsFB, GetVSurfaceByID(guiVideoTitleBar), 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
+  BltStretchVSurface(vsFB, FindVSurface(guiVideoTitleBar), 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
                      &DestRect);
 
   InvalidateRegion(DestRect.iLeft, DestRect.iTop, DestRect.iRight, DestRect.iBottom);
