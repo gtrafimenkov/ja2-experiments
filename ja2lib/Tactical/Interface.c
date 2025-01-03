@@ -2730,7 +2730,7 @@ void HandleTopMessages() {
       SrcRect.iRight = 640;
       SrcRect.iBottom = 20;
 
-      BltVideoSurface(vsSaveBufferID, vsIndexFB, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
+      BltVSurfaceToVSurface(vsSaveBuffer, vsFB, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
 
       InvalidateRegion(0, 0, 640, 20);
 

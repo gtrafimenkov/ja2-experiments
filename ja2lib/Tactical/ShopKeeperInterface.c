@@ -1387,10 +1387,9 @@ BOOLEAN RenderShopKeeperInterface() {
 }
 
 void RestoreTacticalBackGround() {
-  struct VSurface *hDestVSurface, *hSrcVSurface;
+  struct VSurface *hSrcVSurface;
   struct Rect SrcRect;
 
-  GetVSurfaceByIndexOld(&hDestVSurface, vsIndexFB);
   GetVSurfaceByIndexOld(&hSrcVSurface, guiCornerWhereTacticalIsStillSeenImage);
 
   SrcRect.left = 0;
@@ -1398,8 +1397,8 @@ void RestoreTacticalBackGround() {
   SrcRect.right = SKI_TACTICAL_BACKGROUND_START_WIDTH;
   SrcRect.bottom = SKI_TACTICAL_BACKGROUND_START_HEIGHT;
 
-  BltVSurfaceUsingDD(hDestVSurface, hSrcVSurface, VS_BLT_USECOLORKEY,
-                     SKI_TACTICAL_BACKGROUND_START_X, SKI_TACTICAL_BACKGROUND_START_Y, &SrcRect);
+  BltVSurfaceUsingDD(vsFB, hSrcVSurface, VS_BLT_USECOLORKEY, SKI_TACTICAL_BACKGROUND_START_X,
+                     SKI_TACTICAL_BACKGROUND_START_Y, &SrcRect);
 
   InvalidateRegion(0, 0, 640, 480);
 }
@@ -2390,7 +2389,7 @@ uint32_t DisplayInvSlot(uint8_t ubSlotNum, uint16_t usItemIndex, uint16_t usPosX
   // Display the status of the item
   DrawItemUIBarEx(pItemObject, 0, (int16_t)(usPosX + 2), (int16_t)(usPosY + 2 + 20), 2, 20,
                   Get16BPPColor(FROMRGB(140, 136, 119)), Get16BPPColor(FROMRGB(140, 136, 119)),
-                  TRUE, vsIndexFB);  // vsSaveBufferID
+                  vsFB);
 
   // Display the Items Cost
   if (ubItemArea == PLAYERS_OFFER_AREA) {
