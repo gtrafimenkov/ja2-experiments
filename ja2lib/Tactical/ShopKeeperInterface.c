@@ -1079,8 +1079,7 @@ BOOLEAN InitShopKeepersFace(uint8_t ubMercID) {
     giShopKeeperFaceIndex = InitFace(ubMercID, GetSolID(pSoldier), FACE_BIGFACE);
   }
 
-  SetAutoFaceActive(vsIndexFB, FACE_AUTO_RESTORE_BUFFER, giShopKeeperFaceIndex, SKI_FACE_X,
-                    SKI_FACE_Y);
+  SetAutoFaceActive(vsFB, FACE_AUTO_RESTORE_BUFFER, giShopKeeperFaceIndex, SKI_FACE_X, SKI_FACE_Y);
 
   // Set it so the face cannot be set InActive
   gFacesData[giShopKeeperFaceIndex].uiFlags |= FACE_INACTIVE_HANDLED_ELSEWHERE;

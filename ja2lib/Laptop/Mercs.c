@@ -909,32 +909,6 @@ uint8_t GetMercIDFromMERCArray(uint8_t ubMercID) {
   }
 }
 
-/*
-BOOLEAN InitDeleteMercVideoConferenceMode()
-{
-        static BOOLEAN	fVideoConfModeCreated = FALSE;
-
-        if( !fVideoConfModeCreated && gubCurrentMercVideoMode == MERC_VIDEO_INIT_VIDEO_MODE )
-        {
-//		InitMercVideoFace();
-        }
-
-        if( fVideoConfModeCreated && gubCurrentMercVideoMode == MERC_VIDEO_EXIT_VIDEO_MODE )
-        {
-                //If merc is talking, stop him from talking
-                ShutupaYoFace( giVideoSpeckFaceIndex );
-
-                //Delete the face
-                DeleteFace( giVideoSpeckFaceIndex  );
-
-                gfMercVideoIsBeingDisplayed = FALSE;
-        }
-
-
-        return(TRUE);
-}
-*/
-
 void InitMercVideoFace() {
   // Alocates space, and loads the sti for SPECK
   //	giVideoSpeckFaceIndex = InternalInitFace( NO_PROFILE, NOBODY, 0,
@@ -942,10 +916,8 @@ void InitMercVideoFace() {
   giVideoSpeckFaceIndex = InitFace(MERC_VIDEO_MERC_ID_FOR_SPECKS, NOBODY, 0);
 
   // Sets up the eyes blinking and the mouth moving
-  //	InternalSetAutoFaceActive( guiMercVideoFaceBackground, FACE_AUTO_RESTORE_BUFFER ,
-  // giVideoSpeckFaceIndex, 0, 0, 8, 9, 7, 25 );
-  SetAutoFaceActive(guiMercVideoFaceBackground, FACE_AUTO_RESTORE_BUFFER, giVideoSpeckFaceIndex, 0,
-                    0);
+  SetAutoFaceActive(GetVSurfaceByID(guiMercVideoFaceBackground), FACE_AUTO_RESTORE_BUFFER,
+                    giVideoSpeckFaceIndex, 0, 0);
 
   // Renders the face to the background
   RenderAutoFace(giVideoSpeckFaceIndex);
