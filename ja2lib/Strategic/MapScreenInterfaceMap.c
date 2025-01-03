@@ -267,7 +267,7 @@ enum {
   MAP_SHADE_DK_RED,
 };
 // the big map .pcx
-uint32_t guiBIGMAP;
+struct VSurface *vsBigMap;
 
 // orta .sti icon
 uint32_t guiORTAICON;
@@ -623,8 +623,8 @@ uint32_t DrawMap(void) {
   if (!iCurrentMapSectorZ) {
     pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
 
-    CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-    pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+    hSrcVSurface = vsBigMap;
+    pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
     // clip blits to mapscreen region
     // ClipBlitsToMapViewRegion( );
@@ -657,7 +657,7 @@ uint32_t DrawMap(void) {
                                    uiSrcPitchBYTES, MAP_VIEW_START_X + 1, MAP_VIEW_START_Y);
     }
 
-    UnlockVSurfaceByID(guiBIGMAP);
+    UnlockVSurface(vsBigMap);
     UnlockVSurface(vsSaveBuffer);
 
     // shade map sectors (must be done after Tixa/Orta/Mine icons have been blitted, but before
@@ -1081,7 +1081,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   uint16_t *pOriginalPallette;
 
   // get original video surface palette
-  CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+  hSrcVSurface = vsBigMap;
   // get original video surface palette
   // CHECKF( GetVSurfaceByIndexOld( &hSAMSurface, guiSAMICON ) );
   // get original video surface palette
@@ -1132,7 +1132,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
       case (MAP_SHADE_LT_GREEN):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
 
         hSrcVSurface->p16BPPPalette = pMapLTGreenPalette;
         // hMineSurface->p16BPPPalette = pMapLTGreenPalette;
@@ -1140,8 +1140,8 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1151,21 +1151,21 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // pSrcBuf,uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
         break;
 
       case (MAP_SHADE_DK_GREEN):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
         hSrcVSurface->p16BPPPalette = pMapDKGreenPalette;
         // hMineSurface->p16BPPPalette = pMapDKGreenPalette;
         // hSAMSurface->p16BPPPalette = pMapDKGreenPalette;
 
         /// lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1175,21 +1175,21 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // pSrcBuf,uiSrcPitchBYTES, sScreenX , sScreenY , &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
         break;
 
       case (MAP_SHADE_LT_RED):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
         hSrcVSurface->p16BPPPalette = pMapLTRedPalette;
         // hMineSurface->p16BPPPalette = pMapLTRedPalette;
         // hSAMSurface->p16BPPPalette = pMapLTRedPalette;
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1199,21 +1199,21 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // pSrcBuf,uiSrcPitchBYTES, sScreenX , sScreenY , &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
         break;
 
       case (MAP_SHADE_DK_RED):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
         hSrcVSurface->p16BPPPalette = pMapDKRedPalette;
         // hMineSurface->p16BPPPalette = pMapDKRedPalette;
         // hSAMSurface->p16BPPPalette = pMapDKRedPalette;
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
@@ -1223,16 +1223,14 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // pSrcBuf,uiSrcPitchBYTES, sScreenX , sScreenY , &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
         break;
     }
 
     // restore original palette
-    CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+    hSrcVSurface = vsBigMap;
     hSrcVSurface->p16BPPPalette = pOriginalPallette;
-    // hMineSurface->p16BPPPalette = pOriginalPallette;
-    // hSAMSurface->p16BPPPalette = pOriginalPallette;
   }
 
   return (TRUE);
@@ -1258,7 +1256,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   iX = (int32_t)sScreenX - MAP_GRID_X;
 
   // get original video surface palette
-  CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+  hSrcVSurface = vsBigMap;
   pOriginalPallette = hSrcVSurface->p16BPPPalette;
 
   if ((iX > MapScreenRect.iLeft - MAP_GRID_X * 2) && (iX < MapScreenRect.iRight) &&
@@ -1316,80 +1314,80 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
       case (MAP_SHADE_LT_GREEN):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
         hSrcVSurface->p16BPPPalette = pMapLTGreenPalette;
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                     uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
 
         break;
 
       case (MAP_SHADE_DK_GREEN):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
         hSrcVSurface->p16BPPPalette = pMapDKGreenPalette;
 
         /// lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                     uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
 
         break;
 
       case (MAP_SHADE_LT_RED):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
         hSrcVSurface->p16BPPPalette = pMapLTRedPalette;
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                     uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
 
         break;
 
       case (MAP_SHADE_DK_RED):
         // grab video surface and set palette
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+        hSrcVSurface = vsBigMap;
         hSrcVSurface->p16BPPPalette = pMapDKRedPalette;
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
-        pSrcBuf = LockVSurfaceByID(guiBIGMAP, &uiSrcPitchBYTES);
+        hSrcVSurface = vsBigMap;
+        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
         // now blit
         Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
                                     uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
 
         // unlock source and dest buffers
-        UnlockVSurfaceByID(guiBIGMAP);
+        UnlockVSurface(vsBigMap);
         UnlockVSurface(vsSaveBuffer);
 
         break;
@@ -1397,7 +1395,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   }
 
   // restore original palette
-  CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, guiBIGMAP));
+  hSrcVSurface = vsBigMap;
   hSrcVSurface->p16BPPPalette = pOriginalPallette;
 
   return (TRUE);
@@ -1405,25 +1403,15 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
 BOOLEAN InitializePalettesForMap(void) {
   // init palettes
-  struct VSurface *hSrcVSurface;
   struct SGPPaletteEntry pPalette[256];
-  uint32_t uiTempMap;
 
-  // load image
-  CHECKF(AddVSurfaceFromFile("INTERFACE\\b_map.pcx", &uiTempMap));
-
-  // get video surface
-  CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, uiTempMap));
-  GetVSurfacePaletteEntries(hSrcVSurface, pPalette);
+  GetVSurfacePaletteEntries(vsBigMap, pPalette);
 
   // set up various palettes
   pMapLTRedPalette = Create16BPPPaletteShaded(pPalette, 400, 0, 0, TRUE);
   pMapDKRedPalette = Create16BPPPaletteShaded(pPalette, 200, 0, 0, TRUE);
   pMapLTGreenPalette = Create16BPPPaletteShaded(pPalette, 0, 400, 0, TRUE);
   pMapDKGreenPalette = Create16BPPPaletteShaded(pPalette, 0, 200, 0, TRUE);
-
-  // delete image
-  DeleteVSurfaceByIndex(uiTempMap);
 
   return (TRUE);
 }
