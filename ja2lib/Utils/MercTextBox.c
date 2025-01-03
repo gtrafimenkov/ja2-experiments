@@ -532,7 +532,7 @@ BOOLEAN RemoveMercPopupBox() {
       }
     }
     // yep, get rid of the bloody...
-    DeleteVideoSurface(gPopUpTextBox->sourceBuffer);
+    DeleteVSurface(gPopUpTextBox->sourceBuffer);
 
     // DEF Added 5/26
     // Delete the background and the border
