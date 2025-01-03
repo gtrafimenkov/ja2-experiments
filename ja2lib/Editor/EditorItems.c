@@ -316,7 +316,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
 
       SetFont(SMALLCOMPFONT);
       SetFontForeground(FONT_MCOLOR_WHITE);
-      SetFontDestBuffer(GetVSurfaceByID(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
+      SetFontDestBuffer(FindVSurface(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
 
       swprintf(pStr, ARR_SIZE(pStr), L"%S", LockTable[i].ubEditorName);
       DisplayWrappedString(x, (uint16_t)(y + 25), 60, 2, SMALLCOMPFONT, FONT_WHITE, pStr,
@@ -327,7 +327,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
       sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
 
-      BltVideoObjectOutlineFromIndex(GetVSurfaceByID(eInfo.uiBuffer), uiVideoObjectIndex,
+      BltVideoObjectOutlineFromIndex(FindVSurface(eInfo.uiBuffer), uiVideoObjectIndex,
                                      item->ubGraphicNum, sStart, y + 2, 0, FALSE);
       // cycle through the various slot positions (0,0), (0,40), (60,0), (60,40), (120,0)...
       if (y == 0) {
@@ -403,8 +403,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
 
           SetFont(SMALLCOMPFONT);
           SetFontForeground(FONT_MCOLOR_WHITE);
-          SetFontDestBuffer(GetVSurfaceByID(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight,
-                            FALSE);
+          SetFontDestBuffer(FindVSurface(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
 
           if (eInfo.uiItemType != TBAR_MODE_ITEM_TRIGGERS) {
             LoadItemInfo(usCounter, pItemName, NULL);
@@ -443,7 +442,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
           sStart = x + (60 - sWidth - sOffset * 2) / 2;
 
           if (sWidth) {
-            BltVideoObjectOutlineFromIndex(GetVSurfaceByID(eInfo.uiBuffer), uiVideoObjectIndex,
+            BltVideoObjectOutlineFromIndex(FindVSurface(eInfo.uiBuffer), uiVideoObjectIndex,
                                            item->ubGraphicNum, sStart, y + 2, 0, FALSE);
           }
           // cycle through the various slot positions (0,0), (0,40), (60,0), (60,40), (120,0)...

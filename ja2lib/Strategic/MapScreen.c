@@ -5423,8 +5423,8 @@ void PopupText(wchar_t *pFontString, ...) {
   FindFontCenterCoordinates(0, 0, SCREEN_WIDTH, INTERFACE_START_Y, PopupString, LARGEFONT1, &sX,
                             &sY);
 
-  BltVSurfaceToVSurface(vsFB, GetVSurfaceByID(guiINTEXT), 0, 85, 160,
-                        VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVSurfaceToVSurface(vsFB, FindVSurface(guiINTEXT), 0, 85, 160, VS_BLT_FAST | VS_BLT_USECOLORKEY,
+                        NULL);
 
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
@@ -5937,7 +5937,7 @@ void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo) {
   SetFont(CHAR_FONT);
   SetFontForeground(CHAR_TITLE_FONT_COLOR);
   SetFontBackground(FONT_BLACK);
-  SetFontDestBuffer(GetVSurfaceByID(uiBufferToRenderTo), 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(FindVSurface(uiBufferToRenderTo), 0, 0, 640, 480, FALSE);
 
   // assignment strings
   DrawString(pUpperLeftMapScreenStrings[0],
