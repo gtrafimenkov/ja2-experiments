@@ -258,11 +258,6 @@ BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurfac
   return FALSE;
 }
 
-BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_t usRegionIndex,
-                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, SGPRect *srcRect) {
-  return FALSE;
-}
-
 BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
                               int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
   return FALSE;
