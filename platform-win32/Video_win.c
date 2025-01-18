@@ -2168,26 +2168,6 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
 
 void DeletePrimaryVideoSurfaces();
 
-#ifdef _DEBUG
-enum {
-  DEBUGSTR_NONE,
-  DEBUGSTR_SETVIDEOSURFACETRANSPARENCY,
-  DEBUGSTR_ADDVIDEOSURFACEREGION,
-  DEBUGSTR_GETVIDEOSURFACEDESCRIPTION,
-  DEBUGSTR_BLTVIDEOSURFACE_DST,
-  DEBUGSTR_BLTVIDEOSURFACE_SRC,
-  DEBUGSTR_COLORFILLVIDEOSURFACEAREA,
-  DEBUGSTR_SHADOWVIDEOSURFACERECT,
-  DEBUGSTR_BLTSTRETCHVIDEOSURFACE_DST,
-  DEBUGSTR_BLTSTRETCHVIDEOSURFACE_SRC,
-  DEBUGSTR_DeleteVSurfaceByIndex
-};
-
-uint8_t gubVSDebugCode = 0;
-
-void CheckValidVSurfaceIndex(uint32_t uiIndex);
-#endif
-
 int32_t giMemUsedInSurfaces;
 
 BOOLEAN InitializeVideoSurfaceManager() {
@@ -2236,9 +2216,6 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
   // Get Video Surface
   //
 
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_SETVIDEOSURFACETRANSPARENCY;
-#endif
   CHECKF(GetVSurfaceByIndexOld(&hVSurface, uiIndex));
 
   //
@@ -2248,40 +2225,6 @@ BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
   SetVideoSurfaceTransparencyColor(hVSurface, TransColor);
 
   return (TRUE);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Given an index to the dest and src vobject contained in our private VSurface list
-// Based on flags, blit accordingly
-// There are two types, a BltFast and a Blt. BltFast is 10% faster, uses no
-// clipping lists
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-BOOLEAN BltVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, uint16_t usRegionIndex,
-                        int32_t iDestX, int32_t iDestY, uint32_t fBltFlags, SGPRect *srcRect) {
-  struct VSurface *hDestVSurface;
-  struct VSurface *hSrcVSurface;
-
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_BLTVIDEOSURFACE_DST;
-#endif
-  if (!GetVSurfaceByIndexOld(&hDestVSurface, uiDestVSurface)) {
-    return FALSE;
-  }
-#ifdef _DEBUG
-  gubVSDebugCode = DEBUGSTR_BLTVIDEOSURFACE_SRC;
-#endif
-  if (!GetVSurfaceByIndexOld(&hSrcVSurface, uiSrcVSurface)) {
-    return FALSE;
-  }
-  if (!BltVSurfaceToVSurface(hDestVSurface, hSrcVSurface, usRegionIndex, iDestX, iDestY, fBltFlags,
-                             srcRect)) {
-    // VO Blitter will set debug messages for error conditions
-    return FALSE;
-  }
-  return TRUE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2988,62 +2931,6 @@ BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurfac
 
   return (TRUE);
 }
-
-#ifdef _DEBUG
-void CheckValidVSurfaceIndex(uint32_t uiIndex) {
-  BOOLEAN fAssertError = FALSE;
-  if (uiIndex == 0xffffffff) {  //-1 index -- deleted
-    fAssertError = TRUE;
-  } else if (uiIndex % 2 && uiIndex < 0xfffffff0) {  // odd numbers are reserved for vobjects
-    fAssertError = TRUE;
-  }
-
-  if (fAssertError) {
-    char str[60];
-    switch (gubVSDebugCode) {
-      case DEBUGSTR_SETVIDEOSURFACETRANSPARENCY:
-        sprintf(str, "SetVideoSurfaceTransparency");
-        break;
-      case DEBUGSTR_ADDVIDEOSURFACEREGION:
-        sprintf(str, "AddVideoSurfaceRegion");
-        break;
-      case DEBUGSTR_GETVIDEOSURFACEDESCRIPTION:
-        sprintf(str, "GetVideoSurfaceDescription");
-        break;
-      case DEBUGSTR_BLTVIDEOSURFACE_DST:
-        sprintf(str, "BltVideoSurface (dest)");
-        break;
-      case DEBUGSTR_BLTVIDEOSURFACE_SRC:
-        sprintf(str, "BltVideoSurface (src)");
-        break;
-      case DEBUGSTR_COLORFILLVIDEOSURFACEAREA:
-        sprintf(str, "ColorFillVSurfaceArea");
-        break;
-      case DEBUGSTR_SHADOWVIDEOSURFACERECT:
-        sprintf(str, "ShadowVideoSurfaceRect");
-        break;
-      case DEBUGSTR_BLTSTRETCHVIDEOSURFACE_DST:
-        sprintf(str, "BltStretchVSurface (dest)");
-        break;
-      case DEBUGSTR_BLTSTRETCHVIDEOSURFACE_SRC:
-        sprintf(str, "BltStretchVSurface (src)");
-        break;
-      case DEBUGSTR_DeleteVSurfaceByIndex:
-        sprintf(str, "DeleteVSurfaceByIndex");
-        break;
-      case DEBUGSTR_NONE:
-      default:
-        sprintf(str, "GetVSurfaceByIndexOld");
-        break;
-    }
-    if (uiIndex == 0xffffffff) {
-      AssertMsg(0, String("Trying to %s with deleted index -1.", str));
-    } else {
-      AssertMsg(0, String("Trying to %s using a VOBJECT ID %d!", str, uiIndex));
-    }
-  }
-}
-#endif
 
 //////////////////////////////////////////////////////////////////
 // Cinematics
