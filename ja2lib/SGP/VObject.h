@@ -104,7 +104,6 @@ typedef struct {
       SGPFILENAME ImageFile;  // Filename of image data to use
     };
   };
-  uint8_t ubBitDepth;  // BPP, ignored if given from file
 } VOBJECT_DESC;
 
 // **********************************************************************************
