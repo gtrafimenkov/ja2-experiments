@@ -38,15 +38,15 @@ void InitJA2SplashScreen() {
   InitializeFileDatabase();
 
 #if !defined(ENGLISH) && defined(JA2TESTVERSION)
-  uint32_t uiLogoID = 0;
-  struct VSurface* hVSurface;
-  if (!AddVSurfaceFromFile("LOADSCREENS\\Notification.sti", &uiLogoID)) {
+  struct VSurface* hVSurface = CreateVSurfaceFromFile("LOADSCREENS\\Notification.sti");
+  if (hVSurface == NULL) {
     AssertMsg(0, String("Failed to load %s", VSurfaceDesc.ImageFile));
     return;
   }
-  hVSurface = FindVSurface(uiLogoID);
+  SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
+
   BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
-  DeleteVSurfaceByIndex(uiLogoID);
+  DeleteVSurface(hVSurface);
 
   InvalidateScreen();
   RefreshScreen(NULL);
@@ -67,14 +67,14 @@ void InitJA2SplashScreen() {
   {
     SGPFILENAME ImageFile;
     GetMLGFilename(ImageFile, MLG_SPLASH);
-    if (!AddVSurfaceFromFile(ImageFile, &uiLogoID)) {
+    struct VSurface* hVSurface = CreateVSurfaceFromFile(ImageFile);
+    if (hVSurface == NULL) {
       AssertMsg(0, String("Failed to load %s", ImageFile));
       return;
     }
-
-    hVSurface = FindVSurface(uiLogoID);
+    SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
-    DeleteVSurfaceByIndex(uiLogoID);
+    DeleteVSurface(uiLogoID);
   }
 #endif
 
