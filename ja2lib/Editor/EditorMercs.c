@@ -2588,11 +2588,11 @@ void RenderSelectedMercsInventory() {
       xp = mercRects[i].iLeft + 4 + MERCPANEL_X;
       yp = mercRects[i].iTop + MERCPANEL_Y;
       pDst = LockVSurface(vsFB, &uiDstPitchBYTES);
-      pSrc = LockVSurfaceByID(guiMercInvPanelBuffers[i], &uiSrcPitchBYTES);
+      pSrc = LockVSurface(vsMercInvPanelBuffers[i], &uiSrcPitchBYTES);
       Blt16BPPTo16BPPTrans((uint16_t *)pDst, uiDstPitchBYTES, (uint16_t *)pSrc, uiSrcPitchBYTES, xp,
                            yp, 0, 0, i < 3 ? 22 : 44, 15, 0);
       UnlockVSurface(vsFB);
-      UnlockVSurfaceByID(guiMercInvPanelBuffers[i]);
+      UnlockVSurface(vsMercInvPanelBuffers[i]);
       LoadItemInfo(gpMercSlotItem[i]->usItem, pItemName, NULL);
       // Render the text
       switch (i) {
@@ -2711,7 +2711,7 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   // offsets, etc. Each slot has it's own smaller version buffer, and this is what gets drawn when
   // the rendering happens.
 
-  struct VSurface *dest = FindVSurface(guiMercInvPanelBuffers[gbCurrSelect]);
+  struct VSurface *dest = vsMercInvPanelBuffers[gbCurrSelect];
 
   // build the rects
   iDstWidth = gbCurrSelect < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH;
