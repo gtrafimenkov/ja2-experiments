@@ -66,7 +66,6 @@ BOOLEAN DrawMercsFaceToScreen(uint8_t ubMercID, uint16_t usPosX, uint16_t usPosY
 void GameInitAimFacialIndex() {}
 
 BOOLEAN EnterAimFacialIndex() {
-  VOBJECT_DESC VObjectDesc;
   uint8_t i;
   uint16_t usPosX, usPosY, x, y;
   char *sFaceLoc = "FACES\\";
@@ -89,8 +88,7 @@ BOOLEAN EnterAimFacialIndex() {
       MSYS_SetRegionUserData(&gMercFaceMouseRegions[i], 0, i);
 
       sprintf(sTemp, "%s%02d.sti", sFaceLoc, AimMercArray[i]);
-      FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-      if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiAimFiFace[i])) return (FALSE);
+      if (!AddVObject(CreateVObjectFromFile(sTemp), &guiAimFiFace[i])) return (FALSE);
 
       usPosX += AIM_FI_PORTRAIT_WIDTH + AIM_FI_MUGSHOT_GAP_X;
       i++;

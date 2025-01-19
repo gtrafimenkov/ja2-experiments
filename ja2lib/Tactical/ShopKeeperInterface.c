@@ -763,7 +763,6 @@ uint32_t ShopKeeperScreenShutdown() {
 //
 
 BOOLEAN EnterShopKeeperInterface() {
-  VOBJECT_DESC VObjectDesc;
   uint8_t ubCnt;
   char zTemp[32];
   struct SOLDIERTYPE *pSoldier;
@@ -802,8 +801,7 @@ BOOLEAN EnterShopKeeperInterface() {
   SetSMPanelCurrentMerc((uint8_t)gusSelectedSoldier);
 
   // load the Main trade screen backgroiund image
-  FilenameForBPP("InterFace\\TradeScreen.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiMainTradeScreenImage)) {
+  if (!AddVObject(CreateVObjectFromFile("InterFace\\TradeScreen.sti"), &guiMainTradeScreenImage)) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION, L"Failed to load TradeScreen.sti");
 #endif
@@ -812,8 +810,7 @@ BOOLEAN EnterShopKeeperInterface() {
   }
 
   // load the Main trade screen background image
-  FilenameForBPP("InterFace\\itemcrossout.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiItemCrossOut)) {
+  if (!AddVObject(CreateVObjectFromFile("InterFace\\itemcrossout.sti"), &guiItemCrossOut)) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION, L"Failed to load itemcrossout.sti");
 #endif
@@ -838,9 +835,7 @@ BOOLEAN EnterShopKeeperInterface() {
       sprintf(zTemp, "FACES\\33FACE\\%02d.sti", gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
 
       // While we are at it, add their small face
-      FilenameForBPP(zTemp, VObjectDesc.ImageFile);
-      if (!AddVObject(CreateVideoObject(&VObjectDesc),
-                      &guiSmallSoldiersFace[gubNumberMercsInArray])) {
+      if (!AddVObject(CreateVObjectFromFile(zTemp), &guiSmallSoldiersFace[gubNumberMercsInArray])) {
 #ifdef JA2BETAVERSION
         ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION, L"Failed to load %s", zTemp);
 #endif

@@ -201,11 +201,10 @@ void MapScreenMessageScrollBarCallBack(struct MOUSE_REGION *pRegion, int32_t iRe
 
 void HandleLoadOfMapBottomGraphics(void) {
   // will load the graphics needed for the mapscreen interface bottom
-  VOBJECT_DESC VObjectDesc;
 
   // will create buttons for interface bottom
-  FilenameForBPP("INTERFACE\\map_screen_bottom.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiMAPBOTTOMPANEL)) return;
+  if (!AddVObject(CreateVObjectFromFile("INTERFACE\\map_screen_bottom.sti"), &guiMAPBOTTOMPANEL))
+    return;
 
   // load slider bar icon
   LoadMessageSliderBar();
@@ -803,10 +802,9 @@ void RemoveCompressModePause(void) { MSYS_RemoveRegion(&gMapPauseRegion); }
 
 void LoadMessageSliderBar(void) {
   // this function will load the message slider bar
-  VOBJECT_DESC VObjectDesc;
 
-  FilenameForBPP("INTERFACE\\map_screen_bottom_arrows.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiSliderBar)) return;
+  if (!AddVObject(CreateVObjectFromFile("INTERFACE\\map_screen_bottom_arrows.sti"), &guiSliderBar))
+    return;
 }
 
 void DeleteMessageSliderBar(void) {

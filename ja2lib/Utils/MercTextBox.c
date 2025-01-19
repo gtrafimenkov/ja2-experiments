@@ -112,7 +112,6 @@ BOOLEAN ResetOverrideMercPopupBox() {
 
 BOOLEAN InitMercPopupBox() {
   int32_t iCounter = 0;
-  VOBJECT_DESC VObjectDesc;
 
   // init the pop up box list
   for (iCounter = 0; iCounter < MAX_NUMBER_OF_POPUP_BOXES; iCounter++) {
@@ -121,13 +120,11 @@ BOOLEAN InitMercPopupBox() {
   }
 
   // LOAD STOP ICON...
-  FilenameForBPP("INTERFACE\\msgboxicons.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiBoxIcons))
+  if (!AddVObject(CreateVObjectFromFile("INTERFACE\\msgboxicons.sti"), &guiBoxIcons))
     AssertMsg(0, "Missing INTERFACE\\msgboxicons.sti");
 
   // LOAD SKULL ICON...
-  FilenameForBPP("INTERFACE\\msgboxiconskull.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiSkullIcons))
+  if (!AddVObject(CreateVObjectFromFile("INTERFACE\\msgboxiconskull.sti"), &guiSkullIcons))
     AssertMsg(0, "Missing INTERFACE\\msgboxiconskull.sti");
 
   return (TRUE);
