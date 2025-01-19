@@ -451,7 +451,6 @@ void RenderTopmostTacticalInterface() {
   struct SOLDIERTYPE *pSoldier;
   uint32_t cnt;
   static uint32_t uiBogTarget = 0;
-  VOBJECT_DESC VObjectDesc;
   int16_t sX, sY;
   int16_t sOffsetX, sOffsetY, sTempY_S, sTempX_S;
   int16_t usMapPos;
@@ -510,8 +509,7 @@ void RenderTopmostTacticalInterface() {
           // Blit bogus target
           if (uiBogTarget == 0) {
             // Loadup cursor!
-            FilenameForBPP("CURSORS\\targblak.sti", VObjectDesc.ImageFile);
-            AddVObject(CreateVideoObject(&VObjectDesc), &uiBogTarget);
+            AddVObject(CreateVObjectFromFile("CURSORS\\targblak.sti"), &uiBogTarget);
           }
 
           if (GridNoOnScreen(
