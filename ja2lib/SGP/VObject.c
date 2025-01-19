@@ -73,7 +73,6 @@ uint32_t guiVObjectTotalAdded = 0;
 #ifdef _DEBUG
 enum {
   DEBUGSTR_NONE,
-  DEBUGSTR_SETVIDEOOBJECTTRANSPARENCY,
   DEBUGSTR_BLTVIDEOOBJECTFROMINDEX,
   DEBUGSTR_SETOBJECTHANDLESHADE,
   DEBUGSTR_GETVIDEOOBJECTETRLESUBREGIONPROPERTIES,
@@ -176,21 +175,6 @@ BOOLEAN AddVObjectAndSetTransparency(struct VObject *vo, uint32_t *puiIndex) {
 #endif
 
   return TRUE;
-}
-
-BOOLEAN SetVideoObjectTransparency(uint32_t uiIndex, COLORVAL TransColor) {
-  struct VObject *hVObject;
-
-// Get video object
-#ifdef _DEBUG
-  gubVODebugCode = DEBUGSTR_SETVIDEOOBJECTTRANSPARENCY;
-#endif
-  CHECKF(GetVideoObject(&hVObject, uiIndex));
-
-  // Set transparency
-  SetVideoObjectTransparencyColor(hVObject, TransColor);
-
-  return (TRUE);
 }
 
 BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex) {
@@ -1202,9 +1186,6 @@ void CheckValidVObjectIndex(uint32_t uiIndex) {
   if (fAssertError) {
     char str[60];
     switch (gubVODebugCode) {
-      case DEBUGSTR_SETVIDEOOBJECTTRANSPARENCY:
-        sprintf(str, "SetVideoObjectTransparency");
-        break;
       case DEBUGSTR_BLTVIDEOOBJECTFROMINDEX:
         sprintf(str, "BltVideoObjectFromIndex");
         break;
