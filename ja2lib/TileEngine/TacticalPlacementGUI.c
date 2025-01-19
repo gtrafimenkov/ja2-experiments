@@ -195,12 +195,11 @@ void InitTacticalPlacementGUI() {
   GoIntoOverheadMap();
 
   // Load the images
-  sprintf(VObjectDesc.ImageFile, "Interface\\OverheadInterface.sti");
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &giOverheadPanelImage)) {
+  if (!AddVObject(CreateVObjectFromFile("Interface\\OverheadInterface.sti"),
+                  &giOverheadPanelImage)) {
     AssertMsg(0, "Failed to load Interface\\OverheadInterface.sti");
   }
-  sprintf(VObjectDesc.ImageFile, "Interface\\panels.sti");
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &giMercPanelImage)) {
+  if (!AddVObject(CreateVObjectFromFile("Interface\\panels.sti"), &giMercPanelImage)) {
     AssertMsg(0, "Failed to load Interface\\panels.sti");
   }
 
@@ -324,8 +323,8 @@ void InitTacticalPlacementGUI() {
     }
 
     if (!AddVObject(CreateVideoObject(&VObjectDesc), &gMercPlacement[i].uiVObjectID)) {
-      sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\speck.sti");
-      if (!AddVObject(CreateVideoObject(&VObjectDesc), &gMercPlacement[i].uiVObjectID)) {
+      if (!AddVObject(CreateVObjectFromFile("Faces\\65Face\\speck.sti"),
+                      &gMercPlacement[i].uiVObjectID)) {
         AssertMsg(0,
                   String("Failed to load %Faces\\65Face\\%03d.sti or it's placeholder, speck.sti",
                          gMercProfiles[GetSolProfile(gMercPlacement[i].pSoldier)].ubFaceIndex));

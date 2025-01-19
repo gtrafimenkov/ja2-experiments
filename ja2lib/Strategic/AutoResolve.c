@@ -1612,7 +1612,6 @@ void RenderAutoResolve() {
 }
 
 void CreateAutoResolveInterface() {
-  VOBJECT_DESC VObjectDesc;
   int32_t i, index;
   struct VObject *hVObject;
   // Setup new autoresolve blanket interface.
@@ -1622,8 +1621,7 @@ void CreateAutoResolveInterface() {
   gpAR->fExitAutoResolve = FALSE;
 
   // Load the general panel image pieces, to be combined to make the dynamically sized window.
-  sprintf(VObjectDesc.ImageFile, "Interface\\AutoResolve.sti");
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpAR->iPanelImages)) {
+  if (!AddVObject(CreateVObjectFromFile("Interface\\AutoResolve.sti"), &gpAR->iPanelImages)) {
     AssertMsg(0, "Failed to load Interface\\AutoResolve.sti");
   }
 
@@ -1653,8 +1651,7 @@ void CreateAutoResolveInterface() {
       UseLoadedButtonImage(gpAR->iButtonImage[PAUSE_BUTTON], -1, 16, -1, 17, -1);
 
   // Load the generic faces for civs and enemies
-  sprintf(VObjectDesc.ImageFile, "Interface\\SmFaces.sti");
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpAR->iFaces)) {
+  if (!AddVObject(CreateVObjectFromFile("Interface\\SmFaces.sti"), &gpAR->iFaces)) {
     AssertMsg(0, "Failed to load Interface\\SmFaces.sti");
   }
   if (GetVideoObject(&hVObject, gpAR->iFaces)) {
@@ -1663,8 +1660,7 @@ void CreateAutoResolveInterface() {
   }
 
   // Add the battle over panels
-  sprintf(VObjectDesc.ImageFile, "Interface\\indent.sti");
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpAR->iIndent)) {
+  if (!AddVObject(CreateVObjectFromFile("Interface\\indent.sti"), &gpAR->iIndent)) {
     AssertMsg(0, "Failed to load Interface\\indent.sti");
   }
 
@@ -1675,8 +1671,7 @@ void CreateAutoResolveInterface() {
     sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
             gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex);
     if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpMercs[i].uiVObjectID)) {
-      sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\speck.sti");
-      if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpMercs[i].uiVObjectID)) {
+      if (!AddVObject(CreateVObjectFromFile("Faces\\65Face\\speck.sti"), &gpMercs[i].uiVObjectID)) {
         AssertMsg(0,
                   String("Failed to load %Faces\\65Face\\%02d.sti or it's placeholder, speck.sti",
                          gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex));
