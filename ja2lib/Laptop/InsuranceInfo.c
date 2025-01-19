@@ -93,14 +93,12 @@ void EnterInitInsuranceInfo() {
 }
 
 BOOLEAN EnterInsuranceInfo() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX;
 
   InitInsuranceDefaults();
 
   // load the Insurance bullet graphic and add it
-  FilenameForBPP("LAPTOP\\bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBulletImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\bullet.sti"), &guiBulletImage));
 
   // left arrow
   guiInsPrevButtonImage = LoadButtonImage("LAPTOP\\InsLeftButton.sti", 2, 0, -1, 1, -1);

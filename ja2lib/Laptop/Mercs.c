@@ -329,8 +329,6 @@ void GameInitMercs() {
 }
 
 BOOLEAN EnterMercs() {
-  VOBJECT_DESC VObjectDesc;
-
   SetBookMark(MERC_BOOKMARK);
 
   // Reset a static variable
@@ -339,28 +337,23 @@ BOOLEAN EnterMercs() {
   InitMercBackGround();
 
   // load the Account box graphic and add it
-  FilenameForBPP("LAPTOP\\AccountBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAccountBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\AccountBox.sti"), &guiAccountBox));
 
   // load the files Box graphic and add it
-  FilenameForBPP("LAPTOP\\FilesBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFilesBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\FilesBox.sti"), &guiFilesBox));
 
   // load the MercSymbol graphic and add it
-  FilenameForBPP("LAPTOP\\MERCSymbol.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercSymbol));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\MERCSymbol.sti"), &guiMercSymbol));
 
   // load the SpecPortrait graphic and add it
-  FilenameForBPP("LAPTOP\\SpecPortrait.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSpecPortrait));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\SpecPortrait.sti"), &guiSpecPortrait));
 
   // load the Arrow graphic and add it
-  FilenameForBPP("LAPTOP\\Arrow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiArrow));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Arrow.sti"), &guiArrow));
 
   // load the Merc video conf background graphic and add it
-  FilenameForBPP("LAPTOP\\SpeckComWindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercVideoPopupBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\SpeckComWindow.sti"),
+                    &guiMercVideoPopupBackground));
 
   // Account Box button
   guiAccountBoxButtonImage = LoadButtonImage("LAPTOP\\SmallButtons.sti", -1, 0, -1, 1, -1);
@@ -589,11 +582,8 @@ void RenderMercs() {
 }
 
 BOOLEAN InitMercBackGround() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Merc background graphic and add it
-  FilenameForBPP("LAPTOP\\MERCBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercBackGround));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\MERCBackGround.sti"), &guiMercBackGround));
 
   return (TRUE);
 }

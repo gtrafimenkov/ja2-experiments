@@ -163,7 +163,6 @@ void GameInitAimSort() {
 }
 
 BOOLEAN EnterAimSort() {
-  VOBJECT_DESC VObjectDesc;
   uint8_t ubCurNumber = 0;
   uint16_t ubWidth;
   uint8_t i;
@@ -176,8 +175,7 @@ BOOLEAN EnterAimSort() {
   InitAimDefaults();
 
   // load the SortBy box graphic and add it
-  FilenameForBPP("LAPTOP\\SortBy.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSortByBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\SortBy.sti"), &guiSortByBox));
 
   // load the ToAlumni graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_TOALUMNI), &guiToAlumni));
@@ -189,8 +187,7 @@ BOOLEAN EnterAimSort() {
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_TOSTATS), &guiToStats));
 
   // load the SelectLight graphic and add it
-  FilenameForBPP("LAPTOP\\SelectLight.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSelectLight));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\SelectLight.sti"), &guiSelectLight));
 
   //** Mouse Regions **
 

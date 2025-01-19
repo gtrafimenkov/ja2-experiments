@@ -23,15 +23,11 @@ uint32_t guiUsedGrid;
 void GameInitBobbyRUsed() {}
 
 BOOLEAN EnterBobbyRUsed() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the background graphic and add it
-  FilenameForBPP("LAPTOP\\usedbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUsedBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\usedbackground.sti"), &guiUsedBackground));
 
   // load the gunsgrid graphic and add it
-  FilenameForBPP("LAPTOP\\usedgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUsedGrid));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\usedgrid.sti"), &guiUsedGrid));
 
   InitBobbyBrTitle();
 

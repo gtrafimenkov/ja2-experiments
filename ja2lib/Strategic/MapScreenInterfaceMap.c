@@ -4310,20 +4310,16 @@ BOOLEAN DropAPersonInASector(uint8_t ubType, uint8_t sX, uint8_t sY) {
 }
 
 BOOLEAN LoadMilitiaPopUpBox(void) {
-  VOBJECT_DESC VObjectDesc;
-
   // load the militia pop up box
-  FilenameForBPP("INTERFACE\\Militia.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMilitia));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Militia.sti"), &guiMilitia));
 
-  FilenameForBPP("INTERFACE\\Militiamaps.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMilitiaMaps));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Militiamaps.sti"), &guiMilitiaMaps));
 
-  FilenameForBPP("INTERFACE\\MilitiamapsectorOutline2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMilitiaSectorHighLight));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\MilitiamapsectorOutline2.sti"),
+                    &guiMilitiaSectorHighLight));
 
-  FilenameForBPP("INTERFACE\\MilitiamapsectorOutline.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMilitiaSectorOutline));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\MilitiamapsectorOutline.sti"),
+                    &guiMilitiaSectorOutline));
 
   return (TRUE);
 }

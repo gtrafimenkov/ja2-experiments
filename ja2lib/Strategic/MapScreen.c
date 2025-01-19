@@ -2524,8 +2524,6 @@ void DisplayCharacterList() {
 
 // THIS IS STUFF THAT RUNS *ONCE* DURING APPLICATION EXECUTION, AT INITIAL STARTUP
 uint32_t MapScreenInit(void) {
-  VOBJECT_DESC VObjectDesc;
-
   SetUpBadSectorsList();
 
   // setup message box system
@@ -2540,11 +2538,10 @@ uint32_t MapScreenInit(void) {
   // set up leave list arrays for dismissed mercs
   InitLeaveList();
 
-  FilenameForBPP("INTERFACE\\group_confirm.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUpdatePanel));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\group_confirm.sti"), &guiUpdatePanel));
 
-  FilenameForBPP("INTERFACE\\group_confirm_tactical.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUpdatePanelTactical));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\group_confirm_tactical.sti"),
+                    &guiUpdatePanelTactical));
 
   return TRUE;
 }
@@ -2656,84 +2653,65 @@ uint32_t MapScreenHandle(void) {
 
       CHECKF(AddVSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
 
-      FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSAMICON));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\SAM.sti"), &guiSAMICON));
 
-      FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mapcursr.sti"), &guiMAPCURSORS));
 
-      FilenameForBPP("INTERFACE\\Mine_1.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSubLevel1));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Mine_1.sti"), &guiSubLevel1));
 
-      FilenameForBPP("INTERFACE\\Mine_2.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSubLevel2));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Mine_2.sti"), &guiSubLevel2));
 
-      FilenameForBPP("INTERFACE\\Mine_3.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSubLevel3));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Mine_3.sti"), &guiSubLevel3));
 
-      FilenameForBPP("INTERFACE\\sleepicon.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSleepIcon));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\sleepicon.sti"), &guiSleepIcon));
 
-      FilenameForBPP("INTERFACE\\charinfo.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARINFO));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\charinfo.sti"), &guiCHARINFO));
 
-      FilenameForBPP("INTERFACE\\newgoldpiece3.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARLIST));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\newgoldpiece3.sti"), &guiCHARLIST));
 
-      FilenameForBPP("INTERFACE\\boxes.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARICONS));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\boxes.sti"), &guiCHARICONS));
 
-      FilenameForBPP("INTERFACE\\incross.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCROSS));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\incross.sti"), &guiCROSS));
 
-      FilenameForBPP("INTERFACE\\mapinv.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAPINV));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mapinv.sti"), &guiMAPINV));
 
-      FilenameForBPP("INTERFACE\\map_inv_2nd_gun_cover.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapInvSecondHandBlockout));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\map_inv_2nd_gun_cover.sti"),
+                        &guiMapInvSecondHandBlockout));
 
       // the upper left corner piece icons
-      FilenameForBPP("INTERFACE\\top_left_corner_icons.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiULICONS));
+      CHECKF(
+          AddVObject(CreateVObjectFromFile("INTERFACE\\top_left_corner_icons.sti"), &guiULICONS));
 
-      FilenameForBPP("INTERFACE\\map_item.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiORTAICON));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\map_item.sti"), &guiORTAICON));
 
-      FilenameForBPP("INTERFACE\\prison.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTIXAICON));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\prison.sti"), &guiTIXAICON));
 
-      FilenameForBPP("INTERFACE\\merc_between_sector_icons.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARBETWEENSECTORICONS));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\merc_between_sector_icons.sti"),
+                        &guiCHARBETWEENSECTORICONS));
 
-      FilenameForBPP("INTERFACE\\merc_mvt_green_arrows.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARBETWEENSECTORICONSCLOSE));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\merc_mvt_green_arrows.sti"),
+                        &guiCHARBETWEENSECTORICONSCLOSE));
 
-      FilenameForBPP("INTERFACE\\GreenArr.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLEVELMARKER));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\GreenArr.sti"), &guiLEVELMARKER));
 
-      FilenameForBPP("INTERFACE\\Helicop.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHelicopterIcon));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Helicop.sti"), &guiHelicopterIcon));
 
-      FilenameForBPP("INTERFACE\\eta_pop_up.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapBorderEtaPopUp));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\eta_pop_up.sti"), &guiMapBorderEtaPopUp));
 
-      FilenameForBPP("INTERFACE\\pos2.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapBorderHeliSectors));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\pos2.sti"), &guiMapBorderHeliSectors));
 
-      FilenameForBPP("INTERFACE\\secondary_gun_hidden.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSecItemHiddenVO));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\secondary_gun_hidden.sti"),
+                        &guiSecItemHiddenVO));
 
-      FilenameForBPP("INTERFACE\\selectedchararrow.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSelectedCharArrow));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\selectedchararrow.sti"),
+                        &guiSelectedCharArrow));
 
-      FilenameForBPP("INTERFACE\\mine.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMINEICON));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mine.sti"), &guiMINEICON));
 
       sprintf(VObjectDesc.ImageFile, "INTERFACE\\hilite.sti");
       AddVObject(CreateVideoObject(&VObjectDesc), &guiSectorLocatorGraphicID);
 
-      FilenameForBPP("INTERFACE\\BullsEye.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBULLSEYE));
+      CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\BullsEye.sti"), &guiBULLSEYE));
 
       HandleLoadOfMapBottomGraphics();
 
@@ -2770,8 +2748,8 @@ uint32_t MapScreenHandle(void) {
       }
     }
 
-    FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBrownBackgroundForTeamPanel));
+    CHECKF(
+        AddVObject(CreateVObjectFromFile("INTERFACE\\Bars.sti"), &guiBrownBackgroundForTeamPanel));
 
     // we are in fact in the map, do not repeat this sequence
     fInMapMode = TRUE;
@@ -8307,87 +8285,66 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
     return FALSE;
   }
 
-  FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mapcursr.sti"), &guiMAPCURSORS));
 
-  FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSAMICON));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\SAM.sti"), &guiSAMICON));
 
-  FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mapcursr.sti"), &guiMAPCURSORS));
 
-  FilenameForBPP("INTERFACE\\sleepicon.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSleepIcon));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\sleepicon.sti"), &guiSleepIcon));
 
-  FilenameForBPP("INTERFACE\\charinfo.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARINFO));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\charinfo.sti"), &guiCHARINFO));
 
-  FilenameForBPP("INTERFACE\\newgoldpiece3.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARLIST));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\newgoldpiece3.sti"), &guiCHARLIST));
 
   // the sublevels
-  FilenameForBPP("INTERFACE\\Mine_1.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSubLevel1));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Mine_1.sti"), &guiSubLevel1));
 
-  FilenameForBPP("INTERFACE\\Mine_2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSubLevel2));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Mine_2.sti"), &guiSubLevel2));
 
-  FilenameForBPP("INTERFACE\\Mine_3.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSubLevel3));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Mine_3.sti"), &guiSubLevel3));
 
-  FilenameForBPP("INTERFACE\\boxes.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARICONS));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\boxes.sti"), &guiCHARICONS));
 
-  FilenameForBPP("INTERFACE\\incross.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCROSS));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\incross.sti"), &guiCROSS));
 
-  FilenameForBPP("INTERFACE\\mapinv.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAPINV));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mapinv.sti"), &guiMAPINV));
 
-  FilenameForBPP("INTERFACE\\map_inv_2nd_gun_cover.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapInvSecondHandBlockout));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\map_inv_2nd_gun_cover.sti"),
+                    &guiMapInvSecondHandBlockout));
 
   // the upper left corner piece icons
-  FilenameForBPP("INTERFACE\\top_left_corner_icons.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiULICONS));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\top_left_corner_icons.sti"), &guiULICONS));
 
-  FilenameForBPP("INTERFACE\\prison.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTIXAICON));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\prison.sti"), &guiTIXAICON));
 
   HandleLoadOfMapBottomGraphics();
 
-  FilenameForBPP("INTERFACE\\map_item.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiORTAICON));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\map_item.sti"), &guiORTAICON));
 
-  FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mapcursr.sti"), &guiMAPCURSORS));
 
-  FilenameForBPP("INTERFACE\\merc_between_sector_icons.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARBETWEENSECTORICONS));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\merc_between_sector_icons.sti"),
+                    &guiCHARBETWEENSECTORICONS));
 
-  FilenameForBPP("INTERFACE\\merc_mvt_green_arrows.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARBETWEENSECTORICONSCLOSE));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\merc_mvt_green_arrows.sti"),
+                    &guiCHARBETWEENSECTORICONSCLOSE));
 
-  FilenameForBPP("INTERFACE\\GreenArr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLEVELMARKER));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\GreenArr.sti"), &guiLEVELMARKER));
 
-  FilenameForBPP("INTERFACE\\Helicop.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHelicopterIcon));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Helicop.sti"), &guiHelicopterIcon));
 
-  FilenameForBPP("INTERFACE\\eta_pop_up.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapBorderEtaPopUp));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\eta_pop_up.sti"), &guiMapBorderEtaPopUp));
 
-  FilenameForBPP("INTERFACE\\pos2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapBorderHeliSectors));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\pos2.sti"), &guiMapBorderHeliSectors));
 
-  FilenameForBPP("INTERFACE\\secondary_gun_hidden.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSecItemHiddenVO));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\secondary_gun_hidden.sti"),
+                    &guiSecItemHiddenVO));
 
-  FilenameForBPP("INTERFACE\\selectedchararrow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSelectedCharArrow));
+  CHECKF(
+      AddVObject(CreateVObjectFromFile("INTERFACE\\selectedchararrow.sti"), &guiSelectedCharArrow));
 
-  FilenameForBPP("INTERFACE\\mine.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMINEICON));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mine.sti"), &guiMINEICON));
 
   sprintf(VObjectDesc.ImageFile, "INTERFACE\\hilite.sti");
   AddVObject(CreateVideoObject(&VObjectDesc), &guiSectorLocatorGraphicID);
@@ -8396,8 +8353,7 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
   sprintf(VObjectDesc.ImageFile, "INTERFACE\\newemail.sti");
   AddVObject(CreateVideoObject(&VObjectDesc), &guiNewMailIcons);
 
-  FilenameForBPP("INTERFACE\\BullsEye.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBULLSEYE));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\BullsEye.sti"), &guiBULLSEYE));
 
   // graphic for pool inventory
   LoadInventoryPoolGraphic();

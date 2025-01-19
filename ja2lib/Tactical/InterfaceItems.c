@@ -839,36 +839,34 @@ BOOLEAN InitInvSlotInterface(INV_REGION_DESC *pRegionDesc, INV_REGION_DESC *pCam
                              MOUSE_CALLBACK INVMoveCammoCallback,
                              MOUSE_CALLBACK INVClickCammoCallback, BOOLEAN fSetHighestPrioity) {
   int32_t cnt;
-  VOBJECT_DESC VObjectDesc;
 
   // Load all four body type images
-  FilenameForBPP("INTERFACE\\inventory_figure_large_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[1][0])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_figure_large_male.sti"),
+                    &(guiBodyInvVO[1][0])));
 
-  FilenameForBPP("INTERFACE\\inventory_figure_large_male_H.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[1][1])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_figure_large_male_H.sti"),
+                    &(guiBodyInvVO[1][1])));
 
-  FilenameForBPP("INTERFACE\\inventory_normal_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[0][0])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_normal_male.sti"),
+                    &(guiBodyInvVO[0][0])));
 
-  FilenameForBPP("INTERFACE\\inventory_normal_male_H.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[0][1])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_normal_male_H.sti"),
+                    &(guiBodyInvVO[0][1])));
 
-  FilenameForBPP("INTERFACE\\inventory_normal_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[2][0])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_normal_male.sti"),
+                    &(guiBodyInvVO[2][0])));
 
-  FilenameForBPP("INTERFACE\\inventory_normal_male.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[2][1])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_normal_male.sti"),
+                    &(guiBodyInvVO[2][1])));
 
-  FilenameForBPP("INTERFACE\\inventory_figure_female.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[3][0])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_figure_female.sti"),
+                    &(guiBodyInvVO[3][0])));
 
-  FilenameForBPP("INTERFACE\\inventory_figure_female_H.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(guiBodyInvVO[3][1])));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_figure_female_H.sti"),
+                    &(guiBodyInvVO[3][1])));
 
   // add gold key graphic
-  FilenameForBPP("INTERFACE\\gold_key_button.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGoldKeyVO));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\gold_key_button.sti"), &guiGoldKeyVO));
 
   // Add cammo region
   MSYS_DefineRegion(&gSMInvCamoRegion, pCamoRegion->sX, pCamoRegion->sY,
@@ -5305,7 +5303,6 @@ void SetItemPickupMenuDirty(BOOLEAN fDirtyLevel) { gItemPickupMenu.fDirtyLevel =
 BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
                                  struct ITEM_POOL *pItemPool, int16_t sScreenX, int16_t sScreenY,
                                  int8_t bZLevel) {
-  VOBJECT_DESC VObjectDesc;
   char ubString[48];
   struct ITEM_POOL *pTempItemPool;
   int32_t cnt;
@@ -5356,8 +5353,7 @@ BOOLEAN InitializeItemPickupMenu(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
     gItemPickupMenu.bNumSlotsPerPage = gItemPickupMenu.ubTotalItems;
   }
 
-  FilenameForBPP("INTERFACE\\itembox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &(gItemPickupMenu.uiPanelVo)));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\itembox.sti"), &(gItemPickupMenu.uiPanelVo)));
 
   // Memalloc selection array...
   gItemPickupMenu.pfSelectedArray =

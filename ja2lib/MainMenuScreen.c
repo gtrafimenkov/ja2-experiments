@@ -228,8 +228,6 @@ void HandleMainMenuScreen() {
 }
 
 BOOLEAN InitMainMenu() {
-  VOBJECT_DESC VObjectDesc;
-
   //	gfDoHelpScreen = 0;
 
   // Check to see whatr saved game files exist
@@ -241,13 +239,12 @@ BOOLEAN InitMainMenu() {
   CreateDestroyMainMenuButtons(TRUE);
 
   // load background graphic and add it
-  FilenameForBPP("LOADSCREENS\\MainMenuBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMainMenuBackGroundImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LOADSCREENS\\MainMenuBackGround.sti"),
+                    &guiMainMenuBackGroundImage));
 
   // load ja2 logo graphic and add it
   //	FilenameForBPP("INTERFACE\\Ja2_2.sti", VObjectDesc.ImageFile);
-  FilenameForBPP("LOADSCREENS\\Ja2Logo.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiJa2LogoImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LOADSCREENS\\Ja2Logo.sti"), &guiJa2LogoImage));
 
   /*
           // Gray out some buttons based on status of game!

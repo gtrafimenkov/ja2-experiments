@@ -82,15 +82,12 @@ void SelectFloristTitleHomeLinkRegionCallBack(struct MOUSE_REGION *pRegion, int3
 void GameInitFlorist() {}
 
 BOOLEAN EnterFlorist() {
-  VOBJECT_DESC VObjectDesc;
-
   SetBookMark(FLORIST_BOOKMARK);
 
   InitFloristDefaults();
 
   // load the handbullet graphic and add it
-  FilenameForBPP("LAPTOP\\HandBullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHandBullet));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\HandBullet.sti"), &guiHandBullet));
 
   guiGalleryButtonImage = LoadButtonImage("LAPTOP\\FloristButtons.sti", -1, 0, -1, 1, -1);
 
@@ -186,11 +183,8 @@ void RenderFlorist() {
 }
 
 BOOLEAN InitFloristDefaults() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Florist background graphic and add it
-  FilenameForBPP("LAPTOP\\leafback.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFloristBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\leafback.sti"), &guiFloristBackground));
 
   // if its the first page
   if (guiCurrentLaptopMode == LAPTOP_MODE_FLORIST) {

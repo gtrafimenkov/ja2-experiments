@@ -49,13 +49,10 @@ uint32_t guiCancelBoxButton;
 void GameInitMercsNoAccount() {}
 
 BOOLEAN EnterMercsNoAccount() {
-  VOBJECT_DESC VObjectDesc;
-
   InitMercBackGround();
 
   // load the Account box graphic and add it
-  FilenameForBPP("LAPTOP\\NoAccountBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiNoAccountImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\NoAccountBox.sti"), &guiNoAccountImage));
 
   // Open Accouint button
   guiOpenAccountBoxButtonImage = LoadButtonImage("LAPTOP\\BigButtons.sti", -1, 0, -1, 1, -1);

@@ -89,16 +89,13 @@ void MercAuthorizePaymentMessageBoxCallBack(uint8_t bExitValue);
 void GameInitMercsAccount() {}
 
 BOOLEAN EnterMercsAccount() {
-  VOBJECT_DESC VObjectDesc;
-
   InitMercBackGround();
 
   // load the Arrow graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_ORDERGRID), &guiMercOrderGrid));
 
   // load the Arrow graphic and add it
-  FilenameForBPP("LAPTOP\\AccountNumber.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAccountNumberGrid));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\AccountNumber.sti"), &guiAccountNumberGrid));
 
   guiMercAuthorizeButtonImage = LoadButtonImage("LAPTOP\\BigButtons.sti", -1, 0, -1, 1, -1);
 

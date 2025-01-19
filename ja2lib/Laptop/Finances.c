@@ -485,28 +485,22 @@ void RenderFinances(void) {
 }
 
 BOOLEAN LoadFinances(void) {
-  VOBJECT_DESC VObjectDesc;
   // load Finance video objects into memory
 
   // title bar
-  FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTITLE));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\programtitlebar.sti"), &guiTITLE));
 
   // top portion of the screen background
-  FilenameForBPP("LAPTOP\\Financeswindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTOP));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Financeswindow.sti"), &guiTOP));
 
   // black divider line - long ( 480 length)
-  FilenameForBPP("LAPTOP\\divisionline480.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLONGLINE));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\divisionline480.sti"), &guiLONGLINE));
 
   // the records columns
-  FilenameForBPP("LAPTOP\\recordcolumns.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLISTCOLUMNS));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\recordcolumns.sti"), &guiLISTCOLUMNS));
 
   // black divider line - long ( 480 length)
-  FilenameForBPP("LAPTOP\\divisionline.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLINE));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\divisionline.sti"), &guiLINE));
 
   return (TRUE);
 }

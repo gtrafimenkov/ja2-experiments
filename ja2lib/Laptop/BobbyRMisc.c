@@ -23,15 +23,11 @@ uint32_t guiMiscGrid;
 void GameInitBobbyRMisc() {}
 
 BOOLEAN EnterBobbyRMisc() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the background graphic and add it
-  FilenameForBPP("LAPTOP\\miscbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMiscBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\miscbackground.sti"), &guiMiscBackground));
 
   // load the gunsgrid graphic and add it
-  FilenameForBPP("LAPTOP\\miscgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMiscGrid));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\miscgrid.sti"), &guiMiscGrid));
 
   InitBobbyBrTitle();
   // Draw menu bar

@@ -114,11 +114,9 @@ void BtnRaiseLevelBtnCallback(GUI_BUTTON *btn,int32_t reason);
 
 BOOLEAN LoadMapBorderGraphics(void) {
   // this procedure will load the graphics needed for the map border
-  VOBJECT_DESC VObjectDesc;
 
   // will load map border
-  FilenameForBPP("INTERFACE\\MBS.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapBorder));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\MBS.sti"), &guiMapBorder));
 
   return (TRUE);
 }

@@ -98,14 +98,13 @@ void HandleIMPPortraits(void) {
 
 BOOLEAN RenderPortrait(int16_t sX, int16_t sY) {
   // render the portrait of the current picture
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hHandle;
   uint32_t uiGraphicHandle;
 
   if (fCharacterIsMale) {
     // load it
-    FilenameForBPP(pPlayerSelectedBigFaceFileNames[iCurrentPortrait], VObjectDesc.ImageFile);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+    CHECKF(AddVObject(CreateVObjectFromFile(pPlayerSelectedBigFaceFileNames[iCurrentPortrait]),
+                      &uiGraphicHandle));
 
     // show it
     GetVideoObject(&hHandle, uiGraphicHandle);
@@ -116,8 +115,8 @@ BOOLEAN RenderPortrait(int16_t sX, int16_t sY) {
 
   } else {
     // load it
-    FilenameForBPP(pPlayerSelectedBigFaceFileNames[iCurrentPortrait + 8], VObjectDesc.ImageFile);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+    CHECKF(AddVObject(CreateVObjectFromFile(pPlayerSelectedBigFaceFileNames[iCurrentPortrait + 8]),
+                      &uiGraphicHandle));
 
     // show it
     GetVideoObject(&hHandle, uiGraphicHandle);

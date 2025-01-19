@@ -397,7 +397,6 @@ void BtnIMPFinishVoiceCallback(GUI_BUTTON *btn, int32_t reason) {
 
 BOOLEAN RenderCharProfileFinishFace(void) {
   // render the portrait of the current picture
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hHandle;
   uint32_t uiGraphicHandle;
 
@@ -407,8 +406,7 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        FilenameForBPP("Faces\\SmallFaces\\00.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+        CHECKF(AddVObject(CreateVObjectFromFile("Faces\\SmallFaces\\00.sti"), &uiGraphicHandle));
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
@@ -423,8 +421,7 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        FilenameForBPP("Faces\\SmallFaces\\01.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+        CHECKF(AddVObject(CreateVObjectFromFile("Faces\\SmallFaces\\01.sti"), &uiGraphicHandle));
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
@@ -439,8 +436,7 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        FilenameForBPP("Faces\\SmallFaces\\02.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+        CHECKF(AddVObject(CreateVObjectFromFile("Faces\\SmallFaces\\02.sti"), &uiGraphicHandle));
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
@@ -459,8 +455,7 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        FilenameForBPP("Faces\\SmallFaces\\03.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+        CHECKF(AddVObject(CreateVObjectFromFile("Faces\\SmallFaces\\03.sti"), &uiGraphicHandle));
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
@@ -475,8 +470,7 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        FilenameForBPP("Faces\\SmallFaces\\04.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+        CHECKF(AddVObject(CreateVObjectFromFile("Faces\\SmallFaces\\04.sti"), &uiGraphicHandle));
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
@@ -491,8 +485,7 @@ BOOLEAN RenderCharProfileFinishFace(void) {
         // first portrait
 
         // load it
-        FilenameForBPP("Faces\\SmallFaces\\05.sti", VObjectDesc.ImageFile);
-        CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
+        CHECKF(AddVObject(CreateVObjectFromFile("Faces\\SmallFaces\\05.sti"), &uiGraphicHandle));
 
         // show it
         GetVideoObject(&hHandle, uiGraphicHandle);
@@ -535,11 +528,10 @@ void RenderCharFullName(void) {
 
 BOOLEAN LoadCharacterPortrait(void) {
   // this function will load the character's portrait, to be used on portrait button
-  VOBJECT_DESC VObjectDesc;
 
   // load it
-  FilenameForBPP(pPlayerSelectedFaceFileNames[iPortraitNumber], VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARACTERPORTRAIT));
+  CHECKF(AddVObject(CreateVObjectFromFile(pPlayerSelectedFaceFileNames[iPortraitNumber]),
+                    &guiCHARACTERPORTRAIT));
 
   return (TRUE);
 }

@@ -197,8 +197,6 @@ BOOLEAN fFirstTimeIn = TRUE;
 void GameInitAIM() { LaptopInitAim(); }
 
 BOOLEAN EnterAIM() {
-  VOBJECT_DESC VObjectDesc;
-
   gubWarningTimer = 0;
   gubCurrentAdvertisment = AIM_AD_WARNING_BOX;
   LaptopInitAim();
@@ -206,16 +204,13 @@ BOOLEAN EnterAIM() {
   InitAimDefaults();
 
   // load the MemberShipcard graphic and add it
-  FilenameForBPP("LAPTOP\\membercard.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMemberCard));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\membercard.sti"), &guiMemberCard));
 
   // load the Policies graphic and add it
-  FilenameForBPP("LAPTOP\\Policies.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPolicies));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Policies.sti"), &guiPolicies));
 
   // load the Links graphic and add it
-  FilenameForBPP("LAPTOP\\Links.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLinks));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Links.sti"), &guiLinks));
 
   // load the History graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_HISTORY), &guiHistory));
@@ -224,8 +219,7 @@ BOOLEAN EnterAIM() {
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_WARNING), &guiWarning));
 
   // load the flower advertisment and add it
-  FilenameForBPP("LAPTOP\\flowerad_16.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFlowerAdvertisement));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\flowerad_16.sti"), &guiFlowerAdvertisement));
 
   // load the your ad advertisment and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_YOURAD13), &guiAdForAdsImages));
@@ -395,11 +389,8 @@ void SelectLinksRegionCallBack(struct MOUSE_REGION *pRegion, int32_t iReason) {
 }
 
 BOOLEAN InitAimDefaults() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Rust bacground graphic and add it
-  FilenameForBPP("LAPTOP\\rustbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiRustBackGround));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\rustbackground.sti"), &guiRustBackGround));
 
   // load the Aim Symbol graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_AIMSYMBOL), &guiAimSymbol));
