@@ -393,10 +393,6 @@ struct VObject *CreateVObjectFromHImage(HIMAGE hImage) {
 }
 
 struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
-  if (VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMHIMAGE) {
-    return CreateVObjectFromHImage(VObjectDesc->hImage);
-  }
-
   if (VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMFILE) {
     HIMAGE hImage = CreateImage(VObjectDesc->ImageFile, IMAGE_ALLIMAGEDATA);
     if (hImage == NULL) {

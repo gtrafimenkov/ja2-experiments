@@ -58,8 +58,7 @@ typedef struct {
 // Video object creation flags
 // Used in the VOBJECT_DESC structure to describe creation flags
 
-#define VOBJECT_CREATE_FROMFILE 0x00000040    // Creates a video object from a file ( using HIMAGE )
-#define VOBJECT_CREATE_FROMHIMAGE 0x00000080  // Creates a video object from a pre-loaded hImage
+#define VOBJECT_CREATE_FROMFILE 0x00000040  // Creates a video object from a file ( using HIMAGE )
 
 // VOBJECT FLAGS
 #define VOBJECT_FLAG_SHADETABLE_SHARED 0x00000100
@@ -96,9 +95,6 @@ typedef struct {
   union {
     struct {
       SGPFILENAME ImageFile;  // Filename of image data to use
-    };
-    struct {
-      HIMAGE hImage;
     };
   };
 } VOBJECT_DESC;
