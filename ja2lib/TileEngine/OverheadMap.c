@@ -469,7 +469,6 @@ void HandleOverheadMap() {
 BOOLEAN InOverheadMap() { return (gfInOverheadMap); }
 
 void GoIntoOverheadMap() {
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hVObject;
 
   gfInOverheadMap = TRUE;
@@ -485,13 +484,11 @@ void GoIntoOverheadMap() {
   MSYS_AddRegion(&OverheadRegion);
 
   // LOAD CLOSE ANIM
-  FilenameForBPP("INTERFACE\\MAP_BORD.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &uiOVERMAP))
+  if (!AddVObject(CreateVObjectFromFile("INTERFACE\\MAP_BORD.sti"), &uiOVERMAP))
     AssertMsg(0, "Missing INTERFACE\\MAP_BORD.sti");
 
   // LOAD PERSONS
-  FilenameForBPP("INTERFACE\\PERSONS.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &uiPERSONS))
+  if (!AddVObject(CreateVObjectFromFile("INTERFACE\\PERSONS.sti"), &uiPERSONS))
     AssertMsg(0, "Missing INTERFACE\\PERSONS.sti");
 
   // Add shades to persons....
