@@ -268,12 +268,12 @@ BOOLEAN EnterBobbyRGuns() {
   // load the background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\gunbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiGunBackground));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGunBackground));
 
   // load the gunsgrid graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\gunsgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiGunsGrid));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGunsGrid));
 
   InitBobbyBrTitle();
 
@@ -364,7 +364,7 @@ BOOLEAN InitBobbyBrTitle() {
   // load the br title graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\br.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBrTitle));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBrTitle));
 
   // initialize the link to the homepage by clicking on the title
   MSYS_DefineRegion(&gSelectedTitleImageLinkRegion, BOBBYR_BRTITLE_X, BOBBYR_BRTITLE_Y,

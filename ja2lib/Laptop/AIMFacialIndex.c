@@ -75,7 +75,7 @@ BOOLEAN EnterAimFacialIndex() {
   // load the Portait graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\MugShotBorder3.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMugShotBorder));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMugShotBorder));
 
   usPosX = AIM_FI_FIRST_MUGSHOT_X;
   usPosY = AIM_FI_FIRST_MUGSHOT_Y;
@@ -93,8 +93,7 @@ BOOLEAN EnterAimFacialIndex() {
       sprintf(sTemp, "%s%02d.sti", sFaceLoc, AimMercArray[i]);
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-      if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiAimFiFace[i]))
-        return (FALSE);
+      if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiAimFiFace[i])) return (FALSE);
 
       usPosX += AIM_FI_PORTRAIT_WIDTH + AIM_FI_MUGSHOT_GAP_X;
       i++;

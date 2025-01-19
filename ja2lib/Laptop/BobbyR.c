@@ -216,32 +216,32 @@ BOOLEAN EnterBobbyR() {
   // load the Bobbyname graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYNAME);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBobbyName));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBobbyName));
 
   // load the plaque graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyPlaques.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiPlaque));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPlaque));
 
   // load the TopHinge graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyTopHinge.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiTopHinge));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTopHinge));
 
   // load the BottomHinge graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyBottomHinge.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBottomHinge));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBottomHinge));
 
   // load the Store Plaque graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_STOREPLAQUE);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiStorePlaque));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiStorePlaque));
 
   // load the Handle graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyHandle.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiHandle));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHandle));
 
   InitBobbiesMouseRegion(BOBBIES_NUMBER_SIGNS, usMouseRegionPosArray,
                          gSelectedBobbiesSignMenuRegion);
@@ -250,8 +250,7 @@ BOOLEAN EnterBobbyR() {
     // load the Handle graphic and add it
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\UnderConstruction.sti", VObjectDesc.ImageFile);
-    CHECKF(
-        AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiUnderConstructionImage));
+    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUnderConstructionImage));
 
     for (i = 0; i < BOBBIES_NUMBER_SIGNS; i++) {
       MSYS_DisableRegion(&gSelectedBobbiesSignMenuRegion[i]);
@@ -408,7 +407,7 @@ BOOLEAN InitBobbyRWoodBackground() {
   // load the Wood bacground graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyWood.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiWoodBackground));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiWoodBackground));
 
   return (TRUE);
 }

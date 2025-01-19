@@ -816,32 +816,32 @@ int32_t EnterLaptop() {
   // load the laptop graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\laptop3.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiLAPTOP));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLAPTOP));
 
   // background for panel
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\taskbar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiLaptopBACKGROUND));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLaptopBACKGROUND));
 
   // background for panel
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiTITLEBARLAPTOP));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTITLEBARLAPTOP));
 
   // lights for power and HD
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\lights.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiLIGHTS));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLIGHTS));
 
   // icons for title bars
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\ICONS.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiTITLEBARICONS));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTITLEBARICONS));
 
   // load, blt and delete graphics
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\NewMailWarning.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiEmailWarning));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailWarning));
   // load background
   LoadDesktopBackground();
 
@@ -2769,34 +2769,34 @@ BOOLEAN LoadBookmark() {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\downloadtop.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiDOWNLOADTOP));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiDOWNLOADTOP));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\downloadmid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiDOWNLOADMID));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiDOWNLOADMID));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\downloadbot.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiDOWNLOADBOT));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiDOWNLOADBOT));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\bookmarktop.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBOOKTOP));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBOOKTOP));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\bookmarkmiddle.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBOOKMID));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBOOKMID));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\webpages.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBOOKMARK));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBOOKMARK));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\hilite.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBOOKHIGH));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBOOKHIGH));
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Bookmarkbottom.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBOOKBOT));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBOOKBOT));
 
   return (TRUE);
 }
@@ -3203,10 +3203,10 @@ BOOLEAN LoadLoadPending(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\graphwindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiGRAPHWINDOW));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGRAPHWINDOW));
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\graphsegment.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiGRAPHBAR));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGRAPHBAR));
 
   return (TRUE);
 }
@@ -4774,7 +4774,7 @@ BOOLEAN RenderWWWProgramTitleBar(void) {
   // title bar - load
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &uiTITLEFORWWW));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiTITLEFORWWW));
 
   // blit title
   GetVideoObject(&hHandle, uiTITLEFORWWW);

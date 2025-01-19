@@ -114,7 +114,7 @@ BOOLEAN InitSlider() {
   // load Slider Box Graphic graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\SliderBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSliderBoxImage));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSliderBoxImage));
 
   gfSliderInited = TRUE;
 

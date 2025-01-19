@@ -342,33 +342,32 @@ BOOLEAN EnterMercs() {
   // load the Account box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\AccountBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiAccountBox));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAccountBox));
 
   // load the files Box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\FilesBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiFilesBox));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFilesBox));
 
   // load the MercSymbol graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\MERCSymbol.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMercSymbol));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercSymbol));
 
   // load the SpecPortrait graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\SpecPortrait.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSpecPortrait));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSpecPortrait));
 
   // load the Arrow graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Arrow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiArrow));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiArrow));
 
   // load the Merc video conf background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\SpeckComWindow.sti", VObjectDesc.ImageFile);
-  CHECKF(
-      AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMercVideoPopupBackground));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercVideoPopupBackground));
 
   // Account Box button
   guiAccountBoxButtonImage = LoadButtonImage("LAPTOP\\SmallButtons.sti", -1, 0, -1, 1, -1);
@@ -609,7 +608,7 @@ BOOLEAN InitMercBackGround() {
   // load the Merc background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\MERCBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMercBackGround));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercBackGround));
 
   return (TRUE);
 }

@@ -123,7 +123,7 @@ BOOLEAN LoadRadarScreenBitmap(char *aFilename) {
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     sprintf(VObjectDesc.ImageFile, "RADARMAPS\\%s.STI", zFilename);
 
-    CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &gusRadarImage));
+    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &gusRadarImage));
 
     fImageLoaded = TRUE;
 
@@ -529,7 +529,7 @@ BOOLEAN CreateDestroyMouseRegionsForSquadList(void) {
     // load graphics
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("INTERFACE\\squadpanel.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &uiHandle));
+    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiHandle));
 
     GetVideoObject(&hHandle, uiHandle);
     BltVideoObject(guiSAVEBUFFER, hHandle, 0, 538, 0 + gsVIEWPORT_END_Y, VO_BLT_SRCTRANSPARENCY,
