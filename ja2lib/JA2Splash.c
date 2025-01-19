@@ -10,6 +10,7 @@
 #include "SGP/FileMan.h"
 #include "SGP/TopicIDs.h"
 #include "SGP/TopicOps.h"
+#include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "Utils/MultiLanguageGraphicUtils.h"
@@ -23,15 +24,14 @@ uint32_t guiSplashStartTime = 0;
 void InitJA2SplashScreen() {
 #if defined(JA2TESTVERSION)
   if (!UsingEnglishResources()) {
-    uint32_t uiLogoID = 0;
-    struct VSurface* hVSurface;
-    if (!AddVSurfaceFromFile("LOADSCREENS\\Notification.sti", &uiLogoID)) {
+    struct VSurface* hVSurface = CreateVSurfaceFromFile("LOADSCREENS\\Notification.sti");
+    if (hVSurface == NULL) {
       AssertMsg(0, String("Failed to load %s", "LOADSCREENS\\Notification.sti"));
       return;
     }
-    hVSurface = FindVSurface(uiLogoID);
+    SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
-    DeleteVSurfaceByIndex(uiLogoID);
+    DeleteVSurface(hVSurface);
 
     InvalidateScreen();
     RefreshScreen(NULL);
@@ -51,18 +51,16 @@ void InitJA2SplashScreen() {
   if (UsingEnglishResources()) {
     ClearMainMenu();
   } else {
-    uint32_t uiLogoID = 0;
-    struct VSurface* hVSurface;
     SGPFILENAME ImageFile;
     GetMLGFilename(ImageFile, MLG_SPLASH);
-    if (!AddVSurfaceFromFile(ImageFile, &uiLogoID)) {
+    struct VSurface* hVSurface = CreateVSurfaceFromFile(ImageFile);
+    if (hVSurface == NULL) {
       AssertMsg(0, String("Failed to load %s", ImageFile));
       return;
     }
-
-    hVSurface = FindVSurface(uiLogoID);
+    SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
-    DeleteVSurfaceByIndex(uiLogoID);
+    DeleteVSurface(hVSurface);
   }
 
   InvalidateScreen();
