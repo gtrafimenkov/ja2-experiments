@@ -48,14 +48,13 @@ extern BOOLEAN gfExtraBuffer;
 //
 
 struct VSurface {
-  uint16_t usHeight;          // Height of Video Surface
-  uint16_t usWidth;           // Width of Video Surface
-  uint8_t ubBitDepth;         // 8 or 16
-  void *_platformData1;       // platform-specific data (Direct Draw One Interface)
-  void *_platformData2;       // platform-specific data (Direct Draw Two Interface)
-  void *pPalette;             // A void pointer, but for this implementation a DDPalette
-  uint16_t *p16BPPPalette;    // A 16BPP palette used for 8->16 blits
-  COLORVAL TransparentColor;  // Defaults to 0,0,0
+  uint16_t usHeight;        // Height of Video Surface
+  uint16_t usWidth;         // Width of Video Surface
+  uint8_t ubBitDepth;       // 8 or 16
+  void *_platformData1;     // platform-specific data (Direct Draw One Interface)
+  void *_platformData2;     // platform-specific data (Direct Draw Two Interface)
+  void *pPalette;           // A void pointer, but for this implementation a DDPalette
+  uint16_t *p16BPPPalette;  // A 16BPP palette used for 8->16 blits
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

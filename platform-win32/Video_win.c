@@ -2413,7 +2413,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   vs->_platformData2 = (void *)lpDDS2;
   vs->pPalette = NULL;
   vs->p16BPPPalette = NULL;
-  vs->TransparentColor = FROMRGB(0, 0, 0);
 
   SGPRect tempRect;
   tempRect.iLeft = 0;
@@ -2518,9 +2517,6 @@ BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColo
 
   // Assertions
   Assert(vs != NULL);
-
-  // Set trans color into Video Surface
-  vs->TransparentColor = TransColor;
 
   // Get surface pointer
   lpDDSurface = (LPDIRECTDRAWSURFACE2)vs->_platformData2;
