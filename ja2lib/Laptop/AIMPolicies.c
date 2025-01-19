@@ -209,16 +209,16 @@ BOOLEAN EnterAimPolicies() {
   // load the Bottom Buttons graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BottomButton.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiBottomButton));
+  CHECKF(AddVObject(&VObjectDesc, &guiBottomButton));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BottomButton2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiBottomButton2));
+  CHECKF(AddVObject(&VObjectDesc, &guiBottomButton2));
 
   // load the Content Buttons graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\ContentButton.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiContentButton));
+  CHECKF(AddVObject(&VObjectDesc, &guiContentButton));
 
   RenderAimPolicies();
   return (TRUE);

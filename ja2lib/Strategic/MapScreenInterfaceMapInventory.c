@@ -207,7 +207,7 @@ BOOLEAN LoadInventoryPoolGraphic(void) {
   sprintf(VObjectDesc.ImageFile, "INTERFACE\\sector_inventory.sti");
 
   // add to V-object index
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMapInventoryPoolBackground));
+  CHECKF(AddVObject(&VObjectDesc, &guiMapInventoryPoolBackground));
 
   return (TRUE);
 }

@@ -924,7 +924,7 @@ BOOLEAN AddFacesToAutoBandageBox(void) {
       }
 
       // load the face
-      AddStandardVideoObject(&VObjectDesc, &giAutoBandagesSoldierFaces[iCounter]);
+      AddVObject(&VObjectDesc, &giAutoBandagesSoldierFaces[iCounter]);
       iNumberOfDoctors++;
     }
   }
@@ -943,15 +943,14 @@ BOOLEAN AddFacesToAutoBandageBox(void) {
       }
 
       // load the face
-      AddStandardVideoObject(&VObjectDesc,
-                             &giAutoBandagesSoldierFaces[iCounter + iNumberOfDoctors]);
+      AddVObject(&VObjectDesc, &giAutoBandagesSoldierFaces[iCounter + iNumberOfDoctors]);
     }
   }
 
   // grab panels
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "Interface\\panels.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &giMercPanelImage)) {
+  if (!AddVObject(&VObjectDesc, &giMercPanelImage)) {
     AssertMsg(0, "Failed to load Interface\\panels.sti");
   }
 

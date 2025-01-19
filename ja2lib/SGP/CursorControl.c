@@ -130,8 +130,8 @@ BOOLEAN LoadCursorData(uint32_t uiCursorIndex) {
         VideoObjectDescription.fCreateFlags = VOBJECT_CREATE_FROMHIMAGE;
         VideoObjectDescription.hImage = hImage;
 
-        if (!AddStandardVideoObject(&VideoObjectDescription,
-                                    &(gpCursorFileDatabase[pCurImage->uiFileIndex].uiIndex))) {
+        if (!AddVObject(&VideoObjectDescription,
+                        &(gpCursorFileDatabase[pCurImage->uiFileIndex].uiIndex))) {
           return (FALSE);
         }
 

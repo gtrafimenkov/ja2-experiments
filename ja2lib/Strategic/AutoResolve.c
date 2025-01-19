@@ -1624,7 +1624,7 @@ void CreateAutoResolveInterface() {
   // Load the general panel image pieces, to be combined to make the dynamically sized window.
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "Interface\\AutoResolve.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &gpAR->iPanelImages)) {
+  if (!AddVObject(&VObjectDesc, &gpAR->iPanelImages)) {
     AssertMsg(0, "Failed to load Interface\\AutoResolve.sti");
   }
 
@@ -1655,7 +1655,7 @@ void CreateAutoResolveInterface() {
 
   // Load the generic faces for civs and enemies
   sprintf(VObjectDesc.ImageFile, "Interface\\SmFaces.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &gpAR->iFaces)) {
+  if (!AddVObject(&VObjectDesc, &gpAR->iFaces)) {
     AssertMsg(0, "Failed to load Interface\\SmFaces.sti");
   }
   if (GetVideoObject(&hVObject, gpAR->iFaces)) {
@@ -1665,7 +1665,7 @@ void CreateAutoResolveInterface() {
 
   // Add the battle over panels
   sprintf(VObjectDesc.ImageFile, "Interface\\indent.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &gpAR->iIndent)) {
+  if (!AddVObject(&VObjectDesc, &gpAR->iIndent)) {
     AssertMsg(0, "Failed to load Interface\\indent.sti");
   }
 
@@ -1676,9 +1676,9 @@ void CreateAutoResolveInterface() {
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
             gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex);
-    if (!AddStandardVideoObject(&VObjectDesc, &gpMercs[i].uiVObjectID)) {
+    if (!AddVObject(&VObjectDesc, &gpMercs[i].uiVObjectID)) {
       sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\speck.sti");
-      if (!AddStandardVideoObject(&VObjectDesc, &gpMercs[i].uiVObjectID)) {
+      if (!AddVObject(&VObjectDesc, &gpMercs[i].uiVObjectID)) {
         AssertMsg(0,
                   String("Failed to load %Faces\\65Face\\%02d.sti or it's placeholder, speck.sti",
                          gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex));

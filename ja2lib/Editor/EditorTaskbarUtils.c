@@ -158,11 +158,11 @@ void LoadEditorImages() {
   // Set up the merc inventory panel
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "EDITOR\\InvPanel.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &guiMercInventoryPanel))
+  if (!AddVObject(&VObjectDesc, &guiMercInventoryPanel))
     AssertMsg(0, "Failed to load data\\editor\\InvPanel.sti");
   // Set up small omerta map
   sprintf(VObjectDesc.ImageFile, "EDITOR\\omerta.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &guiOmertaMap))
+  if (!AddVObject(&VObjectDesc, &guiOmertaMap))
     AssertMsg(0, "Failed to load data\\editor\\omerta.sti");
   // Set up the merc directional buttons.
   giEditMercDirectionIcons[0] = LoadGenericButtonIcon("EDITOR//arrowsoff.sti");
@@ -172,10 +172,10 @@ void LoadEditorImages() {
   giEditMercImage[1] = LoadButtonImage("EDITOR\\rightarrow.sti", 0, 1, 2, 3, 4);
 
   sprintf(VObjectDesc.ImageFile, "EDITOR\\Exclamation.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &guiExclamation))
+  if (!AddVObject(&VObjectDesc, &guiExclamation))
     AssertMsg(0, "Failed to load data\\editor\\Exclamation.sti");
   sprintf(VObjectDesc.ImageFile, "EDITOR\\KeyImage.sti");
-  if (!AddStandardVideoObject(&VObjectDesc, &guiKeyImage))
+  if (!AddVObject(&VObjectDesc, &guiKeyImage))
     AssertMsg(0, "Failed to load data\\editor\\KeyImage.sti");
 }
 

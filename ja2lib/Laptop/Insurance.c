@@ -100,12 +100,12 @@ BOOLEAN EnterInsurance() {
   // load the Insurance title graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_INSURANCETITLE);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiInsuranceTitleImage));
+  CHECKF(AddVObject(&VObjectDesc, &guiInsuranceTitleImage));
 
   // load the red bar on the side of the page and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiInsuranceBulletImage));
+  CHECKF(AddVObject(&VObjectDesc, &guiInsuranceBulletImage));
 
   usPosX = INSURANCE_BOTTOM_LINK_RED_BAR_X;
   for (i = 0; i < 3; i++) {
@@ -239,24 +239,24 @@ BOOLEAN InitInsuranceDefaults() {
   // load the Flower Account Box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BackGroundTile.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiInsuranceBackGround));
+  CHECKF(AddVObject(&VObjectDesc, &guiInsuranceBackGround));
 
   // load the red bar on the side of the page and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\LeftTile.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiInsuranceRedBarImage));
+  CHECKF(AddVObject(&VObjectDesc, &guiInsuranceRedBarImage));
 
   // load the red bar on the side of the page and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\LargeBar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiInsuranceBigRedLineImage));
+  CHECKF(AddVObject(&VObjectDesc, &guiInsuranceBigRedLineImage));
 
   // if it is not the first page, display the small title
   if (guiCurrentLaptopMode != LAPTOP_MODE_INSURANCE) {
     // load the small title for the every page other then the first page
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     GetMLGFilename(VObjectDesc.ImageFile, MLG_SMALLTITLE);
-    CHECKF(AddStandardVideoObject(&VObjectDesc, &guiInsuranceSmallTitleImage));
+    CHECKF(AddVObject(&VObjectDesc, &guiInsuranceSmallTitleImage));
 
     // create the link to the home page on the small titles
     MSYS_DefineRegion(
