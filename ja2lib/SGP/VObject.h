@@ -58,8 +58,6 @@ typedef struct {
 // Video object creation flags
 // Used in the VOBJECT_DESC structure to describe creation flags
 
-#define VOBJECT_CREATE_DEFAULT \
-  0x00000020  // Creates and empty object of given width, height and BPP
 #define VOBJECT_CREATE_FROMFILE 0x00000040    // Creates a video object from a file ( using HIMAGE )
 #define VOBJECT_CREATE_FROMHIMAGE 0x00000080  // Creates a video object from a pre-loaded hImage
 
