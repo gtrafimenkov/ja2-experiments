@@ -354,7 +354,7 @@ uint32_t guiDOWNLOADBOT;
 uint32_t guiTITLEBARLAPTOP;
 uint32_t guiLIGHTS;
 uint32_t guiTITLEBARICONS;
-uint32_t guiDESKTOP;
+static struct VSurface *vsDESKTOP;
 
 // email notification
 uint32_t guiUNREAD;
@@ -4314,7 +4314,6 @@ void BlitTitleBarIcons(void) {
 }
 
 BOOLEAN DrawDeskTopBackground(void) {
-  struct VSurface *hSrcVSurface;
   uint32_t uiDestPitchBYTES;
   uint32_t uiSrcPitchBYTES;
   uint16_t *pDestBuf;
@@ -4326,20 +4325,19 @@ BOOLEAN DrawDeskTopBackground(void) {
   clip.iRight = 506;
   clip.iTop = 0;
   clip.iBottom = 408 + 19;
-  // get surfaces
-  hSrcVSurface = FindVSurface(guiDESKTOP);
-  if (hSrcVSurface == NULL) {
+
+  if (vsDESKTOP == NULL) {
     return FALSE;
   }
   pDestBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);
-  pSrcBuf = LockVSurface(hSrcVSurface, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(vsDESKTOP, &uiSrcPitchBYTES);
 
   // blit .pcx for the background onto desktop
-  Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
+  Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, vsDESKTOP, pSrcBuf, uiSrcPitchBYTES,
                               LAPTOP_SCREEN_UL_X - 2, LAPTOP_SCREEN_UL_Y - 3, &clip);
 
   // release surfaces
-  UnlockVSurface(hSrcVSurface);
+  UnlockVSurface(vsDESKTOP);
   UnlockVSurface(vsFB);
 
   return (TRUE);
@@ -4349,16 +4347,18 @@ BOOLEAN LoadDesktopBackground(void) {
   // load desktop background
   SGPFILENAME ImageFile;
   GetMLGFilename(ImageFile, MLG_DESKTOP);
-  CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile(ImageFile), &guiDESKTOP));
+  vsDESKTOP = CreateVSurfaceFromFile(ImageFile);
+  if (vsDESKTOP == NULL) {
+    return FALSE;
+  }
+  SetVideoSurfaceTransparencyColor(vsDESKTOP, FROMRGB(0, 0, 0));
 
   return (TRUE);
 }
 
 void DeleteDesktopBackground(void) {
-  // delete desktop
-
-  DeleteVSurfaceByIndex(guiDESKTOP);
-  return;
+  DeleteVSurface(vsDESKTOP);
+  vsDESKTOP = NULL;
 }
 
 void PrintBalance(void) {
