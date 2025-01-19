@@ -154,17 +154,17 @@ BOOLEAN EnterMercsFiles() {
   // load the stats box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_STATSBOX);
-  CHECKF(AddVObject(&VObjectDesc, &guiStatsBox));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiStatsBox));
 
   // load the Portrait box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\PortraitBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiPortraitBox));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPortraitBox));
 
   // load the bio box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BioBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiBioBox));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBioBox));
 
   // Prev Box button
   guiButtonImage = LoadButtonImage("LAPTOP\\BigButtons.sti", -1, 0, -1, 1, -1);
@@ -410,7 +410,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   sprintf(sTemp, "%s%02d.sti", sFaceLoc, ubMercID);
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiMercFace));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercFace));
 
   // Blt face to screen
   GetVideoObject(&hFaceHandle, guiMercFace);

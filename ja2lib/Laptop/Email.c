@@ -370,27 +370,27 @@ BOOLEAN EnterEmail() {
   // title bar
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiEmailTitle));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailTitle));
 
   // the list background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Mailwindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiEmailBackground));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailBackground));
 
   // the indication/notification box
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\MailIndicator.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiEmailIndicator));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailIndicator));
 
   // the message background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\emailviewer.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiEmailMessage));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailMessage));
 
   // the message background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\maillistdivider.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiMAILDIVIDER));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAILDIVIDER));
 
   // AddEmail(IMP_EMAIL_PROFILE_RESULTS, IMP_EMAIL_PROFILE_RESULTS_LENGTH, IMP_PROFILE_RESULTS,
   // GetWorldTotalMin( ) );

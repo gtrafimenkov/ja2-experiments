@@ -136,17 +136,10 @@ uint32_t CountVideoObjectNodes() {
   return i;
 }
 
-BOOLEAN AddVObject(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
-  struct VObject *hVObject;
-
-  // Assertions
+BOOLEAN AddVObject(struct VObject *vo, uint32_t *puiIndex) {
   Assert(puiIndex);
-  Assert(pVObjectDesc);
 
-  // Create video object
-  hVObject = CreateVideoObject(pVObjectDesc);
-
-  if (!hVObject) {
+  if (!vo) {
     // Video Object will set error condition.
     return FALSE;
   }
@@ -165,7 +158,7 @@ BOOLEAN AddVObject(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
     gpVObjectTail = gpVObjectHead;
   }
   // Set the hVObject into the node.
-  gpVObjectTail->hVObject = hVObject;
+  gpVObjectTail->hVObject = vo;
   gpVObjectTail->uiIndex = guiVObjectIndex += 2;
   *puiIndex = gpVObjectTail->uiIndex;
   Assert(guiVObjectIndex < 0xfffffff0);  // unlikely that we will ever use 2 billion vobjects!

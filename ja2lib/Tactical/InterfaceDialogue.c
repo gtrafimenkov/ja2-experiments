@@ -369,7 +369,7 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "INTERFACE\\talkbox1.sti");
   // Load
-  if (AddVObject(&VObjectDesc, &(gTalkPanel.uiPanelVO)) == FALSE) {
+  if (AddVObject(CreateVideoObject(&VObjectDesc), &(gTalkPanel.uiPanelVO)) == FALSE) {
     return (0);
   }
 

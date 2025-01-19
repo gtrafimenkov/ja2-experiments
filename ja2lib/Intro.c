@@ -426,7 +426,7 @@ void DisplaySirtechSplashScreen() {
   FilenameForBPP("INTERFACE\\SirtechSplash.sti", VObjectDesc.ImageFile);
 
   //	FilenameForBPP("INTERFACE\\TShold.sti", VObjectDesc.ImageFile);
-  if (!AddVObject(&VObjectDesc, &uiLogoID)) {
+  if (!AddVObject(CreateVideoObject(&VObjectDesc), &uiLogoID)) {
     AssertMsg(0, String("Failed to load %s", VObjectDesc.ImageFile));
     return;
   }

@@ -178,27 +178,27 @@ BOOLEAN EnterAimSort() {
   // load the SortBy box graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\SortBy.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiSortByBox));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSortByBox));
 
   // load the ToAlumni graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_TOALUMNI);
-  CHECKF(AddVObject(&VObjectDesc, &guiToAlumni));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiToAlumni));
 
   // load the ToMugShots graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_TOMUGSHOTS);
-  CHECKF(AddVObject(&VObjectDesc, &guiToMugShots));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiToMugShots));
 
   // load the ToStats graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_TOSTATS);
-  CHECKF(AddVObject(&VObjectDesc, &guiToStats));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiToStats));
 
   // load the SelectLight graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\SelectLight.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiSelectLight));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSelectLight));
 
   //** Mouse Regions **
 

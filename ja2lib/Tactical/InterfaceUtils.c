@@ -85,7 +85,7 @@ BOOLEAN LoadCarPortraitValues(void) {
   for (iCounter = 0; iCounter < NUMBER_CAR_PORTRAITS; iCounter++) {
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     strcopy(VObjectDesc.ImageFile, sizeof(VObjectDesc.ImageFile), pbCarPortraitFileNames[iCounter]);
-    CHECKF(AddVObject(&VObjectDesc, &giCarPortraits[iCounter]));
+    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &giCarPortraits[iCounter]));
   }
   return (TRUE);
 }
