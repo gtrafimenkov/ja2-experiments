@@ -947,8 +947,7 @@ BOOLEAN AddFacesToAutoBandageBox(void) {
   }
 
   // grab panels
-  sprintf(VObjectDesc.ImageFile, "Interface\\panels.sti");
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &giMercPanelImage)) {
+  if (!AddVObject(CreateVObjectFromFile("Interface\\panels.sti"), &giMercPanelImage)) {
     AssertMsg(0, "Failed to load Interface\\panels.sti");
   }
 

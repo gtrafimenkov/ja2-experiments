@@ -5071,14 +5071,12 @@ void EndMapScreen(BOOLEAN fDuringFade) {
   UpdatePausedStatesDueToTimeCompression();
 
   if (!gfDontStartTransitionFromLaptop) {
-    VOBJECT_DESC VObjectDesc;
     uint32_t uiLaptopOn;
 
     // Load a tiny graphic of the on screen and draw it to the buffer.
     PlayJA2SampleFromFile("SOUNDS\\Initial Power Up (8-11).wav", RATE_11025, HIGHVOLUME, 1,
                           MIDDLEPAN);
-    sprintf(VObjectDesc.ImageFile, "INTERFACE\\LaptopOn.sti");
-    if (!AddVObject(CreateVideoObject(&VObjectDesc), &uiLaptopOn))
+    if (!AddVObject(CreateVObjectFromFile("INTERFACE\\LaptopOn.sti"), &uiLaptopOn))
       AssertMsg(0, "Failed to load data\\Interface\\LaptopOn.sti");
     BltVObjectFromIndex(vsFB, uiLaptopOn, 0, 465, 417);
     InvalidateRegion(465, 417, 480, 427);
