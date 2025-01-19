@@ -131,7 +131,7 @@ void DeleteMapBorderGraphics(void) {
 }
 
 void RenderMapBorder(void) {
-  // renders the actual border to the vsSaveBufferID
+  // renders the actual border to the vsSaveBuffer
   struct VObject *hHandle;
 
   /*

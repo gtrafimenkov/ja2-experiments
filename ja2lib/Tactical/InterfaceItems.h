@@ -70,7 +70,7 @@ void CheckForAnyNewlyAddedItems(struct SOLDIERTYPE *pSoldier);
 BOOLEAN HandleCompatibleAmmoUI(struct SOLDIERTYPE *pSoldier, int8_t bInvPos, BOOLEAN fOn);
 
 // THIS FUNCTION IS CALLED TO RENDER AN ITEM.
-// uiBuffer - The Dest Video Surface - can only be vsFB or vsSaveBufferID
+// uiBuffer - The Dest Video Surface - can only be vsFB or vsSaveBuffer
 // pSoldier - used for determining whether burst mode needs display
 // pObject	- Usually taken from pSoldier->inv[HANDPOS]
 // sX, sY, Width, Height,  - Will Center it in the Width
