@@ -2711,7 +2711,6 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   // offsets, etc. Each slot has it's own smaller version buffer, and this is what gets drawn when
   // the rendering happens.
 
-  struct VSurface *src = FindVSurface(guiMercTempBuffer);
   struct VSurface *dest = FindVSurface(guiMercInvPanelBuffers[gbCurrSelect]);
 
   // build the rects
@@ -2727,7 +2726,8 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   DstRect.iBottom = iDstHeight;
 
   // clear both buffers (fill with black to erase previous graphic)
-  ColorFillVSurfaceArea(src, SrcRect.iLeft, SrcRect.iTop, SrcRect.iRight, SrcRect.iBottom, 0);
+  ColorFillVSurfaceArea(vsMercTempBuffer, SrcRect.iLeft, SrcRect.iTop, SrcRect.iRight,
+                        SrcRect.iBottom, 0);
   ColorFillVSurfaceArea(dest, DstRect.iLeft, DstRect.iTop, DstRect.iRight, DstRect.iBottom, 0);
 
   // if the index is 0, then there is no item.
@@ -2737,7 +2737,8 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   item = &Item[gusMercsNewItemIndex];
   uiVideoObjectIndex = GetInterfaceGraphicForItem(item);
   GetVideoObject(&hVObject, uiVideoObjectIndex);
-  BltVideoObjectOutlineFromIndex(src, uiVideoObjectIndex, item->ubGraphicNum, 0, 0, 0, FALSE);
+  BltVideoObjectOutlineFromIndex(vsMercTempBuffer, uiVideoObjectIndex, item->ubGraphicNum, 0, 0, 0,
+                                 FALSE);
 
   // crop the source image
   pObject = &hVObject->pETRLEObject[item->ubGraphicNum];
@@ -2788,7 +2789,7 @@ void AddNewItemToSelectedMercsInventory(BOOLEAN fCreate) {
   DstRect.iBottom = DstRect.iTop + iDstHeight;
 
   // scale the item down to the smaller buffer.
-  BltStretchVSurface(dest, src, 0, 0, VS_BLT_USECOLORKEY, &SrcRect, &DstRect);
+  BltStretchVSurface(dest, vsMercTempBuffer, 0, 0, VS_BLT_USECOLORKEY, &SrcRect, &DstRect);
 
   // invalidate the mercs new item index
   gusMercsNewItemIndex = 0xffff;
