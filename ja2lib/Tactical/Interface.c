@@ -195,7 +195,7 @@ enum {
 int32_t iActionIcons[NUM_ICONS];
 
 // GLOBAL INTERFACE SURFACES
-uint32_t guiINTEXT;
+struct VSurface *vsINTEXT;
 uint32_t guiCLOSE;
 uint32_t guiDEAD;
 uint32_t guiHATCH;
@@ -287,9 +287,11 @@ BOOLEAN InitializeTacticalInterface() {
       UseLoadedButtonImage(iIconImages[OPEN_DOOR_IMAGES], -1, 15, 16, 17, -1);
 
   // Load interface panels
-  if (!AddVSurfaceFromFile("INTERFACE\\IN_TEXT.STI", &guiINTEXT))
+  vsINTEXT = CreateVSurfaceFromFile("INTERFACE\\IN_TEXT.STI");
+  if (vsINTEXT == NULL) {
     AssertMsg(0, "Missing INTERFACE\\In_text.sti");
-  SetVideoSurfaceTransparency(guiINTEXT, FROMRGB(255, 0, 0));
+  }
+  SetVideoSurfaceTransparencyColor(vsINTEXT, FROMRGB(255, 0, 0));
 
   // LOAD CLOSE ANIM
   if (!AddVObject(CreateVObjectFromFile("INTERFACE\\p_close.sti"), &guiCLOSE))
@@ -1675,9 +1677,8 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
 
-  BltVSurfaceToVSurface(pBlitter->vsDestBuff, FindVSurface(guiINTEXT), 0,
-                        pBlitter->pBackground->sLeft, pBlitter->pBackground->sTop,
-                        VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVSurfaceToVSurface(pBlitter->vsDestBuff, vsINTEXT, 0, pBlitter->pBackground->sLeft,
+                        pBlitter->pBackground->sTop, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
   pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
 

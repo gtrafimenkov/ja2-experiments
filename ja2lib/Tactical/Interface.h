@@ -71,7 +71,7 @@ extern int16_t gsCurInterfacePanel;
 extern uint32_t guiCLOSE;
 extern uint32_t guiDEAD;
 extern uint32_t guiHATCH;
-extern uint32_t guiINTEXT;
+extern struct VSurface *vsINTEXT;
 extern uint32_t guiGUNSM;
 extern uint32_t guiP1ITEMS;
 extern uint32_t guiP2ITEMS;
