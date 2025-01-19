@@ -8,6 +8,7 @@
 
 #include "SGP/Font.h"
 #include "SGP/Random.h"
+#include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "Strategic/CampaignTypes.h"
@@ -179,8 +180,6 @@ extern BOOLEAN gfSchedulesHosed;
 // and refreshing the screen with it.
 void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
   char* filepath = NULL;
-  struct VSurface* hVSurface;
-  uint32_t uiLoadScreen;
 
   switch (ubLoadScreenID) {
     case LOADINGSCREEN_NOTHING:
@@ -324,11 +323,12 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...", filepath);
   } else {
-    if (AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile(filepath), &uiLoadScreen)) {
+    struct VSurface* vs = CreateVSurfaceFromFile(filepath);
+    if (vs) {
+      SetVideoSurfaceTransparencyColor(vs, FROMRGB(0, 0, 0));
       // Blit the background image
-      hVSurface = FindVSurface(uiLoadScreen);
-      BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
-      DeleteVSurfaceByIndex(uiLoadScreen);
+      BltVSurfaceToVSurface(vsFB, vs, 0, 0, 0, 0, NULL);
+      DeleteVSurface(vs);
     } else {  // Failed to load the file, so use a black screen and print out message.
       SetFont(FONT10ARIAL);
       SetFontForeground(FONT_YELLOW);
