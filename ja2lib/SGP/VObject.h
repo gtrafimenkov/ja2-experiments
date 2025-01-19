@@ -72,7 +72,6 @@ struct VObject {
   uint32_t fFlags;                        // Special flags
   uint32_t uiSizePixData;                 // ETRLE data size
   struct SGPPaletteEntry *pPaletteEntry;  // 8BPP Palette
-  COLORVAL TransparentColor;              // Defaults to 0,0,0
   uint16_t *p16BPPPalette;                // A 16BPP palette used for 8->16 blits
 
   void *pPixData;             // ETRLE pixel data
@@ -142,9 +141,6 @@ BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16
 BOOLEAN BltVObjectFromIndexOld(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
                                uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY);
 
-// Sets transparency
-BOOLEAN SetVideoObjectTransparency(uint32_t uiIndex, COLORVAL TransColor);
-
 // **********************************************************************************
 //
 // Video Object manipulation functions
@@ -153,9 +149,6 @@ BOOLEAN SetVideoObjectTransparency(uint32_t uiIndex, COLORVAL TransColor);
 
 // Created from a VOBJECT_DESC structure. Can be from a file via HIMAGE or empty.
 struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc);
-
-// Sets Transparency color into struct VObject*
-BOOLEAN SetVideoObjectTransparencyColor(struct VObject *hVObject, COLORVAL TransColor);
 
 // Sets struct VObject* palette, creates if nessessary. Also sets 16BPP palette
 BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct SGPPaletteEntry *pSrcPalette);

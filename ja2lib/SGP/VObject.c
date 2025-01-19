@@ -73,7 +73,6 @@ uint32_t guiVObjectTotalAdded = 0;
 #ifdef _DEBUG
 enum {
   DEBUGSTR_NONE,
-  DEBUGSTR_SETVIDEOOBJECTTRANSPARENCY,
   DEBUGSTR_BLTVIDEOOBJECTFROMINDEX,
   DEBUGSTR_SETOBJECTHANDLESHADE,
   DEBUGSTR_GETVIDEOOBJECTETRLESUBREGIONPROPERTIES,
@@ -152,9 +151,6 @@ BOOLEAN AddStandardVideoObject(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
     return FALSE;
   }
 
-  // Set transparency to default
-  SetVideoObjectTransparencyColor(hVObject, FROMRGB(0, 0, 0));
-
   // Set into video object list
   if (gpVObjectHead) {  // Add node after tail
     gpVObjectTail->next = (VOBJECT_NODE *)MemAlloc(sizeof(VOBJECT_NODE));
@@ -184,21 +180,6 @@ BOOLEAN AddStandardVideoObject(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
 #endif
 
   return TRUE;
-}
-
-BOOLEAN SetVideoObjectTransparency(uint32_t uiIndex, COLORVAL TransColor) {
-  struct VObject *hVObject;
-
-// Get video object
-#ifdef _DEBUG
-  gubVODebugCode = DEBUGSTR_SETVIDEOOBJECTTRANSPARENCY;
-#endif
-  CHECKF(GetVideoObject(&hVObject, uiIndex));
-
-  // Set transparency
-  SetVideoObjectTransparencyColor(hVObject, TransColor);
-
-  return (TRUE);
 }
 
 BOOLEAN GetVideoObject(struct VObject **hVObject, uint32_t uiIndex) {
@@ -499,18 +480,6 @@ BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct SGPPaletteEntry *
 
   //  DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_3, String("Video Object Palette change successfull"
   //  ));
-  return (TRUE);
-}
-
-// Transparency needs to take RGB value and find best fit and place it into DD Surface
-// colorkey value.
-BOOLEAN SetVideoObjectTransparencyColor(struct VObject *hVObject, COLORVAL TransColor) {
-  // Assertions
-  Assert(hVObject != NULL);
-
-  // Set trans color into video object
-  hVObject->TransparentColor = TransColor;
-
   return (TRUE);
 }
 
@@ -1201,9 +1170,6 @@ void CheckValidVObjectIndex(uint32_t uiIndex) {
   if (fAssertError) {
     char str[60];
     switch (gubVODebugCode) {
-      case DEBUGSTR_SETVIDEOOBJECTTRANSPARENCY:
-        sprintf(str, "SetVideoObjectTransparency");
-        break;
       case DEBUGSTR_BLTVIDEOOBJECTFROMINDEX:
         sprintf(str, "BltVObjectFromIndexOld");
         break;
