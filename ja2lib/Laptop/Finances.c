@@ -491,27 +491,27 @@ BOOLEAN LoadFinances(void) {
   // title bar
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiTITLE));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTITLE));
 
   // top portion of the screen background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Financeswindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiTOP));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTOP));
 
   // black divider line - long ( 480 length)
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\divisionline480.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiLONGLINE));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLONGLINE));
 
   // the records columns
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\recordcolumns.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiLISTCOLUMNS));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLISTCOLUMNS));
 
   // black divider line - long ( 480 length)
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\divisionline.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiLINE));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLINE));
 
   return (TRUE);
 }

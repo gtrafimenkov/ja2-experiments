@@ -337,12 +337,12 @@ BOOLEAN EnterOptionsScreen() {
   // load the options screen background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\OptionScreenBase.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiOptionBackGroundImage));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiOptionBackGroundImage));
 
   // load button, title graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_OPTIONHEADER);
-  CHECKF(AddVObject(&VObjectDesc, &guiOptionsAddOnImages));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiOptionsAddOnImages));
 
   // Save game button
   giOptionsButtonImages = LoadButtonImage("INTERFACE\\OptionScreenAddons.sti", -1, 2, -1, 3, -1);

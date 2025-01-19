@@ -208,52 +208,52 @@ BOOLEAN EnterAIM() {
   // load the MemberShipcard graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\membercard.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiMemberCard));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMemberCard));
 
   // load the Policies graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Policies.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiPolicies));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPolicies));
 
   // load the Links graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Links.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiLinks));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLinks));
 
   // load the History graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_HISTORY);
-  CHECKF(AddVObject(&VObjectDesc, &guiHistory));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHistory));
 
   // load the Wanring graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_WARNING);
-  CHECKF(AddVObject(&VObjectDesc, &guiWarning));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiWarning));
 
   // load the flower advertisment and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\flowerad_16.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiFlowerAdvertisement));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFlowerAdvertisement));
 
   // load the your ad advertisment and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_YOURAD13);
-  CHECKF(AddVObject(&VObjectDesc, &guiAdForAdsImages));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAdForAdsImages));
 
   // load the insurance advertisment and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_INSURANCEAD10);
-  CHECKF(AddVObject(&VObjectDesc, &guiInsuranceAdImages));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceAdImages));
 
   // load the funeral advertisment and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_FUNERALAD9);
-  CHECKF(AddVObject(&VObjectDesc, &guiFuneralAdImages));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFuneralAdImages));
 
   // load the funeral advertisment and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYRAYAD21);
-  CHECKF(AddVObject(&VObjectDesc, &guiBobbyRAdImages));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBobbyRAdImages));
 
   //** Mouse Regions **
 
@@ -416,12 +416,12 @@ BOOLEAN InitAimDefaults() {
   // load the Rust bacground graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\rustbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(&VObjectDesc, &guiRustBackGround));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiRustBackGround));
 
   // load the Aim Symbol graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_AIMSYMBOL);
-  CHECKF(AddVObject(&VObjectDesc, &guiAimSymbol));
+  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAimSymbol));
 
   // Mouse region for the Links
   MSYS_DefineRegion(&gSelectedAimLogo, AIM_SYMBOL_X, AIM_SYMBOL_Y, AIM_SYMBOL_X + AIM_SYMBOL_WIDTH,
