@@ -154,8 +154,6 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_
 //
 //////////////////////////////////////////////////////////////////////////////
 
-bool AddVSurfaceFromFile(const char *filepath, VSurfID *index);
-
 void InitVSurfaceList();
 void DeinitVSurfaceList();
 
