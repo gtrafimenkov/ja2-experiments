@@ -585,12 +585,11 @@ void IMPMainPageNotSelectableBtnCallback(struct MOUSE_REGION *pRegion, int32_t i
 
 BOOLEAN LoadCharacterPortraitForMainPage(void) {
   // this function will load the character's portrait, to be used on portrait button
-  VOBJECT_DESC VObjectDesc;
 
   if (iCurrentProfileMode >= 4) {
     // load it
-    FilenameForBPP(pPlayerSelectedFaceFileNames[iPortraitNumber], VObjectDesc.ImageFile);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCHARACTERPORTRAITFORMAINPAGE));
+    CHECKF(AddVObject(CreateVObjectFromFile(pPlayerSelectedFaceFileNames[iPortraitNumber]),
+                      &guiCHARACTERPORTRAITFORMAINPAGE));
 
     // now specify
     SpecifyButtonIcon(giIMPMainPageButton[4], guiCHARACTERPORTRAITFORMAINPAGE, 0, 33, 23, FALSE);

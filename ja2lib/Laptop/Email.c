@@ -362,30 +362,24 @@ void GameInitEmail() {
 }
 
 BOOLEAN EnterEmail() {
-  VOBJECT_DESC VObjectDesc;
   // load graphics
 
   iCurrentPage = LaptopSaveInfo.iCurrentEmailPage;
 
   // title bar
-  FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailTitle));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\programtitlebar.sti"), &guiEmailTitle));
 
   // the list background
-  FilenameForBPP("LAPTOP\\Mailwindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Mailwindow.sti"), &guiEmailBackground));
 
   // the indication/notification box
-  FilenameForBPP("LAPTOP\\MailIndicator.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailIndicator));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\MailIndicator.sti"), &guiEmailIndicator));
 
   // the message background
-  FilenameForBPP("LAPTOP\\emailviewer.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiEmailMessage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\emailviewer.sti"), &guiEmailMessage));
 
   // the message background
-  FilenameForBPP("LAPTOP\\maillistdivider.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMAILDIVIDER));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\maillistdivider.sti"), &guiMAILDIVIDER));
 
   // AddEmail(IMP_EMAIL_PROFILE_RESULTS, IMP_EMAIL_PROFILE_RESULTS_LENGTH, IMP_PROFILE_RESULTS,
   // GetWorldTotalMin( ) );

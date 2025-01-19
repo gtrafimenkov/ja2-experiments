@@ -147,20 +147,16 @@ void EnableDisableMercFilesNextPreviousButton();
 void GameInitMercsFiles() {}
 
 BOOLEAN EnterMercsFiles() {
-  VOBJECT_DESC VObjectDesc;
-
   InitMercBackGround();
 
   // load the stats box graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_STATSBOX), &guiStatsBox));
 
   // load the Portrait box graphic and add it
-  FilenameForBPP("LAPTOP\\PortraitBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPortraitBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\PortraitBox.sti"), &guiPortraitBox));
 
   // load the bio box graphic and add it
-  FilenameForBPP("LAPTOP\\BioBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBioBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BioBox.sti"), &guiBioBox));
 
   // Prev Box button
   guiButtonImage = LoadButtonImage("LAPTOP\\BigButtons.sti", -1, 0, -1, 1, -1);
@@ -390,7 +386,6 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   char *sFaceLoc = "FACES\\BIGFACES\\";
   char sTemp[100];
   MERCPROFILESTRUCT *pMerc;
-  VOBJECT_DESC VObjectDesc;
   struct SOLDIERTYPE *pSoldier = NULL;
 
   // Portrait Frame
@@ -404,8 +399,7 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
 
   // load the Face graphic and add it
   sprintf(sTemp, "%s%02d.sti", sFaceLoc, ubMercID);
-  FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercFace));
+  CHECKF(AddVObject(CreateVObjectFromFile(sTemp), &guiMercFace));
 
   // Blt face to screen
   GetVideoObject(&hFaceHandle, guiMercFace);

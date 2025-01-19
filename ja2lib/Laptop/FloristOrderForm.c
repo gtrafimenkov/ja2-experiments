@@ -248,7 +248,6 @@ void FlowerOrderUserTextFieldCallBack(uint8_t ubID, BOOLEAN fEntering);
 void GameInitFloristOrderForm() {}
 
 BOOLEAN EnterFloristOrderForm() {
-  VOBJECT_DESC VObjectDesc;
   uint8_t i;
   char sTemp[40];
   uint16_t usPosX, usWidth, usHeight;
@@ -256,33 +255,28 @@ BOOLEAN EnterFloristOrderForm() {
   InitFloristDefaults();
 
   // load the DeliveryLocation graphic and add it
-  FilenameForBPP("LAPTOP\\DeliveryLocation.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiDeliveryLocation));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\DeliveryLocation.sti"), &guiDeliveryLocation));
 
   // load the Flower frame graphic and add it
-  FilenameForBPP("LAPTOP\\FlowerFrame.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFlowerFrame));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\FlowerFrame.sti"), &guiFlowerFrame));
 
   // load the Personel sentiments graphic and add it
-  FilenameForBPP("LAPTOP\\PersonalSentiments.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPersonalSentiments));
+  CHECKF(
+      AddVObject(CreateVObjectFromFile("LAPTOP\\PersonalSentiments.sti"), &guiPersonalSentiments));
 
   // load the Name Box graphic and add it
-  FilenameForBPP("LAPTOP\\NameBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiNameBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\NameBox.sti"), &guiNameBox));
 
   // load the Check Box graphic and add it
-  FilenameForBPP("LAPTOP\\OrderCheckBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFlowerOrderCheckBoxButtonImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\OrderCheckBox.sti"),
+                    &guiFlowerOrderCheckBoxButtonImage));
 
   // load the currently selected flower bouquet
   sprintf(sTemp, "LAPTOP\\Flower_%d.sti", guiCurrentlySelectedFlower);
-  FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCurrentlySelectedFlowerImage));
+  CHECKF(AddVObject(CreateVObjectFromFile(sTemp), &guiCurrentlySelectedFlowerImage));
 
   // border
-  FilenameForBPP("INTERFACE\\TactPopUp.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiDropDownBorder));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\TactPopUp.sti"), &guiDropDownBorder));
 
   guiFlowerOrderButtonImage = LoadButtonImage("LAPTOP\\FloristButtons.sti", -1, 0, -1, 1, -1);
 

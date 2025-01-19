@@ -90,7 +90,6 @@ void SelectInsuranceTitleLinkRegionCallBack(struct MOUSE_REGION *pRegion, int32_
 void GameInitInsurance() {}
 
 BOOLEAN EnterInsurance() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX, i;
 
   SetBookMark(INSURANCE_BOOKMARK);
@@ -101,8 +100,7 @@ BOOLEAN EnterInsurance() {
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_INSURANCETITLE), &guiInsuranceTitleImage));
 
   // load the red bar on the side of the page and add it
-  FilenameForBPP("LAPTOP\\Bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceBulletImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Bullet.sti"), &guiInsuranceBulletImage));
 
   usPosX = INSURANCE_BOTTOM_LINK_RED_BAR_X;
   for (i = 0; i < 3; i++) {
@@ -231,19 +229,14 @@ void RenderInsurance() {
 }
 
 BOOLEAN InitInsuranceDefaults() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Flower Account Box graphic and add it
-  FilenameForBPP("LAPTOP\\BackGroundTile.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceBackGround));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BackGroundTile.sti"), &guiInsuranceBackGround));
 
   // load the red bar on the side of the page and add it
-  FilenameForBPP("LAPTOP\\LeftTile.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceRedBarImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\LeftTile.sti"), &guiInsuranceRedBarImage));
 
   // load the red bar on the side of the page and add it
-  FilenameForBPP("LAPTOP\\LargeBar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceBigRedLineImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\LargeBar.sti"), &guiInsuranceBigRedLineImage));
 
   // if it is not the first page, display the small title
   if (guiCurrentLaptopMode != LAPTOP_MODE_INSURANCE) {

@@ -107,23 +107,19 @@ void DisplayFuneralRipTombStone();
 void GameInitFuneral() {}
 
 BOOLEAN EnterFuneral() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosX, i;
 
   // load the Closed graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_CLOSED), &guiClosedSign));
 
   // load the Left column graphic and add it
-  FilenameForBPP("LAPTOP\\LeftColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLeftColumn));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\LeftColumn.sti"), &guiLeftColumn));
 
   // load the Link carving graphic and add it
-  FilenameForBPP("LAPTOP\\LinkCarving.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLinkCarving));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\LinkCarving.sti"), &guiLinkCarving));
 
   // load the Marble graphic and add it
-  FilenameForBPP("LAPTOP\\Marble.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMarbleBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Marble.sti"), &guiMarbleBackground));
 
   // load the McGillicuttys sign graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_MCGILLICUTTYS), &guiMcGillicuttys));
@@ -132,8 +128,7 @@ BOOLEAN EnterFuneral() {
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_MORTUARY), &guiMortuary));
 
   // load the right column graphic and add it
-  FilenameForBPP("LAPTOP\\RightColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiRightColumn));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\RightColumn.sti"), &guiRightColumn));
 
   usPosX = FUNERAL_LINK_1_X;
   for (i = 0; i < FUNERAL_NUMBER_OF_LINKS; i++) {

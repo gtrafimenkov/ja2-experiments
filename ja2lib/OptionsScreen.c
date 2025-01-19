@@ -304,7 +304,6 @@ uint32_t OptionsScreenHandle() {
 uint32_t OptionsScreenShutdown() { return (TRUE); }
 
 BOOLEAN EnterOptionsScreen() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t usPosY;
   uint8_t cnt;
   uint16_t usTextWidth, usTextHeight;
@@ -335,8 +334,8 @@ BOOLEAN EnterOptionsScreen() {
   gfExitOptionsDueToMessageBox = FALSE;
 
   // load the options screen background graphic and add it
-  FilenameForBPP("INTERFACE\\OptionScreenBase.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiOptionBackGroundImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\OptionScreenBase.sti"),
+                    &guiOptionBackGroundImage));
 
   // load button, title graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_OPTIONHEADER), &guiOptionsAddOnImages));

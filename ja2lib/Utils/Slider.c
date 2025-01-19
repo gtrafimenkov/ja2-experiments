@@ -109,11 +109,8 @@ void CalculateNewSliderIncrement(uint32_t uiSliderID, uint16_t usPosX);
 ///////////////////////////////////////////////////
 
 BOOLEAN InitSlider() {
-  VOBJECT_DESC VObjectDesc;
-
   // load Slider Box Graphic graphic and add it
-  FilenameForBPP("INTERFACE\\SliderBox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSliderBoxImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\SliderBox.sti"), &guiSliderBoxImage));
 
   gfSliderInited = TRUE;
 

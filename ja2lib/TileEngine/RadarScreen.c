@@ -518,15 +518,13 @@ BOOLEAN CreateDestroyMouseRegionsForSquadList(void) {
   // for
   static BOOLEAN fCreated = FALSE;
   int16_t sCounter = 0;
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hHandle;
   uint32_t uiHandle;
 
   if ((fRenderRadarScreen == FALSE) && (fCreated == FALSE)) {
     // create regions
     // load graphics
-    FilenameForBPP("INTERFACE\\squadpanel.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiHandle));
+    CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\squadpanel.sti"), &uiHandle));
 
     GetVideoObject(&hHandle, uiHandle);
     BltVideoObject(vsSaveBuffer, hHandle, 0, 538, 0 + gsVIEWPORT_END_Y);

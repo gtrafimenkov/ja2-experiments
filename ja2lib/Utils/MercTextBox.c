@@ -149,8 +149,6 @@ void GetMercPopupBoxFontColor(uint8_t ubBackgroundIndex, uint8_t *pubFontColor,
 
 // Tactical Popup
 BOOLEAN LoadTextMercPopupImages(uint8_t ubBackgroundIndex, uint8_t ubBorderIndex) {
-  VOBJECT_DESC VObjectDesc;
-
   // this function will load the graphics associated with the background and border index values
 
   // the background
@@ -158,8 +156,8 @@ BOOLEAN LoadTextMercPopupImages(uint8_t ubBackgroundIndex, uint8_t ubBorderIndex
                              &gPopUpTextBox->uiMercTextPopUpBackground));
 
   // border
-  FilenameForBPP(zMercBorderPopupFilenames[ubBorderIndex], VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &gPopUpTextBox->uiMercTextPopUpBorder));
+  CHECKF(AddVObject(CreateVObjectFromFile(zMercBorderPopupFilenames[ubBorderIndex]),
+                    &gPopUpTextBox->uiMercTextPopUpBorder));
 
   gPopUpTextBox->fMercTextPopupInitialized = TRUE;
 

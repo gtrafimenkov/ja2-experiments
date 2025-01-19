@@ -1080,17 +1080,14 @@ BOOLEAN InitializeSMPanel() {
   strcpy(VObjectDesc.ImageFile, "INTERFACE\\inventory_bottom_panel.STI");
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSMPanel));
 
-  FilenameForBPP("INTERFACE\\inventory_gold_front.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSMObjects));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inventory_gold_front.sti"), &guiSMObjects));
 
-  FilenameForBPP("INTERFACE\\inv_frn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSMObjects2));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\inv_frn.sti"), &guiSMObjects2));
 
-  FilenameForBPP("INTERFACE\\secondary_gun_hidden.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSecItemHiddenVO));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\secondary_gun_hidden.sti"),
+                    &guiSecItemHiddenVO));
 
-  FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBrownBackgroundForTeamPanel));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Bars.sti"), &guiBrownBackgroundForTeamPanel));
 
   // Clear inv display stuff
   memset(gfSM_HandInvDispText, 0, sizeof(gfSM_HandInvDispText));
@@ -2760,7 +2757,6 @@ void BtnPositionShowCallback(GUI_BUTTON *btn, int32_t reason) {}
 
 // TEAM PANEL!!!!!!!!!!!!!!
 BOOLEAN InitializeTEAMPanel() {
-  VOBJECT_DESC VObjectDesc;
   uint32_t cnt, posIndex;
 
   // INit viewport region
@@ -2773,14 +2769,11 @@ BOOLEAN InitializeTEAMPanel() {
 
   // Load interface panels
 
-  FilenameForBPP("INTERFACE\\bottom_bar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTEAMPanel));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\bottom_bar.sti"), &guiTEAMPanel));
 
-  FilenameForBPP("INTERFACE\\gold_front.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTEAMObjects));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\gold_front.sti"), &guiTEAMObjects));
 
-  FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBrownBackgroundForTeamPanel));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\Bars.sti"), &guiBrownBackgroundForTeamPanel));
 
   // Clear inv display stuff
   memset(gfTEAM_HandInvDispText, 0, sizeof(gfTEAM_HandInvDispText));

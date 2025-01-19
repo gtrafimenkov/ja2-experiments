@@ -23,15 +23,11 @@ uint32_t guiArmourGrid;
 void GameInitBobbyRArmour() {}
 
 BOOLEAN EnterBobbyRArmour() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the background graphic and add it
-  FilenameForBPP("LAPTOP\\Armourbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiArmourBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Armourbackground.sti"), &guiArmourBackground));
 
   // load the gunsgrid graphic and add it
-  FilenameForBPP("LAPTOP\\Armourgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiArmourGrid));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\Armourgrid.sti"), &guiArmourGrid));
 
   InitBobbyBrTitle();
   // Draw menu bar

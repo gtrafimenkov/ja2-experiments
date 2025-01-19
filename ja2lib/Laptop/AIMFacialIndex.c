@@ -73,8 +73,7 @@ BOOLEAN EnterAimFacialIndex() {
   char sTemp[100];
 
   // load the Portait graphic and add it
-  FilenameForBPP("LAPTOP\\MugShotBorder3.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMugShotBorder));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\MugShotBorder3.sti"), &guiMugShotBorder));
 
   usPosX = AIM_FI_FIRST_MUGSHOT_X;
   usPosY = AIM_FI_FIRST_MUGSHOT_Y;

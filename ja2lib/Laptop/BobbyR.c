@@ -186,7 +186,6 @@ void SimulateBobbyRayCustomer(STORE_INVENTORY *pInventoryArray, BOOLEAN fUsed);
 void GameInitBobbyR() {}
 
 BOOLEAN EnterBobbyR() {
-  VOBJECT_DESC VObjectDesc;
   uint8_t i;
 
   // an array of mouse regions for the bobbies signs.  Top Left corner, bottom right corner
@@ -217,31 +216,27 @@ BOOLEAN EnterBobbyR() {
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_BOBBYNAME), &guiBobbyName));
 
   // load the plaque graphic and add it
-  FilenameForBPP("LAPTOP\\BobbyPlaques.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPlaque));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BobbyPlaques.sti"), &guiPlaque));
 
   // load the TopHinge graphic and add it
-  FilenameForBPP("LAPTOP\\BobbyTopHinge.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTopHinge));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BobbyTopHinge.sti"), &guiTopHinge));
 
   // load the BottomHinge graphic and add it
-  FilenameForBPP("LAPTOP\\BobbyBottomHinge.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBottomHinge));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BobbyBottomHinge.sti"), &guiBottomHinge));
 
   // load the Store Plaque graphic and add it
   CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_STOREPLAQUE), &guiStorePlaque));
 
   // load the Handle graphic and add it
-  FilenameForBPP("LAPTOP\\BobbyHandle.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHandle));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BobbyHandle.sti"), &guiHandle));
 
   InitBobbiesMouseRegion(BOBBIES_NUMBER_SIGNS, usMouseRegionPosArray,
                          gSelectedBobbiesSignMenuRegion);
 
   if (!LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
     // load the Handle graphic and add it
-    FilenameForBPP("LAPTOP\\UnderConstruction.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUnderConstructionImage));
+    CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\UnderConstruction.sti"),
+                      &guiUnderConstructionImage));
 
     for (i = 0; i < BOBBIES_NUMBER_SIGNS; i++) {
       MSYS_DisableRegion(&gSelectedBobbiesSignMenuRegion[i]);
@@ -374,11 +369,8 @@ void RenderBobbyR() {
 }
 
 BOOLEAN InitBobbyRWoodBackground() {
-  VOBJECT_DESC VObjectDesc;
-
   // load the Wood bacground graphic and add it
-  FilenameForBPP("LAPTOP\\BobbyWood.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiWoodBackground));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BobbyWood.sti"), &guiWoodBackground));
 
   return (TRUE);
 }

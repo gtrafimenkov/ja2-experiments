@@ -112,15 +112,12 @@ void GameInitAimHistory() {}
 void EnterInitAimHistory() { memset(&AimHistorySubPagesVisitedFlag, 0, NUM_AIM_HISTORY_PAGES); }
 
 BOOLEAN EnterAimHistory() {
-  VOBJECT_DESC VObjectDesc;
-
   gfExitingAimHistory = FALSE;
   InitAimDefaults();
   InitAimHistoryMenuBar();
 
   // load the Content Buttons graphic and add it
-  FilenameForBPP("LAPTOP\\ContentButton.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiContentButton));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\ContentButton.sti"), &guiContentButton));
 
   gubCurPageNum = (uint8_t)giCurrentSubPage;
   RenderAimHistory();
@@ -221,15 +218,12 @@ void RenderAimHistory() {
 }
 
 BOOLEAN InitAimHistoryMenuBar(void) {
-  VOBJECT_DESC VObjectDesc;
   uint16_t i, usPosX;
 
   // load the Bottom Buttons graphic and add it
-  FilenameForBPP("LAPTOP\\BottomButton.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBottomButton));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BottomButton.sti"), &guiBottomButton));
 
-  FilenameForBPP("LAPTOP\\BottomButton2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBottomButton2));
+  CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\BottomButton2.sti"), &guiBottomButton2));
 
   guiHistoryMenuButtonImage = LoadButtonImage("LAPTOP\\BottomButtons2.sti", -1, 0, -1, 1, -1);
   usPosX = AIM_HISTORY_MENU_X;

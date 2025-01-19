@@ -273,7 +273,6 @@ uint32_t GameInitOptionsScreenHandle(void) {
 uint32_t GameInitOptionsScreenShutdown(void) { return (1); }
 
 BOOLEAN EnterGIOScreen() {
-  VOBJECT_DESC VObjectDesc;
   uint16_t cnt;
   uint16_t usPosY;
 
@@ -282,8 +281,8 @@ BOOLEAN EnterGIOScreen() {
   SetCurrentCursorFromDatabase(CURSOR_NORMAL);
 
   // load the Main trade screen backgroiund image
-  FilenameForBPP("InterFace\\OptionsScreenBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGIOMainBackGroundImage));
+  CHECKF(AddVObject(CreateVObjectFromFile("InterFace\\OptionsScreenBackGround.sti"),
+                    &guiGIOMainBackGroundImage));
 
   // Ok button
   giGIODoneBtnImage = LoadButtonImage("INTERFACE\\PreferencesButtons.sti", -1, 0, -1, 2, -1);
