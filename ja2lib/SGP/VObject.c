@@ -137,7 +137,7 @@ uint32_t CountVideoObjectNodes() {
   return i;
 }
 
-BOOLEAN AddStandardVideoObject(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
+BOOLEAN AddVideoObject(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
   struct VObject *hVObject;
 
   // Assertions
