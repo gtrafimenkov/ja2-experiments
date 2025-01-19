@@ -4315,19 +4315,19 @@ BOOLEAN LoadMilitiaPopUpBox(void) {
   // load the militia pop up box
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Militia.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMilitia));
+  CHECKF(AddVObject(&VObjectDesc, &guiMilitia));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Militiamaps.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMilitiaMaps));
+  CHECKF(AddVObject(&VObjectDesc, &guiMilitiaMaps));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\MilitiamapsectorOutline2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMilitiaSectorHighLight));
+  CHECKF(AddVObject(&VObjectDesc, &guiMilitiaSectorHighLight));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\MilitiamapsectorOutline.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMilitiaSectorOutline));
+  CHECKF(AddVObject(&VObjectDesc, &guiMilitiaSectorOutline));
 
   return (TRUE);
 }

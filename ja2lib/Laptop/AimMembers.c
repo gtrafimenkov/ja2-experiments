@@ -604,57 +604,57 @@ BOOLEAN EnterAIMMembers() {
   // load the stats graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\stats.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiStats));
+  CHECKF(AddVObject(&VObjectDesc, &guiStats));
 
   // load the Price graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\price.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiPrice));
+  CHECKF(AddVObject(&VObjectDesc, &guiPrice));
 
   // load the Portait graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\portrait.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiPortrait));
+  CHECKF(AddVObject(&VObjectDesc, &guiPortrait));
 
   // load the WeaponBox graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\weaponbox.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiWeaponBox));
+  CHECKF(AddVObject(&VObjectDesc, &guiWeaponBox));
 
   // load the videoconf Popup graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\VideoConfPopup.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiVideoConfPopup));
+  CHECKF(AddVObject(&VObjectDesc, &guiVideoConfPopup));
 
   // load the video conf terminal graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\VideoConfTerminal.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiVideoConfTerminal));
+  CHECKF(AddVObject(&VObjectDesc, &guiVideoConfTerminal));
 
   // load the background snow for the video conf terminal
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BWSnow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiBWSnow));
+  CHECKF(AddVObject(&VObjectDesc, &guiBWSnow));
 
   // load the fuzzy line for the video conf terminal
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\FuzzLine.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiFuzzLine));
+  CHECKF(AddVObject(&VObjectDesc, &guiFuzzLine));
 
   // load the line distortion for the video conf terminal
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\LineInterference.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiStraightLine));
+  CHECKF(AddVObject(&VObjectDesc, &guiStraightLine));
 
   // load the translucent snow for the video conf terminal
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\TransSnow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiTransSnow));
+  CHECKF(AddVObject(&VObjectDesc, &guiTransSnow));
 
   // load the translucent snow for the video conf terminal
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\VideoContractCharge.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiVideoContractCharge));
+  CHECKF(AddVObject(&VObjectDesc, &guiVideoContractCharge));
 
   //** Mouse Regions **
   MSYS_DefineRegion(&gSelectedFaceRegion, PORTRAIT_X, PORTRAIT_Y, PORTRAIT_X + PORTRAIT_WIDTH,
@@ -1310,7 +1310,7 @@ BOOLEAN DisplayMercsFace() {
   sprintf(sTemp, "%s%02d.sti", sFaceLoc, gbCurrentSoldier);
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiFace));
+  CHECKF(AddVObject(&VObjectDesc, &guiFace));
 
   // Blt face to screen
   GetVideoObject(&hFaceHandle, guiFace);
@@ -1955,7 +1955,7 @@ BOOLEAN InitCreateDeleteAimPopUpBox(uint8_t ubFlag, wchar_t *sString1, wchar_t *
       // load the popup box graphic
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("LAPTOP\\VideoConfPopUp.sti", VObjectDesc.ImageFile);
-      CHECKF(AddStandardVideoObject(&VObjectDesc, &guiPopUpBox));
+      CHECKF(AddVObject(&VObjectDesc, &guiPopUpBox));
 
       GetVideoObject(&hPopupBoxHandle, guiPopUpBox);
       BltVideoObject(vsFB, hPopupBoxHandle, 0, usPosX, usPosY);
@@ -2908,7 +2908,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
       // load the answering machine graphic and add it
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("LAPTOP\\VideoTitleBar.sti", VObjectDesc.ImageFile);
-      CHECKF(AddStandardVideoObject(&VObjectDesc, &uiVideoBackgroundGraphic));
+      CHECKF(AddVObject(&VObjectDesc, &uiVideoBackgroundGraphic));
 
       // Create a background video surface to blt the face onto
       CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH,
@@ -3090,7 +3090,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
     /*		// load the answering machine graphic and add it
                     VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
                     FilenameForBPP("LAPTOP\\explosion.sti", VObjectDesc.ImageFile);
-                    CHECKF(AddStandardVideoObject(&VObjectDesc, &guiAnsweringMachineImage));
+                    CHECKF(AddVObject(&VObjectDesc, &guiAnsweringMachineImage));
     */
     gubCurrentStaticMode = VC_NO_STATIC;
   }
@@ -3133,7 +3133,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
     // load the Video conference background graphic and add it
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\VideoTitleBar.sti", VObjectDesc.ImageFile);
-    CHECKF(AddStandardVideoObject(&VObjectDesc, &uiVideoBackgroundGraphic));
+    CHECKF(AddVObject(&VObjectDesc, &uiVideoBackgroundGraphic));
 
     // Create a background video surface to blt the face onto
     CHECKF(AddVSurfaceAndSetTransparency(

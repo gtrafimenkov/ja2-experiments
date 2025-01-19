@@ -113,37 +113,37 @@ BOOLEAN EnterFuneral() {
   // load the Closed graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_CLOSED);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiClosedSign));
+  CHECKF(AddVObject(&VObjectDesc, &guiClosedSign));
 
   // load the Left column graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\LeftColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiLeftColumn));
+  CHECKF(AddVObject(&VObjectDesc, &guiLeftColumn));
 
   // load the Link carving graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\LinkCarving.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiLinkCarving));
+  CHECKF(AddVObject(&VObjectDesc, &guiLinkCarving));
 
   // load the Marble graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Marble.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMarbleBackground));
+  CHECKF(AddVObject(&VObjectDesc, &guiMarbleBackground));
 
   // load the McGillicuttys sign graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_MCGILLICUTTYS);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMcGillicuttys));
+  CHECKF(AddVObject(&VObjectDesc, &guiMcGillicuttys));
 
   // load the Mortuary  graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_MORTUARY);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiMortuary));
+  CHECKF(AddVObject(&VObjectDesc, &guiMortuary));
 
   // load the right column graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\RightColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiRightColumn));
+  CHECKF(AddVObject(&VObjectDesc, &guiRightColumn));
 
   usPosX = FUNERAL_LINK_1_X;
   for (i = 0; i < FUNERAL_NUMBER_OF_LINKS; i++) {

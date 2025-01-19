@@ -639,8 +639,7 @@ uint32_t SexScreenHandle(void) {
     // Load face....
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("INTERFACE\\luckysmile.sti", VObjectDesc.ImageFile);
-    if (!AddStandardVideoObject(&VObjectDesc, &guiSMILY))
-      AssertMsg(0, "Missing INTERFACE\\luckysmile.sti");
+    if (!AddVObject(&VObjectDesc, &guiSMILY)) AssertMsg(0, "Missing INTERFACE\\luckysmile.sti");
 
     // Init screen
     bCurFrame = 0;

@@ -392,11 +392,11 @@ BOOLEAN EnterCreditsScreen() {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Credits.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiCreditBackGroundImage));
+  CHECKF(AddVObject(&VObjectDesc, &guiCreditBackGroundImage));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Credit Faces.sti", VObjectDesc.ImageFile);
-  CHECKF(AddStandardVideoObject(&VObjectDesc, &guiCreditFaces));
+  CHECKF(AddVObject(&VObjectDesc, &guiCreditFaces));
 
   // Initialize the root credit node
   InitCreditNode();

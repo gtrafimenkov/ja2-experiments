@@ -3689,7 +3689,7 @@ void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
   // if update
   if (pUpdateSoldierBox[iCounter] == NULL) {
     sprintf(VObjectDesc.ImageFile, "Interface\\panels.sti");
-    if (!AddStandardVideoObject(&VObjectDesc, &giMercPanelImage)) {
+    if (!AddVObject(&VObjectDesc, &giMercPanelImage)) {
       AssertMsg(0, "Failed to load Interface\\panels.sti");
     }
   }
@@ -3712,7 +3712,7 @@ void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
       }
 
       // load the face
-      AddStandardVideoObject(&VObjectDesc, &giUpdateSoldierFaces[iCounter]);
+      AddVObject(&VObjectDesc, &giUpdateSoldierFaces[iCounter]);
 
       return;
     }
