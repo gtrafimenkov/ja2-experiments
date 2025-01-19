@@ -3177,7 +3177,6 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   uint16_t usHeight;
   uint16_t usWidth;
   uint8_t ubBitDepth;
-  uint32_t fMemUsage;
 
   uint32_t uiRBitMask;
   uint32_t uiGBitMask;
@@ -3185,11 +3184,6 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
 
   // Clear the memory
   memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
-
-  //
-  // The description structure contains memory usage flag
-  //
-  fMemUsage = VSurfaceDesc->fCreateFlags;
 
   //
   // Check creation options
@@ -3200,7 +3194,7 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
     // Check if creating from file
     //
 
-    if (VSurfaceDesc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
+    if (VSurfaceDesc->fCreateFlags_ & VSURFACE_CREATE_FROMFILE) {
       //
       // Create himage object from file
       //
@@ -3288,16 +3282,16 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   //
 
   do {
-    if (fMemUsage & VSURFACE_DEFAULT_MEM_USAGE) {
+    if (VSurfaceDesc->fCreateFlags_ & VSURFACE_DEFAULT_MEM_USAGE) {
       SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
       break;
     }
-    if (fMemUsage & VSURFACE_VIDEO_MEM_USAGE) {
+    if (VSurfaceDesc->fCreateFlags_ & VSURFACE_VIDEO_MEM_USAGE) {
       SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
       break;
     }
 
-    if (fMemUsage & VSURFACE_SYSTEM_MEM_USAGE) {
+    if (VSurfaceDesc->fCreateFlags_ & VSURFACE_SYSTEM_MEM_USAGE) {
       SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
       break;
     }
@@ -3342,7 +3336,7 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   // Fail if create tried for video but it's in system
   //
 
-  if (VSurfaceDesc->fCreateFlags & VSURFACE_VIDEO_MEM_USAGE &&
+  if (VSurfaceDesc->fCreateFlags_ & VSURFACE_VIDEO_MEM_USAGE &&
       SurfaceDescription.ddsCaps.dwCaps & DDSCAPS_SYSTEMMEMORY) {
     //
     // Return failure due to not in video
@@ -3392,7 +3386,7 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   // Initialize surface with hImage , if given
   //
 
-  if (VSurfaceDesc->fCreateFlags & VSURFACE_CREATE_FROMFILE) {
+  if (VSurfaceDesc->fCreateFlags_ & VSURFACE_CREATE_FROMFILE) {
     tempRect.iLeft = 0;
     tempRect.iTop = 0;
     tempRect.iRight = hImage->usWidth - 1;
@@ -4609,7 +4603,7 @@ BOOLEAN MakeVSurfaceFromVObject(uint32_t uiVObject, uint16_t usSubIndex, uint32_
   if (GetVideoObject(&hSrcVObject, uiVObject)) {
     // ATE: Memset
     memset(&hDesc, 0, sizeof(VSURFACE_DESC));
-    hDesc.fCreateFlags = VSURFACE_CREATE_DEFAULT;
+    hDesc.fCreateFlags_ = VSURFACE_CREATE_DEFAULT;
     hDesc.usWidth = hSrcVObject->pETRLEObject[usSubIndex].usWidth;
     hDesc.usHeight = hSrcVObject->pETRLEObject[usSubIndex].usHeight;
     hDesc.ubBitDepth = PIXEL_DEPTH;

@@ -97,7 +97,7 @@ uint32_t MapUtilScreenHandle() {
 
     // Create render buffer
     GetCurrentVideoSettings(&usWidth, &usHeight, &ubBitDepth);
-    vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+    vs_desc.fCreateFlags_ = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
     vs_desc.usWidth = 88;
     vs_desc.usHeight = 44;
     vs_desc.ubBitDepth = ubBitDepth;
@@ -124,7 +124,7 @@ uint32_t MapUtilScreenHandle() {
     p24BitDest = (uint8_t *)p24BitValues;
 
     // Allocate 8-bit surface
-    vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+    vs_desc.fCreateFlags_ = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
     vs_desc.usWidth = 88;
     vs_desc.usHeight = 44;
     vs_desc.ubBitDepth = 8;

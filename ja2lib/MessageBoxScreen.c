@@ -250,7 +250,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   SetPendingNewScreen(MSG_BOX_SCREEN);
 
   // Init save buffer
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+  vs_desc.fCreateFlags_ = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
   vs_desc.usWidth = usTextBoxWidth;
   vs_desc.usHeight = usTextBoxHeight;
   vs_desc.ubBitDepth = 16;

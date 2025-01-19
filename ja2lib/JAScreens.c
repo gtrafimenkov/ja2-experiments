@@ -277,7 +277,7 @@ uint32_t InitScreenHandle(void) {
 
   if (ubCurrentScreen == 0) {
     // Load init screen and blit!
-    vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
+    vs_desc.fCreateFlags_ = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
 
     strcpy(vs_desc.ImageFile, "ja2_logo.STI");
 

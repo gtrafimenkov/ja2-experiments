@@ -118,11 +118,11 @@ struct VSurface {
 //
 
 typedef struct {
-  uint32_t fCreateFlags;  // Specifies creation flags like from file or not
-  SGPFILENAME ImageFile;  // Filename of image data to use
-  uint16_t usWidth;       // Width, ignored if given from file
-  uint16_t usHeight;      // Height, ignored if given from file
-  uint8_t ubBitDepth;     // BPP, ignored if given from file
+  uint32_t fCreateFlags_;  // Specifies creation flags like from file or not
+  SGPFILENAME ImageFile;   // Filename of image data to use
+  uint16_t usWidth;        // Width, ignored if given from file
+  uint16_t usHeight;       // Height, ignored if given from file
+  uint8_t ubBitDepth;      // BPP, ignored if given from file
 
 } VSURFACE_DESC;
 

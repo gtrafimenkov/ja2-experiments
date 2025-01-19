@@ -3806,7 +3806,7 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
   Assert(uiBackgroundGraphic);
 
   // Create a background video surface to blt the title bar onto
-  vs_desc.fCreateFlags = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
+  vs_desc.fCreateFlags_ = VSURFACE_CREATE_DEFAULT | VSURFACE_SYSTEM_MEM_USAGE;
   vs_desc.usWidth = LAPTOP_TITLE_BAR_WIDTH;
   vs_desc.usHeight = LAPTOP_TITLE_BAR_HEIGHT;
   vs_desc.ubBitDepth = 16;
@@ -4448,7 +4448,7 @@ BOOLEAN LoadDesktopBackground(void) {
   // load desktop background
   VSURFACE_DESC vs_desc;
 
-  vs_desc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
+  vs_desc.fCreateFlags_ = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
   GetMLGFilename(vs_desc.ImageFile, MLG_DESKTOP);
   CHECKF(AddVideoSurface(&vs_desc, &guiDESKTOP));
 
