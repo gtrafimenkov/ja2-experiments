@@ -1958,7 +1958,6 @@ BOOLEAN InitKeyItemDescriptionBox(struct SOLDIERTYPE *pSoldier, uint8_t ubPositi
 
 BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, int16_t sY,
                                        uint8_t ubStatusIndex, struct SOLDIERTYPE *pSoldier) {
-  VOBJECT_DESC VObjectDesc;
   char ubString[48];
   int32_t cnt;
   wchar_t pStr[10];
@@ -2139,14 +2138,11 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
   }
 
   // Load graphic
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\infobox.sti");
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiItemDescBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\infobox.sti"), &guiItemDescBox));
 
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\iteminfoc.STI");
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapItemDescBox));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\iteminfoc.STI"), &guiMapItemDescBox));
 
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\bullet.STI");
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBullet));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\bullet.STI"), &guiBullet));
 
   if (gpItemDescObject->usItem != MONEY) {
     for (cnt = 0; cnt < MAX_ATTACHMENTS; cnt++) {
@@ -2191,8 +2187,8 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
     gRemoveMoney.uiMoneyRemoving = 0;
 
     // Load graphic
-    strcpy(VObjectDesc.ImageFile, "INTERFACE\\info_bil.sti");
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMoneyGraphicsForDescBox));
+    CHECKF(
+        AddVObject(CreateVObjectFromFile("INTERFACE\\info_bil.sti"), &guiMoneyGraphicsForDescBox));
 
     // Create buttons for the money
     //		if (guiCurrentScreen ==  MAP_SCREEN )
@@ -4561,7 +4557,6 @@ BOOLEAN InKeyRingPopup() { return (gfInKeyRingPopup); }
 
 BOOLEAN InitItemStackPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int16_t sInvX,
                            int16_t sInvY, int16_t sInvWidth, int16_t sInvHeight) {
-  VOBJECT_DESC VObjectDesc;
   int16_t sX, sY, sCenX, sCenY;
   SGPRect aRect;
   uint8_t ubLimit;
@@ -4595,8 +4590,7 @@ BOOLEAN InitItemStackPopup(struct SOLDIERTYPE *pSoldier, uint8_t ubPosition, int
   }
 
   // Load graphics
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\extra_inventory.STI");
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiItemPopupBoxes));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\extra_inventory.STI"), &guiItemPopupBoxes));
 
   // Get size
   GetVideoObject(&hVObject, guiItemPopupBoxes);
@@ -4764,7 +4758,6 @@ void DeleteItemStackPopup() {
 
 BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, int16_t sInvX, int16_t sInvY,
                          int16_t sInvWidth, int16_t sInvHeight) {
-  VOBJECT_DESC VObjectDesc;
   SGPRect aRect;
   ETRLEObject *pTrav;
   struct VObject *hVObject;
@@ -4792,8 +4785,7 @@ BOOLEAN InitKeyRingPopup(struct SOLDIERTYPE *pSoldier, int16_t sInvX, int16_t sI
   gpItemPopupSoldier = pSoldier;
 
   // Load graphics
-  strcpy(VObjectDesc.ImageFile, "INTERFACE\\extra_inventory.STI");
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiItemPopupBoxes));
+  CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\extra_inventory.STI"), &guiItemPopupBoxes));
 
   // Get size
   GetVideoObject(&hVObject, guiItemPopupBoxes);
@@ -4996,7 +4988,6 @@ uint16_t GetTileGraphicForItem(INVTYPE *pItem) {
 BOOLEAN LoadTileGraphicForItem(INVTYPE *pItem, uint32_t *puiVo) {
   char zName[100];
   uint32_t uiVo;
-  VOBJECT_DESC VObjectDesc;
   uint8_t ubGraphic;
 
   // CHECK SUBCLASS
@@ -5032,8 +5023,9 @@ BOOLEAN LoadTileGraphicForItem(INVTYPE *pItem, uint32_t *puiVo) {
   }
 
   // Load item
-  sprintf(VObjectDesc.ImageFile, "BIGITEMS\\%s", zName);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiVo));
+  SGPFILENAME ImageFile;
+  sprintf(ImageFile, "BIGITEMS\\%s", zName);
+  CHECKF(AddVObject(CreateVObjectFromFile(ImageFile), &uiVo));
 
   *puiVo = uiVo;
 
