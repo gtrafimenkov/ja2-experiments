@@ -178,7 +178,6 @@ void CheckForValidMapEdge(uint8_t *pubStrategicInsertionCode) {
 #endif
 
 void InitTacticalPlacementGUI() {
-  VOBJECT_DESC VObjectDesc;
   int32_t i, xp, yp;
   uint8_t ubFaceIndex;
   gfTacticalPlacementGUIActive = TRUE;
@@ -314,15 +313,16 @@ void InitTacticalPlacementGUI() {
   // add all the faces now
   for (i = 0; i < giPlacements; i++) {
     // Load the faces
+    SGPFILENAME ImageFile;
     {
       ubFaceIndex = gMercProfiles[GetSolProfile(gMercPlacement[i].pSoldier)].ubFaceIndex;
       if (ubFaceIndex < 100)
-        sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti", ubFaceIndex);
+        sprintf(ImageFile, "Faces\\65Face\\%02d.sti", ubFaceIndex);
       else
-        sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%03d.sti", ubFaceIndex);
+        sprintf(ImageFile, "Faces\\65Face\\%03d.sti", ubFaceIndex);
     }
 
-    if (!AddVObject(CreateVideoObject(&VObjectDesc), &gMercPlacement[i].uiVObjectID)) {
+    if (!AddVObject(CreateVObjectFromFile(ImageFile), &gMercPlacement[i].uiVObjectID)) {
       if (!AddVObject(CreateVObjectFromFile("Faces\\65Face\\speck.sti"),
                       &gMercPlacement[i].uiVObjectID)) {
         AssertMsg(0,

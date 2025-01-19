@@ -1666,11 +1666,11 @@ void CreateAutoResolveInterface() {
 
   // add all the faces now
   for (i = 0; i < gpAR->ubMercs; i++) {
-    VOBJECT_DESC VObjectDesc;
     // Load the face
-    sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
+    SGPFILENAME ImageFile;
+    sprintf(ImageFile, "Faces\\65Face\\%02d.sti",
             gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex);
-    if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpMercs[i].uiVObjectID)) {
+    if (!AddVObject(CreateVObjectFromFile(ImageFile), &gpMercs[i].uiVObjectID)) {
       if (!AddVObject(CreateVObjectFromFile("Faces\\65Face\\speck.sti"), &gpMercs[i].uiVObjectID)) {
         AssertMsg(0,
                   String("Failed to load %Faces\\65Face\\%02d.sti or it's placeholder, speck.sti",
