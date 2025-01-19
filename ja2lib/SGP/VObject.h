@@ -133,9 +133,6 @@ BOOLEAN BltVObjectFromIndexOld(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
 //
 // **********************************************************************************
 
-// Created from a VOBJECT_DESC structure. Can be from a file via HIMAGE or empty.
-struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc);
-
 struct VObject *CreateVObjectFromFile(const char *filename);
 struct VObject *CreateVObjectFromMLGFile(uint16_t usMLGGraphicID);
 struct VObject *CreateVObjectFromHImage(HIMAGE hImage);

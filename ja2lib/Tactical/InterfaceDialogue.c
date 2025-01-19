@@ -349,7 +349,6 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   FACETYPE *pFace;
   uint16_t usWidth;
   uint16_t usHeight;
-  VOBJECT_DESC VObjectDesc;
   int16_t sCenterYVal, sCenterXVal;
   char ubString[48];
 
@@ -366,9 +365,8 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   gTalkPanel.fOnName = FALSE;
 
   // Load Video Object!
-  sprintf(VObjectDesc.ImageFile, "INTERFACE\\talkbox1.sti");
-  // Load
-  if (AddVObject(CreateVideoObject(&VObjectDesc), &(gTalkPanel.uiPanelVO)) == FALSE) {
+  if (AddVObject(CreateVObjectFromFile("INTERFACE\\talkbox1.sti"), &(gTalkPanel.uiPanelVO)) ==
+      FALSE) {
     return (0);
   }
 

@@ -3673,7 +3673,6 @@ void ShowUpdateBox(void) {
 
 void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
   int32_t iCounter = 0;
-  VOBJECT_DESC VObjectDesc;
 
   // going to load face
   if (pSoldier->bLife == 0) {
@@ -3698,18 +3697,19 @@ void AddSoldierToUpdateBox(struct SOLDIERTYPE *pSoldier) {
       // add to box
       pUpdateSoldierBox[iCounter] = pSoldier;
 
+      SGPFILENAME ImageFile;
       if (gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex < 100) {
         // grab filename of face
-        sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
+        sprintf(ImageFile, "Faces\\65Face\\%02d.sti",
                 gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
       } else {
         // grab filename of face
-        sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%03d.sti",
+        sprintf(ImageFile, "Faces\\65Face\\%03d.sti",
                 gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
       }
 
       // load the face
-      AddVObject(CreateVideoObject(&VObjectDesc), &giUpdateSoldierFaces[iCounter]);
+      AddVObject(CreateVObjectFromFile(ImageFile), &giUpdateSoldierFaces[iCounter]);
 
       return;
     }

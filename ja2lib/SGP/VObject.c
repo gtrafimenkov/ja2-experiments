@@ -410,10 +410,6 @@ struct VObject *CreateVObjectFromFile(const char *filename) {
   return vo;
 }
 
-struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
-  return CreateVObjectFromFile(VObjectDesc->ImageFile);
-}
-
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette
 BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct SGPPaletteEntry *pSrcPalette) {
   Assert(hVObject != NULL);
