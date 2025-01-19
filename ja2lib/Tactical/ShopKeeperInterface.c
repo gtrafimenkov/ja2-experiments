@@ -1331,7 +1331,7 @@ BOOLEAN RenderShopKeeperInterface() {
   // At this point the background is pure, copy it to the save buffer
   if (gfRenderScreenOnNextLoop) {
     hDestVSurface = FindVSurface(guiCornerWhereTacticalIsStillSeenImage);
-    hSrcVSurface = FindVSurface(vsSaveBufferID);
+    hSrcVSurface = vsSaveBuffer;
 
     SrcRect.left = SKI_TACTICAL_BACKGROUND_START_X;
     SrcRect.top = SKI_TACTICAL_BACKGROUND_START_Y;

@@ -10,11 +10,10 @@
 
 #include "SGP/HImage.h"
 #include "SGP/Types.h"
+#include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
-
-uint32_t vsSaveBufferID = 0;
 
 struct VSurface *vsSaveBuffer = NULL;
 struct VSurface *vsExtraBuffer = NULL;
@@ -30,8 +29,12 @@ BOOLEAN InitializeGameVideoObjects() {
   GetCurrentVideoSettings(&usWidth, &usHeight);
 
   vsSaveBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
+  if (vsSaveBuffer == NULL) {
+    return FALSE;
+  }
+  SetVideoSurfaceTransparencyColor(vsSaveBuffer, FROMRGB(0, 0, 0));
+
   vsExtraBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
-  CHECKF(AddVSurfaceAndSetTransparency(vsSaveBuffer, &vsSaveBufferID));
   gfExtraBuffer = TRUE;
 
   return (TRUE);
