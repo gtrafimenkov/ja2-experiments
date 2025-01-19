@@ -2563,7 +2563,6 @@ uint32_t MapScreenShutdown(void) {
 
 uint32_t MapScreenHandle(void) {
   uint32_t uiNewScreen;
-  VOBJECT_DESC VObjectDesc;
   //	static BOOLEAN fSecondFrame = FALSE;
   int32_t iCounter = 0;
 
@@ -2708,8 +2707,7 @@ uint32_t MapScreenHandle(void) {
 
       CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mine.sti"), &guiMINEICON));
 
-      sprintf(VObjectDesc.ImageFile, "INTERFACE\\hilite.sti");
-      AddVObject(CreateVideoObject(&VObjectDesc), &guiSectorLocatorGraphicID);
+      AddVObject(CreateVObjectFromFile("INTERFACE\\hilite.sti"), &guiSectorLocatorGraphicID);
 
       CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\BullsEye.sti"), &guiBULLSEYE));
 
@@ -2722,8 +2720,7 @@ uint32_t MapScreenHandle(void) {
       LoadInventoryPoolGraphic();
 
       // Kris:  Added this because I need to blink the icons button.
-      sprintf(VObjectDesc.ImageFile, "INTERFACE\\newemail.sti");
-      AddVObject(CreateVideoObject(&VObjectDesc), &guiNewMailIcons);
+      AddVObject(CreateVObjectFromFile("INTERFACE\\newemail.sti"), &guiNewMailIcons);
     }
 
     // create buttons
@@ -8274,7 +8271,6 @@ BOOLEAN AnyMercsLeavingRealSoon() {
 
 BOOLEAN HandlePreloadOfMapGraphics(void) {
   // check amt of memory, if above required amt...use it
-  VOBJECT_DESC VObjectDesc;
 
   fPreLoadedMapGraphics = TRUE;
 
@@ -8344,12 +8340,10 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
 
   CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\mine.sti"), &guiMINEICON));
 
-  sprintf(VObjectDesc.ImageFile, "INTERFACE\\hilite.sti");
-  AddVObject(CreateVideoObject(&VObjectDesc), &guiSectorLocatorGraphicID);
+  AddVObject(CreateVObjectFromFile("INTERFACE\\hilite.sti"), &guiSectorLocatorGraphicID);
 
   // Kris:  Added this because I need to blink the icons button.
-  sprintf(VObjectDesc.ImageFile, "INTERFACE\\newemail.sti");
-  AddVObject(CreateVideoObject(&VObjectDesc), &guiNewMailIcons);
+  AddVObject(CreateVObjectFromFile("INTERFACE\\newemail.sti"), &guiNewMailIcons);
 
   CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\BullsEye.sti"), &guiBULLSEYE));
 
