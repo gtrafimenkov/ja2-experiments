@@ -241,7 +241,7 @@ enum {
 // the wait time for closing of laptop animation/delay
 #define EXIT_LAPTOP_DELAY_TIME 100
 
-uint32_t guiTitleBarSurface;
+static struct VSurface *vsTitleBarSurface;
 BOOLEAN gfTitleBarSurfaceAlreadyActive = FALSE;
 
 #define LAPTOP__NEW_FILE_ICON_X 83
@@ -3711,20 +3711,20 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
   Assert(uiBackgroundGraphic);
 
   // Create a background video surface to blt the title bar onto
-  CHECKF(AddVSurfaceAndSetTransparency(
-      CreateVSurfaceBlank16(LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT), &guiTitleBarSurface));
+  vsTitleBarSurface = CreateVSurfaceBlank16(LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT);
+  SetVideoSurfaceTransparencyColor(vsTitleBarSurface, FROMRGB(0, 0, 0));
 
   // blit the toolbar grapgucs onto the surface
   GetVideoObject(&hImageHandle, uiBackgroundGraphic);
-  BltVideoObjectOld(guiTitleBarSurface, hImageHandle, 0, 0, 0);
+  BltVideoObject(vsTitleBarSurface, hImageHandle, 0, 0, 0);
 
   // blit th icon onto the tool bar
   GetVideoObject(&hImageHandle, uiIconGraphic);
-  BltVideoObjectOld(guiTitleBarSurface, hImageHandle, usIconGraphicIndex,
-                    LAPTOP_TITLE_BAR_ICON_OFFSET_X, LAPTOP_TITLE_BAR_ICON_OFFSET_Y);
+  BltVideoObject(vsTitleBarSurface, hImageHandle, usIconGraphicIndex,
+                 LAPTOP_TITLE_BAR_ICON_OFFSET_X, LAPTOP_TITLE_BAR_ICON_OFFSET_Y);
 
-  SetFontDestBuffer(FindVSurface(guiTitleBarSurface), 0, 0, LAPTOP_TITLE_BAR_WIDTH,
-                    LAPTOP_TITLE_BAR_HEIGHT, FALSE);
+  SetFontDestBuffer(vsTitleBarSurface, 0, 0, LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT,
+                    FALSE);
   DrawTextToScreen(pTitle, LAPTOP_TITLE_BAR_TEXT_OFFSET_X, LAPTOP_TITLE_BAR_TEXT_OFFSET_Y, 0,
                    FONT14ARIAL, FONT_MCOLOR_WHITE, FONT_MCOLOR_BLACK, FALSE, LEFT_JUSTIFIED);
   SetFontDestBuffer(vsFB, 0, 0, 640, 480, FALSE);
@@ -3816,8 +3816,7 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
     }
   }
 
-  BltStretchVSurface(vsFB, FindVSurface(guiTitleBarSurface), 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
-                     &DestRect);
+  BltStretchVSurface(vsFB, vsTitleBarSurface, 0, 0, VS_BLT_USECOLORKEY, &SrcRect, &DestRect);
 
   InvalidateRegion(DestRect.iLeft, DestRect.iTop, DestRect.iRight, DestRect.iBottom);
   InvalidateRegion(LastRect.iLeft, LastRect.iTop, LastRect.iRight, LastRect.iBottom);
@@ -3845,7 +3844,10 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
   return (TRUE);
 }
 
-void RemoveTitleBarMaximizeGraphics() { DeleteVSurfaceByIndex(guiTitleBarSurface); }
+void RemoveTitleBarMaximizeGraphics() {
+  DeleteVSurface(vsTitleBarSurface);
+  vsTitleBarSurface = NULL;
+}
 
 void HandleSlidingTitleBar(void) {
   if ((fMaximizingProgram == FALSE) && (fMinizingProgram == FALSE)) {
