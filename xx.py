@@ -78,12 +78,15 @@ def find_ja2_data_files():
 def copy_ja2_data_files(dest_dir):
     if os.path.isdir(dest_dir):
         print("Data already copied", file=sys.stderr)
-    else:
-        source = find_ja2_data_files()
-        if source is None:
-            print("Cannot find data files for JA2", file=sys.stderr)
-        else:
-            shutil.copytree(source, dest_dir)
+        return True
+
+    source = find_ja2_data_files()
+    if source is None:
+        print("Cannot find data files for JA2", file=sys.stderr)
+        return False
+
+    shutil.copytree(source, dest_dir)
+    return True
 
 
 # def get_debug_build_location():
@@ -162,7 +165,8 @@ def run_command(command):
 
     elif command == "copy-data":
         dest_dir = os.path.join(get_release_build_location(), "data")
-        copy_ja2_data_files(dest_dir)
+        if not copy_ja2_data_files(dest_dir):
+            sys.exit(10)
 
     elif command == "format-modified":
         modified_files = get_modified_files()
