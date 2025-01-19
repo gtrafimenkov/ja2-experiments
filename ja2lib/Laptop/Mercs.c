@@ -160,7 +160,7 @@ uint32_t guiFilesBox;
 uint32_t guiMercSymbol;
 uint32_t guiSpecPortrait;
 uint32_t guiMercBackGround;
-uint32_t guiMercVideoFaceBackground;
+static struct VSurface *vsMercVideoFaceBackground;
 uint32_t guiMercVideoPopupBackground;
 
 uint8_t gubMercArray[NUMBER_OF_MERCS];
@@ -380,9 +380,8 @@ BOOLEAN EnterMercs() {
   //
 
   // Create a background video surface to blt the face onto
-  CHECKF(AddVSurfaceAndSetTransparency(
-      CreateVSurfaceBlank16(MERC_VIDEO_FACE_WIDTH, MERC_VIDEO_FACE_HEIGHT),
-      &guiMercVideoFaceBackground));
+  vsMercVideoFaceBackground = CreateVSurfaceBlank16(MERC_VIDEO_FACE_WIDTH, MERC_VIDEO_FACE_HEIGHT);
+  SetVideoSurfaceTransparencyColor(vsMercVideoFaceBackground, FROMRGB(0, 0, 0));
 
   RenderMercs();
 
@@ -444,15 +443,8 @@ void ExitMercs() {
 
   RemoveMercBackGround();
 
-  DeleteVSurfaceByIndex(guiMercVideoFaceBackground);
-
-  /*
-          //Set that we have been here before
-          if( LaptopSaveInfo.ubPlayerBeenToMercSiteStatus == MERC_SITE_FIRST_VISIT )
-                  LaptopSaveInfo.ubPlayerBeenToMercSiteStatus = MERC_SITE_SECOND_VISIT;
-          else
-                  LaptopSaveInfo.ubPlayerBeenToMercSiteStatus = MERC_SITE_THIRD_OR_MORE_VISITS;
-  */
+  DeleteVSurface(vsMercVideoFaceBackground);
+  vsMercVideoFaceBackground = NULL;
 
   gfJustEnteredMercSite = TRUE;
   gusMercVideoSpeckSpeech = MERC_VIDEO_SPECK_SPEECH_NOT_TALKING;
@@ -900,8 +892,8 @@ void InitMercVideoFace() {
   giVideoSpeckFaceIndex = InitFace(MERC_VIDEO_MERC_ID_FOR_SPECKS, NOBODY, 0);
 
   // Sets up the eyes blinking and the mouth moving
-  SetAutoFaceActive(FindVSurface(guiMercVideoFaceBackground), FACE_AUTO_RESTORE_BUFFER,
-                    giVideoSpeckFaceIndex, 0, 0);
+  SetAutoFaceActive(vsMercVideoFaceBackground, FACE_AUTO_RESTORE_BUFFER, giVideoSpeckFaceIndex, 0,
+                    0);
 
   // Renders the face to the background
   RenderAutoFace(giVideoSpeckFaceIndex);
@@ -957,8 +949,8 @@ BOOLEAN HandleSpeckTalking(BOOLEAN fReset) {
   HandleTalkingAutoFaces();
 
   // Blt the face surface to the video background surface
-  if (!BltStretchVSurface(vsFB, FindVSurface(guiMercVideoFaceBackground), 0, 0, VS_BLT_USECOLORKEY,
-                          &SrcRect, &DestRect))
+  if (!BltStretchVSurface(vsFB, vsMercVideoFaceBackground, 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
+                          &DestRect))
     return (FALSE);
 
   // HandleCurrentMercDistortion();
