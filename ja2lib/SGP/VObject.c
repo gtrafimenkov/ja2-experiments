@@ -305,91 +305,59 @@ BOOLEAN BltVideoObject(uint32_t uiDestVSurface, struct VObject *hSrcVObject, uin
 // Video Object Manipulation Functions
 // *******************************************************************************
 
-struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
-  struct VObject *hVObject;
-  HIMAGE hImage;
-  ETRLEData TempETRLEData;
-  //	uint32_t							count;
-
-  // Allocate memory for video object data and initialize
-  hVObject = (struct VObject *)MemAlloc(sizeof(struct VObject));
-  CHECKF(hVObject != NULL);
-  memset(hVObject, 0, sizeof(struct VObject));
-
-  // default of all members of the vobject is 0
-
-  // Check creation options
-  //	do
-  //	{
-  if (VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMFILE ||
-      VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMHIMAGE) {
-    if (VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMFILE) {
-      // Create himage object from file
-      hImage = CreateImage(VObjectDesc->ImageFile, IMAGE_ALLIMAGEDATA);
-
-      if (hImage == NULL) {
-        MemFree(hVObject);
-        DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid Image Filename given");
-        return (NULL);
-      }
-    } else {  // create video object from provided hImage
-      hImage = VObjectDesc->hImage;
-      if (hImage == NULL) {
-        MemFree(hVObject);
-        DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid hImage pointer given");
-        return (NULL);
-      }
-    }
-
-    // Check if returned himage is TRLE compressed - return error if not
-    if (!(hImage->fFlags & IMAGE_TRLECOMPRESSED)) {
-      MemFree(hVObject);
-      DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid Image format given.");
-      DestroyImage(hImage);
-      return (NULL);
-    }
-
-    // Set values from himage
-    hVObject->ubBitDepth = hImage->ubBitDepth;
-
-    // Get TRLE data
-    CHECKF(GetETRLEImageData(hImage, &TempETRLEData));
-
-    // Set values
-    hVObject->usNumberOfObjects = TempETRLEData.usNumberOfObjects;
-    hVObject->pETRLEObject = TempETRLEData.pETRLEObject;
-    hVObject->pPixData = TempETRLEData.pPixData;
-    hVObject->uiSizePixData = TempETRLEData.uiSizePixData;
-
-    // Set palette from himage
-    if (hImage->ubBitDepth == 8) {
-      hVObject->pShade8 = ubColorTables[DEFAULT_SHADE_LEVEL];
-      hVObject->pGlow8 = ubColorTables[0];
-
-      SetVideoObjectPalette(hVObject, hImage->pPalette);
-    }
-
-    if (VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMFILE) {
-      // Delete himage object
-      DestroyImage(hImage);
-    }
-    //		break;
-  } else {
-    MemFree(hVObject);
-    DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid VObject creation flags given.");
+struct VObject *CreateVObjectFromHImage(HIMAGE hImage) {
+  if (hImage == NULL) {
+    DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid hImage pointer given");
     return (NULL);
   }
 
-  // If here, no special options given, use structure given in paraneters
-  // TO DO:
+  struct VObject *vo;
+  ETRLEData TempETRLEData;
 
-  //	}
-  //	while( FALSE );
+  vo = (struct VObject *)MemAlloc(sizeof(struct VObject));
+  CHECKF(vo != NULL);
+  memset(vo, 0, sizeof(struct VObject));
 
-  // All is well
-  //  DbgMessage( TOPIC_VIDEOOBJECT, DBG_LEVEL_3, String("Success in Creating Video Object" ) );
+  if (!(hImage->fFlags & IMAGE_TRLECOMPRESSED)) {
+    MemFree(vo);
+    DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid Image format given.");
+    DestroyImage(hImage);
+    return (NULL);
+  }
 
-  return (hVObject);
+  vo->ubBitDepth = hImage->ubBitDepth;
+
+  CHECKF(GetETRLEImageData(hImage, &TempETRLEData));
+
+  vo->usNumberOfObjects = TempETRLEData.usNumberOfObjects;
+  vo->pETRLEObject = TempETRLEData.pETRLEObject;
+  vo->pPixData = TempETRLEData.pPixData;
+  vo->uiSizePixData = TempETRLEData.uiSizePixData;
+
+  if (hImage->ubBitDepth == 8) {
+    vo->pShade8 = ubColorTables[DEFAULT_SHADE_LEVEL];
+    vo->pGlow8 = ubColorTables[0];
+    SetVideoObjectPalette(vo, hImage->pPalette);
+  }
+
+  return vo;
+}
+
+struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
+  if (VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMFILE) {
+    HIMAGE hImage = CreateImage(VObjectDesc->ImageFile, IMAGE_ALLIMAGEDATA);
+
+    if (hImage == NULL) {
+      DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid Image Filename given");
+      return NULL;
+    }
+    struct VObject *vo = CreateVObjectFromHImage(hImage);
+    DestroyImage(hImage);
+    return vo;
+  } else {
+    DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid VObject creation flags given.");
+    return NULL;
+  }
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette

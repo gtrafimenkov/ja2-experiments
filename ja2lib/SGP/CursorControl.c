@@ -108,7 +108,6 @@ BOOLEAN LoadCursorData(uint32_t uiCursorIndex) {
       //
       // The file containing the video object hasn't been loaded yet. Let's load it now
       //
-      VOBJECT_DESC VideoObjectDescription;
       // FIRST LOAD AS AN HIMAGE SO WE CAN GET AUX DATA!
       HIMAGE hImage;
       struct AuxObjectData *pAuxData;
@@ -127,10 +126,7 @@ BOOLEAN LoadCursorData(uint32_t uiCursorIndex) {
           return (FALSE);
         }
 
-        VideoObjectDescription.fCreateFlags = VOBJECT_CREATE_FROMHIMAGE;
-        VideoObjectDescription.hImage = hImage;
-
-        if (!AddVObject(CreateVideoObject(&VideoObjectDescription),
+        if (!AddVObject(CreateVObjectFromHImage(hImage),
                         &(gpCursorFileDatabase[pCurImage->uiFileIndex].uiIndex))) {
           return (FALSE);
         }

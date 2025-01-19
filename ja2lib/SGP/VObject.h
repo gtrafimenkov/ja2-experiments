@@ -67,8 +67,7 @@ typedef struct {
 
 #define VOBJECT_CREATE_DEFAULT \
   0x00000020  // Creates and empty object of given width, height and BPP
-#define VOBJECT_CREATE_FROMFILE 0x00000040    // Creates a video object from a file ( using HIMAGE )
-#define VOBJECT_CREATE_FROMHIMAGE 0x00000080  // Creates a video object from a pre-loaded hImage
+#define VOBJECT_CREATE_FROMFILE 0x00000040  // Creates a video object from a file ( using HIMAGE )
 
 // VOBJECT FLAGS
 #define VOBJECT_FLAG_SHADETABLE_SHARED 0x00000100
@@ -105,9 +104,6 @@ typedef struct {
   union {
     struct {
       SGPFILENAME ImageFile;  // Filename of image data to use
-    };
-    struct {
-      HIMAGE hImage;
     };
   };
   uint8_t ubBitDepth;  // BPP, ignored if given from file
@@ -152,6 +148,7 @@ BOOLEAN BltVideoObjectFromIndex(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
 
 // Created from a VOBJECT_DESC structure. Can be from a file via HIMAGE or empty.
 struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc);
+struct VObject *CreateVObjectFromHImage(HIMAGE hImage);
 
 // Sets struct VObject* palette, creates if nessessary. Also sets 16BPP palette
 BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct SGPPaletteEntry *pSrcPalette);
