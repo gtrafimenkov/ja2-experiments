@@ -60,7 +60,7 @@ extern uint32_t guiOmertaMap;
 extern uint32_t guiExclamation;
 extern uint32_t guiKeyImage;
 extern uint32_t guiMercInvPanelBuffers[9];
-extern uint32_t guiMercTempBuffer;
+extern struct VSurface* vsMercTempBuffer;
 extern int32_t giEditMercImage[2];
 
 #endif
