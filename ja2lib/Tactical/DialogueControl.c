@@ -1725,7 +1725,7 @@ void HandleExternNPCSpeechFace(int32_t iIndex) {
   iFaceIndex = iIndex;
 
   // Enable it!
-  SetAutoFaceActive(NULL, FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0, 0);
+  SetAutoFaceActive(NULL, NULL, iFaceIndex, 0, 0);
 
   // Set flag to say WE control when to set inactive!
   gFacesData[iFaceIndex].uiFlags |= FACE_INACTIVE_HANDLED_ELSEWHERE;
@@ -1799,7 +1799,7 @@ void HandleTacticalSpeechUI(uint8_t ubCharacterNum, int32_t iFaceIndex) {
 
   if (fDoExternPanel) {
     // Enable it!
-    SetAutoFaceActive(NULL, FACE_AUTO_RESTORE_BUFFER, iFaceIndex, 0, 0);
+    SetAutoFaceActive(NULL, NULL, iFaceIndex, 0, 0);
 
     // Set flag to say WE control when to set inactive!
     gFacesData[iFaceIndex].uiFlags |= (FACE_INACTIVE_HANDLED_ELSEWHERE | FACE_MAKEACTIVE_ONCE_DONE);

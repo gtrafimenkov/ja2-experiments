@@ -417,7 +417,7 @@ void RenderSoldierFace(struct SOLDIERTYPE *pSoldier, int16_t sFaceX, int16_t sFa
         // Render as an extern face...
         fAutoFace = FALSE;
       } else {
-        SetAutoFaceActiveFromSoldier(vsFB, vsSaveBufferID, GetSolID(pSoldier), sFaceX, sFaceY);
+        SetAutoFaceActiveFromSoldier(vsFB, vsSaveBuffer, GetSolID(pSoldier), sFaceX, sFaceY);
       }
     }
 

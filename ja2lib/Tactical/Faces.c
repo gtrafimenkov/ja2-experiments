@@ -386,13 +386,13 @@ void DeleteFace(int32_t iFaceIndex) {
   RecountFaces();
 }
 
-void SetAutoFaceActiveFromSoldier(struct VSurface *buffer, uint32_t uiRestoreBuffer,
+void SetAutoFaceActiveFromSoldier(struct VSurface *buffer, struct VSurface *restoreBuffer,
                                   uint8_t ubSoldierID, uint16_t usFaceX, uint16_t usFaceY) {
   if (ubSoldierID == NOBODY) {
     return;
   }
 
-  SetAutoFaceActive(buffer, uiRestoreBuffer, MercPtrs[ubSoldierID]->iFaceIndex, usFaceX, usFaceY);
+  SetAutoFaceActive(buffer, restoreBuffer, MercPtrs[ubSoldierID]->iFaceIndex, usFaceX, usFaceY);
 }
 
 void GetFaceRelativeCoordinates(FACETYPE *pFace, uint16_t *pusEyesX, uint16_t *pusEyesY,
@@ -439,13 +439,13 @@ void GetFaceRelativeCoordinates(FACETYPE *pFace, uint16_t *pusEyesX, uint16_t *p
 
 // Same as above, yet used mostly internally. Is compatible with the fact that a soldier profile ID
 // is not required...
-static void InternalSetAutoFaceActive(struct VSurface *displayBuffer, uint32_t uiRestoreBuffer,
-                                      int32_t iFaceIndex, uint16_t usFaceX, uint16_t usFaceY,
-                                      uint16_t usEyesX, uint16_t usEyesY, uint16_t usMouthX,
-                                      uint16_t usMouthY);
+static void InternalSetAutoFaceActive(struct VSurface *displayBuffer,
+                                      struct VSurface *restoreBuffer, int32_t iFaceIndex,
+                                      uint16_t usFaceX, uint16_t usFaceY, uint16_t usEyesX,
+                                      uint16_t usEyesY, uint16_t usMouthX, uint16_t usMouthY);
 
-void SetAutoFaceActive(struct VSurface *displayBuffer, uint32_t uiRestoreBuffer, int32_t iFaceIndex,
-                       uint16_t usFaceX, uint16_t usFaceY) {
+void SetAutoFaceActive(struct VSurface *displayBuffer, struct VSurface *restoreBuffer,
+                       int32_t iFaceIndex, uint16_t usFaceX, uint16_t usFaceY) {
   uint16_t usEyesX;
   uint16_t usEyesY;
   uint16_t usMouthX;
@@ -459,14 +459,14 @@ void SetAutoFaceActive(struct VSurface *displayBuffer, uint32_t uiRestoreBuffer,
 
   GetFaceRelativeCoordinates(pFace, &usEyesX, &usEyesY, &usMouthX, &usMouthY);
 
-  InternalSetAutoFaceActive(displayBuffer, uiRestoreBuffer, iFaceIndex, usFaceX, usFaceY, usEyesX,
+  InternalSetAutoFaceActive(displayBuffer, restoreBuffer, iFaceIndex, usFaceX, usFaceY, usEyesX,
                             usEyesY, usMouthX, usMouthY);
 }
 
-static void InternalSetAutoFaceActive(struct VSurface *displayBuffer, uint32_t uiRestoreBuffer,
-                                      int32_t iFaceIndex, uint16_t usFaceX, uint16_t usFaceY,
-                                      uint16_t usEyesX, uint16_t usEyesY, uint16_t usMouthX,
-                                      uint16_t usMouthY) {
+static void InternalSetAutoFaceActive(struct VSurface *displayBuffer,
+                                      struct VSurface *restoreBuffer, int32_t iFaceIndex,
+                                      uint16_t usFaceX, uint16_t usFaceY, uint16_t usEyesX,
+                                      uint16_t usEyesY, uint16_t usMouthX, uint16_t usMouthY) {
   FACETYPE *pFace;
 
   // Check face index
@@ -486,14 +486,16 @@ static void InternalSetAutoFaceActive(struct VSurface *displayBuffer, uint32_t u
     SetAutoFaceInActive(iFaceIndex);
   }
 
-  if (uiRestoreBuffer == FACE_AUTO_RESTORE_BUFFER) {
+  if (restoreBuffer == NULL /*FACE_AUTO_RESTORE_BUFFER*/) {
     pFace->fAutoRestoreBuffer = TRUE;
-    CHECKV(AddVSurfaceAndSetTransparency(
-        CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight),
-        &(pFace->uiAutoRestoreBuffer)));
+    pFace->autoRestoreBuffer = CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight);
+    if (pFace->autoRestoreBuffer == NULL) {
+      return;
+    }
+    SetVideoSurfaceTransparencyColor(pFace->autoRestoreBuffer, FROMRGB(0, 0, 0));
   } else {
     pFace->fAutoRestoreBuffer = FALSE;
-    pFace->uiAutoRestoreBuffer = uiRestoreBuffer;
+    pFace->autoRestoreBuffer = restoreBuffer;
   }
 
   if (displayBuffer == NULL) {
@@ -580,7 +582,8 @@ void SetAutoFaceInActive(int32_t iFaceIndex) {
   }
 
   if (pFace->fAutoRestoreBuffer) {
-    DeleteVSurfaceByIndex(pFace->uiAutoRestoreBuffer);
+    DeleteVSurface(pFace->autoRestoreBuffer);
+    pFace->autoRestoreBuffer = NULL;
   }
 
   if (pFace->fAutoDisplayBuffer) {
@@ -688,7 +691,7 @@ void BlinkAutoFace(int32_t iFaceIndex) {
           pFace->ubExpression = NO_EXPRESSION;
           // Update rects just for eyes
 
-          if (pFace->uiAutoRestoreBuffer == vsSaveBufferID) {
+          if (pFace->autoRestoreBuffer == vsSaveBuffer) {
             FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usEyesX, pFace->usEyesY,
                                            pFace->usEyesX, pFace->usEyesY, pFace->usEyesWidth,
                                            pFace->usEyesHeight);
@@ -823,7 +826,7 @@ void MouthAutoFace(int32_t iFaceIndex) {
           if (pFace->GapList.audio_gap_active) {
             pFace->sMouthFrame = 0;
 
-            if (pFace->uiAutoRestoreBuffer == vsSaveBufferID) {
+            if (pFace->autoRestoreBuffer == vsSaveBuffer) {
               FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usMouthX, pFace->usMouthY,
                                              pFace->usMouthX, pFace->usMouthY, pFace->usMouthWidth,
                                              pFace->usMouthHeight);
@@ -858,7 +861,7 @@ void MouthAutoFace(int32_t iFaceIndex) {
                 // RenderFace( uiDestBuffer , uiCount );
                 // pFace->fTaking = FALSE;
                 // Update rects just for Mouth
-                if (pFace->uiAutoRestoreBuffer == vsSaveBufferID) {
+                if (pFace->autoRestoreBuffer == vsSaveBuffer) {
                   FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usMouthX, pFace->usMouthY,
                                                  pFace->usMouthX, pFace->usMouthY,
                                                  pFace->usMouthWidth, pFace->usMouthHeight);
@@ -1040,11 +1043,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
     if (fDisplayBuffer) {
       renderBuffer = pFace->autoDisplayBuffer;
     } else {
-      renderBuffer = FindVSurface(pFace->uiAutoRestoreBuffer);
-
-      if (pFace->uiAutoRestoreBuffer == FACE_NO_RESTORE_BUFFER) {
-        return;
-      }
+      renderBuffer = pFace->autoRestoreBuffer;
     }
   }
 
@@ -1345,20 +1344,18 @@ BOOLEAN RenderAutoFace(int32_t iFaceIndex) {
   }
 
   // Blit face to save buffer!
-  if (pFace->uiAutoRestoreBuffer != FACE_NO_RESTORE_BUFFER) {
-    if (pFace->uiAutoRestoreBuffer == vsSaveBufferID) {
-      BltVObjectFromIndexOld(pFace->uiAutoRestoreBuffer, pFace->uiVideoObject, 0, pFace->usFaceX,
-                             pFace->usFaceY);
-    } else {
-      BltVObjectFromIndexOld(pFace->uiAutoRestoreBuffer, pFace->uiVideoObject, 0, 0, 0);
-    }
+  if (pFace->autoRestoreBuffer == vsSaveBuffer) {
+    BltVObjectFromIndex(pFace->autoRestoreBuffer, pFace->uiVideoObject, 0, pFace->usFaceX,
+                        pFace->usFaceY);
+  } else {
+    BltVObjectFromIndex(pFace->autoRestoreBuffer, pFace->uiVideoObject, 0, 0, 0);
   }
 
   HandleRenderFaceAdjustments(pFace, FALSE, FALSE, 0, pFace->usFaceX, pFace->usFaceY,
                               pFace->usEyesX, pFace->usEyesY);
 
   // Restore extern rect
-  if (pFace->uiAutoRestoreBuffer == vsSaveBufferID) {
+  if (pFace->autoRestoreBuffer == vsSaveBuffer) {
     FaceRestoreSavedBackgroundRect(iFaceIndex, (int16_t)(pFace->usFaceX), (int16_t)(pFace->usFaceY),
                                    (int16_t)(pFace->usFaceX), (int16_t)(pFace->usFaceY),
                                    (int16_t)(pFace->usFaceWidth), (int16_t)(pFace->usFaceHeight));
@@ -1751,20 +1748,14 @@ BOOLEAN FaceRestoreSavedBackgroundRect(int32_t iFaceIndex, int16_t sDestLeft, in
 
   pFace = &gFacesData[iFaceIndex];
 
-  // DOn't continue if we do not want the resotre to happen ( ei blitting entrie thing every
-  // frame...
-  if (pFace->uiAutoRestoreBuffer == FACE_NO_RESTORE_BUFFER) {
-    return (FALSE);
-  }
-
   pDestBuf = LockVSurface(pFace->autoDisplayBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVSurfaceByID(pFace->uiAutoRestoreBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(pFace->autoRestoreBuffer, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sDestLeft, sDestTop, sSrcLeft, sSrcTop, sWidth, sHeight);
 
   UnlockVSurface(pFace->autoDisplayBuffer);
-  UnlockVSurfaceByID(pFace->uiAutoRestoreBuffer);
+  UnlockVSurface(pFace->autoRestoreBuffer);
 
   // Add rect to frame buffer queue
   if (pFace->autoDisplayBuffer == vsFB) {
@@ -1854,7 +1845,7 @@ void InternalShutupaYoFace(int32_t iFaceIndex, BOOLEAN fForce) {
 
     // ATE: Only change if active!
     if (!pFace->fDisabled) {
-      if (pFace->uiAutoRestoreBuffer == vsSaveBufferID) {
+      if (pFace->autoRestoreBuffer == vsSaveBuffer) {
         FaceRestoreSavedBackgroundRect(iFaceIndex, pFace->usMouthX, pFace->usMouthY,
                                        pFace->usMouthX, pFace->usMouthY, pFace->usMouthWidth,
                                        pFace->usMouthHeight);
@@ -1898,7 +1889,7 @@ void SetupFinalTalkingDelay(FACETYPE *pFace) {
 
   // Close mouth!
   if (!pFace->fDisabled) {
-    if (pFace->uiAutoRestoreBuffer == vsSaveBufferID) {
+    if (pFace->autoRestoreBuffer == vsSaveBuffer) {
       FaceRestoreSavedBackgroundRect(pFace->iID, pFace->usMouthX, pFace->usMouthY, pFace->usMouthX,
                                      pFace->usMouthY, pFace->usMouthWidth, pFace->usMouthHeight);
     } else {
