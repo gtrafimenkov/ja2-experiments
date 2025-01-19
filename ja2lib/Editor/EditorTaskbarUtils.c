@@ -56,7 +56,7 @@ extern struct ITEM_POOL *gpItemPool;
 int32_t giEditMercDirectionIcons[2];
 uint32_t guiMercInventoryPanel;
 uint32_t guiOmertaMap;
-uint32_t guiMercInvPanelBuffers[9];
+struct VSurface *vsMercInvPanelBuffers[9];
 struct VSurface *vsMercTempBuffer;
 int32_t giEditMercImage[2];
 uint32_t guiExclamation;
@@ -191,11 +191,9 @@ void CreateEditorBuffers() {
 
   // create the nine buffers for the merc's inventory slots.
   for (i = 0; i < 9; i++) {
-    if (!AddVSurfaceAndSetTransparency(
-            CreateVSurfaceBlank16(MERCINV_SLOT_HEIGHT,
-                                  i < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH),
-            &guiMercInvPanelBuffers[i]))
-      AssertMsg(0, "Failed to allocate memory for merc item[] buffers.");
+    vsMercInvPanelBuffers[i] = CreateVSurfaceBlank16(
+        MERCINV_SLOT_HEIGHT, i < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH);
+    SetVideoSurfaceTransparencyColor(vsMercInvPanelBuffers[i], FROMRGB(0, 0, 0));
   }
 }
 
@@ -204,7 +202,8 @@ void DeleteEditorBuffers() {
   DeleteVSurface(vsMercTempBuffer);
   vsMercTempBuffer = NULL;
   for (i = 0; i < 9; i++) {
-    DeleteVSurfaceByIndex(guiMercInvPanelBuffers[i]);
+    DeleteVSurface(vsMercInvPanelBuffers[i]);
+    vsMercInvPanelBuffers[i] = NULL;
   }
 }
 
