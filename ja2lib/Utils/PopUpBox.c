@@ -1076,11 +1076,14 @@ BOOLEAN DrawBox(uint32_t uiCounter) {
   // blit in texture first, then borders
   // blit in surface
   pDestBuf = (uint16_t *)LockVSurface(PopUpBoxList[uiCounter]->vsBuffer, &uiDestPitchBYTES);
-  CHECKF(GetVSurfaceByIndexOld(&hSrcVSurface, PopUpBoxList[uiCounter]->iBackGroundSurface));
-  pSrcBuf = LockVSurfaceByID(PopUpBoxList[uiCounter]->iBackGroundSurface, &uiSrcPitchBYTES);
+  hSrcVSurface = FindVSurface(PopUpBoxList[uiCounter]->iBackGroundSurface);
+  if (hSrcVSurface == NULL) {
+    return FALSE;
+  }
+  pSrcBuf = LockVSurface(hSrcVSurface, &uiSrcPitchBYTES);
   Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
                               usTopX, usTopY, &clip);
-  UnlockVSurfaceByID(PopUpBoxList[uiCounter]->iBackGroundSurface);
+  UnlockVSurface(hSrcVSurface);
   UnlockVSurface(PopUpBoxList[uiCounter]->vsBuffer);
   GetVideoObject(&hBoxHandle, PopUpBoxList[uiCounter]->iBorderObjectIndex);
 

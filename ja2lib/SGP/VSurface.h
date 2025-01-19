@@ -74,9 +74,6 @@ BOOLEAN ShutdownVideoSurfaceManager();
 // Adds a video Surface to list
 BOOLEAN AddVSurfaceAndSetTransparency(struct VSurface *vs, uint32_t *uiIndex);
 
-// Returns a HVSurface for the specified index
-BOOLEAN GetVSurfaceByIndexOld(struct VSurface **pvs, VSurfID id);
-
 uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *uiPitch);
 void UnlockVSurfaceByID(VSurfID id);
 

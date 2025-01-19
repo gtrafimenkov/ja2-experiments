@@ -119,7 +119,7 @@ uint32_t MapUtilScreenHandle() {
     if (AddVSurfaceAndSetTransparency(CreateVSurfaceBlank8(88, 44), &gi8BitMiniMap) == FALSE) {
       return (ERROR_SCREEN);
     }
-    GetVSurfaceByIndexOld(&ghvSurface, gi8BitMiniMap);
+    ghvSurface = FindVSurface(gi8BitMiniMap);
   }
 
   // OK, we are here, now loop through files

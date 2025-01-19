@@ -305,11 +305,6 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, int32_t 
   return BltVSurface(dest, src, fBltFlags, iDestX, iDestY, &srcRect, &destRect);
 }
 
-BOOLEAN GetVSurfaceByIndexOld(struct VSurface **pvs, VSurfID id) {
-  *pvs = FindVSurface(id);
-  return *pvs != NULL;
-}
-
 BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHandle, int32_t iPosX,
                                 int32_t iPosY) {
   // Horizontal shadow
