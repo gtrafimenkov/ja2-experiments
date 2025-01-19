@@ -114,7 +114,7 @@ typedef struct AUTORESOLVE_STRUCT {
   int32_t iFaces;          // for generic civs and enemies
   int32_t iMercFaces[20];  // for each merc face
   int32_t iIndent;
-  uint32_t iInterfaceBuffer;
+  struct VSurface *vsInterfaceBuffer;
   int32_t iNumMercFaces;
   int32_t iActualMercFaces;  // this represents the real number of merc faces.  Because
                              // my debug mode allows to freely add and subtract mercs, we
@@ -976,9 +976,11 @@ void BuildInterfaceBuffer() {
   DestRect.iRight = gpAR->sWidth;
   DestRect.iBottom = gpAR->sHeight;
 
-  if (!AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(gpAR->sWidth, gpAR->sHeight),
-                                     &gpAR->iInterfaceBuffer))
+  gpAR->vsInterfaceBuffer = CreateVSurfaceBlank16(gpAR->sWidth, gpAR->sHeight);
+  if (gpAR->vsInterfaceBuffer == NULL) {
     AssertMsg(0, "Failed to allocate memory for autoresolve interface buffer.");
+  }
+  SetVideoSurfaceTransparencyColor(gpAR->vsInterfaceBuffer, FROMRGB(0, 0, 0));
 
   GetClippingRect(&ClipRect);
   SetClippingRect(&DestRect);
@@ -986,44 +988,44 @@ void BuildInterfaceBuffer() {
   // Blit the back panels...
   for (y = DestRect.iTop; y < DestRect.iBottom; y += 40) {
     for (x = DestRect.iLeft; x < DestRect.iRight; x += 50) {
-      BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, C_TEXTURE, x, y);
+      BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, C_TEXTURE, x, y);
     }
   }
   // Blit the left and right edges
   for (y = DestRect.iTop; y < DestRect.iBottom; y += 40) {
     x = DestRect.iLeft;
-    BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, L_BORDER, x, y);
+    BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, L_BORDER, x, y);
     x = DestRect.iRight - 3;
-    BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, R_BORDER, x, y);
+    BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, R_BORDER, x, y);
   }
   // Blit the top and bottom edges
   for (x = DestRect.iLeft; x < DestRect.iRight; x += 50) {
     y = DestRect.iTop;
-    BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, T_BORDER, x, y);
+    BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, T_BORDER, x, y);
     y = DestRect.iBottom - 3;
-    BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, B_BORDER, x, y);
+    BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, B_BORDER, x, y);
   }
   // Blit the 4 corners
-  BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, TL_BORDER, DestRect.iLeft,
-                         DestRect.iTop);
-  BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, TR_BORDER,
-                         DestRect.iRight - 10, DestRect.iTop);
-  BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, BL_BORDER, DestRect.iLeft,
-                         DestRect.iBottom - 9);
-  BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, BR_BORDER,
-                         DestRect.iRight - 10, DestRect.iBottom - 9);
+  BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, TL_BORDER, DestRect.iLeft,
+                      DestRect.iTop);
+  BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, TR_BORDER, DestRect.iRight - 10,
+                      DestRect.iTop);
+  BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, BL_BORDER, DestRect.iLeft,
+                      DestRect.iBottom - 9);
+  BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, BR_BORDER, DestRect.iRight - 10,
+                      DestRect.iBottom - 9);
 
   // Blit the center pieces
   x = gpAR->sCenterStartX - gpAR->Rect.iLeft;
   y = 0;
   // Top
-  BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, TOP_MIDDLE, x, y);
+  BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, TOP_MIDDLE, x, y);
   // Middle
   for (y = 40; y < gpAR->sHeight - 40; y += 40) {
-    BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, AUTO_MIDDLE, x, y);
+    BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, AUTO_MIDDLE, x, y);
   }
   y = gpAR->sHeight - 40;
-  BltVObjectFromIndexOld(gpAR->iInterfaceBuffer, gpAR->iPanelImages, BOT_MIDDLE, x, y);
+  BltVObjectFromIndex(gpAR->vsInterfaceBuffer, gpAR->iPanelImages, BOT_MIDDLE, x, y);
 
   SetClippingRect(&ClipRect);
 }
@@ -1368,7 +1370,6 @@ uint32_t AutoBandageMercs() {
 
 void RenderAutoResolve() {
   int32_t i;
-  struct VSurface *hVSurface;
   int32_t xp, yp;
   wchar_t str[100];
   uint8_t ubGood, ubBad;
@@ -1411,9 +1412,8 @@ void RenderAutoResolve() {
   }
   gpAR->fRenderAutoResolve = FALSE;
 
-  hVSurface = FindVSurface(gpAR->iInterfaceBuffer);
-  BltVSurfaceToVSurface(vsFB, hVSurface, 0, gpAR->Rect.iLeft, gpAR->Rect.iTop, VS_BLT_USECOLORKEY,
-                        0);
+  BltVSurfaceToVSurface(vsFB, gpAR->vsInterfaceBuffer, 0, gpAR->Rect.iLeft, gpAR->Rect.iTop,
+                        VS_BLT_USECOLORKEY, 0);
 
   for (i = 0; i < gpAR->ubMercs; i++) {
     RenderSoldierCell(&gpMercs[i]);
@@ -1896,7 +1896,8 @@ void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
   DeleteVideoObjectFromIndex(gpAR->iPanelImages);
   DeleteVideoObjectFromIndex(gpAR->iFaces);
   DeleteVideoObjectFromIndex(gpAR->iIndent);
-  DeleteVSurfaceByIndex(gpAR->iInterfaceBuffer);
+  DeleteVSurface(gpAR->vsInterfaceBuffer);
+  gpAR->vsInterfaceBuffer = NULL;
 
   if (fDeleteForGood) {  // Delete the soldier instances -- done when we are completely finished.
 
@@ -2738,12 +2739,12 @@ void RenderSoldierCellHealth(SOLDIERCELL *pCell) {
   SetFont(SMALLCOMPFONT);
   // Restore the background before drawing text.
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
-  pSrcBuf = LockVSurfaceByID(gpAR->iInterfaceBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(gpAR->vsInterfaceBuffer, &uiSrcPitchBYTES);
   xp = pCell->xp + 2;
   yp = pCell->yp + 32;
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, xp,
                   yp, xp - gpAR->Rect.iLeft, yp - gpAR->Rect.iTop, 46, 10);
-  UnlockVSurfaceByID(gpAR->iInterfaceBuffer);
+  UnlockVSurface(gpAR->vsInterfaceBuffer);
   UnlockVSurface(vsFB);
 
   if (pCell->pSoldier->bLife) {
