@@ -382,7 +382,7 @@ uint32_t guiStraightLine;
 uint32_t guiTransSnow;
 uint32_t guiVideoContractCharge;
 // uint32_t		guiAnsweringMachineImage;
-uint32_t guiVideoTitleBar;
+static struct VSurface *vsVideoTitleBar;
 int32_t iAimMembersBoxId = -1;
 
 uint8_t gbCurrentSoldier = 0;
@@ -3006,14 +3006,17 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
                         &uiVideoBackgroundGraphic));
 
       // Create a background video surface to blt the face onto
-      CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH,
-                                                                 AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT),
-                                           &guiVideoTitleBar));
+      vsVideoTitleBar = CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH,
+                                              AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT);
+      if (vsVideoTitleBar == NULL) {
+        return FALSE;
+      }
+      SetVideoSurfaceTransparencyColor(vsVideoTitleBar, FROMRGB(0, 0, 0));
 
       gfAimMemberCanMercSayOpeningQuote = TRUE;
 
       GetVideoObject(&hImageHandle, uiVideoBackgroundGraphic);
-      BltVideoObjectOld(guiVideoTitleBar, hImageHandle, 0, 0, 0);
+      BltVideoObject(vsVideoTitleBar, hImageHandle, 0, 0, 0);
 
       DeleteVideoObjectFromIndex(uiVideoBackgroundGraphic);
     }
@@ -3222,12 +3225,15 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
         AddVObject(CreateVObjectFromFile("LAPTOP\\VideoTitleBar.sti"), &uiVideoBackgroundGraphic));
 
     // Create a background video surface to blt the face onto
-    CHECKF(AddVSurfaceAndSetTransparency(
-        CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT),
-        &guiVideoTitleBar));
+    vsVideoTitleBar =
+        CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT);
+    SetVideoSurfaceTransparencyColor(vsVideoTitleBar, FROMRGB(0, 0, 0));
+    if (vsVideoTitleBar == NULL) {
+      return FALSE;
+    }
 
     GetVideoObject(&hImageHandle, uiVideoBackgroundGraphic);
-    BltVideoObjectOld(guiVideoTitleBar, hImageHandle, 0, 0, 0);
+    BltVideoObject(vsVideoTitleBar, hImageHandle, 0, 0, 0);
 
     DeleteVideoObjectFromIndex(uiVideoBackgroundGraphic);
   }
@@ -3252,7 +3258,8 @@ BOOLEAN DeleteVideoConfPopUp() {
     }
 
     case AIM_VIDEO_POPUP_MODE: {
-      DeleteVSurfaceByIndex(guiVideoTitleBar);
+      DeleteVSurface(vsVideoTitleBar);
+      vsVideoTitleBar = NULL;
       break;
     }
 
@@ -3324,7 +3331,8 @@ BOOLEAN DeleteVideoConfPopUp() {
       }
 
       gfWaitingForMercToStopTalkingOrUserToClick = FALSE;
-      DeleteVSurfaceByIndex(guiVideoTitleBar);
+      DeleteVSurface(vsVideoTitleBar);
+      vsVideoTitleBar = NULL;
       break;
     }
   }
@@ -3571,8 +3579,7 @@ BOOLEAN DisplayMovingTitleBar(BOOLEAN fForward, BOOLEAN fInit) {
     }
   }
 
-  BltStretchVSurface(vsFB, FindVSurface(guiVideoTitleBar), 0, 0, VS_BLT_USECOLORKEY, &SrcRect,
-                     &DestRect);
+  BltStretchVSurface(vsFB, vsVideoTitleBar, 0, 0, VS_BLT_USECOLORKEY, &SrcRect, &DestRect);
 
   InvalidateRegion(DestRect.iLeft, DestRect.iTop, DestRect.iRight, DestRect.iBottom);
   InvalidateRegion(LastRect.iLeft, LastRect.iTop, LastRect.iRight, LastRect.iBottom);
