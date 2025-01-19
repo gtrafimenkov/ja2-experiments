@@ -30,7 +30,6 @@ extern void RemoveTempMouseCursorObject(void);
 extern BOOLEAN DrawTempMouseCursorObject(void);
 extern void ShowCurrentDrawingMode(void);
 extern void ShowCurrentSlotImage(struct VObject* hVObj, int32_t iWindow);
-extern void ShowCurrentSlotSurface(uint32_t hSurface, int32_t iWindow);
 
 void CreateNewMap();
 

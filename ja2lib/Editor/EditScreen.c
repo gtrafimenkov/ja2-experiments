@@ -2374,60 +2374,6 @@ void FindTilesetComments(void) {}
 void GetMasterList(void) {}
 
 //----------------------------------------------------------------------------------------------
-//	ShowCurrentSlotSurface
-//
-//	Displays the image of the currently highlighted tileset slot if it's a video surface.
-//	(usually a 16 bit image)
-//
-void ShowCurrentSlotSurface(uint32_t vSurface, int32_t iWindow) {
-  SGPRect ClipRect, WinRect;
-  int32_t iStartX;
-  int32_t iStartY;
-  int32_t iPicHeight, iPicWidth;
-  struct VSurface *hvSurface;
-  int32_t iWinWidth, iWinHeight;
-
-  WinRect.iLeft = (iWindow == 0) ? (336) : (488);
-  WinRect.iTop = 211;
-  WinRect.iRight = (iWindow == 0) ? (485) : (637);
-  WinRect.iBottom = 399;
-
-  ColorFillVSurfaceArea(vsFB, WinRect.iLeft - 1, WinRect.iTop - 1, WinRect.iRight + 1,
-                        WinRect.iBottom + 1, Get16BPPColor(FROMRGB(128, 0, 0)));
-
-  iWinWidth = WinRect.iRight - WinRect.iLeft;
-  iWinHeight = WinRect.iBottom - WinRect.iTop;
-
-  GetVSurfaceByIndexOld(&hvSurface, vSurface);
-
-  iPicWidth = (int32_t)hvSurface->usWidth;
-  iPicHeight = (int32_t)hvSurface->usHeight;
-
-  if (iPicWidth > iWinWidth) {
-    ClipRect.iLeft = (iPicWidth - iWinWidth) / 2;
-    ClipRect.iRight = ClipRect.iLeft + iWinWidth - 1;
-    iStartX = WinRect.iLeft;
-  } else {
-    ClipRect.iLeft = 0;
-    ClipRect.iRight = iPicWidth - 1;
-    iStartX = ((iWinWidth - iPicWidth) / 2) + WinRect.iLeft;
-  }
-
-  if (iPicHeight > iWinHeight) {
-    ClipRect.iTop = (iPicHeight - iWinHeight) / 2;
-    ClipRect.iBottom = ClipRect.iTop + iWinHeight - 1;
-    iStartY = WinRect.iTop;
-  } else {
-    ClipRect.iTop = 0;
-    ClipRect.iBottom = iPicHeight - 1;
-    iStartY = ((iWinHeight - iPicHeight) / 2) + WinRect.iTop;
-  }
-
-  BltVSurfaceToVSurface(vsFB, FindVSurface(vSurface), 0, iStartX, iStartY, VS_BLT_SRCSUBRECT,
-                        &ClipRect);
-}
-
-//----------------------------------------------------------------------------------------------
 //	ShowCurrentSlotImage
 //
 //	Displays the image of the currently highlighted tileset slot image. Usually this is for
