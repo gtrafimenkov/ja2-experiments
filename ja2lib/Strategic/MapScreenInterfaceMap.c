@@ -1082,11 +1082,6 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
   // get original video surface palette
   hSrcVSurface = vsBigMap;
-  // get original video surface palette
-  // CHECKF( GetVSurfaceByIndexOld( &hSAMSurface, guiSAMICON ) );
-  // get original video surface palette
-  // CHECKF( GetVSurfaceByIndexOld( &hMineSurface, guiMINEICON ) );
-  // get original video surface palette
 
   pOriginalPallette = hSrcVSurface->p16BPPPalette;
 

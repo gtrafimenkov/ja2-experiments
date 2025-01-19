@@ -391,10 +391,9 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
     UnlockVSurface(pPopUpTextBox->sourceBuffer);
 
   } else {
-    if (!GetVSurfaceByIndexOld(&hSrcVSurface, pPopUpTextBox->uiMercTextPopUpBackground)) {
-      AssertMsg(0,
-                String("Failed to GetVSurfaceByIndexOld for PrepareMercPopupBox.  VSurfaceID:  %d",
-                       pPopUpTextBox->uiMercTextPopUpBackground));
+    hSrcVSurface = FindVSurface(pPopUpTextBox->uiMercTextPopUpBackground);
+    if (hSrcVSurface == NULL) {
+      AssertMsg(0, String("Failed to find VSurface: %d", pPopUpTextBox->uiMercTextPopUpBackground));
     }
 
     pDestBuf = (uint16_t *)LockVSurface(pPopUpTextBox->sourceBuffer, &uiDestPitchBYTES);

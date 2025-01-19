@@ -324,7 +324,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...", filepath);
   } else if (AddVSurfaceFromFile(filepath, &uiLoadScreen)) {  // Blit the background image
-    GetVSurfaceByIndexOld(&hVSurface, uiLoadScreen);
+    hVSurface = FindVSurface(uiLoadScreen);
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVSurfaceByIndex(uiLoadScreen);
   } else {  // Failed to load the file, so use a black screen and print out message.
