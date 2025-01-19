@@ -16,6 +16,7 @@
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "Utils/MultiLanguageGraphicUtils.h"
 #include "platform_strings.h"
 
 // ******************************************************************************
@@ -392,8 +393,14 @@ struct VObject *CreateVObjectFromHImage(HIMAGE hImage) {
   return vo;
 }
 
-struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
-  HIMAGE hImage = CreateImage(VObjectDesc->ImageFile, IMAGE_ALLIMAGEDATA);
+struct VObject *CreateVObjectFromMLGFile(uint16_t usMLGGraphicID) {
+  SGPFILENAME ImageFile;
+  GetMLGFilename(ImageFile, usMLGGraphicID);
+  return CreateVObjectFromFile(ImageFile);
+}
+
+struct VObject *CreateVObjectFromFile(const char *filename) {
+  HIMAGE hImage = CreateImage(filename, IMAGE_ALLIMAGEDATA);
   if (hImage == NULL) {
     DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid Image Filename given");
     return NULL;
@@ -401,6 +408,10 @@ struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
   struct VObject *vo = CreateVObjectFromHImage(hImage);
   DestroyImage(hImage);
   return vo;
+}
+
+struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
+  return CreateVObjectFromFile(VObjectDesc->ImageFile);
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette

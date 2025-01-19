@@ -437,8 +437,7 @@ BOOLEAN EnterSaveLoadScreen() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSlgBackGroundImage));
 
   // load Load Screen Add ons graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_LOADSAVEHEADER);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBackGroundAddOns));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_LOADSAVEHEADER), &guiBackGroundAddOns));
 
   guiSlgButtonImage = LoadButtonImage("INTERFACE\\LoadScreenAddOns.sti", -1, 6, -1, 9, -1);
   //	guiSlgButtonImage = UseLoadedButtonImage( guiBackGroundAddOns, -1,9,-1,6,-1 );

@@ -218,32 +218,26 @@ BOOLEAN EnterAIM() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLinks));
 
   // load the History graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_HISTORY);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHistory));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_HISTORY), &guiHistory));
 
   // load the Wanring graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_WARNING);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiWarning));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_WARNING), &guiWarning));
 
   // load the flower advertisment and add it
   FilenameForBPP("LAPTOP\\flowerad_16.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFlowerAdvertisement));
 
   // load the your ad advertisment and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_YOURAD13);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAdForAdsImages));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_YOURAD13), &guiAdForAdsImages));
 
   // load the insurance advertisment and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_INSURANCEAD10);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceAdImages));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_INSURANCEAD10), &guiInsuranceAdImages));
 
   // load the funeral advertisment and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_FUNERALAD9);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFuneralAdImages));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_FUNERALAD9), &guiFuneralAdImages));
 
   // load the funeral advertisment and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYRAYAD21);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBobbyRAdImages));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_BOBBYRAYAD21), &guiBobbyRAdImages));
 
   //** Mouse Regions **
 
@@ -408,8 +402,7 @@ BOOLEAN InitAimDefaults() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiRustBackGround));
 
   // load the Aim Symbol graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_AIMSYMBOL);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAimSymbol));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_AIMSYMBOL), &guiAimSymbol));
 
   // Mouse region for the Links
   MSYS_DefineRegion(&gSelectedAimLogo, AIM_SYMBOL_X, AIM_SYMBOL_Y, AIM_SYMBOL_X + AIM_SYMBOL_WIDTH,

@@ -363,8 +363,7 @@ BOOLEAN EnterBobbyRMailOrder() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiDeliverySpeedGraphic));
 
   // load the delivery speed graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_CONFIRMORDER);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiConfirmGraphic));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_CONFIRMORDER), &guiConfirmGraphic));
 
   // load the delivery speed graphic and add it
   FilenameForBPP("LAPTOP\\TotalSaveArea.sti", VObjectDesc.ImageFile);

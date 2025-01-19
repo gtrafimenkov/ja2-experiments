@@ -355,8 +355,7 @@ BOOLEAN EnterOptionsScreen() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiOptionBackGroundImage));
 
   // load button, title graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_OPTIONHEADER);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiOptionsAddOnImages));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_OPTIONHEADER), &guiOptionsAddOnImages));
 
   // Save game button
   giOptionsButtonImages = LoadButtonImage("INTERFACE\\OptionScreenAddons.sti", -1, 2, -1, 3, -1);

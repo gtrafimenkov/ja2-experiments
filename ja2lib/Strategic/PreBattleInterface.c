@@ -255,7 +255,6 @@ void ValidateAndCorrectInBattleCounters(struct GROUP *pLocGroup) {
 #endif
 
 void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) {
-  VOBJECT_DESC VObjectDesc;
   int32_t i;
   uint8_t ubGroupID = 0;
   uint8_t ubNumStationaryEnemies = 0;
@@ -400,8 +399,7 @@ void InitPreBattleInterface(struct GROUP *pBattleGroup, BOOLEAN fPersistantPBI) 
   MSYS_DefineRegion(&PBInterfaceBlanket, 0, 0, 261, 359, MSYS_PRIORITY_HIGHEST - 5, 0, 0, 0);
 
   // Create the panel
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_PREBATTLEPANEL);
-  if (!AddVObject(CreateVideoObject(&VObjectDesc), &uiInterfaceImages))
+  if (!AddVObject(CreateVObjectFromMLGFile(MLG_PREBATTLEPANEL), &uiInterfaceImages))
     AssertMsg(0, "Failed to load interface\\PreBattlePanel.sti");
 
   // Create the 3 buttons
