@@ -282,7 +282,6 @@ BOOLEAN EnterGIOScreen() {
   SetCurrentCursorFromDatabase(CURSOR_NORMAL);
 
   // load the Main trade screen backgroiund image
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("InterFace\\OptionsScreenBackGround.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGIOMainBackGroundImage));
 

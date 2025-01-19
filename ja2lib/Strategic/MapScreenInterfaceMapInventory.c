@@ -203,7 +203,6 @@ BOOLEAN LoadInventoryPoolGraphic(void) {
   VOBJECT_DESC VObjectDesc;
 
   // load the file
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "INTERFACE\\sector_inventory.sti");
 
   // add to V-object index

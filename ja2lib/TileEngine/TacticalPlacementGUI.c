@@ -195,7 +195,6 @@ void InitTacticalPlacementGUI() {
   GoIntoOverheadMap();
 
   // Load the images
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "Interface\\OverheadInterface.sti");
   if (!AddVObject(CreateVideoObject(&VObjectDesc), &giOverheadPanelImage)) {
     AssertMsg(0, "Failed to load Interface\\OverheadInterface.sti");
@@ -315,8 +314,6 @@ void InitTacticalPlacementGUI() {
   }
   // add all the faces now
   for (i = 0; i < giPlacements; i++) {
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-
     // Load the faces
     {
       ubFaceIndex = gMercProfiles[GetSolProfile(gMercPlacement[i].pSoldier)].ubFaceIndex;

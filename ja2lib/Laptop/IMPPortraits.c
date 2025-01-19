@@ -105,7 +105,6 @@ BOOLEAN RenderPortrait(int16_t sX, int16_t sY) {
 
   if (fCharacterIsMale) {
     // load it
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP(pPlayerSelectedBigFaceFileNames[iCurrentPortrait], VObjectDesc.ImageFile);
     CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
 
@@ -118,7 +117,6 @@ BOOLEAN RenderPortrait(int16_t sX, int16_t sY) {
 
   } else {
     // load it
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP(pPlayerSelectedBigFaceFileNames[iCurrentPortrait + 8], VObjectDesc.ImageFile);
     CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiGraphicHandle));
 

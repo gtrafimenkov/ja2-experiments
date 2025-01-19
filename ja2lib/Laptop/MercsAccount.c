@@ -94,12 +94,10 @@ BOOLEAN EnterMercsAccount() {
   InitMercBackGround();
 
   // load the Arrow graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_ORDERGRID);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMercOrderGrid));
 
   // load the Arrow graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\AccountNumber.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiAccountNumberGrid));
 

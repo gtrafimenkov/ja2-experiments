@@ -908,8 +908,6 @@ BOOLEAN AddFacesToAutoBandageBox(void) {
   // reset
   memset(&giAutoBandagesSoldierFaces, -1, sizeof(giAutoBandagesSoldierFaces));
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-
   for (iCounter = 0; iCounter < MAX_CHARACTER_COUNT; iCounter++) {
     // find a free slot
     if (iDoctorList[iCounter] != -1) {
@@ -949,7 +947,6 @@ BOOLEAN AddFacesToAutoBandageBox(void) {
   }
 
   // grab panels
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "Interface\\panels.sti");
   if (!AddVObject(CreateVideoObject(&VObjectDesc), &giMercPanelImage)) {
     AssertMsg(0, "Failed to load Interface\\panels.sti");

@@ -422,7 +422,6 @@ void DisplaySirtechSplashScreen() {
   UnlockVSurface(vsFB);
 
   memset(&VObjectDesc, 0, sizeof(VOBJECT_DESC));
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\SirtechSplash.sti", VObjectDesc.ImageFile);
 
   //	FilenameForBPP("INTERFACE\\TShold.sti", VObjectDesc.ImageFile);

@@ -802,7 +802,6 @@ BOOLEAN EnterShopKeeperInterface() {
   SetSMPanelCurrentMerc((uint8_t)gusSelectedSoldier);
 
   // load the Main trade screen backgroiund image
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("InterFace\\TradeScreen.sti", VObjectDesc.ImageFile);
   if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiMainTradeScreenImage)) {
 #ifdef JA2BETAVERSION
@@ -813,7 +812,6 @@ BOOLEAN EnterShopKeeperInterface() {
   }
 
   // load the Main trade screen background image
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("InterFace\\itemcrossout.sti", VObjectDesc.ImageFile);
   if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiItemCrossOut)) {
 #ifdef JA2BETAVERSION
@@ -821,14 +819,6 @@ BOOLEAN EnterShopKeeperInterface() {
 #endif
     return (FALSE);
   }
-
-  /*
-  ATM:
-          // load the Main trade screen backgroiund image
-          VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-          FilenameForBPP("InterFace\\TradeScreenAtm.sti", VObjectDesc.ImageFile);
-          CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSkiAtmImage ));
-  */
 
   // Create an array of all mercs (anywhere!) currently in the player's employ, and load their small
   // faces
@@ -848,7 +838,6 @@ BOOLEAN EnterShopKeeperInterface() {
       sprintf(zTemp, "FACES\\33FACE\\%02d.sti", gMercProfiles[GetSolProfile(pSoldier)].ubFaceIndex);
 
       // While we are at it, add their small face
-      VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(zTemp, VObjectDesc.ImageFile);
       if (!AddVObject(CreateVideoObject(&VObjectDesc),
                       &guiSmallSoldiersFace[gubNumberMercsInArray])) {

@@ -26,12 +26,10 @@ BOOLEAN EnterBobbyRArmour() {
   VOBJECT_DESC VObjectDesc;
 
   // load the background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Armourbackground.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiArmourBackground));
 
   // load the gunsgrid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Armourgrid.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiArmourGrid));
 

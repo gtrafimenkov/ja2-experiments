@@ -156,7 +156,6 @@ void LoadEditorImages() {
   VOBJECT_DESC VObjectDesc;
 
   // Set up the merc inventory panel
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "EDITOR\\InvPanel.sti");
   if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiMercInventoryPanel))
     AssertMsg(0, "Failed to load data\\editor\\InvPanel.sti");

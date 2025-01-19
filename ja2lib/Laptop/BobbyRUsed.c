@@ -26,12 +26,10 @@ BOOLEAN EnterBobbyRUsed() {
   VOBJECT_DESC VObjectDesc;
 
   // load the background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\usedbackground.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUsedBackground));
 
   // load the gunsgrid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\usedgrid.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUsedGrid));
 

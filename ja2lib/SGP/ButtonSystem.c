@@ -196,7 +196,6 @@ int32_t LoadButtonImage(char *filename, int32_t Grayed, int32_t OffNormal, int32
   }
 
   // Load the image
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, filename);
 
   if ((ButtonPictures[UseSlot].vobj = CreateVideoObject(&vo_desc)) == NULL) {
@@ -642,7 +641,6 @@ BOOLEAN InitializeButtonImageManager() {
   for (x = 0; x < MAX_BUTTON_ICONS; x++) GenericButtonIcons[x] = NULL;
 
   // Load the default generic button images
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_OFF);
 
   if ((GenericButtonOffNormal[0] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -651,7 +649,6 @@ BOOLEAN InitializeButtonImageManager() {
     return (FALSE);
   }
 
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_ON);
 
   if ((GenericButtonOnNormal[0] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -663,11 +660,9 @@ BOOLEAN InitializeButtonImageManager() {
   // Load up the off hilite and on hilite images. We won't check for errors because if the file
   // doesn't exists, the system simply ignores that file. These are only here as extra images, they
   // aren't required for operation (only OFF Normal and ON Normal are required).
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_OFF_HI);
   GenericButtonOffHilite[0] = CreateVideoObject(&vo_desc);
 
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, DEFAULT_GENERIC_BUTTON_ON_HI);
   GenericButtonOnHilite[0] = CreateVideoObject(&vo_desc);
 
@@ -735,7 +730,6 @@ int16_t LoadGenericButtonIcon(char *filename) {
   }
 
   // Load the icon
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, filename);
 
   if ((GenericButtonIcons[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -852,7 +846,6 @@ int16_t LoadGenericButtonImages(char *GrayName, char *OffNormName, char *OffHili
   }
 
   // Load the image for the Off-Normal button state (required)
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, OffNormName);
 
   if ((GenericButtonOffNormal[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -862,7 +855,6 @@ int16_t LoadGenericButtonImages(char *GrayName, char *OffNormName, char *OffHili
   }
 
   // Load the image for the On-Normal button state (required)
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, OnNormName);
 
   if ((GenericButtonOnNormal[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -875,7 +867,6 @@ int16_t LoadGenericButtonImages(char *GrayName, char *OffNormName, char *OffHili
   // if so, load it.
 
   if (GrayName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     strcpy(vo_desc.ImageFile, GrayName);
 
     if ((GenericButtonGrayed[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -887,7 +878,6 @@ int16_t LoadGenericButtonImages(char *GrayName, char *OffNormName, char *OffHili
     GenericButtonGrayed[ImgSlot] = NULL;
 
   if (OffHiliteName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     strcpy(vo_desc.ImageFile, OffHiliteName);
 
     if ((GenericButtonOffHilite[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -899,7 +889,6 @@ int16_t LoadGenericButtonImages(char *GrayName, char *OffNormName, char *OffHili
     GenericButtonOffHilite[ImgSlot] = NULL;
 
   if (OnHiliteName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     strcpy(vo_desc.ImageFile, OnHiliteName);
 
     if ((GenericButtonOnHilite[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
@@ -911,7 +900,6 @@ int16_t LoadGenericButtonImages(char *GrayName, char *OffNormName, char *OffHili
     GenericButtonOnHilite[ImgSlot] = NULL;
 
   if (BkGrndName != BUTTON_NO_FILENAME) {
-    vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     strcpy(vo_desc.ImageFile, BkGrndName);
 
     if ((GenericButtonBackground[ImgSlot] = CreateVideoObject(&vo_desc)) == NULL) {
