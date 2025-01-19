@@ -143,9 +143,6 @@ BOOLEAN AddVObjectAndSetTransparency(struct VObject *vo, uint32_t *puiIndex) {
     return FALSE;
   }
 
-  // Set transparency to default
-  vo->TransparentColor = FROMRGB(0, 0, 0);
-
   // Set into video object list
   if (gpVObjectHead) {  // Add node after tail
     gpVObjectTail->next = (VOBJECT_NODE *)MemAlloc(sizeof(VOBJECT_NODE));

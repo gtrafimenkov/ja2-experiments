@@ -79,7 +79,6 @@ struct VObject {
   uint32_t fFlags;                        // Special flags
   uint32_t uiSizePixData;                 // ETRLE data size
   struct SGPPaletteEntry *pPaletteEntry;  // 8BPP Palette
-  COLORVAL TransparentColor;              // Defaults to 0,0,0
   uint16_t *p16BPPPalette;                // A 16BPP palette used for 8->16 blits
 
   void *pPixData;             // ETRLE pixel data
