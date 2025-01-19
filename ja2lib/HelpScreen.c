@@ -343,7 +343,7 @@ BOOLEAN gfHelpScreenEntry = TRUE;
 BOOLEAN gfHelpScreenExit = FALSE;
 
 uint32_t guiHelpScreenBackGround;
-uint32_t guiHelpScreenTextBufferSurface;
+struct VSurface *vsHelpScreenTextBufferSurface;
 
 BOOLEAN gfScrollBoxIsScrolling = FALSE;
 
@@ -1134,14 +1134,9 @@ void SpecialHandlerCode() {
 
 uint16_t RenderSpecificHelpScreen() {
   uint16_t usNumVerticalPixelsDisplayed = 0;
-  // new screen:
 
-  // set the buffer for the text to go to
-  //	SetFontDestBuffer( guiHelpScreenTextBufferSurface, gHelpScreen.usLeftMarginPosX,
-  // gHelpScreen.usScreenLocY + HELP_SCREEN_TEXT_OFFSET_Y,
-  // HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__NUMBER_BYTES_IN_TEXT_BUFFER, FALSE );
-  SetFontDestBuffer(FindVSurface(guiHelpScreenTextBufferSurface), 0, 0,
-                    HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER, FALSE);
+  SetFontDestBuffer(vsHelpScreenTextBufferSurface, 0, 0, HLP_SCRN__WIDTH_OF_TEXT_BUFFER,
+                    HLP_SCRN__HEIGHT_OF_TEXT_BUFFER, FALSE);
 
   // switch on the current screen
   switch (gHelpScreen.bCurrentHelpScreen) {
@@ -1983,14 +1978,17 @@ int8_t HelpScreenDetermineWhichMapScreenHelpToShow() {
 
 BOOLEAN CreateHelpScreenTextBuffer() {
   // Create a background video surface to blt the face onto
-  CHECKF(AddVSurfaceAndSetTransparency(
-      CreateVSurfaceBlank16(HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER),
-      &guiHelpScreenTextBufferSurface));
+  vsHelpScreenTextBufferSurface =
+      CreateVSurfaceBlank16(HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER);
+  SetVideoSurfaceTransparencyColor(vsHelpScreenTextBufferSurface, FROMRGB(0, 0, 0));
 
   return (TRUE);
 }
 
-void DestroyHelpScreenTextBuffer() { DeleteVSurfaceByIndex(guiHelpScreenTextBufferSurface); }
+void DestroyHelpScreenTextBuffer() {
+  DeleteVSurface(vsHelpScreenTextBufferSurface);
+  vsHelpScreenTextBufferSurface = NULL;
+}
 
 void RenderCurrentHelpScreenTextToBuffer() {
   // clear the buffer ( use 0, black as a transparent color
@@ -2005,17 +2003,15 @@ void RenderCurrentHelpScreenTextToBuffer() {
 }
 
 void RenderTextBufferToScreen() {
-  struct VSurface *hSrcVSurface;
   struct Rect SrcRect;
-
-  GetVSurfaceByIndexOld(&hSrcVSurface, guiHelpScreenTextBufferSurface);
 
   SrcRect.left = 0;
   SrcRect.top = gHelpScreen.iLineAtTopOfTextBuffer * HLP_SCRN__HEIGHT_OF_1_LINE_IN_BUFFER;
   SrcRect.right = HLP_SCRN__WIDTH_OF_TEXT_BUFFER;
   SrcRect.bottom = SrcRect.top + HLP_SCRN__HEIGHT_OF_TEXT_AREA - (2 * 8);
 
-  BltVSurfaceUsingDD(vsFB, hSrcVSurface, VS_BLT_USECOLORKEY, gHelpScreen.usLeftMarginPosX,
+  BltVSurfaceUsingDD(vsFB, vsHelpScreenTextBufferSurface, VS_BLT_USECOLORKEY,
+                     gHelpScreen.usLeftMarginPosX,
                      (gHelpScreen.usScreenLocY + HELP_SCREEN_TEXT_OFFSET_Y), &SrcRect);
 
   DisplayHelpScreenTextBufferScrollBox();
@@ -2042,9 +2038,9 @@ void ClearHelpScreenTextBuffer() {
   uint8_t *pDestBuf;
 
   // CLEAR THE FRAME BUFFER
-  pDestBuf = LockVSurfaceByID(guiHelpScreenTextBufferSurface, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(vsHelpScreenTextBufferSurface, &uiDestPitchBYTES);
   memset(pDestBuf, 0, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER * uiDestPitchBYTES);
-  UnlockVSurfaceByID(guiHelpScreenTextBufferSurface);
+  UnlockVSurface(vsHelpScreenTextBufferSurface);
   InvalidateScreen();
 }
 
