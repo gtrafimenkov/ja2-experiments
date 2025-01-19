@@ -224,8 +224,6 @@ uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) { return NULL
 
 void UnlockVSurfaceByID(VSurfID id) {}
 
-BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) { return FALSE; }
-
 BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                     uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect,
                     struct Rect *DestRect) {

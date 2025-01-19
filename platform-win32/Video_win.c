@@ -2209,24 +2209,6 @@ void UnlockVSurfaceByID(VSurfID id) {
   }
 }
 
-BOOLEAN SetVideoSurfaceTransparency(uint32_t uiIndex, COLORVAL TransColor) {
-  struct VSurface *hVSurface;
-
-  //
-  // Get Video Surface
-  //
-
-  CHECKF(GetVSurfaceByIndexOld(&hVSurface, uiIndex));
-
-  //
-  // Set transparency
-  //
-
-  SetVideoSurfaceTransparencyColor(hVSurface, TransColor);
-
-  return (TRUE);
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Fills an rectangular area with a specified color value.
