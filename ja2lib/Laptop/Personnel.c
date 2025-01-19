@@ -596,16 +596,16 @@ BOOLEAN LoadPersonnelGraphics(void) {
   // title bar
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTITLE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiTITLE));
 
   // the background grpahics
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\personnelwindow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSCREEN));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSCREEN));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\personnel_inventory.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiPersonnelInventory));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiPersonnelInventory));
 
   return (TRUE);
 }
@@ -811,7 +811,7 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFACE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFACE));
 
   // Blt face to screen to
   GetVideoObject(&hFaceHandle, guiFACE);
@@ -1882,12 +1882,12 @@ BOOLEAN LoadPersonnelScreenBackgroundGraphics(void) {
   // departed bar
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\departed.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiDEPARTEDTEAM));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiDEPARTEDTEAM));
 
   // current bar
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\CurrentTeam.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiCURRENTTEAM));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCURRENTTEAM));
 
   return (TRUE);
 }
@@ -2032,7 +2032,7 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-      CHECKF(AddVideoObject(&VObjectDesc, &guiFACE));
+      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFACE));
 
       // Blt face to screen to
       GetVideoObject(&hFaceHandle, guiFACE);
@@ -4366,7 +4366,7 @@ BOOLEAN DisplayPortraitOfPastMerc(int32_t iId, int32_t iCounter, BOOLEAN fDead, 
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFACE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFACE));
 
   // Blt face to screen to
   GetVideoObject(&hFaceHandle, guiFACE);
@@ -4776,7 +4776,7 @@ BOOLEAN DisplayHighLightBox(void) {
   // bounding
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\PicBorde.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &uiBox));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiBox));
 
   // blit it
   GetVideoObject(&hHandle, uiBox);
@@ -4951,7 +4951,7 @@ BOOLEAN RenderAtmPanel(void) {
   if (fShowAtmPanel) {
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\AtmButtons.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiBox));
+    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiBox));
 
     // blit it
     GetVideoObject(&hHandle, uiBox);
@@ -4980,7 +4980,7 @@ BOOLEAN RenderAtmPanel(void) {
     // bounding
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\AtmButtons.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiBox));
+    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiBox));
 
     GetVideoObject(&hHandle, uiBox);
     BltVideoObject(FRAME_BUFFER, hHandle, 0, (int16_t)(ATM_UL_X), (int16_t)(ATM_UL_Y),

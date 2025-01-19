@@ -212,12 +212,12 @@ BOOLEAN EnterInsuranceContract() {
   // load the Insurance title graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\InsOrderGrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsOrderGridImage));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiInsOrderGridImage));
 
   // load the Insurance bullet graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\bullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiInsOrderBulletImage));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiInsOrderBulletImage));
 
   usPosX = INS_CTRCT_BOTTOM_LINK_RED_BAR_X;
   for (i = 0; i < 2; i++) {
@@ -520,7 +520,7 @@ BOOLEAN DisplayOrderGrid(uint8_t ubGridNumber, uint8_t ubMercID) {
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(sTemp, "FACES\\%02d.sti", ubMercID);
   FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &uiInsMercFaceImage));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiInsMercFaceImage));
 
   // Get the merc's face
   GetVideoObject(&hPixHandle, uiInsMercFaceImage);

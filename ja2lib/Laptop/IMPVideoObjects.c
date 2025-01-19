@@ -72,7 +72,7 @@ BOOLEAN LoadProfileBackGround(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\MetalBackGround.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBACKGROUND));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBACKGROUND));
 
   return (TRUE);
 }
@@ -129,7 +129,7 @@ BOOLEAN LoadIMPSymbol(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_IMPSYMBOL);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiIMPSYMBOL));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiIMPSYMBOL));
 
   return (TRUE);
 }
@@ -160,7 +160,7 @@ BOOLEAN LoadBeginIndent(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BeginScreenIndent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBEGININDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBEGININDENT));
 
   return (TRUE);
 }
@@ -192,7 +192,7 @@ BOOLEAN LoadActivationIndent(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\ActivationIndent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiACTIVATIONINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiACTIVATIONINDENT));
 
   return (TRUE);
 }
@@ -223,7 +223,7 @@ BOOLEAN LoadFrontPageIndent(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\FrontPageIndent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFRONTPAGEINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFRONTPAGEINDENT));
 
   return (TRUE);
 }
@@ -254,7 +254,7 @@ BOOLEAN LoadAnalyse(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Analyze.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiANALYSE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiANALYSE));
 
   return (TRUE);
 }
@@ -285,7 +285,7 @@ BOOLEAN LoadAttributeGraph(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Attributegraph.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiATTRIBUTEGRAPH));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiATTRIBUTEGRAPH));
 
   return (TRUE);
 }
@@ -316,7 +316,7 @@ BOOLEAN LoadAttributeGraphBar(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\AttributegraphBar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiATTRIBUTEGRAPHBAR));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiATTRIBUTEGRAPHBAR));
 
   return (TRUE);
 }
@@ -347,7 +347,7 @@ BOOLEAN LoadFullNameIndent(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\FullNameIndent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFULLNAMEINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFULLNAMEINDENT));
 
   return (TRUE);
 }
@@ -378,7 +378,7 @@ BOOLEAN LoadNickNameIndent(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\NickName.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiNICKNAMEINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiNICKNAMEINDENT));
 
   return (TRUE);
 }
@@ -409,7 +409,7 @@ BOOLEAN LoadNameIndent(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\NameIndent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiNAMEINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiNAMEINDENT));
 
   return (TRUE);
 }
@@ -440,7 +440,7 @@ BOOLEAN LoadGenderIndent(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\GenderIndent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiGENDERINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiGENDERINDENT));
 
   return (TRUE);
 }
@@ -471,7 +471,7 @@ BOOLEAN LoadSmallFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\SmallFrame.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMALLFRAME));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSMALLFRAME));
 
   return (TRUE);
 }
@@ -502,7 +502,7 @@ BOOLEAN LoadSmallSilhouette(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\SmallSilhouette.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMALLSILHOUETTE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSMALLSILHOUETTE));
 
   return (TRUE);
 }
@@ -533,7 +533,7 @@ BOOLEAN LoadLargeSilhouette(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\largesilhouette.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLARGESILHOUETTE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLARGESILHOUETTE));
 
   return (TRUE);
 }
@@ -564,7 +564,7 @@ BOOLEAN LoadAttributeFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\attributeframe.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiATTRIBUTEFRAME));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiATTRIBUTEFRAME));
 
   return (TRUE);
 }
@@ -645,7 +645,7 @@ BOOLEAN LoadSliderBar(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\attributeslider.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSLIDERBAR));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSLIDERBAR));
 
   return (TRUE);
 }
@@ -676,7 +676,7 @@ BOOLEAN LoadButton2Image(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\button_2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBUTTON2IMAGE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBUTTON2IMAGE));
 
   return (TRUE);
 }
@@ -707,7 +707,7 @@ BOOLEAN LoadButton4Image(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\button_4.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBUTTON4IMAGE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBUTTON4IMAGE));
 
   return (TRUE);
 }
@@ -738,7 +738,7 @@ BOOLEAN LoadButton1Image(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\button_1.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBUTTON1IMAGE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBUTTON1IMAGE));
 
   return (TRUE);
 }
@@ -769,7 +769,7 @@ BOOLEAN LoadPortraitFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Voice_PortraitFrame.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiPORTRAITFRAME));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiPORTRAITFRAME));
 
   return (TRUE);
 }
@@ -800,7 +800,7 @@ BOOLEAN LoadMainIndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\mainprofilepageindent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMAININDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAININDENT));
 
   return (TRUE);
 }
@@ -831,7 +831,7 @@ BOOLEAN LoadQtnLongIndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\longindent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLONGINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLONGINDENT));
 
   return (TRUE);
 }
@@ -862,7 +862,7 @@ BOOLEAN LoadQtnShortIndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\shortindent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSHORTINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSHORTINDENT));
 
   return (TRUE);
 }
@@ -893,7 +893,7 @@ BOOLEAN LoadQtnLongIndentHighFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\longindenthigh.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLONGHINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLONGHINDENT));
 
   return (TRUE);
 }
@@ -924,7 +924,7 @@ BOOLEAN LoadQtnShortIndentHighFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\shortindenthigh.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSHORTHINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSHORTHINDENT));
 
   return (TRUE);
 }
@@ -955,7 +955,7 @@ BOOLEAN LoadQtnIndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\questionindent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiQINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiQINDENT));
 
   return (TRUE);
 }
@@ -986,7 +986,7 @@ BOOLEAN LoadAttrib1IndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\attributescreenindent_1.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiA1INDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiA1INDENT));
 
   return (TRUE);
 }
@@ -1017,7 +1017,7 @@ BOOLEAN LoadAttrib2IndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\attributescreenindent_2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiA2INDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiA2INDENT));
 
   return (TRUE);
 }
@@ -1048,7 +1048,7 @@ BOOLEAN LoadAvgMercIndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\anaveragemercindent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiAVGMERCINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiAVGMERCINDENT));
 
   return (TRUE);
 }
@@ -1079,7 +1079,7 @@ BOOLEAN LoadAboutUsIndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\aboutusindent.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiABOUTUSINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiABOUTUSINDENT));
 
   return (TRUE);
 }
@@ -1110,7 +1110,7 @@ BOOLEAN LoadQtnShort2IndentFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\shortindent2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSHORT2INDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSHORT2INDENT));
 
   return (TRUE);
 }
@@ -1141,7 +1141,7 @@ BOOLEAN LoadQtnShort2IndentHighFrame(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\shortindent2High.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSHORT2HINDENT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSHORT2HINDENT));
 
   return (TRUE);
 }

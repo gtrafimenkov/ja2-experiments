@@ -322,22 +322,22 @@ BOOLEAN LoadFiles(void) {
   // title bar
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTITLE));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiTITLE));
 
   // top portion of the screen background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\fileviewer.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTOP));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiTOP));
 
   // the highlight
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\highlight.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiHIGHLIGHT));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiHIGHLIGHT));
 
   // top portion of the screen background
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\fileviewerwhite.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiFileBack));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFileBack));
 
   return (TRUE);
 }
@@ -778,7 +778,7 @@ BOOLEAN DisplayFormattedText(void) {
       // load graphic
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(pFilesList->pPicFileNameList[0], VObjectDesc.ImageFile);
-      CHECKF(AddVideoObject(&VObjectDesc, &uiFirstTempPicture));
+      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiFirstTempPicture));
 
       GetVideoObjectETRLESubregionProperties(uiFirstTempPicture, 0, &usFirstWidth, &usFirstHeight);
 
@@ -818,12 +818,12 @@ BOOLEAN DisplayFormattedText(void) {
       // load first graphic
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(pFilesList->pPicFileNameList[0], VObjectDesc.ImageFile);
-      CHECKF(AddVideoObject(&VObjectDesc, &uiFirstTempPicture));
+      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiFirstTempPicture));
 
       // load second graphic
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(pFilesList->pPicFileNameList[1], VObjectDesc.ImageFile);
-      CHECKF(AddVideoObject(&VObjectDesc, &uiSecondTempPicture));
+      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiSecondTempPicture));
 
       GetVideoObjectETRLESubregionProperties(uiFirstTempPicture, 0, &usFirstWidth, &usFirstHeight);
       GetVideoObjectETRLESubregionProperties(uiSecondTempPicture, 0, &usSecondWidth,
@@ -1043,7 +1043,7 @@ BOOLEAN HandleSpecialFiles(uint8_t ubFormat) {
     // title bar
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\ArucoFilesMap.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiPicture));
+    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiPicture));
 
     // get title bar object
     GetVideoObject(&hHandle, uiPicture);
@@ -1057,7 +1057,7 @@ BOOLEAN HandleSpecialFiles(uint8_t ubFormat) {
     // kid pic
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\Enrico_Y.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiPicture));
+    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiPicture));
 
     // get title bar object
     GetVideoObject(&hHandle, uiPicture);
@@ -1071,7 +1071,7 @@ BOOLEAN HandleSpecialFiles(uint8_t ubFormat) {
     // wedding pic
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\Enrico_W.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &uiPicture));
+    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiPicture));
 
     // get title bar object
     GetVideoObject(&hHandle, uiPicture);
@@ -1521,7 +1521,7 @@ BOOLEAN HandleSpecialTerroristFile(int32_t iFileNumber, char *sPictureName) {
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-      CHECKF(AddVideoObject(&VObjectDesc, &uiPicture));
+      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiPicture));
 
       // Blt face to screen to
       GetVideoObject(&hHandle, uiPicture);
@@ -1536,7 +1536,7 @@ BOOLEAN HandleSpecialTerroristFile(int32_t iFileNumber, char *sPictureName) {
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("LAPTOP\\InterceptBorder.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVideoObject(&VObjectDesc, &uiPicture));
+      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &uiPicture));
 
       // Blt face to screen to
       GetVideoObject(&hHandle, uiPicture);

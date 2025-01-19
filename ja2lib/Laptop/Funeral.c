@@ -113,37 +113,37 @@ BOOLEAN EnterFuneral() {
   // load the Closed graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_CLOSED);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiClosedSign));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiClosedSign));
 
   // load the Left column graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\LeftColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLeftColumn));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLeftColumn));
 
   // load the Link carving graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\LinkCarving.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiLinkCarving));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLinkCarving));
 
   // load the Marble graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\Marble.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMarbleBackground));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMarbleBackground));
 
   // load the McGillicuttys sign graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_MCGILLICUTTYS);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMcGillicuttys));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMcGillicuttys));
 
   // load the Mortuary  graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_MORTUARY);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiMortuary));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMortuary));
 
   // load the right column graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\RightColumn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiRightColumn));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiRightColumn));
 
   usPosX = FUNERAL_LINK_1_X;
   for (i = 0; i < FUNERAL_NUMBER_OF_LINKS; i++) {

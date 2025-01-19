@@ -137,7 +137,7 @@ uint32_t CountVideoObjectNodes() {
   return i;
 }
 
-BOOLEAN AddVideoObject(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
+BOOLEAN AddVObjectAndSetTransparency(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
   struct VObject *hVObject;
 
   // Assertions

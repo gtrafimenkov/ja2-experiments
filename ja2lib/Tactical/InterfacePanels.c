@@ -1079,23 +1079,23 @@ BOOLEAN InitializeSMPanel() {
   // failing the CHECKF after this will cause you to lose your mouse
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(VObjectDesc.ImageFile, "INTERFACE\\inventory_bottom_panel.STI");
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMPanel));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSMPanel));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\inventory_gold_front.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMObjects));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSMObjects));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\inv_frn.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSMObjects2));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSMObjects2));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\secondary_gun_hidden.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSecItemHiddenVO));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSecItemHiddenVO));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBrownBackgroundForTeamPanel));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBrownBackgroundForTeamPanel));
 
   // Clear inv display stuff
   memset(gfSM_HandInvDispText, 0, sizeof(gfSM_HandInvDispText));
@@ -2784,15 +2784,15 @@ BOOLEAN InitializeTEAMPanel() {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\bottom_bar.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTEAMPanel));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiTEAMPanel));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\gold_front.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiTEAMObjects));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiTEAMObjects));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBrownBackgroundForTeamPanel));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBrownBackgroundForTeamPanel));
 
   // Clear inv display stuff
   memset(gfTEAM_HandInvDispText, 0, sizeof(gfTEAM_HandInvDispText));

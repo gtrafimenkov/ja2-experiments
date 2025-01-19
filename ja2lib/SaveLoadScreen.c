@@ -437,12 +437,12 @@ BOOLEAN EnterSaveLoadScreen() {
   // load Main background  graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\LoadScreen.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiSlgBackGroundImage));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSlgBackGroundImage));
 
   // load Load Screen Add ons graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_LOADSAVEHEADER);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiBackGroundAddOns));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBackGroundAddOns));
 
   guiSlgButtonImage = LoadButtonImage("INTERFACE\\LoadScreenAddOns.sti", -1, 6, -1, 9, -1);
   //	guiSlgButtonImage = UseLoadedButtonImage( guiBackGroundAddOns, -1,9,-1,6,-1 );

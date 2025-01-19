@@ -512,7 +512,7 @@ void RenderTopmostTacticalInterface() {
             // Loadup cursor!
             VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
             FilenameForBPP("CURSORS\\targblak.sti", VObjectDesc.ImageFile);
-            AddVideoObject(&VObjectDesc, &uiBogTarget);
+            AddVObjectAndSetTransparency(&VObjectDesc, &uiBogTarget);
           }
 
           if (GridNoOnScreen(

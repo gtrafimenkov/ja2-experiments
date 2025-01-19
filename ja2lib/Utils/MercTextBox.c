@@ -123,13 +123,13 @@ BOOLEAN InitMercPopupBox() {
   // LOAD STOP ICON...
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\msgboxicons.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &guiBoxIcons))
+  if (!AddVObjectAndSetTransparency(&VObjectDesc, &guiBoxIcons))
     AssertMsg(0, "Missing INTERFACE\\msgboxicons.sti");
 
   // LOAD SKULL ICON...
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\msgboxiconskull.sti", VObjectDesc.ImageFile);
-  if (!AddVideoObject(&VObjectDesc, &guiSkullIcons))
+  if (!AddVObjectAndSetTransparency(&VObjectDesc, &guiSkullIcons))
     AssertMsg(0, "Missing INTERFACE\\msgboxiconskull.sti");
 
   return (TRUE);
@@ -164,7 +164,7 @@ BOOLEAN LoadTextMercPopupImages(uint8_t ubBackgroundIndex, uint8_t ubBorderIndex
   // border
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP(zMercBorderPopupFilenames[ubBorderIndex], VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &gPopUpTextBox->uiMercTextPopUpBorder));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &gPopUpTextBox->uiMercTextPopUpBorder));
 
   gPopUpTextBox->fMercTextPopupInitialized = TRUE;
 

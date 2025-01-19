@@ -32,12 +32,12 @@ BOOLEAN EnterBobbyRAmmo() {
   // load the background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\ammobackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiAmmoBackground));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiAmmoBackground));
 
   // load the gunsgrid graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\ammogrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVideoObject(&VObjectDesc, &guiAmmoGrid));
+  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiAmmoGrid));
 
   InitBobbyBrTitle();
 

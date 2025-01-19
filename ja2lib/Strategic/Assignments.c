@@ -7530,7 +7530,7 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
   if ((fShowAssignmentMenu == TRUE) && (fCreated == FALSE)) {
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVideoObject(&VObjectDesc, &guiPOPUPBORDERS));
+    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiPOPUPBORDERS));
 
     vs_desc.fCreateFlags_ = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
     strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
