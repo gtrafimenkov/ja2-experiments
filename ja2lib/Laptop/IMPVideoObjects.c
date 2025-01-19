@@ -115,21 +115,11 @@ void RenderProfileBackGround(void) {
 }
 
 BOOLEAN LoadIMPSymbol(void) {
-  // this procedure will load the IMP main symbol into memory
-  VOBJECT_DESC VObjectDesc;
-
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_IMPSYMBOL);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiIMPSYMBOL));
-
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_IMPSYMBOL), &guiIMPSYMBOL));
   return (TRUE);
 }
 
-void DeleteIMPSymbol(void) {
-  // remove IMP symbol
-  DeleteVideoObjectFromIndex(guiIMPSYMBOL);
-
-  return;
-}
+void DeleteIMPSymbol(void) { DeleteVideoObjectFromIndex(guiIMPSYMBOL); }
 
 void RenderIMPSymbol(int16_t sX, int16_t sY) {
   struct VObject* hHandle;

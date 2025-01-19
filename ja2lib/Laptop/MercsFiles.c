@@ -152,8 +152,7 @@ BOOLEAN EnterMercsFiles() {
   InitMercBackGround();
 
   // load the stats box graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_STATSBOX);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiStatsBox));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_STATSBOX), &guiStatsBox));
 
   // load the Portrait box graphic and add it
   FilenameForBPP("LAPTOP\\PortraitBox.sti", VObjectDesc.ImageFile);

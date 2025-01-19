@@ -214,8 +214,7 @@ BOOLEAN EnterBobbyR() {
   InitBobbyRWoodBackground();
 
   // load the Bobbyname graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYNAME);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBobbyName));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_BOBBYNAME), &guiBobbyName));
 
   // load the plaque graphic and add it
   FilenameForBPP("LAPTOP\\BobbyPlaques.sti", VObjectDesc.ImageFile);
@@ -230,8 +229,7 @@ BOOLEAN EnterBobbyR() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBottomHinge));
 
   // load the Store Plaque graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_STOREPLAQUE);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiStorePlaque));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_STOREPLAQUE), &guiStorePlaque));
 
   // load the Handle graphic and add it
   FilenameForBPP("LAPTOP\\BobbyHandle.sti", VObjectDesc.ImageFile);

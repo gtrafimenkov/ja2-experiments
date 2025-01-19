@@ -180,16 +180,13 @@ BOOLEAN EnterAimSort() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSortByBox));
 
   // load the ToAlumni graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_TOALUMNI);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiToAlumni));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_TOALUMNI), &guiToAlumni));
 
   // load the ToMugShots graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_TOMUGSHOTS);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiToMugShots));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_TOMUGSHOTS), &guiToMugShots));
 
   // load the ToStats graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_TOSTATS);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiToStats));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_TOSTATS), &guiToStats));
 
   // load the SelectLight graphic and add it
   FilenameForBPP("LAPTOP\\SelectLight.sti", VObjectDesc.ImageFile);

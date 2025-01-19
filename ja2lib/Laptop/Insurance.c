@@ -98,8 +98,7 @@ BOOLEAN EnterInsurance() {
   InitInsuranceDefaults();
 
   // load the Insurance title graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_INSURANCETITLE);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceTitleImage));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_INSURANCETITLE), &guiInsuranceTitleImage));
 
   // load the red bar on the side of the page and add it
   FilenameForBPP("LAPTOP\\Bullet.sti", VObjectDesc.ImageFile);
@@ -249,8 +248,7 @@ BOOLEAN InitInsuranceDefaults() {
   // if it is not the first page, display the small title
   if (guiCurrentLaptopMode != LAPTOP_MODE_INSURANCE) {
     // load the small title for the every page other then the first page
-    GetMLGFilename(VObjectDesc.ImageFile, MLG_SMALLTITLE);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsuranceSmallTitleImage));
+    CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_SMALLTITLE), &guiInsuranceSmallTitleImage));
 
     // create the link to the home page on the small titles
     MSYS_DefineRegion(

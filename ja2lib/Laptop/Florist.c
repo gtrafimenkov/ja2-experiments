@@ -195,12 +195,10 @@ BOOLEAN InitFloristDefaults() {
   // if its the first page
   if (guiCurrentLaptopMode == LAPTOP_MODE_FLORIST) {
     // load the small title graphic and add it
-    GetMLGFilename(VObjectDesc.ImageFile, MLG_LARGEFLORISTSYMBOL);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiLargeTitleSymbol));
+    CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_LARGEFLORISTSYMBOL), &guiLargeTitleSymbol));
   } else {
     // load the leaf back graphic and add it
-    GetMLGFilename(VObjectDesc.ImageFile, MLG_SMALLFLORISTSYMBOL);
-    CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSmallTitleSymbol));
+    CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_SMALLFLORISTSYMBOL), &guiSmallTitleSymbol));
 
     // flower title homepage link
     MSYS_DefineRegion(

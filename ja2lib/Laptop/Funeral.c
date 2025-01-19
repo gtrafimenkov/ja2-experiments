@@ -111,8 +111,7 @@ BOOLEAN EnterFuneral() {
   uint16_t usPosX, i;
 
   // load the Closed graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_CLOSED);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiClosedSign));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_CLOSED), &guiClosedSign));
 
   // load the Left column graphic and add it
   FilenameForBPP("LAPTOP\\LeftColumn.sti", VObjectDesc.ImageFile);
@@ -127,12 +126,10 @@ BOOLEAN EnterFuneral() {
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMarbleBackground));
 
   // load the McGillicuttys sign graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_MCGILLICUTTYS);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMcGillicuttys));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_MCGILLICUTTYS), &guiMcGillicuttys));
 
   // load the Mortuary  graphic and add it
-  GetMLGFilename(VObjectDesc.ImageFile, MLG_MORTUARY);
-  CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMortuary));
+  CHECKF(AddVObject(CreateVObjectFromMLGFile(MLG_MORTUARY), &guiMortuary));
 
   // load the right column graphic and add it
   FilenameForBPP("LAPTOP\\RightColumn.sti", VObjectDesc.ImageFile);
