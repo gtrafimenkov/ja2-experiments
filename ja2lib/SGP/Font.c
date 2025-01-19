@@ -289,7 +289,6 @@ int32_t FindFreeFont(void) {
 //  Otherwise the font number is returned.
 //*****************************************************************************
 int32_t LoadFontFile(char *filename) {
-  VOBJECT_DESC vo_desc;
   uint32_t LoadIndex;
 
   Assert(filename != NULL);
@@ -301,9 +300,7 @@ int32_t LoadFontFile(char *filename) {
     return (-1);
   }
 
-  strcpy(vo_desc.ImageFile, filename);
-
-  if ((FontObjs[LoadIndex] = CreateVideoObject(&vo_desc)) == NULL) {
+  if ((FontObjs[LoadIndex] = CreateVObjectFromFile(filename)) == NULL) {
     DbgMessage(TOPIC_FONT_HANDLER, DBG_LEVEL_0, String("Error creating VOBJECT (%s)", filename));
     FatalError("Cannot init FONT file %s", filename);
     return (-1);
