@@ -111,7 +111,6 @@ void RenderOverheadOverlays();
 
 void InitNewOverheadDB(uint8_t ubTilesetID) {
   uint32_t uiLoop;
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hVObject;
   char cFileBPP[128];
   char cAdjustedFile[200];
@@ -129,8 +128,7 @@ void InitNewOverheadDB(uint8_t ubTilesetID) {
     // Adjust for tileset position
     sprintf(cAdjustedFile, "TILESETS\\%d\\T\\%s", ubTilesetID, cFileBPP);
 
-    strcpy(VObjectDesc.ImageFile, cAdjustedFile);
-    hVObject = CreateVideoObject(&VObjectDesc);
+    hVObject = CreateVObjectFromFile(cAdjustedFile);
 
     if (hVObject == NULL) {
       // TRY loading from default directory
@@ -139,13 +137,11 @@ void InitNewOverheadDB(uint8_t ubTilesetID) {
       sprintf(cAdjustedFile, "TILESETS\\0\\T\\%s", cFileBPP);
 
       // LOAD ONE WE KNOW ABOUT!
-      strcpy(VObjectDesc.ImageFile, cAdjustedFile);
-      hVObject = CreateVideoObject(&VObjectDesc);
+      hVObject = CreateVObjectFromFile(cAdjustedFile);
 
       if (hVObject == NULL) {
         // LOAD ONE WE KNOW ABOUT!
-        strcpy(VObjectDesc.ImageFile, "TILESETS\\0\\T\\grass.sti");
-        hVObject = CreateVideoObject(&VObjectDesc);
+        hVObject = CreateVObjectFromFile("TILESETS\\0\\T\\grass.sti");
       }
     }
 
