@@ -2644,7 +2644,8 @@ uint32_t MapScreenHandle(void) {
       // load border graphics
       LoadMapBorderGraphics();
 
-      CHECKF(AddVSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
+      CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile("INTERFACE\\popupbackground.pcx"),
+                                           &guiPOPUPTEX));
 
       CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\SAM.sti"), &guiSAMICON));
 

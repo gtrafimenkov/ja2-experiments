@@ -323,16 +323,19 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     SetFontShadow(FONT_NEARBLACK);
     ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...", filepath);
-  } else if (AddVSurfaceFromFile(filepath, &uiLoadScreen)) {  // Blit the background image
-    hVSurface = FindVSurface(uiLoadScreen);
-    BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
-    DeleteVSurfaceByIndex(uiLoadScreen);
-  } else {  // Failed to load the file, so use a black screen and print out message.
-    SetFont(FONT10ARIAL);
-    SetFontForeground(FONT_YELLOW);
-    SetFontShadow(FONT_NEARBLACK);
-    ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, 0);
-    mprintf(5, 5, L"%S loadscreen data file not found...", filepath);
+  } else {
+    if (AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile(filepath), &uiLoadScreen)) {
+      // Blit the background image
+      hVSurface = FindVSurface(uiLoadScreen);
+      BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0, 0, NULL);
+      DeleteVSurfaceByIndex(uiLoadScreen);
+    } else {  // Failed to load the file, so use a black screen and print out message.
+      SetFont(FONT10ARIAL);
+      SetFontForeground(FONT_YELLOW);
+      SetFontShadow(FONT_NEARBLACK);
+      ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, 0);
+      mprintf(5, 5, L"%S loadscreen data file not found...", filepath);
+    }
   }
 
   gubLastLoadingScreenID = ubLoadScreenID;

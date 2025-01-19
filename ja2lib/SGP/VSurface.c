@@ -18,10 +18,6 @@ struct VSurface *vsFB = NULL;
 struct VSurface *vsMouseBuffer = NULL;
 struct VSurface *vsMouseBufferOriginal = NULL;
 
-bool AddVSurfaceFromFile(const char *filepath, VSurfID *index) {
-  return AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile(filepath), index);
-}
-
 typedef struct VSURFACE_NODE {
   struct VSurface *hVSurface;
   uint32_t uiIndex;

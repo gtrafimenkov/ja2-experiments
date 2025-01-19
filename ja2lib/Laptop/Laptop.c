@@ -4349,7 +4349,7 @@ BOOLEAN LoadDesktopBackground(void) {
   // load desktop background
   SGPFILENAME ImageFile;
   GetMLGFilename(ImageFile, MLG_DESKTOP);
-  CHECKF(AddVSurfaceFromFile(ImageFile, &guiDESKTOP));
+  CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile(ImageFile), &guiDESKTOP));
 
   return (TRUE);
 }

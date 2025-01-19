@@ -149,8 +149,9 @@ BOOLEAN LoadTextMercPopupImages(uint8_t ubBackgroundIndex, uint8_t ubBorderIndex
   // this function will load the graphics associated with the background and border index values
 
   // the background
-  CHECKF(AddVSurfaceFromFile(zMercBackgroundPopupFilenames[ubBackgroundIndex],
-                             &gPopUpTextBox->uiMercTextPopUpBackground));
+  CHECKF(AddVSurfaceAndSetTransparency(
+      CreateVSurfaceFromFile(zMercBackgroundPopupFilenames[ubBackgroundIndex]),
+      &gPopUpTextBox->uiMercTextPopUpBackground));
 
   // border
   CHECKF(AddVObject(CreateVObjectFromFile(zMercBorderPopupFilenames[ubBorderIndex]),

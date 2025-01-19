@@ -7458,7 +7458,8 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
   if ((fShowAssignmentMenu == TRUE) && (fCreated == FALSE)) {
     CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\popup.sti"), &guiPOPUPBORDERS));
 
-    CHECKF(AddVSurfaceFromFile("INTERFACE\\popupbackground.pcx", &guiPOPUPTEX));
+    CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile("INTERFACE\\popupbackground.pcx"),
+                                         &guiPOPUPTEX));
 
     // these boxes are always created while in mapscreen...
     CreateEPCBox();
