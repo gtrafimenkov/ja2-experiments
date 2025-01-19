@@ -2284,7 +2284,7 @@ BOOLEAN InitVideoFace(uint8_t ubMercID) {
   // Create the facial index
   giMercFaceIndex = InitFace(ubMercID, NOBODY, 0);
 
-  SetAutoFaceActive(vsVideoFaceBackground, FACE_AUTO_RESTORE_BUFFER, giMercFaceIndex, 0, 0);
+  SetAutoFaceActive(vsVideoFaceBackground, NULL, giMercFaceIndex, 0, 0);
 
   RenderAutoFace(giMercFaceIndex);
 

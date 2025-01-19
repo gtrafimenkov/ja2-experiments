@@ -892,8 +892,7 @@ void InitMercVideoFace() {
   giVideoSpeckFaceIndex = InitFace(MERC_VIDEO_MERC_ID_FOR_SPECKS, NOBODY, 0);
 
   // Sets up the eyes blinking and the mouth moving
-  SetAutoFaceActive(vsMercVideoFaceBackground, FACE_AUTO_RESTORE_BUFFER, giVideoSpeckFaceIndex, 0,
-                    0);
+  SetAutoFaceActive(vsMercVideoFaceBackground, NULL, giVideoSpeckFaceIndex, 0, 0);
 
   // Renders the face to the background
   RenderAutoFace(giVideoSpeckFaceIndex);
