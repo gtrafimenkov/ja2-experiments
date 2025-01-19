@@ -3286,10 +3286,6 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
       SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
       break;
     }
-    if (VSurfaceDesc->fCreateFlags_ & VSURFACE_VIDEO_MEM_USAGE) {
-      SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-      break;
-    }
 
     if (VSurfaceDesc->fCreateFlags_ & VSURFACE_SYSTEM_MEM_USAGE) {
       SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
@@ -3331,23 +3327,6 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   //
 
   DDGetSurfaceDescription(lpDDS2, &SurfaceDescription);
-
-  //
-  // Fail if create tried for video but it's in system
-  //
-
-  if (VSurfaceDesc->fCreateFlags_ & VSURFACE_VIDEO_MEM_USAGE &&
-      SurfaceDescription.ddsCaps.dwCaps & DDSCAPS_SYSTEMMEMORY) {
-    //
-    // Return failure due to not in video
-    //
-
-    DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-               String("Failed to create Video Surface in video memory"));
-    DDReleaseSurface(&lpDDS, &lpDDS2);
-    MemFree(hVSurface);
-    return (NULL);
-  }
 
   //
   // Look for system memory
