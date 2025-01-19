@@ -510,7 +510,6 @@ void RenderTopmostTacticalInterface() {
           // Blit bogus target
           if (uiBogTarget == 0) {
             // Loadup cursor!
-            VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
             FilenameForBPP("CURSORS\\targblak.sti", VObjectDesc.ImageFile);
             AddVObject(CreateVideoObject(&VObjectDesc), &uiBogTarget);
           }

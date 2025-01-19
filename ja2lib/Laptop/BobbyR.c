@@ -214,32 +214,26 @@ BOOLEAN EnterBobbyR() {
   InitBobbyRWoodBackground();
 
   // load the Bobbyname graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_BOBBYNAME);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBobbyName));
 
   // load the plaque graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyPlaques.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPlaque));
 
   // load the TopHinge graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyTopHinge.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTopHinge));
 
   // load the BottomHinge graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyBottomHinge.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBottomHinge));
 
   // load the Store Plaque graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   GetMLGFilename(VObjectDesc.ImageFile, MLG_STOREPLAQUE);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiStorePlaque));
 
   // load the Handle graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyHandle.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiHandle));
 
@@ -248,7 +242,6 @@ BOOLEAN EnterBobbyR() {
 
   if (!LaptopSaveInfo.fBobbyRSiteCanBeAccessed) {
     // load the Handle graphic and add it
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\UnderConstruction.sti", VObjectDesc.ImageFile);
     CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiUnderConstructionImage));
 
@@ -386,7 +379,6 @@ BOOLEAN InitBobbyRWoodBackground() {
   VOBJECT_DESC VObjectDesc;
 
   // load the Wood bacground graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyWood.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiWoodBackground));
 

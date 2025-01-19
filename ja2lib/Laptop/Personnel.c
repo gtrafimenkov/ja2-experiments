@@ -594,16 +594,13 @@ BOOLEAN LoadPersonnelGraphics(void) {
   // load graphics
 
   // title bar
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\programtitlebar.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiTITLE));
 
   // the background grpahics
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\personnelwindow.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiSCREEN));
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\personnel_inventory.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPersonnelInventory));
 
@@ -791,7 +788,6 @@ BOOLEAN RenderPersonnelFace(int32_t iId, int32_t iSlot, BOOLEAN fDead, BOOLEAN f
     }
   }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP(sTemp, VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFACE));
 
@@ -1861,12 +1857,10 @@ BOOLEAN LoadPersonnelScreenBackgroundGraphics(void) {
   VOBJECT_DESC VObjectDesc;
 
   // departed bar
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\departed.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiDEPARTEDTEAM));
 
   // current bar
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\CurrentTeam.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiCURRENTTEAM));
 
@@ -2011,7 +2005,6 @@ BOOLEAN DisplayPicturesOfCurrentTeam(void) {
         }
       }
 
-      VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(sTemp, VObjectDesc.ImageFile);
       CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFACE));
 
@@ -4339,7 +4332,6 @@ BOOLEAN DisplayPortraitOfPastMerc(int32_t iId, int32_t iCounter, BOOLEAN fDead, 
     }
   }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP(sTemp, VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFACE));
 
@@ -4748,7 +4740,6 @@ BOOLEAN DisplayHighLightBox(void) {
   }
 
   // bounding
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\PicBorde.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiBox));
 
@@ -4922,7 +4913,6 @@ BOOLEAN RenderAtmPanel(void) {
 
   // render the ATM panel
   if (fShowAtmPanel) {
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\AtmButtons.sti", VObjectDesc.ImageFile);
     CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiBox));
 
@@ -4950,7 +4940,6 @@ BOOLEAN RenderAtmPanel(void) {
   } else {
     // just show basic panel
     // bounding
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("LAPTOP\\AtmButtons.sti", VObjectDesc.ImageFile);
     CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &uiBox));
 

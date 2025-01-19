@@ -105,7 +105,6 @@ BOOLEAN EnterBobbyRShipments() {
   InitBobbyRWoodBackground();
 
   // load the Order Grid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\BobbyRay_OnOrder.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBobbyRShipmentGrid));
 

@@ -266,12 +266,10 @@ BOOLEAN EnterBobbyRGuns() {
   gfBigImageMouseRegionCreated = FALSE;
 
   // load the background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\gunbackground.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGunBackground));
 
   // load the gunsgrid graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\gunsgrid.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiGunsGrid));
 
@@ -360,7 +358,6 @@ BOOLEAN InitBobbyBrTitle() {
   VOBJECT_DESC VObjectDesc;
 
   // load the br title graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\br.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiBrTitle));
 

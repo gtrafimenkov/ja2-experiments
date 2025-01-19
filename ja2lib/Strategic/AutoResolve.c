@@ -1622,7 +1622,6 @@ void CreateAutoResolveInterface() {
   gpAR->fExitAutoResolve = FALSE;
 
   // Load the general panel image pieces, to be combined to make the dynamically sized window.
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "Interface\\AutoResolve.sti");
   if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpAR->iPanelImages)) {
     AssertMsg(0, "Failed to load Interface\\AutoResolve.sti");
@@ -1673,7 +1672,6 @@ void CreateAutoResolveInterface() {
   for (i = 0; i < gpAR->ubMercs; i++) {
     VOBJECT_DESC VObjectDesc;
     // Load the face
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     sprintf(VObjectDesc.ImageFile, "Faces\\65Face\\%02d.sti",
             gMercProfiles[GetSolProfile(gpMercs[i].pSoldier)].ubFaceIndex);
     if (!AddVObject(CreateVideoObject(&VObjectDesc), &gpMercs[i].uiVObjectID)) {

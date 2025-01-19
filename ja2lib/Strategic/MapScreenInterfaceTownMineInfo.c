@@ -705,7 +705,6 @@ void AddInventoryButtonForMapPopUpBox(void) {
   struct VObject *hHandle;
 
   // load the button
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapinvbtns.sti", VObjectDesc.ImageFile);
   AddVObject(CreateVideoObject(&VObjectDesc), &uiObject);
 
@@ -815,7 +814,6 @@ void MinWidthOfTownMineInfoBox(void) {
   uint32_t uiObject;
   ETRLEObject *pTrav;
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapinvbtns.sti", VObjectDesc.ImageFile);
   AddVObject(CreateVideoObject(&VObjectDesc), &uiObject);
 

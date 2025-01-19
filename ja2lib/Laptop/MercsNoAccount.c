@@ -54,7 +54,6 @@ BOOLEAN EnterMercsNoAccount() {
   InitMercBackGround();
 
   // load the Account box graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\NoAccountBox.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiNoAccountImage));
 

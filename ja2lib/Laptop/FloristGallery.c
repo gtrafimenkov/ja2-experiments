@@ -270,7 +270,6 @@ BOOLEAN InitFlowerButtons() {
   for (i = 0; i < gubCurNumberOfFlowers; i++) {
     // load the handbullet graphic and add it
     sprintf(sTemp, "LAPTOP\\Flower_%d.sti", count);
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP(sTemp, VObjectDesc.ImageFile);
     CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiFlowerImages[i]));
     count++;

@@ -393,19 +393,14 @@ struct VObject *CreateVObjectFromHImage(HIMAGE hImage) {
 }
 
 struct VObject *CreateVideoObject(VOBJECT_DESC *VObjectDesc) {
-  if (VObjectDesc->fCreateFlags & VOBJECT_CREATE_FROMFILE) {
-    HIMAGE hImage = CreateImage(VObjectDesc->ImageFile, IMAGE_ALLIMAGEDATA);
-    if (hImage == NULL) {
-      DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid Image Filename given");
-      return NULL;
-    }
-    struct VObject *vo = CreateVObjectFromHImage(hImage);
-    DestroyImage(hImage);
-    return vo;
-  } else {
-    DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid VObject creation flags given.");
+  HIMAGE hImage = CreateImage(VObjectDesc->ImageFile, IMAGE_ALLIMAGEDATA);
+  if (hImage == NULL) {
+    DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_2, "Invalid Image Filename given");
     return NULL;
   }
+  struct VObject *vo = CreateVObjectFromHImage(hImage);
+  DestroyImage(hImage);
+  return vo;
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette

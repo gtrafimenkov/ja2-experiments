@@ -73,7 +73,6 @@ BOOLEAN EnterAimFacialIndex() {
   char sTemp[100];
 
   // load the Portait graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\MugShotBorder3.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMugShotBorder));
 
@@ -91,7 +90,6 @@ BOOLEAN EnterAimFacialIndex() {
       MSYS_SetRegionUserData(&gMercFaceMouseRegions[i], 0, i);
 
       sprintf(sTemp, "%s%02d.sti", sFaceLoc, AimMercArray[i]);
-      VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(sTemp, VObjectDesc.ImageFile);
       if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiAimFiFace[i])) return (FALSE);
 

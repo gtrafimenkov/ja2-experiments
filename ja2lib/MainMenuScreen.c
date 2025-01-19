@@ -241,12 +241,10 @@ BOOLEAN InitMainMenu() {
   CreateDestroyMainMenuButtons(TRUE);
 
   // load background graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LOADSCREENS\\MainMenuBackGround.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMainMenuBackGroundImage));
 
   // load ja2 logo graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   //	FilenameForBPP("INTERFACE\\Ja2_2.sti", VObjectDesc.ImageFile);
   FilenameForBPP("LOADSCREENS\\Ja2Logo.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiJa2LogoImage));

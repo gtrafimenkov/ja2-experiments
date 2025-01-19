@@ -300,7 +300,6 @@ int32_t LoadFontFile(char *filename) {
     return (-1);
   }
 
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   strcpy(vo_desc.ImageFile, filename);
 
   if ((FontObjs[LoadIndex] = CreateVideoObject(&vo_desc)) == NULL) {

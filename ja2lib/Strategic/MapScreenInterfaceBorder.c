@@ -117,18 +117,8 @@ BOOLEAN LoadMapBorderGraphics(void) {
   VOBJECT_DESC VObjectDesc;
 
   // will load map border
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\MBS.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiMapBorder));
-
-  /* corner was removed along with the Zoom feature
-          // will load map border corner
-          VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
-          FilenameForBPP( "INTERFACE\\map_screen_cutout.sti", VObjectDesc.ImageFile );
-          CHECKF( AddVObject(CreateVideoObject( &VObjectDesc), &guiMapBorderCorner ) );
-
-          fCursorIsOnMapScrollButtons = FALSE;
-  */
 
   return (TRUE);
 }

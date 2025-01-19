@@ -7527,7 +7527,6 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
   VOBJECT_DESC VObjectDesc;
 
   if ((fShowAssignmentMenu == TRUE) && (fCreated == FALSE)) {
-    VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
     CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiPOPUPBORDERS));
 

@@ -53,7 +53,6 @@ BOOLEAN EnterInsuranceComments() {
   InitInsuranceDefaults();
 
   // load the Insurance bullet graphic and add it
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\bullet.sti", VObjectDesc.ImageFile);
   CHECKF(AddVObject(CreateVideoObject(&VObjectDesc), &guiInsCmntBulletImage));
 

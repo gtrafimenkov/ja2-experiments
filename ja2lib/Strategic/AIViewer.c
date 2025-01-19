@@ -241,7 +241,6 @@ BOOLEAN CreateAIViewer() {
   DisableScrollMessages();
   giSaveTCMode = giTimeCompressMode;
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "DevTools\\arulco.sti");
   if (!AddVObject(CreateVideoObject(&VObjectDesc), &guiMapGraphicID))
     AssertMsg(0, "Failed to load data\\DevTools\\arulco.sti");
