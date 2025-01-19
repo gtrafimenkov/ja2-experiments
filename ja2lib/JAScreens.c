@@ -713,15 +713,13 @@ extern int8_t gbFadeSpeed;
 
 #ifdef GERMAN
 void DisplayTopwareGermanyAddress() {
-  VOBJECT_DESC vo_desc;
   uint32_t uiTempID;
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
   SGPRect ClipRect;
 
   // bring up the Topware address screen
-  sprintf(vo_desc.ImageFile, "German\\topware_germany.sti");
-  if (!AddVObject(CreateVideoObject(&vo_desc), &uiTempID)) {
+  if (!AddVObject(CreateVObjectFromFile("German\\topware_germany.sti"), &uiTempID)) {
     AssertMsg(0, "Failed to load German\\topware_germany.sti");
     return;
   }
