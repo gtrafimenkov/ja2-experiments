@@ -32,7 +32,6 @@ uint8_t gbSameAsDefaultSurfaceUsed[NUMBEROFTILETYPES];
 struct TILE_IMAGERY *LoadTileSurface(char *cFilename) {
   // Add tile surface
   struct TILE_IMAGERY *pTileSurf = NULL;
-  VOBJECT_DESC VObjectDesc;
   struct VObject *hVObject;
   HIMAGE hImage;
   SGPFILENAME cStructureFilename;
@@ -47,10 +46,7 @@ struct TILE_IMAGERY *LoadTileSurface(char *cFilename) {
     return (NULL);
   }
 
-  VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMHIMAGE;
-  VObjectDesc.hImage = hImage;
-
-  hVObject = CreateVideoObject(&VObjectDesc);
+  hVObject = CreateVObjectFromHImage(hImage);
 
   if (hVObject == NULL) {
     // Report error
