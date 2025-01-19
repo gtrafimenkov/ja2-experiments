@@ -55,9 +55,6 @@ typedef struct {
 #define FROMRGB(r, g, b) \
   ((uint32_t)(((uint8_t)(r) | ((uint16_t)(g) << 8)) | (((uint32_t)(uint8_t)(b)) << 16)))
 
-// Video object creation flags
-// Used in the VOBJECT_DESC structure to describe creation flags
-
 // VOBJECT FLAGS
 #define VOBJECT_FLAG_SHADETABLE_SHARED 0x00000100
 
@@ -86,11 +83,6 @@ struct VObject {
   // Reserved for added room and 32-byte boundaries
   uint8_t bReserved[1];
 };
-
-// This structure describes the creation parameters for a Video Object
-typedef struct {
-  SGPFILENAME ImageFile;  // Filename of image data to use
-} VOBJECT_DESC;
 
 // **********************************************************************************
 //

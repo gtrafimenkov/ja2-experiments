@@ -226,7 +226,6 @@ void StringFromValue(wchar_t *str, int32_t iValue, uint32_t uiMax) {
 }
 
 BOOLEAN CreateAIViewer() {
-  VOBJECT_DESC VObjectDesc;
   wchar_t str[6];
 
   // Check to see if data exists.
