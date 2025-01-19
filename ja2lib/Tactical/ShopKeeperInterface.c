@@ -780,7 +780,7 @@ BOOLEAN EnterShopKeeperInterface() {
   vs_desc.usWidth = SKI_TACTICAL_BACKGROUND_START_WIDTH;
   vs_desc.usHeight = SKI_TACTICAL_BACKGROUND_START_HEIGHT;
   vs_desc.ubBitDepth = 16;
-  if (!AddVideoSurface(&vs_desc, &guiCornerWhereTacticalIsStillSeenImage)) {
+  if (!AddStandardVideoSurface(&vs_desc, &guiCornerWhereTacticalIsStillSeenImage)) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION,
               L"Failed to create Surface where tactical map shows through");

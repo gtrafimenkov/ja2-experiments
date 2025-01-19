@@ -7534,7 +7534,7 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
 
     vs_desc.fCreateFlags_ = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
     strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
-    CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
+    CHECKF(AddStandardVideoSurface(&vs_desc, &guiPOPUPTEX));
 
     // these boxes are always created while in mapscreen...
     CreateEPCBox();

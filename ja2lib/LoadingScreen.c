@@ -326,7 +326,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     ColorFillVideoSurfaceArea(FRAME_BUFFER, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...",
             vs_desc.ImageFile);
-  } else if (AddVideoSurface(&vs_desc, &uiLoadScreen)) {  // Blit the background image
+  } else if (AddStandardVideoSurface(&vs_desc, &uiLoadScreen)) {  // Blit the background image
     GetVideoSurface(&hVSurface, uiLoadScreen);
     BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVideoSurfaceFromIndex(uiLoadScreen);

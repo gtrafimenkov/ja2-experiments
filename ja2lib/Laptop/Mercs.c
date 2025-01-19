@@ -398,7 +398,7 @@ BOOLEAN EnterMercs() {
   vs_desc.usWidth = MERC_VIDEO_FACE_WIDTH;
   vs_desc.usHeight = MERC_VIDEO_FACE_HEIGHT;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(&vs_desc, &guiMercVideoFaceBackground));
+  CHECKF(AddStandardVideoSurface(&vs_desc, &guiMercVideoFaceBackground));
 
   RenderMercs();
 

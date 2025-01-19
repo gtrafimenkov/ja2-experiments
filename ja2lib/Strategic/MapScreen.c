@@ -2738,10 +2738,10 @@ uint32_t MapScreenHandle(void) {
       // Grab the Map image
 
       strcpy(vs_desc.ImageFile, "INTERFACE\\b_map.pcx");
-      CHECKF(AddVideoSurface(&vs_desc, &guiBIGMAP));
+      CHECKF(AddStandardVideoSurface(&vs_desc, &guiBIGMAP));
 
       strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
-      CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
+      CHECKF(AddStandardVideoSurface(&vs_desc, &guiPOPUPTEX));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
@@ -8474,9 +8474,9 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
 
   vs_desc.fCreateFlags_ = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
   strcpy(vs_desc.ImageFile, "INTERFACE\\b_map.pcx");
-  CHECKF(AddVideoSurface(&vs_desc, &guiBIGMAP));
+  CHECKF(AddStandardVideoSurface(&vs_desc, &guiBIGMAP));
   // strcpy(vs_desc.ImageFile, "INTERFACE\\popupbackground.pcx");
-  // CHECKF(AddVideoSurface(&vs_desc, &guiPOPUPTEX));
+  // CHECKF(AddStandardVideoSurface(&vs_desc, &guiPOPUPTEX));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
@@ -8509,7 +8509,7 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
   FilenameForBPP("INTERFACE\\charinfo.sti", VObjectDesc.ImageFile);
   CHECKF(AddVideoObject(&VObjectDesc, &guiCHARINFO));
   /*strcpy(vs_desc.ImageFile, "INTERFACE\\playlist3.pcx");
-  CHECKF(AddVideoSurface( &vs_desc, &guiCHARLIST ));*/
+  CHECKF(AddStandardVideoSurface( &vs_desc, &guiCHARLIST ));*/
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\newgoldpiece3.sti", VObjectDesc.ImageFile);

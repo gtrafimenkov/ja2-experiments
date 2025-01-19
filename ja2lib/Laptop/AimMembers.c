@@ -598,7 +598,7 @@ BOOLEAN EnterAIMMembers() {
   vs_desc.usWidth = AIM_MEMBER_VIDEO_FACE_WIDTH;
   vs_desc.usHeight = AIM_MEMBER_VIDEO_FACE_HEIGHT;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(&vs_desc, &guiVideoFaceBackground));
+  CHECKF(AddStandardVideoSurface(&vs_desc, &guiVideoFaceBackground));
 
   // load the stats graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
@@ -3054,7 +3054,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
       vs_desc.usWidth = AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH;
       vs_desc.usHeight = AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT;
       vs_desc.ubBitDepth = 16;
-      CHECKF(AddVideoSurface(&vs_desc, &guiVideoTitleBar));
+      CHECKF(AddStandardVideoSurface(&vs_desc, &guiVideoTitleBar));
 
       gfAimMemberCanMercSayOpeningQuote = TRUE;
 
@@ -3281,7 +3281,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
     vs_desc.usWidth = AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH;
     vs_desc.usHeight = AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT;
     vs_desc.ubBitDepth = 16;
-    CHECKF(AddVideoSurface(&vs_desc, &guiVideoTitleBar));
+    CHECKF(AddStandardVideoSurface(&vs_desc, &guiVideoTitleBar));
 
     GetVideoObject(&hImageHandle, uiVideoBackgroundGraphic);
     BltVideoObject(guiVideoTitleBar, hImageHandle, 0, 0, 0, VO_BLT_SRCTRANSPARENCY, NULL);

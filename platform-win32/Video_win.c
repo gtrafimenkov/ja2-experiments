@@ -4587,7 +4587,7 @@ BOOLEAN MakeVSurfaceFromVObject(uint32_t uiVObject, uint16_t usSubIndex, uint32_
     hDesc.usHeight = hSrcVObject->pETRLEObject[usSubIndex].usHeight;
     hDesc.ubBitDepth = PIXEL_DEPTH;
 
-    if (AddVideoSurface(&hDesc, &uiVSurface)) {
+    if (AddStandardVideoSurface(&hDesc, &uiVSurface)) {
       if (BltVideoObjectFromIndex(uiVSurface, uiVObject, usSubIndex, 0, 0, VO_BLT_SRCTRANSPARENCY,
                                   NULL)) {
         *puiVSurface = uiVSurface;
@@ -4727,31 +4727,6 @@ void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {
   MemFree(pCode);
   MemFree(puiCounter);
   fclose(fp);
-}
-
-// Debug wrapper for adding vsurfaces
-BOOLEAN _AddAndRecordVSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex, uint32_t uiLineNum,
-                              char *pSourceFile) {
-  uint16_t usLength;
-  char str[256];
-  if (!AddStandardVideoSurface(VSurfaceDesc, uiIndex)) {
-    return FALSE;
-  }
-
-  // record the filename of the vsurface (some are created via memory though)
-  usLength = strlen(VSurfaceDesc->ImageFile) + 1;
-  gpVSurfaceTail->pName = (char *)MemAlloc(usLength);
-  memset(gpVSurfaceTail->pName, 0, usLength);
-  strcpy(gpVSurfaceTail->pName, VSurfaceDesc->ImageFile);
-
-  // record the code location of the calling creating function.
-  sprintf(str, "%s -- line(%d)", pSourceFile, uiLineNum);
-  usLength = strlen(str) + 1;
-  gpVSurfaceTail->pCode = (char *)MemAlloc(usLength);
-  memset(gpVSurfaceTail->pCode, 0, usLength);
-  strcpy(gpVSurfaceTail->pCode, str);
-
-  return TRUE;
 }
 
 #endif

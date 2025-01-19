@@ -205,14 +205,14 @@ void CreateEditorBuffers() {
   vs_desc.usWidth = 60;
   vs_desc.usHeight = 25;
   vs_desc.ubBitDepth = ubBitDepth;
-  if (!AddVideoSurface(&vs_desc, &guiMercTempBuffer))
+  if (!AddStandardVideoSurface(&vs_desc, &guiMercTempBuffer))
     AssertMsg(0, "Failed to allocate memory for merc tempitem buffer.");
 
   // create the nine buffers for the merc's inventory slots.
   vs_desc.usHeight = MERCINV_SLOT_HEIGHT;
   for (i = 0; i < 9; i++) {
     vs_desc.usWidth = i < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH;
-    if (!AddVideoSurface(&vs_desc, &guiMercInvPanelBuffers[i]))
+    if (!AddStandardVideoSurface(&vs_desc, &guiMercInvPanelBuffers[i]))
       AssertMsg(0, "Failed to allocate memory for merc item[] buffers.");
   }
 }

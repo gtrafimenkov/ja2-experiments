@@ -296,7 +296,8 @@ BOOLEAN InitializeTacticalInterface() {
 
   strcpy(vs_desc.ImageFile, "INTERFACE\\IN_TEXT.STI");
 
-  if (!AddVideoSurface(&vs_desc, &guiINTEXT)) AssertMsg(0, "Missing INTERFACE\\In_text.sti");
+  if (!AddStandardVideoSurface(&vs_desc, &guiINTEXT))
+    AssertMsg(0, "Missing INTERFACE\\In_text.sti");
   SetVideoSurfaceTransparency(guiINTEXT, FROMRGB(255, 0, 0));
 
   // LOAD CLOSE ANIM
@@ -398,7 +399,7 @@ BOOLEAN InitializeTacticalInterface() {
   vs_desc.usWidth = 640;
   vs_desc.usHeight = 20;
   vs_desc.ubBitDepth = 16;
-  CHECKF(AddVideoSurface(&vs_desc, &(gTopMessage.uiSurface)));
+  CHECKF(AddStandardVideoSurface(&vs_desc, &(gTopMessage.uiSurface)));
 
   InitItemInterface();
 
