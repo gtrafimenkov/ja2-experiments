@@ -4916,12 +4916,6 @@ void GetMapKeyboardInput(uint32_t *puiNewEvent) {
         break;
         case 'v':
           if (fCtrl) {
-#ifdef SGP_VIDEO_DEBUGGING
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"VObjects:  %d", guiVObjectSize);
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"VSurfaces:  %d", guiVSurfaceSize);
-            ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"SGPVideoDump.txt updated...");
-            PerformVideoInfoDumpIntoFile("SGPVideoDump.txt", TRUE);
-#endif
           } else {
             DisplayGameSettings();
           }

@@ -144,11 +144,6 @@ BOOLEAN ShutdownVideoSurfaceManager();
 BOOLEAN RestoreVideoSurfaces();
 
 // Creates and adds a video Surface to list
-#ifdef SGP_VIDEO_DEBUGGING
-void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend);
-#endif
-#define AddStandardVideoSurface(a, b) AddStandardVideoSurface(a, b)
-
 BOOLEAN AddStandardVideoSurface(VSURFACE_DESC *VSurfaceDesc, uint32_t *uiIndex);
 
 // Returns a HVSurface for the specified index
