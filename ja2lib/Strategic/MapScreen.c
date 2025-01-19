@@ -675,7 +675,6 @@ void SetHourAlternate(wchar_t *pStringA, ...);
 void SetDayAlternate(wchar_t *pStringA, ...);
 
 void RenderIconsForUpperLeftCornerPiece(int8_t bCharNumber);
-void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo);
 
 void DisplayThePotentialPathForCurrentDestinationCharacterForMapScreenInterface(int16_t sMapX,
                                                                                 int16_t sMapY);
@@ -5862,7 +5861,7 @@ void HandleMapInventoryCursor() {
 }
 
 // will place down the upper left hand corner attribute strings
-void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo) {
+static void RenderAttributeStringsForUpperLeftHandCorner(struct VSurface *vsBufferToRenderTo) {
   int32_t iCounter = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
 
@@ -5873,7 +5872,7 @@ void RenderAttributeStringsForUpperLeftHandCorner(uint32_t uiBufferToRenderTo) {
   SetFont(CHAR_FONT);
   SetFontForeground(CHAR_TITLE_FONT_COLOR);
   SetFontBackground(FONT_BLACK);
-  SetFontDestBuffer(FindVSurface(uiBufferToRenderTo), 0, 0, 640, 480, FALSE);
+  SetFontDestBuffer(vsBufferToRenderTo, 0, 0, 640, 480, FALSE);
 
   // assignment strings
   DrawString(pUpperLeftMapScreenStrings[0],
@@ -7049,7 +7048,7 @@ void RenderCharacterInfoBackground(void) {
 
   if ((fDisableDueToBattleRoster == FALSE)) {
     // draw attributes
-    RenderAttributeStringsForUpperLeftHandCorner(vsSaveBufferID);
+    RenderAttributeStringsForUpperLeftHandCorner(vsSaveBuffer);
   }
 
   // reset dirty flag
