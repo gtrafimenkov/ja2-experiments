@@ -51,13 +51,12 @@ extern uint32_t guiMouseBufferState;  // BUFFER_READY, BUFFER_DIRTY, BUFFER_DISA
 
 struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface);
 
-extern LPDIRECTDRAW2 GetDirectDraw2Object(void);
 extern BOOLEAN GetRGBDistribution(void);
 
 // Surface Functions
 
-void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
-                     LPDIRECTDRAWSURFACE *ppNewSurface1, LPDIRECTDRAWSURFACE2 *ppNewSurface2);
+static void DDCreateSurface(DDSURFACEDESC *pNewSurfaceDesc, LPDIRECTDRAWSURFACE *ppNewSurface1,
+                            LPDIRECTDRAWSURFACE2 *ppNewSurface2);
 void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc);
 void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1, LPDIRECTDRAWSURFACE2 *ppOldSurface2);
 void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect, LPDDSURFACEDESC pSurfaceDesc,
@@ -1956,12 +1955,6 @@ ENDOFLOOP:
   fFirstTime = FALSE;
 }
 
-LPDIRECTDRAW2 GetDirectDraw2Object(void) {
-  Assert(gpDirectDrawObject != NULL);
-
-  return gpDirectDrawObject;
-}
-
 LPDIRECTDRAWSURFACE2 GetPrimarySurfaceObject(void) {
   Assert(gpPrimarySurface != NULL);
 
@@ -2618,7 +2611,6 @@ void DeletePrimaryVideoSurfaces() {
 extern void SetClippingRect(SGPRect *clip);
 extern void GetClippingRect(SGPRect *clip);
 
-LPDIRECTDRAW2 GetDirectDraw2Object();
 LPDIRECTDRAWSURFACE2 GetPrimarySurfaceInterface();
 LPDIRECTDRAWSURFACE2 GetBackbufferInterface();
 
@@ -3175,7 +3167,6 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
-  LPDIRECTDRAW2 lpDD2Object;
   DDSURFACEDESC SurfaceDescription;
   DDPIXELFORMAT PixelFormat;
   LPDIRECTDRAWSURFACE lpDDS;
@@ -3194,12 +3185,6 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
 
   // Clear the memory
   memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
-
-  //
-  // Get Direct Draw Object
-  //
-
-  lpDD2Object = GetDirectDraw2Object();
 
   //
   // The description structure contains memory usage flag
@@ -3334,33 +3319,18 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
   SurfaceDescription.dwHeight = usHeight;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-  //
-  // Create Surface
-  //
-
-  DDCreateSurface(lpDD2Object, &SurfaceDescription, &lpDDS, &lpDDS2);
-
-  //
-  // Allocate memory for Video Surface data and initialize
-  //
-
   hVSurface = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
-  memset(hVSurface, 0, sizeof(struct VSurface));
   CHECKF(hVSurface != NULL);
+  memset(hVSurface, 0, sizeof(struct VSurface));
+
+  DDCreateSurface(&SurfaceDescription, &lpDDS, &lpDDS2);
+  hVSurface->pSurfaceData1 = (void *)lpDDS;
+  hVSurface->pSurfaceData = (void *)lpDDS2;
 
   hVSurface->usHeight = usHeight;
   hVSurface->usWidth = usWidth;
   hVSurface->ubBitDepth = ubBitDepth;
-  hVSurface->pSurfaceData1 = (void *)lpDDS;
-  hVSurface->pSurfaceData = (void *)lpDDS2;
-  hVSurface->pSavedSurfaceData1 = NULL;
-  hVSurface->pSavedSurfaceData = NULL;
-  hVSurface->pPalette = NULL;
-  hVSurface->p16BPPPalette = NULL;
-  hVSurface->TransparentColor = FROMRGB(0, 0, 0);
   hVSurface->RegionList = CreateList(DEFAULT_NUM_REGIONS, sizeof(VSURFACE_REGION));
-  hVSurface->fFlags = 0;
-  hVSurface->pClipper = NULL;
 
   //
   // Determine memory and other attributes of newly created surface
@@ -3413,16 +3383,7 @@ struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
     SurfaceDescription.dwHeight = usHeight;
     SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-    //
-    // Create Surface
-    //
-
-    DDCreateSurface(lpDD2Object, &SurfaceDescription, &lpDDS, &lpDDS2);
-
-    //
-    // Save surface to backup
-    //
-
+    DDCreateSurface(&SurfaceDescription, &lpDDS, &lpDDS2);
     hVSurface->pSavedSurfaceData1 = lpDDS;
     hVSurface->pSavedSurfaceData = lpDDS2;
   }
@@ -3642,7 +3603,7 @@ BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntr
 
   // Create palette object if not already done so
   if (hVSurface->pPalette == NULL) {
-    DDCreatePalette(GetDirectDraw2Object(), (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
+    DDCreatePalette(gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
                     (LPPALETTEENTRY)(&pSrcPalette[0]), (LPDIRECTDRAWPALETTE *)&hVSurface->pPalette,
                     NULL);
   } else {
@@ -3825,10 +3786,6 @@ BOOLEAN SetClipList(struct VSurface *hVSurface, SGPRect *RegionData, uint16_t us
   RGNDATA *pRgnData;
   uint16_t cnt;
   RECT aRect;
-  LPDIRECTDRAW2 lpDD2Object;
-
-  // Get Direct Draw Object
-  lpDD2Object = GetDirectDraw2Object();
 
   // Assertions
   Assert(hVSurface != NULL);
@@ -3844,7 +3801,7 @@ BOOLEAN SetClipList(struct VSurface *hVSurface, SGPRect *RegionData, uint16_t us
   }
 
   // Create Clipper Object
-  DDCreateClipper(lpDD2Object, 0, (LPDIRECTDRAWCLIPPER *)&hVSurface->pClipper);
+  DDCreateClipper(gpDirectDrawObject, 0, (LPDIRECTDRAWCLIPPER *)&hVSurface->pClipper);
 
   // Allocate region data
   pRgnData = (LPRGNDATA)MemAlloc(sizeof(RGNDATAHEADER) + (usNumRegions * sizeof(RECT)));
@@ -5313,8 +5270,10 @@ void PrintWinFont(uint32_t uiDestBuf, int32_t iFont, int32_t x, int32_t y, wchar
 //////////////////////////////////////////////////////////////////
 
 // DirectDrawSurface2 Calls
-void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
-                     LPDIRECTDRAWSURFACE *ppNewSurface1, LPDIRECTDRAWSURFACE2 *ppNewSurface2) {
+void DDCreateSurface(DDSURFACEDESC *pNewSurfaceDesc, LPDIRECTDRAWSURFACE *ppNewSurface1,
+                     LPDIRECTDRAWSURFACE2 *ppNewSurface2) {
+  LPDIRECTDRAW2 pExistingDirectDraw = gpDirectDrawObject;
+
   Assert(pExistingDirectDraw != NULL);
   Assert(pNewSurfaceDesc != NULL);
   Assert(ppNewSurface1 != NULL);
