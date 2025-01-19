@@ -28,12 +28,12 @@ BOOLEAN EnterBobbyRMisc() {
   // load the background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\miscbackground.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMiscBackground));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMiscBackground));
 
   // load the gunsgrid graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\miscgrid.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMiscGrid));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMiscGrid));
 
   InitBobbyBrTitle();
   // Draw menu bar

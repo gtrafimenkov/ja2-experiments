@@ -272,7 +272,7 @@ BOOLEAN InitFlowerButtons() {
     sprintf(sTemp, "LAPTOP\\Flower_%d.sti", count);
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP(sTemp, VObjectDesc.ImageFile);
-    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFlowerImages[i]));
+    CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiFlowerImages[i]));
     count++;
   }
 

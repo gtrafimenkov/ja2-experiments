@@ -131,7 +131,8 @@ BOOLEAN LoadCursorData(uint32_t uiCursorIndex) {
         VideoObjectDescription.hImage = hImage;
 
         if (!AddVObjectAndSetTransparency(
-                &VideoObjectDescription, &(gpCursorFileDatabase[pCurImage->uiFileIndex].uiIndex))) {
+                CreateVideoObject(&VideoObjectDescription),
+                &(gpCursorFileDatabase[pCurImage->uiFileIndex].uiIndex))) {
           return (FALSE);
         }
 

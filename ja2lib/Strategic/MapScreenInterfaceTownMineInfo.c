@@ -707,7 +707,7 @@ void AddInventoryButtonForMapPopUpBox(void) {
   // load the button
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapinvbtns.sti", VObjectDesc.ImageFile);
-  AddVObjectAndSetTransparency(&VObjectDesc, &uiObject);
+  AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &uiObject);
 
   // Calculate smily face positions...
   GetVideoObject(&hHandle, uiObject);
@@ -817,7 +817,7 @@ void MinWidthOfTownMineInfoBox(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapinvbtns.sti", VObjectDesc.ImageFile);
-  AddVObjectAndSetTransparency(&VObjectDesc, &uiObject);
+  AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &uiObject);
 
   // Calculate smily face positions...
   GetVideoObject(&hHandle, uiObject);

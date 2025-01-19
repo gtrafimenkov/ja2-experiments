@@ -126,8 +126,8 @@ BOOLEAN InitializeVideoObjectManager();
 // Deletes any video object placed into list
 BOOLEAN ShutdownVideoObjectManager();
 
-// Creates and adds a video object to list
-BOOLEAN AddVObjectAndSetTransparency(VOBJECT_DESC *VObjectDesc, uint32_t *uiIndex);
+// Adds a video object to list
+BOOLEAN AddVObjectAndSetTransparency(struct VObject *vo, uint32_t *uiIndex);
 
 // Removes a video object
 BOOLEAN DeleteVideoObjectFromIndex(uint32_t uiVObject);

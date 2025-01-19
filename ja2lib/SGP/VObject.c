@@ -137,23 +137,15 @@ uint32_t CountVideoObjectNodes() {
   return i;
 }
 
-BOOLEAN AddVObjectAndSetTransparency(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIndex) {
-  struct VObject *hVObject;
-
-  // Assertions
+BOOLEAN AddVObjectAndSetTransparency(struct VObject *vo, uint32_t *puiIndex) {
   Assert(puiIndex);
-  Assert(pVObjectDesc);
 
-  // Create video object
-  hVObject = CreateVideoObject(pVObjectDesc);
-
-  if (!hVObject) {
-    // Video Object will set error condition.
+  if (!vo) {
     return FALSE;
   }
 
   // Set transparency to default
-  SetVideoObjectTransparencyColor(hVObject, FROMRGB(0, 0, 0));
+  SetVideoObjectTransparencyColor(vo, FROMRGB(0, 0, 0));
 
   // Set into video object list
   if (gpVObjectHead) {  // Add node after tail
@@ -169,7 +161,7 @@ BOOLEAN AddVObjectAndSetTransparency(VOBJECT_DESC *pVObjectDesc, uint32_t *puiIn
     gpVObjectTail = gpVObjectHead;
   }
   // Set the hVObject into the node.
-  gpVObjectTail->hVObject = hVObject;
+  gpVObjectTail->hVObject = vo;
   gpVObjectTail->uiIndex = guiVObjectIndex += 2;
   *puiIndex = gpVObjectTail->uiIndex;
   Assert(guiVObjectIndex < 0xfffffff0);  // unlikely that we will ever use 2 billion vobjects!

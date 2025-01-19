@@ -91,7 +91,7 @@ BOOLEAN EnterFlorist() {
   // load the handbullet graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\HandBullet.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiHandBullet));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiHandBullet));
 
   guiGalleryButtonImage = LoadButtonImage("LAPTOP\\FloristButtons.sti", -1, 0, -1, 1, -1);
 
@@ -193,19 +193,19 @@ BOOLEAN InitFloristDefaults() {
   // load the Florist background graphic and add it
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("LAPTOP\\leafback.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiFloristBackground));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiFloristBackground));
 
   // if its the first page
   if (guiCurrentLaptopMode == LAPTOP_MODE_FLORIST) {
     // load the small title graphic and add it
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     GetMLGFilename(VObjectDesc.ImageFile, MLG_LARGEFLORISTSYMBOL);
-    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLargeTitleSymbol));
+    CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiLargeTitleSymbol));
   } else {
     // load the leaf back graphic and add it
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     GetMLGFilename(VObjectDesc.ImageFile, MLG_SMALLFLORISTSYMBOL);
-    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSmallTitleSymbol));
+    CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSmallTitleSymbol));
 
     // flower title homepage link
     MSYS_DefineRegion(

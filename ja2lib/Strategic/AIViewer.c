@@ -243,10 +243,10 @@ BOOLEAN CreateAIViewer() {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "DevTools\\arulco.sti");
-  if (!AddVObjectAndSetTransparency(&VObjectDesc, &guiMapGraphicID))
+  if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapGraphicID))
     AssertMsg(0, "Failed to load data\\DevTools\\arulco.sti");
   sprintf(VObjectDesc.ImageFile, "DevTools\\icons.sti");
-  if (!AddVObjectAndSetTransparency(&VObjectDesc, &guiMapIconsID))
+  if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapIconsID))
     AssertMsg(0, "Failed to load data\\DevTools\\icons.sti");
 
   gfRenderViewer = TRUE;

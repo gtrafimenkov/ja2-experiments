@@ -2617,11 +2617,11 @@ uint32_t MapScreenInit(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\group_confirm.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiUpdatePanel));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiUpdatePanel));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\group_confirm_tactical.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiUpdatePanelTactical));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiUpdatePanelTactical));
 
   return TRUE;
 }
@@ -2745,108 +2745,112 @@ uint32_t MapScreenHandle(void) {
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSAMICON));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSAMICON));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPCURSORS));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\Mine_1.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSubLevel1));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSubLevel1));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\Mine_2.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSubLevel2));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSubLevel2));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\Mine_3.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSubLevel3));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSubLevel3));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\sleepicon.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSleepIcon));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSleepIcon));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\charinfo.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARINFO));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCHARINFO));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\newgoldpiece3.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARLIST));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCHARLIST));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\boxes.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARICONS));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCHARICONS));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\incross.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCROSS));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCROSS));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\mapinv.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPINV));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPINV));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\map_inv_2nd_gun_cover.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMapInvSecondHandBlockout));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc),
+                                          &guiMapInvSecondHandBlockout));
 
       // the upper left corner piece icons
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\top_left_corner_icons.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiULICONS));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiULICONS));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\map_item.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiORTAICON));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiORTAICON));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\prison.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiTIXAICON));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiTIXAICON));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\merc_between_sector_icons.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARBETWEENSECTORICONS));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc),
+                                          &guiCHARBETWEENSECTORICONS));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\merc_mvt_green_arrows.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARBETWEENSECTORICONSCLOSE));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc),
+                                          &guiCHARBETWEENSECTORICONSCLOSE));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\GreenArr.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLEVELMARKER));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiLEVELMARKER));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\Helicop.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiHelicopterIcon));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiHelicopterIcon));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\eta_pop_up.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMapBorderEtaPopUp));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapBorderEtaPopUp));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\pos2.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMapBorderHeliSectors));
+      CHECKF(
+          AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapBorderHeliSectors));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\secondary_gun_hidden.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSecItemHiddenVO));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSecItemHiddenVO));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\selectedchararrow.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSelectedCharArrow));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSelectedCharArrow));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\mine.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMINEICON));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMINEICON));
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       sprintf(VObjectDesc.ImageFile, "INTERFACE\\hilite.sti");
-      AddVObjectAndSetTransparency(&VObjectDesc, &guiSectorLocatorGraphicID);
+      AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSectorLocatorGraphicID);
 
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP("INTERFACE\\BullsEye.sti", VObjectDesc.ImageFile);
-      CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBULLSEYE));
+      CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBULLSEYE));
 
       HandleLoadOfMapBottomGraphics();
 
@@ -2859,7 +2863,7 @@ uint32_t MapScreenHandle(void) {
       // Kris:  Added this because I need to blink the icons button.
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       sprintf(VObjectDesc.ImageFile, "INTERFACE\\newemail.sti");
-      AddVObjectAndSetTransparency(&VObjectDesc, &guiNewMailIcons);
+      AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiNewMailIcons);
     }
 
     // create buttons
@@ -2886,7 +2890,8 @@ uint32_t MapScreenHandle(void) {
 
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("INTERFACE\\Bars.sti", VObjectDesc.ImageFile);
-    CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBrownBackgroundForTeamPanel));
+    CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc),
+                                        &guiBrownBackgroundForTeamPanel));
 
     // we are in fact in the map, do not repeat this sequence
     fInMapMode = TRUE;
@@ -5218,7 +5223,7 @@ void EndMapScreen(BOOLEAN fDuringFade) {
                           MIDDLEPAN);
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     sprintf(VObjectDesc.ImageFile, "INTERFACE\\LaptopOn.sti");
-    if (!AddVObjectAndSetTransparency(&VObjectDesc, &uiLaptopOn))
+    if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &uiLaptopOn))
       AssertMsg(0, "Failed to load data\\Interface\\LaptopOn.sti");
     BltVideoObjectFromIndex(FRAME_BUFFER, uiLaptopOn, 0, 465, 417, VO_BLT_SRCTRANSPARENCY, NULL);
     InvalidateRegion(465, 417, 480, 427);
@@ -8474,145 +8479,147 @@ BOOLEAN HandlePreloadOfMapGraphics(void) {
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPCURSORS));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\SAM.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSAMICON));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSAMICON));
 
   // VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   // FilenameForBPP("INTERFACE\\s_map.sti", VObjectDesc.ImageFile);
-  // CHECKF( AddVObjectAndSetTransparency( &VObjectDesc, &guiMAP ) );
+  // CHECKF( AddVObjectAndSetTransparency(CreateVideoObject( &VObjectDesc), &guiMAP ) );
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPCURSORS));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\sleepicon.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSleepIcon));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSleepIcon));
 
   // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
   // FilenameForBPP("INTERFACE\\addonslcp.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCORNERADDONS));
+  // CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCORNERADDONS));
 
   // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
   // FilenameForBPP("INTERFACE\\mapborder.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPBORDER));
+  // CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPBORDER));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\charinfo.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARINFO));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCHARINFO));
   /*strcpy(vs_desc.ImageFile, "INTERFACE\\playlist3.pcx");
   CHECKF(AddStandardVideoSurface( &vs_desc, &guiCHARLIST ));*/
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\newgoldpiece3.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARLIST));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCHARLIST));
 
   // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
   // FilenameForBPP("INTERFACE\\mapbordercorner.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPCORNER));
+  // CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPCORNER));
 
   // VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
   // FilenameForBPP("INTERFACE\\popup.sti", VObjectDesc.ImageFile);
-  // CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiPOPUPBORDERS));
+  // CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiPOPUPBORDERS));
 
   // the sublevels
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Mine_1.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSubLevel1));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSubLevel1));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Mine_2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSubLevel2));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSubLevel2));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Mine_3.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSubLevel3));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSubLevel3));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\boxes.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARICONS));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCHARICONS));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\incross.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCROSS));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCROSS));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapinv.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPINV));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPINV));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\map_inv_2nd_gun_cover.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMapInvSecondHandBlockout));
+  CHECKF(
+      AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapInvSecondHandBlockout));
 
   // the upper left corner piece icons
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\top_left_corner_icons.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiULICONS));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiULICONS));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\prison.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiTIXAICON));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiTIXAICON));
 
   HandleLoadOfMapBottomGraphics();
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\map_item.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiORTAICON));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiORTAICON));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mapcursr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMAPCURSORS));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMAPCURSORS));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\merc_between_sector_icons.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARBETWEENSECTORICONS));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiCHARBETWEENSECTORICONS));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\merc_mvt_green_arrows.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiCHARBETWEENSECTORICONSCLOSE));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc),
+                                      &guiCHARBETWEENSECTORICONSCLOSE));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\GreenArr.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiLEVELMARKER));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiLEVELMARKER));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\Helicop.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiHelicopterIcon));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiHelicopterIcon));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\eta_pop_up.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMapBorderEtaPopUp));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapBorderEtaPopUp));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\pos2.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMapBorderHeliSectors));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapBorderHeliSectors));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\secondary_gun_hidden.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSecItemHiddenVO));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSecItemHiddenVO));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\selectedchararrow.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSelectedCharArrow));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSelectedCharArrow));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\mine.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMINEICON));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMINEICON));
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "INTERFACE\\hilite.sti");
-  AddVObjectAndSetTransparency(&VObjectDesc, &guiSectorLocatorGraphicID);
+  AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSectorLocatorGraphicID);
 
   // Kris:  Added this because I need to blink the icons button.
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(VObjectDesc.ImageFile, "INTERFACE\\newemail.sti");
-  AddVObjectAndSetTransparency(&VObjectDesc, &guiNewMailIcons);
+  AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiNewMailIcons);
 
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\BullsEye.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiBULLSEYE));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiBULLSEYE));
 
   // graphic for pool inventory
   LoadInventoryPoolGraphic();

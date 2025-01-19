@@ -645,7 +645,7 @@ uint32_t SexScreenHandle(void) {
     // Load face....
     VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
     FilenameForBPP("INTERFACE\\luckysmile.sti", VObjectDesc.ImageFile);
-    if (!AddVObjectAndSetTransparency(&VObjectDesc, &guiSMILY))
+    if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSMILY))
       AssertMsg(0, "Missing INTERFACE\\luckysmile.sti");
 
     // Init screen
@@ -733,7 +733,7 @@ void DisplayTopwareGermanyAddress() {
   // bring up the Topware address screen
   vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   sprintf(vo_desc.ImageFile, "German\\topware_germany.sti");
-  if (!AddVObjectAndSetTransparency(&vo_desc, &uiTempID)) {
+  if (!AddVObjectAndSetTransparency(CreateVideoObject(&vo_desc), &uiTempID)) {
     AssertMsg(0, "Failed to load German\\topware_germany.sti");
     return;
   }

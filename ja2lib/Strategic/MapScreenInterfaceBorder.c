@@ -119,13 +119,14 @@ BOOLEAN LoadMapBorderGraphics(void) {
   // will load map border
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("INTERFACE\\MBS.sti", VObjectDesc.ImageFile);
-  CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiMapBorder));
+  CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMapBorder));
 
   /* corner was removed along with the Zoom feature
           // will load map border corner
           VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
           FilenameForBPP( "INTERFACE\\map_screen_cutout.sti", VObjectDesc.ImageFile );
-          CHECKF( AddVObjectAndSetTransparency( &VObjectDesc, &guiMapBorderCorner ) );
+          CHECKF( AddVObjectAndSetTransparency(CreateVideoObject( &VObjectDesc), &guiMapBorderCorner
+     ) );
 
           fCursorIsOnMapScrollButtons = FALSE;
   */

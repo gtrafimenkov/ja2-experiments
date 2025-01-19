@@ -809,7 +809,7 @@ BOOLEAN EnterShopKeeperInterface() {
   // load the Main trade screen backgroiund image
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("InterFace\\TradeScreen.sti", VObjectDesc.ImageFile);
-  if (!AddVObjectAndSetTransparency(&VObjectDesc, &guiMainTradeScreenImage)) {
+  if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiMainTradeScreenImage)) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION, L"Failed to load TradeScreen.sti");
 #endif
@@ -820,7 +820,7 @@ BOOLEAN EnterShopKeeperInterface() {
   // load the Main trade screen background image
   VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
   FilenameForBPP("InterFace\\itemcrossout.sti", VObjectDesc.ImageFile);
-  if (!AddVObjectAndSetTransparency(&VObjectDesc, &guiItemCrossOut)) {
+  if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiItemCrossOut)) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION, L"Failed to load itemcrossout.sti");
 #endif
@@ -832,7 +832,7 @@ BOOLEAN EnterShopKeeperInterface() {
           // load the Main trade screen backgroiund image
           VObjectDesc.fCreateFlags=VOBJECT_CREATE_FROMFILE;
           FilenameForBPP("InterFace\\TradeScreenAtm.sti", VObjectDesc.ImageFile);
-          CHECKF(AddVObjectAndSetTransparency(&VObjectDesc, &guiSkiAtmImage ));
+          CHECKF(AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc), &guiSkiAtmImage ));
   */
 
   // Create an array of all mercs (anywhere!) currently in the player's employ, and load their small
@@ -855,7 +855,7 @@ BOOLEAN EnterShopKeeperInterface() {
       // While we are at it, add their small face
       VObjectDesc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
       FilenameForBPP(zTemp, VObjectDesc.ImageFile);
-      if (!AddVObjectAndSetTransparency(&VObjectDesc,
+      if (!AddVObjectAndSetTransparency(CreateVideoObject(&VObjectDesc),
                                         &guiSmallSoldiersFace[gubNumberMercsInArray])) {
 #ifdef JA2BETAVERSION
         ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION, L"Failed to load %s", zTemp);
