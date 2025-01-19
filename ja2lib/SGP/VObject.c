@@ -144,7 +144,7 @@ BOOLEAN AddVObjectAndSetTransparency(struct VObject *vo, uint32_t *puiIndex) {
   }
 
   // Set transparency to default
-  SetVideoObjectTransparencyColor(vo, FROMRGB(0, 0, 0));
+  vo->TransparentColor = FROMRGB(0, 0, 0);
 
   // Set into video object list
   if (gpVObjectHead) {  // Add node after tail
@@ -427,18 +427,6 @@ BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct SGPPaletteEntry *
 
   //  DbgMessage(TOPIC_VIDEOOBJECT, DBG_LEVEL_3, String("Video Object Palette change successfull"
   //  ));
-  return (TRUE);
-}
-
-// Transparency needs to take RGB value and find best fit and place it into DD Surface
-// colorkey value.
-BOOLEAN SetVideoObjectTransparencyColor(struct VObject *hVObject, COLORVAL TransColor) {
-  // Assertions
-  Assert(hVObject != NULL);
-
-  // Set trans color into video object
-  hVObject->TransparentColor = TransColor;
-
   return (TRUE);
 }
 
