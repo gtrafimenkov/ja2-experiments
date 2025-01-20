@@ -48,10 +48,6 @@ extern BOOLEAN fMapPanelDirty;
 extern BOOLEAN gfGamePaused;
 extern BOOLEAN fShowMapInventoryPool;
 
-extern BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                                  uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                                  struct Rect *SrcRect);
-
 #define HELP_SCREEN_ACTIVE 0x00000001
 
 // The defualt size and placement of the screen
