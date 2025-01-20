@@ -1315,9 +1315,6 @@ void RefreshScreen(void *DummyVariable) {
   }
 
   if (gfPrintFrameBuffer == TRUE) {
-    LPDIRECTDRAWSURFACE _pTmpBuffer;
-    LPDIRECTDRAWSURFACE2 pTmpBuffer;
-    DDSURFACEDESC SurfaceDescription;
     FILE *OutputFile;
     char FileName[64];
     int32_t iIndex;
@@ -1332,14 +1329,17 @@ void RefreshScreen(void *DummyVariable) {
     // surface which can be interlaced or have a funky pitch
     //
 
-    memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-    SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-    SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-    SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-    SurfaceDescription.dwWidth = usScreenWidth;
-    SurfaceDescription.dwHeight = usScreenHeight;
-
-    DDCreateSurface(gpDirectDrawObject, &SurfaceDescription, &_pTmpBuffer, &pTmpBuffer);
+    struct VSurface *vsTmp = NULL;
+    {
+      DDSURFACEDESC SurfaceDescription;
+      memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
+      SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
+      SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
+      SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+      SurfaceDescription.dwWidth = usScreenWidth;
+      SurfaceDescription.dwHeight = usScreenHeight;
+      vsTmp = CreateVSurfaceInternal(&SurfaceDescription, false);
+    }
 
     //
     // Copy the primary surface to the temporary surface
@@ -1351,7 +1351,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.bottom = usScreenHeight;
 
     do {
-      ReturnCode = IDirectDrawSurface2_BltFast(pTmpBuffer, 0, 0,
+      ReturnCode = IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)vsTmp->_platformData2, 0, 0,
                                                (LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
                                                &Region, DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -1368,16 +1368,10 @@ void RefreshScreen(void *DummyVariable) {
       fprintf(OutputFile, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,
               0, 0x80, 0x02, 0xe0, 0x01, 0x10, 0);
 
-      //
-      // Lock temp surface
-      //
+      uint8_t *data;
+      uint32_t pitch;
 
-      memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-      SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-      ReturnCode = IDirectDrawSurface2_Lock(pTmpBuffer, NULL, &SurfaceDescription, 0, NULL);
-      if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-        DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-      }
+      data = LockVSurface(vsTmp, &pitch);
 
       //
       // Copy 16 bit buffer to file
@@ -1393,8 +1387,7 @@ void RefreshScreen(void *DummyVariable) {
         // if current settings are 5/6/5....
         if (gusRedMask == 0xF800 && gusGreenMask == 0x07E0 && gusBlueMask == 0x001F) {
           // Read into a buffer...
-          memcpy(p16BPPData, (((uint8_t *)SurfaceDescription.lpSurface) + (iIndex * 640 * 2)),
-                 640 * 2);
+          memcpy(p16BPPData, (data + (iIndex * 640 * 2)), 640 * 2);
 
           // Convert....
           ConvertRGBDistribution565To555(p16BPPData, 640);
@@ -1402,8 +1395,7 @@ void RefreshScreen(void *DummyVariable) {
           // Write
           fwrite(p16BPPData, 640 * 2, 1, OutputFile);
         } else {
-          fwrite((void *)(((uint8_t *)SurfaceDescription.lpSurface) + (iIndex * 640 * 2)), 640 * 2,
-                 1, OutputFile);
+          fwrite((void *)(data + (iIndex * 640 * 2)), 640 * 2, 1, OutputFile);
         }
       }
 
@@ -1414,16 +1406,7 @@ void RefreshScreen(void *DummyVariable) {
 
       fclose(OutputFile);
 
-      //
-      // Unlock temp surface
-      //
-
-      memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-      SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-      ReturnCode = IDirectDrawSurface2_Unlock(pTmpBuffer, &SurfaceDescription);
-      if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-        DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-      }
+      UnlockVSurface(vsTmp);
     }
 
     //
@@ -1431,7 +1414,8 @@ void RefreshScreen(void *DummyVariable) {
     //
 
     gfPrintFrameBuffer = FALSE;
-    IDirectDrawSurface2_Release(pTmpBuffer);
+
+    DeleteVSurface(vsTmp);
 
     strcat(ExecDir, "\\Data");
     Plat_SetCurrentDirectory(ExecDir);
