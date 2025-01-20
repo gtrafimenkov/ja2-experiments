@@ -1080,24 +1080,6 @@ BOOLEAN BlitBufferToBuffer(struct VSurface *src, struct VSurface *dest, uint16_t
   return (fRetVal);
 }
 
-BOOLEAN BlitBufferToBufferOld(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t usSrcX,
-                              uint16_t usSrcY, uint16_t usWidth, uint16_t usHeight) {
-  uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
-  uint8_t *pDestBuf, *pSrcBuf;
-  BOOLEAN fRetVal;
-
-  pDestBuf = LockVSurfaceByID(uiDestBuffer, &uiDestPitchBYTES);
-  pSrcBuf = LockVSurfaceByID(uiSrcBuffer, &uiSrcPitchBYTES);
-
-  fRetVal = Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf,
-                            uiSrcPitchBYTES, usSrcX, usSrcY, usSrcX, usSrcY, usWidth, usHeight);
-
-  UnlockVSurfaceByID(uiDestBuffer);
-  UnlockVSurfaceByID(uiSrcBuffer);
-
-  return (fRetVal);
-}
-
 void EnableVideoOverlay(BOOLEAN fEnable, int32_t iOverlayIndex) {
   VIDEO_OVERLAY_DESC VideoOverlayDesc;
 
