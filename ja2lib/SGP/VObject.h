@@ -111,9 +111,6 @@ BOOLEAN BltVideoObject(struct VSurface *dest, struct VObject *voSrc, uint16_t us
                        int32_t iDestX, int32_t iDestY);
 
 // Blits a video object to another video object
-BOOLEAN BltVideoObjectOld(uint32_t uiDestVSurface, struct VObject *voSrc, uint16_t usRegionIndex,
-                          int32_t iDestX, int32_t iDestY);
-
 BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16_t usRegionIndex,
                             int32_t iDestX, int32_t iDestY);
 
