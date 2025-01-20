@@ -95,6 +95,42 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
   return vs;
 }
 
+static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) {
+#ifdef _DEBUG
+  if (iErrorCode != DD_OK) {
+    FastDebugMsg("DIRECTX COMMON: DirectX Error\n");
+    FastDebugMsg(DirectXErrorDescription(iErrorCode));
+  }
+#endif
+}
+
+static void DDBltFast(struct VSurface *dest, uint16_t x, uint16_t y, struct VSurface *src,
+                      RECT *region, uint32_t flags) {
+  // DDBLTFAST_DESTCOLORKEY
+  //   A transparent bitblt that uses the destination color key.
+  // DDBLTFAST_NOCOLORKEY
+  //   A normal copy bitblt with no transparency.
+  // DDBLTFAST_SRCCOLORKEY
+  //   A transparent bitblt that uses the source color key.
+  // DDBLTFAST_WAIT
+  //   Postpones the DDERR_WASSTILLDRAWING message if the bitbltter is busy, and returns as soon as
+  //   the bitblt can be set up or another error occurs.
+
+  HRESULT ReturnCode;
+  do {
+    // STDMETHOD(BltFast)(THIS_ DWORD,DWORD,LPDIRECTDRAWSURFACE2, LPRECT,DWORD)
+    ReturnCode =
+        IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dest->_platformData2, x, y,
+                                    (LPDIRECTDRAWSURFACE2)src->_platformData2, region, flags);
+    if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
+      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
+    }
+    if (ReturnCode == DDERR_SURFACELOST) {
+      break;
+    }
+  } while (ReturnCode != DD_OK);
+}
+
 #define BUFFER_READY 0x00
 #define BUFFER_BUSY 0x01
 #define BUFFER_DIRTY 0x02
@@ -122,7 +158,6 @@ static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette);
 
 // local functions
 static char *DirectXErrorDescription(int32_t iDXReturn);
-static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename);
 
 #undef DEBUGMSG
 #define DEBUGMSG(x) DebugPrint(x)
@@ -1353,14 +1388,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = usScreenWidth;
     Region.bottom = usScreenHeight;
 
-    do {
-      ReturnCode = IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)vsTmp->_platformData2, 0, 0,
-                                               (LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
-                                               &Region, DDBLTFAST_NOCOLORKEY);
-      if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-        DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-      }
-    } while (ReturnCode != DD_OK);
+    DDBltFast(vsTmp, 0, 0, vsPrimary, &Region, DDBLTFAST_NOCOLORKEY);
 
     //
     // Ok now that temp surface has contents of backbuffer, copy temp surface to disk
@@ -1439,15 +1467,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = gusMouseCursorWidth;
     Region.bottom = gusMouseCursorHeight;
 
-    do {
-      ReturnCode =
-          IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)vsMouseBuffer->_platformData2, 0, 0,
-                                      (LPDIRECTDRAWSURFACE2)vsMouseBufferOriginal->_platformData2,
-                                      (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-      if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-        DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-      }
-    } while (ReturnCode != DD_OK);
+    DDBltFast(vsMouseBuffer, 0, 0, vsMouseBufferOriginal, (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
 
     guiMouseBufferState = BUFFER_READY;
   }
@@ -3003,15 +3023,6 @@ static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags
 //////////////////////////////////////////////////////////////////
 // DirectXCommon
 //////////////////////////////////////////////////////////////////
-
-static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) {
-#ifdef _DEBUG
-  if (iErrorCode != DD_OK) {
-    FastDebugMsg("DIRECTX COMMON: DirectX Error\n");
-    FastDebugMsg(DirectXErrorDescription(iErrorCode));
-  }
-#endif
-}
 
 static char *DirectXErrorDescription(int32_t iDXReturn) {
   switch (iDXReturn) {
