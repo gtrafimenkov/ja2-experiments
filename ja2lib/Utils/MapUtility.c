@@ -35,7 +35,7 @@
 #define WINDOW_SIZE 2
 
 float gdXStep, gdYStep;
-uint32_t giMiniMap;
+static struct VSurface *vsMiniMap;
 static struct VSurface *vs8BitMiniMap;
 
 extern BOOLEAN gfOverheadMapDirty;
@@ -95,7 +95,9 @@ uint32_t MapUtilScreenHandle() {
 
     // Create render buffer
     GetCurrentVideoSettings(&usWidth, &usHeight);
-    if (AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(88, 44), &giMiniMap) == FALSE) {
+    vsMiniMap = CreateVSurfaceBlank16(88, 44);
+    SetVideoSurfaceTransparencyColor(vsMiniMap, FROMRGB(0, 0, 0));
+    if (vsMiniMap == NULL) {
       return (ERROR_SCREEN);
     }
 
@@ -169,7 +171,7 @@ uint32_t MapUtilScreenHandle() {
   dX = dStartX;
   dY = dStartY;
 
-  pDestBuf = (uint16_t *)LockVSurfaceByID(giMiniMap, &uiDestPitchBYTES);
+  pDestBuf = (uint16_t *)LockVSurface(vsMiniMap, &uiDestPitchBYTES);
   pSrcBuf = (uint16_t *)LockVSurface(vsFB, &uiSrcPitchBYTES);
 
   for (iX = 0; iX < 88; iX++) {
@@ -228,11 +230,11 @@ uint32_t MapUtilScreenHandle() {
     dX += gdXStep;
   }
 
-  UnlockVSurfaceByID(giMiniMap);
+  UnlockVSurface(vsMiniMap);
   UnlockVSurface(vsFB);
 
   // RENDER!
-  BltVSurface(vsFB, FindVSurface(giMiniMap), 0, 20, 360, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVSurface(vsFB, vsMiniMap, 0, 20, 360, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
   // QUantize!
   pDataPtr = (uint8_t *)LockVSurface(vs8BitMiniMap, &uiSrcPitchBYTES);
