@@ -42,7 +42,7 @@
 
 extern int32_t giNumFrames;
 
-static struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface);
+static struct VSurface *CreateVSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface);
 
 extern BOOLEAN GetRGBDistribution(void);
 
@@ -51,7 +51,6 @@ extern BOOLEAN GetRGBDistribution(void);
 static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
                             LPDIRECTDRAWSURFACE *ppNewSurface1,
                             LPDIRECTDRAWSURFACE2 *ppNewSurface2);
-static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc);
 static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
                           LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent);
 static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
@@ -2011,27 +2010,27 @@ static void DeletePrimaryVideoSurfaces();
 BOOLEAN SetPrimaryVideoSurfaces() {
   DeletePrimaryVideoSurfaces();
 
-  vsPrimary = CreateVideoSurfaceFromDDSurface(gpPrimarySurface2);
+  vsPrimary = CreateVSurfaceFromDDSurface(gpPrimarySurface2);
   if (!vsPrimary) {
     return FALSE;
   }
 
-  vsBackBuffer = CreateVideoSurfaceFromDDSurface(gpBackBuffer);
+  vsBackBuffer = CreateVSurfaceFromDDSurface(gpBackBuffer);
   if (!vsBackBuffer) {
     return FALSE;
   }
 
-  vsMouseBuffer = CreateVideoSurfaceFromDDSurface(gpMouseCursor2);
+  vsMouseBuffer = CreateVSurfaceFromDDSurface(gpMouseCursor2);
   if (!vsMouseBuffer) {
     return FALSE;
   }
 
-  vsMouseBufferOriginal = CreateVideoSurfaceFromDDSurface(gpMouseCursorOriginal2);
+  vsMouseBufferOriginal = CreateVSurfaceFromDDSurface(gpMouseCursorOriginal2);
   if (!vsMouseBufferOriginal) {
     return FALSE;
   }
 
-  vsFB = CreateVideoSurfaceFromDDSurface(gpFrameBuffer2);
+  vsFB = CreateVSurfaceFromDDSurface(gpFrameBuffer2);
   if (!vsFB) {
     return FALSE;
   }
@@ -2623,21 +2622,18 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
 //
 // *****************************************************************************
 
-static struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface) {
+static struct VSurface *CreateVSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface) {
   // Create Video Surface
-  DDPIXELFORMAT PixelFormat;
-  struct VSurface *hVSurface;
+
+  struct VSurface *hVSurface = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
+
   DDSURFACEDESC DDSurfaceDesc;
-  LPDIRECTDRAWPALETTE pDDPalette;
-  struct SGPPaletteEntry SGPPalette[256];
-  HRESULT ReturnCode;
+  memset(&DDSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
+  DDSurfaceDesc.dwSize = sizeof(DDSURFACEDESC);
+  DirectXAttempt(IDirectDrawSurface2_GetSurfaceDesc(lpDDSurface, &DDSurfaceDesc), __LINE__,
+                 __FILE__);
 
-  // Allocate Video Surface struct
-  hVSurface = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
-
-  // Set values based on DD Surface given
-  DDGetSurfaceDescription(lpDDSurface, &DDSurfaceDesc);
-  PixelFormat = DDSurfaceDesc.ddpfPixelFormat;
+  DDPIXELFORMAT PixelFormat = DDSurfaceDesc.ddpfPixelFormat;
 
   hVSurface->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
   hVSurface->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
@@ -2646,13 +2642,15 @@ static struct VSurface *CreateVideoSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpD
   hVSurface->_platformData1 = NULL;
 
   // Get and Set palette, if attached, allow to fail
-  ReturnCode = IDirectDrawSurface2_GetPalette(lpDDSurface, &pDDPalette);
+  LPDIRECTDRAWPALETTE pDDPalette;
+  HRESULT ReturnCode = IDirectDrawSurface2_GetPalette(lpDDSurface, &pDDPalette);
 
   if (ReturnCode == DD_OK) {
     // Set 8-bit Palette and 16 BPP palette
     hVSurface->pPalette = pDDPalette;
 
     // Create 16-BPP Palette
+    struct SGPPaletteEntry SGPPalette[256];
     DDGetPaletteEntries(pDDPalette, 0, 0, 256, (LPPALETTEENTRY)SGPPalette);
     hVSurface->p16BPPPalette = Create16BPPPalette(SGPPalette);
   } else {
@@ -3150,16 +3148,6 @@ static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
   DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-}
-
-static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc) {
-  Assert(pSurface != NULL);
-  Assert(pSurfaceDesc != NULL);
-
-  memset(pSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
-  pSurfaceDesc->dwSize = sizeof(DDSURFACEDESC);
-
-  DirectXAttempt(IDirectDrawSurface2_GetSurfaceDesc(pSurface, pSurfaceDesc), __LINE__, __FILE__);
 }
 
 static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
