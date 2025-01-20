@@ -109,8 +109,6 @@ extern BOOLEAN GetRGBDistribution(void);
 
 // Surface Functions
 
-static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
-                          LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent);
 static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
                                  LPDDCOLORKEY pDDColorKey);
 
@@ -2307,13 +2305,19 @@ uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
     return NULL;
   }
 
-  DDSURFACEDESC SurfaceDescription;
+  DDSURFACEDESC descr;
+  memset(&descr, 0, sizeof(DDSURFACEDESC));
+  descr.dwSize = sizeof(DDSURFACEDESC);
 
-  DDLockSurface((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL, &SurfaceDescription, 0, NULL);
+  HRESULT ReturnCode;
+  do {
+    ReturnCode =
+        IDirectDrawSurface2_Lock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL, &descr, 0, NULL);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
-  *pPitch = SurfaceDescription.lPitch;
+  *pPitch = descr.lPitch;
 
-  return (uint8_t *)SurfaceDescription.lpSurface;
+  return (uint8_t *)descr.lpSurface;
 }
 
 void UnlockVSurface(struct VSurface *vs) {
@@ -2976,25 +2980,6 @@ void SmkShutdownVideo(void) {}
 //////////////////////////////////////////////////////////////////
 // DirectDrawCalls
 //////////////////////////////////////////////////////////////////
-
-// Lock, unlock calls
-static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
-                          LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent) {
-  HRESULT ReturnCode;
-
-  Assert(pSurface != NULL);
-  Assert(pSurfaceDesc != NULL);
-
-  memset(pSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
-  pSurfaceDesc->dwSize = sizeof(DDSURFACEDESC);
-
-  do {
-    ReturnCode = IDirectDrawSurface2_Lock(pSurface, pDestRect, pSurfaceDesc, uiFlags, hEvent);
-
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
-
-  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-}
 
 static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
                             LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter) {
