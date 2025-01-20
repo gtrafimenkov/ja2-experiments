@@ -182,7 +182,7 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect 
   if ((dest->ubBitDepth != 16) && (src->ubBitDepth != 16)) return (FALSE);
   struct Rect srcRect = {SrcRect->iLeft, SrcRect->iTop, SrcRect->iRight, SrcRect->iBottom};
   struct Rect destRect = {DestRect->iLeft, DestRect->iTop, DestRect->iRight, DestRect->iBottom};
-  return BltVSurface(dest, src, &srcRect, &destRect);
+  return BltVSurfaceRectToRect(dest, src, &srcRect, &destRect);
 }
 
 BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHandle, int32_t iPosX,
