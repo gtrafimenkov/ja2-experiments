@@ -42,7 +42,7 @@ typedef struct {
   uint16_t sHeight;
   uint8_t ubBackgroundIndex;
   uint8_t ubBorderIndex;
-  uint32_t uiMercTextPopUpBackground;
+  struct VSurface *vsMercTextPopUpBackground;
   uint32_t uiMercTextPopUpBorder;
   BOOLEAN fMercTextPopupInitialized;
   BOOLEAN fMercTextPopupSurfaceInitialized;
