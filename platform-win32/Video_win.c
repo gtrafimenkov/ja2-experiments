@@ -56,8 +56,6 @@ static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
                              LPDIRECTDRAWSURFACE2 *ppOldSurface2);
 static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
                           LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent);
-static void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
-                             LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans);
 static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
                          LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiFlags,
                          LPDDBLTFX pDDBltFx);
@@ -2768,8 +2766,12 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
       uiDDFlags = DDBLTFAST_NOCOLORKEY;
     }
 
-    DDBltFastSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, iDestX, iDestY,
-                     (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags);
+    HRESULT ReturnCode;
+    do {
+      ReturnCode = IDirectDrawSurface2_BltFast(
+          (LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, iDestX, iDestY,
+          (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags);
+    } while (ReturnCode == DDERR_WASSTILLDRAWING);
   } else {
     // Normal, specialized blit for clipping, etc
 
@@ -3163,20 +3165,6 @@ static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
 
   *ppOldSurface1 = NULL;
   *ppOldSurface2 = NULL;
-}
-
-static void DDBltFastSurface(LPDIRECTDRAWSURFACE2 pDestSurface, uint32_t uiX, uint32_t uiY,
-                             LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiTrans) {
-  HRESULT ReturnCode;
-
-  Assert(pDestSurface != NULL);
-  Assert(pSrcSurface != NULL);
-
-  do {
-    ReturnCode =
-        IDirectDrawSurface2_BltFast(pDestSurface, uiX, uiY, pSrcSurface, pSrcRect, uiTrans);
-
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
 static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
