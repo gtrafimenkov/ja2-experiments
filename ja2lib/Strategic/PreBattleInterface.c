@@ -768,7 +768,7 @@ void DoTransitionFromMapscreenToPreBattleInterface() {
     DstRect.iTop = iTop - iHeight * iPercentage / 200;
     DstRect.iBottom = DstRect.iTop + max(iHeight * iPercentage / 100, 1);
 
-    BltStretchVSurface(vsFB, vsSaveBuffer, 0, 0, 0, &PBIRect, &DstRect);
+    BltStretchVSurface(vsFB, vsSaveBuffer, &PBIRect, &DstRect);
 
     InvalidateScreen();
     RefreshScreen(NULL);

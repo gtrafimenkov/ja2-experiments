@@ -115,8 +115,8 @@ BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
 // These blitting functions more-or less encapsolate all of the functionality of DirectDraw
 // Blitting, giving an API layer for portability.
 
-BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags, int32_t iDestX,
-                    int32_t iDestY, struct Rect *SrcRect, struct Rect *DestRect);
+BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
+                    struct Rect *DestRect);
 BOOLEAN BltVSurfaceUsingDD(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
                            int32_t iDestX, int32_t iDestY, struct Rect *SrcRect);
 
@@ -131,8 +131,8 @@ BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHan
 
 // If the Dest Rect and the source rect are not the same size, the source surface will be either
 // enlraged or shunk.
-BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
-                           int32_t iDestY, uint32_t fBltFlags, SGPRect *SrcRect, SGPRect *DestRect);
+BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect *SrcRect,
+                           SGPRect *DestRect);
 
 BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_t X1, int32_t Y1,
                                                    int32_t X2, int32_t Y2);

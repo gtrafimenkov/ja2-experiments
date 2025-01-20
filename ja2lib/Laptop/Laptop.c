@@ -1650,7 +1650,7 @@ uint32_t LaptopScreenHandle() {
       SrcRect2.iTop = iY - iHeight / 2;
       SrcRect2.iBottom = SrcRect2.iTop + iHeight;
 
-      BltStretchVSurface(vsFB, vsSaveBuffer, 0, 0, 0, &DstRect, &SrcRect2);
+      BltStretchVSurface(vsFB, vsSaveBuffer, &DstRect, &SrcRect2);
       InvalidateScreen();
       RefreshScreen(NULL);
     }
@@ -2212,7 +2212,7 @@ BOOLEAN LeaveLapTopScreen(void) {
         SrcRect2.iTop = iY - iHeight / 2;
         SrcRect2.iBottom = SrcRect2.iTop + iHeight;
 
-        BltStretchVSurface(vsFB, vsSaveBuffer, 0, 0, 0, &DstRect, &SrcRect2);
+        BltStretchVSurface(vsFB, vsSaveBuffer, &DstRect, &SrcRect2);
         InvalidateScreen();
         RefreshScreen(NULL);
       }
@@ -3816,7 +3816,7 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
     }
   }
 
-  BltStretchVSurface(vsFB, vsTitleBarSurface, 0, 0, VS_BLT_USECOLORKEY, &SrcRect, &DestRect);
+  BltStretchVSurface(vsFB, vsTitleBarSurface, &SrcRect, &DestRect);
 
   InvalidateRegion(DestRect.iLeft, DestRect.iTop, DestRect.iRight, DestRect.iBottom);
   InvalidateRegion(LastRect.iLeft, LastRect.iTop, LastRect.iRight, LastRect.iBottom);

@@ -251,8 +251,7 @@ void FatalError(char *pError, ...) {}
 
 BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) { return FALSE; }
 
-BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                    uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect,
+BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
                     struct Rect *DestRect) {
   return FALSE;
 }
