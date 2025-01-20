@@ -540,39 +540,6 @@ static BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYT
   return (TRUE);
 }
 
-BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
-                                int32_t Y2) {
-  uint16_t *pBuffer;
-  uint32_t uiPitch;
-  SGPRect area;
-  uint8_t uiPattern[8][8] = {{0, 1, 0, 1, 0, 1, 0, 1}, {1, 0, 1, 0, 1, 0, 1, 0},
-                             {0, 1, 0, 1, 0, 1, 0, 1}, {1, 0, 1, 0, 1, 0, 1, 0},
-                             {0, 1, 0, 1, 0, 1, 0, 1}, {1, 0, 1, 0, 1, 0, 1, 0},
-                             {0, 1, 0, 1, 0, 1, 0, 1}, {1, 0, 1, 0, 1, 0, 1, 0}};
-
-  // Lock video surface
-  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
-
-  if (pBuffer == NULL) {
-    return (FALSE);
-  }
-
-  area.iTop = Y1;
-  area.iBottom = Y2;
-  area.iLeft = X1;
-  area.iRight = X2;
-
-  // Now we have the video object and surface, call the shadow function
-  if (!Blt16BPPBufferPixelateRect(pBuffer, uiPitch, &area, uiPattern)) {
-    UnlockVSurfaceByID(uiDestVSurface);
-    // Blit has failed if false returned
-    return (FALSE);
-  }
-
-  UnlockVSurfaceByID(uiDestVSurface);
-  return (TRUE);
-}
-
 /**********************************************************************************************
  DestroyObjectPaletteTables
 
