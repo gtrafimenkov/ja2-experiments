@@ -39,7 +39,10 @@ static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pN
                             LPDIRECTDRAWSURFACE *ppNewSurface1,
                             LPDIRECTDRAWSURFACE2 *ppNewSurface2);
 
-static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
+static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
+                                uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
+
+static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPalette) {
   struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
   if (vs == NULL) {
     return NULL;
@@ -55,6 +58,21 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
   vs->usWidth = (uint16_t)descr->dwWidth;
   vs->usHeight = (uint16_t)descr->dwHeight;
   vs->ubBitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
+
+  if (getPalette) {
+    LPDIRECTDRAWPALETTE pDDPalette;
+    HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
+
+    if (ReturnCode == DD_OK) {
+      // Set 8-bit Palette and 16 BPP palette
+      vs->pPalette = pDDPalette;
+
+      // Create 16-BPP Palette
+      struct SGPPaletteEntry SGPPalette[256];
+      DDGetPaletteEntries(pDDPalette, 0, 0, 256, (LPPALETTEENTRY)SGPPalette);
+      vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
+    }
+  }
 
   return vs;
 }
@@ -87,8 +105,6 @@ static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
                                 uint32_t uiStartingEntry, uint32_t uiCount,
                                 LPPALETTEENTRY pEntries);
 static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette);
-static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
-                                uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
 
 // local functions
 static char *DirectXErrorDescription(int32_t iDXReturn);
@@ -2231,7 +2247,7 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
   SurfaceDescription.dwHeight = height;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription);
+  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription, false);
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in Creating Video Surface"));
 
@@ -2287,7 +2303,7 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   SurfaceDescription.dwHeight = hImage->usHeight;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription);
+  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription, false);
 
   SGPRect tempRect;
   tempRect.iLeft = 0;
