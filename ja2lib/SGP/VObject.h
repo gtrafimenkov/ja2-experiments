@@ -200,7 +200,5 @@ BOOLEAN BltVideoObjectOutline(struct VSurface *dest, struct VObject *hSrcVObject
                               BOOLEAN fDoOutline);
 BOOLEAN BltVideoObjectOutlineShadowFromIndex(struct VSurface *dest, uint32_t uiSrcVObject,
                                              uint16_t usIndex, int32_t iDestX, int32_t iDestY);
-BOOLEAN BltVideoObjectOutlineShadow(uint32_t uiDestVSurface, struct VObject *hSrcVObject,
-                                    uint16_t usIndex, int32_t iDestX, int32_t iDestY);
 
 #endif
