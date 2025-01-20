@@ -381,10 +381,6 @@ extern void HandleShortCutExitState(void);
 extern uint8_t gubSelectSMPanelToMerc;
 extern int32_t giItemDescAmmoButton;
 
-extern BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                                  uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                                  struct Rect *SrcRect);
-
 extern uint8_t gubLastSpecialItemAddedAtElement;
 
 // Enums for the various Atm modes

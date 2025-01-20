@@ -2420,9 +2420,8 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
   return (TRUE);
 }
 
-BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                           uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                           struct Rect *SrcRect) {
+BOOLEAN BltVSurfaceUsingDD(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
+                           int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
   RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
 
   // Blit using the correct blitter
@@ -2432,9 +2431,9 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
     CHECKF(iDestY >= 0);
 
     if (fBltFlags & VS_BLT_USECOLORKEY) {
-      DDBltFastSrcColorKey(hDestVSurface, iDestX, iDestY, hSrcVSurface, &srcRect);
+      DDBltFastSrcColorKey(dest, iDestX, iDestY, src, &srcRect);
     } else {
-      DDBltFast(hDestVSurface, iDestX, iDestY, hSrcVSurface, &srcRect, DDBLTFAST_NOCOLORKEY);
+      DDBltFast(dest, iDestX, iDestY, src, &srcRect, DDBLTFAST_NOCOLORKEY);
     }
   } else {
     // Normal, specialized blit for clipping, etc
@@ -2455,7 +2454,7 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
     DestRect.right = (int)iDestX + (SrcRect->right - SrcRect->left);
 
     // Do Clipping of rectangles
-    if (!ClipReleatedSrcAndDestRectangles(hDestVSurface, hSrcVSurface, &DestRect, &srcRect)) {
+    if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &srcRect)) {
       // Returns false because dest start is > dest size
       return (TRUE);
     }
@@ -2467,9 +2466,9 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
 
     HRESULT ReturnCode;
     do {
-      ReturnCode = IDirectDrawSurface2_Blt(
-          (LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &DestRect,
-          (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags, NULL);
+      ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &DestRect,
+                                           (LPDIRECTDRAWSURFACE2)src->_platformData2, &srcRect,
+                                           uiDDFlags, NULL);
 
     } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
@@ -2479,9 +2478,8 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
   return (TRUE);
 }
 
-BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                    uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect,
-                    struct Rect *DestRect) {
+BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags, int32_t iDestX,
+                    int32_t iDestY, struct Rect *SrcRect, struct Rect *DestRect) {
   uint32_t uiDDFlags;
   RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
   RECT destRect = {DestRect->left, DestRect->top, DestRect->right, DestRect->bottom};
@@ -2496,9 +2494,9 @@ BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurfac
 
   HRESULT ReturnCode;
   do {
-    ReturnCode = IDirectDrawSurface2_Blt(
-        (LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &destRect,
-        (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags, NULL);
+    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &destRect,
+                                         (LPDIRECTDRAWSURFACE2)src->_platformData2, &srcRect,
+                                         uiDDFlags, NULL);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
   DirectXAttempt(ReturnCode, __LINE__, __FILE__);
