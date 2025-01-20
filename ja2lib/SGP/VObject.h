@@ -116,8 +116,6 @@ BOOLEAN BltVideoObjectOld(uint32_t uiDestVSurface, struct VObject *voSrc, uint16
 
 BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16_t usRegionIndex,
                             int32_t iDestX, int32_t iDestY);
-BOOLEAN BltVObjectFromIndexOld(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
-                               uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY);
 
 // **********************************************************************************
 //
