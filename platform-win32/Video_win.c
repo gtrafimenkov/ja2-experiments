@@ -44,12 +44,11 @@ static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2
   HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
 
   if (ReturnCode == DD_OK) {
-    // Set 8-bit Palette and 16 BPP palette
-    vs->pPalette = pDDPalette;
+    vs->_platformPalette = pDDPalette;
 
     // Create 16-BPP Palette
     struct SGPPaletteEntry SGPPalette[256];
-    DDGetPaletteEntries(pDDPalette, 0, 0, 256, (LPPALETTEENTRY)SGPPalette);
+    GetVSurfacePaletteEntries(vs, SGPPalette);
     vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
   }
 }
@@ -2332,13 +2331,13 @@ BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntr
   Assert(hVSurface != NULL);
 
   // Create palette object if not already done so
-  if (hVSurface->pPalette == NULL) {
+  if (hVSurface->_platformPalette == NULL) {
     DDCreatePalette(gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
-                    (LPPALETTEENTRY)(&pSrcPalette[0]), (LPDIRECTDRAWPALETTE *)&hVSurface->pPalette,
-                    NULL);
+                    (LPPALETTEENTRY)(&pSrcPalette[0]),
+                    (LPDIRECTDRAWPALETTE *)&hVSurface->_platformPalette, NULL);
   } else {
     // Just Change entries
-    DDSetPaletteEntries((LPDIRECTDRAWPALETTE)hVSurface->pPalette, 0, 0, 256,
+    DDSetPaletteEntries((LPDIRECTDRAWPALETTE)hVSurface->_platformPalette, 0, 0, 256,
                         (PALETTEENTRY *)pSrcPalette);
   }
 
@@ -2395,9 +2394,9 @@ BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColo
 }
 
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteEntry *pPalette) {
-  CHECKF(hVSurface->pPalette != NULL);
+  CHECKF(hVSurface->_platformPalette != NULL);
 
-  DDGetPaletteEntries((LPDIRECTDRAWPALETTE)hVSurface->pPalette, 0, 0, 256,
+  DDGetPaletteEntries((LPDIRECTDRAWPALETTE)hVSurface->_platformPalette, 0, 0, 256,
                       (PALETTEENTRY *)pPalette);
 
   return (TRUE);
@@ -2408,9 +2407,9 @@ BOOLEAN DeleteVSurface(struct VSurface *vs) {
   CHECKF(vs != NULL);
 
   // Release palette
-  if (vs->pPalette != NULL) {
-    DDReleasePalette((LPDIRECTDRAWPALETTE)vs->pPalette);
-    vs->pPalette = NULL;
+  if (vs->_platformPalette != NULL) {
+    DDReleasePalette((LPDIRECTDRAWPALETTE)vs->_platformPalette);
+    vs->_platformPalette = NULL;
   }
 
   // Release surface
