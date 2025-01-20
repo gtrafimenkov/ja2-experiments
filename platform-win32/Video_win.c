@@ -1265,18 +1265,8 @@ void RefreshScreen(void *DummyVariable) {
     SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
     SurfaceDescription.dwWidth = usScreenWidth;
     SurfaceDescription.dwHeight = usScreenHeight;
-    ReturnCode =
-        IDirectDraw2_CreateSurface(gpDirectDrawObject, &SurfaceDescription, &_pTmpBuffer, NULL);
-    if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    }
 
-    IID tmpID = IID_IDirectDrawSurface2;
-    ReturnCode = IDirectDrawSurface_QueryInterface((IDirectDrawSurface *)_pTmpBuffer, &tmpID,
-                                                   (LPVOID *)&pTmpBuffer);
-    if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    }
+    DDCreateSurface(gpDirectDrawObject, &SurfaceDescription, &_pTmpBuffer, &pTmpBuffer);
 
     //
     // Copy the primary surface to the temporary surface
