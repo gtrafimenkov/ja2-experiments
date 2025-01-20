@@ -299,12 +299,11 @@ void SetBorderType(int32_t hBoxHandle, int32_t iBorderObjectIndex) {
   return;
 }
 
-void SetBackGroundSurface(int32_t hBoxHandle, int32_t iBackGroundSurfaceIndex) {
+void SetBackGroundSurface(int32_t hBoxHandle, struct VSurface *BackGroundSurface) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
-  PopUpBoxList[hBoxHandle]->iBackGroundSurface = iBackGroundSurfaceIndex;
-  return;
+  PopUpBoxList[hBoxHandle]->vsBackGroundSurface = BackGroundSurface;
 }
 
 // adds a FIRST column string to the CURRENT popup box
@@ -1022,7 +1021,6 @@ BOOLEAN DrawBox(uint32_t uiCounter) {
   uint32_t uiNumTilesHigh;
   uint32_t uiCount = 0;
   struct VObject *hBoxHandle;
-  struct VSurface *hSrcVSurface;
   uint32_t uiDestPitchBYTES;
   uint32_t uiSrcPitchBYTES;
   uint16_t *pDestBuf;
@@ -1076,14 +1074,14 @@ BOOLEAN DrawBox(uint32_t uiCounter) {
   // blit in texture first, then borders
   // blit in surface
   pDestBuf = (uint16_t *)LockVSurface(PopUpBoxList[uiCounter]->vsBuffer, &uiDestPitchBYTES);
-  hSrcVSurface = FindVSurface(PopUpBoxList[uiCounter]->iBackGroundSurface);
-  if (hSrcVSurface == NULL) {
+  if (PopUpBoxList[uiCounter]->vsBackGroundSurface == NULL) {
     return FALSE;
   }
-  pSrcBuf = LockVSurface(hSrcVSurface, &uiSrcPitchBYTES);
-  Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
-                              usTopX, usTopY, &clip);
-  UnlockVSurface(hSrcVSurface);
+  pSrcBuf = LockVSurface(PopUpBoxList[uiCounter]->vsBackGroundSurface, &uiSrcPitchBYTES);
+  Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES,
+                              PopUpBoxList[uiCounter]->vsBackGroundSurface, pSrcBuf,
+                              uiSrcPitchBYTES, usTopX, usTopY, &clip);
+  UnlockVSurface(PopUpBoxList[uiCounter]->vsBackGroundSurface);
   UnlockVSurface(PopUpBoxList[uiCounter]->vsBuffer);
   GetVideoObject(&hBoxHandle, PopUpBoxList[uiCounter]->iBorderObjectIndex);
 

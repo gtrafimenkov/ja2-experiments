@@ -6922,7 +6922,7 @@ void CreateSquadBox(void) {
   SetBorderType(ghSquadBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghSquadBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghSquadBox, vsPOPUPTEX);
 
   // margin sizes
   SetMargins(ghSquadBox, 6, 6, 4, 4);
@@ -7000,7 +7000,7 @@ void CreateEPCBox(void) {
   SetBorderType(ghEpcBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghEpcBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghEpcBox, vsPOPUPTEX);
 
   // margin sizes
   SetMargins(ghEpcBox, 6, 6, 4, 4);
@@ -7139,7 +7139,7 @@ void CreateVehicleBox() {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
   SetBoxBuffer(ghVehicleBox, vsFB);
   SetBorderType(ghVehicleBox, guiPOPUPBORDERS);
-  SetBackGroundSurface(ghVehicleBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghVehicleBox, vsPOPUPTEX);
   SetMargins(ghVehicleBox, 6, 6, 4, 4);
   SetLineSpace(ghVehicleBox, 2);
 }
@@ -7149,7 +7149,7 @@ void CreateRepairBox(void) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_CENTER_TEXT | POPUP_BOX_FLAG_RESIZE));
   SetBoxBuffer(ghRepairBox, vsFB);
   SetBorderType(ghRepairBox, guiPOPUPBORDERS);
-  SetBackGroundSurface(ghRepairBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghRepairBox, vsPOPUPTEX);
   SetMargins(ghRepairBox, 6, 6, 4, 4);
   SetLineSpace(ghRepairBox, 2);
 }
@@ -7170,7 +7170,7 @@ void CreateContractBox(struct SOLDIERTYPE *pCharacter) {
                  (POPUP_BOX_FLAG_CLIP_TEXT | POPUP_BOX_FLAG_RESIZE));
   SetBoxBuffer(ghContractBox, vsFB);
   SetBorderType(ghContractBox, guiPOPUPBORDERS);
-  SetBackGroundSurface(ghContractBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghContractBox, vsPOPUPTEX);
   SetMargins(ghContractBox, 6, 6, 4, 4);
   SetLineSpace(ghContractBox, 2);
 
@@ -7287,7 +7287,7 @@ void CreateAttributeBox(void) {
   SetBorderType(ghAttributeBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghAttributeBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghAttributeBox, vsPOPUPTEX);
 
   // margin sizes
   SetMargins(ghAttributeBox, 6, 6, 4, 4);
@@ -7348,7 +7348,7 @@ void CreateTrainingBox(void) {
   SetBorderType(ghTrainingBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghTrainingBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghTrainingBox, vsPOPUPTEX);
 
   // margin sizes
   SetMargins(ghTrainingBox, 6, 6, 4, 4);
@@ -7417,7 +7417,7 @@ void CreateAssignmentsBox(void) {
   SetBorderType(ghAssignmentBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghAssignmentBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghAssignmentBox, vsPOPUPTEX);
 
   // margin sizes
   SetMargins(ghAssignmentBox, 6, 6, 4, 4);
@@ -7484,7 +7484,7 @@ void CreateMercRemoveAssignBox(void) {
   SetBorderType(ghRemoveMercAssignBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghRemoveMercAssignBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghRemoveMercAssignBox, vsPOPUPTEX);
 
   // margin sizes
   SetMargins(ghRemoveMercAssignBox, 6, 6, 4, 4);
@@ -7528,8 +7528,11 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
   if ((fShowAssignmentMenu == TRUE) && (fCreated == FALSE)) {
     CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\popup.sti"), &guiPOPUPBORDERS));
 
-    CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceFromFile("INTERFACE\\popupbackground.pcx"),
-                                         &guiPOPUPTEX));
+    vsPOPUPTEX = CreateVSurfaceFromFile("INTERFACE\\popupbackground.pcx");
+    if (vsPOPUPTEX == NULL) {
+      return FALSE;
+    }
+    SetVideoSurfaceTransparencyColor(vsPOPUPTEX, FROMRGB(0, 0, 0));
 
     // these boxes are always created while in mapscreen...
     CreateEPCBox();
@@ -7544,7 +7547,8 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
     fCreated = TRUE;
   } else if ((fShowAssignmentMenu == FALSE) && (fCreated == TRUE)) {
     DeleteVideoObjectFromIndex(guiPOPUPBORDERS);
-    DeleteVSurfaceByIndex(guiPOPUPTEX);
+    DeleteVSurface(vsPOPUPTEX);
+    vsPOPUPTEX = NULL;
 
     RemoveBox(ghAttributeBox);
     ghAttributeBox = -1;
