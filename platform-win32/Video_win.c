@@ -1964,21 +1964,13 @@ typedef struct {
 
 static void SnapshotSmall(void) {
   int32_t iCountX, iCountY;
-  DDSURFACEDESC SurfaceDescription;
   uint16_t *pVideo, *pDest;
 
-  HRESULT ReturnCode;
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Lock((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2, NULL,
-                                        &SurfaceDescription, 0, NULL);
-  if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
+  uint32_t pitch;
+  pVideo = (uint16_t *)LockVSurface(vsPrimary, &pitch);
+  if (pVideo == NULL) {
     return;
   }
-
-  // Get the write pointer
-  pVideo = (uint16_t *)SurfaceDescription.lpSurface;
 
   pDest = gpFrameData[giNumFrames];
 
@@ -1994,15 +1986,7 @@ static void SnapshotSmall(void) {
     RefreshMovieCache();
   }
 
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
-                                          &SurfaceDescription);
-  if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-  }
-
-  //	fclose(disk);
+  UnlockVSurface(vsPrimary);
 }
 
 void VideoCaptureToggle(void) {
