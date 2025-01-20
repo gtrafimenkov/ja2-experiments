@@ -42,6 +42,21 @@ static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pN
 static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
                                 uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
 
+static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2) {
+  LPDIRECTDRAWPALETTE pDDPalette;
+  HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
+
+  if (ReturnCode == DD_OK) {
+    // Set 8-bit Palette and 16 BPP palette
+    vs->pPalette = pDDPalette;
+
+    // Create 16-BPP Palette
+    struct SGPPaletteEntry SGPPalette[256];
+    DDGetPaletteEntries(pDDPalette, 0, 0, 256, (LPPALETTEENTRY)SGPPalette);
+    vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
+  }
+}
+
 static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPalette) {
   struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
   if (vs == NULL) {
@@ -60,18 +75,7 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
   vs->ubBitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
 
   if (getPalette) {
-    LPDIRECTDRAWPALETTE pDDPalette;
-    HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
-
-    if (ReturnCode == DD_OK) {
-      // Set 8-bit Palette and 16 BPP palette
-      vs->pPalette = pDDPalette;
-
-      // Create 16-BPP Palette
-      struct SGPPaletteEntry SGPPalette[256];
-      DDGetPaletteEntries(pDDPalette, 0, 0, 256, (LPPALETTEENTRY)SGPPalette);
-      vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
-    }
+    FillVSurfacePalette(vs, lpDDS2);
   }
 
   return vs;
@@ -2623,7 +2627,7 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
 static struct VSurface *CreateVSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface) {
   // Create Video Surface
 
-  struct VSurface *hVSurface = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
+  struct VSurface *hVSurface = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
 
   DDSURFACEDESC DDSurfaceDesc;
   memset(&DDSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
@@ -2631,30 +2635,13 @@ static struct VSurface *CreateVSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSur
   DirectXAttempt(IDirectDrawSurface2_GetSurfaceDesc(lpDDSurface, &DDSurfaceDesc), __LINE__,
                  __FILE__);
 
-  DDPIXELFORMAT PixelFormat = DDSurfaceDesc.ddpfPixelFormat;
-
   hVSurface->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
   hVSurface->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
-  hVSurface->ubBitDepth = (uint8_t)PixelFormat.dwRGBBitCount;
-  hVSurface->_platformData2 = (void *)lpDDSurface;
+  hVSurface->ubBitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
   hVSurface->_platformData1 = NULL;
+  hVSurface->_platformData2 = (void *)lpDDSurface;
 
-  // Get and Set palette, if attached, allow to fail
-  LPDIRECTDRAWPALETTE pDDPalette;
-  HRESULT ReturnCode = IDirectDrawSurface2_GetPalette(lpDDSurface, &pDDPalette);
-
-  if (ReturnCode == DD_OK) {
-    // Set 8-bit Palette and 16 BPP palette
-    hVSurface->pPalette = pDDPalette;
-
-    // Create 16-BPP Palette
-    struct SGPPaletteEntry SGPPalette[256];
-    DDGetPaletteEntries(pDDPalette, 0, 0, 256, (LPPALETTEENTRY)SGPPalette);
-    hVSurface->p16BPPPalette = Create16BPPPalette(SGPPalette);
-  } else {
-    hVSurface->pPalette = NULL;
-    hVSurface->p16BPPPalette = NULL;
-  }
+  FillVSurfacePalette(hVSurface, lpDDSurface);
 
   // All is well
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_0,
