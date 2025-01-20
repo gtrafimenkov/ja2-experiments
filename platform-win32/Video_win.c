@@ -2171,7 +2171,6 @@ void DeletePrimaryVideoSurfaces();
 int32_t giMemUsedInSurfaces;
 
 BOOLEAN InitializeVideoSurfaceManager() {
-  InitVSurfaceList();
   RegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Surface Manager");
 
   giMemUsedInSurfaces = 0;
@@ -2188,25 +2187,8 @@ BOOLEAN InitializeVideoSurfaceManager() {
 BOOLEAN ShutdownVideoSurfaceManager() {
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_0, "Shutting down the Video Surface manager");
   DeletePrimaryVideoSurfaces();
-  DeinitVSurfaceList();
   UnRegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Objects");
   return TRUE;
-}
-
-uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *puiPitch) {
-  struct VSurface *vs = FindVSurface(uiVSurface);
-  if (!vs) {
-    return FALSE;
-  }
-
-  return LockVSurface(vs, puiPitch);
-}
-
-void UnlockVSurfaceByID(VSurfID id) {
-  struct VSurface *vs = FindVSurface(id);
-  if (vs) {
-    UnlockVSurface(vs);
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

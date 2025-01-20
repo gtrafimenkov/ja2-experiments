@@ -367,8 +367,6 @@ BOOLEAN InitializeTacticalInterface() {
   if (gTopMessage.dest == NULL) {
     return FALSE;
   }
-  // CHECKF(AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(640, 20),
-  // &(gTopMessage.uiSurface)));
 
   InitItemInterface();
   InitRadarScreen();

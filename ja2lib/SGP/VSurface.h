@@ -68,12 +68,6 @@ BOOLEAN InitializeVideoSurfaceManager();
 // Deletes any video Surface placed into list
 BOOLEAN ShutdownVideoSurfaceManager();
 
-// Adds a video Surface to list
-BOOLEAN AddVSurfaceAndSetTransparency(struct VSurface *vs, uint32_t *uiIndex);
-
-uint8_t *LockVSurfaceByID(uint32_t uiVSurface, uint32_t *uiPitch);
-void UnlockVSurfaceByID(VSurfID id);
-
 BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
                               int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP);
 
@@ -146,18 +140,6 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, int32_t 
 
 BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_t X1, int32_t Y1,
                                                    int32_t X2, int32_t Y2);
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////////////
-
-void InitVSurfaceList();
-void DeinitVSurfaceList();
-
-VSurfID AddVSurfaceToList(struct VSurface *vs);
-bool DeleteVSurfaceByIndex(VSurfID id);
-
-struct VSurface *FindVSurface(VSurfID id);
 
 //////////////////////////////////////////////////////////////////////////////
 //
