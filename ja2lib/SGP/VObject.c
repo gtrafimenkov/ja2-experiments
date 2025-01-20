@@ -74,7 +74,6 @@ uint32_t guiVObjectTotalAdded = 0;
 #ifdef _DEBUG
 enum {
   DEBUGSTR_NONE,
-  DEBUGSTR_BLTVIDEOOBJECTFROMINDEX,
   DEBUGSTR_SETOBJECTHANDLESHADE,
   DEBUGSTR_GETVIDEOOBJECTETRLESUBREGIONPROPERTIES,
   DEBUGSTR_GETVIDEOOBJECTETRLEPROPERTIESFROMINDEX,
@@ -222,39 +221,6 @@ BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16
   }
 
   UnlockVSurface(dest);
-  return (TRUE);
-}
-
-BOOLEAN BltVObjectFromIndexOld(uint32_t uiDestVSurface, uint32_t uiSrcVObject,
-                               uint16_t usRegionIndex, int32_t iDestX, int32_t iDestY) {
-  uint16_t *pBuffer;
-  uint32_t uiPitch;
-  struct VObject *hSrcVObject;
-
-  // Lock video surface
-  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
-
-  if (pBuffer == NULL) {
-    return (FALSE);
-  }
-
-// Get video object
-#ifdef _DEBUG
-  gubVODebugCode = DEBUGSTR_BLTVIDEOOBJECTFROMINDEX;
-#endif
-  if (!GetVideoObject(&hSrcVObject, uiSrcVObject)) {
-    UnlockVSurfaceByID(uiDestVSurface);
-    return FALSE;
-  }
-
-  // Now we have the video object and surface, call the VO blitter function
-  if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY)) {
-    UnlockVSurfaceByID(uiDestVSurface);
-    // VO Blitter will set debug messages for error conditions
-    return FALSE;
-  }
-
-  UnlockVSurfaceByID(uiDestVSurface);
   return (TRUE);
 }
 
@@ -1132,9 +1098,6 @@ void CheckValidVObjectIndex(uint32_t uiIndex) {
   if (fAssertError) {
     char str[60];
     switch (gubVODebugCode) {
-      case DEBUGSTR_BLTVIDEOOBJECTFROMINDEX:
-        sprintf(str, "BltVObjectFromIndexOld");
-        break;
       case DEBUGSTR_SETOBJECTHANDLESHADE:
         sprintf(str, "SetObjectHandleShade");
         break;
