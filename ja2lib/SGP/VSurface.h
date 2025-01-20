@@ -50,7 +50,7 @@ struct VSurface {
   uint8_t ubBitDepth;       // 8 or 16
   void *_platformData1;     // platform-specific data (Direct Draw One Interface)
   void *_platformData2;     // platform-specific data (Direct Draw Two Interface)
-  void *pPalette;           // A void pointer, but for this implementation a DDPalette
+  void *_platformPalette;   // platform-specific data (LPDIRECTDRAWPALETTE)
   uint16_t *p16BPPPalette;  // A 16BPP palette used for 8->16 blits
 };
 
