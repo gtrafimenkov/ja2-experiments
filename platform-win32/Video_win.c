@@ -234,8 +234,6 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   DDCOLORKEY ColorKey;
   void *pTmpPointer;
 
-  DDSCAPS SurfaceCaps;
-
   //
   // Register debug topics
   //
@@ -329,12 +327,30 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
+  // DDSCAPS_PRIMARYSURFACE
+  //   This surface is the primary surface. It represents what is visible to the user at the
+  //   moment.
+  //
+  // DDSCAPS_FLIP
+  //   This surface is a part of a surface flipping structure. When this capability is passed to the
+  //   application's CreateSurface method, a front buffer and one or more back buffers are created.
+  //   DirectDraw sets the DDSCAPS_FRONTBUFFER bit on the front-buffer surface and the
+  //   DDSCAPS_BACKBUFFER bit on the surface adjacent to the front-buffer surface. The
+  //   dwBackBufferCount member of the DDSURFACEDESC structure must be set to at least 1 in order
+  //   for the method call to succeed. The DDSCAPS_COMPLEX capability must always be set when
+  //   creating multiple surfaces by using the CreateSurface method.
+  //
+  // DDSCAPS_COMPLEX
+  //   A complex surface is being described. A complex surface results in the creation of more than
+  //   one surface. The additional surfaces are attached to the root surface. The complex structure
+  //   can be destroyed only by destroying the root.
   SurfaceDescription.dwBackBufferCount = 1;
   vsPrimary = CreateVSurfaceInternal(&SurfaceDescription, true);
   if (vsPrimary == NULL) {
     return FALSE;
   }
 
+  DDSCAPS SurfaceCaps;
   SurfaceCaps.dwCaps = DDSCAPS_BACKBUFFER;
   ReturnCode = IDirectDrawSurface2_GetAttachedSurface(
       (LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2, &SurfaceCaps, &gpBackBuffer);
