@@ -202,7 +202,5 @@ BOOLEAN BltVideoObjectOutlineShadowFromIndex(struct VSurface *dest, uint32_t uiS
                                              uint16_t usIndex, int32_t iDestX, int32_t iDestY);
 BOOLEAN BltVideoObjectOutlineShadow(uint32_t uiDestVSurface, struct VObject *hSrcVObject,
                                     uint16_t usIndex, int32_t iDestX, int32_t iDestY);
-BOOLEAN PixelateVideoObjectRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
-                                int32_t Y2);
 
 #endif
