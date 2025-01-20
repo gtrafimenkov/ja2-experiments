@@ -100,8 +100,6 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
 
 extern int32_t giNumFrames;
 
-static struct VSurface *CreateVSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface);
-
 extern BOOLEAN GetRGBDistribution(void);
 
 // Surface Functions
@@ -354,10 +352,20 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
       return FALSE;
     }
 
-    vsBackBuffer = CreateVSurfaceFromDDSurface(backBuffer);
-    if (!vsBackBuffer) {
+    vsBackBuffer = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
+    if (vsBackBuffer == NULL) {
       return FALSE;
     }
+    DDSURFACEDESC DDSurfaceDesc;
+    memset(&DDSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
+    DDSurfaceDesc.dwSize = sizeof(DDSURFACEDESC);
+    IDirectDrawSurface2_GetSurfaceDesc(backBuffer, &DDSurfaceDesc);
+    vsBackBuffer->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
+    vsBackBuffer->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
+    vsBackBuffer->ubBitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
+    vsBackBuffer->_platformData1 = NULL;
+    vsBackBuffer->_platformData2 = (void *)backBuffer;
+    FillVSurfacePalette(vsBackBuffer, backBuffer);
   }
 
   //
@@ -2565,33 +2573,6 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
   }
 
   return (TRUE);
-}
-
-// *****************************************************************************
-//
-// Private DirectDraw manipulation functions
-//
-// *****************************************************************************
-
-static struct VSurface *CreateVSurfaceFromDDSurface(LPDIRECTDRAWSURFACE2 lpDDSurface) {
-  DDSURFACEDESC DDSurfaceDesc;
-  memset(&DDSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
-  DDSurfaceDesc.dwSize = sizeof(DDSURFACEDESC);
-  DirectXAttempt(IDirectDrawSurface2_GetSurfaceDesc(lpDDSurface, &DDSurfaceDesc), __LINE__,
-                 __FILE__);
-
-  struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
-  vs->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
-  vs->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
-  vs->ubBitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
-  vs->_platformData1 = NULL;
-  vs->_platformData2 = (void *)lpDDSurface;
-  FillVSurfacePalette(vs, lpDDSurface);
-
-  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_0,
-             String("Success in Creating Video Surface from DD Surface"));
-
-  return vs;
 }
 
 // UTILITY FUNCTIONS FOR BLITTING
