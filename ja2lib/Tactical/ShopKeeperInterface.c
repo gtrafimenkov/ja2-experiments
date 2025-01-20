@@ -272,8 +272,9 @@ SKIRGBCOLOR SkiGlowColorsA[] = {
 ///////////////////////////////////////////
 
 uint32_t guiMainTradeScreenImage;
-uint32_t guiCornerWhereTacticalIsStillSeenImage;  // This image is for where the corner of tactical
-                                                  // is still seen through the shop keeper interface
+
+// This image is for where the corner of tactical is still seen through the shop keeper interface
+static struct VSurface *vsCornerWhereTacticalIsStillSeenImage;
 
 // ATM:
 // uint32_t		guiSkiAtmImage;
@@ -772,13 +773,14 @@ BOOLEAN EnterShopKeeperInterface() {
             "Selected merc can't interact with shopkeeper.  Send save AM-1");
 
   // Create a video surface to blt corner of the tactical screen that still shines through
-  if (!AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(SKI_TACTICAL_BACKGROUND_START_WIDTH,
-                                                           SKI_TACTICAL_BACKGROUND_START_HEIGHT),
-                                     &guiCornerWhereTacticalIsStillSeenImage)) {
+  vsCornerWhereTacticalIsStillSeenImage = CreateVSurfaceBlank16(
+      SKI_TACTICAL_BACKGROUND_START_WIDTH, SKI_TACTICAL_BACKGROUND_START_HEIGHT);
+  if (vsCornerWhereTacticalIsStillSeenImage == NULL) {
 #ifdef JA2BETAVERSION
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION,
               L"Failed to create Surface where tactical map shows through");
 #endif
+    SetVideoSurfaceTransparencyColor(vsCornerWhereTacticalIsStillSeenImage, FROMRGB(0, 0, 0));
 
     return (FALSE);
   }
@@ -1092,7 +1094,8 @@ BOOLEAN ExitShopKeeperInterface() {
   // Delete the main shopkeep background
   DeleteVideoObjectFromIndex(guiMainTradeScreenImage);
   DeleteVideoObjectFromIndex(guiItemCrossOut);
-  DeleteVSurfaceByIndex(guiCornerWhereTacticalIsStillSeenImage);
+  DeleteVSurface(vsCornerWhereTacticalIsStillSeenImage);
+  vsCornerWhereTacticalIsStillSeenImage = NULL;
 
   ShutUpShopKeeper();
 
@@ -1270,7 +1273,6 @@ void HandleShopKeeperInterface() {
 BOOLEAN RenderShopKeeperInterface() {
   struct VObject *hPixHandle;
   wchar_t zMoney[128];
-  struct VSurface *hDestVSurface, *hSrcVSurface;
   struct Rect SrcRect;
 
   if (InItemDescriptionBox() && pShopKeeperItemDescObject != NULL) {
@@ -1330,15 +1332,13 @@ BOOLEAN RenderShopKeeperInterface() {
 
   // At this point the background is pure, copy it to the save buffer
   if (gfRenderScreenOnNextLoop) {
-    hDestVSurface = FindVSurface(guiCornerWhereTacticalIsStillSeenImage);
-    hSrcVSurface = vsSaveBuffer;
-
     SrcRect.left = SKI_TACTICAL_BACKGROUND_START_X;
     SrcRect.top = SKI_TACTICAL_BACKGROUND_START_Y;
     SrcRect.right = SKI_TACTICAL_BACKGROUND_START_X + SKI_TACTICAL_BACKGROUND_START_WIDTH;
     SrcRect.bottom = SKI_TACTICAL_BACKGROUND_START_Y + SKI_TACTICAL_BACKGROUND_START_HEIGHT;
 
-    BltVSurfaceUsingDD(hDestVSurface, hSrcVSurface, VS_BLT_USECOLORKEY, 0, 0, &SrcRect);
+    BltVSurfaceUsingDD(vsCornerWhereTacticalIsStillSeenImage, vsSaveBuffer, VS_BLT_USECOLORKEY, 0,
+                       0, &SrcRect);
 
     gfRenderScreenOnNextLoop = FALSE;
   }
@@ -1372,18 +1372,15 @@ BOOLEAN RenderShopKeeperInterface() {
 }
 
 void RestoreTacticalBackGround() {
-  struct VSurface *hSrcVSurface;
   struct Rect SrcRect;
-
-  hSrcVSurface = FindVSurface(guiCornerWhereTacticalIsStillSeenImage);
 
   SrcRect.left = 0;
   SrcRect.top = 0;
   SrcRect.right = SKI_TACTICAL_BACKGROUND_START_WIDTH;
   SrcRect.bottom = SKI_TACTICAL_BACKGROUND_START_HEIGHT;
 
-  BltVSurfaceUsingDD(vsFB, hSrcVSurface, VS_BLT_USECOLORKEY, SKI_TACTICAL_BACKGROUND_START_X,
-                     SKI_TACTICAL_BACKGROUND_START_Y, &SrcRect);
+  BltVSurfaceUsingDD(vsFB, vsCornerWhereTacticalIsStillSeenImage, VS_BLT_USECOLORKEY,
+                     SKI_TACTICAL_BACKGROUND_START_X, SKI_TACTICAL_BACKGROUND_START_Y, &SrcRect);
 
   InvalidateRegion(0, 0, 640, 480);
 }
