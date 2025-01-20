@@ -48,7 +48,7 @@ extern BOOLEAN GetRGBDistribution(void);
 
 // Surface Functions
 
-static void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
+static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
                             LPDIRECTDRAWSURFACE *ppNewSurface1,
                             LPDIRECTDRAWSURFACE2 *ppNewSurface2);
 static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc);
@@ -124,8 +124,9 @@ int32_t giNumFrames = 0;
 static LPDIRECTDRAW _gpDirectDrawObject = NULL;
 static LPDIRECTDRAW2 gpDirectDrawObject = NULL;
 
-static LPDIRECTDRAWSURFACE _gpPrimarySurface = NULL;
-static LPDIRECTDRAWSURFACE2 gpPrimarySurface = NULL;
+static LPDIRECTDRAWSURFACE gpPrimarySurface1 = NULL;
+static LPDIRECTDRAWSURFACE2 gpPrimarySurface2 = NULL;
+
 static LPDIRECTDRAWSURFACE2 gpBackBuffer = NULL;
 
 //
@@ -304,24 +305,14 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
   SurfaceDescription.dwBackBufferCount = 1;
 
-  ReturnCode =
-      IDirectDraw2_CreateSurface(gpDirectDrawObject, &SurfaceDescription, &_gpPrimarySurface, NULL);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return FALSE;
-  }
-
-  tmpID = IID_IDirectDrawSurface2;
-  ReturnCode =
-      IDirectDrawSurface_QueryInterface(_gpPrimarySurface, &tmpID, (LPVOID *)&gpPrimarySurface);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
+  if (!DDCreateSurface(gpDirectDrawObject, &SurfaceDescription, &gpPrimarySurface1,
+                       &gpPrimarySurface2)) {
     return FALSE;
   }
 
   SurfaceCaps.dwCaps = DDSCAPS_BACKBUFFER;
   ReturnCode =
-      IDirectDrawSurface2_GetAttachedSurface(gpPrimarySurface, &SurfaceCaps, &gpBackBuffer);
+      IDirectDrawSurface2_GetAttachedSurface(gpPrimarySurface2, &SurfaceCaps, &gpBackBuffer);
   if (ReturnCode != DD_OK) {
     DirectXAttempt(ReturnCode, __LINE__, __FILE__);
     return FALSE;
@@ -497,7 +488,7 @@ void ShutdownVideoManager(void) {
   IDirectDrawSurface2_Release(gpMouseCursor);
   IDirectDrawSurface2_Release(gMouseCursorBackground[0].pSurface);
   IDirectDrawSurface2_Release(gpBackBuffer);
-  IDirectDrawSurface2_Release(gpPrimarySurface);
+  IDirectDrawSurface2_Release(gpPrimarySurface2);
 
   IDirectDraw2_RestoreDisplayMode(gpDirectDrawObject);
   IDirectDraw2_SetCooperativeLevel(gpDirectDrawObject, ghWindow, DDSCL_NORMAL);
@@ -533,7 +524,7 @@ BOOLEAN RestoreVideoManager(void) {
     // Restore the Primary and Backbuffer
     //
 
-    ReturnCode = IDirectDrawSurface2_Restore(gpPrimarySurface);
+    ReturnCode = IDirectDrawSurface2_Restore(gpPrimarySurface2);
     if (ReturnCode != DD_OK) {
       DirectXAttempt(ReturnCode, __LINE__, __FILE__);
       return FALSE;
@@ -1269,7 +1260,7 @@ void RefreshScreen(void *DummyVariable) {
     }
     if (gfRenderScroll) {
       ScrollJA2Background(guiScrollDirection, gsScrollXIncrement, gsScrollYIncrement,
-                          gpPrimarySurface, gpBackBuffer, TRUE, PREVIOUS_MOUSE_DATA);
+                          gpPrimarySurface2, gpBackBuffer, TRUE, PREVIOUS_MOUSE_DATA);
     }
     gfIgnoreScrollDueToCenterAdjust = FALSE;
 
@@ -1339,7 +1330,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.bottom = usScreenHeight;
 
     do {
-      ReturnCode = IDirectDrawSurface2_BltFast(pTmpBuffer, 0, 0, gpPrimarySurface, &Region,
+      ReturnCode = IDirectDrawSurface2_BltFast(pTmpBuffer, 0, 0, gpPrimarySurface2, &Region,
                                                DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1586,7 +1577,7 @@ void RefreshScreen(void *DummyVariable) {
   // Step (1) - Flip pages
   //
   do {
-    ReturnCode = IDirectDrawSurface_Flip(_gpPrimarySurface, NULL, DDFLIP_WAIT);
+    ReturnCode = IDirectDrawSurface_Flip(gpPrimarySurface1, NULL, DDFLIP_WAIT);
     //    if ((ReturnCode != DD_OK)&&(ReturnCode != DDERR_WASSTILLDRAWING))
     if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
       DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1608,7 +1599,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.bottom = 360;
 
     do {
-      ReturnCode = IDirectDrawSurface2_BltFast(gpBackBuffer, 0, 0, gpPrimarySurface, &Region,
+      ReturnCode = IDirectDrawSurface2_BltFast(gpBackBuffer, 0, 0, gpPrimarySurface2, &Region,
                                                DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1638,7 +1629,7 @@ void RefreshScreen(void *DummyVariable) {
     do {
       ReturnCode = IDirectDrawSurface2_BltFast(
           gpBackBuffer, gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseXPos,
-          gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseYPos, gpPrimarySurface,
+          gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseYPos, gpPrimarySurface2,
           (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
       if (ReturnCode != DD_OK && ReturnCode != DDERR_WASSTILLDRAWING) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1657,8 +1648,8 @@ void RefreshScreen(void *DummyVariable) {
     do {
       ReturnCode = IDirectDrawSurface2_BltFast(
           gpBackBuffer, gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
-          gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, gpPrimarySurface, (LPRECT)&Region,
-          DDBLTFAST_NOCOLORKEY);
+          gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, gpPrimarySurface2,
+          (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
 
@@ -1679,7 +1670,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.bottom = SCREEN_HEIGHT;
 
     do {
-      ReturnCode = IDirectDrawSurface2_BltFast(gpBackBuffer, 0, 0, gpPrimarySurface, &Region,
+      ReturnCode = IDirectDrawSurface2_BltFast(gpBackBuffer, 0, 0, gpPrimarySurface2, &Region,
                                                DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1702,7 +1693,7 @@ void RefreshScreen(void *DummyVariable) {
 
       do {
         ReturnCode =
-            IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpPrimarySurface,
+            IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpPrimarySurface2,
                                         (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
         if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
           DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1731,7 +1722,7 @@ void RefreshScreen(void *DummyVariable) {
 
     do {
       ReturnCode =
-          IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpPrimarySurface,
+          IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpPrimarySurface2,
                                       (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1755,12 +1746,12 @@ BOOLEAN GetRGBDistribution(void) {
   uint16_t usBit;
   HRESULT ReturnCode;
 
-  Assert(gpPrimarySurface != NULL);
+  Assert(gpPrimarySurface2 != NULL);
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_PIXELFORMAT;
-  ReturnCode = IDirectDrawSurface2_GetSurfaceDesc(gpPrimarySurface, &SurfaceDescription);
+  ReturnCode = IDirectDrawSurface2_GetSurfaceDesc(gpPrimarySurface2, &SurfaceDescription);
   if (ReturnCode != DD_OK) {
     DirectXAttempt(ReturnCode, __LINE__, __FILE__);
     return FALSE;
@@ -1885,7 +1876,7 @@ BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) {
     return (FALSE);
   }
   // Apply the palette to the surfaces
-  ReturnCode = IDirectDrawSurface_SetPalette(gpPrimarySurface, gpDirectDrawPalette);
+  ReturnCode = IDirectDrawSurface_SetPalette(gpPrimarySurface2, gpDirectDrawPalette);
   if (ReturnCode != DD_OK) {
     DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, String("Failed to apply 8-bit palette to primary surface"));
     return (FALSE);
@@ -1961,7 +1952,7 @@ static void SnapshotSmall(void) {
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Lock(gpPrimarySurface, NULL, &SurfaceDescription, 0, NULL);
+  ReturnCode = IDirectDrawSurface2_Lock(gpPrimarySurface2, NULL, &SurfaceDescription, 0, NULL);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
     return;
   }
@@ -1985,7 +1976,7 @@ static void SnapshotSmall(void) {
 
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_Unlock(gpPrimarySurface, &SurfaceDescription);
+  ReturnCode = IDirectDrawSurface2_Unlock(gpPrimarySurface2, &SurfaceDescription);
   if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
     DirectXAttempt(ReturnCode, __LINE__, __FILE__);
   }
@@ -2079,7 +2070,7 @@ static void DeletePrimaryVideoSurfaces();
 BOOLEAN SetPrimaryVideoSurfaces() {
   DeletePrimaryVideoSurfaces();
 
-  vsPrimary = CreateVideoSurfaceFromDDSurface(gpPrimarySurface);
+  vsPrimary = CreateVideoSurfaceFromDDSurface(gpPrimarySurface2);
   if (!vsPrimary) {
     return FALSE;
   }
@@ -2425,7 +2416,7 @@ void UnlockVSurface(struct VSurface *vs) {
     return;
   }
   if (vs == vsPrimary) {
-    IDirectDrawSurface2_Unlock(gpPrimarySurface, NULL);
+    IDirectDrawSurface2_Unlock(gpPrimarySurface2, NULL);
   } else if (vs == vsBackBuffer) {
     IDirectDrawSurface2_Unlock(gpBackBuffer, NULL);
   } else if (vs == vsFB) {
@@ -3156,8 +3147,7 @@ void SmkShutdownVideo(void) {
 // DirectDrawCalls
 //////////////////////////////////////////////////////////////////
 
-// DirectDrawSurface2 Calls
-static void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
+static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
                             LPDIRECTDRAWSURFACE *ppNewSurface1,
                             LPDIRECTDRAWSURFACE2 *ppNewSurface2) {
   Assert(pExistingDirectDraw != NULL);
@@ -3166,14 +3156,22 @@ static void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pN
   Assert(ppNewSurface2 != NULL);
 
   // create the directdraw surface
-  DirectXAttempt(
-      IDirectDraw2_CreateSurface(pExistingDirectDraw, pNewSurfaceDesc, ppNewSurface1, NULL),
-      __LINE__, __FILE__);
+  HRESULT ReturnCode =
+      IDirectDraw2_CreateSurface(pExistingDirectDraw, pNewSurfaceDesc, ppNewSurface1, NULL);
+  if (ReturnCode != DD_OK) {
+    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
+    return false;
+  }
 
   // get the direct draw surface 2 interface
   IID tmpID = IID_IDirectDrawSurface2;
-  DirectXAttempt(IDirectDrawSurface_QueryInterface(*ppNewSurface1, &tmpID, (LPVOID *)ppNewSurface2),
-                 __LINE__, __FILE__);
+  ReturnCode = IDirectDrawSurface_QueryInterface(*ppNewSurface1, &tmpID, (LPVOID *)ppNewSurface2);
+  if (ReturnCode != DD_OK) {
+    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
+    return false;
+  }
+
+  return true;
 }
 
 // Lock, unlock calls
