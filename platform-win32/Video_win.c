@@ -36,9 +36,6 @@
 static LPDIRECTDRAW _gpDirectDrawObject = NULL;
 static LPDIRECTDRAW2 gpDirectDrawObject = NULL;
 
-static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
-                                uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
-
 static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2) {
   LPDIRECTDRAWPALETTE pDDPalette;
   HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
@@ -2393,13 +2390,12 @@ BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColo
   return (TRUE);
 }
 
-BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteEntry *pPalette) {
-  CHECKF(hVSurface->_platformPalette != NULL);
-
-  DDGetPaletteEntries((LPDIRECTDRAWPALETTE)hVSurface->_platformPalette, 0, 0, 256,
-                      (PALETTEENTRY *)pPalette);
-
-  return (TRUE);
+BOOLEAN GetVSurfacePaletteEntries(struct VSurface *vs, struct SGPPaletteEntry *pPalette) {
+  CHECKF(vs->_platformPalette != NULL);
+  Assert(pPalette != NULL);
+  IDirectDrawPalette_GetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,
+                                (PALETTEENTRY *)pPalette);
+  return TRUE;
 }
 
 // Deletes all palettes, surfaces and region data
@@ -3043,15 +3039,6 @@ static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
   DirectXAttempt(
       IDirectDrawPalette_SetEntries(pPalette, uiFlags, uiStartingEntry, uiCount, pEntries),
       __LINE__, __FILE__);
-}
-
-static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
-                                uint32_t uiNumEntries, LPPALETTEENTRY pEntries) {
-  Assert(pPalette != NULL);
-  Assert(pEntries != NULL);
-
-  DirectXAttempt(IDirectDrawPalette_GetEntries(pPalette, uiFlags, uiBase, uiNumEntries, pEntries),
-                 __LINE__, __FILE__);
 }
 
 static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette) {
