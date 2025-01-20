@@ -106,15 +106,10 @@ static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) 
 
 static void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
                       RECT *region, uint32_t flags) {
-  // DDBLTFAST_DESTCOLORKEY
-  //   A transparent bitblt that uses the destination color key.
   // DDBLTFAST_NOCOLORKEY
   //   A normal copy bitblt with no transparency.
   // DDBLTFAST_SRCCOLORKEY
   //   A transparent bitblt that uses the source color key.
-  // DDBLTFAST_WAIT
-  //   Postpones the DDERR_WASSTILLDRAWING message if the bitbltter is busy, and returns as soon as
-  //   the bitblt can be set up or another error occurs.
 
   HRESULT ReturnCode;
   do {
@@ -129,6 +124,11 @@ static void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSur
       break;
     }
   } while (ReturnCode != DD_OK);
+}
+
+static void DDBltFastSrcColorKey(struct VSurface *dest, uint32_t x, uint32_t y,
+                                 struct VSurface *src, RECT *region) {
+  DDBltFast(dest, x, y, src, region, DDBLTFAST_SRCCOLORKEY);
 }
 
 #define BUFFER_READY 0x00
@@ -1424,9 +1424,9 @@ void RefreshScreen(void *DummyVariable) {
         Region.right = gMouseCursorBackground[CURRENT_MOUSE_DATA].usRight;
         Region.bottom = gMouseCursorBackground[CURRENT_MOUSE_DATA].usBottom;
 
-        DDBltFast(vsBackBuffer, gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
-                  gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, vsMouseBuffer, &Region,
-                  DDBLTFAST_SRCCOLORKEY);
+        DDBltFastSrcColorKey(vsBackBuffer, gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
+                             gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, vsMouseBuffer,
+                             &Region);
       } else {
         //
         // Hum, the mouse was not blitted this round. Henceforth we will flag fRestore as FALSE
@@ -2423,9 +2423,6 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
 BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                            uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
                            struct Rect *SrcRect) {
-  uint32_t uiDDFlags;
-  RECT DestRect;
-
   RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
 
   // Blit using the correct blitter
@@ -2434,25 +2431,16 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
     CHECKF(iDestX >= 0);
     CHECKF(iDestY >= 0);
 
-    // Default flags
-    uiDDFlags = 0;
-
-    // Convert flags into DD flags, ( for transparency use, etc )
     if (fBltFlags & VS_BLT_USECOLORKEY) {
-      uiDDFlags |= DDBLTFAST_SRCCOLORKEY;
+      DDBltFastSrcColorKey(hDestVSurface, iDestX, iDestY, hSrcVSurface, &srcRect);
+    } else {
+      DDBltFast(hDestVSurface, iDestX, iDestY, hSrcVSurface, &srcRect, DDBLTFAST_NOCOLORKEY);
     }
-
-    if (uiDDFlags == 0) {
-      // Default here is no colorkey
-      uiDDFlags = DDBLTFAST_NOCOLORKEY;
-    }
-
-    DDBltFast(hDestVSurface, iDestX, iDestY, hSrcVSurface, &srcRect, uiDDFlags);
   } else {
     // Normal, specialized blit for clipping, etc
 
     // Default flags
-    uiDDFlags = DDBLT_WAIT;
+    uint32_t uiDDFlags = DDBLT_WAIT;
 
     // Convert flags into DD flags, ( for transparency use, etc )
     if (fBltFlags & VS_BLT_USECOLORKEY) {
@@ -2460,6 +2448,7 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
     }
 
     // Setup dest rectangle
+    RECT DestRect;
     DestRect.top = (int)iDestY;
     DestRect.left = (int)iDestX;
     DestRect.bottom = (int)iDestY + (SrcRect->bottom - SrcRect->top);
