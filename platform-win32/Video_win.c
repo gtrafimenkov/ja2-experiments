@@ -133,8 +133,8 @@ static LPDIRECTDRAWSURFACE2 gpBackBuffer = NULL;
 // Direct Draw Objects for the frame buffer
 //
 
-static LPDIRECTDRAWSURFACE _gpFrameBuffer = NULL;
-static LPDIRECTDRAWSURFACE2 gpFrameBuffer = NULL;
+static LPDIRECTDRAWSURFACE gpFrameBuffer1 = NULL;
+static LPDIRECTDRAWSURFACE2 gpFrameBuffer2 = NULL;
 
 //
 // Globals for mouse cursor
@@ -328,17 +328,8 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
   SurfaceDescription.dwWidth = SCREEN_WIDTH;
   SurfaceDescription.dwHeight = SCREEN_HEIGHT;
-  ReturnCode =
-      IDirectDraw2_CreateSurface(gpDirectDrawObject, &SurfaceDescription, &_gpFrameBuffer, NULL);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return FALSE;
-  }
 
-  tmpID = IID_IDirectDrawSurface2;
-  ReturnCode = IDirectDrawSurface_QueryInterface(_gpFrameBuffer, &tmpID, (LPVOID *)&gpFrameBuffer);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
+  if (!DDCreateSurface(gpDirectDrawObject, &SurfaceDescription, &gpFrameBuffer1, &gpFrameBuffer2)) {
     return FALSE;
   }
 
@@ -1017,7 +1008,7 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
 
       do {
         ReturnCode = IDirectDrawSurface2_BltFast(
-            pDest, StripRegions[cnt].left, StripRegions[cnt].top, gpFrameBuffer,
+            pDest, StripRegions[cnt].left, StripRegions[cnt].top, gpFrameBuffer2,
             (LPRECT) & (StripRegions[cnt]), DDBLTFAST_NOCOLORKEY);
         if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
           DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1196,7 +1187,7 @@ void RefreshScreen(void *DummyVariable) {
         Region.bottom = usScreenHeight;
 
         do {
-          ReturnCode = IDirectDrawSurface2_BltFast(gpBackBuffer, 0, 0, gpFrameBuffer,
+          ReturnCode = IDirectDrawSurface2_BltFast(gpBackBuffer, 0, 0, gpFrameBuffer2,
                                                    (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
           if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
             DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1216,7 +1207,7 @@ void RefreshScreen(void *DummyVariable) {
 
           do {
             ReturnCode =
-                IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpFrameBuffer,
+                IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpFrameBuffer2,
                                             (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
             if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
               DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1245,7 +1236,7 @@ void RefreshScreen(void *DummyVariable) {
 
           do {
             ReturnCode =
-                IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpFrameBuffer,
+                IDirectDrawSurface2_BltFast(gpBackBuffer, Region.left, Region.top, gpFrameBuffer2,
                                             (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
             if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
               DirectXAttempt(ReturnCode, __LINE__, __FILE__);
@@ -1888,7 +1879,7 @@ BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) {
     return (FALSE);
   }
 
-  ReturnCode = IDirectDrawSurface_SetPalette(gpFrameBuffer, gpDirectDrawPalette);
+  ReturnCode = IDirectDrawSurface_SetPalette(gpFrameBuffer2, gpDirectDrawPalette);
   if (ReturnCode != DD_OK) {
     DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, String("Failed to apply 8-bit palette to frame buffer"));
     return (FALSE);
@@ -2090,7 +2081,7 @@ BOOLEAN SetPrimaryVideoSurfaces() {
     return FALSE;
   }
 
-  vsFB = CreateVideoSurfaceFromDDSurface(gpFrameBuffer);
+  vsFB = CreateVideoSurfaceFromDDSurface(gpFrameBuffer2);
   if (!vsFB) {
     return FALSE;
   }
@@ -2420,7 +2411,7 @@ void UnlockVSurface(struct VSurface *vs) {
   } else if (vs == vsBackBuffer) {
     IDirectDrawSurface2_Unlock(gpBackBuffer, NULL);
   } else if (vs == vsFB) {
-    IDirectDrawSurface2_Unlock(gpFrameBuffer, NULL);
+    IDirectDrawSurface2_Unlock(gpFrameBuffer2, NULL);
   } else if (vs == vsMouseBuffer) {
     IDirectDrawSurface2_Unlock(gpMouseCursor, NULL);
   } else if (vs == vsMouseBufferOriginal) {
