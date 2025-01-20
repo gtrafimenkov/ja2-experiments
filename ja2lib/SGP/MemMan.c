@@ -42,3 +42,12 @@ wchar_t* gzJA2ScreenNames[] = {
 BOOLEAN InitializeMemoryManager(void) { return (TRUE); }
 
 void ShutdownMemoryManager(void) {}
+
+// Allocate memory and zero it.
+void* MemAllocZero(size_t size) {
+  void* p = MemAlloc(size);
+  if (p != NULL) {
+    memset(p, 0, size);
+  }
+  return p;
+}
