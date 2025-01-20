@@ -2779,7 +2779,6 @@ struct SmkFlic {
   struct SmackTag *SmackHandle;
   struct SmackBufTag *SmackBuffer;
   uint32_t uiFlags;
-  LPDIRECTDRAWSURFACE2 lpDDS;
   HWND hWindow;
   uint32_t uiFrame;
   uint32_t uiLeft, uiTop;
@@ -2791,10 +2790,6 @@ HWND hDisplayWindow = 0;
 uint32_t uiDisplayHeight, uiDisplayWidth;
 BOOLEAN fSuspendFlics = FALSE;
 uint32_t uiFlicsPlaying = 0;
-uint32_t guiSmackPixelFormat = SMACKBUFFER565;
-
-LPDIRECTDRAWSURFACE lpVideoPlayback = NULL;
-LPDIRECTDRAWSURFACE2 lpVideoPlayback2 = NULL;
 
 //-Function-Prototypes-------------------------------------------------------------
 void SmkInitialize(uint32_t uiWidth, uint32_t uiHeight);
@@ -2808,23 +2803,30 @@ struct SmkFlic *SmkGetFreeFlic(void);
 void SmkSetupVideo(void);
 void SmkShutdownVideo(void);
 
+static uint32_t SmkGetPixelFormat() {
+  if ((gusRedMask == 0x7c00) && (gusGreenMask == 0x03e0) && (gusBlueMask == 0x1f)) {
+    return SMACKBUFFER555;
+  } else {
+    return SMACKBUFFER565;
+  }
+}
+
 BOOLEAN SmkPollFlics(void) {
   uint32_t uiCount;
   BOOLEAN fFlicStatus = FALSE;
-  DDSURFACEDESC SurfaceDescription;
 
   for (uiCount = 0; uiCount < SMK_NUM_FLICS; uiCount++) {
     if (SmkList[uiCount].uiFlags & SMK_FLIC_PLAYING) {
       fFlicStatus = TRUE;
       if (!fSuspendFlics) {
         if (!SmackWait(SmkList[uiCount].SmackHandle)) {
-          DDLockSurface(SmkList[uiCount].lpDDS, NULL, &SurfaceDescription, 0, NULL);
+          uint32_t pitch;
+          uint8_t *data = LockVSurface(vsFB, &pitch);
           SmackToBuffer(SmkList[uiCount].SmackHandle, SmkList[uiCount].uiLeft,
-                        SmkList[uiCount].uiTop, SurfaceDescription.lPitch,
-                        SmkList[uiCount].SmackHandle->Height, SurfaceDescription.lpSurface,
-                        guiSmackPixelFormat);
+                        SmkList[uiCount].uiTop, pitch, SmkList[uiCount].SmackHandle->Height, data,
+                        SmkGetPixelFormat());
           SmackDoFrame(SmkList[uiCount].SmackHandle);
-          IDirectDrawSurface2_Unlock(SmkList[uiCount].lpDDS, SurfaceDescription.lpSurface);
+          UnlockVSurface(vsFB);
           // temp til I figure out what to do with it
           // InvalidateRegion(0,0, 640, 480, FALSE);
 
@@ -2931,7 +2933,6 @@ struct SmkFlic *SmkOpenFlic(char *cFilename) {
   SmkSetupVideo();
 
   pSmack->cFilename = cFilename;
-  pSmack->lpDDS = lpVideoPlayback2;
   pSmack->hWindow = hDisplayWindow;
 
   // Smack flic is now open and ready to go
@@ -2968,35 +2969,9 @@ struct SmkFlic *SmkGetFreeFlic(void) {
   return (NULL);
 }
 
-void SmkSetupVideo(void) {
-  DDSURFACEDESC SurfaceDescription;
-  HRESULT ReturnCode;
-  uint16_t usRed, usGreen, usBlue;
+void SmkSetupVideo(void) {}
 
-  lpVideoPlayback2 = (LPDIRECTDRAWSURFACE2)vsFB->_platformData2;
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  ReturnCode = IDirectDrawSurface2_GetSurfaceDesc(lpVideoPlayback2, &SurfaceDescription);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return;
-  }
-
-  usRed = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwRBitMask;
-  usGreen = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwGBitMask;
-  usBlue = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwBBitMask;
-
-  if ((usRed == 0xf800) && (usGreen == 0x07e0) && (usBlue == 0x001f))
-    guiSmackPixelFormat = SMACKBUFFER565;
-  else
-    guiSmackPixelFormat = SMACKBUFFER555;
-}
-
-void SmkShutdownVideo(void) {
-  // DEF:
-  //	CinematicModeOff();
-}
+void SmkShutdownVideo(void) {}
 
 //////////////////////////////////////////////////////////////////
 // DirectDrawCalls
