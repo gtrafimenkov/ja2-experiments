@@ -32,6 +32,33 @@
 #define _MT
 #endif
 
+static LPDIRECTDRAW _gpDirectDrawObject = NULL;
+static LPDIRECTDRAW2 gpDirectDrawObject = NULL;
+
+static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
+                            LPDIRECTDRAWSURFACE *ppNewSurface1,
+                            LPDIRECTDRAWSURFACE2 *ppNewSurface2);
+
+static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
+  struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
+  if (vs == NULL) {
+    return NULL;
+  }
+
+  LPDIRECTDRAWSURFACE lpDDS;
+  LPDIRECTDRAWSURFACE2 lpDDS2;
+  DDCreateSurface(gpDirectDrawObject, descr, &lpDDS, &lpDDS2);
+
+  vs->_platformData1 = (void *)lpDDS;
+  vs->_platformData2 = (void *)lpDDS2;
+
+  vs->usWidth = (uint16_t)descr->dwWidth;
+  vs->usHeight = (uint16_t)descr->dwHeight;
+  vs->ubBitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
+
+  return vs;
+}
+
 #define BUFFER_READY 0x00
 #define BUFFER_BUSY 0x01
 #define BUFFER_DIRTY 0x02
@@ -48,9 +75,6 @@ extern BOOLEAN GetRGBDistribution(void);
 
 // Surface Functions
 
-static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
-                            LPDIRECTDRAWSURFACE *ppNewSurface1,
-                            LPDIRECTDRAWSURFACE2 *ppNewSurface2);
 static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
                           LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent);
 static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
@@ -112,9 +136,6 @@ int32_t giNumFrames = 0;
 //
 // Direct Draw objects for both the Primary and Backbuffer surfaces
 //
-
-static LPDIRECTDRAW _gpDirectDrawObject = NULL;
-static LPDIRECTDRAW2 gpDirectDrawObject = NULL;
 
 static LPDIRECTDRAWSURFACE gpPrimarySurface1 = NULL;
 static LPDIRECTDRAWSURFACE2 gpPrimarySurface2 = NULL;
@@ -2210,20 +2231,7 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
   SurfaceDescription.dwHeight = height;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-  LPDIRECTDRAWSURFACE lpDDS;
-  LPDIRECTDRAWSURFACE2 lpDDS2;
-  LPDIRECTDRAW2 lpDD2Object = gpDirectDrawObject;
-  DDCreateSurface(lpDD2Object, &SurfaceDescription, &lpDDS, &lpDDS2);
-
-  struct VSurface *vs = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
-  CHECKF(vs != NULL);
-  memset(vs, 0, sizeof(struct VSurface));
-
-  vs->usHeight = height;
-  vs->usWidth = width;
-  vs->ubBitDepth = bitDepth;
-  vs->_platformData1 = (void *)lpDDS;
-  vs->_platformData2 = (void *)lpDDS2;
+  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription);
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in Creating Video Surface"));
 
@@ -2231,11 +2239,6 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
 }
 
 struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
-  DDSURFACEDESC SurfaceDescription;
-  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
-
-  LPDIRECTDRAW2 lpDD2Object = gpDirectDrawObject;
-
   HIMAGE hImage = CreateImage(filepath, IMAGE_ALLIMAGEDATA);
 
   if (hImage == NULL) {
@@ -2243,18 +2246,17 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
     return (NULL);
   }
 
-  uint16_t usHeight = hImage->usHeight;
-  uint16_t usWidth = hImage->usWidth;
-  uint8_t ubBitDepth = hImage->ubBitDepth;
+  DDSURFACEDESC SurfaceDescription;
+  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
 
-  Assert(usHeight > 0);
-  Assert(usWidth > 0);
+  Assert(hImage->usHeight > 0);
+  Assert(hImage->usWidth > 0);
 
   DDPIXELFORMAT PixelFormat;
   memset(&PixelFormat, 0, sizeof(PixelFormat));
   PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
 
-  switch (ubBitDepth) {
+  switch (hImage->ubBitDepth) {
     case 8: {
       PixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
       PixelFormat.dwRGBBitCount = 8;
@@ -2279,29 +2281,13 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   }
 
   SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
-
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwWidth = usWidth;
-  SurfaceDescription.dwHeight = usHeight;
+  SurfaceDescription.dwWidth = hImage->usWidth;
+  SurfaceDescription.dwHeight = hImage->usHeight;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-  LPDIRECTDRAWSURFACE lpDDS;
-  LPDIRECTDRAWSURFACE2 lpDDS2;
-  DDCreateSurface(lpDD2Object, &SurfaceDescription, &lpDDS, &lpDDS2);
-
-  struct VSurface *vs = (struct VSurface *)MemAlloc(sizeof(struct VSurface));
-  memset(vs, 0, sizeof(struct VSurface));
-  CHECKF(vs != NULL);
-
-  vs->usHeight = usHeight;
-  vs->usWidth = usWidth;
-  vs->ubBitDepth = ubBitDepth;
-  vs->_platformData1 = (void *)lpDDS;
-  vs->_platformData2 = (void *)lpDDS2;
-  vs->pPalette = NULL;
-  vs->p16BPPPalette = NULL;
+  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription);
 
   SGPRect tempRect;
   tempRect.iLeft = 0;
@@ -2315,10 +2301,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   }
 
   DestroyImage(hImage);
-
-  vs->usHeight = usHeight;
-  vs->usWidth = usWidth;
-  vs->ubBitDepth = ubBitDepth;
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in CreateVSurfaceFromFile"));
 
