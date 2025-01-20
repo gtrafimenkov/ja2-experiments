@@ -147,7 +147,4 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter);
 BOOLEAN BlitBufferToBuffer(struct VSurface *src, struct VSurface *dest, uint16_t usSrcX,
                            uint16_t usSrcY, uint16_t usWidth, uint16_t usHeight);
 
-BOOLEAN BlitBufferToBufferOld(uint32_t uiSrcBuffer, uint32_t uiDestBuffer, uint16_t usSrcX,
-                              uint16_t usSrcY, uint16_t usWidth, uint16_t usHeight);
-
 #endif
