@@ -60,8 +60,6 @@ struct VSurface {
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-extern int32_t giMemUsedInSurfaces;
-
 // Creates a list to contain video Surfaces
 BOOLEAN InitializeVideoSurfaceManager();
 

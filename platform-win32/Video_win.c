@@ -2096,12 +2096,8 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
 
 void DeletePrimaryVideoSurfaces();
 
-int32_t giMemUsedInSurfaces;
-
 BOOLEAN InitializeVideoSurfaceManager() {
   RegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Surface Manager");
-
-  giMemUsedInSurfaces = 0;
 
   // Create primary and backbuffer from globals
   if (!SetPrimaryVideoSurfaces()) {
@@ -2229,8 +2225,6 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
   vs->_platformData1 = (void *)lpDDS;
   vs->_platformData2 = (void *)lpDDS2;
 
-  giMemUsedInSurfaces += (vs->usHeight * vs->usWidth * (vs->ubBitDepth / 8));
-
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in Creating Video Surface"));
 
   return (vs);
@@ -2325,8 +2319,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   vs->usHeight = usHeight;
   vs->usWidth = usWidth;
   vs->ubBitDepth = ubBitDepth;
-
-  giMemUsedInSurfaces += (vs->usHeight * vs->usWidth * (vs->ubBitDepth / 8));
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in CreateVSurfaceFromFile"));
 
@@ -2452,38 +2444,36 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 }
 
 // Deletes all palettes, surfaces and region data
-BOOLEAN DeleteVSurface(struct VSurface *hVSurface) {
-  CHECKF(hVSurface != NULL);
+BOOLEAN DeleteVSurface(struct VSurface *vs) {
+  CHECKF(vs != NULL);
 
   // Release palette
-  if (hVSurface->pPalette != NULL) {
-    DDReleasePalette((LPDIRECTDRAWPALETTE)hVSurface->pPalette);
-    hVSurface->pPalette = NULL;
+  if (vs->pPalette != NULL) {
+    DDReleasePalette((LPDIRECTDRAWPALETTE)vs->pPalette);
+    vs->pPalette = NULL;
   }
 
   // Release surface
-  if (hVSurface->_platformData2 != NULL) {
-    DirectXAttempt(IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)hVSurface->_platformData2),
-                   __LINE__, __FILE__);
-    hVSurface->_platformData2 = NULL;
+  if (vs->_platformData2 != NULL) {
+    DirectXAttempt(IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)vs->_platformData2), __LINE__,
+                   __FILE__);
+    vs->_platformData2 = NULL;
   }
 
-  if (hVSurface->_platformData1 != NULL) {
-    DirectXAttempt(IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)hVSurface->_platformData1),
-                   __LINE__, __FILE__);
-    hVSurface->_platformData1 = NULL;
+  if (vs->_platformData1 != NULL) {
+    DirectXAttempt(IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)vs->_platformData1), __LINE__,
+                   __FILE__);
+    vs->_platformData1 = NULL;
   }
 
   // If there is a 16bpp palette, free it
-  if (hVSurface->p16BPPPalette != NULL) {
-    MemFree(hVSurface->p16BPPPalette);
-    hVSurface->p16BPPPalette = NULL;
+  if (vs->p16BPPPalette != NULL) {
+    MemFree(vs->p16BPPPalette);
+    vs->p16BPPPalette = NULL;
   }
 
-  giMemUsedInSurfaces -= (hVSurface->usHeight * hVSurface->usWidth * (hVSurface->ubBitDepth / 8));
-
   // Release object
-  MemFree(hVSurface);
+  MemFree(vs);
 
   return (TRUE);
 }
