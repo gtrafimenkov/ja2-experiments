@@ -9,16 +9,16 @@
 #include "SGP/Types.h"
 
 typedef struct {
-  BOOLEAN fGameInit;        // Used for initializing save variables the first time.
-                            // This flag is initialize at
-  BOOLEAN fKill;            // flagged for deallocation.
-  BOOLEAN fActive;          // currently active
-  uint16_t *pusItemIndex;   // a dynamic array of Item indices
-  uint32_t uiBuffer;        // index of buffer
-  uint32_t uiItemType;      // Weapons, ammo, armour, explosives, equipment
-  int16_t sWidth, sHeight;  // width and height of buffer
-  int16_t sNumItems;        // total number of items in the current class of item.
-  int16_t sSelItemIndex;    // currently selected item index.
+  BOOLEAN fGameInit;          // Used for initializing save variables the first time.
+                              // This flag is initialize at
+  BOOLEAN fKill;              // flagged for deallocation.
+  BOOLEAN fActive;            // currently active
+  uint16_t* pusItemIndex;     // a dynamic array of Item indices
+  struct VSurface* vsBuffer;  // index of buffer
+  uint32_t uiItemType;        // Weapons, ammo, armour, explosives, equipment
+  int16_t sWidth, sHeight;    // width and height of buffer
+  int16_t sNumItems;          // total number of items in the current class of item.
+  int16_t sSelItemIndex;      // currently selected item index.
   int16_t sHilitedItemIndex;
   int16_t sScrollIndex;  // current scroll index (0 is far left, 1 is next tile to the right, ...)
   int16_t sSaveSelWeaponsIndex, sSaveSelAmmoIndex, sSaveSelArmourIndex, sSaveSelExplosivesIndex,

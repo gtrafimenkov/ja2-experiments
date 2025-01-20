@@ -116,7 +116,7 @@ EditorItemsInfo eInfo;
 void EntryInitEditorItemsInfo() {
   int32_t i;
   INVTYPE *item;
-  eInfo.uiBuffer = 0;
+  eInfo.vsBuffer = 0;
   eInfo.fKill = 0;
   eInfo.fActive = 0;
   eInfo.sWidth = 0;
@@ -276,14 +276,15 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   eInfo.sHeight = 80;
   // Create item buffer
   //!!!Memory check.  Create the item buffer
-  if (!AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(eInfo.sWidth, eInfo.sHeight),
-                                     &eInfo.uiBuffer)) {
+  eInfo.vsBuffer = CreateVSurfaceBlank16(eInfo.sWidth, eInfo.sHeight);
+  if (eInfo.vsBuffer == NULL) {
     eInfo.fKill = TRUE;
     eInfo.fActive = FALSE;
     return;
   }
+  SetVideoSurfaceTransparencyColor(eInfo.vsBuffer, FROMRGB(0, 0, 0));
 
-  pDestBuf = LockVSurfaceByID(eInfo.uiBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(eInfo.vsBuffer, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
 
   // copy a blank chunk of the editor interface to the new buffer.
@@ -292,7 +293,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
                     0 + i, 0, 100, 360, 60, 80);
   }
 
-  UnlockVSurfaceByID(eInfo.uiBuffer);
+  UnlockVSurface(eInfo.vsBuffer);
   UnlockVSurface(vsFB);
 
   x = 0;
@@ -316,7 +317,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
 
       SetFont(SMALLCOMPFONT);
       SetFontForeground(FONT_MCOLOR_WHITE);
-      SetFontDestBuffer(FindVSurface(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
+      SetFontDestBuffer(eInfo.vsBuffer, 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
 
       swprintf(pStr, ARR_SIZE(pStr), L"%S", LockTable[i].ubEditorName);
       DisplayWrappedString(x, (uint16_t)(y + 25), 60, 2, SMALLCOMPFONT, FONT_WHITE, pStr,
@@ -327,8 +328,8 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
       sOffset = hVObject->pETRLEObject[item->ubGraphicNum].sOffsetX;
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
 
-      BltVideoObjectOutlineFromIndex(FindVSurface(eInfo.uiBuffer), uiVideoObjectIndex,
-                                     item->ubGraphicNum, sStart, y + 2, 0, FALSE);
+      BltVideoObjectOutlineFromIndex(eInfo.vsBuffer, uiVideoObjectIndex, item->ubGraphicNum, sStart,
+                                     y + 2, 0, FALSE);
       // cycle through the various slot positions (0,0), (0,40), (60,0), (60,40), (120,0)...
       if (y == 0) {
         y = 40;
@@ -403,7 +404,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
 
           SetFont(SMALLCOMPFONT);
           SetFontForeground(FONT_MCOLOR_WHITE);
-          SetFontDestBuffer(FindVSurface(eInfo.uiBuffer), 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
+          SetFontDestBuffer(eInfo.vsBuffer, 0, 0, eInfo.sWidth, eInfo.sHeight, FALSE);
 
           if (eInfo.uiItemType != TBAR_MODE_ITEM_TRIGGERS) {
             LoadItemInfo(usCounter, pItemName, NULL);
@@ -442,8 +443,8 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
           sStart = x + (60 - sWidth - sOffset * 2) / 2;
 
           if (sWidth) {
-            BltVideoObjectOutlineFromIndex(FindVSurface(eInfo.uiBuffer), uiVideoObjectIndex,
-                                           item->ubGraphicNum, sStart, y + 2, 0, FALSE);
+            BltVideoObjectOutlineFromIndex(eInfo.vsBuffer, uiVideoObjectIndex, item->ubGraphicNum,
+                                           sStart, y + 2, 0, FALSE);
           }
           // cycle through the various slot positions (0,0), (0,40), (60,0), (60,40), (120,0)...
           if (y == 0) {
@@ -496,13 +497,13 @@ void RenderEditorItemsInfo() {
     eInfo.sHilitedItemIndex = -1;
   }
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
-  pSrcBuf = LockVSurfaceByID(eInfo.uiBuffer, &uiSrcPitchBYTES);
+  pSrcBuf = LockVSurface(eInfo.vsBuffer, &uiSrcPitchBYTES);
 
   // copy the items buffer to the editor bar
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 110,
                   360, 60 * eInfo.sScrollIndex, 0, 360, 80);
 
-  UnlockVSurfaceByID(eInfo.uiBuffer);
+  UnlockVSurface(eInfo.vsBuffer);
   UnlockVSurface(vsFB);
 
   // calculate the min and max index that is currently shown.  This determines
@@ -563,9 +564,10 @@ void RenderEditorItemsInfo() {
 }
 
 void ClearEditorItemsInfo() {
-  if (eInfo.uiBuffer) {
-    DeleteVSurfaceByIndex(eInfo.uiBuffer);
-    eInfo.uiBuffer = 0;
+  if (eInfo.vsBuffer) {
+    DeleteVSurface(eInfo.vsBuffer);
+    eInfo.vsBuffer = NULL;
+    eInfo.vsBuffer = 0;
   }
   if (eInfo.pusItemIndex) {
     MemFree(eInfo.pusItemIndex);
