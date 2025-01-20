@@ -998,31 +998,6 @@ BOOLEAN BltVideoObjectOutlineShadowFromIndex(struct VSurface *dest, uint32_t uiS
   return (TRUE);
 }
 
-BOOLEAN BltVideoObjectOutlineShadow(uint32_t uiDestVSurface, struct VObject *hSrcVObject,
-                                    uint16_t usIndex, int32_t iDestX, int32_t iDestY) {
-  uint16_t *pBuffer;
-  uint32_t uiPitch;
-  // Lock video surface
-  pBuffer = (uint16_t *)LockVSurfaceByID(uiDestVSurface, &uiPitch);
-
-  if (pBuffer == NULL) {
-    return (FALSE);
-  }
-
-  if (BltIsClipped(hSrcVObject, iDestX, iDestY, usIndex, &ClippingRect)) {
-    Blt8BPPDataTo16BPPBufferOutlineShadowClip((uint16_t *)pBuffer, uiPitch, hSrcVObject, iDestX,
-                                              iDestY, usIndex, &ClippingRect);
-  } else {
-    Blt8BPPDataTo16BPPBufferOutlineShadow((uint16_t *)pBuffer, uiPitch, hSrcVObject, iDestX, iDestY,
-                                          usIndex);
-  }
-
-  // Now we have the video object and surface, call the VO blitter function
-
-  UnlockVSurfaceByID(uiDestVSurface);
-  return (TRUE);
-}
-
 #ifdef _DEBUG
 void CheckValidVObjectIndex(uint32_t uiIndex) {
   BOOLEAN fAssertError = FALSE;
