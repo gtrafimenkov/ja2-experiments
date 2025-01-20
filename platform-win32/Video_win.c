@@ -78,9 +78,6 @@ static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, 
 static char *DirectXErrorDescription(int32_t iDXReturn);
 static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename);
 
-#undef ATTEMPT
-#define ATTEMPT(x) DirectXAttempt((x), __LINE__, __FILE__)
-
 #undef DEBUGMSG
 #define DEBUGMSG(x) DebugPrint(x)
 
@@ -3169,11 +3166,14 @@ static void DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pN
   Assert(ppNewSurface2 != NULL);
 
   // create the directdraw surface
-  ATTEMPT(IDirectDraw2_CreateSurface(pExistingDirectDraw, pNewSurfaceDesc, ppNewSurface1, NULL));
+  DirectXAttempt(
+      IDirectDraw2_CreateSurface(pExistingDirectDraw, pNewSurfaceDesc, ppNewSurface1, NULL),
+      __LINE__, __FILE__);
 
   // get the direct draw surface 2 interface
   IID tmpID = IID_IDirectDrawSurface2;
-  ATTEMPT(IDirectDrawSurface_QueryInterface(*ppNewSurface1, &tmpID, (LPVOID *)ppNewSurface2));
+  DirectXAttempt(IDirectDrawSurface_QueryInterface(*ppNewSurface1, &tmpID, (LPVOID *)ppNewSurface2),
+                 __LINE__, __FILE__);
 }
 
 // Lock, unlock calls
@@ -3192,7 +3192,7 @@ static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
 
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
-  ATTEMPT(ReturnCode);
+  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
 }
 
 static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc) {
@@ -3202,7 +3202,7 @@ static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC
   memset(pSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
   pSurfaceDesc->dwSize = sizeof(DDSURFACEDESC);
 
-  ATTEMPT(IDirectDrawSurface2_GetSurfaceDesc(pSurface, pSurfaceDesc));
+  DirectXAttempt(IDirectDrawSurface2_GetSurfaceDesc(pSurface, pSurfaceDesc), __LINE__, __FILE__);
 }
 
 static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
@@ -3212,8 +3212,8 @@ static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
   Assert(*ppOldSurface1 != NULL);
   Assert(*ppOldSurface2 != NULL);
 
-  ATTEMPT(IDirectDrawSurface2_Release(*ppOldSurface2));
-  ATTEMPT(IDirectDrawSurface_Release(*ppOldSurface1));
+  DirectXAttempt(IDirectDrawSurface2_Release(*ppOldSurface2), __LINE__, __FILE__);
+  DirectXAttempt(IDirectDrawSurface_Release(*ppOldSurface1), __LINE__, __FILE__);
 
   *ppOldSurface1 = NULL;
   *ppOldSurface2 = NULL;
@@ -3246,14 +3246,16 @@ static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
 
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
-  ATTEMPT(ReturnCode);
+  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
 }
 
 static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
                             LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter) {
   Assert(pDirectDraw != NULL);
 
-  ATTEMPT(IDirectDraw2_CreatePalette(pDirectDraw, uiFlags, pColorTable, ppDDPalette, pUnkOuter));
+  DirectXAttempt(
+      IDirectDraw2_CreatePalette(pDirectDraw, uiFlags, pColorTable, ppDDPalette, pUnkOuter),
+      __LINE__, __FILE__);
 }
 
 static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
@@ -3262,7 +3264,9 @@ static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
   Assert(pPalette != NULL);
   Assert(pEntries != NULL);
 
-  ATTEMPT(IDirectDrawPalette_SetEntries(pPalette, uiFlags, uiStartingEntry, uiCount, pEntries));
+  DirectXAttempt(
+      IDirectDrawPalette_SetEntries(pPalette, uiFlags, uiStartingEntry, uiCount, pEntries),
+      __LINE__, __FILE__);
 }
 
 static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
@@ -3270,13 +3274,14 @@ static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, 
   Assert(pPalette != NULL);
   Assert(pEntries != NULL);
 
-  ATTEMPT(IDirectDrawPalette_GetEntries(pPalette, uiFlags, uiBase, uiNumEntries, pEntries));
+  DirectXAttempt(IDirectDrawPalette_GetEntries(pPalette, uiFlags, uiBase, uiNumEntries, pEntries),
+                 __LINE__, __FILE__);
 }
 
 static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette) {
   Assert(pPalette != NULL);
 
-  ATTEMPT(IDirectDrawPalette_Release(pPalette));
+  DirectXAttempt(IDirectDrawPalette_Release(pPalette), __LINE__, __FILE__);
 }
 
 static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
@@ -3284,7 +3289,8 @@ static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags
   Assert(pSurface != NULL);
   Assert(pDDColorKey != NULL);
 
-  ATTEMPT(IDirectDrawSurface2_SetColorKey(pSurface, uiFlags, pDDColorKey));
+  DirectXAttempt(IDirectDrawSurface2_SetColorKey(pSurface, uiFlags, pDDColorKey), __LINE__,
+                 __FILE__);
 }
 
 //////////////////////////////////////////////////////////////////
