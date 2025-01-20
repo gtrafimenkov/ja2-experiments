@@ -748,11 +748,11 @@ void InvalidateScreen(void) {
   guiFrameBufferState = BUFFER_DIRTY;
 }
 
-void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_t sScrollYIncrement,
-                         LPDIRECTDRAWSURFACE2 pSource, LPDIRECTDRAWSURFACE2 pDest,
-                         BOOLEAN fRenderStrip, uint32_t uiCurrentMouseBackbuffer) {
+static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
+                                int16_t sScrollYIncrement, struct VSurface *pSource,
+                                struct VSurface *pDest, BOOLEAN fRenderStrip,
+                                uint32_t uiCurrentMouseBackbuffer) {
   uint16_t usWidth, usHeight;
-  HRESULT ReturnCode;
   static RECT Region;
   static uint16_t usMouseXPos, usMouseYPos;
   static RECT StripRegions[2], MouseRegion;
@@ -789,18 +789,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth - (sScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      do {
-        ReturnCode =
-            IDirectDrawSurface2_BltFast(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y,
-                                        pSource, (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region,
+                DDBLTFAST_NOCOLORKEY);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -820,17 +810,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      do {
-        ReturnCode = IDirectDrawSurface2_BltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource,
-                                                 (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region,
+                DDBLTFAST_NOCOLORKEY);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -852,18 +833,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - sScrollYIncrement;
 
-      do {
-        ReturnCode =
-            IDirectDrawSurface2_BltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement,
-                                        pSource, (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement, pSource, (LPRECT)&Region,
+                DDBLTFAST_NOCOLORKEY);
 
       for (uiCountY = sScrollYIncrement - 1 + gsVIEWPORT_WINDOW_START_Y;
            uiCountY >= gsVIEWPORT_WINDOW_START_Y; uiCountY--) {
@@ -884,17 +855,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      do {
-        ReturnCode = IDirectDrawSurface2_BltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource,
-                                                 (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region,
+                DDBLTFAST_NOCOLORKEY);
 
       // Zero out z
       for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
@@ -916,18 +878,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth - (sScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - sScrollYIncrement;
 
-      do {
-        ReturnCode = IDirectDrawSurface2_BltFast(pDest, sScrollXIncrement,
-                                                 gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement,
-                                                 pSource, (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement, pSource,
+                (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -955,18 +907,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - sScrollYIncrement;
 
-      do {
-        ReturnCode =
-            IDirectDrawSurface2_BltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement,
-                                        pSource, (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement, pSource, (LPRECT)&Region,
+                DDBLTFAST_NOCOLORKEY);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -996,18 +938,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth - (sScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      do {
-        ReturnCode =
-            IDirectDrawSurface2_BltFast(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y,
-                                        pSource, (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region,
+                DDBLTFAST_NOCOLORKEY);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -1036,17 +968,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      do {
-        ReturnCode = IDirectDrawSurface2_BltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource,
-                                                 (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-          if (ReturnCode == DDERR_SURFACELOST) {
-            break;
-          }
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region,
+                DDBLTFAST_NOCOLORKEY);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -1079,19 +1002,8 @@ void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement, int16_
       // ExamineZBufferRect( (int16_t)StripRegions[ cnt ].left, (int16_t)StripRegions[ cnt ].top,
       // (int16_t)StripRegions[ cnt ].right, (int16_t)StripRegions[ cnt ].bottom );
 
-      do {
-        ReturnCode =
-            IDirectDrawSurface2_BltFast(pDest, StripRegions[cnt].left, StripRegions[cnt].top,
-                                        (LPDIRECTDRAWSURFACE2)vsFB->_platformData2,
-                                        (LPRECT) & (StripRegions[cnt]), DDBLTFAST_NOCOLORKEY);
-        if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-          DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-        }
-
-        if (ReturnCode == DDERR_SURFACELOST) {
-          break;
-        }
-      } while (ReturnCode != DD_OK);
+      DDBltFast(pDest, StripRegions[cnt].left, StripRegions[cnt].top, vsFB,
+                (LPRECT) & (StripRegions[cnt]), DDBLTFAST_NOCOLORKEY);
     }
 
     sShiftX = 0;
@@ -1282,10 +1194,8 @@ void RefreshScreen(void *DummyVariable) {
       }
     }
     if (gfRenderScroll) {
-      ScrollJA2Background(guiScrollDirection, gsScrollXIncrement, gsScrollYIncrement,
-                          (LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
-                          (LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2, TRUE,
-                          PREVIOUS_MOUSE_DATA);
+      ScrollJA2Background(guiScrollDirection, gsScrollXIncrement, gsScrollYIncrement, vsPrimary,
+                          vsBackBuffer, TRUE, PREVIOUS_MOUSE_DATA);
     }
     gfIgnoreScrollDueToCenterAdjust = FALSE;
 
