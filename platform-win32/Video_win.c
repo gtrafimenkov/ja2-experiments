@@ -2462,14 +2462,16 @@ BOOLEAN DeleteVSurface(struct VSurface *hVSurface) {
   }
 
   // Release surface
-  if (hVSurface->_platformData1 != NULL) {
+  if (hVSurface->_platformData2 != NULL) {
     DirectXAttempt(IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)hVSurface->_platformData2),
                    __LINE__, __FILE__);
+    hVSurface->_platformData2 = NULL;
+  }
+
+  if (hVSurface->_platformData1 != NULL) {
     DirectXAttempt(IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)hVSurface->_platformData1),
                    __LINE__, __FILE__);
-
     hVSurface->_platformData1 = NULL;
-    hVSurface->_platformData2 = NULL;
   }
 
   // If there is a 16bpp palette, free it
