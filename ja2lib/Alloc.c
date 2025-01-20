@@ -11,6 +11,15 @@ void* MemRealloc(void* ptr, size_t size) { return realloc(ptr, size); }
 
 void MemZero(void* ptr, size_t size) { memset(ptr, 0, size); }
 
+// Allocate memory and zero it.
+void* MemAllocZero(size_t size) {
+  void* p = MemAlloc(size);
+  if (p != NULL) {
+    memset(p, 0, size);
+  }
+  return p;
+}
+
 // asprintf is not available of windows
 int my_asprintf(char** strp, const char* format, ...) {
   va_list args;

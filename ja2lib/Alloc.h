@@ -10,6 +10,9 @@ void* MemRealloc(void* ptr, size_t size);
 
 void MemZero(void* ptr, size_t size);
 
+// Allocate memory and zero it.
+void* MemAllocZero(size_t size);
+
 int my_asprintf(char** strp, const char* format, ...);
 
 #endif
