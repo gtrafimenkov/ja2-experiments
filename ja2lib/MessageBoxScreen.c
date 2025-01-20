@@ -14,6 +14,7 @@
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/Types.h"
+#include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
@@ -248,19 +249,20 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   SetPendingNewScreen(MSG_BOX_SCREEN);
 
   // Init save buffer
-  if (AddVSurfaceAndSetTransparency(CreateVSurfaceBlank16(usTextBoxWidth, usTextBoxHeight),
-                                    &gMsgBox.uiSaveBuffer) == FALSE) {
-    return (-1);
+  gMsgBox.vsSaveBuffer = CreateVSurfaceBlank16(usTextBoxWidth, usTextBoxHeight);
+  if (gMsgBox.vsSaveBuffer == NULL) {
+    return -1;
   }
+  SetVideoSurfaceTransparencyColor(gMsgBox.vsSaveBuffer, FROMRGB(0, 0, 0));
 
   // Save what we have under here...
-  pDestBuf = LockVSurfaceByID(gMsgBox.uiSaveBuffer, &uiDestPitchBYTES);
+  pDestBuf = LockVSurface(gMsgBox.vsSaveBuffer, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, gMsgBox.sX, gMsgBox.sY, usTextBoxWidth, usTextBoxHeight);
 
-  UnlockVSurfaceByID(gMsgBox.uiSaveBuffer);
+  UnlockVSurface(gMsgBox.vsSaveBuffer);
   UnlockVSurface(vsFB);
 
   // Create top-level mouse region
@@ -784,13 +786,13 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
   if (((gMsgBox.uiExitScreen != GAME_SCREEN) || (fRestoreBackgroundForMessageBox == TRUE)) &&
       gfDontOverRideSaveBuffer) {
     // restore what we have under here...
-    pSrcBuf = LockVSurfaceByID(gMsgBox.uiSaveBuffer, &uiSrcPitchBYTES);
+    pSrcBuf = LockVSurface(gMsgBox.vsSaveBuffer, &uiSrcPitchBYTES);
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                     gMsgBox.sX, gMsgBox.sY, 0, 0, gMsgBox.usWidth, gMsgBox.usHeight);
 
-    UnlockVSurfaceByID(gMsgBox.uiSaveBuffer);
+    UnlockVSurface(gMsgBox.vsSaveBuffer);
     UnlockVSurface(vsFB);
 
     InvalidateRegion(gMsgBox.sX, gMsgBox.sY, (int16_t)(gMsgBox.sX + gMsgBox.usWidth),
@@ -818,7 +820,8 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
   MSYS_RemoveRegion(&(gMsgBox.BackRegion));
 
   // Remove save buffer!
-  DeleteVSurfaceByIndex(gMsgBox.uiSaveBuffer);
+  DeleteVSurface(gMsgBox.vsSaveBuffer);
+  gMsgBox.vsSaveBuffer = NULL;
 
   switch (gMsgBox.uiExitScreen) {
     case GAME_SCREEN:

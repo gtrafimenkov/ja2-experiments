@@ -471,11 +471,14 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   // Build save buffer
   // Create a buffer for him to go!
   // OK, ignore screen widths, height, only use BPP
-  CHECKF(AddVSurfaceAndSetTransparency(
-      CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight), &(gTalkPanel.uiSaveBuffer)));
+  gTalkPanel.vsSaveBuffer = CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight);
+  if (gTalkPanel.vsSaveBuffer == NULL) {
+    return FALSE;
+  }
+  SetVideoSurfaceTransparencyColor(gTalkPanel.vsSaveBuffer, FROMRGB(0, 0, 0));
 
   // Set face to auto
-  SetAutoFaceActive(FindVSurface(gTalkPanel.uiSaveBuffer), NULL, iFaceIndex, 0, 0);
+  SetAutoFaceActive(gTalkPanel.vsSaveBuffer, NULL, iFaceIndex, 0, 0);
   gFacesData[iFaceIndex].uiFlags |= FACE_INACTIVE_HANDLED_ELSEWHERE;
 
   // Load buttons, create button
@@ -546,7 +549,8 @@ void DeleteTalkingMenu() {
   }
 
   // Delete save buffer
-  DeleteVSurfaceByIndex(gTalkPanel.uiSaveBuffer);
+  DeleteVSurface(gTalkPanel.vsSaveBuffer);
+  gTalkPanel.vsSaveBuffer = NULL;
 
   // Remove video object
   DeleteVideoObjectFromIndex(gTalkPanel.uiPanelVO);
@@ -661,7 +665,7 @@ void RenderTalkingMenu() {
     SetFontShadow(DEFAULT_SHADOW);
 
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
-    pSrcBuf = LockVSurfaceByID(gTalkPanel.uiSaveBuffer, &uiSrcPitchBYTES);
+    pSrcBuf = LockVSurface(gTalkPanel.vsSaveBuffer, &uiSrcPitchBYTES);
 
     Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                     (int16_t)(gTalkPanel.sX + TALK_PANEL_FACE_X),
@@ -669,7 +673,7 @@ void RenderTalkingMenu() {
                     pFace->usFaceHeight);
 
     UnlockVSurface(vsFB);
-    UnlockVSurfaceByID(gTalkPanel.uiSaveBuffer);
+    UnlockVSurface(gTalkPanel.vsSaveBuffer);
 
     MarkButtonsDirty();
 
