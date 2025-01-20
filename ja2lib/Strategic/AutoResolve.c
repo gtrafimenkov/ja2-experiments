@@ -517,7 +517,7 @@ void DoTransitionFromPreBattleInterfaceToAutoResolve() {
     DstRect.iTop = iTop - iHeight * iPercentage / 200;
     DstRect.iBottom = DstRect.iTop + max(iHeight * iPercentage / 100, 1);
 
-    BltStretchVSurface(vsFB, vsSaveBuffer, 0, 0, 0, &SrcRect, &DstRect);
+    BltStretchVSurface(vsFB, vsSaveBuffer, &SrcRect, &DstRect);
     InvalidateScreen();
     RefreshScreen(NULL);
 

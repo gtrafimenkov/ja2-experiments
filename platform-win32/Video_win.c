@@ -2478,19 +2478,12 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *dest, struct VSurface *src, uint32_t
   return (TRUE);
 }
 
-BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags, int32_t iDestX,
-                    int32_t iDestY, struct Rect *SrcRect, struct Rect *DestRect) {
-  uint32_t uiDDFlags;
+BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
+                    struct Rect *DestRect) {
   RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
   RECT destRect = {DestRect->left, DestRect->top, DestRect->right, DestRect->bottom};
 
-  // Default flags
-  uiDDFlags = DDBLT_WAIT;
-
-  // Convert flags into DD flags, ( for transparency use, etc )
-  if (fBltFlags & VS_BLT_USECOLORKEY) {
-    uiDDFlags |= DDBLT_KEYSRC;
-  }
+  uint32_t uiDDFlags = DDBLT_WAIT;
 
   HRESULT ReturnCode;
   do {

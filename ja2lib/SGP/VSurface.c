@@ -177,13 +177,12 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_
 //
 // This function will stretch the source image to the size of the dest rect.
 // If the 2 images are not 16 Bpp, it returns false.
-BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
-                           int32_t iDestY, uint32_t fBltFlags, SGPRect *SrcRect,
+BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect *SrcRect,
                            SGPRect *DestRect) {
   if ((dest->ubBitDepth != 16) && (src->ubBitDepth != 16)) return (FALSE);
   struct Rect srcRect = {SrcRect->iLeft, SrcRect->iTop, SrcRect->iRight, SrcRect->iBottom};
   struct Rect destRect = {DestRect->iLeft, DestRect->iTop, DestRect->iRight, DestRect->iBottom};
-  return BltVSurface(dest, src, fBltFlags, iDestX, iDestY, &srcRect, &destRect);
+  return BltVSurface(dest, src, &srcRect, &destRect);
 }
 
 BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHandle, int32_t iPosX,
