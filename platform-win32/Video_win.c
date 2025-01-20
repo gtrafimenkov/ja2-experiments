@@ -136,9 +136,7 @@ typedef struct {
   uint16_t usMouseXPos, usMouseYPos;
   uint16_t usLeft, usTop, usRight, usBottom;
   RECT Region;
-  LPDIRECTDRAWSURFACE pSurface1;
-  LPDIRECTDRAWSURFACE2 pSurface2;
-
+  struct VSurface *vs;
 } MouseCursorBackground;
 
 //
@@ -451,10 +449,8 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
     SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
     SurfaceDescription.dwWidth = MAX_CURSOR_WIDTH;
     SurfaceDescription.dwHeight = MAX_CURSOR_HEIGHT;
-
-    if (!DDCreateSurface(gpDirectDrawObject, &SurfaceDescription,
-                         &gMouseCursorBackground[uiIndex].pSurface1,
-                         &gMouseCursorBackground[uiIndex].pSurface2)) {
+    gMouseCursorBackground[uiIndex].vs = CreateVSurfaceInternal(&SurfaceDescription, true);
+    if (gMouseCursorBackground[uiIndex].vs == NULL) {
       return FALSE;
     }
   }
@@ -496,7 +492,8 @@ void ShutdownVideoManager(void) {
   vsMouseBufferOriginal = NULL;
   DeleteVSurface(vsMouseBuffer);
   vsMouseBuffer = NULL;
-  IDirectDrawSurface2_Release(gMouseCursorBackground[0].pSurface2);
+  DeleteVSurface(gMouseCursorBackground[0].vs);
+  gMouseCursorBackground[0].vs = NULL;
   DeleteVSurface(vsBackBuffer);
   vsBackBuffer = NULL;
   DeleteVSurface(vsPrimary);
@@ -552,7 +549,8 @@ BOOLEAN RestoreVideoManager(void) {
     // Restore the mouse surfaces
     //
 
-    ReturnCode = IDirectDrawSurface2_Restore(gMouseCursorBackground[0].pSurface2);
+    ReturnCode = IDirectDrawSurface2_Restore(
+        (LPDIRECTDRAWSURFACE2)gMouseCursorBackground[0].vs->_platformData2);
     if (ReturnCode != DD_OK) {
       DirectXAttempt(ReturnCode, __LINE__, __FILE__);
       return FALSE;
@@ -1164,12 +1162,12 @@ void RefreshScreen(void *DummyVariable) {
     Region.bottom = gMouseCursorBackground[CURRENT_MOUSE_DATA].usBottom;
 
     do {
-      ReturnCode =
-          IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2,
-                                      gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
-                                      gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos,
-                                      gMouseCursorBackground[CURRENT_MOUSE_DATA].pSurface2,
-                                      (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
+      ReturnCode = IDirectDrawSurface2_BltFast(
+          (LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2,
+          gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
+          gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos,
+          (LPDIRECTDRAWSURFACE2)gMouseCursorBackground[CURRENT_MOUSE_DATA].vs->_platformData2,
+          (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
 
@@ -1524,7 +1522,7 @@ void RefreshScreen(void *DummyVariable) {
 
         do {
           ReturnCode = IDirectDrawSurface2_BltFast(
-              gMouseCursorBackground[CURRENT_MOUSE_DATA].pSurface2,
+              (LPDIRECTDRAWSURFACE2)gMouseCursorBackground[CURRENT_MOUSE_DATA].vs->_platformData2,
               gMouseCursorBackground[CURRENT_MOUSE_DATA].usLeft,
               gMouseCursorBackground[CURRENT_MOUSE_DATA].usTop,
               (LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2, &Region, DDBLTFAST_NOCOLORKEY);
