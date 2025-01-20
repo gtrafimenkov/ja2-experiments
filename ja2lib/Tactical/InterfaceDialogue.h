@@ -34,7 +34,7 @@ typedef struct {
   BOOLEAN fTextRegionOn;
   BOOLEAN fOnName;
   BOOLEAN fDirtyLevel;
-  uint32_t uiSaveBuffer;
+  struct VSurface *vsSaveBuffer;
   BOOLEAN fHandled;
   BOOLEAN fHandledTalkingVal;
   BOOLEAN fHandledCanDeleteVal;

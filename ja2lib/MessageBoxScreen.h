@@ -15,7 +15,7 @@ typedef struct {
   MSGBOX_CALLBACK ExitCallback;
   int16_t sX;
   int16_t sY;
-  uint32_t uiSaveBuffer;
+  struct VSurface *vsSaveBuffer;
   struct MOUSE_REGION BackRegion;
   uint16_t usWidth;
   uint16_t usHeight;
