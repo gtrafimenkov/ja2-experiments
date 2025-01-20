@@ -2479,8 +2479,8 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
   return (TRUE);
 }
 
-BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
-                    struct Rect *DestRect) {
+BOOLEAN BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
+                              struct Rect *DestRect) {
   RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
   RECT destRect = {DestRect->left, DestRect->top, DestRect->right, DestRect->bottom};
 
