@@ -52,13 +52,8 @@ static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pN
                             LPDIRECTDRAWSURFACE *ppNewSurface1,
                             LPDIRECTDRAWSURFACE2 *ppNewSurface2);
 static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC *pSurfaceDesc);
-static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
-                             LPDIRECTDRAWSURFACE2 *ppOldSurface2);
 static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
                           LPDDSURFACEDESC pSurfaceDesc, uint32_t uiFlags, HANDLE hEvent);
-static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
-                         LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiFlags,
-                         LPDDBLTFX pDDBltFx);
 static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
                                  LPDDCOLORKEY pDDColorKey);
 
@@ -2160,13 +2155,16 @@ BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iD
   r.right = iDestX2;
   r.bottom = iDestY2;
 
-  {
-    DDBLTFX BlitterFX;
-    BlitterFX.dwSize = sizeof(DDBLTFX);
-    BlitterFX.dwFillColor = Color16BPP;
-    DDBltSurface((LPDIRECTDRAWSURFACE2)dest->_platformData2, &r, NULL, NULL, DDBLT_COLORFILL,
-                 &BlitterFX);
-  }
+  DDBLTFX BlitterFX;
+  BlitterFX.dwSize = sizeof(DDBLTFX);
+  BlitterFX.dwFillColor = Color16BPP;
+  HRESULT ReturnCode;
+  do {
+    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &r, NULL, NULL,
+                                         DDBLT_COLORFILL, &BlitterFX);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
+
+  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
   return TRUE;
 }
 
@@ -2456,9 +2454,6 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 
 // Deletes all palettes, surfaces and region data
 BOOLEAN DeleteVSurface(struct VSurface *hVSurface) {
-  LPDIRECTDRAWSURFACE2 lpDDSurface;
-
-  // Assertions
   CHECKF(hVSurface != NULL);
 
   // Release palette
@@ -2467,12 +2462,15 @@ BOOLEAN DeleteVSurface(struct VSurface *hVSurface) {
     hVSurface->pPalette = NULL;
   }
 
-  // Get surface pointer
-  lpDDSurface = (LPDIRECTDRAWSURFACE2)hVSurface->_platformData2;
-
   // Release surface
   if (hVSurface->_platformData1 != NULL) {
-    DDReleaseSurface((LPDIRECTDRAWSURFACE *)&hVSurface->_platformData1, &lpDDSurface);
+    DirectXAttempt(IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)hVSurface->_platformData2),
+                   __LINE__, __FILE__);
+    DirectXAttempt(IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)hVSurface->_platformData1),
+                   __LINE__, __FILE__);
+
+    hVSurface->_platformData1 = NULL;
+    hVSurface->_platformData2 = NULL;
   }
 
   // If there is a 16bpp palette, free it
@@ -2800,10 +2798,15 @@ BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrc
       return (TRUE);
     }
 
-    // Check for -ve values
+    HRESULT ReturnCode;
+    do {
+      ReturnCode = IDirectDrawSurface2_Blt(
+          (LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &DestRect,
+          (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags, NULL);
 
-    DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &DestRect,
-                 (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags, NULL);
+    } while (ReturnCode == DDERR_WASSTILLDRAWING);
+
+    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
   }
 
   return (TRUE);
@@ -2824,8 +2827,14 @@ BOOLEAN BltVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurfac
     uiDDFlags |= DDBLT_KEYSRC;
   }
 
-  DDBltSurface((LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &destRect,
-               (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags, NULL);
+  HRESULT ReturnCode;
+  do {
+    ReturnCode = IDirectDrawSurface2_Blt(
+        (LPDIRECTDRAWSURFACE2)hDestVSurface->_platformData2, &destRect,
+        (LPDIRECTDRAWSURFACE2)hSrcVSurface->_platformData2, &srcRect, uiDDFlags, NULL);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
+
+  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
 
   return (TRUE);
 }
@@ -3151,36 +3160,6 @@ static void DDGetSurfaceDescription(LPDIRECTDRAWSURFACE2 pSurface, DDSURFACEDESC
   pSurfaceDesc->dwSize = sizeof(DDSURFACEDESC);
 
   DirectXAttempt(IDirectDrawSurface2_GetSurfaceDesc(pSurface, pSurfaceDesc), __LINE__, __FILE__);
-}
-
-static void DDReleaseSurface(LPDIRECTDRAWSURFACE *ppOldSurface1,
-                             LPDIRECTDRAWSURFACE2 *ppOldSurface2) {
-  Assert(ppOldSurface1 != NULL);
-  Assert(ppOldSurface2 != NULL);
-  Assert(*ppOldSurface1 != NULL);
-  Assert(*ppOldSurface2 != NULL);
-
-  DirectXAttempt(IDirectDrawSurface2_Release(*ppOldSurface2), __LINE__, __FILE__);
-  DirectXAttempt(IDirectDrawSurface_Release(*ppOldSurface1), __LINE__, __FILE__);
-
-  *ppOldSurface1 = NULL;
-  *ppOldSurface2 = NULL;
-}
-
-static void DDBltSurface(LPDIRECTDRAWSURFACE2 pDestSurface, LPRECT pDestRect,
-                         LPDIRECTDRAWSURFACE2 pSrcSurface, LPRECT pSrcRect, uint32_t uiFlags,
-                         LPDDBLTFX pDDBltFx) {
-  HRESULT ReturnCode;
-
-  Assert(pDestSurface != NULL);
-
-  do {
-    ReturnCode =
-        IDirectDrawSurface2_Blt(pDestSurface, pDestRect, pSrcSurface, pSrcRect, uiFlags, pDDBltFx);
-
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
-
-  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
 }
 
 static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
