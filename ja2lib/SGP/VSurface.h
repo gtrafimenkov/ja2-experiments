@@ -73,9 +73,6 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
                                   int32_t iDestX2, int32_t iDestY2, struct VObject *BkgrndImg,
                                   uint16_t Index, int16_t Ox, int16_t Oy);
 
-// This function sets the global video Surfaces for primary and backbuffer
-BOOLEAN SetPrimaryVideoSurfaces();
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Video Surface manipulation functions
