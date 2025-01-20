@@ -36,10 +36,6 @@
 static LPDIRECTDRAW _gpDirectDrawObject = NULL;
 static LPDIRECTDRAW2 gpDirectDrawObject = NULL;
 
-static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
-                            LPDIRECTDRAWSURFACE *ppNewSurface1,
-                            LPDIRECTDRAWSURFACE2 *ppNewSurface2);
-
 static void DDGetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags, uint32_t uiBase,
                                 uint32_t uiNumEntries, LPPALETTEENTRY pEntries);
 
@@ -66,7 +62,20 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
 
   LPDIRECTDRAWSURFACE lpDDS;
   LPDIRECTDRAWSURFACE2 lpDDS2;
-  DDCreateSurface(gpDirectDrawObject, descr, &lpDDS, &lpDDS2);
+  {
+    // create the directdraw surface
+    HRESULT ReturnCode = IDirectDraw2_CreateSurface(gpDirectDrawObject, descr, &lpDDS, NULL);
+    if (ReturnCode != DD_OK) {
+      return NULL;
+    }
+
+    // get the direct draw surface 2 interface
+    IID tmpID = IID_IDirectDrawSurface2;
+    ReturnCode = IDirectDrawSurface_QueryInterface(lpDDS, &tmpID, &lpDDS2);
+    if (ReturnCode != DD_OK) {
+      return NULL;
+    }
+  }
 
   vs->_platformData1 = (void *)lpDDS;
   vs->_platformData2 = (void *)lpDDS2;
@@ -2997,33 +3006,6 @@ void SmkShutdownVideo(void) {
 //////////////////////////////////////////////////////////////////
 // DirectDrawCalls
 //////////////////////////////////////////////////////////////////
-
-static bool DDCreateSurface(LPDIRECTDRAW2 pExistingDirectDraw, DDSURFACEDESC *pNewSurfaceDesc,
-                            LPDIRECTDRAWSURFACE *ppNewSurface1,
-                            LPDIRECTDRAWSURFACE2 *ppNewSurface2) {
-  Assert(pExistingDirectDraw != NULL);
-  Assert(pNewSurfaceDesc != NULL);
-  Assert(ppNewSurface1 != NULL);
-  Assert(ppNewSurface2 != NULL);
-
-  // create the directdraw surface
-  HRESULT ReturnCode =
-      IDirectDraw2_CreateSurface(pExistingDirectDraw, pNewSurfaceDesc, ppNewSurface1, NULL);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return false;
-  }
-
-  // get the direct draw surface 2 interface
-  IID tmpID = IID_IDirectDrawSurface2;
-  ReturnCode = IDirectDrawSurface_QueryInterface(*ppNewSurface1, &tmpID, (LPVOID *)ppNewSurface2);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return false;
-  }
-
-  return true;
-}
 
 // Lock, unlock calls
 static void DDLockSurface(LPDIRECTDRAWSURFACE2 pSurface, LPRECT pDestRect,
