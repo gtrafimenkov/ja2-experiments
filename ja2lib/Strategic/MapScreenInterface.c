@@ -247,7 +247,7 @@ int32_t giContractHighLine = -1;
 int32_t giSleepHighLine = -1;
 
 // pop up box textures
-uint32_t guiPOPUPTEX;
+struct VSurface *vsPOPUPTEX;
 uint32_t guiPOPUPBORDERS;
 
 // the currently selected character arrow
@@ -2733,7 +2733,7 @@ void CreatePopUpBoxForMovementBox(void) {
   SetBorderType(ghMoveBox, guiPOPUPBORDERS);
 
   // background texture
-  SetBackGroundSurface(ghMoveBox, guiPOPUPTEX);
+  SetBackGroundSurface(ghMoveBox, vsPOPUPTEX);
 
   // margin sizes
   SetMargins(ghMoveBox, 6, 6, 4, 4);
