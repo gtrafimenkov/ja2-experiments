@@ -35,8 +35,8 @@
 #define WINDOW_SIZE 2
 
 float gdXStep, gdYStep;
-uint32_t giMiniMap, gi8BitMiniMap;
-struct VSurface *ghvSurface;
+uint32_t giMiniMap;
+static struct VSurface *vs8BitMiniMap;
 
 extern BOOLEAN gfOverheadMapDirty;
 
@@ -116,10 +116,11 @@ uint32_t MapUtilScreenHandle() {
     p24BitValues = (RGBValues *)MemAlloc(MINIMAP_X_SIZE * MINIMAP_Y_SIZE * sizeof(RGBValues));
     p24BitDest = (uint8_t *)p24BitValues;
 
-    if (AddVSurfaceAndSetTransparency(CreateVSurfaceBlank8(88, 44), &gi8BitMiniMap) == FALSE) {
+    vs8BitMiniMap = CreateVSurfaceBlank8(88, 44);
+    SetVideoSurfaceTransparencyColor(vs8BitMiniMap, FROMRGB(0, 0, 0));
+    if (vs8BitMiniMap == NULL) {
       return (ERROR_SCREEN);
     }
-    ghvSurface = FindVSurface(gi8BitMiniMap);
   }
 
   // OK, we are here, now loop through files
@@ -234,12 +235,12 @@ uint32_t MapUtilScreenHandle() {
   BltVSurface(vsFB, FindVSurface(giMiniMap), 0, 20, 360, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
   // QUantize!
-  pDataPtr = (uint8_t *)LockVSurfaceByID(gi8BitMiniMap, &uiSrcPitchBYTES);
+  pDataPtr = (uint8_t *)LockVSurface(vs8BitMiniMap, &uiSrcPitchBYTES);
   pDestBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);
   QuantizeImage(pDataPtr, p24BitDest, MINIMAP_X_SIZE, MINIMAP_Y_SIZE, pPalette);
-  SetVideoSurfacePalette(ghvSurface, pPalette);
+  SetVideoSurfacePalette(vs8BitMiniMap, pPalette);
   // Blit!
-  Blt8BPPDataTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, ghvSurface, pDataPtr, 300, 360);
+  Blt8BPPDataTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, vs8BitMiniMap, pDataPtr, 300, 360);
 
   // Write palette!
   {
@@ -272,7 +273,7 @@ uint32_t MapUtilScreenHandle() {
   WriteSTIFile(pDataPtr, pPalette, MINIMAP_X_SIZE, MINIMAP_Y_SIZE, zFilename2,
                CONVERT_ETRLE_COMPRESS, 0);
 
-  UnlockVSurfaceByID(gi8BitMiniMap);
+  UnlockVSurface(vs8BitMiniMap);
 
   SetFont(TINYFONT1);
   SetFontBackground(FONT_MCOLOR_BLACK);
