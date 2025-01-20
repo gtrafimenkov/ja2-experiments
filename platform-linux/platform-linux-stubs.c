@@ -246,9 +246,9 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
   return FALSE;
 }
 
-BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                           uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                           struct Rect *SrcRect) {
+BOOLEAN BltVSurfaceRectToPoint(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
+                               uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
+                               struct Rect *SrcRect) {
   return FALSE;
 }
 

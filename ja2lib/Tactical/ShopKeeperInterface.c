@@ -1333,8 +1333,8 @@ BOOLEAN RenderShopKeeperInterface() {
     SrcRect.right = SKI_TACTICAL_BACKGROUND_START_X + SKI_TACTICAL_BACKGROUND_START_WIDTH;
     SrcRect.bottom = SKI_TACTICAL_BACKGROUND_START_Y + SKI_TACTICAL_BACKGROUND_START_HEIGHT;
 
-    BltVSurfaceUsingDD(vsCornerWhereTacticalIsStillSeenImage, vsSaveBuffer, VS_BLT_USECOLORKEY, 0,
-                       0, &SrcRect);
+    BltVSurfaceRectToPoint(vsCornerWhereTacticalIsStillSeenImage, vsSaveBuffer, VS_BLT_USECOLORKEY,
+                           0, 0, &SrcRect);
 
     gfRenderScreenOnNextLoop = FALSE;
   }
@@ -1375,8 +1375,9 @@ void RestoreTacticalBackGround() {
   SrcRect.right = SKI_TACTICAL_BACKGROUND_START_WIDTH;
   SrcRect.bottom = SKI_TACTICAL_BACKGROUND_START_HEIGHT;
 
-  BltVSurfaceUsingDD(vsFB, vsCornerWhereTacticalIsStillSeenImage, VS_BLT_USECOLORKEY,
-                     SKI_TACTICAL_BACKGROUND_START_X, SKI_TACTICAL_BACKGROUND_START_Y, &SrcRect);
+  BltVSurfaceRectToPoint(vsFB, vsCornerWhereTacticalIsStillSeenImage, VS_BLT_USECOLORKEY,
+                         SKI_TACTICAL_BACKGROUND_START_X, SKI_TACTICAL_BACKGROUND_START_Y,
+                         &SrcRect);
 
   InvalidateRegion(0, 0, 640, 480);
 }

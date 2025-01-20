@@ -1890,9 +1890,9 @@ extern void GetClippingRect(SGPRect *clip);
 #define DEFAULT_NUM_REGIONS 5
 #define DEFAULT_VIDEO_SURFACE_LIST_SIZE 10
 
-BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                           uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                           struct Rect *SrcRect);
+BOOLEAN BltVSurfaceRectToPoint(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
+                               uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
+                               struct Rect *SrcRect);
 
 BOOLEAN InitializeVideoSurfaceManager() {
   RegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Surface Manager");
@@ -2320,7 +2320,8 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
   // First check BPP values for compatibility
   if (hDestVSurface->ubBitDepth == 16 && hSrcVSurface->ubBitDepth == 16) {
     struct Rect srcRect = {SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom};
-    CHECKF(BltVSurfaceUsingDD(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &srcRect));
+    CHECKF(
+        BltVSurfaceRectToPoint(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &srcRect));
 
   } else if (hDestVSurface->ubBitDepth == 8 && hSrcVSurface->ubBitDepth == 8) {
     if ((pSrcSurface8 = (uint8_t *)LockVSurface(hSrcVSurface, &uiSrcPitch)) == NULL) {
@@ -2420,8 +2421,8 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
   return (TRUE);
 }
 
-BOOLEAN BltVSurfaceUsingDD(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
-                           int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
+BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
+                               int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
   RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
 
   // Blit using the correct blitter

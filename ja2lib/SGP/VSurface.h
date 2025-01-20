@@ -117,8 +117,8 @@ BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
 
 BOOLEAN BltVSurface(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
                     struct Rect *DestRect);
-BOOLEAN BltVSurfaceUsingDD(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
-                           int32_t iDestX, int32_t iDestY, struct Rect *SrcRect);
+BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
+                               int32_t iDestX, int32_t iDestY, struct Rect *SrcRect);
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                               uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
