@@ -5,6 +5,7 @@
 #include <process.h>
 #include <stdio.h>
 
+#include "DebugLog.h"
 #include "FadeScreen.h"
 #include "Globals.h"
 #include "Local.h"
@@ -2090,6 +2091,9 @@ BOOLEAN SetPrimaryVideoSurfaces() {
   if (!vsFB) {
     return FALSE;
   }
+  DebugLogF("vsFB.width     = %d", vsFB->usWidth);
+  DebugLogF("vsFB.height    = %d", vsFB->usHeight);
+  DebugLogF("vsFB.bit_depth = %d", vsFB->ubBitDepth);
 
   return (TRUE);
 }
