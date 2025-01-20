@@ -169,9 +169,6 @@ static uint16_t gusMouseCursorHeight;
 static int16_t gsMouseCursorXOffset;
 static int16_t gsMouseCursorYOffset;
 
-static LPDIRECTDRAWSURFACE gpMouseCursorOriginal1 = NULL;
-static LPDIRECTDRAWSURFACE2 gpMouseCursorOriginal2 = NULL;
-
 static MouseCursorBackground gMouseCursorBackground[2];
 
 static struct VObject *gpCursorStore;
@@ -427,8 +424,8 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
   SurfaceDescription.dwWidth = MAX_CURSOR_WIDTH;
   SurfaceDescription.dwHeight = MAX_CURSOR_HEIGHT;
-  if (!DDCreateSurface(gpDirectDrawObject, &SurfaceDescription, &gpMouseCursorOriginal1,
-                       &gpMouseCursorOriginal2)) {
+  vsMouseBufferOriginal = CreateVSurfaceInternal(&SurfaceDescription, true);
+  if (vsMouseBufferOriginal == NULL) {
     return FALSE;
   }
 
@@ -495,7 +492,8 @@ void ShutdownVideoManager(void) {
   // itself down
   //
 
-  IDirectDrawSurface2_Release(gpMouseCursorOriginal2);
+  DeleteVSurface(vsMouseBufferOriginal);
+  vsMouseBufferOriginal = NULL;
   DeleteVSurface(vsMouseBuffer);
   vsMouseBuffer = NULL;
   IDirectDrawSurface2_Release(gMouseCursorBackground[0].pSurface2);
@@ -1440,9 +1438,10 @@ void RefreshScreen(void *DummyVariable) {
     Region.bottom = gusMouseCursorHeight;
 
     do {
-      ReturnCode = IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)vsMouseBuffer->_platformData2,
-                                               0, 0, gpMouseCursorOriginal2, (LPRECT)&Region,
-                                               DDBLTFAST_NOCOLORKEY);
+      ReturnCode =
+          IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)vsMouseBuffer->_platformData2, 0, 0,
+                                      (LPDIRECTDRAWSURFACE2)vsMouseBufferOriginal->_platformData2,
+                                      (LPRECT)&Region, DDBLTFAST_NOCOLORKEY);
       if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
         DirectXAttempt(ReturnCode, __LINE__, __FILE__);
       }
@@ -2089,11 +2088,6 @@ static void DeletePrimaryVideoSurfaces();
 BOOLEAN SetPrimaryVideoSurfaces() {
   DeletePrimaryVideoSurfaces();
 
-  vsMouseBufferOriginal = CreateVSurfaceFromDDSurface(gpMouseCursorOriginal2);
-  if (!vsMouseBufferOriginal) {
-    return FALSE;
-  }
-
   vsFB = CreateVSurfaceFromDDSurface(gpFrameBuffer2);
   if (!vsFB) {
     return FALSE;
@@ -2110,11 +2104,6 @@ static void DeletePrimaryVideoSurfaces() {
   if (vsFB != NULL) {
     DeleteVSurface(vsFB);
     vsFB = NULL;
-  }
-
-  if (vsMouseBufferOriginal != NULL) {
-    DeleteVSurface(vsMouseBufferOriginal);
-    vsMouseBufferOriginal = NULL;
   }
 }
 
@@ -2362,10 +2351,6 @@ void UnlockVSurface(struct VSurface *vs) {
   }
   if (vs == vsFB) {
     IDirectDrawSurface2_Unlock(gpFrameBuffer2, NULL);
-  } else if (vs == vsMouseBufferOriginal) {
-    IDirectDrawSurface2_Unlock(gpMouseCursorOriginal2, NULL);
-  } else if (vs == vsMouseBufferOriginal) {
-    IDirectDrawSurface2_Unlock(gpMouseCursorOriginal2, NULL);
   } else {
     IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL);
   }
