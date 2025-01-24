@@ -1412,7 +1412,7 @@ void RenderAutoResolve() {
   }
   gpAR->fRenderAutoResolve = FALSE;
 
-  BltVSurfaceToVSurface(vsFB, gpAR->vsInterfaceBuffer, 0, gpAR->Rect.iLeft, gpAR->Rect.iTop,
+  BltVSurfaceToVSurface(vsFB, gpAR->vsInterfaceBuffer, gpAR->Rect.iLeft, gpAR->Rect.iTop,
                         VS_BLT_USECOLORKEY, 0);
 
   for (i = 0; i < gpAR->ubMercs; i++) {

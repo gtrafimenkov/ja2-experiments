@@ -2242,8 +2242,7 @@ static BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
 // Will drop down into user-defined blitter if 8->16 BPP blitting is being done
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                              uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
-                              SGPRect *srcRect) {
+                              int32_t iDestX, int32_t iDestY, int32_t fBltFlags, SGPRect *srcRect) {
   RECT SrcRect, DestRect;
   uint8_t *pSrcSurface8, *pDestSurface8;
   uint32_t uiSrcPitch, uiDestPitch, uiWidth, uiHeight;

@@ -477,7 +477,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iRight != SrcRect.iLeft) {
-    BltVSurfaceToVSurface(vsBackBuffer, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVSurfaceToVSurface(vsBackBuffer, vsFB, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   iX1 = giX2;
@@ -491,7 +491,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iRight != SrcRect.iLeft) {
-    BltVSurfaceToVSurface(vsBackBuffer, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVSurfaceToVSurface(vsBackBuffer, vsFB, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   iX1 = giX1;
@@ -505,7 +505,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iBottom != SrcRect.iTop) {
-    BltVSurfaceToVSurface(vsBackBuffer, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVSurfaceToVSurface(vsBackBuffer, vsFB, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   iX1 = giX1;
@@ -519,7 +519,7 @@ void FadeInBackBufferSquare() {
   SrcRect.iBottom = iY2;
 
   if (SrcRect.iBottom != SrcRect.iTop) {
-    BltVSurfaceToVSurface(vsBackBuffer, vsFB, 0, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
+    BltVSurfaceToVSurface(vsBackBuffer, vsFB, iX1, iY1, VS_BLT_SRCSUBRECT, &SrcRect);
   }
 
   giX1 -= sFadeXMove;

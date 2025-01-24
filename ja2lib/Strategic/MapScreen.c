@@ -5362,7 +5362,7 @@ void PopupText(wchar_t *pFontString, ...) {
   FindFontCenterCoordinates(0, 0, SCREEN_WIDTH, INTERFACE_START_Y, PopupString, LARGEFONT1, &sX,
                             &sY);
 
-  BltVSurfaceToVSurface(vsFB, vsINTEXT, 0, 85, 160, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVSurfaceToVSurface(vsFB, vsINTEXT, 85, 160, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
 
