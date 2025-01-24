@@ -1675,7 +1675,7 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
 
-  BltVSurfaceToVSurface(pBlitter->vsDestBuff, vsINTEXT, 0, pBlitter->pBackground->sLeft,
+  BltVSurfaceToVSurface(pBlitter->vsDestBuff, vsINTEXT, pBlitter->pBackground->sLeft,
                         pBlitter->pBackground->sTop, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
 
   pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
@@ -2677,7 +2677,7 @@ void HandleTopMessages() {
       SrcRect.iRight = 640;
       SrcRect.iBottom = 20;
 
-      BltVSurfaceToVSurface(vsFB, gTopMessage.dest, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
+      BltVSurfaceToVSurface(vsFB, gTopMessage.dest, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
 
       // Save to save buffer....
       SrcRect.iLeft = 0;
@@ -2685,7 +2685,7 @@ void HandleTopMessages() {
       SrcRect.iRight = 640;
       SrcRect.iBottom = 20;
 
-      BltVSurfaceToVSurface(vsSaveBuffer, vsFB, 0, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
+      BltVSurfaceToVSurface(vsSaveBuffer, vsFB, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
 
       InvalidateRegion(0, 0, 640, 20);
 

@@ -327,7 +327,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     if (vs) {
       SetVideoSurfaceTransparencyColor(vs, FROMRGB(0, 0, 0));
       // Blit the background image
-      BltVSurfaceToVSurface(vsFB, vs, 0, 0, 0, 0, NULL);
+      BltVSurfaceToVSurface(vsFB, vs, 0, 0, 0, NULL);
       DeleteVSurface(vs);
     } else {  // Failed to load the file, so use a black screen and print out message.
       SetFont(FONT10ARIAL);
