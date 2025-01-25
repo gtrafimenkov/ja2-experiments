@@ -35,7 +35,7 @@ python xx.py build test
 ## How to run
 
 ```
-python xx.py build test copy-data run
+python xx.py build test copy-dlls copy-data run
 ```
 
 ## How to play the game

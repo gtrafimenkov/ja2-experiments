@@ -19,6 +19,7 @@ Commands:
   build-release         - build release version
   format-modified       - format modified files using clang-format
   format-all            - format all sources
+  copy-dlls             - copy dlls necessary to run the game
   copy-data             - find and copy game data to the debug build localtion
   clean                 - cleanup repository from all unwanted files
   run                   - run debug build
@@ -62,6 +63,21 @@ def format_files(files):
         subprocess.run(["clang-format", "-i", "--style=file"] + files)
     else:
         print("No files to format", file=sys.stderr)
+
+
+def copy_dlls(dest_dir):
+    """
+    Copy dlls necessary to run the game.
+    """
+    if platform.system() == "Windows":
+        shutil.copy("tools/original-dlls/Smackw32.dll", dest_dir)
+        shutil.copy("tools/original-dlls/mss32.dll", dest_dir)
+
+    if platform.system() == "Windows" and platform.release() == "10":
+        shutil.copy("tools/dxwrapper/ddraw.dll", dest_dir)
+        shutil.copy("tools/dxwrapper/dsound.dll", dest_dir)
+        shutil.copy("tools/dxwrapper/dxwrapper.dll", dest_dir)
+        shutil.copy("tools/dxwrapper/dxwrapper.ini", dest_dir)
 
 
 def find_ja2_data_files():
@@ -162,6 +178,9 @@ def run_command(command):
 
     elif command == "clean":
         subprocess.run(["git", "clean", "-fdx"], check=True)
+
+    elif command == "copy-dlls":
+        copy_dlls(get_release_build_location())
 
     elif command == "copy-data":
         dest_dir = os.path.join(get_release_build_location(), "data")
