@@ -43,6 +43,16 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 endif()
 
+if(NOT DEFINED LANGUAGE)
+    set(LANGUAGE ENGLISH)
+endif()
+
+if(NOT LANGUAGE MATCHES "^(ENGLISH|FRENCH|GERMAN|RUSSIAN|DUTCH|POLISH)$")
+    message(FATAL_ERROR "Invalid LANGUAGE: ${LANGUAGE}. Supported values are ENGLISH, FRENCH, GERMAN, RUSSIAN, DUTCH, POLISH.")
+endif()
+
+add_compile_definitions(${LANGUAGE})
+
 add_subdirectory(ja2lib)
 add_subdirectory(platform-dummy)
 

@@ -26,16 +26,24 @@ bin-linux          - project to build Linux binary of the game (not implemented)
 unittester         - an application to run unit tests
 ```
 
-## How to build
+## How to build and run the game
+
+English version of the game:
 
 ```
-python xx.py build test
+python xx.py build-release test copy-dlls copy-data run
 ```
 
-## How to run
+Russian version:
 
 ```
-python xx.py build test copy-dlls copy-data run
+python xx.py build-release-ru copy-dlls-ru copy-data-ru run-ru
+```
+
+French version:
+
+```
+python xx.py build-release-fr copy-dlls-fr copy-data-fr run-fr
 ```
 
 ## How to play the game

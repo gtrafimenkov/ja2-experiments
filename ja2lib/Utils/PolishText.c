@@ -3197,7 +3197,7 @@ wchar_t* gzCreditNameFunny[] = {
     L"(did items and loading screens too!)",   // Joey \"Joeker\" Whelan",
 };
 
-wchar_t* sRepairsDoneString[] = {
+wchar_t sRepairsDoneString[][MED_STRING_LENGTH] = {
     L"%s skończył(a) naprawiać własne wyposażenie",
     L"%s skończył(a) naprawiać broń i ochraniacze wszystkich członków oddziału",
     L"%s skończył(a) naprawiać wyposażenie wszystkich członków oddziału",

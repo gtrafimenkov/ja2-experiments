@@ -3149,7 +3149,7 @@ wchar_t* gzCreditNameFunny[] = {
     L"(did items and loading screens too!)",   // Joey \"Joeker\" Whelan",
 };
 
-wchar_t* sRepairsDoneString[] = {
+wchar_t sRepairsDoneString[][MED_STRING_LENGTH] = {
     L"%s finished repairing own items",
     L"%s finished repairing everyone's guns & armor",
     L"%s finished repairing everyone's equipped items",

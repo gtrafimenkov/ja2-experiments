@@ -3254,7 +3254,7 @@ wchar_t* gzCreditNameFunny[] = {
     L"(deed items en schermen-laden ook!)",   // Joey \"Joeker\" Whelan",
 };
 
-wchar_t* sRepairsDoneString[] = {
+wchar_t sRepairsDoneString[][MED_STRING_LENGTH] = {
     L"%s is klaar met reparatie van eigen items",
     L"%s is klaar met reparatie van ieders wapens en bepantering",
     L"%s is klaar met reparatie van ieders uitrusting",

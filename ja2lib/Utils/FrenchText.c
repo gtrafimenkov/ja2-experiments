@@ -3178,7 +3178,7 @@ wchar_t* gzCreditNameFunny[] = {
     L"(conception des objets et des écrans de chargement !)",  // Joey \"Joeker\" Whelan",
 };
 
-wchar_t* sRepairsDoneString[] = {
+wchar_t sRepairsDoneString[][MED_STRING_LENGTH] = {
     L"%s a terminé la réparation de ses objets",
     L"%s a terminé la réparation des armes & armures",
     L"%s a terminé la réparation des objets portés",

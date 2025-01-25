@@ -6,6 +6,8 @@
 
 #ifdef RUSSIAN
 
+#include "Utils/Text.h"
+
 /*
 
 ******************************************************************************************************
@@ -108,16 +110,16 @@ address problems as SirTech uses the "@@@" notation.
 
 */
 
-uint16_t ItemNames[MAXITEMS][80] = {L""};
+wchar_t ItemNames[MAXITEMS][80] = {L""};
 
-uint16_t ShortItemNames[MAXITEMS][80] = {L""};
+wchar_t ShortItemNames[MAXITEMS][80] = {L""};
 
 // Different weapon calibres
 // CAWS is Close Assault Weapon System and should probably be left as it is
 // NATO is the North Atlantic Treaty Organization
 // WP is Warsaw Pact
 // cal is an abbreviation for calibre
-uint16_t AmmoCaliber[][20] = {
+wchar_t AmmoCaliber[][20] = {
     L"0",         L",38 кал", L"9мм",    L",45 кал", L",357 кал",
     L"12 кал",    L"ОББ",     L"5,45мм", L"5,56мм",  L"7,62мм НАТО",
     L"7,62мм ВД", L"4,7мм",   L"5,7мм",  L"Монстр",  L"Ракета",
@@ -133,23 +135,23 @@ uint16_t AmmoCaliber[][20] = {
 // NATO is the North Atlantic Treaty Organization
 // WP is Warsaw Pact
 // cal is an abbreviation for calibre
-uint16_t BobbyRayAmmoCaliber[][20] = {
+wchar_t BobbyRayAmmoCaliber[][20] = {
     L"0",      L",38 кал",   L"9мм",       L",45 кал", L",357 кал", L"12 кал", L"ОББ",    L"5,45мм",
     L"5,56мм", L"7,62мм Н.", L"7,62мм ВД", L"4,7мм",   L"5.7мм",    L"Монстр", L"Ракета",
     L"",  // дротик
 };
 
-uint16_t WeaponType[][30] = {L"Другое",      L"Пистолет",       L"Автопистолет",
-                             L"Полуавтомат", L"Винтовка",       L"Снайп.винтовка",
-                             L"Базука",      L"Легкий автомат", L"Револьвер"};
+wchar_t WeaponType[][30] = {L"Другое",      L"Пистолет",       L"Автопистолет",
+                            L"Полуавтомат", L"Винтовка",       L"Снайп.винтовка",
+                            L"Базука",      L"Легкий автомат", L"Револьвер"};
 
-uint16_t TeamTurnString[][STRING_LENGTH] = {
+wchar_t TeamTurnString[][STRING_LENGTH] = {
     L"Ход Игрока",  // player's turn
     L"Ход Оппонента", L"Ход Существа", L"Ход Ополчения", L"Ход Жителей"
     // planning turn
 };
 
-uint16_t Message[][STRING_LENGTH] = {
+wchar_t Message[][STRING_LENGTH] = {
     L"",
 
     // In the following 8 strings, the %s is the merc's name, and the %d (if any) is a number.
@@ -718,7 +720,7 @@ wchar_t* sKeyDescriptionStrings[2] = {
 
 // The headers used to describe various weapon statistics.
 
-int16_t gWeaponStatsDesc[][14] = {
+wchar_t gWeaponStatsDesc[][14] = {
     L"Вес (%s):", L"Статус:",
     L"Пули:",  // Number of bullets left in a magazine
     L"Дист:",  // Range
@@ -729,7 +731,7 @@ int16_t gWeaponStatsDesc[][14] = {
 
 // The headers used for the merc's money.
 
-int16_t gMoneyStatsDesc[][13] = {
+wchar_t gMoneyStatsDesc[][13] = {
     L"Кол-во",
     L"Осталось:",  // this is the overall balance
     L"Кол-во",
@@ -745,7 +747,7 @@ int16_t gMoneyStatsDesc[][13] = {
 // The health of various creatures, enemies, characters in the game. The numbers following each are
 // for comment only, but represent the precentage of points remaining.
 
-uint16_t zHealthStr[][13] = {
+wchar_t zHealthStr[][13] = {
     L"УМИРАЕТ",   //	>= 0
     L"КРИТИЧЕН",  //	>= 15
     L"ПЛОХ",      //	>= 30
@@ -758,16 +760,16 @@ uint16_t zHealthStr[][13] = {
 wchar_t* gzMoneyAmounts[6] = {L"1000$", L"100$", L"10$", L"Готово", L"Отделить", L"Взять"};
 
 // short words meaning "Advantages" for "Pros" and "Disadvantages" for "Cons."
-int16_t gzProsLabel[10] = {
+wchar_t gzProsLabel[10] = {
     L"За:",
 };
 
-int16_t gzConsLabel[10] = {
+wchar_t gzConsLabel[10] = {
     L"Прот:",
 };
 
 // Conversation options a player has when encountering an NPC
-uint16_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
+wchar_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
     L"Еще раз?",  // meaning "Repeat yourself"
     L"Дружески",  // approach in a friendly
     L"Прямо",     // approach directly - let's get down to business
@@ -776,14 +778,14 @@ uint16_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
 
 // Some NPCs buy, sell or repair items. These different options are available for those NPCs as
 // well.
-uint16_t zDealerStrings[4][SMALL_STRING_LENGTH] = {
+wchar_t zDealerStrings[4][SMALL_STRING_LENGTH] = {
     L"Куп/Прод",
     L"Куп.",
     L"Прод.",
     L"Ремонт",
 };
 
-uint16_t zDialogActions[1][SMALL_STRING_LENGTH] = {
+wchar_t zDialogActions[1][SMALL_STRING_LENGTH] = {
     L"Готово",
 };
 
@@ -812,7 +814,7 @@ wchar_t* zVehicleName[] = {
 
 // These are messages Used in the Tactical Screen
 
-uint16_t TacticalStr[][MED_STRING_LENGTH] = {
+wchar_t TacticalStr[][MED_STRING_LENGTH] = {
     L"Воздушный Рейд", L"Оказывать перв.помощь сразу?",
 
     // CAMFIELD NUKE THIS and add quote #66.
@@ -1883,7 +1885,7 @@ wchar_t* pUpdatePanelButtons[] = {
 
 // Text which appears when everyone on your team is incapacitated and incapable of battle
 
-uint16_t LargeTacticalStr[][LARGE_STRING_LENGTH] = {
+wchar_t LargeTacticalStr[][LARGE_STRING_LENGTH] = {
     L"В этом секторе вам нанесли поражение!",
     L"Враг, не испытывая угрызений совести, пожрет всех до единого!",
     L"Член вашей команды захвачен (он без сознания)!",
@@ -2897,8 +2899,8 @@ wchar_t* pMessageStrings[] = {
 #endif
 };
 
-uint16_t ItemPickupHelpPopup[][40] = {L"OK", L"Листать вверх", L"Выделить все", L"Листать вниз",
-                                      L"Отмена"};
+wchar_t ItemPickupHelpPopup[][40] = {L"OK", L"Листать вверх", L"Выделить все", L"Листать вниз",
+                                     L"Отмена"};
 
 wchar_t* pDoctorWarningString[] = {
     L"%s слишком далеко,чтобы его можно было лечить.",
@@ -3063,7 +3065,7 @@ wchar_t* gzCreditNameFunny[] = {
     L"(строил предметы и загрузочные экраны!)",      // Joey \"Joeker\" Whelan",
 };
 
-wchar_t* sRepairsDoneString[] = {
+wchar_t sRepairsDoneString[][MED_STRING_LENGTH] = {
     L"%s закончил ремонт своих вещей",
     L"%s закончил ремонтировать все оружие и броню",
     L"%s закончил ремонтировать все снаряжение",

@@ -5,11 +5,7 @@
 #include "Utils/JA25EnglishText.h"
 
 #include "LanguageDefines.h"
-#ifdef ENGLISH
-#include "Utils/Text.h"
-#endif
-
-#ifdef ENGLISH
+#if defined(ENGLISH) || defined(FRENCH) || defined(RUSSIAN)
 
 // VERY TRUNCATED FILE COPIED FROM JA2.5 FOR ITS FEATURES FOR JA2 GOLD
 

@@ -14,15 +14,22 @@ Usage:
   python xx.py COMMAND [COMMAND...]
 
 Commands:
-  build                 - build debug version
   build-debug           - build debug version
   build-release         - build release version
+  build-release-ru      - build release version for Russian game resources
+  build-release-ru      - build release version for French game resources
   format-modified       - format modified files using clang-format
   format-all            - format all sources
   copy-dlls             - copy dlls necessary to run the game
+  copy-dlls-ru          - copy dlls necessary to run the game
+  copy-dlls-fr          - copy dlls necessary to run the game
   copy-data             - find and copy game data to the debug build localtion
+  copy-data-ru          - find and copy game data to Russian version
+  copy-data-fr          - find and copy game data to French version
   clean                 - cleanup repository from all unwanted files
-  run                   - run debug build
+  run                   - run release build
+  run-ru                - run Russian release build
+  run-fr                - run French release build
   test                  - run unit test
 
 Examples:
@@ -80,25 +87,36 @@ def copy_dlls(dest_dir):
         shutil.copy("tools/dxwrapper/dxwrapper.ini", dest_dir)
 
 
-def find_ja2_data_files():
-    try_dirs = [
-        r"C:\Program Files (x86)\Steam\steamapps\common\Jagged Alliance 2 Gold\Data",
-        "C:\\GOG Games\\Jagged Alliance 2\\Data\\",
-    ]
+def find_ja2_data_files(lang):
+    try_dirs = []
+    if lang == "ENGLISH":
+        try_dirs = [
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Jagged Alliance 2 Gold\\Data",
+            "C:\\GOG Games\\Jagged Alliance 2\\Data\\",
+        ]
+    elif lang == "RUSSIAN":
+        try_dirs = [
+            "../ja2-collection/russian-buka/Data",
+            # "../ja2-collection/russian-gold/Data",
+        ]
+    elif lang == "FRENCH":
+        try_dirs = [
+            "../ja2-collection/french/Data",
+        ]
     for d in try_dirs:
         if os.path.isdir(d):
             return d
     return None
 
 
-def copy_ja2_data_files(dest_dir):
+def copy_ja2_data_files(dest_dir, lang):
     if os.path.isdir(dest_dir):
         print("Data already copied", file=sys.stderr)
         return True
 
-    source = find_ja2_data_files()
+    source = find_ja2_data_files(lang)
     if source is None:
-        print("Cannot find data files for JA2", file=sys.stderr)
+        print(f"Cannot find data files for JA2 {lang}", file=sys.stderr)
         return False
 
     shutil.copytree(source, dest_dir)
@@ -117,74 +135,131 @@ def copy_ja2_data_files(dest_dir):
 #     return "build/ja2vcp"
 
 
-def get_release_build_location():
+def get_release_build_location(lang):
     if platform.system() == "Windows":
-        return "build/bin-win32/RelWithDebInfo"
-        return "ReleaseWithDebug"
-    return "build"
+        return os.path.join(get_build_dir(True, lang), "bin-win32/RelWithDebInfo")
+    else:
+        raise Exception("No game build for linux yet")
 
 
-def get_release_build_exe():
+def get_release_build_exe(lang):
     if platform.system() == "Windows":
-        return "build/bin-win32/RelWithDebInfo/ja2v.exe"
-    return "build/ja2v"
+        return os.path.join(
+            get_build_dir(True, lang), "bin-win32/RelWithDebInfo/ja2v.exe"
+        )
+    else:
+        raise Exception("No game build for linux yet")
 
 
-def get_release_test_exe():
+def get_release_test_exe(lang):
     if platform.system() == "Windows":
-        return "build/unittester/RelWithDebInfo/unittester.exe"
-    return "build/unittester/unittester"
+        return os.path.join(
+            get_build_dir(True, lang), "unittester/RelWithDebInfo/unittester.exe"
+        )
+    else:
+        return os.path.join(get_build_dir(True, lang), "unittester/unittester")
+
+
+def get_build_dir(release, lang):
+    suffix = ""
+    if lang == "RUSSIAN":
+        suffix = "-ru"
+    elif lang == "FRENCH":
+        suffix = "-fr"
+    if release:
+        return "build-release" + suffix
+    else:
+        return "build-debug" + suffix
+
+
+def get_configure_build_command(release, lang):
+    lang_param = f"-DLANGUAGE={lang}"
+    build_type = "Release" if release else "Debug"
+    if platform.system() == "Windows":
+        return [
+            "cmake",
+            "-G",
+            "Visual Studio 17 2022",
+            "-A",
+            "Win32",
+            "-B",
+            get_build_dir(release, lang),
+            lang_param,
+        ]
+    else:
+        return [
+            "cmake",
+            "-B",
+            get_build_dir(release, lang),
+            f"-DCMAKE_BUILD_TYPE={build_type}",
+            lang_param,
+        ]
+
+
+def get_build_command(release, lang):
+    if platform.system() == "Windows":
+        return [
+            "cmake",
+            "--build",
+            get_build_dir(release, lang),
+            "--parallel",
+            "--config",
+            "RelWithDebInfo" if release else "Debug",
+        ]
+    else:
+        return ["cmake", "--build", get_build_dir(release, lang), "--parallel"]
 
 
 def run_command(command):
     if command in ["build-debug"]:
-        if platform.system() == "Windows":
-            subprocess.run(
-                ["cmake", "-G", "Visual Studio 17 2022", "-A", "Win32", "-B", "build"],
-                check=True,
-            )
-            subprocess.run(
-                ["cmake", "--build", "build", "--parallel", "--config", "Debug"],
-                check=True,
-            )
-        else:
-            subprocess.run(
-                ["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Debug"], check=True
-            )
-            subprocess.run(["cmake", "--build", "build", "--parallel"], check=True)
+        is_release = False
+        lang = "ENGLISH"
+        subprocess.run(get_configure_build_command(is_release, lang), check=True)
+        subprocess.run(get_build_command(is_release, lang), check=True)
 
-    elif command in ["build", "build-release"]:
-        if platform.system() == "Windows":
-            subprocess.run(["cmake", "-B", "build", "-A", "Win32"], check=True)
-            subprocess.run(
-                [
-                    "cmake",
-                    "--build",
-                    "build",
-                    "--parallel",
-                    "--config",
-                    "RelWithDebInfo",
-                ],
-                check=True,
-            )
-        else:
-            subprocess.run(
-                ["cmake", "-B", "build-release", "-DCMAKE_BUILD_TYPE=Release"],
-                check=True,
-            )
-            subprocess.run(
-                ["cmake", "--build", "build-release", "--parallel"], check=True
-            )
+    elif command in ["build-release"]:
+        is_release = True
+        lang = "ENGLISH"
+        subprocess.run(get_configure_build_command(is_release, lang), check=True)
+        subprocess.run(get_build_command(is_release, lang), check=True)
+
+    elif command in ["build-release-ru"]:
+        is_release = True
+        lang = "RUSSIAN"
+        subprocess.run(get_configure_build_command(is_release, lang), check=True)
+        subprocess.run(get_build_command(is_release, lang), check=True)
+
+    elif command in ["build-release-fr"]:
+        is_release = True
+        lang = "FRENCH"
+        subprocess.run(get_configure_build_command(is_release, lang), check=True)
+        subprocess.run(get_build_command(is_release, lang), check=True)
 
     elif command == "clean":
         subprocess.run(["git", "clean", "-fdx"], check=True)
 
     elif command == "copy-dlls":
-        copy_dlls(get_release_build_location())
+        copy_dlls(get_release_build_location(lang="ENGLISH"))
+
+    elif command == "copy-dlls-ru":
+        copy_dlls(get_release_build_location(lang="RUSSIAN"))
+
+    elif command == "copy-dlls-fr":
+        copy_dlls(get_release_build_location(lang="FRENCH"))
 
     elif command == "copy-data":
-        dest_dir = os.path.join(get_release_build_location(), "data")
-        if not copy_ja2_data_files(dest_dir):
+        dest_dir = os.path.join(get_release_build_location(lang="ENGLISH"), "data")
+        if not copy_ja2_data_files(dest_dir, lang="ENGLISH"):
+            sys.exit(10)
+
+    elif command == "copy-data-ru":
+        dest_dir = os.path.join(get_release_build_location(lang="RUSSIAN"), "data")
+        if not copy_ja2_data_files(dest_dir, lang="RUSSIAN"):
+            sys.exit(10)
+
+    elif command == "copy-data-fr":
+        dest_dir = os.path.join(get_release_build_location(lang="FRENCH"), "data")
+        if not copy_ja2_data_files(dest_dir, lang="FRENCH"):
             sys.exit(10)
 
     elif command == "format-modified":
@@ -203,10 +278,16 @@ def run_command(command):
         format_files(source_files)
 
     elif command == "run":
-        subprocess.run([get_release_build_exe()])
+        subprocess.run([get_release_build_exe(lang="ENGLISH")])
+
+    elif command == "run-ru":
+        subprocess.run([get_release_build_exe(lang="RUSSIAN")])
+
+    elif command == "run-fr":
+        subprocess.run([get_release_build_exe(lang="FRENCH")])
 
     elif command == "test":
-        subprocess.run([get_release_test_exe()], check=True)
+        subprocess.run([get_release_test_exe(lang="ENGLISH")], check=True)
 
     else:
         print(f"Unknown command {command}", file=sys.stderr)
