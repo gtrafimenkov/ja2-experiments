@@ -166,7 +166,6 @@ void ShutdownStandardGamingPlatform(void) {
 
   ShutdownSoundManager();
 
-  DestroyEnglishTransTable();  // has to go before ShutdownFontManager()
   ShutdownFontManager();
 
   ShutdownClockManager();  // must shutdown before VideoManager, 'cause it uses ghWindow

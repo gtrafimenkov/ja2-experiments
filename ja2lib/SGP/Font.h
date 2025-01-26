@@ -77,8 +77,6 @@ uint16_t *SetFontObjectPalette8BPP(int32_t iFont, struct SGPPaletteEntry *pPal8)
 uint16_t *SetFontObjectPalette16BPP(int32_t iFont, uint16_t *pPal16);
 uint16_t *GetFontObjectPalette16BPP(int32_t iFont);
 
-void DestroyEnglishTransTable(void);
-
 extern struct VObject *GetFontObject(int32_t iFont);
 extern uint32_t gprintf(int32_t x, int32_t y, wchar_t *pFontString, ...);
 extern uint32_t gprintfDirty(int32_t x, int32_t y, wchar_t *pFontString, ...);
@@ -103,13 +101,10 @@ extern BOOLEAN SetFont(int32_t iFontIndex);
 
 extern int32_t LoadFontFile(char *pFileName);
 extern uint16_t GetFontHeight(int32_t FontNum);
-extern BOOLEAN InitializeFontManager(uint16_t usDefaultPixDepth, FontTranslationTable *pTransTable);
+extern BOOLEAN InitializeFontManager(uint16_t usDefaultPixDepth);
 extern void ShutdownFontManager(void);
 extern void UnloadFont(uint32_t FontIndex);
 
-extern FontTranslationTable *CreateEnglishTransTable();
-
-extern int16_t GetIndex(uint16_t siChar);
 extern uint32_t GetWidth(struct VObject *hSrcVObject, int16_t ssIndex);
 
 extern int16_t StringPixLengthArgFastHelp(int32_t usUseFont, int32_t usBoldFont,
@@ -131,5 +126,7 @@ void FindFontRightCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, int16
                               wchar_t *pStr, int32_t iFontIndex, int16_t *psNewX, int16_t *psNewY);
 void FindFontCenterCoordinates(int16_t sLeft, int16_t sTop, int16_t sWidth, int16_t sHeight,
                                wchar_t *pStr, int32_t iFontIndex, int16_t *psNewX, int16_t *psNewY);
+
+uint16_t GetCharWidth_(struct VObject *font, wchar_t c);
 
 #endif
