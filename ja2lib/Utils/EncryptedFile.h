@@ -7,7 +7,9 @@
 
 #include "SGP/Types.h"
 
-BOOLEAN LoadEncryptedDataFromFile(char* pFileName, wchar_t* pDestString, uint32_t uiSeekFrom,
-                                  uint32_t uiSeekAmount);
+void DecodeEncryptedString(wchar_t* str, size_t maxChars);
+
+BOOLEAN LoadEncryptedDataFromFile(char* pFileName, wchar_t* pDestString, uint32_t startPos,
+                                  uint32_t bytesCount);
 
 #endif

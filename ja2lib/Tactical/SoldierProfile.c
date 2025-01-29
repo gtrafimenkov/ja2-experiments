@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "GameRes.h"
 #include "GameSettings.h"
 #include "Laptop/AIM.h"
 #include "Laptop/History.h"
@@ -53,6 +54,7 @@
 #include "TileEngine/SysUtil.h"
 #include "TileEngine/WorldMan.h"
 #include "Town.h"
+#include "Utils/EncryptedFile.h"
 #include "Utils/EventPump.h"
 #include "Utils/TimerControl.h"
 
@@ -144,6 +146,16 @@ void DecideActiveTerrorists(void);
 extern struct SOLDIERTYPE *gpSMCurrentMerc;
 extern BOOLEAN gfRerenderInterfaceFromHelpText;
 
+static void FixRussianEncoding(wchar_t *str, size_t maxChars) {
+  wchar_t *end = str + maxChars;
+  for (; *str != 0 && str < end; str++) {
+    // copied from ja2-vanilla-cp project
+    if (*str >= 0xC0 && *str <= 0xFF) {
+      *str = *str + 0x350;
+    }
+  }
+}
+
 BOOLEAN LoadMercProfiles(void) {
   //	FILE *fptr;
   HWFILE fptr;
@@ -165,6 +177,12 @@ BOOLEAN LoadMercProfiles(void) {
                String("FAILED to Read Merc Profiles from File %d %s", uiLoop, pFileName));
       FileMan_Close(fptr);
       return (FALSE);
+    }
+
+    // Fix encoding for name and nickname
+    if (IsRussianVersion() || IsRussianGoldVersion()) {
+      FixRussianEncoding(gMercProfiles[uiLoop].zName, NAME_LENGTH);
+      FixRussianEncoding(gMercProfiles[uiLoop].zNickname, NICKNAME_LENGTH);
     }
 
     // if the Dialogue exists for the merc, allow the merc to be hired
