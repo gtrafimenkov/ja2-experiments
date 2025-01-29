@@ -788,9 +788,6 @@ int32_t EnterLaptop() {
     guiRainLoop = PlayJA2Ambient(RAIN_1, LOWVOLUME, 0);
   }
 
-  // open the laptop library
-  //	OpenLibrary( LIBRARY_LAPTOP );
-
   // pause the game because we dont want time to advance in the laptop
   PauseGame();
 
@@ -998,8 +995,6 @@ void ExitLaptop() {
   // Since we are going to MapScreen, check the flag
   guiTacticalInterfaceFlags |= INTERFACE_MAPSCREEN;
 
-  // close the laptop library
-  //	CloseLibrary( LIBRARY_LAPTOP );
   // pause the game because we dont want time to advance in the laptop
   UnPauseGame();
 }

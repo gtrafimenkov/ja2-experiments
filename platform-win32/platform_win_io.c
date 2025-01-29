@@ -259,7 +259,7 @@ HWFILE FileMan_Open(char *strFilename, uint32_t uiOptions, BOOLEAN fDeleteOnClos
   }
 
   // if the file did not exist, try to open it from the database
-  else if (gFileDataBase.fInitialized) {
+  else {
     // if the file is to be opened for writing, return an error cause you cant write a file that is
     // in the database library
     if (fDeleteOnClose) {
@@ -365,8 +365,7 @@ void FileMan_Close(HWFILE hFile) {
       }
     }
   } else {
-    // if the database is initialized
-    if (gFileDataBase.fInitialized) CloseLibraryFile(sLibraryID, uiFileNum);
+    CloseLibraryFile(sLibraryID, uiFileNum);
   }
 }
 
@@ -440,19 +439,12 @@ BOOLEAN FileMan_Read(HWFILE hFile, void *pDest, uint32_t uiBytesToRead, uint32_t
       if (puiBytesRead) *puiBytesRead = (uint32_t)dwNumBytesRead;
     }
   } else {
-    // if the database is initialized
-    if (gFileDataBase.fInitialized) {
-      // if the library is open
-      if (IsLibraryOpened(sLibraryID)) {
-        // if the file is opened
-        if (gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFileID != 0) {
-          // read the data from the library
-          fRet = LoadDataFromLibrary(sLibraryID, uiFileNum, pDest, dwNumBytesToRead,
-                                     (uint32_t *)&dwNumBytesRead);
-          if (puiBytesRead) {
-            *puiBytesRead = (uint32_t)dwNumBytesRead;
-          }
-        }
+    if (gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFileID != 0) {
+      // read the data from the library
+      fRet = LoadDataFromLibrary(sLibraryID, uiFileNum, pDest, dwNumBytesToRead,
+                                 (uint32_t *)&dwNumBytesRead);
+      if (puiBytesRead) {
+        *puiBytesRead = (uint32_t)dwNumBytesRead;
       }
     }
   }
@@ -573,8 +565,7 @@ BOOLEAN FileMan_Seek(HWFILE hFile, uint32_t uiDistance, uint8_t uiHow) {
 
     if (Plat_SetFilePointer(hRealFile, iDistance, uiHow) == 0xFFFFFFFF) return (FALSE);
   } else {
-    // if the database is initialized
-    if (gFileDataBase.fInitialized) LibraryFileSeek(sLibraryID, uiFileNum, uiDistance, uiHow);
+    LibraryFileSeek(sLibraryID, uiFileNum, uiDistance, uiHow);
   }
 
   return (TRUE);
@@ -623,14 +614,10 @@ int32_t FileMan_GetPos(HWFILE hFile) {
     }
     return (uiPositionInFile);
   } else {
-    // if the library is open
-    if (IsLibraryOpened(sLibraryID)) {
-      // check if the file is open
-      if (gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFileID != 0) {
-        uiPositionInFile =
-            gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFilePosInFile;
-        return (uiPositionInFile);
-      }
+    // check if the file is open
+    if (gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFileID != 0) {
+      uiPositionInFile = gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFilePosInFile;
+      return (uiPositionInFile);
     }
   }
 
@@ -676,10 +663,8 @@ uint32_t FileMan_GetSize(HWFILE hFile) {
 
     uiFileSize = Plat_GetFileSize(hRealHandle);
   } else {
-    // if the library is open
-    if (IsLibraryOpened(sLibraryID))
-      uiFileSize =
-          gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].pFileHeader->uiFileLength;
+    uiFileSize =
+        gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].pFileHeader->uiFileLength;
   }
 
   if (uiFileSize == 0xFFFFFFFF)
@@ -988,26 +973,18 @@ BOOLEAN FileMan_CheckEndOfFile(HWFILE hFile) {
 
   // else it is a library file
   else {
-    // if the database is initialized
-    if (gFileDataBase.fInitialized) {
-      // if the library is open
-      if (IsLibraryOpened(sLibraryID)) {
-        // if the file is opened
-        if (gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFileID != 0) {
-          uint32_t uiLength;  // uiOffsetInLibrary
-          //					HANDLE	hLibraryFile;
-          //					uint32_t	uiNumBytesRead;
-          uint32_t uiCurPos;
+    // if the file is opened
+    if (gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFileID != 0) {
+      uint32_t uiLength;
+      uint32_t uiCurPos;
 
-          uiLength =
-              gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].pFileHeader->uiFileLength;
-          uiCurPos = gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFilePosInFile;
+      uiLength =
+          gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].pFileHeader->uiFileLength;
+      uiCurPos = gFileDataBase.pLibraries[sLibraryID].pOpenFiles[uiFileNum].uiFilePosInFile;
 
-          // if we are trying to read more data then the size of the file, return an error
-          if (uiCurPos >= uiLength) {
-            return (TRUE);
-          }
-        }
+      // if we are trying to read more data then the size of the file, return an error
+      if (uiCurPos >= uiLength) {
+        return (TRUE);
       }
     }
   }

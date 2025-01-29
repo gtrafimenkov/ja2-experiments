@@ -48,8 +48,7 @@ BOOLEAN FileMan_Exists(char* strFilename) {
 
   // if the file wasnt on disk, check to see if its in a library
   if (fExists == FALSE) {
-    // if the database is initialized
-    if (gFileDataBase.fInitialized) fExists = CheckIfFileExistInLibrary(strFilename);
+    fExists = CheckIfFileExistInLibrary(strFilename);
   }
 
   return (fExists);

@@ -54,19 +54,14 @@ typedef struct {
 } FileOpenStruct;
 
 typedef struct {
+  char* libName;
   char* sLibraryPath;
   SYS_FILE_HANDLE hLibraryHandle;
   uint16_t usNumberOfEntries;
-  BOOLEAN fLibraryOpen;
-  //	BOOLEAN	fAnotherFileAlreadyOpenedLibrary;				//this variable is
-  // set when a file is opened from the library and reset when the file is close.  No 2 files can
-  // have
-  // access
-  // to the library at 1 time.
-  uint32_t
-      uiIdOfOtherFileAlreadyOpenedLibrary;  // this variable is set when a file is opened from
-                                            // the library and reset when the file is close.  No
-                                            // 2 files can have access to the library at 1 time.
+  // this variable is set when a file is opened from
+  // the library and reset when the file is close.  No
+  // 2 files can have access to the library at 1 time.
+  uint32_t uiIdOfOtherFileAlreadyOpenedLibrary;
   int32_t iNumFilesOpen;
   int32_t iSizeOfOpenFileArray;
   FileHeaderStruct* pFileHeader;
@@ -91,8 +86,8 @@ typedef struct {
 typedef struct {
   char* sManagerName;
   LibraryHeaderStruct* pLibraries;
-  uint16_t usNumberOfLibraries;
-  BOOLEAN fInitialized;
+  uint16_t size;
+  uint16_t capacity;
   RealFileHeaderStruct RealFiles;
 } DatabaseManagerHeaderStruct;
 
@@ -138,8 +133,6 @@ BOOLEAN LoadDataFromLibrary(int16_t sLibraryID, uint32_t uiFileIndex, void* pDat
 BOOLEAN LibraryFileSeek(int16_t sLibraryID, uint32_t uiFileNum, uint32_t uiDistance,
                         uint8_t uiHowToSeek);
 
-// used to open and close libraries during the game
-BOOLEAN CloseLibrary(int16_t sLibraryID);
-BOOLEAN OpenLibrary(int16_t sLibraryID, const char* libFileName);
+BOOLEAN OpenLibrary(const char* libFileName);
 
 #endif

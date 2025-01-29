@@ -11,7 +11,7 @@
 
 BOOLEAN InitializeFileDatabase();
 BOOLEAN ShutDownFileDatabase();
-BOOLEAN IsLibraryOpened(int16_t sLibraryID);
+bool IsLibraryOpened(const char *libraryName);
 BOOLEAN IsLibraryRealFile(HWFILE hFile);
 
 #endif

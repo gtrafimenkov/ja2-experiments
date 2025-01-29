@@ -169,7 +169,7 @@ BOOLEAN EnterIntroScreen() {
 #endif
 
   // if the library doesnt exist, exit
-  if (!IsLibraryOpened(LIBRARY_INTRO)) {
+  if (!IsLibraryOpened("intro.slf")) {
     PrepareToExitIntroScreen();
     return (TRUE);
   }
