@@ -8,19 +8,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/** Check if this is English version of the game. */
-bool IsEnglishVersion();
+// Known type of game resources
+enum ResourceVersion { RT_ENGLISH, RT_GERMAN, RT_POLISH, RT_RUSSIAN_BUKA, RT_RUSSIAN_GOLD };
 
-/** Check if this is German version of the game. */
-bool IsGermanVersion();
+void DetectResourcesVersion();
+enum ResourceVersion GetResourceVersion();
 
-/** Check if this is Polish version of the game. */
-bool IsPolishVersion();
+bool UsingEnglishResources();
+bool UsingGermanResources();
+bool UsingPolishResources();
+bool UsingRussianBukaResources();
+bool UsingRussianGoldResources();
 
-/** Check if this is Russian version of the game. */
-bool IsRussianVersion();
-
-/** Check if this is Russian GOLD version of the game. */
-bool IsRussianGoldVersion();
+wchar_t GetZeroGlyphChar();
 
 #endif JA2_GAME_RES

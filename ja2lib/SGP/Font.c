@@ -10,6 +10,7 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "GameRes.h"
 #include "Globals.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
@@ -554,16 +555,10 @@ uint16_t GetFontHeight(int32_t FontNum) {
   return ((uint16_t)GetHeight(FontObjs[FontNum], 0));
 }
 
-#if defined RUSSIAN
-#define ZERO_GLYPH_CHAR L' '
-#else
-#define ZERO_GLYPH_CHAR L'A'
-#endif
-
 /* Given a wide char, this function returns the index of the glyph. If no glyph
  * exists for the requested wide char, the glyph index of '?' is returned. */
 static uint8_t GetIndex(wchar_t const c) {
-  if (c == ZERO_GLYPH_CHAR) {
+  if (c == GetZeroGlyphChar()) {
     return 0;
   }
   if (c < TranslationTableSize) {

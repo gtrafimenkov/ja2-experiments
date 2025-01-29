@@ -4,42 +4,42 @@
 
 #include "GameRes.h"
 
-bool IsEnglishVersion() {
-#ifdef ENGLISH
-  return true;
-#else
-  return false;
-#endif
+#include "DebugLog.h"
+#include "SGP/LibraryDataBasePub.h"
+
+static enum ResourceVersion _resVersion = RT_ENGLISH;
+
+void DetectResourcesVersion() {
+  if (IsLibraryOpened("russian.slf")) {
+    _resVersion = RT_RUSSIAN_BUKA;
+  } else if (IsLibraryOpened("german.slf")) {
+    _resVersion = RT_GERMAN;
+  } else {
+    _resVersion = RT_ENGLISH;
+  }
+  DebugLogF("Detect resources type: %d", _resVersion);
+
+  // Library files that can be used to detect resource type:
+  //   german.slf, IMPSYMBOL_GERMAN.PCX
+  //   russian.slf, IMPSYMBOL_RUSSIAN.PCX
+  //
+  //   english, french and russian gold have the same file names inside of laptop.slf
+  //   For resource type detection, it is better to check hash of some files, e.g hash of
+  //   laptop/impsymbol.sti
 }
 
-bool IsGermanVersion() {
-#ifdef GERMAN
-  return true;
-#else
-  return false;
-#endif
-}
+enum ResourceVersion GetResourceVersion() { return _resVersion; }
 
-bool IsPolishVersion() {
-#ifdef POLISH
-  return true;
-#else
-  return false;
-#endif
-}
+bool UsingEnglishResources() { return _resVersion == RT_ENGLISH; }
+bool UsingGermanResources() { return _resVersion == RT_GERMAN; }
+bool UsingPolishResources() { return _resVersion == RT_POLISH; }
+bool UsingRussianBukaResources() { return _resVersion == RT_RUSSIAN_BUKA; }
+bool UsingRussianGoldResources() { return _resVersion == RT_RUSSIAN_GOLD; }
 
-bool IsRussianVersion() {
-#ifdef RUSSIAN
-  return true;
-#else
-  return false;
-#endif
-}
-
-bool IsRussianGoldVersion() {
-#ifdef RUSSIAN_GOLD
-  return true;
-#else
-  return false;
-#endif
+wchar_t GetZeroGlyphChar() {
+  if (UsingRussianBukaResources()) {
+    return L' ';
+  } else {
+    return L'A';
+  }
 }

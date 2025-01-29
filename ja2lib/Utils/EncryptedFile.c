@@ -16,13 +16,13 @@ void DecodeEncryptedString(wchar_t* str, size_t maxChars) {
   for (; *str != 0 && str < end; str++) {
     wchar_t c = (*str > 33 ? *str - 1 : *str);
 
-    if (IsRussianVersion() || IsRussianGoldVersion()) {
+    if (UsingRussianBukaResources() || UsingRussianGoldResources()) {
       /* The Russian data files are incorrectly encoded. The original texts seem
        * to be encoded in CP1251, but then they were converted from CP1252 (!)
        * to UTF-16 to store them in the data files. Undo this damage here. */
       if (0xC0 <= c && c <= 0xFF) c += 0x0350;
     } else {
-      if (IsEnglishVersion()) {
+      if (UsingEnglishResources()) {
         /* The English data files are incorrectly encoded. The original texts
          * seem to be encoded in CP437, but then they were converted from CP1252
          * (!) to UTF-16 to store them in the data files. Undo this damage here.
@@ -38,7 +38,7 @@ void DecodeEncryptedString(wchar_t* str, size_t maxChars) {
             c = 0x00E7;
             break;  // ç
         }
-      } else if (IsPolishVersion()) {
+      } else if (UsingPolishResources()) {
         /* The Polish data files are incorrectly encoded. The original texts
          * seem to be encoded in CP1250, but then they were converted from
          * CP1252 (!) to UTF-16 to store them in the data files. Undo this

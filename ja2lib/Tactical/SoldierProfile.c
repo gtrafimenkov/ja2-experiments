@@ -180,7 +180,7 @@ BOOLEAN LoadMercProfiles(void) {
     }
 
     // Fix encoding for name and nickname
-    if (IsRussianVersion() || IsRussianGoldVersion()) {
+    if (UsingRussianBukaResources() || UsingRussianGoldResources()) {
       FixRussianEncoding(gMercProfiles[uiLoop].zName, NAME_LENGTH);
       FixRussianEncoding(gMercProfiles[uiLoop].zNickname, NICKNAME_LENGTH);
     }

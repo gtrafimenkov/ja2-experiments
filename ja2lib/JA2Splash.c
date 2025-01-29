@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 
+#include "GameRes.h"
 #include "MainMenuScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
@@ -37,6 +38,7 @@ void InitJA2SplashScreen() {
 
   // Initialize the file database
   InitializeFileDatabase();
+  DetectResourcesVersion();
 
 #if !defined(ENGLISH) && defined(JA2TESTVERSION)
   uint32_t uiLogoID = 0;
