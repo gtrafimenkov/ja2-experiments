@@ -26,17 +26,14 @@
 #define DB_ADD_LIBRARY_ID(exp) (exp << DB_BITS_FOR_FILE_ID)
 #define DB_ADD_FILE_ID(exp) (exp & 0xC00000)
 
-typedef struct {
+struct LibraryInitHeader {
   char sLibraryName[FILENAME_SIZE];  // The name of the library file on the disk
   BOOLEAN fOnCDrom;  // A flag specifying if its a cdrom library ( not implemented yet )
   BOOLEAN
   fInitOnStart;  // Flag specifying if the library is to Initialized at the begining of the game
-
-} LibraryInitHeader;
+};
 
 #include "SGP/Ja2Libs.h"
-
-extern LibraryInitHeader gGameLibaries[];
 
 typedef struct {
   uint32_t uiFileID;                // id of the file ( they start at 1 )
@@ -127,8 +124,7 @@ extern DatabaseManagerHeaderStruct gFileDataBase;
 // Function Prototypes
 
 BOOLEAN CheckForLibraryExistence(char* pLibraryName);
-BOOLEAN InitializeLibrary(char* pLibraryName, LibraryHeaderStruct* pLibheader,
-                          BOOLEAN fCanBeOnCDrom);
+BOOLEAN InitializeLibrary(const char* pLibraryName, LibraryHeaderStruct* pLibheader);
 
 BOOLEAN CheckIfFileExistInLibrary(char* pFileName);
 int16_t GetLibraryIDFromFileName(char* pFileName);
@@ -144,6 +140,6 @@ BOOLEAN LibraryFileSeek(int16_t sLibraryID, uint32_t uiFileNum, uint32_t uiDista
 
 // used to open and close libraries during the game
 BOOLEAN CloseLibrary(int16_t sLibraryID);
-BOOLEAN OpenLibrary(int16_t sLibraryID);
+BOOLEAN OpenLibrary(int16_t sLibraryID, const char* libFileName);
 
 #endif

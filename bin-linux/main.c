@@ -21,7 +21,5 @@ int main() {
   InitializeFileDatabase();
   FileMan_Initialize();
 
-  int locale = DetectLocale();
-  printf("locale:          %d\n", locale);
   printf("? exists cursors\\THROWB.STI:   %d\n", FileMan_Exists("cursors\\THROWB.STI"));
 }

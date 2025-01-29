@@ -84,6 +84,9 @@ struct FileDialogList {
   struct FileDialogList *pPrev;
 };
 
+// Search files with the given extension in the current directory.
+bool Plat_FindFilesWithExtCaseIns(const char *extension, void (*callback)(const char *));
+
 /////////////////////////////////////////////////////////////////////////////////
 // Timers
 /////////////////////////////////////////////////////////////////////////////////

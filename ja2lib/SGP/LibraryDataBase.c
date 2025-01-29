@@ -8,10 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "DebugLog.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
 #include "SGP/MemMan.h"
 #include "SGP/WCheck.h"
+#include "StringVector.h"
 #include "platform.h"
 #include "platform_strings.h"
 
@@ -49,47 +51,40 @@ BOOLEAN CheckIfFileIsAlreadyOpen(char *pFileName, int16_t sLibraryID);
 
 int32_t CompareDirEntryFileNames(char *arg1, DIRENTRY *arg2);
 
-//************************************************************************
-//
-//	 InitializeFileDatabase():  Call this function to initialize the file
-//	database.  It will use the gGameLibaries[] array for the list of libraries
-//	and the define NUMBER_OF_LIBRARIES for the number of libraries.  The gGameLibaries
-//	array is an array of structure, one of the fields determines if the library
-//	will be initialized and game start.
-//
-//************************************************************************
+static struct StringVector *slfFiles;
+
+static void AddSlfFile(const char *filename) {
+  DebugLogF("slf file found: %s", filename);
+  sv_add_string_copy(slfFiles, filename);
+}
+
 BOOLEAN InitializeFileDatabase() {
-  int16_t i;
   uint32_t uiSize;
   BOOLEAN fLibraryInited = FALSE;
 
+  // getting list of slf files
+  slfFiles = sv_new();
+  Plat_FindFilesWithExtCaseIns(".slf", AddSlfFile);
+
   // if all the libraries exist, set them up
-  gFileDataBase.usNumberOfLibraries = NUMBER_OF_LIBRARIES;
+  gFileDataBase.usNumberOfLibraries = slfFiles->size;
 
   // allocate memory for the each of the library headers
-  uiSize = NUMBER_OF_LIBRARIES * sizeof(LibraryHeaderStruct);
+  uiSize = slfFiles->size * sizeof(LibraryHeaderStruct);
   if (uiSize) {
     gFileDataBase.pLibraries = (LibraryHeaderStruct *)MemAlloc(uiSize);
     CHECKF(gFileDataBase.pLibraries);
 
-    // set all the memrory to 0
     memset(gFileDataBase.pLibraries, 0, uiSize);
-
-    // Load up each library
-    for (i = 0; i < NUMBER_OF_LIBRARIES; i++) {
-      // if you want to init the library at the begining of the game
-      if (gGameLibaries[i].fInitOnStart) {
-        // if the library exists
-        if (OpenLibrary(i)) fLibraryInited = TRUE;
-
-        // else the library doesnt exist
-        else {
-          FastDebugMsg(
-              String("Warning in InitializeFileDatabase( ): Library Id #%d (%s) is to be loaded "
-                     "but cannot be found.\n",
-                     i, gGameLibaries[i].sLibraryName));
-          gFileDataBase.pLibraries[i].fLibraryOpen = FALSE;
-        }
+    for (size_t i = 0; i < slfFiles->size; i++) {
+      if (OpenLibrary(i, slfFiles->data[i])) {
+        fLibraryInited = TRUE;
+      } else {
+        FastDebugMsg(
+            String("Warning in InitializeFileDatabase( ): Library Id %s is to be loaded "
+                   "but cannot be found.\n",
+                   slfFiles->data[i]));
+        gFileDataBase.pLibraries[i].fLibraryOpen = FALSE;
       }
     }
     // signify that the database has been initialized ( only if there was a library loaded )
@@ -108,6 +103,9 @@ BOOLEAN InitializeFileDatabase() {
 
   // set the initial number how many files can be opened at the one time
   gFileDataBase.RealFiles.iSizeOfOpenFileArray = INITIAL_NUM_HANDLES;
+
+  sv_free(slfFiles);
+  slfFiles = NULL;
 
   return (TRUE);
 }
@@ -156,8 +154,7 @@ BOOLEAN CheckForLibraryExistence(char *pLibraryName) {
   return FALSE;
 }
 
-BOOLEAN InitializeLibrary(char *pLibraryName, LibraryHeaderStruct *pLibHeader,
-                          BOOLEAN fCanBeOnCDrom) {
+BOOLEAN InitializeLibrary(const char *pLibraryName, LibraryHeaderStruct *pLibHeader) {
   SYS_FILE_HANDLE hFile;
   uint16_t usNumEntries = 0;
   uint32_t uiNumBytesRead;
@@ -703,7 +700,7 @@ BOOLEAN LibraryFileSeek(int16_t sLibraryID, uint32_t uiFileNum, uint32_t uiDista
 //
 //************************************************************************
 
-BOOLEAN OpenLibrary(int16_t sLibraryID) {
+BOOLEAN OpenLibrary(int16_t sLibraryID, const char *libFileName) {
   // if the library is already opened, report an error
   if (gFileDataBase.pLibraries[sLibraryID].fLibraryOpen) return (FALSE);
 
@@ -711,9 +708,7 @@ BOOLEAN OpenLibrary(int16_t sLibraryID) {
   if (sLibraryID >= gFileDataBase.usNumberOfLibraries) return (FALSE);
 
   // if we cant open the library
-  if (!InitializeLibrary(gGameLibaries[sLibraryID].sLibraryName,
-                         &gFileDataBase.pLibraries[sLibraryID], gGameLibaries[sLibraryID].fOnCDrom))
-    return (FALSE);
+  if (!InitializeLibrary(libFileName, &gFileDataBase.pLibraries[sLibraryID])) return (FALSE);
 
   return (TRUE);
 }

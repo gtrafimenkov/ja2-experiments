@@ -19,14 +19,9 @@ enum {
   LANG_NUMBER
 };
 
-extern int8_t gbLocale;
-
-int8_t DetectLocale();
+// int8_t DetectLocale();
 
 extern char* LocaleNames[LANG_NUMBER];
-
-#define NUMBER_OF_LIBRARIES \
-  ((gbLocale != ENGLISH_LANG) ? FULL_NUMBER_OF_LIBRARIES : (FULL_NUMBER_OF_LIBRARIES - 1))
 
 // enums used for accessing the libraries
 enum {

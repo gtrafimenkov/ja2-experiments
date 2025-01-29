@@ -118,6 +118,10 @@ void Plat_FileBaseName(const char *path, char *outputBuf, uint32_t bufSize) { ou
 
 BOOLEAN Plat_FileEntityExists(const char *path) { return FALSE; }
 
+bool Plat_FindFilesWithExtCaseIns(const char *extension, void (*callback)(const char *)) {
+  return false;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 // Input
 /////////////////////////////////////////////////////////////////////////////////
