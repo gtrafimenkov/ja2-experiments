@@ -458,8 +458,8 @@ void StopShowingInterfaceFastHelpText(void);
 BOOLEAN IsTheInterfaceFastHelpTextActive(void);
 
 // set up the tactical lists
-BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition[], int32_t iYPosition[], int32_t iWidth[],
-                                 wchar_t *sString[], int32_t iSize);
+BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition, int32_t iYPosition, int32_t iWidth,
+                                 wchar_t *sString);
 
 // the alternate mapscreen movement system
 void InitializeMovingLists(void);

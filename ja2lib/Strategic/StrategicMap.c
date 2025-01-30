@@ -267,8 +267,6 @@ extern void InitializeTacticalStatusAtBattleStart();
 
 extern BOOLEAN gfOverrideSector;
 
-extern wchar_t *pBullseyeStrings[];
-
 extern void HandleRPCDescription();
 
 #ifdef CRIPPLED_VERSION

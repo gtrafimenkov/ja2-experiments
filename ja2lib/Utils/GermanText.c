@@ -2,131 +2,14 @@
 // This file contains code derived from the code released under the terms
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
-#include "LanguageDefines.h"
-#ifdef GERMAN
-
 #include "Utils/Text.h"
-#endif
-
-#ifdef GERMAN
-
-/*
-******************************************************************************************************
-**
-IMPORTANT TRANSLATION NOTES
-**
-******************************************************************************************************
-
-GENERAL TOPWARE INSTRUCTIONS
-- Always be aware that German strings should be of equal or shorter length than the English
-equivalent. I know that this is difficult to do on many occasions due to the nature of the German
-language when compared to English. By doing so, this will greatly reduce the amount of work on both
-sides. In most cases (but not all), JA2 interfaces were designed with just enough space to fit the
-English word. The general rule is if the string is very short (less than 10 characters), then it's
-short because of interface limitations. On the other hand, full sentences commonly have little
-limitations for length. Strings in between are a little dicey.
-- Never translate a string to appear on multiple lines. All strings L"This is a really long
-string...", must fit on a single line no matter how long the string is. All strings start with L"
-and end with ",
-- Never remove any extra spaces in strings. In addition, all strings containing multiple sentences
-only have one space after a period, which is different than standard typing convention. Never modify
-sections of strings contain combinations of % characters. These are special format characters and
-are always used in conjunction with other characters. For example, %s means string, and is commonly
-used for names, locations, items, etc. %d is used for numbers. %c%d is a character and a number
-(such as A9).
-        %% is how a single % character is built. There are countless types, but strings containing
-these special characters are usually commented to explain what they mean. If it isn't commented,
-then if you can't figure out the context, then feel free to ask SirTech.
-- Comments are always started with // Anything following these two characters on the same line are
-        considered to be comments. Do not translate comments. Comments are always applied to the
-following string(s) on the next line(s), unless the comment is on the same line as a string.
-- All new comments made by SirTech will use "//@@@ comment" (without the quotes) notation. By
-searching for @@@ everytime you recieve a new version, it will simplify your task and identify
-special instructions. Commonly, these types of comments will be used to ask you to abbreviate a
-string. Please leave the comments intact, and SirTech will remove them once the translation for that
-particular area is resolved.
-- If you have a problem or question with translating certain strings, please use "//!!! comment"
-        (without the quotes). The syntax is important, and should be identical to the comments used
-with @@@ symbols. SirTech will search for !!! to look for Topware problems and questions. This is a
-more efficient method than detailing questions in email, so try to do this whenever possible.
-
-
-
-FAST HELP TEXT -- Explains how the syntax of fast help text works.
-**************
-
-1) BOLDED LETTERS
-        The popup help text system supports special characters to specify the hot key(s) for a
-button. Anytime you see a '|' symbol within the help text string, that means the following key is
-assigned to activate the action which is usually a button.
-
-        EX: L"|Map Screen"
-
-        This means the 'M' is the hotkey. In the game, when somebody hits the 'M' key, it activates
-that button. When translating the text to another language, it is best to attempt to choose a word
-that uses 'M'. If you can't always find a match, then the best thing to do is append the 'M' at the
-end of the string in this format:
-
-        EX: L"Ecran De Carte (|M)" (this is the French translation)
-
-        Other examples are used multiple times, like the Esc key or "|E|s|c" or Space ->
-(|S|p|a|c|e)
-
-2) NEWLINE
-        Any place you see a \n within the string, you are looking at another string that is part of
-the fast help text system. \n notation doesn't need to be precisely placed within that string, but
-whereever you wish to start a new line.
-
-        EX: L"Clears all the mercs' positions,\nand allows you to re-enter them manually."
-
-        Would appear as:
-
-                                Clears all the mercs' positions,
-                                and allows you to re-enter them manually.
-
-        NOTE: It is important that you don't pad the characters adjacent to the \n with spaces. If
-we did this in the above example, we would see
-
-        WRONG WAY -- spaces before and after the \n
-        EX: L"Clears all the mercs' positions, \n and allows you to re-enter them manually."
-
-        Would appear as: (the second line is moved in a character)
-
-                                Clears all the mercs' positions,
-                                 and allows you to re-enter them manually.
-
-
-@@@ NOTATION
-************
-
-        Throughout the text files, you'll find an assortment of comments. Comments are used to
-describe the text to make translation easier, but comments don't need to be translated. A good thing
-is to search for
-        "@@@" after receiving new version of the text file, and address the special notes in this
-manner.
-
-!!! NOTATION
-************
-
-        As described above, the "!!!" notation should be used by Topware to ask questions and
-address problems as SirTech uses the "@@@" notation.
-
-*/
-
-wchar_t ItemNames[MAXITEMS][80] = {
-    L"",
-};
-
-wchar_t ShortItemNames[MAXITEMS][80] = {
-    L"",
-};
 
 // Different weapon calibres
 // CAWS is Close Assault Weapon System and should probably be left as it is
 // NATO is the North Atlantic Treaty Organization
 // WP is Warsaw Pact
 // cal is an abbreviation for calibre
-wchar_t AmmoCaliber[][20] = {
+static wchar_t* de_AmmoCaliber[] = {
     L"0",         L".38 Kal", L"9mm",    L".45 Kal", L".357 Kal",
     L"12 Kal",    L"CAWS",    L"5.45mm", L"5.56mm",  L"7.62mm NATO",
     L"7.62mm WP", L"4.7mm",   L"5.7mm",  L"Monster", L"Rakete",
@@ -141,14 +24,14 @@ wchar_t AmmoCaliber[][20] = {
 // NATO is the North Atlantic Treaty Organization
 // WP is Warsaw Pact
 // cal is an abbreviation for calibre
-wchar_t BobbyRayAmmoCaliber[][20] = {
+static wchar_t* de_BobbyRayAmmoCaliber[] = {
     L"0",         L".38 Kal", L"9mm",    L".45 Kal", L".357 Kal",
     L"12 Kal",    L"CAWS",    L"5.45mm", L"5.56mm",  L"7.62mm N.",
     L"7.62mm WP", L"4.7mm",   L"5.7mm",  L"Monster", L"Rakete",
     L"",  // dart
 };
 
-wchar_t WeaponType[][30] = {
+static wchar_t* de_WeaponType[] = {
     L"Andere",           L"Pistole",
     L"Maschinenpistole", L"Schwere Maschinenpistole",
     L"Gewehr",           L"Scharfschützengewehr",
@@ -156,13 +39,13 @@ wchar_t WeaponType[][30] = {
     L"Schrotflinte",
 };
 
-wchar_t TeamTurnString[][STRING_LENGTH] = {
+static wchar_t* de_TeamTurnString[] = {
     L"Spielzug Spieler", L"Spielzug Gegner",     L"Spielzug Monster",
     L"Spielzug Miliz",   L"Spielzug Zivilisten",
     // planning turn
 };
 
-wchar_t Message[][STRING_LENGTH] = {
+static wchar_t* de_Message[] = {
     L"",
 
     // In the following 8 strings, the %s is the merc's name, and the %d (if any) is a number.
@@ -261,21 +144,21 @@ wchar_t Message[][STRING_LENGTH] = {
     L"Spielzug Bloodcats",
 };
 
-wchar_t* pTownNames[] = {
+static wchar_t* de_pTownNames[] = {
     L"",         L"Omerta", L"Drassen", L"Alma",   L"Grumm",  L"Tixa",     L"Cambria",
     L"San Mona", L"Estoni", L"Orta",    L"Balime", L"Meduna", L"Chitzena",
 };
 
 // the types of time compression. For example: is the timer paused? at normal speed, 5 minutes per
 // second, etc. min is an abbreviation for minutes
-wchar_t* sTimeStrings[] = {
+static wchar_t* de_sTimeStrings[] = {
     L"Pause", L"Normal", L"5 Min", L"30 Min", L"60 Min", L"6 Std",
 };
 
 // Assignment Strings: what assignment does the merc have right now? For example, are they on a
 // squad, training, administering medical aid (doctor) or training a town. All are abbreviated. 8
 // letters is the longest it can be.
-wchar_t* pAssignmentStrings[] = {
+static wchar_t* de_pAssignmentStrings[] = {
     L"Trupp 1",  L"Trupp 2",  L"Trupp 3",  L"Trupp 4",  L"Trupp 5",  L"Trupp 6",  L"Trupp 7",
     L"Trupp 8",  L"Trupp 9",  L"Trupp 10", L"Trupp 11", L"Trupp 12", L"Trupp 13", L"Trupp 14",
     L"Trupp 15", L"Trupp 16", L"Trupp 17", L"Trupp 18", L"Trupp 19", L"Trupp 20",
@@ -296,18 +179,18 @@ wchar_t* pAssignmentStrings[] = {
     L"Leer",      // Vehicle is empty
 };
 
-wchar_t* pMilitiaString[] = {
+static wchar_t* de_pMilitiaString[] = {
     L"Miliz",         // the title of the militia box
     L"Ohne Aufgabe",  // the number of unassigned militia troops
     L"Mit Feinden im Sektor können Sie keine Miliz einsetzen!",
 };
 
-wchar_t* pMilitiaButtonString[] = {
+static wchar_t* de_pMilitiaButtonString[] = {
     L"Autom.",  // auto place the militia troops for the player
     L"Fertig",  // done placing militia troops
 };
 
-wchar_t* pConditionStrings[] = {
+static wchar_t* de_pConditionStrings[] = {
     L"Sehr gut",    // the state of a soldier .. excellent health
     L"Gut",         // good health
     L"Mittel",      // fair health
@@ -319,7 +202,7 @@ wchar_t* pConditionStrings[] = {
     L"Tot",         // dead
 };
 
-wchar_t* pEpcMenuStrings[] = {
+static wchar_t* de_pEpcMenuStrings[] = {
     L"Dienst",     // set merc on active duty
     L"Patient",    // set as a patient to receive medical aid
     L"Fahrzeug",   // tell merc to enter vehicle
@@ -328,7 +211,7 @@ wchar_t* pEpcMenuStrings[] = {
 };
 
 // look at pAssignmentString above for comments
-wchar_t* pPersonnelAssignmentStrings[] = {
+static wchar_t* de_pPersonnelAssignmentStrings[] = {
     L"Trupp 1",  L"Trupp 2",  L"Trupp 3",  L"Trupp 4",  L"Trupp 5",  L"Trupp 6",  L"Trupp 7",
     L"Trupp 8",  L"Trupp 9",  L"Trupp 10", L"Trupp 11", L"Trupp 12", L"Trupp 13", L"Trupp 14",
     L"Trupp 15", L"Trupp 16", L"Trupp 17", L"Trupp 18", L"Trupp 19", L"Trupp 20", L"Dienst",
@@ -338,7 +221,7 @@ wchar_t* pPersonnelAssignmentStrings[] = {
 };
 
 // refer to above for comments
-wchar_t* pLongAssignmentStrings[] = {
+static wchar_t* de_pLongAssignmentStrings[] = {
     L"Trupp 1",  L"Trupp 2",  L"Trupp 3",  L"Trupp 4",  L"Trupp 5",  L"Trupp 6",  L"Trupp 7",
     L"Trupp 8",  L"Trupp 9",  L"Trupp 10", L"Trupp 11", L"Trupp 12", L"Trupp 13", L"Trupp 14",
     L"Trupp 15", L"Trupp 16", L"Trupp 17", L"Trupp 18", L"Trupp 19", L"Trupp 20", L"Dienst",
@@ -349,7 +232,7 @@ wchar_t* pLongAssignmentStrings[] = {
 };
 
 // the contract options
-wchar_t* pContractStrings[] = {
+static wchar_t* de_pContractStrings[] = {
     L"Vertragsoptionen:",
     L"",                      // a blank line, required
     L"Einen Tag anbieten",    // offer merc a one day contract extension
@@ -359,12 +242,12 @@ wchar_t* pContractStrings[] = {
     L"Abbrechen",             // stop showing this menu
 };
 
-wchar_t* pPOWStrings[] = {
+static wchar_t* de_pPOWStrings[] = {
     L"gefangen",  // an acronym for Prisoner of War
     L"??",
 };
 
-wchar_t* pLongAttributeStrings[] = {
+static wchar_t* de_pLongAttributeStrings[] = {
     L"KRAFT",  // The merc's strength attribute. Others below represent the other attributes.
     L"GESCHICKLICHKEIT",
     L"BEWEGLICHKEIT",
@@ -377,13 +260,13 @@ wchar_t* pLongAttributeStrings[] = {
     L"ERFAHRUNGSSTUFE",
 };
 
-wchar_t* pInvPanelTitleStrings[] = {
+static wchar_t* de_pInvPanelTitleStrings[] = {
     L"Rüstung",  // the armor rating of the merc
     L"Gewicht",  // the weight the merc is carrying
     L"Tarnung",  // the merc's camouflage rating
 };
 
-wchar_t* pShortAttributeStrings[] = {
+static wchar_t* de_pShortAttributeStrings[] = {
     L"Bew",  // the abbreviated version of : agility
     L"Ges",  // dexterity
     L"Krf",  // strength
@@ -396,7 +279,7 @@ wchar_t* pShortAttributeStrings[] = {
     L"Med",  // medical skill
 };
 
-wchar_t* pUpperLeftMapScreenStrings[] = {
+static wchar_t* de_pUpperLeftMapScreenStrings[] = {
     L"Aufgabe",   // the mercs current assignment
     L"Vertrag",   // the contract info about the merc
     L"Gesundh.",  // the health level of the current merc
@@ -405,14 +288,14 @@ wchar_t* pUpperLeftMapScreenStrings[] = {
     L"Tank",      // the fuel level of the current vehicle
 };
 
-wchar_t* pTrainingStrings[] = {
+static wchar_t* de_pTrainingStrings[] = {
     L"Üben",     // tell merc to train self
     L"Miliz",    // tell merc to train town //
     L"Trainer",  // tell merc to act as trainer
     L"Rekrut",   // tell merc to be train by other
 };
 
-wchar_t* pGuardMenuStrings[] = {
+static wchar_t* de_pGuardMenuStrings[] = {
     L"Schußrate:",              // the allowable rate of fire for a merc who is guarding
     L" Aggressiv feuern",       // the merc can be aggressive in their choice of fire rates
     L" Ammo sparen",            // conserve ammo
@@ -427,7 +310,7 @@ wchar_t* pGuardMenuStrings[] = {
 
 // This string has the same comments as above, however the * denotes the option has been selected by
 // the player
-wchar_t* pOtherGuardMenuStrings[] = {
+static wchar_t* de_pOtherGuardMenuStrings[] = {
     L"Schußrate:",
     L" *Aggressiv feuern*",
     L" *Ammo sparen*",
@@ -440,7 +323,7 @@ wchar_t* pOtherGuardMenuStrings[] = {
     L"Abbruch",
 };
 
-wchar_t* pAssignMenuStrings[] = {
+static wchar_t* de_pAssignMenuStrings[] = {
     L"Dienst",     // merc is on active duty
     L"Doktor",     // the merc is acting as a doctor
     L"Patient",    // the merc is receiving medical attention
@@ -450,17 +333,17 @@ wchar_t* pAssignMenuStrings[] = {
     L"Abbrechen",  // cancel this menu
 };
 
-wchar_t* pRemoveMercStrings[] = {
+static wchar_t* de_pRemoveMercStrings[] = {
     L"Söldner entfernen",  // remove dead merc from current team
     L"Abbrechen",
 };
 
-wchar_t* pAttributeMenuStrings[] = {
+static wchar_t* de_pAttributeMenuStrings[] = {
     L"Kraft",   L"Geschicklichkeit", L"Beweglichkeit",    L"Gesundheit",   L"Treffsicherheit",
     L"Medizin", L"Technik",          L"Führungsqualität", L"Sprengstoffe", L"Abbrechen",
 };
 
-wchar_t* pTrainingMenuStrings[] = {
+static wchar_t* de_pTrainingMenuStrings[] = {
     L"Üben",       // train yourself
     L"Miliz",      // train the town
     L"Trainer",    // train your teammates
@@ -468,17 +351,17 @@ wchar_t* pTrainingMenuStrings[] = {
     L"Abbrechen",  // cancel this menu
 };
 
-wchar_t* pSquadMenuStrings[] = {
+static wchar_t* de_pSquadMenuStrings[] = {
     L"Trupp  1", L"Trupp  2", L"Trupp  3", L"Trupp  4", L"Trupp  5", L"Trupp  6", L"Trupp  7",
     L"Trupp  8", L"Trupp  9", L"Trupp 10", L"Trupp 11", L"Trupp 12", L"Trupp 13", L"Trupp 14",
     L"Trupp 15", L"Trupp 16", L"Trupp 17", L"Trupp 18", L"Trupp 19", L"Trupp 20", L"Abbrechen",
 };
 
-wchar_t* pPersonnelTitle[] = {
+static wchar_t* de_pPersonnelTitle[] = {
     L"Personal",  // the title for the personnel screen/program application
 };
 
-wchar_t* pPersonnelScreenStrings[] = {
+static wchar_t* de_pPersonnelScreenStrings[] = {
     L"Gesundheit: ",  // health of merc
     L"Beweglichkeit: ",
     L"Geschicklichkeit: ",
@@ -507,7 +390,7 @@ wchar_t* pPersonnelScreenStrings[] = {
 };
 
 // These string correspond to enums used in by the SkillTrait enums in SoldierProfileType.h
-wchar_t* gzMercSkillText[] = {
+static wchar_t* de_gzMercSkillText[] = {
     L"Keine Fähigkeiten",
     L"Schlösser knacken",
     L"Nahkampf",
@@ -528,7 +411,7 @@ wchar_t* gzMercSkillText[] = {
 };
 
 // This is pop up help text for the options that are available to the merc
-wchar_t* pTacticalPopupButtonStrings[] = {
+static wchar_t* de_pTacticalPopupButtonStrings[] = {
     L"|Stehen/Gehen",
     L"Kauern/Kauernd bewegen (|C)",
     L"Stehen/|Rennen",
@@ -553,20 +436,20 @@ wchar_t* pTacticalPopupButtonStrings[] = {
 };
 
 // Door Traps. When we examine a door, it could have a particular trap on it. These are the traps.
-wchar_t* pDoorTrapStrings[] = {
+static wchar_t* de_pDoorTrapStrings[] = {
     L"keine Falle",           L"eine Sprengstoffalle",         L"eine elektrische Falle",
     L"eine Falle mit Sirene", L"eine Falle mit stummem Alarm",
 };
 
 // Contract Extension. These are used for the contract extension with AIM mercenaries.
-wchar_t* pContractExtendStrings[] = {
+static wchar_t* de_pContractExtendStrings[] = {
     L"1 Tag", L"1 Woche",
     L"2 Wochen",  //
 };
 
 // On the map screen, there are four columns. This text is popup help text that identifies the
 // individual columns.
-wchar_t* pMapScreenMouseRegionHelpText[] = {
+static wchar_t* de_pMapScreenMouseRegionHelpText[] = {
     L"Charakter auswählen",
     L"Söldner einteilen",
     L"Marschroute",
@@ -580,7 +463,7 @@ wchar_t* pMapScreenMouseRegionHelpText[] = {
 };
 
 // volumes of noises
-wchar_t* pNoiseVolStr[] = {
+static wchar_t* de_pNoiseVolStr[] = {
     L"LEISE",
     L"DEUTLICH",
     L"LAUT",
@@ -588,20 +471,20 @@ wchar_t* pNoiseVolStr[] = {
 };
 
 // types of noises
-wchar_t* pNoiseTypeStr[] = {
+static wchar_t* de_pNoiseTypeStr[] = {
     L"EIN UNBEKANNTES GERÄUSCH", L"EINE BEWEGUNG",   L"EIN KNARREN",    L"EIN KLATSCHEN",
     L"EINEN AUFSCHLAG",          L"EINEN SCHUSS",    L"EINE EXPLOSION", L"EINEN SCHREI",
     L"EINEN AUFSCHLAG",          L"EINEN AUFSCHLAG", L"EIN ZERBRECHEN", L"EIN ZERSCHMETTERN",
 };
 
 // Directions that are used throughout the code for identification.
-wchar_t* pDirectionStr[] = {
+static wchar_t* de_pDirectionStr[] = {
     L"NORDOSTEN", L"OSTEN",  L"SÜDOSTEN",   L"SÜDEN",
     L"SÜDWESTEN", L"WESTEN", L"NORDWESTEN", L"NORDEN",
 };
 
 // These are the different terrain types.
-wchar_t* pLandTypeStrings[] = {
+static wchar_t* de_pLandTypeStrings[] = {
     L"Stadt", L"Straße", L"Ebene", L"Wüste", L"Lichter Wald", L"Dichter Wald", L"Sumpf",
     L"See/Ozean", L"Hügel", L"Unpassierbar",
     L"Fluß",  // river from north to south
@@ -624,7 +507,7 @@ wchar_t* pLandTypeStrings[] = {
     L"",               // Unused
 };
 
-wchar_t* gpStrategicString[] = {
+static wchar_t* de_gpStrategicString[] = {
     //     The first %s can either be bloodcats or enemies.
     L"",                                                                                // Unused
     L"%s wurden entdeckt in Sektor %c%d und ein weiterer Trupp wird gleich ankommen.",  // STR_DETECTED_SINGULAR
@@ -764,20 +647,20 @@ wchar_t* gpStrategicString[] = {
 
 };
 
-wchar_t* gpGameClockString[] = {
+static wchar_t* de_gpGameClockString[] = {
     // This is the day represented in the game clock. Must be very short, 4 characters max.
     L"Tag",
 };
 
 // When the merc finds a key, they can get a description of it which
 // tells them where and when they found it.
-wchar_t* sKeyDescriptionStrings[2] = {
+static wchar_t* de_sKeyDescriptionStrings[2] = {
     L"gefunden im Sektor:",
     L"gefunden am:",
 };
 
 // The headers used to describe various weapon statistics.
-wchar_t gWeaponStatsDesc[][14] =  // USED TO BE 13
+static wchar_t* de_gWeaponStatsDesc[] =  // USED TO BE 13
     {
         L"Gew. (%s):",  // weight
         L"Status:",
@@ -789,7 +672,7 @@ wchar_t gWeaponStatsDesc[][14] =  // USED TO BE 13
 };
 
 // The headers used for the merc's money.
-wchar_t gMoneyStatsDesc[][13] = {
+static wchar_t* de_gMoneyStatsDesc[] = {
     L"Betrag",
     L"Verbleibend:",  // this is the overall balance
     L"Betrag",
@@ -803,7 +686,7 @@ wchar_t gMoneyStatsDesc[][13] = {
 
 // The health of various creatures, enemies, characters in the game. The numbers following each are
 // for comment only, but represent the precentage of points remaining.
-wchar_t zHealthStr[][13] =  // used to be 10
+static wchar_t* de_zHealthStr[] =  // used to be 10
     {
         L"STIRBT",     //	>= 0
         L"KRITISCH",   //	>= 15
@@ -814,21 +697,17 @@ wchar_t zHealthStr[][13] =  // used to be 10
         L"SEHR GUT",   // 	>= 90
 };
 
-wchar_t* gzMoneyAmounts[6] = {
+static wchar_t* de_gzMoneyAmounts[6] = {
     L"$1000", L"$100", L"$10", L"OK", L"Abteilen", L"Abheben",
 };
 
 // short words meaning "Advantages" for "Pros" and "Disadvantages" for "Cons."
-wchar_t gzProsLabel[10] = {
-    L"Pro:",
-};
+static wchar_t* de_gzProsLabel = L"Pro:";
 
-wchar_t gzConsLabel[10] = {
-    L"Kontra:",
-};
+static wchar_t* de_gzConsLabel = L"Kontra:";
 
 // Conversation options a player has when encountering an NPC
-wchar_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
+static wchar_t* de_zTalkMenuStrings[6] = {
     L"Wie bitte?",  // meaning "Repeat yourself"
     L"Freundlich",  // approach in a friendly
     L"Direkt",      // approach directly - let's get down to business
@@ -838,31 +717,31 @@ wchar_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
 
 // Some NPCs buy, sell or repair items. These different options are available for those NPCs as
 // well.
-wchar_t zDealerStrings[4][SMALL_STRING_LENGTH] = {
+static wchar_t* de_zDealerStrings[4] = {
     L"Handeln",
     L"Kaufen",
     L"Verkaufen",
     L"Reparieren",
 };
 
-wchar_t zDialogActions[1][SMALL_STRING_LENGTH] = {
+static wchar_t* de_zDialogActions[1] = {
     L"Fertig",
 };
 
-wchar_t* pVehicleStrings[] = {
+static wchar_t* de_pVehicleStrings[] = {
     L"Eldorado",
     L"Hummer",  // a hummer jeep/truck -- military vehicle
     L"Ice Cream Truck", L"Jeep", L"Tank", L"Helikopter",
 };
 
-wchar_t* pShortVehicleStrings[] = {
+static wchar_t* de_pShortVehicleStrings[] = {
     L"Eldor.",
     L"Hummer",  // the HMVV
     L"Truck",  L"Jeep", L"Tank",
     L"Heli",  // the helicopter
 };
 
-wchar_t* zVehicleName[] = {
+static wchar_t* de_zVehicleName[] = {
     L"Eldorado",
     L"Hummer",  // a military jeep. This is a brand name.
     L"Truck",   // Ice cream truck
@@ -871,7 +750,7 @@ wchar_t* zVehicleName[] = {
 };
 
 // These are messages Used in the Tactical Screen
-wchar_t TacticalStr[][MED_STRING_LENGTH] = {
+static wchar_t* de_TacticalStr[] = {
     L"Luftangriff", L"Automatisch Erste Hilfe leisten?",
 
     // CAMFIELD NUKE THIS and add quote #66.
@@ -1002,7 +881,7 @@ wchar_t TacticalStr[][MED_STRING_LENGTH] = {
 
 // Varying helptext explains (for the "Go to Sector/Map" checkbox) what will happen given different
 // circumstances in the "exiting sector" interface.
-wchar_t* pExitingSectorHelpText[] = {
+static wchar_t* de_pExitingSectorHelpText[] = {
     // Helptext for the "Go to Sector" checkbox button, that explains what will happen when the box
     // is checked.
     L"Der nächste Sektor wird sofort geladen, wenn Sie das Kästchen aktivieren.",
@@ -1054,7 +933,7 @@ wchar_t* pExitingSectorHelpText[] = {
     L"Söldner müssen in der Nähe sein.",
 };
 
-wchar_t* pRepairStrings[] = {
+static wchar_t* de_pRepairStrings[] = {
     L"Gegenstände",        // tell merc to repair items in inventory
     L"Raketenstützpunkt",  // tell merc to repair SAM site - SAM is an acronym for Surface to Air
                            // Missile
@@ -1064,7 +943,7 @@ wchar_t* pRepairStrings[] = {
 
 // NOTE: combine prestatbuildstring with statgain to get a line like the example below.
 // "John has gained 3 points of marksmanship skill."
-wchar_t* sPreStatBuildString[] = {
+static wchar_t* de_sPreStatBuildString[] = {
     L"verliert",  // the merc has lost a statistic
     L"gewinnt",   // the merc has gained a statistic
     L"Punkt",     // singular
@@ -1073,13 +952,13 @@ wchar_t* sPreStatBuildString[] = {
     L"Level",     // plural
 };
 
-wchar_t* sStatGainStrings[] = {
+static wchar_t* de_sStatGainStrings[] = {
     L"Gesundheit.",         L"Beweglichkeit",   L"Geschicklichkeit",  L"Weisheit.",
     L"an Medizin.",         L"an Sprengstoff.", L"an Technik.",       L"an Treffsicherheit.",
     L"Erfahrungsstufe(n).", L"Kraft.",          L"Führungsqualität.",
 };
 
-wchar_t* pHelicopterEtaStrings[] = {
+static wchar_t* de_pHelicopterEtaStrings[] = {
     L"Gesamt: ",        // total distance for helicopter to travel
     L" Sicher: ",       // Number of safe sectors
     L" Unsicher:",      // Number of unsafe sectors
@@ -1092,20 +971,20 @@ wchar_t* pHelicopterEtaStrings[] = {
     L"Absprung",  // make sure length doesn't exceed 8 characters (used to be "Absprungsort")
 };
 
-wchar_t* sMapLevelString[] = {
+static wchar_t* de_sMapLevelString[] = {
     L"Ebene:",  // what level below the ground is the player viewing in mapscreen
 };
 
-wchar_t* gsLoyalString[] = {
+static wchar_t* de_gsLoyalString[] = {
     L"Loyalität ",  // the loyalty rating of a town ie : Loyal 53%
 };
 
 // error message for when player is trying to give a merc a travel order while he's underground.
-wchar_t* gsUndergroundString[] = {
+static wchar_t* de_gsUndergroundString[] = {
     L"Ich kann unter der Erde keinen Marschbefehl empfangen.",
 };
 
-wchar_t* gsTimeStrings[] = {
+static wchar_t* de_gsTimeStrings[] = {
     L"h",  // hours abbreviation
     L"m",  // minutes abbreviation
     L"s",  // seconds abbreviation
@@ -1113,19 +992,19 @@ wchar_t* gsTimeStrings[] = {
 };
 
 // text for the various facilities in the sector
-wchar_t* sFacilitiesStrings[] = {
+static wchar_t* de_sFacilitiesStrings[] = {
     L"Keine",      L"Hospital", L"Fabrik", L"Gefängnis", L"Militär", L"Flughafen",
     L"Reichweite",  // a field for soldiers to practise their shooting skills
 };
 
 // text for inventory pop up button
-wchar_t* pMapPopUpInventoryText[] = {
+static wchar_t* de_pMapPopUpInventoryText[] = {
     L"Inventar",
     L"Exit",
 };
 
 // town strings
-wchar_t* pwTownInfoStrings[] = {
+static wchar_t* de_pwTownInfoStrings[] = {
     L"Größe",            // 0 // size of the town in sectors
     L"",                 // blank line, required
     L"unter Kontrolle",  // how much of town is controlled
@@ -1141,7 +1020,7 @@ wchar_t* pwTownInfoStrings[] = {
 };
 
 // Mine strings
-wchar_t* pwMineStrings[] = {
+static wchar_t* de_pwMineStrings[] = {
     L"Mine",  // 0
     L"Silber",
     L"Gold",
@@ -1160,7 +1039,7 @@ wchar_t* pwMineStrings[] = {
 };
 
 // blank sector strings
-wchar_t* pwMiscSectorStrings[] = {
+static wchar_t* de_pwMiscSectorStrings[] = {
     L"Feindliche Verbände",
     L"Sektor",
     L"# der Gegenstände",
@@ -1171,7 +1050,7 @@ wchar_t* pwMiscSectorStrings[] = {
 };
 
 // error strings for inventory
-wchar_t* pMapInventoryErrorString[] = {
+static wchar_t* de_pMapInventoryErrorString[] = {
     L"%s ist nicht nah genug.",  // Merc is in sector with item but not close enough
     L"Diesen Söldner können Sie nicht auswählen.",
     L"%s ist nicht im Sektor.",
@@ -1180,13 +1059,13 @@ wchar_t* pMapInventoryErrorString[] = {
     L"%s ist nicht im Sektor und kann Gegenstand nicht fallen lassen.",
 };
 
-wchar_t* pMapInventoryStrings[] = {
+static wchar_t* de_pMapInventoryStrings[] = {
     L"Ort",                   // sector these items are in
     L"Zahl der Gegenstände",  // total number of items in sector
 };
 
 // help text for the user
-wchar_t* pMapScreenFastHelpTextList[] = {
+static wchar_t* de_pMapScreenFastHelpTextList[] = {
     L"Um die Aufgabe eines Söldners zu ändern und ihn einem anderen Trupp, einem Reparatur- oder "
     L"Ärzteteam zuzuweisen, klicken Sie in die 'Aufträge'-Spalte.",
     L"Um einen Söldner an einen anderen Bestimmungsort zu versetzen, klicken Sie in die "
@@ -1206,14 +1085,14 @@ wchar_t* pMapScreenFastHelpTextList[] = {
 };
 
 // movement menu text
-wchar_t* pMovementMenuStrings[] = {
+static wchar_t* de_pMovementMenuStrings[] = {
     L"Söldner in Sektor bewegen",  // title for movement box
     L"Route planen",               // done with movement menu, start plotting movement
     L"Abbruch",                    // cancel this menu
     L"Andere",                     // title for group of mercs not on squads nor in vehicles
 };
 
-wchar_t* pUpdateMercStrings[] = {
+static wchar_t* de_pUpdateMercStrings[] = {
     L"Ups:",                       // an error has occured
     L"Vertrag ist abgelaufen:",    // this pop up came up due to a merc contract ending
     L"Auftrag wurde ausgeführt:",  // this pop up....due to more than one merc finishing assignments
@@ -1225,12 +1104,12 @@ wchar_t* pUpdateMercStrings[] = {
 };
 
 // map screen map border buttons help text
-wchar_t* pMapScreenBorderButtonHelpText[] = {
+static wchar_t* de_pMapScreenBorderButtonHelpText[] = {
     L"Städte zeigen (|W)", L"|Minen zeigen",           L"|Teams & Feinde zeigen",
     L"Luftr|aum zeigen",   L"Gegenstände zeigen (|I)", L"Miliz & Feinde zeigen (|Z)",
 };
 
-wchar_t* pMapScreenBottomFastHelp[] = {
+static wchar_t* de_pMapScreenBottomFastHelp[] = {
     L"|Laptop", L"Taktik (|E|s|c)", L"|Optionen",
     L"Zeitraffer (|+)",                                   // time compress more
     L"Zeitraffer (|-)",                                   // time compress less
@@ -1240,20 +1119,20 @@ wchar_t* pMapScreenBottomFastHelp[] = {
     L"Zeit Start/Stop (|S|p|a|c|e)",                            // start/stop time compression
 };
 
-wchar_t* pMapScreenBottomText[] = {
+static wchar_t* de_pMapScreenBottomText[] = {
     L"Kontostand",  // current balance in player bank account
 };
 
-wchar_t* pMercDeadString[] = {
+static wchar_t* de_pMercDeadString[] = {
     L"%s ist tot.",
 };
 
-wchar_t* pDayStrings[] = {
+static wchar_t* de_pDayStrings[] = {
     L"Tag",
 };
 
 // the list of email sender names
-wchar_t* pSenderNameList[] = {
+static wchar_t* de_pSenderNameList[] = {
     L"Enrico",
     L"Psych Pro Inc.",
     L"Online-Hilfe",
@@ -1309,40 +1188,40 @@ wchar_t* pSenderNameList[] = {
 };
 
 // next/prev strings
-wchar_t* pTraverseStrings[] = {
+static wchar_t* de_pTraverseStrings[] = {
     L"Vorige",
     L"Nächste",
 };
 
 // new mail notify string
-wchar_t* pNewMailStrings[] = {
+static wchar_t* de_pNewMailStrings[] = {
     L"Sie haben neue Mails...",
 };
 
 // confirm player's intent to delete messages
-wchar_t* pDeleteMailStrings[] = {
+static wchar_t* de_pDeleteMailStrings[] = {
     L"Mail löschen?",
     L"UNGELESENE Mail löschen?",
 };
 
 // the sort header strings
-wchar_t* pEmailHeaders[] = {
+static wchar_t* de_pEmailHeaders[] = {
     L"Absender:",
     L"Betreff:",
     L"Datum:",
 };
 
 // email titlebar text
-wchar_t* pEmailTitleText[] = {
+static wchar_t* de_pEmailTitleText[] = {
     L"Mailbox",
 };
 
 // the financial screen strings
-wchar_t* pFinanceTitle[] = {
+static wchar_t* de_pFinanceTitle[] = {
     L"Buchhalter Plus",  // the name we made up for the financial program in the game
 };
 
-wchar_t* pFinanceSummary[] = {
+static wchar_t* de_pFinanceSummary[] = {
     L"Haben:",  // the credits column (to ADD money to your account)
     L"Soll:",   // the debits column (to SUBTRACT money from your account)
     L"Einkünfte vom Vortag:",
@@ -1358,7 +1237,7 @@ wchar_t* pFinanceSummary[] = {
 };
 
 // headers to each list in financial screen
-wchar_t* pFinanceHeaders[] = {
+static wchar_t* de_pFinanceHeaders[] = {
     L"Tag",              // the day column
     L"Haben",            // the credits column (to ADD money to your account)
     L"Soll",             // the debits column (to SUBTRACT money from your account)
@@ -1368,7 +1247,7 @@ wchar_t* pFinanceHeaders[] = {
     L"Tag(e)",           // the day(s) of transactions this page displays
 };
 
-wchar_t* pTransactionText[] = {
+static wchar_t* de_pTransactionText[] = {
     L"Aufgelaufene Zinsen",  // interest the player has accumulated so far
     L"Anonyme Einzahlung",
     L"Bearbeitungsgebühr",
@@ -1400,7 +1279,7 @@ wchar_t* pTransactionText[] = {
     L"%s hat Geld angelegt.",
 };
 
-wchar_t* pTransactionAlternateText[] = {
+static wchar_t* de_pTransactionAlternateText[] = {
     L"Versicherung für",            // insurance for a merc
     L"%ss Vertrag verl. um 1 Tag",  // entend mercs contract by a day
     L"%ss Vertrag verl. um 1 Woche",
@@ -1408,7 +1287,7 @@ wchar_t* pTransactionAlternateText[] = {
 };
 
 // helicopter pilot payment
-wchar_t* pSkyriderText[] = {
+static wchar_t* de_pSkyriderText[] = {
     L"Skyrider wurden $%d gezahlt",             // skyrider was paid an amount of money
     L"Skyrider bekommt noch $%d",               // skyrider is still owed an amount of money
     L"Skyrider hat aufgetankt",                 // skyrider has finished refueling
@@ -1420,40 +1299,40 @@ wchar_t* pSkyriderText[] = {
 };
 
 // strings for different levels of merc morale
-wchar_t* pMoralStrings[] = {
+static wchar_t* de_pMoralStrings[] = {
     L"Super", L"Gut", L"Stabil", L"Schlecht", L"Panik", L"Mies",
 };
 
 // Mercs equipment has now arrived and is now available in Omerta or Drassen.
-wchar_t* pLeftEquipmentString[] = {
+static wchar_t* de_pLeftEquipmentString[] = {
     L"%ss Ausrüstung ist in Omerta angekommen (A9).",
     L"%ss Ausrüstung ist in Drassen angekommen (B13).",
 };
 
 // Status that appears on the Map Screen
-wchar_t* pMapScreenStatusStrings[] = {
+static wchar_t* de_pMapScreenStatusStrings[] = {
     L"Gesundheit", L"Energie", L"Moral",
     L"Zustand",  // the condition of the current vehicle (its "health")
     L"Tank",     // the fuel level of the current vehicle (its "energy")
 };
 
-wchar_t* pMapScreenPrevNextCharButtonHelpText[] = {
+static wchar_t* de_pMapScreenPrevNextCharButtonHelpText[] = {
     L"Voriger Söldner (|L|e|f|t)",     // previous merc in the list
     L"Nächster Söldner (|R|i|g|h|t)",  // next merc in the list
 };
 
-wchar_t* pEtaString[] = {
+static wchar_t* de_pEtaString[] = {
     L"Ank.:",  // eta is an acronym for Estimated Time of Arrival
 };
 
-wchar_t* pTrashItemText[] = {
+static wchar_t* de_pTrashItemText[] = {
     L"Sie werden das Ding nie wiedersehen. Trotzdem wegwerfen?",  // do you want to continue and
                                                                   // lose the item forever
     L"Dieser Gegenstand sieht SEHR wichtig aus. Sie sie GANZ SICHER, daß Sie ihn wegwerfen "
     L"wollen?",  // does the user REALLY want to trash this item
 };
 
-wchar_t* pMapErrorString[] = {
+static wchar_t* de_pMapErrorString[] = {
     L"Trupp kann nicht reisen, wenn einer schläft.",
 
     // 1-5
@@ -1521,7 +1400,7 @@ wchar_t* pMapErrorString[] = {
 };
 
 // help text used during strategic route plotting
-wchar_t* pMapPlotStrings[] = {
+static wchar_t* de_pMapPlotStrings[] = {
     L"Klicken Sie noch einmal auf das Ziel, um die Route zu bestätigen. Klicken Sie auf andere "
     L"Sektoren, um die Route zu ändern.",
     L"Route bestätigt.",
@@ -1531,7 +1410,7 @@ wchar_t* pMapPlotStrings[] = {
 };
 
 // help text used when moving the merc arrival sector
-wchar_t* pBullseyeStrings[] = {
+static wchar_t* de_pBullseyeStrings[] = {
     L"Klicken Sie auf den Sektor, in dem die Söldner statt dessen ankommen sollen.",
     L"OK. Söldner werden in %s abgesetzt",
     L"Söldner können nicht dorthin fliegen. Luftraum nicht gesichert!",
@@ -1540,14 +1419,14 @@ wchar_t* pBullseyeStrings[] = {
 };
 
 // help text for mouse regions
-wchar_t* pMiscMapScreenMouseRegionHelpText[] = {
+static wchar_t* de_pMiscMapScreenMouseRegionHelpText[] = {
     L"Ins Inventar gehen (|E|n|t|e|r)",
     L"Gegenstand wegwerfen",
     L"Inventar verlassen (|E|n|t|e|r)",
 };
 
 // male version of where equipment is left
-wchar_t* pMercHeLeaveString[] = {
+static wchar_t* de_pMercHeLeaveString[] = {
     L"Soll %s seine Ausrüstung hier lassen (%s) oder in Drassen (B13), wenn er Arulco verläßt?",
     L"Soll %s seine Ausrüstung hier lassen (%s) oder in Omerta (A9), wenn er Arulco verläßt?",
     L"geht bald und läßt seine Ausrüstung in Omerta (A9).",
@@ -1556,7 +1435,7 @@ wchar_t* pMercHeLeaveString[] = {
 };
 
 // female version
-wchar_t* pMercSheLeaveString[] = {
+static wchar_t* de_pMercSheLeaveString[] = {
     L"Soll %s ihre Ausrüstung hier lassen (%s) oder in Drassen (B13), bevor sie Arulco verläßt?",
     L"Soll %s ihre Ausrüstung hier lassen (%s) oder in Omerta (A9), bevor sie Arulco verläßt?",
     L"geht bald und läßt ihre Ausrüstung in Omerta (A9).",
@@ -1564,7 +1443,7 @@ wchar_t* pMercSheLeaveString[] = {
     L"%s geht bald und läßt ihre Ausrüstung in %s.",
 };
 
-wchar_t* pMercContractOverStrings[] = {
+static wchar_t* de_pMercContractOverStrings[] = {
     L"s Vertrag war abgelaufen, und er ist nach Hause gegangen.",   // merc's contract is over and
                                                                     // has departed
     L"s Vertrag war abgelaufen, und sie ist nach Hause gegangen.",  // merc's contract is over and
@@ -1576,7 +1455,7 @@ wchar_t* pMercContractOverStrings[] = {
 };
 
 // Text used on IMP Web Pages
-wchar_t* pImpPopUpStrings[] = {
+static wchar_t* de_pImpPopUpStrings[] = {
     L"Ungültiger Code",
     L"Sie wollen gerade den ganzen Evaluierungsprozeß von vorn beginnen. Sind Sie sicher?",
     L"Bitte Ihren vollen Namen und Ihr Geschlecht eingeben",
@@ -1589,7 +1468,7 @@ wchar_t* pImpPopUpStrings[] = {
 };
 
 // button labels used on the IMP site
-wchar_t* pImpButtonText[] = {
+static wchar_t* de_pImpButtonText[] = {
     L"Wir über uns",        // about the IMP site
     L"BEGINNEN",            // begin profiling
     L"Persönlichkeit",      // personality section
@@ -1618,18 +1497,18 @@ wchar_t* pImpButtonText[] = {
     L"Stimme",
 };
 
-wchar_t* pExtraIMPStrings[] = {
+static wchar_t* de_pExtraIMPStrings[] = {
     L"Um mit der Evaluierung zu beginnen, Persönlichkeit auswählen.",
     L"Da Sie nun mit der Persönlichkeit fertig sind, wählen Sie Ihre Eigenschaften aus.",
     L"Nach Festlegung der Eigenschaften können Sie nun mit der Porträtauswahl fortfahren.",
     L"Wählen Sie abschließend die Stimmprobe aus, die Ihrer eigenen Stimme am nächsten kommt.",
 };
 
-wchar_t* pFilesTitle[] = {
+static wchar_t* de_pFilesTitle[] = {
     L"Akten einsehen",
 };
 
-wchar_t* pFilesSenderList[] = {
+static wchar_t* de_pFilesSenderList[] = {
     L"Aufklärungsbericht",  // the recon report sent to the player. Recon is an abbreviation for
                             // reconissance
     L"Intercept #1",  // first intercept file .. Intercept is the title of the organization sending
@@ -1643,11 +1522,11 @@ wchar_t* pFilesSenderList[] = {
 };
 
 // Text having to do with the History Log
-wchar_t* pHistoryTitle[] = {
+static wchar_t* de_pHistoryTitle[] = {
     L"Logbuch",
 };
 
-wchar_t* pHistoryHeaders[] = {
+static wchar_t* de_pHistoryHeaders[] = {
     L"Tag",       // the day the history event occurred
     L"Seite",     // the current page in the history report we are in
     L"Tag",       // the days the history report occurs over
@@ -1661,7 +1540,7 @@ wchar_t* pHistoryHeaders[] = {
 // IS TO TURN "CHEAT MODE" ON AND USE CONTROL-R IN THE TACTICAL SCREEN, THEN
 // GO INTO THE LAPTOP/HISTORY LOG AND CHECK OUT THE STRINGS. CONTROL-R INSERTS
 // MANY (NOT ALL) OF THE STRINGS IN THE FOLLOWING LIST INTO THE GAME.
-wchar_t* pHistoryStrings[] = {
+static wchar_t* de_pHistoryStrings[] = {
     L"",  // leave this line blank
     // 1-5
     L"%s von A.I.M angeheuert.",      // merc was hired from the aim site
@@ -1732,36 +1611,36 @@ wchar_t* pHistoryStrings[] = {
     L"%s gekillt",         // History log for when a merc kills an NPC or PC
 };
 
-wchar_t* pHistoryLocations[] = {
+static wchar_t* de_pHistoryLocations[] = {
     L"n.a",  // N/A is an acronym for Not Applicable
 };
 
 // icon text strings that appear on the laptop
-wchar_t* pLaptopIcons[] = {
+static wchar_t* de_pLaptopIcons[] = {
     L"E-mail",      L"Web", L"Finanzen", L"Personal", L"Logbuch", L"Dateien", L"Schließen",
     L"sir-FER 4.0",  // our play on the company name (Sirtech) and web surFER
 };
 
 // bookmarks for different websites
 // IMPORTANT make sure you move down the Cancel string as bookmarks are being added
-wchar_t* pBookMarkStrings[] = {
+static wchar_t* de_pBookMarkStrings[] = {
     L"A.I.M.",           L"Bobby Rays", L"B.S.E",        L"M.E.R.C.",
     L"Bestattungsinst.", L"Florist",    L"Versicherung", L"Abbruch",
 };
 
-wchar_t* pBookmarkTitle[] = {
+static wchar_t* de_pBookmarkTitle[] = {
     L"Lesezeichen",
     L"Rechts klicken, um in Zukunft in dieses Menü zu gelangen.",
 };
 
 // When loading or download a web page
-wchar_t* pDownloadString[] = {
+static wchar_t* de_pDownloadString[] = {
     L"Download läuft",
     L"Neuladen läuft",
 };
 
 // This is the text used on the bank machines, here called ATMs for Automatic Teller Machine
-wchar_t* gsAtmSideButtonText[] = {
+static wchar_t* de_gsAtmSideButtonText[] = {
     L"OK",
     L"Nehmen",      // take money from merc
     L"Geben",       // give money to merc
@@ -1769,14 +1648,14 @@ wchar_t* gsAtmSideButtonText[] = {
     L"Löschen",     // clear amount being displayed on the screen
 };
 
-wchar_t* gsAtmStartButtonText[] = {
+static wchar_t* de_gsAtmStartButtonText[] = {
     L"Überw $",    // transfer money to merc -- short form
     L"Statistik",  // view stats of the merc
     L"Inventar",   // view the inventory of the merc
     L"Anstellung",
 };
 
-wchar_t* sATMText[] = {
+static wchar_t* de_sATMText[] = {
     L"Geld überw.?",                       // transfer funds to merc?
     L"Ok?",                                // are we certain?
     L"Betrag eingeben",                    // enter the amount you want to transfer to merc
@@ -1788,7 +1667,7 @@ wchar_t* sATMText[] = {
 // Web error messages. Please use German equivilant for these messages.
 // DNS is the acronym for Domain Name Server
 // URL is the acronym for Uniform Resource Locator
-wchar_t* pErrorStrings[] = {
+static wchar_t* de_pErrorStrings[] = {
     L"Fehler",
     L"Server hat keinen DNS-Eintrag.",
     L"URL-Adresse überprüfen und nochmal versuchen.",
@@ -1797,16 +1676,16 @@ wchar_t* pErrorStrings[] = {
     L"rechnen.",
 };
 
-wchar_t* pPersonnelString[] = {
+static wchar_t* de_pPersonnelString[] = {
     L"Söldner:",  // mercs we have
 };
 
-wchar_t* pWebTitle[] = {
+static wchar_t* de_pWebTitle[] = {
     L"sir-FER 4.0",  // our name for the version of the browser, play on company name
 };
 
 // The titles for the web program title bar, for each page loaded
-wchar_t* pWebPagesTitles[] = {
+static wchar_t* de_pWebPagesTitles[] = {
     L"A.I.M.",
     L"A.I.M. Mitglieder",
     L"A.I.M. Bilder",  // a mug shot is another name for a portrait
@@ -1845,49 +1724,49 @@ wchar_t* pWebPagesTitles[] = {
     L"",
 };
 
-wchar_t* pShowBookmarkString[] = {
+static wchar_t* de_pShowBookmarkString[] = {
     L"Sir-Help",
     L"Erneut auf Web klicken für Lesezeichen.",
 };
 
-wchar_t* pLaptopTitles[] = {
+static wchar_t* de_pLaptopTitles[] = {
     L"E-Mail", L"Dateien", L"Söldner-Manager", L"Buchhalter Plus", L"Logbuch",
 };
 
-wchar_t* pPersonnelDepartedStateStrings[] = {
+static wchar_t* de_pPersonnelDepartedStateStrings[] = {
     //(careful not to exceed 18 characters total including spaces)
     // reasons why a merc has left.
     L"Getötet", L"Entlassen", L"Sonstiges", L"Heirat", L"Vertrag zu Ende", L"Quit",
 };
 
 // personnel strings appearing in the Personnel Manager on the laptop
-wchar_t* pPersonelTeamStrings[] = {
+static wchar_t* de_pPersonelTeamStrings[] = {
     L"Aktuelles Team",     L"Ausgeschieden",     L"Tgl. Kosten:", L"Höchste Kosten:",
     L"Niedrigste Kosten:", L"Im Kampf getötet:", L"Entlassen:",   L"Sonstiges:",
 };
 
-wchar_t* pPersonnelCurrentTeamStatsStrings[] = {
+static wchar_t* de_pPersonnelCurrentTeamStatsStrings[] = {
     L"Schlechteste",
     L"Durchschn.",
     L"Beste",
 };
 
-wchar_t* pPersonnelTeamStatsStrings[] = {
+static wchar_t* de_pPersonnelTeamStatsStrings[] = {
     L"GSND", L"BEW", L"GES", L"KRF", L"FHR", L"WSH", L"ERF", L"TRF", L"TEC", L"SPR", L"MED",
 };
 
 // horizontal and vertical indices on the map screen
-wchar_t* pMapVertIndex[] = {
+static wchar_t* de_pMapVertIndex[] = {
     L"X", L"A", L"B", L"C", L"D", L"E", L"F", L"G", L"H",
     L"I", L"J", L"K", L"L", L"M", L"N", L"O", L"P",
 };
 
-wchar_t* pMapHortIndex[] = {
+static wchar_t* de_pMapHortIndex[] = {
     L"X", L"1",  L"2",  L"3",  L"4",  L"5",  L"6",  L"7",  L"8",
     L"9", L"10", L"11", L"12", L"13", L"14", L"15", L"16",
 };
 
-wchar_t* pMapDepthIndex[] = {
+static wchar_t* de_pMapDepthIndex[] = {
     L"",
     L"-1",
     L"-2",
@@ -1895,18 +1774,18 @@ wchar_t* pMapDepthIndex[] = {
 };
 
 // text that appears on the contract button
-wchar_t* pContractButtonString[] = {
+static wchar_t* de_pContractButtonString[] = {
     L"Vertrag",
 };
 
 // text that appears on the update panel buttons
-wchar_t* pUpdatePanelButtons[] = {
+static wchar_t* de_pUpdatePanelButtons[] = {
     L"Weiter",
     L"Stop",
 };
 
 // Text which appears when everyone on your team is incapacitated and incapable of battle
-wchar_t LargeTacticalStr[][LARGE_STRING_LENGTH] = {
+static wchar_t* de_LargeTacticalStr[] = {
     L"Sie sind in diesem Sektor geschlagen worden!",
     L"Der Feind hat kein Erbarmen mit den Seelen Ihrer Teammitglieder und verschlingt jeden "
     L"einzelnen.",
@@ -1916,7 +1795,7 @@ wchar_t LargeTacticalStr[][LARGE_STRING_LENGTH] = {
 
 // Insurance Contract.c
 // The text on the buttons at the bottom of the screen.
-wchar_t* InsContractText[] = {
+static wchar_t* de_InsContractText[] = {
     L"Zurück",
     L"Vor",
     L"OK",
@@ -1925,13 +1804,13 @@ wchar_t* InsContractText[] = {
 
 // Insurance Info
 // Text on the buttons on the bottom of the screen
-wchar_t* InsInfoText[] = {
+static wchar_t* de_InsInfoText[] = {
     L"Zurück",
     L"Vor",
 };
 
 // For use at the M.E.R.C. web site. Text relating to the player's account with MERC
-wchar_t* MercAccountText[] = {
+static wchar_t* de_MercAccountText[] = {
     // Text on the buttons on the bottom of the screen
     L"Befugnis ert.",
     L"Home",
@@ -1946,7 +1825,7 @@ wchar_t* MercAccountText[] = {
 };
 
 // For use at the M.E.R.C. web site. Text relating a MERC mercenary
-wchar_t* MercInfo[] = {
+static wchar_t* de_MercInfo[] = {
     L"Gesundheit",
     L"Beweglichkeit",
     L"Geschicklichkeit",
@@ -1974,7 +1853,7 @@ wchar_t* MercInfo[] = {
 };
 
 // For use at the M.E.R.C. web site. Text relating to opening an account with MERC
-wchar_t* MercNoAccountText[] = {
+static wchar_t* de_MercNoAccountText[] = {
     // Text on the buttons at the bottom of the screen
     L"Konto eröffnen",
     L"Rückgängig",
@@ -1982,7 +1861,7 @@ wchar_t* MercNoAccountText[] = {
 };
 
 // For use at the M.E.R.C. web site. MERC Homepage
-wchar_t* MercHomePageText[] = {
+static wchar_t* de_MercHomePageText[] = {
     // Description of various parts on the MERC page
     L"Speck T. Kline, Gründer und Besitzer",
     L"Hier klicken, um ein Konto zu eröffnen",
@@ -1993,7 +1872,7 @@ wchar_t* MercHomePageText[] = {
 };
 
 // For use at MiGillicutty's Web Page.
-wchar_t* sFuneralString[] = {
+static wchar_t* de_sFuneralString[] = {
     L"McGillicuttys Bestattungen: Wir trösten trauernde Familien seit 1983.",
     L"Der Bestattungsunternehmer und frühere A.I.M.-Söldner Murray \"Pops\" McGillicutty ist ein "
     L"ebenso versierter wie erfahrener Bestatter.",
@@ -2019,7 +1898,7 @@ wchar_t* sFuneralString[] = {
 };
 
 // Text for the florist Home page
-wchar_t* sFloristText[] = {
+static wchar_t* de_sFloristText[] = {
     // Text on the button on the bottom of the page
 
     L"Galerie",
@@ -2048,7 +1927,7 @@ wchar_t* sFloristText[] = {
 };
 
 // Florist OrderForm
-wchar_t* sOrderFormText[] = {
+static wchar_t* de_sOrderFormText[] = {
 
     // Text on the buttons
 
@@ -2082,7 +1961,7 @@ wchar_t* sOrderFormText[] = {
 };
 
 // Florist Gallery.c
-wchar_t* sFloristGalleryText[] = {
+static wchar_t* de_sFloristGalleryText[] = {
     // text on the buttons
     L"Zurück",  // abbreviation for previous
     L"Weiter",  // abbreviation for next
@@ -2092,13 +1971,13 @@ wchar_t* sFloristGalleryText[] = {
     L"Home",
 };
 
-wchar_t* sFloristCards[] = {
+static wchar_t* de_sFloristCards[] = {
     L"Klicken Sie auf das Gesteck Ihrer Wahl",
     L"Zurück",
 };
 
 // Text for Bobby Ray's Mail Order Site
-wchar_t* BobbyROrderFormText[] = {
+static wchar_t* de_BobbyROrderFormText[] = {
     L"Bestellformular",                 // Title of the page
     L"St.",                             // The number of items ordered
     L"Gew. (%s)",                       // The weight of the item
@@ -2129,7 +2008,7 @@ wchar_t* BobbyROrderFormText[] = {
 };
 
 // This text is used when on the various Bobby Ray Web site pages that sell items
-wchar_t* BobbyRText[] = {
+static wchar_t* de_BobbyRText[] = {
     L"Bestellen",  // Title
     L"Klicken Sie auf den gewünschten Gegenstand. Weiteres Klicken erhöht die Stückzahl. "
     L"Rechte Maustaste verringert Stückzahl. Wenn Sie fertig sind, weiter mit dem "
@@ -2187,7 +2066,7 @@ wchar_t* BobbyRText[] = {
 };
 
 // Text for Bobby Ray's Home Page
-wchar_t* BobbyRaysFrontText[] = {
+static wchar_t* de_BobbyRaysFrontText[] = {
     // Details on the web site
 
     L"Dies ist die heißeste Site für Waffen und militärische Ausrüstung aller Art",
@@ -2210,7 +2089,7 @@ wchar_t* BobbyRaysFrontText[] = {
 // Text for the AIM page.
 // This is the text used when the user selects the way to sort the aim mercanaries on the AIM mug
 // shot page
-wchar_t* AimSortText[] = {
+static wchar_t* de_AimSortText[] = {
     L"A.I.M. Mitglieder",  // Title
     L"Sortieren:",         // Title for the way to sort
 
@@ -2237,7 +2116,7 @@ wchar_t* AimSortText[] = {
 
 // Aim Policies.c
 // The page in which the AIM policies and regulations are displayed
-wchar_t* AimPolicyText[] = {
+static wchar_t* de_AimPolicyText[] = {
     // The text on the buttons at the bottom of the page
 
     L"Zurück", L"AIM HomePage", L"Regel-Index", L"Nächste Seite", L"Ablehnen", L"Zustimmen",
@@ -2247,14 +2126,14 @@ wchar_t* AimPolicyText[] = {
 // The page in which the players hires AIM mercenaries
 // Instructions to the user to either start video conferencing with the merc, or to go the mug shot
 // index
-wchar_t* AimMemberText[] = {
+static wchar_t* de_AimMemberText[] = {
     L"Linksklick", L"zum Kontaktieren.", L"Rechtsklick", L"zum Foto-Index.",
     //	L"Linksklick zum Kontaktieren. \nRechtsklick zum Foto-Index.",
 };
 
 // Aim Member.c
 // The page in which the players hires AIM mercenaries
-wchar_t* CharacterInfo[] = {
+static wchar_t* de_CharacterInfo[] = {
     // The various attributes of the merc
 
     L"Gesundh.", L"Beweglichkeit", L"Geschicklichkeit", L"Kraft", L"Führungsqualität", L"Weisheit",
@@ -2278,7 +2157,7 @@ wchar_t* CharacterInfo[] = {
 // Aim Member.c
 // The page in which the player's hires AIM mercenaries
 // The following text is used with the video conference popup
-wchar_t* VideoConfercingText[] = {
+static wchar_t* de_VideoConfercingText[] = {
     L"Vertragskosten:",  // Title beside the cost of hiring the merc
 
     // Text on the buttons to select the length of time the merc can be hired
@@ -2309,7 +2188,7 @@ wchar_t* VideoConfercingText[] = {
 // Aim Member.c
 // The page in which the player hires AIM mercenaries
 // The text that pops up when you select the TRANSFER FUNDS button
-wchar_t* AimPopUpText[] = {
+static wchar_t* de_AimPopUpText[] = {
     L"ELEKTRONISCHE ÜBERWEISUNG AUSGEFÜHRT",      // You hired the merc
     L"ÜBERWEISUNG KANN NICHT BEARBEITET WERDEN",  // Player doesn't have enough money, message 1
     L"NICHT GENUG GELD",                          // Player doesn't have enough money, message 2
@@ -2329,13 +2208,13 @@ wchar_t* AimPopUpText[] = {
 };
 
 // AIM Link.c
-wchar_t* AimLinkText[] = {
+static wchar_t* de_AimLinkText[] = {
     L"A.I.M. Links",  // The title of the AIM links page
 };
 
 // Aim History
 // This page displays the history of AIM
-wchar_t* AimHistoryText[] = {
+static wchar_t* de_AimHistoryText[] = {
     L"Die Geschichte von A.I.M.",  // Title
 
     // Text on the buttons at the bottom of the page
@@ -2349,7 +2228,7 @@ wchar_t* AimHistoryText[] = {
 // Aim Mug Shot Index
 // The page in which all the AIM members' portraits are displayed in the order selected by the AIM
 // sort page.
-wchar_t* AimFiText[] = {
+static wchar_t* de_AimFiText[] = {
     // displays the way in which the mercs were sorted
 
     L"Preis",
@@ -2381,7 +2260,7 @@ wchar_t* AimFiText[] = {
 // AimArchives.
 // The page that displays information about the older AIM alumni merc... mercs who are no longer
 // with AIM
-wchar_t* AimAlumniText[] = {
+static wchar_t* de_AimAlumniText[] = {
     // Text of the buttons
     L"SEITE 1",
     L"SEITE 2",
@@ -2391,7 +2270,7 @@ wchar_t* AimAlumniText[] = {
 };
 
 // AIM Home Page
-wchar_t* AimScreenText[] = {
+static wchar_t* de_AimScreenText[] = {
     // AIM disclaimers
 
     L"A.I.M. und das A.I.M.-Logo sind in den meisten Ländern eingetragene Warenzeichen.",
@@ -2408,7 +2287,7 @@ wchar_t* AimScreenText[] = {
 };
 
 // Aim Home Page
-wchar_t* AimBottomMenuText[] = {
+static wchar_t* de_AimBottomMenuText[] = {
     // Text for the links at the bottom of all AIM pages
 
     L"Home", L"Mitglieder", L"Veteranen", L"Regeln", L"Geschichte", L"Links",
@@ -2417,7 +2296,7 @@ wchar_t* AimBottomMenuText[] = {
 // ShopKeeper Interface
 // The shopkeeper interface is displayed when the merc wants to interact with
 // the various store clerks scattered through out the game.
-wchar_t* SKI_Text[] = {
+static wchar_t* de_SKI_Text[] = {
     L"WAREN VORRÄTIG",  // Header for the merchandise available
     L"SEITE",           // The current store inventory page being displayed
     L"KOSTEN",          // The total cost of the the items in the Dealer inventory area
@@ -2442,7 +2321,7 @@ wchar_t* SKI_Text[] = {
 // ShopKeeper Interface
 // for the bank machine panels. Referenced here is the acronym ATM, which means Automatic Teller
 // Machine
-wchar_t* SkiAtmText[] = {
+static wchar_t* de_SkiAtmText[] = {
     // Text on buttons on the banking machine, displayed at the bottom of the page
     L"0",       L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9",
     L"OK",       // Transfer the money
@@ -2453,7 +2332,7 @@ wchar_t* SkiAtmText[] = {
 };
 
 // Shopkeeper Interface
-wchar_t* gzSkiAtmText[] = {
+static wchar_t* de_gzSkiAtmText[] = {
     // Text on the bank machine panel that....
     L"Vorgang auswählen",           // tells the user to select either to give or take from the merc
     L"Betrag eingeben",             // Enter the amount to transfer
@@ -2463,7 +2342,7 @@ wchar_t* gzSkiAtmText[] = {
     L"Kontostand",                   // Display the amount of money the player currently has
 };
 
-wchar_t* SkiMessageBoxText[] = {
+static wchar_t* de_SkiMessageBoxText[] = {
     L"Möchten Sie %s von Ihrem Konto abbuchen, um die Differenz zu begleichen?",
     L"Nicht genug Geld. Ihnen fehlen %s",
     L"Möchten Sie %s von Ihrem Konto abbuchen, um die Kosten zu decken?",
@@ -2474,7 +2353,7 @@ wchar_t* SkiMessageBoxText[] = {
 };
 
 // OptionScreen.c
-wchar_t* zOptionsText[] = {
+static wchar_t* de_zOptionsText[] = {
     // button Text
     L"Spiel sichern",
     L"Spiel laden",
@@ -2490,7 +2369,7 @@ wchar_t* zOptionsText[] = {
 };
 
 // SaveLoadScreen
-wchar_t* zSaveLoadText[] = {
+static wchar_t* de_zSaveLoadText[] = {
     L"Spiel sichern",
     L"Spiel laden",
     L"Abbrechen",
@@ -2545,7 +2424,7 @@ wchar_t* zSaveLoadText[] = {
 };
 
 // MapScreen
-wchar_t* zMarksMapScreenText[] = {
+static wchar_t* de_zMarksMapScreenText[] = {
     L"Map-Level",
     L"Sie haben gar keine Miliz. Sie müssen Bewohner der Stadt trainieren, wenn Sie dort eine "
     L"Miliz aufstellen wollen.",
@@ -2580,12 +2459,12 @@ wchar_t* zMarksMapScreenText[] = {
     L"Vertrag des Söldners ist nicht versichert",
 };
 
-wchar_t* pLandMarkInSectorString[] = {
+static wchar_t* de_pLandMarkInSectorString[] = {
     L"Trupp %d hat in Sektor %s jemanden bemerkt",
 };
 
 // confirm the player wants to pay X dollars to build a militia force in town
-wchar_t* pMilitiaConfirmStrings[] = {
+static wchar_t* de_pMilitiaConfirmStrings[] = {
     L"Eine Milizeinheit für diese Stadt zu trainieren kostet $",  // telling player how much it will
                                                                   // cost
     L"Ausgabe genehmigen?",          // asking player if they wish to pay the amount requested
@@ -2605,17 +2484,17 @@ wchar_t* pMilitiaConfirmStrings[] = {
 
 // Strings used in the popup box when withdrawing, or depositing money from the $ sign at the bottom
 // of the single merc panel
-wchar_t* gzMoneyWithdrawMessageText[] = {
+static wchar_t* de_gzMoneyWithdrawMessageText[] = {
     L"Sie können nur max. 20,000$ abheben.",
     L"Wollen Sie wirklich %s auf Ihr Konto einzahlen?",
 };
 
-wchar_t* gzCopyrightText[] = {
+static wchar_t* de_gzCopyrightText[] = {
     L"Copyright (C) 1999 Sir-tech Canada Ltd. Alle Rechte vorbehalten.",  //
 };
 
 // option Text
-wchar_t* zOptionsToggleText[] = {
+static wchar_t* de_zOptionsToggleText[] = {
     L"Sprache",
     L"Stumme Bestätigungen",
     L"Untertitel",
@@ -2639,7 +2518,7 @@ wchar_t* zOptionsToggleText[] = {
 };
 
 // This is the help text associated with the above toggles.
-wchar_t* zOptionsScreenHelpText[] = {
+static wchar_t* de_zOptionsScreenHelpText[] = {
     // speech
     L"Mit dieser Option hören Sie die Dialoge.",
 
@@ -2710,7 +2589,7 @@ wchar_t* zOptionsScreenHelpText[] = {
 
 };
 
-wchar_t* gzGIOScreenText[] = {
+static wchar_t* de_gzGIOScreenText[] = {
     L"GRUNDEINSTELLUNGEN",
     L"Spielmodus",
     L"Realistisch",
@@ -2730,7 +2609,7 @@ wchar_t* gzGIOScreenText[] = {
     L"Option nicht verfügbar",
 };
 
-wchar_t* pDeliveryLocationStrings[] = {
+static wchar_t* de_pDeliveryLocationStrings[] = {
     L"Austin",       // Austin, Texas, USA
     L"Bagdad",       // Baghdad, Iraq (Suddam Hussein's home)
     L"Drassen",      // The main place in JA2 that you can receive items. The other towns are dummy
@@ -2751,49 +2630,49 @@ wchar_t* pDeliveryLocationStrings[] = {
     L"Vancouver",    // Vancouver, British Columbia, Canada (west coast near US border)
 };
 
-wchar_t* pSkillAtZeroWarning[] = {
+static wchar_t* de_pSkillAtZeroWarning[] = {
     // This string is used in the IMP character generation. It is possible to select 0 ability
     // in a skill meaning you can't use it. This text is confirmation to the player.
     L"Sind Sie sicher? Ein Wert von 0 bedeutet, daß der Charakter diese Fähigkeit nicht nutzen "
     L"kann.",
 };
 
-wchar_t* pIMPBeginScreenStrings[] = {
+static wchar_t* de_pIMPBeginScreenStrings[] = {
     L"(max. 8 Buchstaben)",
 };
 
-wchar_t* pIMPFinishButtonText[] = {
+static wchar_t* de_pIMPFinishButtonText[] = {
     L"Analyse wird durchgeführt",
 };
 
-wchar_t* pIMPFinishStrings[] = {
+static wchar_t* de_pIMPFinishStrings[] = {
     L"Danke, %s",  //%s is the name of the merc
 };
 
 // the strings for imp voices screen
-wchar_t* pIMPVoicesStrings[] = {
+static wchar_t* de_pIMPVoicesStrings[] = {
     L"Stimme",
 };
 
-wchar_t* pDepartedMercPortraitStrings[] = {
+static wchar_t* de_pDepartedMercPortraitStrings[] = {
     L"Im Einsatz getötet",
     L"Entlassen",
     L"Sonstiges",
 };
 
 // title for program
-wchar_t* pPersTitleText[] = {
+static wchar_t* de_pPersTitleText[] = {
     L"Söldner-Manager",
 };
 
 // paused game strings
-wchar_t* pPausedGameText[] = {
+static wchar_t* de_pPausedGameText[] = {
     L"Pause",
     L"Zurück zum Spiel (|P|a|u|s|e)",
     L"Pause (|P|a|u|s|e)",
 };
 
-wchar_t* pMessageStrings[] = {
+static wchar_t* de_pMessageStrings[] = {
     L"Spiel beenden?",
     L"OK",
     L"JA",
@@ -2918,16 +2797,16 @@ wchar_t* pMessageStrings[] = {
 #endif
 };
 
-wchar_t ItemPickupHelpPopup[][40] = {
+static wchar_t* de_ItemPickupHelpPopup[] = {
     L"OK", L"Hochscrollen", L"Alle auswählen", L"Runterscrollen", L"Abbrechen",
 };
 
-wchar_t* pDoctorWarningString[] = {
+static wchar_t* de_pDoctorWarningString[] = {
     L"%s ist nicht nahe genug, um geheilt zu werden",
     L"Ihre Mediziner haben noch nicht alle verbinden können.",
 };
 
-wchar_t* pMilitiaButtonsHelpText[] = {
+static wchar_t* de_pMilitiaButtonsHelpText[] = {
     L"Grüne Miliz aufnehmen(Rechtsklick)/absetzen(Linksklick)",  // button help text informing
                                                                  // player they can pick up or drop
                                                                  // militia with this button
@@ -2936,7 +2815,7 @@ wchar_t* pMilitiaButtonsHelpText[] = {
     L"Milizen gleichmäßig über alle Sektoren verteilen",
 };
 
-wchar_t* pMapScreenJustStartedHelpText[] = {
+static wchar_t* de_pMapScreenJustStartedHelpText[] = {
     L"Zu AIM gehen und Söldner anheuern ( *Tip*: Befindet sich im Laptop )",  // to inform the
                                                                               // player to hired
                                                                               // some mercs to get
@@ -2946,11 +2825,11 @@ wchar_t* pMapScreenJustStartedHelpText[] = {
                                           // game underway
 };
 
-wchar_t* pAntiHackerString[] = {
+static wchar_t* de_pAntiHackerString[] = {
     L"Fehler. Fehlende oder fehlerhafte Datei(en). Spiel wird beendet.",
 };
 
-wchar_t* gzLaptopHelpText[] = {
+static wchar_t* de_gzLaptopHelpText[] = {
     // Buttons:
     L"E-Mail einsehen",
     L"Websites durchblättern",
@@ -2975,11 +2854,11 @@ wchar_t* gzLaptopHelpText[] = {
     L"Versicherungsmakler für A.I.M.-Verträge",
 };
 
-wchar_t* gzHelpScreenText[] = {
+static wchar_t* de_gzHelpScreenText[] = {
     L"Helpscreen verlassen",
 };
 
-wchar_t* gzNonPersistantPBIText[] = {
+static wchar_t* de_gzNonPersistantPBIText[] = {
     L"Es tobt eine Schlacht. Sie können sich nur im Taktikbildschirm zurückziehen.",
     L"Sektor betreten und Kampf fortsetzen (|E).",
     L"Kampf durch PC entscheiden (|A).",
@@ -2992,7 +2871,7 @@ wchar_t* gzNonPersistantPBIText[] = {
     L"Sie können sich nicht zurückziehen, wenn Sie in einem Hinterhalt sind.",
 };
 
-wchar_t* gzMiscString[] = {
+static wchar_t* de_gzMiscString[] = {
     L"Ihre Milizen kämpfen ohne die Hilfe der Söldner weiter...",
     L"Das Fahrzeug muß nicht mehr aufgetankt werden.",
     L"Der Tank ist %d%% voll.",
@@ -3000,7 +2879,7 @@ wchar_t* gzMiscString[] = {
     L"Sie haben ein Tanklager verloren.",
 };
 
-wchar_t* gzIntroScreen[] = {
+static wchar_t* de_gzIntroScreen[] = {
     L"Kann Introvideo nicht finden",
 };
 
@@ -3008,7 +2887,7 @@ wchar_t* gzIntroScreen[] = {
 // and a direction (either "above", "below", or a string from pDirectionStr) to
 // report a noise.
 // e.g. "Sidney hears a loud sound of MOVEMENT coming from the SOUTH."
-wchar_t* pNewNoiseStr[] = {
+static wchar_t* de_pNewNoiseStr[] = {
     // There really isn't any difference between using "coming from" or "to".
     // For the explosion case the string in English could be either:
     //	L"Gus hears a loud EXPLOSION 'to' the north.",
@@ -3027,24 +2906,24 @@ wchar_t* pNewNoiseStr[] = {
     L"%s hört ein ZERSCHMETTERN (%s) von %s.",
 };
 
-wchar_t* wMapScreenSortButtonHelpText[] = {
+static wchar_t* de_wMapScreenSortButtonHelpText[] = {
     L"Sort. nach Name (|F|1)", L"Sort. nach Auftrag (|F|2)", L"Sort. nach wach/schlafend (|F|3)",
     L"Sort. nach Ort (|F|4)",  L"Sort. nach Ziel (|F|5)",    L"Sort. nach Vertragsende (|F|6)",
 };
 
-wchar_t* BrokenLinkText[] = {
+static wchar_t* de_BrokenLinkText[] = {
     L"Error 404",
     L"Site nicht gefunden.",
 };
 
-wchar_t* gzBobbyRShipmentText[] = {
+static wchar_t* de_gzBobbyRShipmentText[] = {
     L"Letzte Lieferungen",
     L"Bestellung #",
     L"Artikelanzahl",
     L"Bestellt am",
 };
 
-wchar_t* gzCreditNames[] = {
+static wchar_t* de_gzCreditNames[] = {
     L"Chris Camfield",
     L"Shaun Lyng",
     L"Kris Märnes",
@@ -3062,7 +2941,7 @@ wchar_t* gzCreditNames[] = {
     L"Joey \"Joeker\" Whelan",
 };
 
-wchar_t* gzCreditNameTitle[] = {
+static wchar_t* de_gzCreditNameTitle[] = {
     L"Game Internals Programmer",                    // Chris Camfield
     L"Co-designer/Writer",                           // Shaun Lyng
     L"Strategic Systems & Editor Programmer",        // Kris \"The Cow Rape Man\" Marnes
@@ -3080,7 +2959,7 @@ wchar_t* gzCreditNameTitle[] = {
     L"Portraits Artist",                             // Joey \"Joeker\" Whelan",
 };
 
-wchar_t* gzCreditNameFunny[] = {
+static wchar_t* de_gzCreditNameFunny[] = {
     L"",                                       // Chris Camfield
     L"(still learning punctuation)",           // Shaun Lyng
     L"(\"It's done. I'm just fixing it\")",    // Kris \"The Cow Rape Man\" Marnes
@@ -3098,14 +2977,14 @@ wchar_t* gzCreditNameFunny[] = {
     L"(did items and loading screens too!)",   // Joey \"Joeker\" Whelan",
 };
 
-wchar_t sRepairsDoneString[][MED_STRING_LENGTH] = {
+static wchar_t* de_sRepairsDoneString[] = {
     L"%s hat  seine eigenen Gegenstände repariert",
     L"%s hat die Waffen und Rüstungen aller Teammitglieder repariert",
     L"%s hat die aktivierten Gegenstände aller Teammitglieder repariert",
     L"%s hat die mitgeführten Gegenstände aller Teammitglieder repariert",
 };
 
-wchar_t* zGioDifConfirmText[] = {
+static wchar_t* de_zGioDifConfirmText[] = {
     L"Sie haben sich für den EINSTEIGER-Modus entschieden. Dies ist die passende Einstellung für "
     L"Spieler, die noch nie zuvor Jagged Alliance oder ähnliche Spiele gespielt haben oder für "
     L"Spieler, die sich ganz einfach kürzere Schlachten wünschen. Ihre Wahl wird den Verlauf des "
@@ -3121,7 +3000,7 @@ wchar_t* zGioDifConfirmText[] = {
     L"Sind Sie ganz sicher, daß Sie im Profi-Modus spielen wollen?",
 };
 
-wchar_t* gzLateLocalizedString[] = {
+static wchar_t* de_gzLateLocalizedString[] = {
     L"%S Loadscreen-Daten nicht gefunden...",
 
     // 1-5
@@ -3260,4 +3139,258 @@ wchar_t* gzLateLocalizedString[] = {
 
 };
 
-#endif  // GERMAN
+// VERY TRUNCATED FILE COPIED FROM JA2.5 FOR ITS FEATURES FOR JA2 GOLD
+wchar_t* de_zNewTacticalMessages[] = {
+    L"Entfernung zum Ziel: %d Felder",
+    L"Verbinden Sie den Transmitter mit Ihrem Laptop-Computer.",
+    L"Sie haben nicht genug Geld, um %s anzuheuern",
+    L"Das obenstehende Honorar deckt für einen begrenzten Zeitraum die Kosten der Gesamtmission, "
+    L"und schließt untenstehendes Equipment mit ein.",
+    L"Engagieren Sie %s jetzt und nutzen Sie den Vorteil unseres beispiellosen 'Ein Betrag für "
+    L"alles'-Honorars. Das persönliche Equipment des Söldners ist gratis in diesem Preis mit "
+    L"inbegriffen.",
+    L"Honorar",
+    L"Da ist noch jemand im Sektor...",
+    L"Waffen-Rchwt.: %d Felder, Entf. zum Ziel: %d Felder",
+    L"Deckung anzeigen",
+    L"Sichtfeld",
+    L"Neue Rekruten können dort nicht hinkommen.",
+    L"Da Ihr Laptop keinen Transmitter besitzt, können Sie keine neuen Teammitglieder anheuern. "
+    L"Vielleicht ist dies eine guter Zeitpunkt, ein gespeichertes  Spiel zu laden oder ein neues "
+    L"zu starten!",
+    L"%s hört das Geräusch knirschenden Metalls unter Jerry hervordringen. Es klingt grässlich - "
+    L"die Antenne ihres Laptop-Computers ist  zerstört.",
+    L"Nach Ansehen des Hinweises, den Commander Morris hinterließ, erkennt %s eine einmalige "
+    L"Gelegenheit. Der Hinweis enthält Koordinaten für den Start von Raketen gegen verschiedene "
+    L"Städte in Arulco. Aber er enthält auch die Koordinaten des Startpunktes - der Raketenanlage.",
+    L"Das Kontroll-Board studierend, entdeckt %s, dass die Zahlen umgedreht werden könnten, so "
+    L"dass die Raketen diese Anlage selbst zerstören. %s muss nun einen Fluchtweg finden. Der "
+    L"Aufzug scheint die schnellstmögliche Route zu bieten...",
+    L"Dies ist ein IRON MAN-Spiel, und es kann nicht gespeichert werden, wenn sich Gegner in der "
+    L"Nähe befinden.",
+    L"(Kann während Kampf nicht speichern)",
+    L"Der Name der aktuellen Kampagne enthält mehr als 30 Buchstaben.",
+    L"Die aktuelle Kampagne kann nicht gefunden werden.",
+    L"Kampagne: Standard ( %S )",
+    L"Kampagne: %S",
+    L"Sie haben die Kampagne %S gewählt. Diese ist eine vom Spieler modifizierte Version der "
+    L"Originalkampagne von JA2UB. Möchten Sie die Kampagne %S spielen?",
+    L"Um den Editor zu benutzen, müssen Sie eine andere als die Standardkampgane auswählen.",
+};
+
+wchar_t* de_gzIronManModeWarningText[] = {
+    L"You have chosen IRON MAN mode. This setting makes the game considerably more challenging as "
+    L"you will not be able to save your game when in a sector occupied by enemies. This setting "
+    L"will affect the entire course of the game.  Are you sure want to play in IRON MAN mode?",
+};
+
+void UseTextGerman() {
+  gzProsLabel = de_gzProsLabel;
+  gzConsLabel = de_gzConsLabel;
+  sRepairsDoneString = de_sRepairsDoneString;
+  AmmoCaliber = de_AmmoCaliber;
+  BobbyRayAmmoCaliber = de_BobbyRayAmmoCaliber;
+  WeaponType = de_WeaponType;
+  Message = de_Message;
+  TeamTurnString = de_TeamTurnString;
+  pAssignMenuStrings = de_pAssignMenuStrings;
+  pTrainingStrings = de_pTrainingStrings;
+  pTrainingMenuStrings = de_pTrainingMenuStrings;
+  pAttributeMenuStrings = de_pAttributeMenuStrings;
+  pVehicleStrings = de_pVehicleStrings;
+  pShortAttributeStrings = de_pShortAttributeStrings;
+  pLongAttributeStrings = de_pLongAttributeStrings;
+  pContractStrings = de_pContractStrings;
+  pAssignmentStrings = de_pAssignmentStrings;
+  pConditionStrings = de_pConditionStrings;
+  pTownNames = de_pTownNames;
+  pPersonnelScreenStrings = de_pPersonnelScreenStrings;
+  pPersonnelTitle = de_pPersonnelTitle;
+  pUpperLeftMapScreenStrings = de_pUpperLeftMapScreenStrings;
+  pTacticalPopupButtonStrings = de_pTacticalPopupButtonStrings;
+  pSquadMenuStrings = de_pSquadMenuStrings;
+  pDoorTrapStrings = de_pDoorTrapStrings;
+  pLongAssignmentStrings = de_pLongAssignmentStrings;
+  pContractExtendStrings = de_pContractExtendStrings;
+  pMapScreenMouseRegionHelpText = de_pMapScreenMouseRegionHelpText;
+  pPersonnelAssignmentStrings = de_pPersonnelAssignmentStrings;
+  pNoiseVolStr = de_pNoiseVolStr;
+  pNoiseTypeStr = de_pNoiseTypeStr;
+  pDirectionStr = de_pDirectionStr;
+  pRemoveMercStrings = de_pRemoveMercStrings;
+  sTimeStrings = de_sTimeStrings;
+  pLandTypeStrings = de_pLandTypeStrings;
+  pGuardMenuStrings = de_pGuardMenuStrings;
+  pOtherGuardMenuStrings = de_pOtherGuardMenuStrings;
+  pInvPanelTitleStrings = de_pInvPanelTitleStrings;
+  pPOWStrings = de_pPOWStrings;
+  pMilitiaString = de_pMilitiaString;
+  pMilitiaButtonString = de_pMilitiaButtonString;
+  pEpcMenuStrings = de_pEpcMenuStrings;
+  pRepairStrings = de_pRepairStrings;
+  sPreStatBuildString = de_sPreStatBuildString;
+  sStatGainStrings = de_sStatGainStrings;
+  pHelicopterEtaStrings = de_pHelicopterEtaStrings;
+  sMapLevelString = de_sMapLevelString;
+  gsLoyalString = de_gsLoyalString;
+  gsUndergroundString = de_gsUndergroundString;
+  gsTimeStrings = de_gsTimeStrings;
+  sFacilitiesStrings = de_sFacilitiesStrings;
+  pMapPopUpInventoryText = de_pMapPopUpInventoryText;
+  pwTownInfoStrings = de_pwTownInfoStrings;
+  pwMineStrings = de_pwMineStrings;
+  pwMiscSectorStrings = de_pwMiscSectorStrings;
+  pMapInventoryErrorString = de_pMapInventoryErrorString;
+  pMapInventoryStrings = de_pMapInventoryStrings;
+  pMapScreenFastHelpTextList = de_pMapScreenFastHelpTextList;
+  pMovementMenuStrings = de_pMovementMenuStrings;
+  pUpdateMercStrings = de_pUpdateMercStrings;
+  pMapScreenBorderButtonHelpText = de_pMapScreenBorderButtonHelpText;
+  pMapScreenBottomFastHelp = de_pMapScreenBottomFastHelp;
+  pMapScreenBottomText = de_pMapScreenBottomText;
+  pMercDeadString = de_pMercDeadString;
+  pSenderNameList = de_pSenderNameList;
+  pTraverseStrings = de_pTraverseStrings;
+  pNewMailStrings = de_pNewMailStrings;
+  pDeleteMailStrings = de_pDeleteMailStrings;
+  pEmailHeaders = de_pEmailHeaders;
+  pEmailTitleText = de_pEmailTitleText;
+  pFinanceTitle = de_pFinanceTitle;
+  pFinanceSummary = de_pFinanceSummary;
+  pFinanceHeaders = de_pFinanceHeaders;
+  pTransactionText = de_pTransactionText;
+  pTransactionAlternateText = de_pTransactionAlternateText;
+  pMoralStrings = de_pMoralStrings;
+  pSkyriderText = de_pSkyriderText;
+  pLeftEquipmentString = de_pLeftEquipmentString;
+  pMapScreenStatusStrings = de_pMapScreenStatusStrings;
+  pMapScreenPrevNextCharButtonHelpText = de_pMapScreenPrevNextCharButtonHelpText;
+  pEtaString = de_pEtaString;
+  pShortVehicleStrings = de_pShortVehicleStrings;
+  pTrashItemText = de_pTrashItemText;
+  pMapErrorString = de_pMapErrorString;
+  pMapPlotStrings = de_pMapPlotStrings;
+  pMiscMapScreenMouseRegionHelpText = de_pMiscMapScreenMouseRegionHelpText;
+  pMercHeLeaveString = de_pMercHeLeaveString;
+  pMercSheLeaveString = de_pMercSheLeaveString;
+  pImpPopUpStrings = de_pImpPopUpStrings;
+  pImpButtonText = de_pImpButtonText;
+  pExtraIMPStrings = de_pExtraIMPStrings;
+  pFilesTitle = de_pFilesTitle;
+  pFilesSenderList = de_pFilesSenderList;
+  pHistoryLocations = de_pHistoryLocations;
+  pHistoryStrings = de_pHistoryStrings;
+  pHistoryHeaders = de_pHistoryHeaders;
+  pHistoryTitle = de_pHistoryTitle;
+  pShowBookmarkString = de_pShowBookmarkString;
+  pWebPagesTitles = de_pWebPagesTitles;
+  pWebTitle = de_pWebTitle;
+  pPersonnelString = de_pPersonnelString;
+  pErrorStrings = de_pErrorStrings;
+  pDownloadString = de_pDownloadString;
+  pBookmarkTitle = de_pBookmarkTitle;
+  pBookMarkStrings = de_pBookMarkStrings;
+  pLaptopIcons = de_pLaptopIcons;
+  sATMText = de_sATMText;
+  gsAtmStartButtonText = de_gsAtmStartButtonText;
+  gsAtmSideButtonText = de_gsAtmSideButtonText;
+  pPersonnelTeamStatsStrings = de_pPersonnelTeamStatsStrings;
+  pPersonnelCurrentTeamStatsStrings = de_pPersonnelCurrentTeamStatsStrings;
+  pPersonelTeamStrings = de_pPersonelTeamStrings;
+  pPersonnelDepartedStateStrings = de_pPersonnelDepartedStateStrings;
+  pMapHortIndex = de_pMapHortIndex;
+  pMapVertIndex = de_pMapVertIndex;
+  pMapDepthIndex = de_pMapDepthIndex;
+  pLaptopTitles = de_pLaptopTitles;
+  pDayStrings = de_pDayStrings;
+  pMercContractOverStrings = de_pMercContractOverStrings;
+  pMilitiaConfirmStrings = de_pMilitiaConfirmStrings;
+  pDeliveryLocationStrings = de_pDeliveryLocationStrings;
+  pSkillAtZeroWarning = de_pSkillAtZeroWarning;
+  pIMPBeginScreenStrings = de_pIMPBeginScreenStrings;
+  pIMPFinishButtonText = de_pIMPFinishButtonText;
+  pIMPFinishStrings = de_pIMPFinishStrings;
+  pIMPVoicesStrings = de_pIMPVoicesStrings;
+  pDepartedMercPortraitStrings = de_pDepartedMercPortraitStrings;
+  pPersTitleText = de_pPersTitleText;
+  pPausedGameText = de_pPausedGameText;
+  zOptionsToggleText = de_zOptionsToggleText;
+  zOptionsScreenHelpText = de_zOptionsScreenHelpText;
+  pDoctorWarningString = de_pDoctorWarningString;
+  pMilitiaButtonsHelpText = de_pMilitiaButtonsHelpText;
+  pMapScreenJustStartedHelpText = de_pMapScreenJustStartedHelpText;
+  pLandMarkInSectorString = de_pLandMarkInSectorString;
+  gzMercSkillText = de_gzMercSkillText;
+  gzNonPersistantPBIText = de_gzNonPersistantPBIText;
+  gzMiscString = de_gzMiscString;
+  wMapScreenSortButtonHelpText = de_wMapScreenSortButtonHelpText;
+  pNewNoiseStr = de_pNewNoiseStr;
+  gzLateLocalizedString = de_gzLateLocalizedString;
+  pAntiHackerString = de_pAntiHackerString;
+  pMessageStrings = de_pMessageStrings;
+  ItemPickupHelpPopup = de_ItemPickupHelpPopup;
+  TacticalStr = de_TacticalStr;
+  LargeTacticalStr = de_LargeTacticalStr;
+  zDialogActions = de_zDialogActions;
+  zDealerStrings = de_zDealerStrings;
+  zTalkMenuStrings = de_zTalkMenuStrings;
+  gzMoneyAmounts = de_gzMoneyAmounts;
+  gMoneyStatsDesc = de_gMoneyStatsDesc;
+  gWeaponStatsDesc = de_gWeaponStatsDesc;
+  sKeyDescriptionStrings = de_sKeyDescriptionStrings;
+  zHealthStr = de_zHealthStr;
+  zVehicleName = de_zVehicleName;
+  pExitingSectorHelpText = de_pExitingSectorHelpText;
+  InsContractText = de_InsContractText;
+  InsInfoText = de_InsInfoText;
+  MercAccountText = de_MercAccountText;
+  MercInfo = de_MercInfo;
+  MercNoAccountText = de_MercNoAccountText;
+  MercHomePageText = de_MercHomePageText;
+  sFuneralString = de_sFuneralString;
+  sFloristText = de_sFloristText;
+  sOrderFormText = de_sOrderFormText;
+  sFloristGalleryText = de_sFloristGalleryText;
+  sFloristCards = de_sFloristCards;
+  BobbyROrderFormText = de_BobbyROrderFormText;
+  BobbyRText = de_BobbyRText;
+  BobbyRaysFrontText = de_BobbyRaysFrontText;
+  AimSortText = de_AimSortText;
+  AimPolicyText = de_AimPolicyText;
+  AimMemberText = de_AimMemberText;
+  CharacterInfo = de_CharacterInfo;
+  VideoConfercingText = de_VideoConfercingText;
+  AimPopUpText = de_AimPopUpText;
+  AimLinkText = de_AimLinkText;
+  AimHistoryText = de_AimHistoryText;
+  AimFiText = de_AimFiText;
+  AimAlumniText = de_AimAlumniText;
+  AimScreenText = de_AimScreenText;
+  AimBottomMenuText = de_AimBottomMenuText;
+  zMarksMapScreenText = de_zMarksMapScreenText;
+  gpStrategicString = de_gpStrategicString;
+  gpGameClockString = de_gpGameClockString;
+  SKI_Text = de_SKI_Text;
+  SkiAtmText = de_SkiAtmText;
+  gzSkiAtmText = de_gzSkiAtmText;
+  SkiMessageBoxText = de_SkiMessageBoxText;
+  zSaveLoadText = de_zSaveLoadText;
+  zOptionsText = de_zOptionsText;
+  gzGIOScreenText = de_gzGIOScreenText;
+  gzHelpScreenText = de_gzHelpScreenText;
+  gzLaptopHelpText = de_gzLaptopHelpText;
+  gzMoneyWithdrawMessageText = de_gzMoneyWithdrawMessageText;
+  gzCopyrightText = de_gzCopyrightText;
+  BrokenLinkText = de_BrokenLinkText;
+  gzBobbyRShipmentText = de_gzBobbyRShipmentText;
+  zGioDifConfirmText = de_zGioDifConfirmText;
+  gzCreditNames = de_gzCreditNames;
+  gzCreditNameTitle = de_gzCreditNameTitle;
+  gzCreditNameFunny = de_gzCreditNameFunny;
+  pUpdatePanelButtons = de_pUpdatePanelButtons;
+  pBullseyeStrings = de_pBullseyeStrings;
+  pContractButtonString = de_pContractButtonString;
+
+  zNewTacticalMessages = de_zNewTacticalMessages;
+  gzIronManModeWarningText = de_gzIronManModeWarningText;
+}

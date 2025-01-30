@@ -16,6 +16,7 @@
 #include "SGP/WCheck.h"
 #include "Utils/Cursors.h"
 #include "Utils/EncryptedFile.h"
+#include "Utils/Text.h"
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"

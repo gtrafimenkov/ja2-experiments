@@ -400,8 +400,8 @@ typedef struct {
   int32_t iXPosition[NUM_INV_HELPTEXT_ENTRIES];
   int32_t iYPosition[NUM_INV_HELPTEXT_ENTRIES];
   int32_t iWidth[NUM_INV_HELPTEXT_ENTRIES];
-  wchar_t *sString1[NUM_INV_HELPTEXT_ENTRIES];
-  wchar_t *sString2[NUM_INV_HELPTEXT_ENTRIES];
+  // wchar_t *sString1[NUM_INV_HELPTEXT_ENTRIES];
+  // wchar_t *sString2[NUM_INV_HELPTEXT_ENTRIES];
 } INV_HELPTEXT;
 
 INV_DESC_STATS gWeaponStats[] = {
@@ -457,8 +457,8 @@ INV_HELPTEXT gItemDescHelpText = {
     {69},   // x locations
     {12},   // y locations
     {170},  // widths
-    {Message[STR_ATTACHMENT_HELP]},
-    {Message[STR_ATTACHMENT_INVALID_HELP]},
+            // {Message[STR_ATTACHMENT_HELP]},
+            // {Message[STR_ATTACHMENT_INVALID_HELP]},
 };
 
 BOOLEAN gfItemDescHelpTextOffset = FALSE;
@@ -2343,13 +2343,11 @@ BOOLEAN InternalInitItemDescriptionBox(struct OBJECTTYPE *pObject, int16_t sX, i
         (ValidAttachment(gpItemPointer->usItem, pObject->usItem) ||
          ValidLaunchable(gpItemPointer->usItem, pObject->usItem) ||
          ValidMerge(gpItemPointer->usItem, pObject->usItem))) {
-      SetUpFastHelpListRegions(gItemDescHelpText.iXPosition, gItemDescHelpText.iYPosition,
-                               gItemDescHelpText.iWidth, gItemDescHelpText.sString1,
-                               NUM_INV_HELPTEXT_ENTRIES);
+      SetUpFastHelpListRegions(gItemDescHelpText.iXPosition[0], gItemDescHelpText.iYPosition[0],
+                               gItemDescHelpText.iWidth[0], Message[STR_ATTACHMENT_HELP]);
     } else {
-      SetUpFastHelpListRegions(gItemDescHelpText.iXPosition, gItemDescHelpText.iYPosition,
-                               gItemDescHelpText.iWidth, gItemDescHelpText.sString2,
-                               NUM_INV_HELPTEXT_ENTRIES);
+      SetUpFastHelpListRegions(gItemDescHelpText.iXPosition[0], gItemDescHelpText.iYPosition[0],
+                               gItemDescHelpText.iWidth[0], Message[STR_ATTACHMENT_INVALID_HELP]);
     }
 
     StartShowingInterfaceFastHelpText();
@@ -5150,7 +5148,9 @@ void ItemDescCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       // Only exit the screen if we are NOT in the money interface.  Only the DONE button should
       // exit the money interface.
       //			if( gpItemDescObject->usItem != MONEY )
-      { DeleteItemDescriptionBox(); }
+      {
+        DeleteItemDescriptionBox();
+      }
     }
   }
 }

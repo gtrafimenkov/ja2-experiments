@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 
+#include "GameRes.h"
 #include "Sector.h"
 #include "Strategic/MapScreenHelicopter.h"
 #include "Strategic/StrategicMap.h"
@@ -16,6 +17,7 @@ TEST(Bugfixes, SectorName) {
   wchar_t buf[100];
 
   InitializeMapStructure();
+  UseTextEnglish();
 
   GetSectorIDString(1, 1, 0, buf, ARR_SIZE(buf), false);
   EXPECT_STREQ(L"A1: Urban", buf);

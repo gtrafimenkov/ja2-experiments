@@ -97,7 +97,6 @@
 #include "Utils/Cursors.h"
 #include "Utils/EventPump.h"
 #include "Utils/FontControl.h"
-#include "Utils/JA25EnglishText.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
 #include "Utils/SoundControl.h"

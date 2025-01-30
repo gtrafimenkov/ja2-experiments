@@ -171,7 +171,6 @@ int32_t iHeightOfInitFastHelpText = 0;
 
 extern int32_t giMapContractButton;
 extern int32_t giCharInfoButton[];
-extern wchar_t *pUpdatePanelButtons[];
 
 // the list of soldiers that are moving
 struct SOLDIERTYPE *pSoldierMovingList[MAX_CHARACTER_COUNT];
@@ -2042,28 +2041,21 @@ void ShutDownUserDefineHelpTextRegions(void) {
 // thsi will setup the fast help text regions that are unrelated to mouse regions
 // user is to pass in the x,y position of the box, the width to wrap the strings and the string
 // itself
-BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition[], int32_t iYPosition[], int32_t iWidth[],
-                                 wchar_t *sString[], int32_t iSize) {
-  int32_t iCounter = 0;
-
+BOOLEAN SetUpFastHelpListRegions(int32_t iXPosition, int32_t iYPosition, int32_t iWidth,
+                                 wchar_t *sString) {
   // reset the size
   giSizeOfInterfaceFastHelpTextList = 0;
 
-  for (iCounter = 0; iCounter < iSize; iCounter++) {
-    // forgiving way of making sure we don't go too far
-    CHECKF(iCounter < MAX_MAPSCREEN_FAST_HELP);
+  // now copy over info
+  pFastHelpMapScreenList[0].iX = iXPosition;
+  pFastHelpMapScreenList[0].iY = iYPosition;
+  pFastHelpMapScreenList[0].iW = iWidth;
 
-    // now copy over info
-    pFastHelpMapScreenList[iCounter].iX = iXPosition[iCounter];
-    pFastHelpMapScreenList[iCounter].iY = iYPosition[iCounter];
-    pFastHelpMapScreenList[iCounter].iW = iWidth[iCounter];
+  // copy string
+  wcscpy(pFastHelpMapScreenList[0].FastHelpText, sString);
 
-    // copy string
-    wcscpy(pFastHelpMapScreenList[iCounter].FastHelpText, sString[iCounter]);
-
-    // update the size
-    giSizeOfInterfaceFastHelpTextList = iCounter + 1;
-  }
+  // update the size
+  giSizeOfInterfaceFastHelpTextList = 1;
 
   return (TRUE);
 }

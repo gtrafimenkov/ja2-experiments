@@ -104,7 +104,6 @@
 #include "Utils/Cursors.h"
 #include "Utils/EventPump.h"
 #include "Utils/FontControl.h"
-#include "Utils/JA25EnglishText.h"
 #include "Utils/Message.h"
 #include "Utils/MultiLanguageGraphicUtils.h"
 #include "Utils/PopUpBox.h"
@@ -619,11 +618,6 @@ extern struct path *pTempHelicopterPath;
 
 extern BOOLEAN gfAutoAIAware;
 extern void HandlePreBattleInterfaceStates();
-
-// the title for the contract button on the character info panel in the upper left portion of the
-// mapscreen
-extern wchar_t *pContractButtonString[];
-extern wchar_t *pBullseyeStrings[];
 
 extern struct OBJECTTYPE *gpItemDescObject;
 
@@ -5303,7 +5297,9 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   }
 
   //	if((!fStationary)||(!fZoomFlag))
-  { GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY); }
+  {
+    GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY);
+  }
 
   // blit in the highlighted sector
   pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);

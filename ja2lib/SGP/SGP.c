@@ -105,6 +105,17 @@ BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params) {
     // Initialize the file database
     InitializeFileDatabase();
     DetectResourcesVersion();
+
+    // always set the english first because localizations may be not complete
+    UseTextEnglish();
+
+    // UseTextFrench();
+    // UseTextGerman();
+    // UseTextRussian();
+    // UseTextPolish();
+    // UseTextItalian();
+    // UseTextDutch();
+
     SelectCorrectTranslationTable();
   }
   InitJA2SplashScreen();

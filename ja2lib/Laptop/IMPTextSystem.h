@@ -14,12 +14,6 @@ void InitializeImpRecordLengthList(void);
 void PrintImpText(void);
 void PrintIMPPersonalityQuizQuestionAndAnsers(void);
 
-// buttons text
-extern wchar_t* pImpButtonText[];
-
-// extra strings not found in IMP Text Document
-extern wchar_t* pExtraIMPStrings[];
-
 enum {
   IMP_HOME_1,
   IMP_HOME_2,

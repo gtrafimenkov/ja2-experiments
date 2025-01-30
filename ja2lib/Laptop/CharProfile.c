@@ -28,6 +28,7 @@
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "Utils/Cursors.h"
+#include "Utils/Text.h"
 
 // BOOLEAN fIMPCompletedFlag = FALSE;
 BOOLEAN fReDrawCharProfile = FALSE;

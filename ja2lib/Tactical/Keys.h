@@ -132,7 +132,6 @@ extern BOOLEAN KeyExistsInInventory(struct SOLDIERTYPE *pSoldier, uint8_t ubKeyI
 extern BOOLEAN KeyExistsInKeyRing(struct SOLDIERTYPE *pSoldier, uint8_t ubKeyID, uint8_t *pubPos);
 extern BOOLEAN SoldierHasKey(struct SOLDIERTYPE *pSoldier, uint8_t ubKeyID);
 
-extern wchar_t *sKeyDescriptionStrings[];
 /**********************************
  * Door utils add by Kris Morness *
  **********************************/

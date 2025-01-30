@@ -12,6 +12,7 @@
 #include "Laptop/Laptop.h"
 #include "SGP/Types.h"
 #include "Utils/EncryptedFile.h"
+#include "Utils/Text.h"
 #include "Utils/WordWrap.h"
 
 #define IMP_SEEK_AMOUNT 5 * 80 * 2

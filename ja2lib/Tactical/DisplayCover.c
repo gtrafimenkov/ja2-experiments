@@ -23,7 +23,6 @@
 #include "TileEngine/TileDef.h"
 #include "TileEngine/WorldMan.h"
 #include "Utils/FontControl.h"
-#include "Utils/JA25EnglishText.h"
 #include "Utils/Message.h"
 #include "Utils/Text.h"
 

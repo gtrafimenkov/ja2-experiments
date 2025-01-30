@@ -23,7 +23,6 @@
 #include "TileEngine/SysUtil.h"
 #include "Utils/Cursors.h"
 #include "Utils/FontControl.h"
-#include "Utils/JA25EnglishText.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"

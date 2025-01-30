@@ -30,4 +30,12 @@ bool UsingRussianGoldResources();
 
 wchar_t GetZeroGlyphChar();
 
+void UseTextEnglish();
+void UseTextFrench();
+void UseTextGerman();
+void UseTextRussian();
+void UseTextPolish();
+void UseTextItalian();
+void UseTextDutch();
+
 #endif JA2_GAME_RES
