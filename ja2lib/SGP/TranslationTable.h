@@ -6,6 +6,8 @@
 #define TranslationTableSize 0x452
 
 /* The code point to glyph map table. */
-extern uint8_t const TranslationTable[TranslationTableSize];
+extern uint8_t const *TranslationTable;
+
+void SelectCorrectTranslationTable();
 
 #endif

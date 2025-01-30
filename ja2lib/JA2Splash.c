@@ -8,7 +8,6 @@
 #include "MainMenuScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
-#include "SGP/LibraryDataBasePub.h"
 #include "SGP/TopicIDs.h"
 #include "SGP/TopicOps.h"
 #include "SGP/VSurface.h"
@@ -22,24 +21,6 @@ uint32_t guiSplashStartTime = 0;
 
 // Simply create videosurface, load image, and draw it to the screen.
 void InitJA2SplashScreen() {
-  char CurrentDir[256];
-  char DataDir[300];
-
-  InitializeJA2Clock();
-  // Get Executable Directory
-  Plat_GetExecutableDirectory(CurrentDir, sizeof(CurrentDir));
-
-  // Adjust Current Dir
-  snprintf(DataDir, ARR_SIZE(DataDir), "%s\\Data", CurrentDir);
-  if (!Plat_SetCurrentDirectory(DataDir)) {
-    DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Could not find data directory, shutting down");
-    return;
-  }
-
-  // Initialize the file database
-  InitializeFileDatabase();
-  DetectResourcesVersion();
-
 #if defined(JA2TESTVERSION)
   if (!UsingEnglishResources()) {
     uint32_t uiLogoID = 0;

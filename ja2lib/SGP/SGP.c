@@ -4,8 +4,11 @@
 
 #include "SGP/SGP.h"
 
+#include <stdio.h>
+
 #include "BuildDefines.h"
 #include "GameLoop.h"
+#include "GameRes.h"
 #include "Globals.h"
 #include "JA2Splash.h"
 #include "Laptop/Laptop.h"
@@ -13,13 +16,16 @@
 #include "SGP/FileMan.h"
 #include "SGP/Font.h"
 #include "SGP/Input.h"
+#include "SGP/LibraryDataBasePub.h"
 #include "SGP/Random.h"
 #include "SGP/SoundMan.h"
 #include "SGP/Timer.h"
+#include "SGP/TranslationTable.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
+#include "Utils/TimerControl.h"
 #include "platform.h"
 
 void SGPExit(void);
@@ -82,6 +88,25 @@ BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params) {
     return FALSE;
   }
 
+  {
+    InitializeJA2Clock();
+
+    char CurrentDir[256];
+    char DataDir[300];
+    Plat_GetExecutableDirectory(CurrentDir, sizeof(CurrentDir));
+
+    // Adjust Current Dir
+    snprintf(DataDir, ARR_SIZE(DataDir), "%s\\Data", CurrentDir);
+    if (!Plat_SetCurrentDirectory(DataDir)) {
+      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Could not find data directory, shutting down");
+      return FALSE;
+    }
+
+    // Initialize the file database
+    InitializeFileDatabase();
+    DetectResourcesVersion();
+    SelectCorrectTranslationTable();
+  }
   InitJA2SplashScreen();
 
   // Make sure we start up our local clock (in milliseconds)
