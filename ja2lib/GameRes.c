@@ -5,19 +5,19 @@
 #include "GameRes.h"
 
 #include "DebugLog.h"
+#include "SGP/FileMan.h"
 #include "SGP/LibraryDataBasePub.h"
+#include "SGP/MemMan.h"
+#include "StrUtils.h"
 
 static enum ResourceVersion _resType = RT_ENGLISH;
 
 void DetectResourcesVersion() {
-  // autodetection for french resources is not implemented; it is forced by
-  // compilation flag at the moment
-#ifdef FRENCH
-  _resType = RT_FRENCH;
-  return;
-#endif
-
-  if (IsLibraryOpened("russian.slf")) {
+  SHA256STR hashstr;
+  if (FileMan_CalcSHA256("loadscreens\\titletext.sti", hashstr) &&
+      strequal(hashstr, "6e901685639cdc1e2563fa6587204312605e920c195e3603c4d88a1391486d68")) {
+    _resType = RT_FRENCH;
+  } else if (IsLibraryOpened("russian.slf")) {
     _resType = RT_RUSSIAN_BUKA;
   } else if (IsLibraryOpened("german.slf")) {
     _resType = RT_GERMAN;

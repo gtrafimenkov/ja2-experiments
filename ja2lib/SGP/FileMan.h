@@ -6,6 +6,7 @@
 #define __FILEMAN_H
 
 #include "SGP/Types.h"
+#include "sha256.h"
 
 #define FILE_ACCESS_READ 0x01
 #define FILE_ACCESS_WRITE 0x02
@@ -46,8 +47,11 @@ extern uint32_t FileMan_Size(char* strFilename);
 
 BOOLEAN FileMan_GetFileWriteTime(HWFILE hFile, uint64_t* pLastWriteTime);
 
-/////////////////////////////////////////////////////////////////////////////////
-//
-/////////////////////////////////////////////////////////////////////////////////
+// Allocate necessary memory and read complete file.
+// If function returns true, then the file was read successfully and memory must be deallocated with
+// MemFree.
+bool FileMan_AllocReadFullFile(char* filename, void** data, uint32_t* size);
+
+bool FileMan_CalcSHA256(char* filename, SHA256STR strhash);
 
 #endif

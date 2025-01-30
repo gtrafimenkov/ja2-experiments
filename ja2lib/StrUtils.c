@@ -12,3 +12,5 @@ void strcopy(char *dest, size_t destSize, const char *src) {
     dest[destSize - 1] = 0;
   }
 }
+
+bool strequal(const char *str1, const char *str2) { return strcmp(str1, str2) == 0; }
