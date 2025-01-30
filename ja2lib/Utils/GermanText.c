@@ -113,11 +113,11 @@ address problems as SirTech uses the "@@@" notation.
 
 */
 
-uint16_t ItemNames[MAXITEMS][80] = {
+wchar_t ItemNames[MAXITEMS][80] = {
     L"",
 };
 
-uint16_t ShortItemNames[MAXITEMS][80] = {
+wchar_t ShortItemNames[MAXITEMS][80] = {
     L"",
 };
 
@@ -126,7 +126,7 @@ uint16_t ShortItemNames[MAXITEMS][80] = {
 // NATO is the North Atlantic Treaty Organization
 // WP is Warsaw Pact
 // cal is an abbreviation for calibre
-uint16_t AmmoCaliber[][20] = {
+wchar_t AmmoCaliber[][20] = {
     L"0",         L".38 Kal", L"9mm",    L".45 Kal", L".357 Kal",
     L"12 Kal",    L"CAWS",    L"5.45mm", L"5.56mm",  L"7.62mm NATO",
     L"7.62mm WP", L"4.7mm",   L"5.7mm",  L"Monster", L"Rakete",
@@ -141,14 +141,14 @@ uint16_t AmmoCaliber[][20] = {
 // NATO is the North Atlantic Treaty Organization
 // WP is Warsaw Pact
 // cal is an abbreviation for calibre
-uint16_t BobbyRayAmmoCaliber[][20] = {
+wchar_t BobbyRayAmmoCaliber[][20] = {
     L"0",         L".38 Kal", L"9mm",    L".45 Kal", L".357 Kal",
     L"12 Kal",    L"CAWS",    L"5.45mm", L"5.56mm",  L"7.62mm N.",
     L"7.62mm WP", L"4.7mm",   L"5.7mm",  L"Monster", L"Rakete",
     L"",  // dart
 };
 
-uint16_t WeaponType[][30] = {
+wchar_t WeaponType[][30] = {
     L"Andere",           L"Pistole",
     L"Maschinenpistole", L"Schwere Maschinenpistole",
     L"Gewehr",           L"Scharfschützengewehr",
@@ -156,13 +156,13 @@ uint16_t WeaponType[][30] = {
     L"Schrotflinte",
 };
 
-uint16_t TeamTurnString[][STRING_LENGTH] = {
+wchar_t TeamTurnString[][STRING_LENGTH] = {
     L"Spielzug Spieler", L"Spielzug Gegner",     L"Spielzug Monster",
     L"Spielzug Miliz",   L"Spielzug Zivilisten",
     // planning turn
 };
 
-uint16_t Message[][STRING_LENGTH] = {
+wchar_t Message[][STRING_LENGTH] = {
     L"",
 
     // In the following 8 strings, the %s is the merc's name, and the %d (if any) is a number.
@@ -777,7 +777,7 @@ wchar_t* sKeyDescriptionStrings[2] = {
 };
 
 // The headers used to describe various weapon statistics.
-int16_t gWeaponStatsDesc[][14] =  // USED TO BE 13
+wchar_t gWeaponStatsDesc[][14] =  // USED TO BE 13
     {
         L"Gew. (%s):",  // weight
         L"Status:",
@@ -789,7 +789,7 @@ int16_t gWeaponStatsDesc[][14] =  // USED TO BE 13
 };
 
 // The headers used for the merc's money.
-int16_t gMoneyStatsDesc[][13] = {
+wchar_t gMoneyStatsDesc[][13] = {
     L"Betrag",
     L"Verbleibend:",  // this is the overall balance
     L"Betrag",
@@ -803,7 +803,7 @@ int16_t gMoneyStatsDesc[][13] = {
 
 // The health of various creatures, enemies, characters in the game. The numbers following each are
 // for comment only, but represent the precentage of points remaining.
-uint16_t zHealthStr[][13] =  // used to be 10
+wchar_t zHealthStr[][13] =  // used to be 10
     {
         L"STIRBT",     //	>= 0
         L"KRITISCH",   //	>= 15
@@ -819,16 +819,16 @@ wchar_t* gzMoneyAmounts[6] = {
 };
 
 // short words meaning "Advantages" for "Pros" and "Disadvantages" for "Cons."
-int16_t gzProsLabel[10] = {
+wchar_t gzProsLabel[10] = {
     L"Pro:",
 };
 
-int16_t gzConsLabel[10] = {
+wchar_t gzConsLabel[10] = {
     L"Kontra:",
 };
 
 // Conversation options a player has when encountering an NPC
-uint16_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
+wchar_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
     L"Wie bitte?",  // meaning "Repeat yourself"
     L"Freundlich",  // approach in a friendly
     L"Direkt",      // approach directly - let's get down to business
@@ -838,14 +838,14 @@ uint16_t zTalkMenuStrings[6][SMALL_STRING_LENGTH] = {
 
 // Some NPCs buy, sell or repair items. These different options are available for those NPCs as
 // well.
-uint16_t zDealerStrings[4][SMALL_STRING_LENGTH] = {
+wchar_t zDealerStrings[4][SMALL_STRING_LENGTH] = {
     L"Handeln",
     L"Kaufen",
     L"Verkaufen",
     L"Reparieren",
 };
 
-uint16_t zDialogActions[1][SMALL_STRING_LENGTH] = {
+wchar_t zDialogActions[1][SMALL_STRING_LENGTH] = {
     L"Fertig",
 };
 
@@ -871,7 +871,7 @@ wchar_t* zVehicleName[] = {
 };
 
 // These are messages Used in the Tactical Screen
-uint16_t TacticalStr[][MED_STRING_LENGTH] = {
+wchar_t TacticalStr[][MED_STRING_LENGTH] = {
     L"Luftangriff", L"Automatisch Erste Hilfe leisten?",
 
     // CAMFIELD NUKE THIS and add quote #66.
@@ -1906,7 +1906,7 @@ wchar_t* pUpdatePanelButtons[] = {
 };
 
 // Text which appears when everyone on your team is incapacitated and incapable of battle
-uint16_t LargeTacticalStr[][LARGE_STRING_LENGTH] = {
+wchar_t LargeTacticalStr[][LARGE_STRING_LENGTH] = {
     L"Sie sind in diesem Sektor geschlagen worden!",
     L"Der Feind hat kein Erbarmen mit den Seelen Ihrer Teammitglieder und verschlingt jeden "
     L"einzelnen.",
@@ -2918,7 +2918,7 @@ wchar_t* pMessageStrings[] = {
 #endif
 };
 
-uint16_t ItemPickupHelpPopup[][40] = {
+wchar_t ItemPickupHelpPopup[][40] = {
     L"OK", L"Hochscrollen", L"Alle auswählen", L"Runterscrollen", L"Abbrechen",
 };
 

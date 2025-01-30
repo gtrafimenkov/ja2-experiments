@@ -17,19 +17,23 @@ Commands:
   build-debug           - build debug version
   build-release         - build release version
   build-release-ru      - build release version for Russian game resources
-  build-release-ru      - build release version for French game resources
+  build-release-fr      - build release version for French game resources
+  build-release-gr      - build release version for German game resources
   format-modified       - format modified files using clang-format
   format-all            - format all sources
   copy-dlls             - copy dlls necessary to run the game
   copy-dlls-ru          - copy dlls necessary to run the game
   copy-dlls-fr          - copy dlls necessary to run the game
+  copy-dlls-gr          - copy dlls necessary to run the game
   copy-data             - find and copy game data to the debug build localtion
   copy-data-ru          - find and copy game data to Russian version
   copy-data-fr          - find and copy game data to French version
+  copy-data-gr          - find and copy game data to German version
   clean                 - cleanup repository from all unwanted files
   run                   - run release build
   run-ru                - run Russian release build
   run-fr                - run French release build
+  run-gr                - run German release build
   test                  - run unit test
 
 Examples:
@@ -103,6 +107,10 @@ def find_ja2_data_files(lang):
         try_dirs = [
             "../ja2-collection/french/Data",
         ]
+    elif lang == "GERMAN":
+        try_dirs = [
+            "../ja2-collection/german/Data",
+        ]
     for d in try_dirs:
         if os.path.isdir(d):
             return d
@@ -166,6 +174,8 @@ def get_build_dir(release, lang):
         suffix = "-ru"
     elif lang == "FRENCH":
         suffix = "-fr"
+    elif lang == "GERMAN":
+        suffix = "-gr"
     if release:
         return "build-release" + suffix
     else:
@@ -235,6 +245,12 @@ def run_command(command):
         subprocess.run(get_configure_build_command(is_release, lang), check=True)
         subprocess.run(get_build_command(is_release, lang), check=True)
 
+    elif command in ["build-release-gr"]:
+        is_release = True
+        lang = "GERMAN"
+        subprocess.run(get_configure_build_command(is_release, lang), check=True)
+        subprocess.run(get_build_command(is_release, lang), check=True)
+
     elif command == "clean":
         subprocess.run(["git", "clean", "-fdx"], check=True)
 
@@ -246,6 +262,9 @@ def run_command(command):
 
     elif command == "copy-dlls-fr":
         copy_dlls(get_release_build_location(lang="FRENCH"))
+
+    elif command == "copy-dlls-gr":
+        copy_dlls(get_release_build_location(lang="GERMAN"))
 
     elif command == "copy-data":
         dest_dir = os.path.join(get_release_build_location(lang="ENGLISH"), "data")
@@ -260,6 +279,11 @@ def run_command(command):
     elif command == "copy-data-fr":
         dest_dir = os.path.join(get_release_build_location(lang="FRENCH"), "data")
         if not copy_ja2_data_files(dest_dir, lang="FRENCH"):
+            sys.exit(10)
+
+    elif command == "copy-data-gr":
+        dest_dir = os.path.join(get_release_build_location(lang="GERMAN"), "data")
+        if not copy_ja2_data_files(dest_dir, lang="GERMAN"):
             sys.exit(10)
 
     elif command == "format-modified":
@@ -285,6 +309,9 @@ def run_command(command):
 
     elif command == "run-fr":
         subprocess.run([get_release_build_exe(lang="FRENCH")])
+
+    elif command == "run-gr":
+        subprocess.run([get_release_build_exe(lang="GERMAN")])
 
     elif command == "test":
         subprocess.run([get_release_test_exe(lang="ENGLISH")], check=True)

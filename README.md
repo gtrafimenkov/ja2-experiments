@@ -46,6 +46,12 @@ French version:
 python xx.py build-release-fr copy-dlls-fr copy-data-fr run-fr
 ```
 
+German version:
+
+```
+python xx.py build-release-gr copy-dlls-gr copy-data-gr run-gr
+```
+
 ## How to play the game
 
 - install the original version of the game (from the original game CDs, Steam, gog.com, etc.)
