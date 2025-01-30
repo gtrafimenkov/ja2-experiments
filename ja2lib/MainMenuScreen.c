@@ -99,13 +99,7 @@ BOOLEAN CreateDestroyMainMenuButtons(BOOLEAN fCreate);
 void RenderMainMenu();
 void RestoreButtonBackGrounds();
 
-uint32_t MainMenuScreenInit() {
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Version Label: %S", zBuildInfo));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Version #:     %s", czVersionNumber));
-  DebugMsg(TOPIC_JA2, DBG_LEVEL_3, String("Tracking #:    %S", zTrackingNumber));
-
-  return (TRUE);
-}
+uint32_t MainMenuScreenInit() { return (TRUE); }
 
 uint32_t MainMenuScreenHandle() {
   uint32_t cnt;
@@ -287,7 +281,9 @@ void ExitMainMenu() {
   //*pDestBuf;
 
   //	if( !gfDoHelpScreen )
-  { CreateDestroyBackGroundMouseMask(FALSE); }
+  {
+    CreateDestroyBackGroundMouseMask(FALSE);
+  }
 
   CreateDestroyMainMenuButtons(FALSE);
 

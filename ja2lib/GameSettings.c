@@ -219,8 +219,8 @@ void InitGameOptions() {
 
 void DisplayGameSettings() {
   // Display the version number
-  ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"%s: %s", pMessageStrings[MSG_VERSION],
-            zBuildInfo);
+  ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"%s: %S", pMessageStrings[MSG_VERSION],
+            GetGameVersionStr());
 
   // Display the difficulty level
   ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, L"%s: %s", gzGIOScreenText[GIO_DIF_LEVEL_TEXT],

@@ -7,11 +7,12 @@
 
 #include "SGP/Types.h"
 
+const char *GetGameVersionStr();
+
 //
 //	Keeps track of the game version
 //
 
-extern const wchar_t* zBuildInfo;
 extern char czVersionNumber[16];
 extern wchar_t zTrackingNumber[16];
 

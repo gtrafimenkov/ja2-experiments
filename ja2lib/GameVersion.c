@@ -4,22 +4,20 @@
 
 #include "GameVersion.h"
 
+#include <stdio.h>
+
 #include "BuildInfo.h"
+#include "GameRes.h"
 #include "SGP/Types.h"
 
-//
-//	Keeps track of the game version
-//
+const char *GetGameVersionStr() {
+  static char version[100];
+  snprintf(version, 100, "JA2 Vanilla (%s), %s game data", BUILD_INFO, GetResourceVersionStr());
+  return version;
+}
 
-const wchar_t* zBuildInfo = L"JA2 Vanilla (" BUILD_INFO ")";
-
-// RELEASE BUILD VERSION
 char czVersionNumber[16] = {"Build 04.12.02"};
 wchar_t zTrackingNumber[16] = {L"Z"};
-
-//
-//		Keeps track of the saved game version.  Increment the saved game version whenever
-//	you will invalidate the saved game file
 
 #define SAVE_GAME_VERSION 99
 

@@ -9,6 +9,7 @@
 #include <time.h>
 #include <wchar.h>
 
+#include "BuildInfo.h"
 #include "Editor/EditScreen.h"
 #include "FadeScreen.h"
 #include "GameLoop.h"
@@ -294,7 +295,7 @@ uint32_t InitScreenHandle(void) {
     SetFontBackground(FONT_MCOLOR_BLACK);
     SetFontForeground(FONT_MCOLOR_WHITE);
 
-    mprintf(10, 430, L"%s", zBuildInfo);
+    mprintf(10, 430, L"%S", GetGameVersionStr());
 
 #ifdef _DEBUG
     mprintf(10, 440, L"struct SOLDIERTYPE: %d bytes", sizeof(struct SOLDIERTYPE));
