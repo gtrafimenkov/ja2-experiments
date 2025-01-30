@@ -1508,7 +1508,8 @@ char *GetDialogueDataFilename(uint8_t ubCharacterNum, uint16_t usQuoteNum, BOOLE
   } else {
     if (fWavFile) {
       // build name of wav file (characternum + quotenum)
-      if (UsingRussianBukaResources() && ubCharacterNum >= FIRST_RPC &&
+      if ((UsingRussianBukaResources() || UsingRussianGoldResources()) &&
+          ubCharacterNum >= FIRST_RPC &&
           gMercProfiles[ubCharacterNum].ubMiscFlags & PROFILE_MISC_FLAG_RECRUITED) {
         sprintf(zFileName, "SPEECH\\r_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
       } else {

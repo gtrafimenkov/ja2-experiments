@@ -10,7 +10,8 @@
 #include "SGP/Types.h"
 
 BOOLEAN GetMLGFilename(SGPFILENAME filename, uint16_t usMLGGraphicID) {
-  bool stdFileNames = UsingEnglishResources() || UsingFrenchResources();
+  bool stdFileNames =
+      UsingEnglishResources() || UsingFrenchResources() || UsingRussianGoldResources();
 
 #if defined(TAIWANESE)
   stdFileNames = true;

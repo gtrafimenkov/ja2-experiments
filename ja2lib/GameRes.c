@@ -12,11 +12,17 @@
 
 static enum ResourceVersion _resType = RT_ENGLISH;
 
+#define TITLETEXT_HASH_FRENCH "6e901685639cdc1e2563fa6587204312605e920c195e3603c4d88a1391486d68"
+#define TITLETEXT_HASH_RU_GOLD "23bcf8a5e3fc64c730acd15b63b807b8a6cd3f11a7d107ec670f308e4d867623"
+
 void DetectResourcesVersion() {
-  SHA256STR hashstr;
-  if (FileMan_CalcSHA256("loadscreens\\titletext.sti", hashstr) &&
-      strequal(hashstr, "6e901685639cdc1e2563fa6587204312605e920c195e3603c4d88a1391486d68")) {
+  // Using hash of the image with main menu buttons to detect exactly the kind of game resources.
+  SHA256STR hashstr = "";
+  FileMan_CalcSHA256("loadscreens\\titletext.sti", hashstr);
+  if (strequal(hashstr, TITLETEXT_HASH_FRENCH)) {
     _resType = RT_FRENCH;
+  } else if (strequal(hashstr, TITLETEXT_HASH_RU_GOLD)) {
+    _resType = RT_RUSSIAN_GOLD;
   } else if (IsLibraryOpened("russian.slf")) {
     _resType = RT_RUSSIAN_BUKA;
   } else if (IsLibraryOpened("german.slf")) {
@@ -30,18 +36,33 @@ void DetectResourcesVersion() {
   } else {
     _resType = RT_ENGLISH;
   }
-  DebugLogF("Detect resources type: %d", _resType);
-
-  // Library files that can be used to detect resource type:
-  //   german.slf, IMPSYMBOL_GERMAN.PCX
-  //   russian.slf, IMPSYMBOL_RUSSIAN.PCX
-  //
-  //   english, french and russian gold have the same file names inside of laptop.slf
-  //   For resource type detection, it is better to check hash of some files, e.g hash of
-  //   laptop/impsymbol.sti
+  DebugLogF("Detect resources type: %s", GetResourceVersionStr());
 }
 
 enum ResourceVersion GetResourceVersion() { return _resType; }
+
+const char *GetResourceVersionStr() {
+  switch (_resType) {
+    case RT_ENGLISH:
+      return "English";
+    case RT_FRENCH:
+      return "French";
+    case RT_GERMAN:
+      return "German";
+    case RT_POLISH:
+      return "Polish";
+    case RT_DUTCH:
+      return "Dutch";
+    case RT_ITALIAN:
+      return "Italian";
+    case RT_RUSSIAN_BUKA:
+      return "Russian Buka";
+    case RT_RUSSIAN_GOLD:
+      return "Russian Gold";
+    default:
+      return "Unknown";
+  }
+}
 
 bool UsingEnglishResources() { return _resType == RT_ENGLISH; }
 bool UsingFrenchResources() { return _resType == RT_FRENCH; }

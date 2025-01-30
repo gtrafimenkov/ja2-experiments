@@ -22,6 +22,7 @@ enum ResourceVersion {
 
 void DetectResourcesVersion();
 enum ResourceVersion GetResourceVersion();
+const char *GetResourceVersionStr();
 
 bool UsingEnglishResources();
 bool UsingFrenchResources();
