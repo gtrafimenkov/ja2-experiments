@@ -2379,16 +2379,6 @@ BOOLEAN LoadSoldierStructure(HWFILE hFile) {
         }
       }
 
-#ifdef GERMAN
-      // Fix neutral flags
-      if (guiSaveGameVersion < 94) {
-        if (Menptr[cnt].bTeam == OUR_TEAM && Menptr[cnt].bNeutral &&
-            Menptr[cnt].bAssignment != ASSIGNMENT_POW) {
-          // turn off neutral flag
-          Menptr[cnt].bNeutral = FALSE;
-        }
-      }
-#endif
       // JA2Gold: fix next-to-previous attacker value
       if (guiSaveGameVersion < 99) {
         Menptr[cnt].ubNextToPreviousAttackerID = NOBODY;
@@ -4147,10 +4137,6 @@ uint32_t CalcJA2EncryptionSet(SAVED_GAME_HEADER *pSaveGameHeader) {
       }
     }
   }
-
-#ifdef GERMAN
-  uiEncryptionSet *= 11;
-#endif
 
   uiEncryptionSet = uiEncryptionSet % 10;
 

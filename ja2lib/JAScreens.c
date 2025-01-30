@@ -722,41 +722,6 @@ void DoneFadeOutForDemoExitScreen(void) { gfProgramIsRunning = FALSE; }
 
 extern int8_t gbFadeSpeed;
 
-#ifdef GERMAN
-void DisplayTopwareGermanyAddress() {
-  VOBJECT_DESC vo_desc;
-  uint32_t uiTempID;
-  uint8_t *pDestBuf;
-  uint32_t uiDestPitchBYTES;
-  SGPRect ClipRect;
-
-  // bring up the Topware address screen
-  vo_desc.fCreateFlags = VOBJECT_CREATE_FROMFILE;
-  sprintf(vo_desc.ImageFile, "German\\topware_germany.sti");
-  if (!AddVideoObject(&vo_desc, &uiTempID)) {
-    AssertMsg(0, "Failed to load German\\topware_germany.sti");
-    return;
-  }
-
-  // Shade out a background piece to emphasize the German address.
-  ClipRect.iLeft = 208;
-  ClipRect.iRight = 431;
-  ClipRect.iTop = 390;
-  ClipRect.iBottom = 475;
-  pDestBuf = LockVideoSurface(FRAME_BUFFER, &uiDestPitchBYTES);
-  Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnLockVideoSurface(FRAME_BUFFER);
-
-  // Draw the anti-aliased address now.
-  BltVideoObjectFromIndex(FRAME_BUFFER, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
-  BltVideoObjectFromIndex(FRAME_BUFFER, uiTempID, 0, 218, 400, VO_BLT_SRCTRANSPARENCY, NULL);
-  InvalidateRegion(208, 390, 431, 475);
-  DeleteVideoObjectFromIndex(uiTempID);
-  ExecuteBaseDirtyRectQueue();
-  EndFrameBufferRender();
-}
-#endif
-
 uint32_t DemoExitScreenHandle(void) {
   gfProgramIsRunning = FALSE;
   return (DEMO_EXIT_SCREEN);

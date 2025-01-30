@@ -585,9 +585,6 @@ extern void ClearHistoryList(void);
 #ifdef JA2TESTVERSION
 extern void CheatToGetAll5Merc();
 #endif
-#if defined(JA2TESTVERSION)
-extern void DemoHiringOfMercs();
-#endif
 
 void SetLaptopExitScreen(uint32_t uiExitScreen) { guiExitScreen = uiExitScreen; }
 
@@ -4651,12 +4648,6 @@ void HandleKeyBoardShortCutsForLapTop(uint16_t usEvent, uint32_t usParam, uint16
       if ((usEvent == KEY_DOWN) && ((usParam == 'h') || (usParam == 'H'))) {
     ShouldTheHelpScreenComeUp(HELP_SCREEN_LAPTOP, TRUE);
   }
-#if defined(JA2TESTVERSION)
-  else if ((usEvent == KEY_DOWN) && (usParam == 'w')) {
-    DemoHiringOfMercs();
-  }
-#endif
-
 #ifdef JA2BETAVERSION
   // adding all emails
   else if ((usEvent == KEY_DOWN) && (usParam == 'e')) {

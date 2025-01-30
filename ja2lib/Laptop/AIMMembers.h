@@ -34,8 +34,4 @@ extern uint8_t gubVideoConferencingMode;
 void TempHiringOfMercs(uint8_t ubNumberOfMercs, BOOLEAN fReset);
 #endif
 
-#if defined(JA2TESTVERSION)
-void DemoHiringOfMercs();
-#endif
-
 #endif

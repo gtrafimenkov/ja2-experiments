@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "GameRes.h"
 #include "LanguageDefines.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -807,7 +808,9 @@ BOOLEAN HandleOpenableStruct(struct SOLDIERTYPE *pSoldier, int16_t sGridNo,
 
   // Deduct points!
   // if ( fDoor )
-  { DeductPoints(pSoldier, sAPCost, sBPCost); }
+  {
+    DeductPoints(pSoldier, sAPCost, sBPCost);
+  }
 
   return (fHandleDoor);
 }
@@ -1150,19 +1153,30 @@ void SetDoorString(int16_t sGridNo) {
 
   // ATE: If here, we try to say, opened or closed...
   if (gfUIIntTileLocation2 == FALSE) {
-#ifdef GERMAN
+    if (UsingGermanResources()) {
+      wcscpy(gzIntTileLocation2, TacticalStr[DOOR_DOOR_MOUSE_DESCRIPTION]);
+      gfUIIntTileLocation2 = TRUE;
 
-    wcscpy(gzIntTileLocation2, TacticalStr[DOOR_DOOR_MOUSE_DESCRIPTION]);
-    gfUIIntTileLocation2 = TRUE;
-
-    // Try to get doors status here...
-    pDoorStatus = GetDoorStatus(sGridNo);
-    if (pDoorStatus == NULL ||
-        (pDoorStatus != NULL && pDoorStatus->ubFlags & DOOR_PERCEIVED_NOTSET)) {
-      // OK, get status based on graphic.....
-      pStructure = FindStructure(sGridNo, STRUCTURE_ANYDOOR);
-      if (pStructure) {
-        if (pStructure->fFlags & STRUCTURE_OPEN) {
+      // Try to get doors status here...
+      pDoorStatus = GetDoorStatus(sGridNo);
+      if (pDoorStatus == NULL ||
+          (pDoorStatus != NULL && pDoorStatus->ubFlags & DOOR_PERCEIVED_NOTSET)) {
+        // OK, get status based on graphic.....
+        pStructure = FindStructure(sGridNo, STRUCTURE_ANYDOOR);
+        if (pStructure) {
+          if (pStructure->fFlags & STRUCTURE_OPEN) {
+            // Door is opened....
+            wcscpy(gzIntTileLocation, pMessageStrings[MSG_OPENED]);
+            gfUIIntTileLocation = TRUE;
+          } else {
+            // Door is closed
+            wcscpy(gzIntTileLocation, pMessageStrings[MSG_CLOSED]);
+            gfUIIntTileLocation = TRUE;
+          }
+        }
+      } else {
+        // Use percived value
+        if (pDoorStatus->ubFlags & DOOR_PERCEIVED_OPEN) {
           // Door is opened....
           wcscpy(gzIntTileLocation, pMessageStrings[MSG_OPENED]);
           gfUIIntTileLocation = TRUE;
@@ -1173,27 +1187,26 @@ void SetDoorString(int16_t sGridNo) {
         }
       }
     } else {
-      // Use percived value
-      if (pDoorStatus->ubFlags & DOOR_PERCEIVED_OPEN) {
-        // Door is opened....
-        wcscpy(gzIntTileLocation, pMessageStrings[MSG_OPENED]);
-        gfUIIntTileLocation = TRUE;
+      // Try to get doors status here...
+      pDoorStatus = GetDoorStatus(sGridNo);
+      if (pDoorStatus == NULL ||
+          (pDoorStatus != NULL && pDoorStatus->ubFlags & DOOR_PERCEIVED_NOTSET)) {
+        // OK, get status based on graphic.....
+        pStructure = FindStructure(sGridNo, STRUCTURE_ANYDOOR);
+        if (pStructure) {
+          if (pStructure->fFlags & STRUCTURE_OPEN) {
+            // Door is opened....
+            wcscpy(gzIntTileLocation2, pMessageStrings[MSG_OPENED]);
+            gfUIIntTileLocation2 = TRUE;
+          } else {
+            // Door is closed
+            wcscpy(gzIntTileLocation2, pMessageStrings[MSG_CLOSED]);
+            gfUIIntTileLocation2 = TRUE;
+          }
+        }
       } else {
-        // Door is closed
-        wcscpy(gzIntTileLocation, pMessageStrings[MSG_CLOSED]);
-        gfUIIntTileLocation = TRUE;
-      }
-    }
-#else
-
-    // Try to get doors status here...
-    pDoorStatus = GetDoorStatus(sGridNo);
-    if (pDoorStatus == NULL ||
-        (pDoorStatus != NULL && pDoorStatus->ubFlags & DOOR_PERCEIVED_NOTSET)) {
-      // OK, get status based on graphic.....
-      pStructure = FindStructure(sGridNo, STRUCTURE_ANYDOOR);
-      if (pStructure) {
-        if (pStructure->fFlags & STRUCTURE_OPEN) {
+        // Use percived value
+        if (pDoorStatus->ubFlags & DOOR_PERCEIVED_OPEN) {
           // Door is opened....
           wcscpy(gzIntTileLocation2, pMessageStrings[MSG_OPENED]);
           gfUIIntTileLocation2 = TRUE;
@@ -1203,19 +1216,6 @@ void SetDoorString(int16_t sGridNo) {
           gfUIIntTileLocation2 = TRUE;
         }
       }
-    } else {
-      // Use percived value
-      if (pDoorStatus->ubFlags & DOOR_PERCEIVED_OPEN) {
-        // Door is opened....
-        wcscpy(gzIntTileLocation2, pMessageStrings[MSG_OPENED]);
-        gfUIIntTileLocation2 = TRUE;
-      } else {
-        // Door is closed
-        wcscpy(gzIntTileLocation2, pMessageStrings[MSG_CLOSED]);
-        gfUIIntTileLocation2 = TRUE;
-      }
     }
-
-#endif
   }
 }

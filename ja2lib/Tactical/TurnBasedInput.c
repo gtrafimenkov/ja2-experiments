@@ -1826,28 +1826,13 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
           break;
 
         case 'a':
-
           if (fCtrl) {
-#ifdef GERMAN
-            if (gubCheatLevel == 3) {
-              gubCheatLevel++;
-              fGoodCheatLevelKey = TRUE;
-            } else if (gubCheatLevel == 5) {
-              gubCheatLevel++;
-              // ATE; We're done.... start cheat mode....
-              ScreenMsg(FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, pMessageStrings[MSG_CHEAT_LEVEL_TWO]);
-              SetHistoryFact(HISTORY_CHEAT_ENABLED, 0, GetWorldTotalMin(), -1, -1);
-            } else {
-              RESET_CHEAT_LEVEL();
-            }
-#else
             if (gubCheatLevel == 1) {
               gubCheatLevel++;
               fGoodCheatLevelKey = TRUE;
             } else {
               RESET_CHEAT_LEVEL();
             }
-#endif
           } else if (fAlt) {
 #ifdef JA2TESTVERSION
             //	ToggleMercsNeverQuit();
@@ -1889,7 +1874,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               *puiNewEvent = I_NEW_BADMERC;
             }
           } else if (fCtrl) {
-#ifndef GERMAN
             if (gubCheatLevel == 2) {
               gubCheatLevel++;
               fGoodCheatLevelKey = TRUE;
@@ -1902,14 +1886,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
             } else {
               RESET_CHEAT_LEVEL();
             }
-#else
-            if (gubCheatLevel == 6) {
-              gubCheatLevel++;
-              fGoodCheatLevelKey = TRUE;
-            } else {
-              RESET_CHEAT_LEVEL();
-            }
-#endif
             // gGameSettings.fOptions[ TOPTION_HIDE_BULLETS ] ^= TRUE;
           } else {
             // nothing in hand and either not in SM panel, or the matching button is enabled if we
@@ -2043,21 +2019,12 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
         case 'g':
 
           if (fCtrl) {
-#ifdef GERMAN
-            if (gubCheatLevel == 1) {
-              gubCheatLevel++;
-              fGoodCheatLevelKey = TRUE;
-            } else {
-              RESET_CHEAT_LEVEL();
-            }
-#else
             if (gubCheatLevel == 0) {
               gubCheatLevel++;
               fGoodCheatLevelKey = TRUE;
             } else {
               RESET_CHEAT_LEVEL();
             }
-#endif
           } else if (fAlt) {
             if (CHEATER_CHEAT_LEVEL()) {
               *puiNewEvent = I_NEW_MERC;
@@ -2092,12 +2059,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               CreateRandomItem();
             }
           } else if (fCtrl) {
-#ifdef GERMAN
-            if (gubCheatLevel == 0) {
-              fGoodCheatLevelKey = TRUE;
-              gubCheatLevel++;
-            }
-#else
             if (gubCheatLevel == 4) {
               gubCheatLevel++;
               fGoodCheatLevelKey = TRUE;
@@ -2107,7 +2068,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
             } else {
               RESET_CHEAT_LEVEL();
             }
-#endif
           } else {
             if (gGameSettings.fOptions[TOPTION_GLOW_ITEMS]) {
               gGameSettings.fOptions[TOPTION_GLOW_ITEMS] = FALSE;
@@ -2302,34 +2262,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
               }
             }
           } else if (fCtrl) {
-#ifdef GERMAN
-            if (gubCheatLevel == 4) {
-              fGoodCheatLevelKey = TRUE;
-              gubCheatLevel++;
-#if 0
-							// ATE: Level one reached.....
-							ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_INTERFACE, pMessageStrings[ MSG_CHEAT_LEVEL_ONE ] );
-#endif
-            } else {
-              RESET_CHEAT_LEVEL();
-            }
-#endif
-
-#if 0
-						if ( INFORMATION_CHEAT_LEVEL( ) )
-						{
-							if( gfUIShowCurIntTile ^= TRUE )
-							{
-								ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_TESTVERSION, L"Turning Enhanced mouse detection ON." );
-								gubIntTileCheckFlags	  = INTILE_CHECK_FULL;
-							}
-							else
-							{
-								ScreenMsg( FONT_MCOLOR_LTYELLOW, MSG_TESTVERSION, L"Turning Enhanced mouse detection OFF." );
-								gubIntTileCheckFlags	  = INTILE_CHECK_SELECTIVE;
-							}
-						}
-#endif
           } else if (!CycleSoldierFindStack(usMapPos))  // Are we over a merc stack?
             CycleIntTileFindStack(usMapPos);  // If not, now check if we are over a struct stack
           break;
@@ -2504,15 +2436,6 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
           } else if (fCtrl) {
             int32_t cnt;
             struct SOLDIERTYPE *pSoldier;
-
-#ifdef GERMAN
-            if (gubCheatLevel == 2) {
-              fGoodCheatLevelKey = TRUE;
-              gubCheatLevel++;
-            } else {
-              RESET_CHEAT_LEVEL();
-            }
-#endif
 
             if (CHEATER_CHEAT_LEVEL() && gusSelectedSoldier != NOBODY) {
               for (pSoldier = MercPtrs[gbPlayerNum], cnt = 0;
@@ -2722,15 +2645,9 @@ void GetKeyboardInput(uint32_t *puiNewEvent) {
           break;
       }
 
-#ifdef GERMAN
-      if (!fGoodCheatLevelKey && gubCheatLevel < 5) {
-        RESET_CHEAT_LEVEL();
-      }
-#else
       if (!fGoodCheatLevelKey && gubCheatLevel < 4) {
         RESET_CHEAT_LEVEL();
       }
-#endif
     }
   }
 }

@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+#include "GameRes.h"
 #include "GameSettings.h"
 #include "LanguageDefines.h"
 #include "Laptop/AIM.h"
@@ -3873,65 +3874,6 @@ VO_BLT_SRCTRANSPARENCY, &SrcRect, &DestRect ) ) return(FALSE);
 }
 */
 
-#if defined(JA2TESTVERSION)
-
-void DemoHiringOfMercs() {
-  int16_t i;
-#ifdef GERMAN
-  uint8_t MercID[] = {7, 10, 4, 14, 50};
-#else
-  uint8_t MercID[] = {7, 10, 4, 42, 33};
-#endif
-  MERC_HIRE_STRUCT HireMercStruct;
-  static BOOLEAN fHaveCalledBefore = FALSE;
-
-  if (fHaveCalledBefore) return;
-
-  fHaveCalledBefore = TRUE;
-
-  if (guiCurrentLaptopMode != LAPTOP_MODE_NONE) return;
-
-  for (i = 0; i < 5; i++) {
-    memset(&HireMercStruct, 0, sizeof(MERC_HIRE_STRUCT));
-
-    HireMercStruct.ubProfileID = MercID[i];
-
-    // DEF: temp
-    HireMercStruct.sSectorX = 1;
-    HireMercStruct.sSectorY = 16;
-    HireMercStruct.ubInsertionCode = INSERTION_CODE_ARRIVING_GAME;
-
-    HireMercStruct.fCopyProfileItemsOver = TRUE;
-    gMercProfiles[MercID[i]].ubMiscFlags |= PROFILE_MISC_FLAG_ALREADY_USED_ITEMS;
-
-    HireMercStruct.iTotalContractLength = 60;
-
-    // specify when the merc should arrive
-    HireMercStruct.uiTimeTillMercArrives = GetMercArrivalTimeOfDay();  // + MercID[i];
-
-    // since this is only a testing function, make the merc available
-    gMercProfiles[MercID[i]].bMercStatus = 0;
-
-    // if we succesfully hired the merc
-    HireMerc(&HireMercStruct);
-
-    // add an entry in the finacial page for the hiring of the merc
-    AddTransactionToPlayersBook(HIRED_MERC, MercID[i],
-                                -(int32_t)(gMercProfiles[MercID[i]].sSalary));
-
-    if (gMercProfiles[MercID[i]].bMedicalDeposit) {
-      // add an entry in the finacial page for the medical deposit
-      AddTransactionToPlayersBook(MEDICAL_DEPOSIT, MercID[i],
-                                  -(gMercProfiles[MercID[i]].sMedicalDepositAmount));
-    }
-
-    // add an entry in the history page for the hiring of the merc
-    AddHistoryToPlayersLog(HISTORY_HIRED_MERC_FROM_AIM, MercID[i], GetWorldTotalMin(), -1, -1);
-  }
-}
-
-#endif
-
 void DisplayPopUpBoxExplainingMercArrivalLocationAndTime() {
   wchar_t szLocAndTime[512];
   struct SOLDIERTYPE *pSoldier = NULL;
@@ -3966,18 +3908,18 @@ void DisplayPopUpBoxExplainingMercArrivalLocationAndTime() {
   // approximately %s.",		//first %s is mercs name, next is the sector location and
   // name where they will be arriving in, lastely is the day an the time of arrival
 
-#ifdef GERMAN
-  // Germans version has a different argument order
-  swprintf(szLocAndTime, ARR_SIZE(szLocAndTime),
-           pMessageStrings[MSG_JUST_HIRED_MERC_ARRIVAL_LOCATION_POPUP],
-           gMercProfiles[GetSolProfile(pSoldier)].zNickname,
-           LaptopSaveInfo.sLastHiredMerc.uiArrivalTime / 1440, zTimeString, zSectorIDString);
-#else
-  swprintf(szLocAndTime, ARR_SIZE(szLocAndTime),
-           pMessageStrings[MSG_JUST_HIRED_MERC_ARRIVAL_LOCATION_POPUP],
-           gMercProfiles[GetSolProfile(pSoldier)].zNickname, zSectorIDString,
-           LaptopSaveInfo.sLastHiredMerc.uiArrivalTime / 1440, zTimeString);
-#endif
+  if (UsingGermanResources()) {
+    // Germans version has a different argument order
+    swprintf(szLocAndTime, ARR_SIZE(szLocAndTime),
+             pMessageStrings[MSG_JUST_HIRED_MERC_ARRIVAL_LOCATION_POPUP],
+             gMercProfiles[GetSolProfile(pSoldier)].zNickname,
+             LaptopSaveInfo.sLastHiredMerc.uiArrivalTime / 1440, zTimeString, zSectorIDString);
+  } else {
+    swprintf(szLocAndTime, ARR_SIZE(szLocAndTime),
+             pMessageStrings[MSG_JUST_HIRED_MERC_ARRIVAL_LOCATION_POPUP],
+             gMercProfiles[GetSolProfile(pSoldier)].zNickname, zSectorIDString,
+             LaptopSaveInfo.sLastHiredMerc.uiArrivalTime / 1440, zTimeString);
+  }
 
   // display the message box
   DoLapTopMessageBox(MSG_BOX_LAPTOP_DEFAULT, szLocAndTime, LAPTOP_SCREEN, MSG_BOX_FLAG_OK,
