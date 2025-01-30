@@ -7,7 +7,6 @@
 
 // ONLY ONE OF THESE CAN BE DEFINED AT A TIME!
 
-// #define GERMAN
 // #define RUSSIAN
 // #define DUTCH
 // #define POLISH
