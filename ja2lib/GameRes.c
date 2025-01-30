@@ -21,6 +21,12 @@ void DetectResourcesVersion() {
     _resType = RT_RUSSIAN_BUKA;
   } else if (IsLibraryOpened("german.slf")) {
     _resType = RT_GERMAN;
+  } else if (IsLibraryOpened("polish.slf")) {
+    _resType = RT_POLISH;
+  } else if (IsLibraryOpened("italian.slf")) {
+    _resType = RT_ITALIAN;
+  } else if (IsLibraryOpened("dutch.slf")) {
+    _resType = RT_DUTCH;
   } else {
     _resType = RT_ENGLISH;
   }
@@ -58,5 +64,31 @@ float GetMajorMapVersion() {
     return 6.00;
   } else {
     return 5.00;
+  }
+}
+
+void UseTextLanguagaeMatchingGameResourcesType() {
+  switch (_resType) {
+    case RT_FRENCH:
+      UseTextFrench();
+      break;
+    case RT_GERMAN:
+      UseTextGerman();
+      break;
+    case RT_DUTCH:
+      UseTextDutch();
+      break;
+    case RT_ITALIAN:
+      UseTextItalian();
+      break;
+    case RT_RUSSIAN_BUKA:
+      UseTextRussian();
+      break;
+    case RT_RUSSIAN_GOLD:
+      UseTextRussian();
+      break;
+    default:
+      UseTextEnglish();
+      break;
   }
 }

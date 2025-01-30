@@ -14,6 +14,8 @@ enum ResourceVersion {
   RT_FRENCH,
   RT_GERMAN,
   RT_POLISH,
+  RT_DUTCH,
+  RT_ITALIAN,
   RT_RUSSIAN_BUKA,
   RT_RUSSIAN_GOLD
 };
@@ -38,5 +40,7 @@ void UseTextRussian();
 void UseTextPolish();
 void UseTextItalian();
 void UseTextDutch();
+
+void UseTextLanguagaeMatchingGameResourcesType();
 
 #endif JA2_GAME_RES

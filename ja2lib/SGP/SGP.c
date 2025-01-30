@@ -109,6 +109,7 @@ BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params) {
     // always set the english first because localizations may be not complete
     UseTextEnglish();
 
+    UseTextLanguagaeMatchingGameResourcesType();
     // UseTextFrench();
     // UseTextGerman();
     // UseTextRussian();
