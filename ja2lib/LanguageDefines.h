@@ -7,14 +7,6 @@
 
 // ONLY ONE OF THESE CAN BE DEFINED AT A TIME!
 
-// #define DUTCH
-// #define POLISH
-
 #define BLOOD_N_GORE_ENABLED
-
-// if the language represents words as single chars
-#ifdef TAIWAN
-#define SINGLE_CHAR_WORDS
-#endif
 
 #endif

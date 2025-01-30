@@ -507,7 +507,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
   }
 
 // if language represents words with a single char
-#ifdef SINGLE_CHAR_WORDS
+#ifdef TAIWAN
   {
     // Enable the use of single word wordwrap
     if (gfUseWinFonts) {
