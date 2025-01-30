@@ -183,7 +183,6 @@ def get_build_dir(release, lang):
 
 
 def get_configure_build_command(release, lang):
-    lang_param = f"-DLANGUAGE={lang}"
     build_type = "Release" if release else "Debug"
     if platform.system() == "Windows":
         return [
@@ -194,7 +193,6 @@ def get_configure_build_command(release, lang):
             "Win32",
             "-B",
             get_build_dir(release, lang),
-            lang_param,
         ]
     else:
         return [
@@ -202,7 +200,6 @@ def get_configure_build_command(release, lang):
             "-B",
             get_build_dir(release, lang),
             f"-DCMAKE_BUILD_TYPE={build_type}",
-            lang_param,
         ]
 
 
