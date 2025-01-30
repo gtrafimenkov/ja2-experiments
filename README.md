@@ -34,10 +34,16 @@ English version of the game:
 python xx.py build-release test copy-dlls copy-data run
 ```
 
-Russian version:
+Russian Buka version:
 
 ```
 python xx.py build-release test copy-dlls copy-data-ru run-ru
+```
+
+Russian Gold version:
+
+```
+python xx.py build-release test copy-dlls copy-data-ru-gold run-ru-gold
 ```
 
 French version:

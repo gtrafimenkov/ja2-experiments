@@ -20,12 +20,14 @@ Commands:
   format-all            - format all sources
   copy-dlls             - copy dlls necessary to run the game
   copy-data             - find and copy game resources to the release build localtion
-  copy-data-ru          - find and copy Russian game resources
+  copy-data-ru          - find and copy Russian Buka game resources
+  copy-data-ru-gold     - find and copy Russian Gold game resources
   copy-data-fr          - find and copy French game resources
   copy-data-de          - find and copy German game resources
   clean                 - cleanup repository from all unwanted files
   run                   - run release build
-  run-ru                - run release build with Russian game data
+  run-ru                - run release build with Russian Buka game data
+  run-ru-gold           - run release build with Russian Gold game data
   run-fr                - run release build with French game data
   run-de                - run release build with German game data
   test                  - run unit test
@@ -85,23 +87,27 @@ def copy_dlls(dest_dir):
         shutil.copy("tools/dxwrapper/dxwrapper.ini", dest_dir)
 
 
-def find_ja2_data_files(lang):
+def find_ja2_data_files(version):
     try_dirs = []
-    if lang == "ENGLISH":
+    if version == "en":
         try_dirs = [
             "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Jagged Alliance 2 Gold\\Data",
             "C:\\GOG Games\\Jagged Alliance 2\\Data\\",
         ]
-    elif lang == "RUSSIAN":
+    elif version == "ru":
         try_dirs = [
             "../ja2-collection/russian-buka/Data",
             # "../ja2-collection/russian-gold/Data",
         ]
-    elif lang == "FRENCH":
+    elif version == "ru-gold":
+        try_dirs = [
+            "../ja2-collection/russian-gold/Data",
+        ]
+    elif version == "fr":
         try_dirs = [
             "../ja2-collection/french/Data",
         ]
-    elif lang == "GERMAN":
+    elif version == "de":
         try_dirs = [
             "../ja2-collection/german/Data",
         ]
@@ -111,14 +117,14 @@ def find_ja2_data_files(lang):
     return None
 
 
-def copy_ja2_data_files(dest_dir, lang):
+def copy_ja2_data_files(dest_dir, version):
     if os.path.isdir(dest_dir):
         print(f"Game data already copied to {dest_dir}", file=sys.stderr)
         return True
 
-    source = find_ja2_data_files(lang)
+    source = find_ja2_data_files(version)
     if source is None:
-        print(f"Cannot find data files for JA2 {lang}", file=sys.stderr)
+        print(f"Cannot find {version} data files", file=sys.stderr)
         return False
 
     shutil.copytree(source, dest_dir)
@@ -221,22 +227,27 @@ def run_command(command):
 
     elif command == "copy-data":
         dest_dir = os.path.join(get_release_build_location(), "data")
-        if not copy_ja2_data_files(dest_dir, lang="ENGLISH"):
+        if not copy_ja2_data_files(dest_dir, "en"):
             sys.exit(10)
 
     elif command == "copy-data-ru":
         dest_dir = os.path.join(get_release_build_location(), "data-ru")
-        if not copy_ja2_data_files(dest_dir, lang="RUSSIAN"):
+        if not copy_ja2_data_files(dest_dir, "ru"):
+            sys.exit(10)
+
+    elif command == "copy-data-ru-gold":
+        dest_dir = os.path.join(get_release_build_location(), "data-ru-gold")
+        if not copy_ja2_data_files(dest_dir, "ru-gold"):
             sys.exit(10)
 
     elif command == "copy-data-fr":
         dest_dir = os.path.join(get_release_build_location(), "data-fr")
-        if not copy_ja2_data_files(dest_dir, lang="FRENCH"):
+        if not copy_ja2_data_files(dest_dir, "fr"):
             sys.exit(10)
 
     elif command == "copy-data-de":
         dest_dir = os.path.join(get_release_build_location(), "data-de")
-        if not copy_ja2_data_files(dest_dir, lang="GERMAN"):
+        if not copy_ja2_data_files(dest_dir, "de"):
             sys.exit(10)
 
     elif command == "format-modified":
@@ -259,6 +270,9 @@ def run_command(command):
 
     elif command == "run-ru":
         subprocess.run([get_release_build_exe(), "--datadir", "data-ru"])
+
+    elif command == "run-ru-gold":
+        subprocess.run([get_release_build_exe(), "--datadir", "data-ru-gold"])
 
     elif command == "run-fr":
         subprocess.run([get_release_build_exe(), "--datadir", "data-fr"])
