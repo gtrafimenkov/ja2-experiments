@@ -696,8 +696,6 @@ BOOLEAN OpenLibrary(const char *libFileName) {
 
   if (InitializeLibrary(libFileName, &gFileDataBase.pLibraries[gFileDataBase.size])) {
     gFileDataBase.size++;
-    DebugLogF("lib name: %s", gFileDataBase.pLibraries[gFileDataBase.size - 1].libName);
-    DebugLogF("is intro.slf loaded: %d", (int)IsLibraryOpened("intro.slf"));
     return TRUE;
   }
   return FALSE;

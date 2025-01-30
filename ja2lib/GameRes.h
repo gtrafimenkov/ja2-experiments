@@ -9,12 +9,20 @@
 #include <stdint.h>
 
 // Known type of game resources
-enum ResourceVersion { RT_ENGLISH, RT_GERMAN, RT_POLISH, RT_RUSSIAN_BUKA, RT_RUSSIAN_GOLD };
+enum ResourceVersion {
+  RT_ENGLISH,
+  RT_FRENCH,
+  RT_GERMAN,
+  RT_POLISH,
+  RT_RUSSIAN_BUKA,
+  RT_RUSSIAN_GOLD
+};
 
 void DetectResourcesVersion();
 enum ResourceVersion GetResourceVersion();
 
 bool UsingEnglishResources();
+bool UsingFrenchResources();
 bool UsingGermanResources();
 bool UsingPolishResources();
 bool UsingRussianBukaResources();

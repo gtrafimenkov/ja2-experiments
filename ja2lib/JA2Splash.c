@@ -40,39 +40,40 @@ void InitJA2SplashScreen() {
   InitializeFileDatabase();
   DetectResourcesVersion();
 
-#if !defined(ENGLISH) && defined(JA2TESTVERSION)
-  uint32_t uiLogoID = 0;
-  VSURFACE_DESC VSurfaceDesc;
-  struct VSurface* hVSurface;
-  memset(&VSurfaceDesc, 0, sizeof(VSURFACE_DESC));
-  VSurfaceDesc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
-  sprintf(VSurfaceDesc.ImageFile, "LOADSCREENS\\Notification.sti");
-  if (!AddVideoSurface(&VSurfaceDesc, &uiLogoID)) {
-    AssertMsg(0, String("Failed to load %s", VSurfaceDesc.ImageFile));
-    return;
-  }
-  GetVideoSurface(&hVSurface, uiLogoID);
-  BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
-  DeleteVideoSurfaceFromIndex(uiLogoID);
+#if defined(JA2TESTVERSION)
+  if (!UsingEnglishResources()) {
+    uint32_t uiLogoID = 0;
+    VSURFACE_DESC VSurfaceDesc;
+    struct VSurface* hVSurface;
+    memset(&VSurfaceDesc, 0, sizeof(VSURFACE_DESC));
+    VSurfaceDesc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
+    sprintf(VSurfaceDesc.ImageFile, "LOADSCREENS\\Notification.sti");
+    if (!AddVideoSurface(&VSurfaceDesc, &uiLogoID)) {
+      AssertMsg(0, String("Failed to load %s", VSurfaceDesc.ImageFile));
+      return;
+    }
+    GetVideoSurface(&hVSurface, uiLogoID);
+    BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
+    DeleteVideoSurfaceFromIndex(uiLogoID);
 
-  InvalidateScreen();
-  RefreshScreen(NULL);
-
-  guiSplashStartTime = GetJA2Clock();
-  int32_t i = 0;
-  while (i < 60 * 15)  // guiSplashStartTime + 15000 > GetJA2Clock() )
-  {
-    // Allow the user to pick his bum.
     InvalidateScreen();
     RefreshScreen(NULL);
-    i++;
+
+    guiSplashStartTime = GetJA2Clock();
+    int32_t i = 0;
+    while (i < 60 * 15)  // guiSplashStartTime + 15000 > GetJA2Clock() )
+    {
+      // Allow the user to pick his bum.
+      InvalidateScreen();
+      RefreshScreen(NULL);
+      i++;
+    }
   }
 #endif
 
-#ifdef ENGLISH
-  ClearMainMenu();
-#else
-  {
+  if (UsingEnglishResources()) {
+    ClearMainMenu();
+  } else {
     uint32_t uiLogoID = 0;
     VSURFACE_DESC VSurfaceDesc;
     struct VSurface* hVSurface;
@@ -88,7 +89,6 @@ void InitJA2SplashScreen() {
     BltVideoSurfaceToVideoSurface(ghFrameBuffer, hVSurface, 0, 0, 0, 0, NULL);
     DeleteVideoSurfaceFromIndex(uiLogoID);
   }
-#endif
 
   InvalidateScreen();
   RefreshScreen(NULL);

@@ -7,17 +7,24 @@
 #include "DebugLog.h"
 #include "SGP/LibraryDataBasePub.h"
 
-static enum ResourceVersion _resVersion = RT_ENGLISH;
+static enum ResourceVersion _resType = RT_ENGLISH;
 
 void DetectResourcesVersion() {
+  // autodetection for french resources is not implemented; it is forced by
+  // compilation flag at the moment
+#ifdef FRENCH
+  _resType = RT_FRENCH;
+  return;
+#endif
+
   if (IsLibraryOpened("russian.slf")) {
-    _resVersion = RT_RUSSIAN_BUKA;
+    _resType = RT_RUSSIAN_BUKA;
   } else if (IsLibraryOpened("german.slf")) {
-    _resVersion = RT_GERMAN;
+    _resType = RT_GERMAN;
   } else {
-    _resVersion = RT_ENGLISH;
+    _resType = RT_ENGLISH;
   }
-  DebugLogF("Detect resources type: %d", _resVersion);
+  DebugLogF("Detect resources type: %d", _resType);
 
   // Library files that can be used to detect resource type:
   //   german.slf, IMPSYMBOL_GERMAN.PCX
@@ -28,13 +35,14 @@ void DetectResourcesVersion() {
   //   laptop/impsymbol.sti
 }
 
-enum ResourceVersion GetResourceVersion() { return _resVersion; }
+enum ResourceVersion GetResourceVersion() { return _resType; }
 
-bool UsingEnglishResources() { return _resVersion == RT_ENGLISH; }
-bool UsingGermanResources() { return _resVersion == RT_GERMAN; }
-bool UsingPolishResources() { return _resVersion == RT_POLISH; }
-bool UsingRussianBukaResources() { return _resVersion == RT_RUSSIAN_BUKA; }
-bool UsingRussianGoldResources() { return _resVersion == RT_RUSSIAN_GOLD; }
+bool UsingEnglishResources() { return _resType == RT_ENGLISH; }
+bool UsingFrenchResources() { return _resType == RT_FRENCH; }
+bool UsingGermanResources() { return _resType == RT_GERMAN; }
+bool UsingPolishResources() { return _resType == RT_POLISH; }
+bool UsingRussianBukaResources() { return _resType == RT_RUSSIAN_BUKA; }
+bool UsingRussianGoldResources() { return _resType == RT_RUSSIAN_GOLD; }
 
 wchar_t GetZeroGlyphChar() {
   if (UsingRussianBukaResources()) {

@@ -12,6 +12,7 @@
 #include "Editor/EditScreen.h"
 #include "FadeScreen.h"
 #include "GameLoop.h"
+#include "GameRes.h"
 #include "GameScreen.h"
 #include "GameVersion.h"
 #include "Globals.h"
@@ -263,16 +264,16 @@ uint32_t InitScreenHandle(void) {
   static uint8_t ubCurrentScreen = 255;
 
   if (ubCurrentScreen == 255) {
-#ifdef ENGLISH
-    if (gfDoneWithSplashScreen) {
-      ubCurrentScreen = 0;
+    if (UsingEnglishResources()) {
+      if (gfDoneWithSplashScreen) {
+        ubCurrentScreen = 0;
+      } else {
+        SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
+        return (INTRO_SCREEN);
+      }
     } else {
-      SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);
-      return (INTRO_SCREEN);
+      ubCurrentScreen = 0;
     }
-#else
-    ubCurrentScreen = 0;
-#endif
   }
 
   if (ubCurrentScreen == 0) {

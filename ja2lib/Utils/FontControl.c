@@ -199,10 +199,12 @@ BOOLEAN InitializeFonts() {
   gvo14PointHumanist = GetFontObject(gp14PointHumanist);
   CHECKF(CreateFontPaletteTables(gvo14PointHumanist));
 
-#if defined(JA2EDITOR) && defined(ENGLISH)
-  gpHugeFont = LoadFontFile("FONTS\\HUGEFONT.sti");
-  gvoHugeFont = GetFontObject(gpHugeFont);
-  CHECKF(CreateFontPaletteTables(gvoHugeFont));
+#if defined(JA2EDITOR)
+  if (UsingEnglishResources()) {
+    gpHugeFont = LoadFontFile("FONTS\\HUGEFONT.sti");
+    gvoHugeFont = GetFontObject(gpHugeFont);
+    CHECKF(CreateFontPaletteTables(gvoHugeFont));
+  }
 #endif
 
   // Set default for font system
@@ -230,8 +232,10 @@ void ShutdownFonts() {
   UnloadFont(gp14PointArial);
   UnloadFont(gpBlockyFont);
   UnloadFont(gp12PointArialFixedFont);
-#if defined(JA2EDITOR) && defined(ENGLISH)
-  UnloadFont(gpHugeFont);
+#if defined(JA2EDITOR)
+  if (UsingEnglishResources()) {
+    UnloadFont(gpHugeFont);
+  }
 #endif
 }
 

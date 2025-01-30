@@ -10,6 +10,7 @@
 
 #include "BuildDefines.h"
 #include "GameLoop.h"
+#include "GameRes.h"
 #include "Globals.h"
 #include "Intro.h"
 #include "JA2Splash.h"
@@ -232,9 +233,9 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
 
   gfGameInitialized = TRUE;
 
-#ifdef ENGLISH
-  SetIntroType(INTRO_SPLASH);
-#endif
+  if (UsingEnglishResources()) {
+    SetIntroType(INTRO_SPLASH);
+  }
 
   gfApplicationActive = TRUE;
   gfProgramIsRunning = TRUE;
