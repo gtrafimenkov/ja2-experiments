@@ -206,14 +206,6 @@ BOOLEAN EnsureQuoteFileLoaded(uint8_t ubNPC) {
   if (fLoadFile) {
     gpNPCQuoteInfoArray[ubNPC] = LoadQuoteFile(ubNPC);
     if (gpNPCQuoteInfoArray[ubNPC] == NULL) {
-#ifdef CRIPPLED_VERSION
-      // make sure we're not trying to load NOPROFILE for some stupid reason
-      if (ubNPC != NO_PROFILE) {
-        struct SOLDIERTYPE *pNull = NULL;
-        pNull->bLife = 0;  // crash!
-      }
-#else
-
 #ifdef JA2TESTVERSION
       if (!gfTriedToLoadQuoteInfoArray[ubNPC])  // don't report the error a second time
       {
@@ -221,21 +213,9 @@ BOOLEAN EnsureQuoteFileLoaded(uint8_t ubNPC) {
         gfTriedToLoadQuoteInfoArray[ubNPC] = TRUE;
       }
 #endif
-#endif
       // error message at this point!
       return (FALSE);
     }
-#ifdef CRIPPLED_VERSION
-    // check a random record to make sure the bytes are set right in the header
-    if (gpNPCQuoteInfoArray[ubNPC][0].ubIdentifier[0] != '9') {
-      if (gpNPCQuoteInfoArray[ubNPC][0].ubIdentifier[2] != '5') {
-        // crash!
-        struct SOLDIERTYPE *pNull = NULL;
-        pNull->bLife = 0;
-      }
-    }
-
-#endif
   }
 
   return (TRUE);
@@ -1583,7 +1563,7 @@ void Converse(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uintptr_t uiAppro
             pSoldier->bNextAction = AI_ACTION_NONE;
             pSoldier->usNextActionData = 0;
           }
-          NPCDoAction(ubNPC, (uint16_t) - (pQuotePtr->sActionData), ubRecordNum);
+          NPCDoAction(ubNPC, (uint16_t)-(pQuotePtr->sActionData), ubRecordNum);
         }
         if (pQuotePtr->ubQuoteNum != NO_QUOTE) {
           // say quote and following consecutive quotes
@@ -1724,7 +1704,7 @@ void Converse(uint8_t ubNPC, uint8_t ubMerc, int8_t bApproach, uintptr_t uiAppro
             pSoldier->bNextAction = AI_ACTION_NONE;
             pSoldier->usNextActionData = 0;
           }
-          NPCDoAction(ubNPC, (uint16_t) - (pQuotePtr->sActionData), ubRecordNum);
+          NPCDoAction(ubNPC, (uint16_t)-(pQuotePtr->sActionData), ubRecordNum);
         } else if (pQuotePtr->usGoToGridno == NO_MOVE && pQuotePtr->sActionData > 0) {
           pSoldier = FindSoldierByProfileID(ubNPC, FALSE);
           ZEROTIMECOUNTER(pSoldier->AICounter);
