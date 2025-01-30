@@ -54,15 +54,16 @@ BOOLEAN Plat_GetFileIsOffline(const struct GetFile *gfs) { return FALSE; }
 
 BOOLEAN Plat_GetFileIsTemporary(const struct GetFile *gfs) { return FALSE; }
 
-HWFILE FileMan_Open(char* strFilename, uint32_t uiOptions, BOOLEAN fDeleteOnClose) { return 0; }
+HWFILE FileMan_Open(char *strFilename, uint32_t uiOptions, BOOLEAN fDeleteOnClose) { return 0; }
 
 void FileMan_Close(HWFILE hFile) {}
 
-BOOLEAN FileMan_Read(HWFILE hFile, void* pDest, uint32_t uiBytesToRead, uint32_t *puiBytesRead) {
+BOOLEAN FileMan_Read(HWFILE hFile, void *pDest, uint32_t uiBytesToRead, uint32_t *puiBytesRead) {
   return FALSE;
 }
 
-BOOLEAN FileMan_Write(HWFILE hFile, void* pDest, uint32_t uiBytesToWrite, uint32_t *puiBytesWritten) {
+BOOLEAN FileMan_Write(HWFILE hFile, const void *pDest, uint32_t uiBytesToWrite,
+                      uint32_t *puiBytesWritten) {
   return FALSE;
 }
 
@@ -84,13 +85,13 @@ BOOLEAN Plat_GetFileNext(struct GetFile *pGFStruct) { return FALSE; }
 
 void Plat_GetFileClose(struct GetFile *pGFStruct) {}
 
-BOOLEAN Plat_ClearFileAttributes(char* strFilename) { return FALSE; }
+BOOLEAN Plat_ClearFileAttributes(char *strFilename) { return FALSE; }
 
 BOOLEAN FileMan_CheckEndOfFile(HWFILE hFile) { return FALSE; }
 
 BOOLEAN FileMan_GetFileWriteTime(HWFILE hFile, uint64_t *pLastWriteTime) { return FALSE; }
 
-uint32_t FileMan_Size(char* strFilename) { return 0; }
+uint32_t FileMan_Size(char *strFilename) { return 0; }
 
 /////////////////////////////////////////////////////////////////////////////////
 // Input
@@ -148,11 +149,11 @@ void CheckCustomizableTimer(void) {}
 // Sound
 /////////////////////////////////////////////////////////////////////////////////
 
-uint32_t SoundPlay(char* pFilename, SOUNDPARMS *pParms) { return (SOUND_ERROR); }
+uint32_t SoundPlay(char *pFilename, SOUNDPARMS *pParms) { return (SOUND_ERROR); }
 
-uint32_t SoundPlayStreamedFile(char* pFilename, SOUNDPARMS *pParms) { return (SOUND_ERROR); }
+uint32_t SoundPlayStreamedFile(char *pFilename, SOUNDPARMS *pParms) { return (SOUND_ERROR); }
 
-uint32_t SoundPlayRandom(char* pFilename, RANDOMPARMS *pParms) { return (SOUND_ERROR); }
+uint32_t SoundPlayRandom(char *pFilename, RANDOMPARMS *pParms) { return (SOUND_ERROR); }
 
 BOOLEAN SoundIsPlaying(uint32_t uiSoundID) { return FALSE; }
 
@@ -174,11 +175,11 @@ BOOLEAN SoundServiceStreams(void) { return FALSE; }
 
 uint32_t SoundGetPosition(uint32_t uiSoundID) { return 0; }
 
-uint32_t SoundLoadSample(char* pFilename) { return (NO_SAMPLE); }
+uint32_t SoundLoadSample(char *pFilename) { return (NO_SAMPLE); }
 
-uint32_t SoundLockSample(char* pFilename) { return (NO_SAMPLE); }
+uint32_t SoundLockSample(char *pFilename) { return (NO_SAMPLE); }
 
-uint32_t SoundUnlockSample(char* pFilename) { return (NO_SAMPLE); }
+uint32_t SoundUnlockSample(char *pFilename) { return (NO_SAMPLE); }
 
 void SoundRemoveSampleFlags(uint32_t uiSample, uint32_t uiFlags) {}
 
@@ -191,7 +192,8 @@ int32_t giNumFrames = 0;
 
 void InvalidateRegion(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom) {}
 
-void InvalidateRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom, uint32_t uiFlags) {}
+void InvalidateRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
+                        uint32_t uiFlags) {}
 
 void InvalidateScreen(void) {}
 
@@ -221,7 +223,7 @@ void EndFrameBufferRender(void) {}
 
 BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) { return FALSE; }
 
-void FatalError(char* pError, ...) {}
+void FatalError(char *pError, ...) {}
 
 uint32_t guiVSurfaceSize = 0;
 
@@ -251,9 +253,7 @@ BOOLEAN ImageFillVideoSurfaceArea(uint32_t uiDestVSurface, int32_t iDestX1, int3
   return FALSE;
 }
 
-struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) {
-  return NULL;
-}
+struct VSurface *CreateVideoSurface(VSURFACE_DESC *VSurfaceDesc) { return NULL; }
 
 BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette) {
   return FALSE;
@@ -268,17 +268,19 @@ BOOLEAN DeleteVideoSurfaceFromIndex(uint32_t uiIndex) { return FALSE; }
 BOOLEAN DeleteVideoSurface(struct VSurface *hVSurface) { return FALSE; }
 
 BOOLEAN BltVideoSurfaceToVideoSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                                      uint16_t usIndex, int32_t iDestX, int32_t iDestY, int32_t fBltFlags,
-                                      blt_vs_fx *pBltFx) {
+                                      uint16_t usIndex, int32_t iDestX, int32_t iDestY,
+                                      int32_t fBltFlags, blt_vs_fx *pBltFx) {
   return FALSE;
 }
 
 BOOLEAN BltVSurfaceUsingDD(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                           uint32_t fBltFlags, int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
+                           uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
+                           struct Rect *SrcRect) {
   return FALSE;
 }
 
-BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2, int32_t Y2) {
+BOOLEAN ShadowVideoSurfaceRect(uint32_t uiDestVSurface, int32_t X1, int32_t Y1, int32_t X2,
+                               int32_t Y2) {
   return FALSE;
 }
 
@@ -293,8 +295,8 @@ BOOLEAN BltStretchVideoSurface(uint32_t uiDestVSurface, uint32_t uiSrcVSurface, 
   return FALSE;
 }
 
-BOOLEAN ShadowVideoSurfaceImage(uint32_t uiDestVSurface, struct VObject *hImageHandle, int32_t iPosX,
-                                int32_t iPosY) {
+BOOLEAN ShadowVideoSurfaceImage(uint32_t uiDestVSurface, struct VObject *hImageHandle,
+                                int32_t iPosX, int32_t iPosY) {
   return FALSE;
 }
 
@@ -319,11 +321,13 @@ void SmkCloseFlic(struct SmkFlic *pSmack) {}
 
 void SetWinFontForeColor(int32_t iFont, COLORVAL *pColor) {}
 
-int16_t WinFontStringPixLength(wchar_t* string2, int32_t iFont) { return 0; }
+int16_t WinFontStringPixLength(wchar_t *string2, int32_t iFont) { return 0; }
 
-int16_t GetWinFontHeight(wchar_t* string2, int32_t iFont) { return 0; }
+int16_t GetWinFontHeight(wchar_t *string2, int32_t iFont) { return 0; }
 
-uint32_t WinFont_mprintf(int32_t iFont, int32_t x, int32_t y, wchar_t* pFontString, ...) { return 0; }
+uint32_t WinFont_mprintf(int32_t iFont, int32_t x, int32_t y, wchar_t *pFontString, ...) {
+  return 0;
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 //

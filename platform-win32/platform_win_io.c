@@ -484,7 +484,7 @@ BOOLEAN FileMan_Read(HWFILE hFile, void *pDest, uint32_t uiBytesToRead, uint32_t
 //
 //**************************************************************************
 
-BOOLEAN FileMan_Write(HWFILE hFile, void *pDest, uint32_t uiBytesToWrite,
+BOOLEAN FileMan_Write(HWFILE hFile, const void *pDest, uint32_t uiBytesToWrite,
                       uint32_t *puiBytesWritten) {
   HANDLE hRealFile;
   DWORD dwNumBytesToWrite, dwNumBytesWritten;

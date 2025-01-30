@@ -108,12 +108,40 @@ extern void PayOffSkyriderDebtIfAny();
 // NPC QUOTE LOW LEVEL ROUTINES
 //
 
+static bool ReadQuotes(HWFILE hFile, NPCQuoteInfo *dest, size_t count) {
+  size_t size = sizeof(NPCQuoteInfo) * count;
+  uint32_t uiBytesRead;
+  if (!FileMan_Read(hFile, dest, size, &uiBytesRead) || uiBytesRead != size) {
+    return false;
+  }
+  return true;
+}
+
+static bool WriteQuotes(HWFILE hFile, const NPCQuoteInfo *data, size_t count) {
+  uint32_t uiNumBytesWritten = 0;
+  size_t size = sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS;
+  if (!FileMan_Write(hFile, data, size, &uiNumBytesWritten) || uiNumBytesWritten != size) {
+    return false;
+  }
+  return true;
+}
+
+static NPCQuoteInfo *ReadQuotesAllocate(HWFILE hFile, size_t count) {
+  size_t size = sizeof(NPCQuoteInfo) * count;
+  NPCQuoteInfo *data = (NPCQuoteInfo *)MemAlloc(size);
+  if (data) {
+    if (!ReadQuotes(hFile, data, count)) {
+      MemFree(data);
+      data = NULL;
+    }
+  }
+  return data;
+}
+
 NPCQuoteInfo *LoadQuoteFile(uint8_t ubNPC) {
   char zFileName[255];
   HWFILE hFile;
   NPCQuoteInfo *pFileData;
-  uint32_t uiBytesRead;
-  uint32_t uiFileSize;
 
   if (ubNPC == PETER || ubNPC == ALBERTO || ubNPC == CARLO) {
     // use a copy of Herve's data file instead!
@@ -145,14 +173,7 @@ NPCQuoteInfo *LoadQuoteFile(uint8_t ubNPC) {
   hFile = FileMan_Open(zFileName, FILE_ACCESS_READ, FALSE);
   CHECKN(hFile);
 
-  uiFileSize = sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS;
-  pFileData = (NPCQuoteInfo *)MemAlloc(uiFileSize);
-  if (pFileData) {
-    if (!FileMan_Read(hFile, pFileData, uiFileSize, &uiBytesRead) || uiBytesRead != uiFileSize) {
-      MemFree(pFileData);
-      pFileData = NULL;
-    }
-  }
+  pFileData = ReadQuotesAllocate(hFile, NUM_NPC_QUOTE_RECORDS);
 
   FileMan_Close(hFile);
 
@@ -287,8 +308,6 @@ NPCQuoteInfo *LoadCivQuoteFile(uint8_t ubIndex) {
   char zFileName[255];
   HWFILE hFile;
   NPCQuoteInfo *pFileData;
-  uint32_t uiBytesRead;
-  uint32_t uiFileSize;
 
   if (ubIndex == MINERS_CIV_QUOTE_INDEX) {
     sprintf(zFileName, "NPCData\\miners.npc");
@@ -302,14 +321,7 @@ NPCQuoteInfo *LoadCivQuoteFile(uint8_t ubIndex) {
   hFile = FileMan_Open(zFileName, FILE_ACCESS_READ, FALSE);
   CHECKN(hFile);
 
-  uiFileSize = sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS;
-  pFileData = (NPCQuoteInfo *)MemAlloc(uiFileSize);
-  if (pFileData) {
-    if (!FileMan_Read(hFile, pFileData, uiFileSize, &uiBytesRead) || uiBytesRead != uiFileSize) {
-      MemFree(pFileData);
-      pFileData = NULL;
-    }
-  }
+  pFileData = ReadQuotesAllocate(hFile, NUM_NPC_QUOTE_RECORDS);
 
   FileMan_Close(hFile);
 
@@ -2309,13 +2321,11 @@ BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile) {
       }
 
       // Save the NPC quote entry
-      FileMan_Write(hFile, gpNPCQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                    &uiNumBytesWritten);
-      if (uiNumBytesWritten != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
-        return (FALSE);
+      if (!WriteQuotes(hFile, gpNPCQuoteInfoArray[cnt], NUM_NPC_QUOTE_RECORDS)) {
+        return FALSE;
       }
     } else {
-      // save a byte specify that there is an npc quote saved
+      // save a byte specify that there is no npc quote saved
       FileMan_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
@@ -2333,13 +2343,11 @@ BOOLEAN SaveNPCInfoToSaveGameFile(HWFILE hFile) {
       }
 
       // Save the NPC quote entry
-      FileMan_Write(hFile, gpCivQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                    &uiNumBytesWritten);
-      if (uiNumBytesWritten != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
-        return (FALSE);
+      if (!WriteQuotes(hFile, gpCivQuoteInfoArray[cnt], NUM_NPC_QUOTE_RECORDS)) {
+        return FALSE;
       }
     } else {
-      // save a byte specify that there is an npc quote saved
+      // save a byte specify that there is no npc quote saved
       FileMan_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
@@ -2389,13 +2397,9 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
         memset(gpNPCQuoteInfoArray[cnt], 0, sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS);
       }
 
-      // Load the NPC quote entry
-      FileMan_Read(hFile, gpNPCQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                   &uiNumBytesRead);
-      if (uiNumBytesRead != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
-        return (FALSE);
+      if (!ReadQuotes(hFile, gpNPCQuoteInfoArray[cnt], NUM_NPC_QUOTE_RECORDS)) {
+        return FALSE;
       }
-    } else {
     }
   }
 
@@ -2424,11 +2428,8 @@ BOOLEAN LoadNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVersion) {
           memset(gpCivQuoteInfoArray[cnt], 0, sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS);
         }
 
-        // Load the civ quote entry
-        FileMan_Read(hFile, gpCivQuoteInfoArray[cnt], sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS,
-                     &uiNumBytesRead);
-        if (uiNumBytesRead != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
-          return (FALSE);
+        if (!ReadQuotes(hFile, gpCivQuoteInfoArray[cnt], NUM_NPC_QUOTE_RECORDS)) {
+          return FALSE;
         }
       }
     }
@@ -2512,13 +2513,11 @@ BOOLEAN SaveBackupNPCInfoToSaveGameFile(HWFILE hFile) {
       }
 
       // Save the NPC quote entry
-      FileMan_Write(hFile, gpBackupNPCQuoteInfoArray[cnt],
-                    sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS, &uiNumBytesWritten);
-      if (uiNumBytesWritten != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
-        return (FALSE);
+      if (!WriteQuotes(hFile, gpBackupNPCQuoteInfoArray[cnt], NUM_NPC_QUOTE_RECORDS)) {
+        return FALSE;
       }
     } else {
-      // save a byte specify that there is an npc quote saved
+      // save a byte specify that there is no npc quote saved
       FileMan_Write(hFile, &ubZero, sizeof(uint8_t), &uiNumBytesWritten);
       if (uiNumBytesWritten != sizeof(uint8_t)) {
         return (FALSE);
@@ -2563,13 +2562,9 @@ BOOLEAN LoadBackupNPCInfoFromSavedGameFile(HWFILE hFile, uint32_t uiSaveGameVers
         memset(gpBackupNPCQuoteInfoArray[cnt], 0, sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS);
       }
 
-      // Load the NPC quote entry
-      FileMan_Read(hFile, gpBackupNPCQuoteInfoArray[cnt],
-                   sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS, &uiNumBytesRead);
-      if (uiNumBytesRead != sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS) {
-        return (FALSE);
+      if (!ReadQuotes(hFile, gpBackupNPCQuoteInfoArray[cnt], NUM_NPC_QUOTE_RECORDS)) {
+        return FALSE;
       }
-    } else {
     }
   }
 
