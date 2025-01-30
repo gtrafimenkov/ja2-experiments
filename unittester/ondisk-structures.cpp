@@ -12,4 +12,4 @@ extern "C" {
 
 // Originally NPCQuoteInfo is 32 bytes with 4 unused bytes at the beginning in
 // Russian version and 4 unused bytes at the end in all other versions.
-TEST(OnDiskStructures, NPCQuoteInfo) { EXPECT_EQ(sizeof(NPCQuoteInfo), 32); }
+TEST(OnDiskStructures, NPCQuoteInfo) { EXPECT_EQ(sizeof(NPCQuoteInfo), 28); }

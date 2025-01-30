@@ -4,6 +4,7 @@
 
 #include "TacticalAI/NPC.h"
 
+#include "GameRes.h"
 #include "Laptop/Finances.h"
 #include "SGP/FileMan.h"
 #include "SGP/Random.h"
@@ -108,20 +109,60 @@ extern void PayOffSkyriderDebtIfAny();
 // NPC QUOTE LOW LEVEL ROUTINES
 //
 
+static bool readFourBytes(HWFILE hFile) {
+  uint32_t data;
+  uint32_t bytesRead;
+  return FileMan_Read(hFile, &data, 4, &bytesRead) && bytesRead == 4;
+}
+
+static bool writeFourBytes(HWFILE hFile) {
+  uint32_t data = 0;
+  uint32_t bytesWritten;
+  return FileMan_Write(hFile, &data, 4, &bytesWritten) && bytesWritten == 4;
+}
+
 static bool ReadQuotes(HWFILE hFile, NPCQuoteInfo *dest, size_t count) {
-  size_t size = sizeof(NPCQuoteInfo) * count;
-  uint32_t uiBytesRead;
-  if (!FileMan_Read(hFile, dest, size, &uiBytesRead) || uiBytesRead != size) {
-    return false;
+  // Origianlly NPCQuoteInfo has 4 unused bytes at the beginning in Russian version
+  // or 4 unused bytes at the end in all other versions.  We need to account for that.
+  size_t size = sizeof(NPCQuoteInfo);
+  for (size_t i = 0; i < count; i++) {
+    if (UsingRussianBukaResources()) {
+      if (!readFourBytes(hFile)) {
+        return false;
+      }
+    }
+    uint32_t uiBytesRead;
+    if (!FileMan_Read(hFile, &dest[i], size, &uiBytesRead) || uiBytesRead != size) {
+      return false;
+    }
+    if (!UsingRussianBukaResources()) {
+      if (!readFourBytes(hFile)) {
+        return false;
+      }
+    }
   }
   return true;
 }
 
 static bool WriteQuotes(HWFILE hFile, const NPCQuoteInfo *data, size_t count) {
-  uint32_t uiNumBytesWritten = 0;
-  size_t size = sizeof(NPCQuoteInfo) * NUM_NPC_QUOTE_RECORDS;
-  if (!FileMan_Write(hFile, data, size, &uiNumBytesWritten) || uiNumBytesWritten != size) {
-    return false;
+  // Origianlly NPCQuoteInfo has 4 unused bytes at the beginning in Russian version
+  // or 4 unused bytes at the end in all other versions.  We need to account for that.
+  size_t size = sizeof(NPCQuoteInfo);
+  for (size_t i = 0; i < count; i++) {
+    if (UsingRussianBukaResources()) {
+      if (!writeFourBytes(hFile)) {
+        return false;
+      }
+    }
+    uint32_t uiNumBytesWritten = 0;
+    if (!FileMan_Write(hFile, data, size, &uiNumBytesWritten) || uiNumBytesWritten != size) {
+      return false;
+    }
+    if (!UsingRussianBukaResources()) {
+      if (!writeFourBytes(hFile)) {
+        return false;
+      }
+    }
   }
   return true;
 }

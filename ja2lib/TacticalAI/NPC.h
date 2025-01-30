@@ -40,10 +40,6 @@ struct OBJECTTYPE;
 #define ANY_RIFLE 1001
 
 typedef struct {
-#if defined(RUSSIAN)
-  uint8_t ubIdentifier[4];
-#endif
-
   uint16_t fFlags;
 
   // conditions
@@ -73,12 +69,7 @@ typedef struct {
   uint16_t usGiftItem;  // item NPC gives to merc after saying quote
   uint16_t usGoToGridno;
   int16_t sActionData;  // special action value
-
-#if !defined(RUSSIAN)
-  uint8_t ubUnused[4];
-#endif
-
-} NPCQuoteInfo;  // 32 bytes
+} NPCQuoteInfo;
 
 typedef enum {
   APPROACH_FRIENDLY = 1,
