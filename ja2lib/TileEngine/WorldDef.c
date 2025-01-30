@@ -13,6 +13,7 @@
 #include "Editor/EditorMapInfo.h"
 #include "Editor/Smooth.h"
 #include "Editor/SummaryInfo.h"
+#include "GameRes.h"
 #include "JAScreens.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
@@ -1390,8 +1391,9 @@ BOOLEAN SaveWorld(char *puiFilename) {
   }
 
   // Write JA2 Version ID
-  FileMan_Write(hfile, &gdMajorMapVersion, sizeof(float), &uiBytesWritten);
-  if (gdMajorMapVersion >= 4.00) {
+  float _majorMapVersion = GetMajorMapVersion();
+  FileMan_Write(hfile, &_majorMapVersion, sizeof(float), &uiBytesWritten);
+  if (GetMajorMapVersion() >= 4.00) {
     FileMan_Write(hfile, &gubMinorMapVersion, sizeof(uint8_t), &uiBytesWritten);
   }
 
@@ -1923,7 +1925,7 @@ BOOLEAN EvaluateWorld(char *pSector, uint8_t ubLevel) {
   Assert(pSummary);
   memset(pSummary, 0, sizeof(SUMMARYFILE));
   pSummary->ubSummaryVersion = GLOBAL_SUMMARY_VERSION;
-  pSummary->dMajorMapVersion = gdMajorMapVersion;
+  pSummary->dMajorMapVersion = GetMajorMapVersion();
 
   // skip JA2 Version ID
   LOADDATA(&dMajorMapVersion, pBuffer, sizeof(float));
@@ -2311,22 +2313,13 @@ BOOLEAN LoadWorld(char *puiFilename) {
   // Read JA2 Version ID
   LOADDATA(&dMajorMapVersion, pBuffer, sizeof(float));
 
-#ifdef RUSSIAN
-  if (dMajorMapVersion != 6.00) {
-    return FALSE;
+  if (UsingRussianBukaResources()) {
+    if (dMajorMapVersion != 6.00) {
+      return FALSE;
+    }
   }
-#endif
 
   LOADDATA(&ubMinorMapVersion, pBuffer, sizeof(uint8_t));
-
-  // CHECK FOR NON-COMPATIBLE VERSIONS!
-  // CHECK FOR MAJOR MAP VERSION INCOMPATIBLITIES
-  // if ( dMajorMapVersion < gdMajorMapVersion )
-  //{
-  // AssertMsg( 0, "Major version conflict.  Should have force updated this map already!!!" );
-  // SET_ERROR(  "Incompatible JA2 map version: %f, map version is now at %f", gdLoadedMapVersion,
-  // gdMapVersion ); return( FALSE );
-  //}
 
   // Read FLAGS FOR WORLD
   LOADDATA(&uiFlags, pBuffer, sizeof(int32_t));
@@ -2563,12 +2556,10 @@ BOOLEAN LoadWorld(char *puiFilename) {
   fp += offset;
   offset = 0;
 
-#ifdef RUSSIAN
-  {
+  if (UsingRussianBukaResources()) {
     uint32_t uiNums[37];
     LOADDATA(uiNums, pBuffer, 37 * sizeof(int32_t));
   }
-#endif
 
   SetRelativeStartAndEndPercentage(0, 58, 59, L"Loading room information...");
   RenderProgressBar(0, 100);
@@ -3381,7 +3372,9 @@ int8_t IsHiddenTileMarkerThere(int16_t sGridNo) {
 
     if (pStructure != NULL) {
       // if ( !( gpWorldLevelData[ sGridNo ].uiFlags & MAPELEMENT_REVEALED ) )
-      { return (2); }
+      {
+        return (2);
+      }
 
       // if we are here, a roof exists but has been revealed
       return (1);
@@ -3390,7 +3383,9 @@ int8_t IsHiddenTileMarkerThere(int16_t sGridNo) {
     // if ( InARoom( sGridNo, &ubRoom ) )
     {
       // if ( !( gpWorldLevelData[ sGridNo ].uiFlags & MAPELEMENT_REVEALED ) )
-      { return (2); }
+      {
+        return (2);
+      }
 
       return (1);
     }
@@ -3502,7 +3497,9 @@ void LoadMapLights(int8_t **hBuffer) {
   // if ( LColors[0].peRed != gpLightColors[0].peRed ||
   //		 LColors[0].peGreen != gpLightColors[0].peGreen ||
   //		 LColors[0].peBlue != gpLightColors[0].peBlue )
-  { LightSetColors(LColors, ubNumColors); }
+  {
+    LightSetColors(LColors, ubNumColors);
+  }
 
   // Determine which lights are valid for the current time.
   if (!gfEditMode) {
@@ -3559,7 +3556,9 @@ BOOLEAN IsRoofVisibleForWireframe(int16_t sMapPos) {
     // if ( InARoom( sMapPos, &ubRoom ) )
     {
       // if ( !( gpWorldLevelData[ sMapPos ].uiFlags & MAPELEMENT_REVEALED ) )
-      { return (TRUE); }
+      {
+        return (TRUE);
+      }
     }
   }
 

@@ -4,6 +4,7 @@
 
 #include "Tactical/DialogueControl.h"
 
+#include "GameRes.h"
 #include "GameScreen.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
@@ -1476,12 +1477,12 @@ char *GetDialogueDataFilename(uint8_t ubCharacterNum, uint16_t usQuoteNum, BOOLE
   // npc quote file
   if (gfUseAlternateDialogueFile) {
     if (fWavFile) {
-// build name of wav file (characternum + quotenum)
-#ifdef RUSSIAN
-      sprintf(zFileName, "NPC_SPEECH\\g_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
-#else
-      sprintf(zFileName, "NPC_SPEECH\\d_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
-#endif
+      // build name of wav file (characternum + quotenum)
+      if (UsingRussianBukaResources()) {
+        sprintf(zFileName, "NPC_SPEECH\\g_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
+      } else {
+        sprintf(zFileName, "NPC_SPEECH\\d_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
+      }
     } else {
       // assume EDT files are in EDT directory on HARD DRIVE
       sprintf(zFileName, "NPCDATA\\d_%03d.EDT", ubCharacterNum);
@@ -1510,13 +1511,11 @@ char *GetDialogueDataFilename(uint8_t ubCharacterNum, uint16_t usQuoteNum, BOOLE
     }
   } else {
     if (fWavFile) {
-#ifdef RUSSIAN
-      if (ubCharacterNum >= FIRST_RPC &&
+      // build name of wav file (characternum + quotenum)
+      if (UsingRussianBukaResources() && ubCharacterNum >= FIRST_RPC &&
           gMercProfiles[ubCharacterNum].ubMiscFlags & PROFILE_MISC_FLAG_RECRUITED) {
         sprintf(zFileName, "SPEECH\\r_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
-      } else
-#endif
-      {  // build name of wav file (characternum + quotenum)
+      } else {
         sprintf(zFileName, "SPEECH\\%03d_%03d.wav", ubCharacterNum, usQuoteNum);
       }
     } else {

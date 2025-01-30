@@ -51,3 +51,12 @@ wchar_t GetZeroGlyphChar() {
     return L'A';
   }
 }
+
+float GetMajorMapVersion() {
+  // Don't mess with this value, unless you want to force update all maps in the game!
+  if (UsingRussianBukaResources()) {
+    return 6.00;
+  } else {
+    return 5.00;
+  }
+}

@@ -29,6 +29,7 @@ bool UsingRussianBukaResources();
 bool UsingRussianGoldResources();
 
 wchar_t GetZeroGlyphChar();
+float GetMajorMapVersion();
 
 void UseTextEnglish();
 void UseTextFrench();

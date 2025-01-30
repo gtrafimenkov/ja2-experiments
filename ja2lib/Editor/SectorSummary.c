@@ -13,6 +13,7 @@
 #include "Editor/EditorTaskbarUtils.h"
 #include "Editor/LoadScreen.h"
 #include "Editor/SummaryInfo.h"
+#include "GameRes.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/FileMan.h"
@@ -2300,7 +2301,7 @@ void LoadSummary(char *pSector, uint8_t ubLevel, float dMajorMapVersion) {
     return;
   }
   fread(&temp, 1, sizeof(SUMMARYFILE), fp);
-  if (temp.ubSummaryVersion < MINIMUMVERSION || dMajorMapVersion < gdMajorMapVersion) {
+  if (temp.ubSummaryVersion < MINIMUMVERSION || dMajorMapVersion < GetMajorMapVersion()) {
     gusNumberOfMapsToBeForceUpdated++;
     gfMustForceUpdateAllMaps = TRUE;
   }
@@ -2500,7 +2501,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & GROUND_LEVEL_MASK) {
         pSF = gpSectorSummary[x][y][0];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 0)) return;
         }
@@ -2508,7 +2509,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & BASEMENT1_LEVEL_MASK) {
         pSF = gpSectorSummary[x][y][1];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 1)) return;
         }
@@ -2516,7 +2517,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & BASEMENT2_LEVEL_MASK) {
         pSF = gpSectorSummary[x][y][2];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 2)) return;
         }
@@ -2524,7 +2525,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & BASEMENT3_LEVEL_MASK) {
         pSF = gpSectorSummary[x][y][3];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 3)) return;
         }
@@ -2532,7 +2533,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & ALTERNATE_GROUND_MASK) {
         pSF = gpSectorSummary[x][y][4];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 4)) return;
         }
@@ -2540,7 +2541,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & ALTERNATE_B1_MASK) {
         pSF = gpSectorSummary[x][y][5];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 5)) return;
         }
@@ -2548,7 +2549,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & ALTERNATE_B2_MASK) {
         pSF = gpSectorSummary[x][y][6];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 6)) return;
         }
@@ -2556,7 +2557,7 @@ void ApologizeOverrideAndForceUpdateEverything() {
       if (gbSectorLevels[x][y] & ALTERNATE_B3_MASK) {
         pSF = gpSectorSummary[x][y][7];
         if (!pSF || pSF->ubSummaryVersion < MINIMUMVERSION ||
-            pSF->dMajorMapVersion < gdMajorMapVersion) {
+            pSF->dMajorMapVersion < GetMajorMapVersion()) {
           gpCurrentSectorSummary = pSF;
           if (!EvaluateWorld(name, 7)) return;
         }
