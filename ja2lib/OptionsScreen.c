@@ -6,7 +6,6 @@
 
 #include "GameSettings.h"
 #include "JAScreens.h"
-#include "LanguageDefines.h"
 #include "SGP/ButtonSystem.h"
 #include "SGP/Debug.h"
 #include "SGP/English.h"

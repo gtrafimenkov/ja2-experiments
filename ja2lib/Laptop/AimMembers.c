@@ -8,7 +8,6 @@
 
 #include "GameRes.h"
 #include "GameSettings.h"
-#include "LanguageDefines.h"
 #include "Laptop/AIM.h"
 #include "Laptop/AIMFacialIndex.h"
 #include "Laptop/Email.h"

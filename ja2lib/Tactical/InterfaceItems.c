@@ -12,7 +12,6 @@
 #include "GameLoop.h"
 #include "GameSettings.h"
 #include "JAScreens.h"
-#include "LanguageDefines.h"
 #include "Laptop/Finances.h"
 #include "MessageBoxScreen.h"
 #include "Money.h"

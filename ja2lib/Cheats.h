@@ -5,7 +5,6 @@
 #ifndef _CHEATS__H_
 #define _CHEATS__H_
 
-#include "LanguageDefines.h"
 #include "SGP/Types.h"
 
 extern uint8_t gubCheatLevel;

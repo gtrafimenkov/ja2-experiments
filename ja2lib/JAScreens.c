@@ -17,7 +17,6 @@
 #include "GameVersion.h"
 #include "Globals.h"
 #include "Init.h"
-#include "LanguageDefines.h"
 #include "MainMenuScreen.h"
 #include "SGP/CursorControl.h"
 #include "SGP/English.h"

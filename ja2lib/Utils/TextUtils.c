@@ -3,7 +3,6 @@
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
 #include "GameSettings.h"
-#include "LanguageDefines.h"
 #include "SGP/FileMan.h"
 #include "Utils/EncryptedFile.h"
 #include "Utils/Text.h"

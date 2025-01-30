@@ -15,7 +15,6 @@
 #include "GameVersion.h"
 #include "HelpScreen.h"
 #include "JAScreens.h"
-#include "LanguageDefines.h"
 #include "Laptop/History.h"
 #include "MessageBoxScreen.h"
 #include "OptionsScreen.h"

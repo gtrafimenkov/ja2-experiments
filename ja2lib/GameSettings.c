@@ -9,7 +9,6 @@
 #include "Cheats.h"
 #include "GameVersion.h"
 #include "HelpScreen.h"
-#include "LanguageDefines.h"
 #include "OptionsScreen.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"

@@ -5,7 +5,6 @@
 #include "Utils/EncryptedFile.h"
 
 #include "GameRes.h"
-#include "LanguageDefines.h"
 #include "SGP/Debug.h"
 #include "SGP/FileMan.h"
 

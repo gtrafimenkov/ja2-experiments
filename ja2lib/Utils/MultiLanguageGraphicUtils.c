@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 #include "GameRes.h"
-#include "LanguageDefines.h"
 #include "SGP/Types.h"
 
 BOOLEAN GetMLGFilename(SGPFILENAME filename, uint16_t usMLGGraphicID) {

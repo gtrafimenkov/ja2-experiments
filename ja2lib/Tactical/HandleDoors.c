@@ -9,7 +9,6 @@
 #include <time.h>
 
 #include "GameRes.h"
-#include "LanguageDefines.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
 #include "Strategic/MapScreenInterfaceMap.h"
