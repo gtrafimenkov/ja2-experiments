@@ -316,6 +316,9 @@ def run_command(command):
     elif command == "test":
         subprocess.run([get_release_test_exe(lang="ENGLISH")], check=True)
 
+    elif command == "test-ru":
+        subprocess.run([get_release_test_exe(lang="RUSSIAN")], check=True)
+
     else:
         print(f"Unknown command {command}", file=sys.stderr)
         sys.exit(1)
