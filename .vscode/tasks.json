@@ -17,45 +17,6 @@
             "problemMatcher": []
         },
         {
-            "label": "build-release-ru",
-            "type": "process",
-            "command": "python",
-            "args": [
-                "xx.py",
-                "build-release-ru"
-            ],
-            "group": {
-                "kind": "build"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build-release-fr",
-            "type": "process",
-            "command": "python",
-            "args": [
-                "xx.py",
-                "build-release-fr"
-            ],
-            "group": {
-                "kind": "build"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "build-release-gr",
-            "type": "process",
-            "command": "python",
-            "args": [
-                "xx.py",
-                "build-release-gr"
-            ],
-            "group": {
-                "kind": "build"
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "test",
             "type": "process",
             "command": "python",

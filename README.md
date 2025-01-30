@@ -37,19 +37,19 @@ python xx.py build-release test copy-dlls copy-data run
 Russian version:
 
 ```
-python xx.py build-release-ru copy-dlls-ru copy-data-ru run-ru
+python xx.py build-release test copy-dlls copy-data-ru run-ru
 ```
 
 French version:
 
 ```
-python xx.py build-release-fr copy-dlls-fr copy-data-fr run-fr
+python xx.py build-release test copy-dlls copy-data-fr run-fr
 ```
 
 German version:
 
 ```
-python xx.py build-release-gr copy-dlls-gr copy-data-gr run-gr
+python xx.py build-release test copy-dlls copy-data-de run-de
 ```
 
 ## How to play the game

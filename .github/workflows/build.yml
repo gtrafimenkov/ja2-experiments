@@ -16,7 +16,6 @@ jobs:
     - run: python xx.py build-debug
     - run: python xx.py build-release
     - run: python xx.py test
-    - run: python xx.py build-release-fr
 
   build-on-windows:
     runs-on: windows-latest
@@ -25,4 +24,3 @@ jobs:
     - run: python xx.py build-debug
     - run: python xx.py build-release
     - run: python xx.py test
-    - run: python xx.py build-release-fr
