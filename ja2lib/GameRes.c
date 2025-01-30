@@ -36,7 +36,7 @@ void DetectResourcesVersion() {
   } else {
     _resType = RT_ENGLISH;
   }
-  DebugLogF("Detect resources type: %s", GetResourceVersionStr());
+  DebugLogF("Detected resources type: %s", GetResourceVersionStr());
 }
 
 enum ResourceVersion GetResourceVersion() { return _resType; }

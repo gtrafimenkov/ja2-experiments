@@ -9,7 +9,8 @@
 
 struct PlatformInitParams;
 
-extern BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params);
+extern BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams* params,
+                                                const char* dataDir);
 extern void ShutdownStandardGamingPlatform(void);
 
 #endif

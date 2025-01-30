@@ -53,10 +53,7 @@ int32_t CompareDirEntryFileNames(char *arg1, DIRENTRY *arg2);
 
 static struct StringVector *slfFiles;
 
-static void AddSlfFile(const char *filename) {
-  DebugLogF("slf file found: %s", filename);
-  sv_add_string_copy(slfFiles, filename);
-}
+static void AddSlfFile(const char *filename) { sv_add_string_copy(slfFiles, filename); }
 
 BOOLEAN InitializeFileDatabase() {
   uint32_t uiSize;

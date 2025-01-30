@@ -9,6 +9,8 @@
 #include <zmouse.h>
 
 #include "BuildDefines.h"
+#include "CmdLine.h"
+#include "DebugLog.h"
 #include "GameLoop.h"
 #include "GameRes.h"
 #include "Globals.h"
@@ -33,6 +35,7 @@
 #include "Strategic/MapScreen.h"
 #include "Strategic/MapScreenInterface.h"
 #include "Strategic/MapScreenInterfaceMap.h"
+#include "StringVector.h"
 #include "Tactical/InterfacePanels.h"
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
@@ -56,8 +59,6 @@ int PASCAL HandledWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pC
                           int sCommandShow);
 
 HINSTANCE ghInstance;
-
-void ProcessJa2CommandLineBeforeInitialization(char *pCommandLine);
 
 // Global Variable Declarations
 #ifdef WINDOWED_MODE
@@ -195,6 +196,44 @@ void ShutdownStandardGamingPlatform(void) {
 #endif
 }
 
+// Split command line arguments given as a single string into a vector of arguments.
+// Splitting by spaces.  Quoted substrings will not be split and will be stored without
+// quotes.
+static void splitCommandLine(const char *commandline, struct StringVector *vec) {
+  if (!vec || !commandline) return;
+
+  const char *start = commandline;
+  while (*start) {
+    while (isspace((unsigned char)*start)) start++;  // Skip leading spaces
+    if (*start == '\0') break;
+
+    const char *end = start;
+    char quote = '\0';
+    if (*start == '"' || *start == '\'') {
+      quote = *start;
+      start++;
+      end = start;
+      while (*end && *end != quote) end++;  // Find closing quote
+    } else {
+      while (*end && !isspace((unsigned char)*end)) end++;  // Find end of word
+    }
+
+    size_t len = end - start;
+    char *word = (char *)malloc(len + 1);
+    if (!word) return;
+
+    memcpy(word, start, len);
+    word[len] = '\0';
+
+    sv_add_string_copy(vec, word);
+    free(word);
+
+    start = end + (quote ? 1 : 0);
+  }
+}
+
+#define PROGRAM_NAME "ja2v"
+
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandLine,
                    int sCommandShow) {
   MSG Message;
@@ -216,15 +255,41 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
   // Copy commandline!
   strcopy(gzCommandLine, ARR_SIZE(gzCommandLine), pCommandLine);
 
-  // Process the command line BEFORE initialization
-  ProcessJa2CommandLineBeforeInitialization(pCommandLine);
+  // Splitting command line into list of arguments.
+  // CommandLineToArgvW can split the command line into a list of arguments,
+  // but there is no A variant of this function and I don't want to use wchar_t.
+  CmdLineArgs cmdLineArgs;
+  {
+    struct StringVector *args = sv_new();
+    sv_add_string_copy(args, PROGRAM_NAME);
+    splitCommandLine(pCommandLine, args);
+    if (!CmdLineParse(args->size, args->data, &cmdLineArgs)) {
+      DebugLogF("Failed to parse command line: %s", cmdLineArgs.errorMessage);
+      CmdLineFree(&cmdLineArgs);
+      return 1;
+    } else {
+      DebugLog("Command line arguments:");
+      DebugLogF("  help    = %d", cmdLineArgs.help);
+      DebugLogF("  nosound = %d", cmdLineArgs.nosound);
+      DebugLogF("  datadir = %s", cmdLineArgs.datadir);
+
+      if (cmdLineArgs.help) {
+        CmdLinePrintHelp(PROGRAM_NAME);
+        return 0;
+      }
+    }
+  }
+
+  if (cmdLineArgs.nosound) {
+    SoundEnableSound(FALSE);
+  }
 
   ShowCursor(FALSE);
 
   // Inititialize the SGP
   struct PlatformInitParams params = {hInstance, (uint16_t)sCommandShow, (void *)WindowProcedure,
                                       IDI_ICON1};
-  if (InitializeStandardGamingPlatform(&params) == FALSE) {
+  if (InitializeStandardGamingPlatform(&params, cmdLineArgs.datadir) == FALSE) {
     return 0;
   }
 
@@ -275,30 +340,4 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
 
   // return wParam of the last message received
   return Message.wParam;
-}
-
-void ProcessJa2CommandLineBeforeInitialization(char *pCommandLine) {
-  char cSeparators[] = "\t =";
-  char *pCopy = NULL, *pToken;
-
-  pCopy = (char *)MemAlloc(strlen(pCommandLine) + 1);
-
-  Assert(pCopy);
-  if (!pCopy) return;
-
-  memcpy(pCopy, pCommandLine, strlen(pCommandLine) + 1);
-
-  pToken = strtok(pCopy, cSeparators);
-  while (pToken) {
-    // if its the NO SOUND option
-    if (!strncasecmp(pToken, "/NOSOUND", 8)) {
-      // disable the sound
-      SoundEnableSound(FALSE);
-    }
-
-    // get the next token
-    pToken = strtok(NULL, cSeparators);
-  }
-
-  MemFree(pCopy);
 }

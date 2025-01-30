@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "BuildDefines.h"
+#include "DebugLog.h"
 #include "GameLoop.h"
 #include "GameRes.h"
 #include "Globals.h"
@@ -30,7 +31,7 @@
 
 void SGPExit(void);
 
-BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params) {
+BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams* params, const char* dataDir) {
   // now required by all (even JA2) in order to call ShutdownSGP
   atexit(SGPExit);
 
@@ -92,13 +93,14 @@ BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams *params) {
     InitializeJA2Clock();
 
     char CurrentDir[256];
-    char DataDir[300];
     Plat_GetExecutableDirectory(CurrentDir, sizeof(CurrentDir));
 
     // Adjust Current Dir
-    snprintf(DataDir, ARR_SIZE(DataDir), "%s\\Data", CurrentDir);
-    if (!Plat_SetCurrentDirectory(DataDir)) {
-      DebugMsg(TOPIC_JA2, DBG_LEVEL_3, "Could not find data directory, shutting down");
+    char fullDataDir[300];
+    snprintf(fullDataDir, ARR_SIZE(fullDataDir), "%s\\%s", CurrentDir, dataDir ? dataDir : "Data");
+    DebugLogF("data directory: %s", fullDataDir);
+    if (!Plat_SetCurrentDirectory(fullDataDir)) {
+      FatalError("Data directory '%s' is not found", fullDataDir);
       return FALSE;
     }
 
