@@ -7,6 +7,4 @@
 
 // ONLY ONE OF THESE CAN BE DEFINED AT A TIME!
 
-#define BLOOD_N_GORE_ENABLED
-
 #endif

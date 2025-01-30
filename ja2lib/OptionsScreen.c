@@ -315,21 +315,6 @@ BOOLEAN EnterOptionsScreen() {
   // Default this to off
   gfHideBloodAndGoreOption = FALSE;
 
-#ifndef BLOOD_N_GORE_ENABLED
-  // This will hide blood and gore option
-  gfHideBloodAndGoreOption = TRUE;
-
-  /*
-  Uncomment this to enable the check for files to activate the blood and gore option for the german
-  build if( !FileMan_Exists( "Germany.dat" ) && FileMan_Exists( "Lecken.dat" ) )
-          {
-                  gfHideBloodAndGoreOption = FALSE;
-          }
-          else
-  */
-  { gGameSettings.fOptions[TOPTION_BLOOD_N_GORE] = FALSE; }
-#endif
-
   // if we are coming from mapscreen
   if (IsMapScreen()) {
     guiTacticalInterfaceFlags &= ~INTERFACE_MAPSCREEN;
@@ -970,7 +955,9 @@ void HandleOptionToggle(uint8_t ubButton, BOOLEAN fState, BOOLEAN fDown, BOOLEAN
 
   // stop the sound if
   //	if( SoundIsPlaying( uiOptionToggleSound ) && !fDown )
-  { SoundStop(uiOptionToggleSound); }
+  {
+    SoundStop(uiOptionToggleSound);
+  }
 
   if (fPlaySound) {
     if (fDown) {
