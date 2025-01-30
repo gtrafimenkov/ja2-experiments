@@ -1478,11 +1478,7 @@ char *GetDialogueDataFilename(uint8_t ubCharacterNum, uint16_t usQuoteNum, BOOLE
   if (gfUseAlternateDialogueFile) {
     if (fWavFile) {
       // build name of wav file (characternum + quotenum)
-      if (UsingRussianBukaResources()) {
-        sprintf(zFileName, "NPC_SPEECH\\g_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
-      } else {
-        sprintf(zFileName, "NPC_SPEECH\\d_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
-      }
+      sprintf(zFileName, "NPC_SPEECH\\d_%03d_%03d.wav", ubCharacterNum, usQuoteNum);
     } else {
       // assume EDT files are in EDT directory on HARD DRIVE
       sprintf(zFileName, "NPCDATA\\d_%03d.EDT", ubCharacterNum);
