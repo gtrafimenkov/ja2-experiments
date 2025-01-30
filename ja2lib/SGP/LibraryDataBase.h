@@ -6,6 +6,7 @@
 #define _LIBRARY_DATABASE_H
 
 #include "SGP/FileMan.h"
+#include "SGP/Ja2Libs.h"
 #include "SGP/LibraryDataBasePub.h"
 #include "SGP/Types.h"
 #include "platform.h"
@@ -25,15 +26,6 @@
 
 #define DB_ADD_LIBRARY_ID(exp) (exp << DB_BITS_FOR_FILE_ID)
 #define DB_ADD_FILE_ID(exp) (exp & 0xC00000)
-
-struct LibraryInitHeader {
-  char sLibraryName[FILENAME_SIZE];  // The name of the library file on the disk
-  BOOLEAN fOnCDrom;  // A flag specifying if its a cdrom library ( not implemented yet )
-  BOOLEAN
-  fInitOnStart;  // Flag specifying if the library is to Initialized at the begining of the game
-};
-
-#include "SGP/Ja2Libs.h"
 
 typedef struct {
   uint32_t uiFileID;                // id of the file ( they start at 1 )
