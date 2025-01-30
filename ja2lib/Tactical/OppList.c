@@ -6,6 +6,7 @@
 
 #include <math.h>
 
+#include "GameRes.h"
 #include "GameSettings.h"
 #include "SGP/Random.h"
 #include "SGP/Types.h"
@@ -2070,8 +2071,8 @@ PopMessage(tempstr);
     // man is seeing an opponent AGAIN whom he has seen at least once before
     gbSeenOpponents[pSoldier->ubID][pOpponent->ubID] = TRUE;
 
-    // if looker is on local team, and the enemy was invisible or "maybe"
-    // visible just prior to this
+  // if looker is on local team, and the enemy was invisible or "maybe"
+  // visible just prior to this
 #ifdef WE_SEE_WHAT_MILITIA_SEES_AND_VICE_VERSA
   if ((PTR_OURTEAM || (pSoldier->bTeam == MILITIA_TEAM)) && (pOpponent->bVisible <= 0))
 #else
@@ -2717,15 +2718,15 @@ void SaySeenQuote(struct SOLDIERTYPE *pSoldier, BOOLEAN fSeenCreature, BOOLEAN f
       // First time we've seen a guy this sector
       TacticalCharacterDialogue(pSoldier, QUOTE_SEE_ENEMY_VARIATION);
     } else {
-#ifdef ENGLISH
-      if (Random(100) < 30) {
-        DoMercBattleSound(pSoldier, BATTLE_SOUND_ENEMY);
+      if (UsingEnglishResources()) {
+        if (Random(100) < 30) {
+          DoMercBattleSound(pSoldier, BATTLE_SOUND_ENEMY);
+        } else {
+          TacticalCharacterDialogue(pSoldier, QUOTE_SEE_ENEMY);
+        }
       } else {
         TacticalCharacterDialogue(pSoldier, QUOTE_SEE_ENEMY);
       }
-#else
-      TacticalCharacterDialogue(pSoldier, QUOTE_SEE_ENEMY);
-#endif
     }
   }
 }

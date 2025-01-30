@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "GameRes.h"
 #include "SGP/HImage.h"
 #include "SGP/Types.h"
 #include "SGP/VObject.h"
@@ -82,10 +83,17 @@ struct VObject* gvoBlockFontNarrow;
 int32_t gp14PointHumanist;
 struct VObject* gvo14PointHumanist;
 
-#if defined(JA2EDITOR) && defined(ENGLISH)
 int32_t gpHugeFont;
 struct VObject* gvoHugeFont;
+
+int32_t GetHugeFont() {
+  if (UsingEnglishResources()) {
+#if defined(JA2EDITOR)
+    return gpHugeFont;
 #endif
+  }
+  return gp16PointArial;
+}
 
 int32_t giSubTitleWinFont;
 

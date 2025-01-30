@@ -124,11 +124,7 @@ extern BOOLEAN gfFontsInit;
 #define BLOCKFONTNARROW gpBlockFontNarrow
 #define FONT14HUMANIST gp14PointHumanist
 
-#if defined(JA2EDITOR) && defined(ENGLISH)
-#define HUGEFONT gpHugeFont
-#else
-#define HUGEFONT gp16PointArial
-#endif
+int32_t GetHugeFont();
 
 #define FONT_SHADE_RED 6
 #define FONT_SHADE_BLUE 1

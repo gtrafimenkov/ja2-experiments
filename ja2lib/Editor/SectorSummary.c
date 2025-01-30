@@ -2473,11 +2473,11 @@ void ApologizeOverrideAndForceUpdateEverything() {
   // Draw it
   DrawButton(iSummaryButton[SUMMARY_BACKGROUND]);
   InvalidateRegion(0, 0, 640, 480);
-  SetFont(HUGEFONT);
+  SetFont(GetHugeFont());
   SetFontForeground(FONT_RED);
   SetFontShadow(FONT_NEARBLACK);
   swprintf(str, ARR_SIZE(str), L"MAJOR VERSION UPDATE");
-  mprintf(320 - StringPixLength(str, HUGEFONT) / 2, 105, str);
+  mprintf(320 - StringPixLength(str, GetHugeFont()) / 2, 105, str);
   SetFont(FONT10ARIAL);
   SetFontForeground(FONT_YELLOW);
   swprintf(str, ARR_SIZE(str), L"There are %d maps requiring a major version update.",
