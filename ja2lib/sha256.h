@@ -1,6 +1,7 @@
 #ifndef JA2_SHA256
 #define JA2_SHA256
 
+#include <stddef.h>
 #include <stdint.h>
 
 typedef struct {

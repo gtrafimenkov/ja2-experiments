@@ -6,6 +6,7 @@
 #define JA2_GAME_RES
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 // Known type of game resources
@@ -44,4 +45,4 @@ void UseTextDutch();
 
 void UseTextLanguagaeMatchingGameResourcesType();
 
-#endif JA2_GAME_RES
+#endif  // JA2_GAME_RES

@@ -26,7 +26,7 @@ void InitJA2SplashScreen() {
     uint32_t uiLogoID = 0;
     VSURFACE_DESC VSurfaceDesc;
     struct VSurface* hVSurface;
-    memset(&VSurfaceDesc, 0, sizeof(VSURFACE_DESC));
+    MemZero(&VSurfaceDesc, sizeof(VSURFACE_DESC));
     VSurfaceDesc.fCreateFlags = VSURFACE_CREATE_FROMFILE | VSURFACE_SYSTEM_MEM_USAGE;
     sprintf(VSurfaceDesc.ImageFile, "LOADSCREENS\\Notification.sti");
     if (!AddVideoSurface(&VSurfaceDesc, &uiLogoID)) {

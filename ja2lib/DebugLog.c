@@ -17,7 +17,13 @@ const char* getLocalTime() {
   memset(&local_time, 0, sizeof(local_time));
 
   time(&now);
+#if defined(_MSC_VER)
+  // Windows
   localtime_s(&local_time, &now);
+#else
+  // Linux
+  localtime_r(&local_time, &now);
+#endif
   strftime(localtime_str, sizeof(localtime_str), "%Y%m%d-%H%M%S", &local_time);
 
   return localtime_str;
@@ -26,8 +32,9 @@ const char* getLocalTime() {
 static bool openFile(const char* localtime_str) {
   if (logFile == NULL) {
     char filename[32];
-    sprintf_s(filename, sizeof(filename), "debug-log-%s.txt", localtime_str);
-    if (fopen_s(&logFile, filename, "a") != 0) {
+    snprintf(filename, sizeof(filename), "debug-log-%s.txt", localtime_str);
+    logFile = fopen(filename, "a");
+    if (logFile == NULL) {
       fprintf(stderr, "Error opening log file '%s'.\n", filename);
       return false;
     }
@@ -51,7 +58,7 @@ void DebugLogF(const char* format, ...) {
 
   va_list args;
   va_start(args, format);
-  size_t written = vsprintf_s(message_buf, sizeof(message_buf) - 1, format, args);
+  size_t written = vsnprintf(message_buf, sizeof(message_buf) - 1, format, args);
   message_buf[written] = 0;
   va_end(args);
 

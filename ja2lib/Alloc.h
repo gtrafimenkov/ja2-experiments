@@ -1,6 +1,7 @@
 #ifndef JA2_ALLOC
 #define JA2_ALLOC
 
+#include <stddef.h>
 #include <stdint.h>
 
 void* MemAlloc(size_t size);

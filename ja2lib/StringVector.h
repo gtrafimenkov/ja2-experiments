@@ -1,6 +1,7 @@
 #ifndef JA2_STRING_VECTOR
 #define JA2_STRING_VECTOR
 
+#include <stddef.h>
 #include <stdint.h>
 
 struct StringVector {
