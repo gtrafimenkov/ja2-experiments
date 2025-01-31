@@ -233,9 +233,6 @@ uint32_t MapUtilScreenHandle() {
   UnlockVSurface(vsMiniMap);
   UnlockVSurface(vsFB);
 
-  // RENDER!
-  // BltVSurfaceRectToRect(vsFB, vsMiniMap, 0, VS_BLT_USECOLORKEY, NULL);
-
   // QUantize!
   pDataPtr = (uint8_t *)LockVSurface(vs8BitMiniMap, &uiSrcPitchBYTES);
   pDestBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);

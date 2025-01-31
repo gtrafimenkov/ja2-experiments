@@ -2333,6 +2333,20 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
   return (TRUE);
 }
 
+static void BltVSurfaceRectToRectInternal(struct VSurface *dest, struct VSurface *src,
+                                          struct Rect *srcRect, struct Rect *destRect,
+                                          uint32_t ddFlags) {
+  RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
+  RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
+
+  HRESULT ReturnCode;
+  do {
+    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
+                                         (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
+                                         ddFlags, NULL);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
+}
+
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
                                int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
   // Blit using the correct blitter
@@ -2377,40 +2391,15 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
       return (TRUE);
     }
 
-    RECT srcRect = {SrcRectCopy.left, SrcRectCopy.top, SrcRectCopy.right, SrcRectCopy.bottom};
-    RECT dstRect = {DestRect.left, DestRect.top, DestRect.right, DestRect.bottom};
-
-    HRESULT ReturnCode;
-    do {
-      ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &dstRect,
-                                           (LPDIRECTDRAWSURFACE2)src->_platformData2, &srcRect,
-                                           uiDDFlags, NULL);
-
-    } while (ReturnCode == DDERR_WASSTILLDRAWING);
-
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
+    BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect, uiDDFlags);
   }
 
   return (TRUE);
 }
 
-BOOLEAN BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
-                              struct Rect *DestRect) {
-  RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
-  RECT destRect = {DestRect->left, DestRect->top, DestRect->right, DestRect->bottom};
-
-  uint32_t uiDDFlags = DDBLT_WAIT;
-
-  HRESULT ReturnCode;
-  do {
-    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &destRect,
-                                         (LPDIRECTDRAWSURFACE2)src->_platformData2, &srcRect,
-                                         uiDDFlags, NULL);
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
-
-  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
-  return (TRUE);
+void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
+                           struct Rect *destRect) {
+  BltVSurfaceRectToRectInternal(dest, src, srcRect, destRect, DDBLT_WAIT);
 }
 
 //////////////////////////////////////////////////////////////////
