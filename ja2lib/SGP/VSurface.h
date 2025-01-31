@@ -113,7 +113,7 @@ void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct R
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
                                int32_t iDestY, struct Rect *SrcRect);
 
-void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
+void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t x, uint32_t y,
                struct Rect *region);
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,

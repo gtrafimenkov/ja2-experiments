@@ -245,7 +245,7 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
   return FALSE;
 }
 
-void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
+void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t x, uint32_t y,
                struct Rect *region) {}
 
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}

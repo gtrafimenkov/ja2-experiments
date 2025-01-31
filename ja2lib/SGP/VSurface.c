@@ -383,7 +383,7 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     CHECKF(destX >= 0);
     CHECKF(destY >= 0);
-    DDBltFast(dest, destX, destY, src, &SrcRect);
+    DDBltFast(dest, src, destX, destY, &SrcRect);
     return TRUE;
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
