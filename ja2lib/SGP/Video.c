@@ -12,6 +12,9 @@
 uint16_t gusScreenWidth;
 uint16_t gusScreenHeight;
 
+uint16_t GetScreenWidth() { return gusScreenWidth; }
+uint16_t GetScreenHeight() { return gusScreenHeight; }
+
 void GetCurrentVideoSettings(uint16_t *usWidth, uint16_t *usHeight) {
   *usWidth = (uint16_t)gusScreenWidth;
   *usHeight = (uint16_t)gusScreenHeight;

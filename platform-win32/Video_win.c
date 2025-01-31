@@ -753,8 +753,14 @@ void InvalidateScreen(void) {
   guiFrameBufferState = BUFFER_DIRTY;
 }
 
+static void eraseZBuffer(int32_t x, int32_t y, int32_t width, int32_t height) {
+  int32_t y_end = y + height;
+  for (int32_t _y = y; _y < y_end; _y++) {
+    memset((uint8_t *)gpZBuffer + (_y * 1280), 0, width * 2);
+  }
+}
+
 static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mouseCursor) {
-  uint16_t usWidth, usHeight;
   static RECT Region;
   uint16_t usMouseXPos, usMouseYPos;
   uint16_t usNumStrips = 0;
@@ -762,8 +768,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
   int16_t sShiftX, sShiftY;
   int32_t uiCountY;
 
-  GetCurrentVideoSettings(&usWidth, &usHeight);
-  usHeight = (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y);
+  uint16_t screenWidth = GetScreenWidth();
+  uint16_t viewportWindowHeight = gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y;
 
   static RECT StripRegions[2];
   StripRegions[0].left = gsVIEWPORT_START_X;
@@ -780,16 +786,13 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
-      Region.right = usWidth - (gsScrollXIncrement);
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
+      Region.right = screenWidth - (gsScrollXIncrement);
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
       DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, vsPrimary,
                           (LPRECT)&Region);
 
-      // memset z-buffer
-      for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
-        memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, gsScrollXIncrement * 2);
-      }
+      eraseZBuffer(0, gsVIEWPORT_WINDOW_START_Y, viewportWindowHeight, gsScrollXIncrement);
 
       StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
       usMouseXPos += gsScrollXIncrement;
@@ -801,8 +804,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = gsScrollXIncrement;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
-      Region.right = usWidth;
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
+      Region.right = screenWidth;
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
       DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
 
@@ -823,8 +826,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
-      Region.right = usWidth;
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - gsScrollYIncrement;
+      Region.right = screenWidth;
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
       DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
                           vsPrimary, (LPRECT)&Region);
@@ -845,8 +848,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement;
-      Region.right = usWidth;
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
+      Region.right = screenWidth;
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
       DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
 
@@ -867,8 +870,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
-      Region.right = usWidth - (gsScrollXIncrement);
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - gsScrollYIncrement;
+      Region.right = screenWidth - (gsScrollXIncrement);
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
       DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement,
                           gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement, vsPrimary,
@@ -897,8 +900,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = gsScrollXIncrement;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
-      Region.right = usWidth;
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - gsScrollYIncrement;
+      Region.right = screenWidth;
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
       DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
                           vsPrimary, (LPRECT)&Region);
@@ -928,8 +931,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement;
-      Region.right = usWidth - (gsScrollXIncrement);
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
+      Region.right = screenWidth - (gsScrollXIncrement);
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
       DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, vsPrimary,
                           (LPRECT)&Region);
@@ -958,8 +961,8 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       Region.left = gsScrollXIncrement;
       Region.top = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement;
-      Region.right = usWidth;
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
+      Region.right = screenWidth;
+      Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
       DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
 

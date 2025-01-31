@@ -24,6 +24,8 @@ extern BOOLEAN InitializeVideoManager(struct PlatformInitParams *params);
 extern void ShutdownVideoManager(void);
 extern void SuspendVideoManager(void);
 extern BOOLEAN RestoreVideoManager(void);
+extern uint16_t GetScreenWidth();
+extern uint16_t GetScreenHeight();
 extern void GetCurrentVideoSettings(uint16_t *usWidth, uint16_t *usHeight);
 extern void InvalidateRegion(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom);
 extern void InvalidateScreen(void);
