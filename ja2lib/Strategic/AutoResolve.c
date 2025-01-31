@@ -1412,7 +1412,7 @@ void RenderAutoResolve() {
   }
   gpAR->fRenderAutoResolve = FALSE;
 
-  BltVSurfaceToVSurfaceColorKey(vsFB, gpAR->vsInterfaceBuffer, gpAR->Rect.iLeft, gpAR->Rect.iTop);
+  BltVSurfaceToVSurface(vsFB, gpAR->vsInterfaceBuffer, gpAR->Rect.iLeft, gpAR->Rect.iTop);
 
   for (i = 0; i < gpAR->ubMercs; i++) {
     RenderSoldierCell(&gpMercs[i]);

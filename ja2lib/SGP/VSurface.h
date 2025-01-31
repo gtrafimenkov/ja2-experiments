@@ -120,8 +120,6 @@ void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *s
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
                               int32_t destY);
-BOOLEAN BltVSurfaceToVSurfaceColorKey(struct VSurface *dest, struct VSurface *src, int32_t destX,
-                                      int32_t destY);
 BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                      int32_t destY, struct Rect *srcRect);
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
