@@ -1676,7 +1676,7 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   uint32_t uiDestPitchBYTES;
 
   BltVSurfaceToVSurfaceFastColorKey(pBlitter->vsDestBuff, vsINTEXT, pBlitter->pBackground->sLeft,
-                                    pBlitter->pBackground->sTop, NULL);
+                                    pBlitter->pBackground->sTop);
 
   pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
 
@@ -2673,21 +2673,19 @@ void HandleTopMessages() {
       gTopMessage.sWorldRenderY = gsRenderCenterY;
 
       // Redner!
-      SGPRect SrcRect;
-      SrcRect.iLeft = 0;
-      SrcRect.iTop = 20 - gTopMessage.bYPos;
-      SrcRect.iRight = 640;
-      SrcRect.iBottom = 20;
-
-      BltVSurfaceToVSurface(vsFB, gTopMessage.dest, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
+      struct Rect SrcRect;
+      SrcRect.left = 0;
+      SrcRect.top = 20 - gTopMessage.bYPos;
+      SrcRect.right = 640;
+      SrcRect.bottom = 20;
+      BltVSurfaceToVSurfaceSubrect(vsFB, gTopMessage.dest, 0, 0, &SrcRect);
 
       // Save to save buffer....
-      SrcRect.iLeft = 0;
-      SrcRect.iTop = 0;
-      SrcRect.iRight = 640;
-      SrcRect.iBottom = 20;
-
-      BltVSurfaceToVSurface(vsSaveBuffer, vsFB, 0, 0, VS_BLT_SRCSUBRECT, &SrcRect);
+      SrcRect.left = 0;
+      SrcRect.top = 0;
+      SrcRect.right = 640;
+      SrcRect.bottom = 20;
+      BltVSurfaceToVSurfaceSubrect(vsSaveBuffer, vsFB, 0, 0, &SrcRect);
 
       InvalidateRegion(0, 0, 640, 20);
 

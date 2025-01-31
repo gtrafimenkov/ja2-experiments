@@ -38,7 +38,6 @@ extern BOOLEAN gfExtraBuffer;
 
 #define VS_BLT_USECOLORKEY 0x000000002
 #define VS_BLT_FAST 0x000000004
-#define VS_BLT_SRCSUBRECT 0x000000040
 
 //
 // This structure is a video Surface. Contains a HLIST of regions
@@ -121,11 +120,13 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
                                int32_t iDestX, int32_t iDestY, struct Rect *SrcRect);
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
-                              int32_t destY, int32_t fBltFlags, SGPRect *srcRect);
+                              int32_t destY, int32_t fBltFlags);
+BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                                     int32_t destY, struct Rect *srcRect);
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
-                                  int32_t destY, SGPRect *srcRect);
+                                  int32_t destY);
 BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface *src,
-                                          int32_t destX, int32_t destY, SGPRect *srcRect);
+                                          int32_t destX, int32_t destY);
 
 BOOLEAN ShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1, int32_t Y1, int32_t X2,
                                int32_t Y2);

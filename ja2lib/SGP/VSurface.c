@@ -290,12 +290,126 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
   return (TRUE);
 }
 
+static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struct VSurface *src,
+                                                    int32_t destX, int32_t destY,
+                                                    struct Rect *srcRect, int32_t fBltFlags) {
+  Assert(dest != NULL);
+  Assert(src != NULL);
+
+  // clipping -- added by DB
+  struct Rect DestRect = {.left = 0, .top = 0, .right = dest->usWidth, .bottom = dest->usHeight};
+  uint32_t uiWidth = srcRect->right - srcRect->left;
+  uint32_t uiHeight = srcRect->bottom - srcRect->top;
+
+  // check for position entirely off the screen
+  if (destX >= DestRect.right) return (FALSE);
+  if (destY >= DestRect.bottom) return (FALSE);
+  if ((destX + (int32_t)uiWidth) < (int32_t)DestRect.left) return (FALSE);
+  if ((destY + (int32_t)uiHeight) < (int32_t)DestRect.top) return (FALSE);
+
+  if ((destX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
+    srcRect->right -= ((destX + uiWidth) - DestRect.right);
+    uiWidth -= ((destX + uiWidth) - DestRect.right);
+  }
+  if ((destY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
+    srcRect->bottom -= ((destY + uiHeight) - DestRect.bottom);
+    uiHeight -= ((destY + uiHeight) - DestRect.bottom);
+  }
+  if (destX < DestRect.left) {
+    srcRect->left += (DestRect.left - destX);
+    uiWidth -= (DestRect.left - destX);
+    destX = DestRect.left;
+  }
+  if (destY < (int32_t)DestRect.top) {
+    srcRect->top += (DestRect.top - destY);
+    uiHeight -= (DestRect.top - destY);
+    destY = DestRect.top;
+  }
+
+  // Send dest position, rectangle, etc to DD bltfast function
+  // First check BPP values for compatibility
+  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+    CHECKF(BltVSurfaceRectToPoint(dest, src, fBltFlags, destX, destY, srcRect));
+  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    uint8_t *pSrcSurface8, *pDestSurface8;
+    uint32_t uiSrcPitch, uiDestPitch;
+    if ((pSrcSurface8 = (uint8_t *)LockVSurface(src, &uiSrcPitch)) == NULL) {
+      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
+                 String("Failed on lock of 8BPP surface for blitting"));
+      return (FALSE);
+    }
+
+    if ((pDestSurface8 = (uint8_t *)LockVSurface(dest, &uiDestPitch)) == NULL) {
+      UnlockVSurface(src);
+      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
+                 String("Failed on lock of 8BPP dest surface for blitting"));
+      return (FALSE);
+    }
+
+    Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, destX, destY, srcRect->left,
+                  srcRect->top, uiWidth, uiHeight);
+    UnlockVSurface(src);
+    UnlockVSurface(dest);
+    return (TRUE);
+  } else {
+    DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
+               String("Incompatible BPP values with src and dest Video Surfaces for blitting"));
+    return (FALSE);
+  }
+
+  return (TRUE);
+}
+
+BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                                     int32_t destY, struct Rect *srcRect) {
+  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, srcRect, 0);
+}
+
+// Blt  will use DD Blt or BltFast depending on flags.
+// Will drop down into user-defined blitter if 8->16 BPP blitting is being done
+
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
-                                  int32_t destY, SGPRect *srcRect) {
-  return BltVSurfaceToVSurface(dest, src, destX, destY, VS_BLT_FAST, srcRect);
+                                  int32_t destY) {
+  Assert(dest != NULL);
+
+  if (dest->usHeight < src->usHeight) {
+    return (FALSE);
+  }
+  if (dest->usWidth < src->usWidth) {
+    return (FALSE);
+  }
+
+  struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
+  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect, VS_BLT_FAST);
 }
 
 BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface *src,
-                                          int32_t destX, int32_t destY, SGPRect *srcRect) {
-  return BltVSurfaceToVSurface(dest, src, destX, destY, VS_BLT_FAST | VS_BLT_USECOLORKEY, srcRect);
+                                          int32_t destX, int32_t destY) {
+  Assert(dest != NULL);
+
+  if (dest->usHeight < src->usHeight) {
+    return (FALSE);
+  }
+  if (dest->usWidth < src->usWidth) {
+    return (FALSE);
+  }
+
+  struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
+  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect,
+                                              VS_BLT_FAST | VS_BLT_USECOLORKEY);
+}
+
+BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                              int32_t destY, int32_t fBltFlags) {
+  Assert(dest != NULL);
+
+  if (dest->usHeight < src->usHeight) {
+    return (FALSE);
+  }
+  if (dest->usWidth < src->usWidth) {
+    return (FALSE);
+  }
+
+  struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
+  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect, fBltFlags);
 }
