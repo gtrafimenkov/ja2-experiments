@@ -162,17 +162,23 @@ void DDBlt(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
     return;
   }
 
-  RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
-  RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
+  if (destWidth == srcWidth && destHeight == srcHeight) {
+    DDBltFast(dest, src, destRect->left, destRect->top, srcRect);
+  } else {
+    // We need resizing, for example, when opening and closing laptop.
 
-  uint32_t flags = (src->transparencySet ? DDBLT_KEYSRC : 0) | DDBLT_WAIT;
+    RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
+    RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
 
-  HRESULT ReturnCode;
-  do {
-    ReturnCode =
-        IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
-                                (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect, flags, NULL);
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
+    uint32_t flags = (src->transparencySet ? DDBLT_KEYSRC : 0) | DDBLT_WAIT;
+
+    HRESULT ReturnCode;
+    do {
+      ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
+                                           (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
+                                           flags, NULL);
+    } while (ReturnCode == DDERR_WASSTILLDRAWING);
+  }
 }
 
 #define BUFFER_READY 0x00
