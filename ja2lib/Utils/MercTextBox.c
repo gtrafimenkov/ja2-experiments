@@ -206,7 +206,7 @@ BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, struct VSurface *dest
 
   // check to see if we are wanting to blit a transparent background
   if (gPopUpTextBox->uiFlags & MERC_POPUP_PREPARE_FLAGS_TRANS_BACK)
-    BltVSurfaceToVSurfaceFastColorKey(dest, gPopUpTextBox->sourceBuffer, sDestX, sDestY);
+    BltVSurfaceToVSurfaceFast(dest, gPopUpTextBox->sourceBuffer, sDestX, sDestY);
   else
     BltVSurfaceToVSurfaceFast(dest, gPopUpTextBox->sourceBuffer, sDestX, sDestY);
 

@@ -126,8 +126,6 @@ BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src
                                      int32_t destY, struct Rect *srcRect);
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                   int32_t destY);
-BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface *src,
-                                          int32_t destX, int32_t destY);
 
 BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VSurface *src,
                                          int32_t *destX, int32_t *destY, struct Rect *srcRect);
