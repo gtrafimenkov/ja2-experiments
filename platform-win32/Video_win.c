@@ -1222,11 +1222,7 @@ void RefreshScreen(void *DummyVariable) {
     FILE *OutputFile;
     char FileName[64];
     int32_t iIndex;
-    STRING512 ExecDir;
     uint16_t *p16BPPData;
-
-    Plat_GetExecutableDirectory(ExecDir, sizeof(ExecDir));
-    Plat_SetCurrentDirectory(ExecDir);
 
     //
     // Create temporary system memory surface. This is used to correct problems with the backbuffer
@@ -1260,7 +1256,7 @@ void RefreshScreen(void *DummyVariable) {
     // Ok now that temp surface has contents of backbuffer, copy temp surface to disk
     //
 
-    sprintf(FileName, "SCREEN%03d.TGA", guiPrintFrameBufferIndex++);
+    sprintf(FileName, "../SCREEN%03d.TGA", guiPrintFrameBufferIndex++);
     if ((OutputFile = fopen(FileName, "wb")) != NULL) {
       fprintf(OutputFile, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,
               0, 0x80, 0x02, 0xe0, 0x01, 0x10, 0);
@@ -1313,9 +1309,6 @@ void RefreshScreen(void *DummyVariable) {
     gfPrintFrameBuffer = FALSE;
 
     DeleteVSurface(vsTmp);
-
-    strcat(ExecDir, "\\Data");
-    Plat_SetCurrentDirectory(ExecDir);
   }
 
   //
