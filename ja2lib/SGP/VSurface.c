@@ -352,22 +352,16 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struc
     uint8_t *pSrcSurface8, *pDestSurface8;
     uint32_t uiSrcPitch, uiDestPitch;
     if ((pSrcSurface8 = (uint8_t *)LockVSurface(src, &uiSrcPitch)) == NULL) {
-      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-                 String("Failed on lock of 8BPP surface for blitting"));
       return (FALSE);
     }
 
     if ((pDestSurface8 = (uint8_t *)LockVSurface(dest, &uiDestPitch)) == NULL) {
       UnlockVSurface(src);
-      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-                 String("Failed on lock of 8BPP dest surface for blitting"));
       return (FALSE);
     }
 
-    uint32_t uiWidth = srcRect->right - srcRect->left;
-    uint32_t uiHeight = srcRect->bottom - srcRect->top;
-    Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, destX, destY, srcRect->left,
-                  srcRect->top, uiWidth, uiHeight);
+    Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, destX, destY, srcRect);
+
     UnlockVSurface(src);
     UnlockVSurface(dest);
     return (TRUE);

@@ -5,6 +5,7 @@
 #ifndef __VOBJECT_BLITTERS
 #define __VOBJECT_BLITTERS
 
+#include "Rect.h"
 #include "SGP/Types.h"
 
 struct VSurface;
@@ -151,8 +152,7 @@ BOOLEAN Blt8BPPDataTo16BPPBufferShadowClip(uint16_t *pBuffer, uint32_t uiDestPit
                                            uint16_t usIndex, SGPRect *clipregion);
 
 BOOLEAN Blt8BPPTo8BPP(uint8_t *pDest, uint32_t uiDestPitch, uint8_t *pSrc, uint32_t uiSrcPitch,
-                      int32_t iDestXPos, int32_t iDestYPos, int32_t iSrcXPos, int32_t iSrcYPos,
-                      uint32_t uiWidth, uint32_t uiHeight);
+                      int32_t iDestXPos, int32_t iDestYPos, const struct Rect *srcRect);
 BOOLEAN Blt16BPPTo16BPP(uint16_t *pDest, uint32_t uiDestPitch, uint16_t *pSrc, uint32_t uiSrcPitch,
                         int32_t iDestXPos, int32_t iDestYPos, int32_t iSrcXPos, int32_t iSrcYPos,
                         uint32_t uiWidth, uint32_t uiHeight);
