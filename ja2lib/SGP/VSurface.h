@@ -108,8 +108,6 @@ BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
 // These blitting functions more-or less encapsolate all of the functionality of DirectDraw
 // Blitting, giving an API layer for portability.
 
-void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
-                           struct Rect *DestRect);
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
                                int32_t iDestY, struct Rect *SrcRect);
 

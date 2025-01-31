@@ -11,6 +11,7 @@
 #include "SGP/VObjectBlitters.h"
 #include "SGP/WCheck.h"
 #include "StrUtils.h"
+#include "jplatform_video.h"
 
 struct VSurface *vsPrimary = NULL;
 struct VSurface *vsBackBuffer = NULL;
@@ -182,9 +183,16 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect 
   if ((dest->ubBitDepth != 16) && (src->ubBitDepth != 16)) {
     return FALSE;
   };
-  struct Rect srcRect = {SrcRect->iLeft, SrcRect->iTop, SrcRect->iRight, SrcRect->iBottom};
-  struct Rect destRect = {DestRect->iLeft, DestRect->iTop, DestRect->iRight, DestRect->iBottom};
-  BltVSurfaceRectToRect(dest, src, &srcRect, &destRect);
+  struct JRect srcBox = {.x = SrcRect->iLeft,
+                         .y = SrcRect->iTop,
+                         .w = SrcRect->iRight - SrcRect->iLeft,
+                         .h = SrcRect->iBottom - SrcRect->iTop};
+
+  struct JRect destBox = {.x = DestRect->iLeft,
+                          .y = DestRect->iTop,
+                          .w = DestRect->iRight - DestRect->iLeft,
+                          .h = DestRect->iBottom - DestRect->iTop};
+  JSurface_BlitRectToRect(src, dest, &srcBox, &destBox);
   return TRUE;
 }
 

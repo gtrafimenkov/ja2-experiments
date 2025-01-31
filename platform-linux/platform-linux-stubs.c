@@ -220,11 +220,6 @@ BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) { return FALSE; }
 
 void FatalError(char *pError, ...) {}
 
-void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
-                           struct Rect *DestRect) {
-  return FALSE;
-}
-
 BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
                               int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
   return FALSE;

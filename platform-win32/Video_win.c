@@ -2219,20 +2219,6 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
   return (TRUE);
 }
 
-void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
-                           struct Rect *destRect) {
-  struct JRect srcBox = {.x = srcRect->left,
-                         .y = srcRect->top,
-                         .w = srcRect->right - srcRect->left,
-                         .h = srcRect->bottom - srcRect->top};
-
-  struct JRect destBox = {.x = destRect->left,
-                          .y = destRect->top,
-                          .w = destRect->right - destRect->left,
-                          .h = destRect->bottom - destRect->top};
-  JSurface_BlitRectToRect(src, dest, &srcBox, &destBox);
-}
-
 //////////////////////////////////////////////////////////////////
 // Cinematics
 //////////////////////////////////////////////////////////////////
