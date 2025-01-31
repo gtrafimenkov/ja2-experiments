@@ -244,10 +244,6 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
                                int32_t iDestY, struct Rect *SrcRect) {
   return FALSE;
 }
-BOOLEAN BltVSurfaceRectToPointColorKey(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
-                                       int32_t iDestY, struct Rect *SrcRect) {
-  return FALSE;
-}
 
 void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
                struct Rect *region) {}

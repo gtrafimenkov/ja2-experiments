@@ -2165,24 +2165,13 @@ static void BltVSurfaceRectToRectInternal(struct VSurface *dest, struct VSurface
   RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
   RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
 
-  HRESULT ReturnCode;
-  do {
-    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
-                                         (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
-                                         DDBLT_WAIT, NULL);
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
-}
-
-static void BltVSurfaceRectToRectInternalColorKey(struct VSurface *dest, struct VSurface *src,
-                                                  struct Rect *srcRect, struct Rect *destRect) {
-  RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
-  RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
+  uint32_t flags = (src->transparencySet ? DDBLT_KEYSRC : 0) | DDBLT_WAIT;
 
   HRESULT ReturnCode;
   do {
-    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
-                                         (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
-                                         DDBLT_KEYSRC | DDBLT_WAIT, NULL);
+    ReturnCode =
+        IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
+                                (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect, flags, NULL);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
@@ -2209,33 +2198,6 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
   }
 
   BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect);
-
-  return (TRUE);
-}
-
-BOOLEAN BltVSurfaceRectToPointColorKey(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
-                                       int32_t iDestY, struct Rect *SrcRect) {
-  // Setup dest rectangle
-  struct Rect DestRect;
-  DestRect.top = (int)iDestY;
-  DestRect.left = (int)iDestX;
-  DestRect.bottom = (int)iDestY + (SrcRect->bottom - SrcRect->top);
-  DestRect.right = (int)iDestX + (SrcRect->right - SrcRect->left);
-
-  struct Rect SrcRectCopy = *SrcRect;
-
-  // Do Clipping of rectangles
-  if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &SrcRectCopy)) {
-    // Returns false because dest start is > dest size
-    return (TRUE);
-  }
-
-  // Check values for 0 size
-  if (DestRect.top == DestRect.bottom || DestRect.right == DestRect.left) {
-    return (TRUE);
-  }
-
-  BltVSurfaceRectToRectInternalColorKey(dest, src, &SrcRectCopy, &DestRect);
 
   return (TRUE);
 }

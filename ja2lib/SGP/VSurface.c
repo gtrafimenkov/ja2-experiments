@@ -387,23 +387,17 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
     return TRUE;
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
-  } else {
-    return FALSE;
   }
+  return FALSE;
 }
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
                               int32_t destY) {
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
-    if (src->transparencySet) {
-      return BltVSurfaceRectToPointColorKey(dest, src, destX, destY, &SrcRect);
-    } else {
-      return BltVSurfaceRectToPoint(dest, src, destX, destY, &SrcRect);
-    }
+    return BltVSurfaceRectToPoint(dest, src, destX, destY, &SrcRect);
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
-  } else {
-    return FALSE;
   }
+  return FALSE;
 }
