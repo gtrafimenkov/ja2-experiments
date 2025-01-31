@@ -302,8 +302,10 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
   return (TRUE);
 }
 
-BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VSurface *src,
-                                         int32_t *destX, int32_t *destY, struct Rect *srcRect) {
+// Update srcRect and destX, destY so that the resulting target
+// rectangle is inside of dest bounds.
+static BOOLEAN clipToDestBounds(struct VSurface *dest, struct VSurface *src, int32_t *destX,
+                                int32_t *destY, struct Rect *srcRect) {
   Assert(dest != NULL);
   Assert(src != NULL);
 
@@ -316,32 +318,28 @@ BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VSurface 
 
   // clipping -- added by DB
   struct Rect DestRect = {.left = 0, .top = 0, .right = dest->usWidth, .bottom = dest->usHeight};
-  uint32_t uiWidth = srcRect->right - srcRect->left;
-  uint32_t uiHeight = srcRect->bottom - srcRect->top;
+  int32_t srcWidth = srcRect->right - srcRect->left;
+  int32_t srcHeight = srcRect->bottom - srcRect->top;
 
   // check for position entirely off the screen
-  if (*destX >= DestRect.right) return false;
-  if (*destY >= DestRect.bottom) return false;
-  if ((*destX + (int32_t)uiWidth) < (int32_t)DestRect.left) return false;
-  if ((*destY + (int32_t)uiHeight) < (int32_t)DestRect.top) return false;
+  if (*destX >= dest->usWidth) return false;
+  if (*destY >= dest->usHeight) return false;
+  if ((*destX + srcWidth) < 0) return false;
+  if ((*destY + srcHeight) < 0) return false;
 
-  if ((*destX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
-    srcRect->right -= ((*destX + uiWidth) - DestRect.right);
-    // uiWidth -= ((*destX + uiWidth) - DestRect.right);
+  if ((*destX + srcWidth) >= dest->usWidth) {
+    srcRect->right -= ((*destX + srcWidth) - dest->usWidth);
   }
-  if ((*destY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
-    srcRect->bottom -= ((*destY + uiHeight) - DestRect.bottom);
-    // uiHeight -= ((*destY + uiHeight) - DestRect.bottom);
+  if ((*destY + srcHeight) >= dest->usHeight) {
+    srcRect->bottom -= ((*destY + srcHeight) - dest->usHeight);
   }
-  if (*destX < DestRect.left) {
-    srcRect->left += (DestRect.left - *destX);
-    // uiWidth -= (DestRect.left - *destX);
-    *destX = DestRect.left;
+  if (*destX < 0) {
+    srcRect->left += -*destX;
+    *destX = 0;
   }
-  if (*destY < (int32_t)DestRect.top) {
-    srcRect->top += (DestRect.top - *destY);
-    // uiHeight -= (DestRect.top - *destY);
-    *destY = DestRect.top;
+  if (*destY < 0) {
+    srcRect->top += -*destY;
+    *destY = 0;
   }
   return true;
 }
@@ -350,7 +348,7 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct VSurface *dest, s
                                                         int32_t destX, int32_t destY,
                                                         struct Rect *srcRect) {
   if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
-    if (!BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
+    if (!clipToDestBounds(dest, src, &destX, &destY, srcRect)) {
       return FALSE;
     }
 
@@ -466,7 +464,7 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
 BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                      int32_t destY, struct Rect *srcRect) {
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
-    if (BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
+    if (clipToDestBounds(dest, src, &destX, &destY, srcRect)) {
       return BltVSurfaceRectToPoint(dest, src, destX, destY, srcRect);
     }
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
