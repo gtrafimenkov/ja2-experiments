@@ -2219,8 +2219,7 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
 }
 
 static void BltVSurfaceRectToRectInternal(struct VSurface *dest, struct VSurface *src,
-                                          struct Rect *srcRect, struct Rect *destRect,
-                                          uint32_t ddFlags) {
+                                          struct Rect *srcRect, struct Rect *destRect) {
   RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
   RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
 
@@ -2228,20 +2227,25 @@ static void BltVSurfaceRectToRectInternal(struct VSurface *dest, struct VSurface
   do {
     ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
                                          (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
-                                         ddFlags | DDBLT_WAIT, NULL);
+                                         DDBLT_WAIT, NULL);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
+}
+
+static void BltVSurfaceRectToRectInternalColorKey(struct VSurface *dest, struct VSurface *src,
+                                                  struct Rect *srcRect, struct Rect *destRect) {
+  RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
+  RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
+
+  HRESULT ReturnCode;
+  do {
+    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
+                                         (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
+                                         DDBLT_KEYSRC | DDBLT_WAIT, NULL);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
                                int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
-  // Default flags
-  uint32_t uiDDFlags = 0;
-
-  // Convert flags into DD flags, ( for transparency use, etc )
-  if (fBltFlags & VS_BLT_USECOLORKEY) {
-    uiDDFlags |= DDBLT_KEYSRC;
-  }
-
   // Setup dest rectangle
   struct Rect DestRect;
   DestRect.top = (int)iDestY;
@@ -2262,14 +2266,18 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
     return (TRUE);
   }
 
-  BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect, uiDDFlags);
+  if (fBltFlags & VS_BLT_USECOLORKEY) {
+    BltVSurfaceRectToRectInternalColorKey(dest, src, &SrcRectCopy, &DestRect);
+  } else {
+    BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect);
+  }
 
   return (TRUE);
 }
 
 void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
                            struct Rect *destRect) {
-  BltVSurfaceRectToRectInternal(dest, src, srcRect, destRect, 0);
+  BltVSurfaceRectToRectInternal(dest, src, srcRect, destRect);
 }
 
 //////////////////////////////////////////////////////////////////
