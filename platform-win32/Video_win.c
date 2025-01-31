@@ -2073,6 +2073,8 @@ BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColo
   // Assertions
   Assert(vs != NULL);
 
+  vs->transparencySet = true;
+
   // Get surface pointer
   lpDDSurface = (LPDIRECTDRAWSURFACE2)vs->_platformData2;
   CHECKF(lpDDSurface != NULL);
