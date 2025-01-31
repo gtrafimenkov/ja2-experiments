@@ -755,12 +755,10 @@ void InvalidateScreen(void) {
 
 static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
                                 int16_t sScrollYIncrement, struct VSurface *pSource,
-                                struct VSurface *pDest, BOOLEAN fRenderStrip,
-                                uint32_t uiCurrentMouseBackbuffer) {
+                                struct VSurface *pDest, MouseCursorBackground *mouseCursor) {
   uint16_t usWidth, usHeight;
   static RECT Region;
   static uint16_t usMouseXPos, usMouseYPos;
-  static RECT StripRegions[2], MouseRegion;
   uint16_t usNumStrips = 0;
   int32_t cnt;
   int16_t sShiftX, sShiftY;
@@ -769,6 +767,7 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
   GetCurrentVideoSettings(&usWidth, &usHeight);
   usHeight = (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y);
 
+  static RECT StripRegions[2];
   StripRegions[0].left = gsVIEWPORT_START_X;
   StripRegions[0].right = gsVIEWPORT_END_X;
   StripRegions[0].top = gsVIEWPORT_WINDOW_START_Y;
@@ -778,13 +777,14 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
   StripRegions[1].top = gsVIEWPORT_WINDOW_START_Y;
   StripRegions[1].bottom = gsVIEWPORT_WINDOW_END_Y;
 
-  MouseRegion.left = gMouseCursorBackground[uiCurrentMouseBackbuffer].usLeft;
-  MouseRegion.top = gMouseCursorBackground[uiCurrentMouseBackbuffer].usTop;
-  MouseRegion.right = gMouseCursorBackground[uiCurrentMouseBackbuffer].usRight;
-  MouseRegion.bottom = gMouseCursorBackground[uiCurrentMouseBackbuffer].usBottom;
+  static RECT MouseRegion;
+  MouseRegion.left = mouseCursor->usLeft;
+  MouseRegion.top = mouseCursor->usTop;
+  MouseRegion.right = mouseCursor->usRight;
+  MouseRegion.bottom = mouseCursor->usBottom;
 
-  usMouseXPos = gMouseCursorBackground[uiCurrentMouseBackbuffer].usMouseXPos;
-  usMouseYPos = gMouseCursorBackground[uiCurrentMouseBackbuffer].usMouseYPos;
+  usMouseXPos = mouseCursor->usMouseXPos;
+  usMouseYPos = mouseCursor->usMouseYPos;
 
   switch (uiDirection) {
     case SCROLL_LEFT:
@@ -995,81 +995,75 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
       break;
   }
 
-  if (fRenderStrip) {
-    for (cnt = 0; cnt < usNumStrips; cnt++) {
-      RenderStaticWorldRect((int16_t)StripRegions[cnt].left, (int16_t)StripRegions[cnt].top,
-                            (int16_t)StripRegions[cnt].right, (int16_t)StripRegions[cnt].bottom,
-                            TRUE);
-      // Optimize Redundent tiles too!
-      // ExamineZBufferRect( (int16_t)StripRegions[ cnt ].left, (int16_t)StripRegions[ cnt ].top,
-      // (int16_t)StripRegions[ cnt ].right, (int16_t)StripRegions[ cnt ].bottom );
-
-      DDBltFastNoColorKey(pDest, StripRegions[cnt].left, StripRegions[cnt].top, vsFB,
-                          (LPRECT) & (StripRegions[cnt]));
-    }
-
-    sShiftX = 0;
-    sShiftY = 0;
-
-    switch (uiDirection) {
-      case SCROLL_LEFT:
-
-        sShiftX = sScrollXIncrement;
-        sShiftY = 0;
-        break;
-
-      case SCROLL_RIGHT:
-
-        sShiftX = -sScrollXIncrement;
-        sShiftY = 0;
-        break;
-
-      case SCROLL_UP:
-
-        sShiftX = 0;
-        sShiftY = sScrollYIncrement;
-        break;
-
-      case SCROLL_DOWN:
-
-        sShiftX = 0;
-        sShiftY = -sScrollYIncrement;
-        break;
-
-      case SCROLL_UPLEFT:
-
-        sShiftX = sScrollXIncrement;
-        sShiftY = sScrollYIncrement;
-        break;
-
-      case SCROLL_UPRIGHT:
-
-        sShiftX = -sScrollXIncrement;
-        sShiftY = sScrollYIncrement;
-        break;
-
-      case SCROLL_DOWNLEFT:
-
-        sShiftX = sScrollXIncrement;
-        sShiftY = -sScrollYIncrement;
-        break;
-
-      case SCROLL_DOWNRIGHT:
-
-        sShiftX = -sScrollXIncrement;
-        sShiftY = -sScrollYIncrement;
-        break;
-    }
-
-    // RESTORE SHIFTED
-    RestoreShiftedVideoOverlays(sShiftX, sShiftY);
-
-    // SAVE NEW
-    SaveVideoOverlaysArea(vsBackBuffer);
-
-    // BLIT NEW
-    ExecuteVideoOverlaysToAlternateBuffer(vsBackBuffer);
+  for (cnt = 0; cnt < usNumStrips; cnt++) {
+    RenderStaticWorldRect((int16_t)StripRegions[cnt].left, (int16_t)StripRegions[cnt].top,
+                          (int16_t)StripRegions[cnt].right, (int16_t)StripRegions[cnt].bottom,
+                          TRUE);
+    DDBltFastNoColorKey(pDest, StripRegions[cnt].left, StripRegions[cnt].top, vsFB,
+                        (LPRECT) & (StripRegions[cnt]));
   }
+
+  sShiftX = 0;
+  sShiftY = 0;
+
+  switch (uiDirection) {
+    case SCROLL_LEFT:
+
+      sShiftX = sScrollXIncrement;
+      sShiftY = 0;
+      break;
+
+    case SCROLL_RIGHT:
+
+      sShiftX = -sScrollXIncrement;
+      sShiftY = 0;
+      break;
+
+    case SCROLL_UP:
+
+      sShiftX = 0;
+      sShiftY = sScrollYIncrement;
+      break;
+
+    case SCROLL_DOWN:
+
+      sShiftX = 0;
+      sShiftY = -sScrollYIncrement;
+      break;
+
+    case SCROLL_UPLEFT:
+
+      sShiftX = sScrollXIncrement;
+      sShiftY = sScrollYIncrement;
+      break;
+
+    case SCROLL_UPRIGHT:
+
+      sShiftX = -sScrollXIncrement;
+      sShiftY = sScrollYIncrement;
+      break;
+
+    case SCROLL_DOWNLEFT:
+
+      sShiftX = sScrollXIncrement;
+      sShiftY = -sScrollYIncrement;
+      break;
+
+    case SCROLL_DOWNRIGHT:
+
+      sShiftX = -sScrollXIncrement;
+      sShiftY = -sScrollYIncrement;
+      break;
+  }
+
+  // RESTORE SHIFTED
+  RestoreShiftedVideoOverlays(sShiftX, sShiftY);
+
+  // SAVE NEW
+  SaveVideoOverlaysArea(vsBackBuffer);
+
+  // BLIT NEW
+  ExecuteVideoOverlaysToAlternateBuffer(vsBackBuffer);
 }
 
 void RefreshScreen(void *DummyVariable) {
@@ -1195,7 +1189,7 @@ void RefreshScreen(void *DummyVariable) {
     }
     if (gfRenderScroll) {
       ScrollJA2Background(guiScrollDirection, gsScrollXIncrement, gsScrollYIncrement, vsPrimary,
-                          vsBackBuffer, TRUE, PREVIOUS_MOUSE_DATA);
+                          vsBackBuffer, &gMouseCursorBackground[PREVIOUS_MOUSE_DATA]);
     }
     gfIgnoreScrollDueToCenterAdjust = FALSE;
 
