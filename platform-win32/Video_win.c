@@ -765,7 +765,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
   uint16_t usMouseXPos, usMouseYPos;
   uint16_t usNumStrips = 0;
   int32_t cnt;
-  int16_t sShiftX, sShiftY;
   int32_t uiCountY;
 
   uint16_t screenWidth = GetScreenWidth();
@@ -996,66 +995,41 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
                         (LPRECT) & (StripRegions[cnt]));
   }
 
-  sShiftX = 0;
-  sShiftY = 0;
-
   switch (uiDirection) {
     case SCROLL_LEFT:
-
-      sShiftX = gsScrollXIncrement;
-      sShiftY = 0;
+      RestoreShiftedVideoOverlays(gsScrollXIncrement, 0);
       break;
 
     case SCROLL_RIGHT:
-
-      sShiftX = -gsScrollXIncrement;
-      sShiftY = 0;
+      RestoreShiftedVideoOverlays(-gsScrollXIncrement, 0);
       break;
 
     case SCROLL_UP:
-
-      sShiftX = 0;
-      sShiftY = gsScrollYIncrement;
+      RestoreShiftedVideoOverlays(0, gsScrollYIncrement);
       break;
 
     case SCROLL_DOWN:
-
-      sShiftX = 0;
-      sShiftY = -gsScrollYIncrement;
+      RestoreShiftedVideoOverlays(0, -gsScrollYIncrement);
       break;
 
     case SCROLL_UPLEFT:
-
-      sShiftX = gsScrollXIncrement;
-      sShiftY = gsScrollYIncrement;
+      RestoreShiftedVideoOverlays(gsScrollXIncrement, gsScrollYIncrement);
       break;
 
     case SCROLL_UPRIGHT:
-
-      sShiftX = -gsScrollXIncrement;
-      sShiftY = gsScrollYIncrement;
+      RestoreShiftedVideoOverlays(-gsScrollXIncrement, gsScrollYIncrement);
       break;
 
     case SCROLL_DOWNLEFT:
-
-      sShiftX = gsScrollXIncrement;
-      sShiftY = -gsScrollYIncrement;
+      RestoreShiftedVideoOverlays(gsScrollXIncrement, -gsScrollYIncrement);
       break;
 
     case SCROLL_DOWNRIGHT:
-
-      sShiftX = -gsScrollXIncrement;
-      sShiftY = -gsScrollYIncrement;
+      RestoreShiftedVideoOverlays(-gsScrollXIncrement, -gsScrollYIncrement);
       break;
   }
 
-  // RESTORE SHIFTED
-  RestoreShiftedVideoOverlays(sShiftX, sShiftY);
-
-  // SAVE NEW
   SaveVideoOverlaysArea(vsBackBuffer);
-
-  // BLIT NEW
   ExecuteVideoOverlaysToAlternateBuffer(vsBackBuffer);
 }
 
