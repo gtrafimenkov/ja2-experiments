@@ -150,11 +150,6 @@ extern int32_t giNumFrames;
 
 extern BOOLEAN GetRGBDistribution(void);
 
-// Surface Functions
-
-static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
-                                 LPDDCOLORKEY pDDColorKey);
-
 // Palette Functions
 static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
                             LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter);
@@ -266,7 +261,6 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   WNDCLASS WindowClass;
   char ClassName[] = APPLICATION_NAME;
   DDSURFACEDESC SurfaceDescription;
-  DDCOLORKEY ColorKey;
 
   //
   // Register debug topics
@@ -431,17 +425,6 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   }
 
   //
-  // Blank out the frame buffer
-  //
-  {
-    // uint32_t uiPitch;
-    // void *pTmpPointer;
-    // pTmpPointer = LockVSurface(vsFB, &uiPitch);
-    // memset(pTmpPointer, 0, 480 * uiPitch);
-    // UnlockVSurface(vsFB);
-  }
-
-  //
   // Initialize the main mouse surfaces
   //
 
@@ -461,15 +444,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   if (vsMouseBuffer == NULL) {
     return FALSE;
   }
-
-  ColorKey.dwColorSpaceLowValue = 0;
-  ColorKey.dwColorSpaceHighValue = 0;
-  ReturnCode = IDirectDrawSurface2_SetColorKey((LPDIRECTDRAWSURFACE2)vsMouseBuffer->_platformData2,
-                                               DDCKEY_SRCBLT, &ColorKey);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return FALSE;
-  }
+  SetVideoSurfaceTransparencyColor(vsMouseBuffer, 0);
 
   //
   // Initialize the main mouse original surface
@@ -2065,43 +2040,26 @@ BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntr
 
 // Transparency needs to take RGB value and find best fit and place it into DD Surface
 // colorkey value.
-BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) {
-  DDCOLORKEY ColorKey;
-  DWORD fFlags = CLR_INVALID;
-  LPDIRECTDRAWSURFACE2 lpDDSurface;
-
-  // Assertions
-  Assert(vs != NULL);
-
+void SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) {
   vs->transparencySet = true;
 
-  // Get surface pointer
-  lpDDSurface = (LPDIRECTDRAWSURFACE2)vs->_platformData2;
-  CHECKF(lpDDSurface != NULL);
-
-  // Get right pixel format, based on bit depth
-
+  DDCOLORKEY ColorKey;
   switch (vs->ubBitDepth) {
     case 8:
-
       // Use color directly
       ColorKey.dwColorSpaceLowValue = TransColor;
       ColorKey.dwColorSpaceHighValue = TransColor;
       break;
 
     case 16:
-
-      fFlags = Get16BPPColor(TransColor);
-
       // fFlags now contains our closest match
-      ColorKey.dwColorSpaceLowValue = fFlags;
+      ColorKey.dwColorSpaceLowValue = Get16BPPColor(TransColor);
       ColorKey.dwColorSpaceHighValue = ColorKey.dwColorSpaceLowValue;
       break;
   }
 
-  DDSetSurfaceColorKey(lpDDSurface, DDCKEY_SRCBLT, &ColorKey);
-
-  return (TRUE);
+  IDirectDrawSurface2_SetColorKey((LPDIRECTDRAWSURFACE2)vs->_platformData2, DDCKEY_SRCBLT,
+                                  &ColorKey);
 }
 
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *vs, struct SGPPaletteEntry *pPalette) {
@@ -2567,15 +2525,6 @@ static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette) {
   Assert(pPalette != NULL);
 
   DirectXAttempt(IDirectDrawPalette_Release(pPalette), __LINE__, __FILE__);
-}
-
-static void DDSetSurfaceColorKey(LPDIRECTDRAWSURFACE2 pSurface, uint32_t uiFlags,
-                                 LPDDCOLORKEY pDDColorKey) {
-  Assert(pSurface != NULL);
-  Assert(pDDColorKey != NULL);
-
-  DirectXAttempt(IDirectDrawSurface2_SetColorKey(pSurface, uiFlags, pDDColorKey), __LINE__,
-                 __FILE__);
 }
 
 //////////////////////////////////////////////////////////////////

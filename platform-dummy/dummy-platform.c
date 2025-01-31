@@ -249,7 +249,7 @@ BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) { return FALSE; }
 
 void FatalError(char *pError, ...) {}
 
-BOOLEAN SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) { return FALSE; }
+void SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) {}
 
 void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
                            struct Rect *DestRect) {}
