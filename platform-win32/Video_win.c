@@ -153,6 +153,15 @@ void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint
 
 void DDBlt(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
            struct Rect *destRect) {
+  int32_t srcWidth = GetRectWidth(srcRect);
+  int32_t srcHeight = GetRectHeight(srcRect);
+  int32_t destWidth = GetRectWidth(destRect);
+  int32_t destHeight = GetRectHeight(destRect);
+
+  if (destWidth <= 0 || destHeight <= 0 || srcWidth <= 0 || srcHeight <= 0) {
+    return;
+  }
+
   RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
   RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
 

@@ -1,9 +1,5 @@
-// This is not free software.
-// This file contains code derived from the code released under the terms
-// of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
-
-#ifndef __RECT_H
-#define __RECT_H
+#ifndef JA2_RECT_H
+#define JA2_RECT_H
 
 #include <stdint.h>
 
@@ -14,4 +10,7 @@ struct Rect {
   int32_t bottom;
 };
 
-#endif
+int32_t GetRectWidth(const struct Rect* r);
+int32_t GetRectHeight(const struct Rect* r);
+
+#endif  // JA2_RECT_H
