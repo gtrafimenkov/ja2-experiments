@@ -235,11 +235,6 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 
 BOOLEAN DeleteVSurface(struct VSurface *hVSurface) { return FALSE; }
 
-BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
-                               int32_t iDestY, struct Rect *SrcRect) {
-  return FALSE;
-}
-
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
 
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch) { return NULL; }
