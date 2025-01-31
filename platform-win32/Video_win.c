@@ -125,8 +125,8 @@ static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) 
 //         rotation.
 //     Use case: When you need advanced blitting features.
 
-void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
-               struct Rect *srcRect) {
+static void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
+                      struct Rect *srcRect) {
   // DDBLTFAST_NOCOLORKEY
   //   A normal copy bitblt with no transparency.
   // DDBLTFAST_SRCCOLORKEY
@@ -2198,11 +2198,6 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
   // Do Clipping of rectangles
   if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &SrcRectCopy)) {
     // Returns false because dest start is > dest size
-    return (TRUE);
-  }
-
-  // Check values for 0 size
-  if (DestRect.top == DestRect.bottom || DestRect.right == DestRect.left) {
     return (TRUE);
   }
 

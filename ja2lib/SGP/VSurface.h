@@ -111,9 +111,6 @@ BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
                                int32_t iDestY, struct Rect *SrcRect);
 
-void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
-               struct Rect *srcRect);
-
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
                               int32_t destY);
 BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,

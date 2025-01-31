@@ -387,13 +387,14 @@ BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src
 
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                   int32_t destY) {
-  struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     CHECKF(destX >= 0);
     CHECKF(destY >= 0);
-    DDBltFast(dest, src, destX, destY, &SrcRect);
+    struct JRect srcBox = {.x = 0, .y = 0, .w = src->usWidth, .h = src->usHeight};
+    JSurface_BlitRectToPoint(src, dest, &srcBox, destX, destY);
     return TRUE;
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
   }
   return FALSE;
