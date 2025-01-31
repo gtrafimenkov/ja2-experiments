@@ -124,21 +124,24 @@ static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) 
 //         rotation.
 //     Use case: When you need advanced blitting features.
 
-void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t x, uint32_t y,
-               struct Rect *region) {
+void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
+               struct Rect *srcRect) {
   // DDBLTFAST_NOCOLORKEY
   //   A normal copy bitblt with no transparency.
   // DDBLTFAST_SRCCOLORKEY
   //   A transparent bitblt that uses the source color key.
   uint32_t flags = src->transparencySet ? DDBLTFAST_SRCCOLORKEY : DDBLTFAST_NOCOLORKEY;
 
-  RECT r = {
-      .left = region->left, .right = region->right, .top = region->top, .bottom = region->bottom};
+  RECT r = {.left = srcRect->left,
+            .right = srcRect->right,
+            .top = srcRect->top,
+            .bottom = srcRect->bottom};
 
   HRESULT ReturnCode;
   do {
-    ReturnCode = IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dest->_platformData2, x, y,
-                                             (LPDIRECTDRAWSURFACE2)src->_platformData2, &r, flags);
+    ReturnCode =
+        IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dest->_platformData2, destX, destY,
+                                    (LPDIRECTDRAWSURFACE2)src->_platformData2, &r, flags);
     if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
       DirectXAttempt(ReturnCode, __LINE__, __FILE__);
     }
