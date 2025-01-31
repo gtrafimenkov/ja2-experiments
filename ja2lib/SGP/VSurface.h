@@ -9,6 +9,7 @@
 #include "SGP/Container.h"
 #include "SGP/HImage.h"
 #include "SGP/Types.h"
+#include "jplatform_video.h"
 
 struct VObject;
 struct VSurface;
@@ -145,5 +146,8 @@ void GetRGB16Masks(uint16_t *red, uint16_t *green, uint16_t *blue);
 //////////////////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////////////////
+
+struct JRect r2jr(const struct Rect *r);
+struct JRect sgpr2jr(const SGPRect *r);
 
 #endif

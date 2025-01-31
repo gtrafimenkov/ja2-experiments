@@ -6,6 +6,26 @@
 #include <ddraw.h>
 #include <windows.h>
 
+// Difference between IDirectDrawSurface2_BltFast and IDirectDrawSurface2_Blt:
+//
+// IDirectDrawSurface2::BltFast
+//     Purpose: Optimized for fast, simple blitting operations.
+//     Restrictions:
+//         Cannot handle stretching or clipping.
+//         Cannot apply effects like color keys (unless explicitly allowed).
+//         Only supports source color keying, no destination color keying.
+//     Use case: When you need the fastest possible blitting for simple copies.
+//
+// IDirectDrawSurface2::Blt
+//     Purpose: A more powerful and flexible blitting function.
+//     Capabilities:
+//         Supports stretching and shrinking.
+//         Supports clipping to the destination surface.
+//         Allows source and destination color keying.
+//         Can apply effects such as mirroring, alpha blending (if supported by hardware), and
+//         rotation.
+//     Use case: When you need advanced blitting features.
+
 void JSurface_BlitRectToPoint(struct VSurface *src, struct VSurface *dst,
                               struct JRect const *srcBox, int32_t destX, int32_t destY) {
   // using IDirectDrawSurface2_BltFast since scaling is not necessary

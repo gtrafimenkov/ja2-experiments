@@ -105,51 +105,10 @@ static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) 
 #endif
 }
 
-// Difference between IDirectDrawSurface2_BltFast and IDirectDrawSurface2_Blt:
-//
-// IDirectDrawSurface2::BltFast
-//     Purpose: Optimized for fast, simple blitting operations.
-//     Restrictions:
-//         Cannot handle stretching or clipping.
-//         Cannot apply effects like color keys (unless explicitly allowed).
-//         Only supports source color keying, no destination color keying.
-//     Use case: When you need the fastest possible blitting for simple copies.
-//
-// IDirectDrawSurface2::Blt
-//     Purpose: A more powerful and flexible blitting function.
-//     Capabilities:
-//         Supports stretching and shrinking.
-//         Supports clipping to the destination surface.
-//         Allows source and destination color keying.
-//         Can apply effects such as mirroring, alpha blending (if supported by hardware), and
-//         rotation.
-//     Use case: When you need advanced blitting features.
-
-static void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
+static void _blitFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
                       struct Rect *srcRect) {
-  // DDBLTFAST_NOCOLORKEY
-  //   A normal copy bitblt with no transparency.
-  // DDBLTFAST_SRCCOLORKEY
-  //   A transparent bitblt that uses the source color key.
-  uint32_t flags = src->transparencySet ? DDBLTFAST_SRCCOLORKEY : DDBLTFAST_NOCOLORKEY;
-
-  RECT r = {.left = srcRect->left,
-            .right = srcRect->right,
-            .top = srcRect->top,
-            .bottom = srcRect->bottom};
-
-  HRESULT ReturnCode;
-  do {
-    ReturnCode =
-        IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dest->_platformData2, destX, destY,
-                                    (LPDIRECTDRAWSURFACE2)src->_platformData2, &r, flags);
-    if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    }
-    if (ReturnCode == DDERR_SURFACELOST) {
-      break;
-    }
-  } while (ReturnCode != DD_OK);
+  struct JRect srcBox = r2jr(srcRect);
+  JSurface_BlitRectToPoint(src, dest, &srcBox, destX, destY);
 }
 
 #define BUFFER_READY 0x00
@@ -775,7 +734,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth - (gsScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFast(vsBackBuffer, vsPrimary, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, &Region);
+      _blitFast(vsBackBuffer, vsPrimary, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, &Region);
 
       eraseZBuffer(0, gsVIEWPORT_WINDOW_START_Y, viewportWindowHeight, gsScrollXIncrement);
 
@@ -791,7 +750,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y, &Region);
+      _blitFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y, &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -812,7 +771,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
-      DDBltFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
+      _blitFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
                 &Region);
 
       for (uiCountY = gsScrollYIncrement - 1 + gsVIEWPORT_WINDOW_START_Y;
@@ -832,7 +791,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y, &Region);
+      _blitFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y, &Region);
 
       // Zero out z
       for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
@@ -852,7 +811,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth - (gsScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
-      DDBltFast(vsBackBuffer, vsPrimary, gsScrollXIncrement,
+      _blitFast(vsBackBuffer, vsPrimary, gsScrollXIncrement,
                 gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement, &Region);
 
       // memset z-buffer
@@ -878,7 +837,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
-      DDBltFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
+      _blitFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
                 &Region);
 
       // memset z-buffer
@@ -906,7 +865,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth - (gsScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFast(vsBackBuffer, vsPrimary, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, &Region);
+      _blitFast(vsBackBuffer, vsPrimary, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -932,7 +891,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y, &Region);
+      _blitFast(vsBackBuffer, vsPrimary, 0, gsVIEWPORT_WINDOW_START_Y, &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -957,7 +916,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
     RenderStaticWorldRect((int16_t)StripRegions[cnt].left, (int16_t)StripRegions[cnt].top,
                           (int16_t)StripRegions[cnt].right, (int16_t)StripRegions[cnt].bottom,
                           TRUE);
-    DDBltFast(vsBackBuffer, vsFB, StripRegions[cnt].left, StripRegions[cnt].top,
+    _blitFast(vsBackBuffer, vsFB, StripRegions[cnt].left, StripRegions[cnt].top,
               &(StripRegions[cnt]));
   }
 
@@ -1057,7 +1016,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = gMouseCursorBackground[CURRENT_MOUSE_DATA].usRight;
     Region.bottom = gMouseCursorBackground[CURRENT_MOUSE_DATA].usBottom;
 
-    DDBltFast(vsBackBuffer, gMouseCursorBackground[CURRENT_MOUSE_DATA].vs,
+    _blitFast(vsBackBuffer, gMouseCursorBackground[CURRENT_MOUSE_DATA].vs,
               gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
               gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, &Region);
 
@@ -1090,7 +1049,7 @@ void RefreshScreen(void *DummyVariable) {
         Region.right = usScreenWidth;
         Region.bottom = usScreenHeight;
 
-        DDBltFast(vsBackBuffer, vsFB, 0, 0, &Region);
+        _blitFast(vsBackBuffer, vsFB, 0, 0, &Region);
       } else {
         for (uiIndex = 0; uiIndex < guiDirtyRegionCount; uiIndex++) {
           Region.left = gListOfDirtyRegions[uiIndex].iLeft;
@@ -1098,7 +1057,7 @@ void RefreshScreen(void *DummyVariable) {
           Region.right = gListOfDirtyRegions[uiIndex].iRight;
           Region.bottom = gListOfDirtyRegions[uiIndex].iBottom;
 
-          DDBltFast(vsBackBuffer, vsFB, Region.left, Region.top, &Region);
+          _blitFast(vsBackBuffer, vsFB, Region.left, Region.top, &Region);
         }
 
         // Now do new, extended dirty regions
@@ -1116,7 +1075,7 @@ void RefreshScreen(void *DummyVariable) {
             }
           }
 
-          DDBltFast(vsBackBuffer, vsFB, Region.left, Region.top, &Region);
+          _blitFast(vsBackBuffer, vsFB, Region.left, Region.top, &Region);
         }
       }
     }
@@ -1176,7 +1135,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = usScreenWidth;
     Region.bottom = usScreenHeight;
 
-    DDBltFast(vsTmp, vsPrimary, 0, 0, &Region);
+    _blitFast(vsTmp, vsPrimary, 0, 0, &Region);
 
     //
     // Ok now that temp surface has contents of backbuffer, copy temp surface to disk
@@ -1252,7 +1211,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = gusMouseCursorWidth;
     Region.bottom = gusMouseCursorHeight;
 
-    DDBltFast(vsMouseBuffer, vsMouseBufferOriginal, 0, 0, &Region);
+    _blitFast(vsMouseBuffer, vsMouseBufferOriginal, 0, 0, &Region);
 
     guiMouseBufferState = BUFFER_READY;
   }
@@ -1329,7 +1288,7 @@ void RefreshScreen(void *DummyVariable) {
         // Ok, do the actual data save to the mouse background
         //
 
-        DDBltFast(gMouseCursorBackground[CURRENT_MOUSE_DATA].vs, vsBackBuffer,
+        _blitFast(gMouseCursorBackground[CURRENT_MOUSE_DATA].vs, vsBackBuffer,
                   gMouseCursorBackground[CURRENT_MOUSE_DATA].usLeft,
                   gMouseCursorBackground[CURRENT_MOUSE_DATA].usTop, &Region);
 
@@ -1342,7 +1301,7 @@ void RefreshScreen(void *DummyVariable) {
         Region.right = gMouseCursorBackground[CURRENT_MOUSE_DATA].usRight;
         Region.bottom = gMouseCursorBackground[CURRENT_MOUSE_DATA].usBottom;
 
-        DDBltFast(vsBackBuffer, vsMouseBuffer,
+        _blitFast(vsBackBuffer, vsMouseBuffer,
                   gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
                   gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, &Region);
       } else {
@@ -1394,7 +1353,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = 640;
     Region.bottom = 360;
 
-    DDBltFast(vsBackBuffer, vsPrimary, 0, 0, &Region);
+    _blitFast(vsBackBuffer, vsPrimary, 0, 0, &Region);
 
     // Get new background for mouse
     //
@@ -1410,7 +1369,7 @@ void RefreshScreen(void *DummyVariable) {
   if (gMouseCursorBackground[PREVIOUS_MOUSE_DATA].fRestore == TRUE) {
     Region = gMouseCursorBackground[PREVIOUS_MOUSE_DATA].Region;
 
-    DDBltFast(vsBackBuffer, vsPrimary, gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseXPos,
+    _blitFast(vsBackBuffer, vsPrimary, gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseXPos,
               gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseYPos, &Region);
   }
 
@@ -1418,7 +1377,7 @@ void RefreshScreen(void *DummyVariable) {
   if (gMouseCursorBackground[CURRENT_MOUSE_DATA].fRestore == TRUE) {
     Region = gMouseCursorBackground[CURRENT_MOUSE_DATA].Region;
 
-    DDBltFast(vsBackBuffer, vsPrimary, gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
+    _blitFast(vsBackBuffer, vsPrimary, gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
               gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, &Region);
   }
 
@@ -1431,7 +1390,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = SCREEN_WIDTH;
     Region.bottom = SCREEN_HEIGHT;
 
-    DDBltFast(vsBackBuffer, vsPrimary, 0, 0, &Region);
+    _blitFast(vsBackBuffer, vsPrimary, 0, 0, &Region);
 
     guiDirtyRegionCount = 0;
     guiDirtyRegionExCount = 0;
@@ -1443,7 +1402,7 @@ void RefreshScreen(void *DummyVariable) {
       Region.right = gListOfDirtyRegions[uiIndex].iRight;
       Region.bottom = gListOfDirtyRegions[uiIndex].iBottom;
 
-      DDBltFast(vsBackBuffer, vsPrimary, Region.left, Region.top, &Region);
+      _blitFast(vsBackBuffer, vsPrimary, Region.left, Region.top, &Region);
     }
 
     guiDirtyRegionCount = 0;
@@ -1461,7 +1420,7 @@ void RefreshScreen(void *DummyVariable) {
       continue;
     }
 
-    DDBltFast(vsBackBuffer, vsPrimary, Region.left, Region.top, &Region);
+    _blitFast(vsBackBuffer, vsPrimary, Region.left, Region.top, &Region);
   }
 
   guiDirtyRegionExCount = 0;
@@ -2200,16 +2159,8 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
     // Returns false because dest start is > dest size
     return (TRUE);
   }
-
-  struct JRect srcBox = {.x = SrcRectCopy.left,
-                         .y = SrcRectCopy.top,
-                         .w = SrcRectCopy.right - SrcRectCopy.left,
-                         .h = SrcRectCopy.bottom - SrcRectCopy.top};
-
-  struct JRect destBox = {.x = DestRect.left,
-                          .y = DestRect.top,
-                          .w = DestRect.right - DestRect.left,
-                          .h = DestRect.bottom - DestRect.top};
+  struct JRect srcBox = r2jr(&SrcRectCopy);
+  struct JRect destBox = r2jr(&DestRect);
   JSurface_BlitRectToRect(src, dest, &srcBox, &destBox);
   return (TRUE);
 }

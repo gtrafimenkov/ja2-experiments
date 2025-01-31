@@ -19,6 +19,17 @@ struct VSurface *vsFB = NULL;
 struct VSurface *vsMouseBuffer = NULL;
 struct VSurface *vsMouseBufferOriginal = NULL;
 
+struct JRect r2jr(const struct Rect *r) {
+  struct JRect box = {.x = r->left, .y = r->top, .w = r->right - r->left, .h = r->bottom - r->top};
+  return box;
+}
+
+struct JRect sgpr2jr(const SGPRect *r) {
+  struct JRect box = {
+      .x = r->iLeft, .y = r->iTop, .w = r->iRight - r->iLeft, .h = r->iBottom - r->iTop};
+  return box;
+}
+
 struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height) {
   return CreateVSurfaceBlank(width, height, 8);
 }
@@ -183,15 +194,8 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect 
   if ((dest->ubBitDepth != 16) && (src->ubBitDepth != 16)) {
     return FALSE;
   };
-  struct JRect srcBox = {.x = SrcRect->iLeft,
-                         .y = SrcRect->iTop,
-                         .w = SrcRect->iRight - SrcRect->iLeft,
-                         .h = SrcRect->iBottom - SrcRect->iTop};
-
-  struct JRect destBox = {.x = DestRect->iLeft,
-                          .y = DestRect->iTop,
-                          .w = DestRect->iRight - DestRect->iLeft,
-                          .h = DestRect->iBottom - DestRect->iTop};
+  struct JRect srcBox = sgpr2jr(SrcRect);
+  struct JRect destBox = sgpr2jr(DestRect);
   JSurface_BlitRectToRect(src, dest, &srcBox, &destBox);
   return TRUE;
 }
