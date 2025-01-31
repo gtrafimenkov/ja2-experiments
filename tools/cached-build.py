@@ -158,7 +158,7 @@ def build_to_cache(commit_hash, build_branch_name, built_exe_path):
         ["git", "reset", "--hard", commit_hash], check=True, cwd=build_location
     )
     log(f"==> running the build at worktree {build_branch_name}")
-    subprocess.run(["python", "xx.py", "build"], check=True, cwd=build_location)
+    subprocess.run(["python", "xx.py", "build-release"], check=True, cwd=build_location)
     log(f"==> copying the built exe to the build cache {cache_dir}")
     os.makedirs(cache_dir, exist_ok=True)
     shutil.copy2(os.path.join(build_location, built_exe_path), cache_dir)
@@ -171,7 +171,7 @@ def main():
 
     command = sys.argv[1]
     commit_hash = sys.argv[2]
-    built_exe_path = "build/bin-win32/RelWithDebInfo/ja2v.exe"
+    built_exe_path = "build-release/bin-win32/RelWithDebInfo/ja2v.exe"
 
     build_branch_name = "cached-build"
 
@@ -179,7 +179,11 @@ def main():
         build_to_cache(commit_hash, build_branch_name, built_exe_path)
     elif command == "build-run":
         build_location = get_build_location(build_branch_name)
-        subprocess.run(["python", "xx.py", "copy-data"], check=True, cwd=build_location)
+        subprocess.run(
+            ["python", "xx.py", "copy-dlls", "copy-data"],
+            check=True,
+            cwd=build_location,
+        )
         build_to_cache_and_run(commit_hash, build_branch_name, built_exe_path)
     else:
         fatal_error(f"Unknown command {command}", 1)
