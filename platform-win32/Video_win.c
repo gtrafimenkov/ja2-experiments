@@ -105,18 +105,20 @@ static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) 
 }
 
 static void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
-                      RECT *region, uint32_t flags) {
+                      struct Rect *region, uint32_t flags) {
   // DDBLTFAST_NOCOLORKEY
   //   A normal copy bitblt with no transparency.
   // DDBLTFAST_SRCCOLORKEY
   //   A transparent bitblt that uses the source color key.
 
+  RECT r = {
+      .left = region->left, .right = region->right, .top = region->top, .bottom = region->bottom};
+
   HRESULT ReturnCode;
   do {
     // STDMETHOD(BltFast)(THIS_ DWORD,DWORD,LPDIRECTDRAWSURFACE2, LPRECT,DWORD)
-    ReturnCode =
-        IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dest->_platformData2, x, y,
-                                    (LPDIRECTDRAWSURFACE2)src->_platformData2, region, flags);
+    ReturnCode = IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dest->_platformData2, x, y,
+                                             (LPDIRECTDRAWSURFACE2)src->_platformData2, &r, flags);
     if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
       DirectXAttempt(ReturnCode, __LINE__, __FILE__);
     }
@@ -127,12 +129,12 @@ static void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSur
 }
 
 static void DDBltFastSrcColorKey(struct VSurface *dest, uint32_t x, uint32_t y,
-                                 struct VSurface *src, RECT *region) {
+                                 struct VSurface *src, struct Rect *region) {
   DDBltFast(dest, x, y, src, region, DDBLTFAST_SRCCOLORKEY);
 }
 
 static void DDBltFastNoColorKey(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
-                                RECT *region) {
+                                struct Rect *region) {
   DDBltFast(dest, x, y, src, region, DDBLTFAST_NOCOLORKEY);
 }
 
@@ -185,7 +187,7 @@ typedef struct {
   BOOLEAN fRestore;
   uint16_t usMouseXPos, usMouseYPos;
   uint16_t usLeft, usTop, usRight, usBottom;
-  RECT Region;
+  struct Rect Region;
   struct VSurface *vs;
 } MouseCursorBackground;
 
@@ -761,7 +763,7 @@ static void eraseZBuffer(int32_t x, int32_t y, int32_t width, int32_t height) {
 }
 
 static void ScrollJA2Background(uint32_t uiDirection) {
-  static RECT Region;
+  struct Rect Region;
   uint16_t usNumStrips = 0;
   int32_t cnt;
   int32_t uiCountY;
@@ -769,7 +771,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
   uint16_t screenWidth = GetScreenWidth();
   uint16_t viewportWindowHeight = gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y;
 
-  static RECT StripRegions[2];
+  struct Rect StripRegions[2];
   StripRegions[0].left = gsVIEWPORT_START_X;
   StripRegions[0].right = gsVIEWPORT_END_X;
   StripRegions[0].top = gsVIEWPORT_WINDOW_START_Y;
@@ -785,7 +787,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
       DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, vsPrimary,
-                          (LPRECT)&Region);
+                          &Region);
 
       eraseZBuffer(0, gsVIEWPORT_WINDOW_START_Y, viewportWindowHeight, gsScrollXIncrement);
 
@@ -801,7 +803,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -823,7 +825,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
       DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
-                          vsPrimary, (LPRECT)&Region);
+                          vsPrimary, &Region);
 
       for (uiCountY = gsScrollYIncrement - 1 + gsVIEWPORT_WINDOW_START_Y;
            uiCountY >= gsVIEWPORT_WINDOW_START_Y; uiCountY--) {
@@ -842,7 +844,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, &Region);
 
       // Zero out z
       for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
@@ -863,8 +865,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
       DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement,
-                          gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement, vsPrimary,
-                          (LPRECT)&Region);
+                          gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement, vsPrimary, &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -890,7 +891,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.bottom = gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement;
 
       DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
-                          vsPrimary, (LPRECT)&Region);
+                          vsPrimary, &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -918,7 +919,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
       DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, vsPrimary,
-                          (LPRECT)&Region);
+                          &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -944,7 +945,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
       Region.right = screenWidth;
       Region.bottom = gsVIEWPORT_WINDOW_END_Y;
 
-      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, &Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
@@ -970,7 +971,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
                           (int16_t)StripRegions[cnt].right, (int16_t)StripRegions[cnt].bottom,
                           TRUE);
     DDBltFastNoColorKey(vsBackBuffer, StripRegions[cnt].left, StripRegions[cnt].top, vsFB,
-                        (LPRECT) & (StripRegions[cnt]));
+                        &(StripRegions[cnt]));
   }
 
   switch (uiDirection) {
@@ -1016,7 +1017,7 @@ void RefreshScreen(void *DummyVariable) {
   uint16_t usScreenWidth, usScreenHeight;
   static BOOLEAN fShowMouse;
   HRESULT ReturnCode;
-  static RECT Region;
+  static struct Rect Region;
   static BOOLEAN fFirstTime = TRUE;
   uint32_t uiTime;
 
@@ -1071,7 +1072,7 @@ void RefreshScreen(void *DummyVariable) {
 
     DDBltFastNoColorKey(vsBackBuffer, gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
                         gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos,
-                        gMouseCursorBackground[CURRENT_MOUSE_DATA].vs, (LPRECT)&Region);
+                        gMouseCursorBackground[CURRENT_MOUSE_DATA].vs, &Region);
 
     // Save position into other background region
     memcpy(&(gMouseCursorBackground[PREVIOUS_MOUSE_DATA]),
@@ -1102,7 +1103,7 @@ void RefreshScreen(void *DummyVariable) {
         Region.right = usScreenWidth;
         Region.bottom = usScreenHeight;
 
-        DDBltFastNoColorKey(vsBackBuffer, 0, 0, vsFB, (LPRECT)&Region);
+        DDBltFastNoColorKey(vsBackBuffer, 0, 0, vsFB, &Region);
       } else {
         for (uiIndex = 0; uiIndex < guiDirtyRegionCount; uiIndex++) {
           Region.left = gListOfDirtyRegions[uiIndex].iLeft;
@@ -1110,7 +1111,7 @@ void RefreshScreen(void *DummyVariable) {
           Region.right = gListOfDirtyRegions[uiIndex].iRight;
           Region.bottom = gListOfDirtyRegions[uiIndex].iBottom;
 
-          DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsFB, (LPRECT)&Region);
+          DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsFB, &Region);
         }
 
         // Now do new, extended dirty regions
@@ -1128,7 +1129,7 @@ void RefreshScreen(void *DummyVariable) {
             }
           }
 
-          DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsFB, (LPRECT)&Region);
+          DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsFB, &Region);
         }
       }
     }
@@ -1264,7 +1265,7 @@ void RefreshScreen(void *DummyVariable) {
     Region.right = gusMouseCursorWidth;
     Region.bottom = gusMouseCursorHeight;
 
-    DDBltFastNoColorKey(vsMouseBuffer, 0, 0, vsMouseBufferOriginal, (LPRECT)&Region);
+    DDBltFastNoColorKey(vsMouseBuffer, 0, 0, vsMouseBufferOriginal, &Region);
 
     guiMouseBufferState = BUFFER_READY;
   }
@@ -1425,7 +1426,7 @@ void RefreshScreen(void *DummyVariable) {
 
     DDBltFastNoColorKey(vsBackBuffer, gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseXPos,
                         gMouseCursorBackground[PREVIOUS_MOUSE_DATA].usMouseYPos, vsPrimary,
-                        (LPRECT)&Region);
+                        &Region);
   }
 
   // NOW NEW MOUSE AREA
@@ -1433,8 +1434,7 @@ void RefreshScreen(void *DummyVariable) {
     Region = gMouseCursorBackground[CURRENT_MOUSE_DATA].Region;
 
     DDBltFastNoColorKey(vsBackBuffer, gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseXPos,
-                        gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, vsPrimary,
-                        (LPRECT)&Region);
+                        gMouseCursorBackground[CURRENT_MOUSE_DATA].usMouseYPos, vsPrimary, &Region);
   }
 
   if (gfForceFullScreenRefresh == TRUE) {
@@ -1458,7 +1458,7 @@ void RefreshScreen(void *DummyVariable) {
       Region.right = gListOfDirtyRegions[uiIndex].iRight;
       Region.bottom = gListOfDirtyRegions[uiIndex].iBottom;
 
-      DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsPrimary, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsPrimary, &Region);
     }
 
     guiDirtyRegionCount = 0;
@@ -1476,7 +1476,7 @@ void RefreshScreen(void *DummyVariable) {
       continue;
     }
 
-    DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsPrimary, (LPRECT)&Region);
+    DDBltFastNoColorKey(vsBackBuffer, Region.left, Region.top, vsPrimary, &Region);
   }
 
   guiDirtyRegionExCount = 0;
@@ -2149,18 +2149,6 @@ BOOLEAN DeleteVSurface(struct VSurface *vs) {
   return (TRUE);
 }
 
-static BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
-  Assert(hVSurface != NULL);
-  Assert(pRect != NULL);
-
-  pRect->left = 0;
-  pRect->top = 0;
-  pRect->right = hVSurface->usWidth;
-  pRect->bottom = hVSurface->usHeight;
-
-  return (TRUE);
-}
-
 // *******************************************************************
 //
 // Blitting Functions
@@ -2172,7 +2160,6 @@ static BOOLEAN GetVSurfaceRect(struct VSurface *hVSurface, RECT *pRect) {
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
                               int32_t iDestX, int32_t iDestY, int32_t fBltFlags, SGPRect *srcRect) {
-  RECT SrcRect, DestRect;
   uint8_t *pSrcSurface8, *pDestSurface8;
   uint32_t uiSrcPitch, uiDestPitch, uiWidth, uiHeight;
 
@@ -2180,17 +2167,14 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
   Assert(hDestVSurface != NULL);
 
   // Check for source coordinate options - from region, specific rect or full src dimensions
-  do {
-    // Use SUBRECT if specified
-    if (fBltFlags & VS_BLT_SRCSUBRECT) {
-      SrcRect.top = srcRect->iTop;
-      SrcRect.left = srcRect->iLeft;
-      SrcRect.bottom = srcRect->iBottom;
-      SrcRect.right = srcRect->iRight;
-
-      break;
-    }
-
+  // Use SUBRECT if specified
+  struct Rect SrcRect;
+  if (fBltFlags & VS_BLT_SRCSUBRECT) {
+    SrcRect.top = srcRect->iTop;
+    SrcRect.left = srcRect->iLeft;
+    SrcRect.bottom = srcRect->iBottom;
+    SrcRect.right = srcRect->iRight;
+  } else {
     // Here, use default, which is entire Video Surface
     // Check Sizes, SRC size MUST be <= DEST size
     if (hDestVSurface->usHeight < hSrcVSurface->usHeight) {
@@ -2208,14 +2192,14 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
     SrcRect.left = (int)0;
     SrcRect.bottom = (int)hSrcVSurface->usHeight;
     SrcRect.right = (int)hSrcVSurface->usWidth;
-
-  } while (FALSE);
+  }
 
   // Once here, assert valid Src
   Assert(hSrcVSurface != NULL);
 
   // clipping -- added by DB
-  GetVSurfaceRect(hDestVSurface, &DestRect);
+  struct Rect DestRect = {
+      .left = 0, .top = 0, .right = hDestVSurface->usWidth, .bottom = hDestVSurface->usHeight};
   uiWidth = SrcRect.right - SrcRect.left;
   uiHeight = SrcRect.bottom - SrcRect.top;
 
@@ -2282,8 +2266,8 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
 // UTILITY FUNCTIONS FOR BLITTING
 
 static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
-                                                struct VSurface *hSrcVSurface, RECT *DestRect,
-                                                RECT *SrcRect) {
+                                                struct VSurface *hSrcVSurface,
+                                                struct Rect *DestRect, struct Rect *SrcRect) {
   Assert(hDestVSurface != NULL);
   Assert(hSrcVSurface != NULL);
 
@@ -2351,8 +2335,6 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
 
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
                                int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
-  RECT srcRect = {SrcRect->left, SrcRect->top, SrcRect->right, SrcRect->bottom};
-
   // Blit using the correct blitter
   if (fBltFlags & VS_BLT_FAST) {
     // Validations
@@ -2360,9 +2342,9 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
     CHECKF(iDestY >= 0);
 
     if (fBltFlags & VS_BLT_USECOLORKEY) {
-      DDBltFastSrcColorKey(dest, iDestX, iDestY, src, &srcRect);
+      DDBltFastSrcColorKey(dest, iDestX, iDestY, src, SrcRect);
     } else {
-      DDBltFastNoColorKey(dest, iDestX, iDestY, src, &srcRect);
+      DDBltFastNoColorKey(dest, iDestX, iDestY, src, SrcRect);
     }
   } else {
     // Normal, specialized blit for clipping, etc
@@ -2376,14 +2358,16 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
     }
 
     // Setup dest rectangle
-    RECT DestRect;
+    struct Rect DestRect;
     DestRect.top = (int)iDestY;
     DestRect.left = (int)iDestX;
     DestRect.bottom = (int)iDestY + (SrcRect->bottom - SrcRect->top);
     DestRect.right = (int)iDestX + (SrcRect->right - SrcRect->left);
 
+    struct Rect SrcRectCopy = *SrcRect;
+
     // Do Clipping of rectangles
-    if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &srcRect)) {
+    if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &SrcRectCopy)) {
       // Returns false because dest start is > dest size
       return (TRUE);
     }
@@ -2393,9 +2377,12 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
       return (TRUE);
     }
 
+    RECT srcRect = {SrcRectCopy.left, SrcRectCopy.top, SrcRectCopy.right, SrcRectCopy.bottom};
+    RECT dstRect = {DestRect.left, DestRect.top, DestRect.right, DestRect.bottom};
+
     HRESULT ReturnCode;
     do {
-      ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &DestRect,
+      ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &dstRect,
                                            (LPDIRECTDRAWSURFACE2)src->_platformData2, &srcRect,
                                            uiDDFlags, NULL);
 
