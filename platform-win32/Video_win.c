@@ -753,12 +753,10 @@ void InvalidateScreen(void) {
   guiFrameBufferState = BUFFER_DIRTY;
 }
 
-static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
-                                int16_t sScrollYIncrement, struct VSurface *pSource,
-                                struct VSurface *pDest, MouseCursorBackground *mouseCursor) {
+static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mouseCursor) {
   uint16_t usWidth, usHeight;
   static RECT Region;
-  static uint16_t usMouseXPos, usMouseYPos;
+  uint16_t usMouseXPos, usMouseYPos;
   uint16_t usNumStrips = 0;
   int32_t cnt;
   int16_t sShiftX, sShiftY;
@@ -772,16 +770,7 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
   StripRegions[0].right = gsVIEWPORT_END_X;
   StripRegions[0].top = gsVIEWPORT_WINDOW_START_Y;
   StripRegions[0].bottom = gsVIEWPORT_WINDOW_END_Y;
-  StripRegions[1].left = gsVIEWPORT_START_X;
-  StripRegions[1].right = gsVIEWPORT_END_X;
-  StripRegions[1].top = gsVIEWPORT_WINDOW_START_Y;
-  StripRegions[1].bottom = gsVIEWPORT_WINDOW_END_Y;
-
-  static RECT MouseRegion;
-  MouseRegion.left = mouseCursor->usLeft;
-  MouseRegion.top = mouseCursor->usTop;
-  MouseRegion.right = mouseCursor->usRight;
-  MouseRegion.bottom = mouseCursor->usBottom;
+  StripRegions[1] = StripRegions[0];
 
   usMouseXPos = mouseCursor->usMouseXPos;
   usMouseYPos = mouseCursor->usMouseYPos;
@@ -791,41 +780,41 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
 
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
-      Region.right = usWidth - (sScrollXIncrement);
+      Region.right = usWidth - (gsScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      DDBltFastNoColorKey(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, pSource,
+      DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, vsPrimary,
                           (LPRECT)&Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
-        memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, sScrollXIncrement * 2);
+        memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, gsScrollXIncrement * 2);
       }
 
-      StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + sScrollXIncrement);
-      usMouseXPos += sScrollXIncrement;
+      StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
+      usMouseXPos += gsScrollXIncrement;
 
       usNumStrips = 1;
       break;
 
     case SCROLL_RIGHT:
 
-      Region.left = sScrollXIncrement;
+      Region.left = gsScrollXIncrement;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      DDBltFastNoColorKey(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
-        memset(
-            (uint8_t *)gpZBuffer + (uiCountY * 1280) + ((gsVIEWPORT_END_X - sScrollXIncrement) * 2),
-            0, sScrollXIncrement * 2);
+        memset((uint8_t *)gpZBuffer + (uiCountY * 1280) +
+                   ((gsVIEWPORT_END_X - gsScrollXIncrement) * 2),
+               0, gsScrollXIncrement * 2);
       }
 
-      StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - sScrollXIncrement);
-      usMouseXPos -= sScrollXIncrement;
+      StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
+      usMouseXPos -= gsScrollXIncrement;
 
       usNumStrips = 1;
       break;
@@ -835,42 +824,42 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
       Region.right = usWidth;
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - sScrollYIncrement;
+      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - gsScrollYIncrement;
 
-      DDBltFastNoColorKey(pDest, 0, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement, pSource,
-                          (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
+                          vsPrimary, (LPRECT)&Region);
 
-      for (uiCountY = sScrollYIncrement - 1 + gsVIEWPORT_WINDOW_START_Y;
+      for (uiCountY = gsScrollYIncrement - 1 + gsVIEWPORT_WINDOW_START_Y;
            uiCountY >= gsVIEWPORT_WINDOW_START_Y; uiCountY--) {
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
 
-      StripRegions[0].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement);
+      StripRegions[0].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement);
       usNumStrips = 1;
 
-      usMouseYPos += sScrollYIncrement;
+      usMouseYPos += gsScrollYIncrement;
 
       break;
 
     case SCROLL_DOWN:
 
       Region.left = 0;
-      Region.top = gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement;
+      Region.top = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement;
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      DDBltFastNoColorKey(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
 
       // Zero out z
-      for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
+      for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
            uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
 
-      StripRegions[0].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
+      StripRegions[0].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
       usNumStrips = 1;
 
-      usMouseYPos -= sScrollYIncrement;
+      usMouseYPos -= gsScrollYIncrement;
 
       break;
 
@@ -878,119 +867,120 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
 
       Region.left = 0;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
-      Region.right = usWidth - (sScrollXIncrement);
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - sScrollYIncrement;
+      Region.right = usWidth - (gsScrollXIncrement);
+      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - gsScrollYIncrement;
 
-      DDBltFastNoColorKey(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement,
-                          pSource, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement,
+                          gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement, vsPrimary,
+                          (LPRECT)&Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
-        memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, sScrollXIncrement * 2);
+        memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, gsScrollXIncrement * 2);
       }
-      for (uiCountY = gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement - 1;
+      for (uiCountY = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement - 1;
            uiCountY >= gsVIEWPORT_WINDOW_START_Y; uiCountY--) {
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
 
-      StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + sScrollXIncrement);
-      StripRegions[1].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement);
-      StripRegions[1].left = (int16_t)(gsVIEWPORT_START_X + sScrollXIncrement);
+      StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
+      StripRegions[1].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement);
+      StripRegions[1].left = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
       usNumStrips = 2;
 
-      usMouseYPos += sScrollYIncrement;
-      usMouseXPos += sScrollXIncrement;
+      usMouseYPos += gsScrollYIncrement;
+      usMouseXPos += gsScrollXIncrement;
 
       break;
 
     case SCROLL_UPRIGHT:
 
-      Region.left = sScrollXIncrement;
+      Region.left = gsScrollXIncrement;
       Region.top = gsVIEWPORT_WINDOW_START_Y;
       Region.right = usWidth;
-      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - sScrollYIncrement;
+      Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight - gsScrollYIncrement;
 
-      DDBltFastNoColorKey(pDest, 0, gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement, pSource,
-                          (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement,
+                          vsPrimary, (LPRECT)&Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
-        memset(
-            (uint8_t *)gpZBuffer + (uiCountY * 1280) + ((gsVIEWPORT_END_X - sScrollXIncrement) * 2),
-            0, sScrollXIncrement * 2);
+        memset((uint8_t *)gpZBuffer + (uiCountY * 1280) +
+                   ((gsVIEWPORT_END_X - gsScrollXIncrement) * 2),
+               0, gsScrollXIncrement * 2);
       }
-      for (uiCountY = gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement - 1;
+      for (uiCountY = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement - 1;
            uiCountY >= gsVIEWPORT_WINDOW_START_Y; uiCountY--) {
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
 
-      StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - sScrollXIncrement);
-      StripRegions[1].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement);
-      StripRegions[1].right = (int16_t)(gsVIEWPORT_END_X - sScrollXIncrement);
+      StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
+      StripRegions[1].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement);
+      StripRegions[1].right = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
       usNumStrips = 2;
 
-      usMouseYPos += sScrollYIncrement;
-      usMouseXPos -= sScrollXIncrement;
+      usMouseYPos += gsScrollYIncrement;
+      usMouseXPos -= gsScrollXIncrement;
 
       break;
 
     case SCROLL_DOWNLEFT:
 
       Region.left = 0;
-      Region.top = gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement;
-      Region.right = usWidth - (sScrollXIncrement);
+      Region.top = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement;
+      Region.right = usWidth - (gsScrollXIncrement);
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      DDBltFastNoColorKey(pDest, sScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, pSource,
+      DDBltFastNoColorKey(vsBackBuffer, gsScrollXIncrement, gsVIEWPORT_WINDOW_START_Y, vsPrimary,
                           (LPRECT)&Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
-        memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, sScrollXIncrement * 2);
+        memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, gsScrollXIncrement * 2);
       }
-      for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
+      for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
            uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
 
-      StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + sScrollXIncrement);
+      StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
 
-      StripRegions[1].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
-      StripRegions[1].left = (int16_t)(gsVIEWPORT_START_X + sScrollXIncrement);
+      StripRegions[1].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
+      StripRegions[1].left = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
       usNumStrips = 2;
 
-      usMouseYPos -= sScrollYIncrement;
-      usMouseXPos += sScrollXIncrement;
+      usMouseYPos -= gsScrollYIncrement;
+      usMouseXPos += gsScrollXIncrement;
 
       break;
 
     case SCROLL_DOWNRIGHT:
 
-      Region.left = sScrollXIncrement;
-      Region.top = gsVIEWPORT_WINDOW_START_Y + sScrollYIncrement;
+      Region.left = gsScrollXIncrement;
+      Region.top = gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement;
       Region.right = usWidth;
       Region.bottom = gsVIEWPORT_WINDOW_START_Y + usHeight;
 
-      DDBltFastNoColorKey(pDest, 0, gsVIEWPORT_WINDOW_START_Y, pSource, (LPRECT)&Region);
+      DDBltFastNoColorKey(vsBackBuffer, 0, gsVIEWPORT_WINDOW_START_Y, vsPrimary, (LPRECT)&Region);
 
       // memset z-buffer
       for (uiCountY = gsVIEWPORT_WINDOW_START_Y; uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
-        memset(
-            (uint8_t *)gpZBuffer + (uiCountY * 1280) + ((gsVIEWPORT_END_X - sScrollXIncrement) * 2),
-            0, sScrollXIncrement * 2);
+        memset((uint8_t *)gpZBuffer + (uiCountY * 1280) +
+                   ((gsVIEWPORT_END_X - gsScrollXIncrement) * 2),
+               0, gsScrollXIncrement * 2);
       }
-      for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
+      for (uiCountY = (gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
            uiCountY < gsVIEWPORT_WINDOW_END_Y; uiCountY++) {
         memset((uint8_t *)gpZBuffer + (uiCountY * 1280), 0, 1280);
       }
 
-      StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - sScrollXIncrement);
-      StripRegions[1].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - sScrollYIncrement);
-      StripRegions[1].right = (int16_t)(gsVIEWPORT_END_X - sScrollXIncrement);
+      StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
+      StripRegions[1].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
+      StripRegions[1].right = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
       usNumStrips = 2;
 
-      usMouseYPos -= sScrollYIncrement;
-      usMouseXPos -= sScrollXIncrement;
+      usMouseYPos -= gsScrollYIncrement;
+      usMouseXPos -= gsScrollXIncrement;
 
       break;
   }
@@ -999,7 +989,7 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
     RenderStaticWorldRect((int16_t)StripRegions[cnt].left, (int16_t)StripRegions[cnt].top,
                           (int16_t)StripRegions[cnt].right, (int16_t)StripRegions[cnt].bottom,
                           TRUE);
-    DDBltFastNoColorKey(pDest, StripRegions[cnt].left, StripRegions[cnt].top, vsFB,
+    DDBltFastNoColorKey(vsBackBuffer, StripRegions[cnt].left, StripRegions[cnt].top, vsFB,
                         (LPRECT) & (StripRegions[cnt]));
   }
 
@@ -1009,50 +999,50 @@ static void ScrollJA2Background(uint32_t uiDirection, int16_t sScrollXIncrement,
   switch (uiDirection) {
     case SCROLL_LEFT:
 
-      sShiftX = sScrollXIncrement;
+      sShiftX = gsScrollXIncrement;
       sShiftY = 0;
       break;
 
     case SCROLL_RIGHT:
 
-      sShiftX = -sScrollXIncrement;
+      sShiftX = -gsScrollXIncrement;
       sShiftY = 0;
       break;
 
     case SCROLL_UP:
 
       sShiftX = 0;
-      sShiftY = sScrollYIncrement;
+      sShiftY = gsScrollYIncrement;
       break;
 
     case SCROLL_DOWN:
 
       sShiftX = 0;
-      sShiftY = -sScrollYIncrement;
+      sShiftY = -gsScrollYIncrement;
       break;
 
     case SCROLL_UPLEFT:
 
-      sShiftX = sScrollXIncrement;
-      sShiftY = sScrollYIncrement;
+      sShiftX = gsScrollXIncrement;
+      sShiftY = gsScrollYIncrement;
       break;
 
     case SCROLL_UPRIGHT:
 
-      sShiftX = -sScrollXIncrement;
-      sShiftY = sScrollYIncrement;
+      sShiftX = -gsScrollXIncrement;
+      sShiftY = gsScrollYIncrement;
       break;
 
     case SCROLL_DOWNLEFT:
 
-      sShiftX = sScrollXIncrement;
-      sShiftY = -sScrollYIncrement;
+      sShiftX = gsScrollXIncrement;
+      sShiftY = -gsScrollYIncrement;
       break;
 
     case SCROLL_DOWNRIGHT:
 
-      sShiftX = -sScrollXIncrement;
-      sShiftY = -sScrollYIncrement;
+      sShiftX = -gsScrollXIncrement;
+      sShiftY = -gsScrollYIncrement;
       break;
   }
 
@@ -1188,8 +1178,7 @@ void RefreshScreen(void *DummyVariable) {
       }
     }
     if (gfRenderScroll) {
-      ScrollJA2Background(guiScrollDirection, gsScrollXIncrement, gsScrollYIncrement, vsPrimary,
-                          vsBackBuffer, &gMouseCursorBackground[PREVIOUS_MOUSE_DATA]);
+      ScrollJA2Background(guiScrollDirection, &gMouseCursorBackground[PREVIOUS_MOUSE_DATA]);
     }
     gfIgnoreScrollDueToCenterAdjust = FALSE;
 
