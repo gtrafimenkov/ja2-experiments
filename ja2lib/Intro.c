@@ -13,7 +13,6 @@
 #include "SGP/Debug.h"
 #include "SGP/English.h"
 #include "SGP/FileMan.h"
-#include "SGP/Ja2Libs.h"
 #include "SGP/LibraryDataBasePub.h"
 #include "SGP/Line.h"
 #include "SGP/Types.h"
