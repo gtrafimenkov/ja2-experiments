@@ -1275,12 +1275,6 @@ BOOLEAN RenderShopKeeperInterface() {
     return (TRUE);
   }
 
-  //	RenderSMPanel( &fDirty );
-
-  //	RenderTacticalInterface( );
-  // Render view window
-  //	RenderRadarScreen( );
-
   // Get the main background screen graphic and blt it
   GetVideoObject(&hPixHandle, guiMainTradeScreenImage);
   BltVideoObject(vsFB, hPixHandle, 0, SKI_MAIN_BACKGROUND_X, SKI_MAIN_BACKGROUND_Y);
@@ -4023,9 +4017,6 @@ int8_t AddInventoryToSkiLocation(INVENTORY_IN_SLOT *pInv, uint8_t ubSpotLocation
 
 void DisplayTalkingArmsDealer() {
   static BOOLEAN fWasTheMercTalking = FALSE;
-  //	static uint32_t		uiLastTime=0;
-  //	uint32_t					uiCurTime = GetJA2Clock();
-  //	static	uint32_t	uiMinimumLengthForTalkingText;
 
   // Make sure the Dealers doesn't get disabled
   gFacesData[giShopKeeperFaceIndex].fDisabled = FALSE;
@@ -4039,10 +4030,6 @@ void DisplayTalkingArmsDealer() {
   HandleShopKeeperDialog(0);
 
   gfIsTheShopKeeperTalking = gFacesData[giShopKeeperFaceIndex].fTalking;
-
-  // if the merc just started talking
-  //	if( gfIsTheShopKeeperTalking && !fWasTheMercTalking )
-  {}
 
   // if the merc is talking
   if (gfIsTheShopKeeperTalking) fWasTheMercTalking = TRUE;

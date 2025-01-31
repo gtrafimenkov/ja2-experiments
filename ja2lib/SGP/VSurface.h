@@ -129,6 +129,9 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
 BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface *src,
                                           int32_t destX, int32_t destY);
 
+BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VSurface *src,
+                                         int32_t *destX, int32_t *destY, struct Rect *srcRect);
+
 BOOLEAN ShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1, int32_t Y1, int32_t X2,
                                int32_t Y2);
 BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHandle, int32_t iPosX,

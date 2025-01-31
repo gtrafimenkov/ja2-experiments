@@ -290,9 +290,8 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
   return (TRUE);
 }
 
-static BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VSurface *src,
-                                                int32_t *destX, int32_t *destY,
-                                                struct Rect *srcRect) {
+BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VSurface *src,
+                                         int32_t *destX, int32_t *destY, struct Rect *srcRect) {
   Assert(dest != NULL);
   Assert(src != NULL);
 
@@ -335,43 +334,45 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VS
   return true;
 }
 
-static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struct VSurface *src,
-                                                    int32_t destX, int32_t destY,
-                                                    struct Rect *srcRect, int32_t fBltFlags) {
-  if (!BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
-    return FALSE;
-  }
-
-  // Send dest position, rectangle, etc to DD bltfast function
-  // First check BPP values for compatibility
-  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
-    if (!BltVSurfaceRectToPoint(dest, src, fBltFlags, destX, destY, srcRect)) {
+static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct VSurface *dest, struct VSurface *src,
+                                                        int32_t destX, int32_t destY,
+                                                        struct Rect *srcRect) {
+  if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    if (!BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
       return FALSE;
     }
-  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+
     uint8_t *pSrcSurface8, *pDestSurface8;
     uint32_t uiSrcPitch, uiDestPitch;
     if ((pSrcSurface8 = (uint8_t *)LockVSurface(src, &uiSrcPitch)) == NULL) {
-      return (FALSE);
+      return FALSE;
     }
 
     if ((pDestSurface8 = (uint8_t *)LockVSurface(dest, &uiDestPitch)) == NULL) {
       UnlockVSurface(src);
-      return (FALSE);
+      return FALSE;
     }
 
     Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, destX, destY, srcRect);
 
     UnlockVSurface(src);
     UnlockVSurface(dest);
-    return (TRUE);
-  } else {
-    DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-               String("Incompatible BPP values with src and dest Video Surfaces for blitting"));
-    return (FALSE);
+    return TRUE;
   }
+  return FALSE;
+}
 
-  return (TRUE);
+static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struct VSurface *src,
+                                                    int32_t destX, int32_t destY,
+                                                    struct Rect *srcRect, int32_t fBltFlags) {
+  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+    if (BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
+      return BltVSurfaceRectToPoint(dest, src, fBltFlags, destX, destY, srcRect);
+    }
+  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, srcRect);
+  }
+  return FALSE;
 }
 
 BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
