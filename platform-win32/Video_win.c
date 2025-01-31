@@ -1819,10 +1819,6 @@ extern void GetClippingRect(SGPRect *clip);
 #define DEFAULT_NUM_REGIONS 5
 #define DEFAULT_VIDEO_SURFACE_LIST_SIZE 10
 
-BOOLEAN BltVSurfaceRectToPoint(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                               uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                               struct Rect *SrcRect);
-
 BOOLEAN InitializeVideoSurfaceManager() {
   RegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Surface Manager");
   return TRUE;
@@ -2244,8 +2240,8 @@ static void BltVSurfaceRectToRectInternalColorKey(struct VSurface *dest, struct 
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
-BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
-                               int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
+BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
+                               int32_t iDestY, struct Rect *SrcRect) {
   // Setup dest rectangle
   struct Rect DestRect;
   DestRect.top = (int)iDestY;
@@ -2266,11 +2262,34 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
     return (TRUE);
   }
 
-  if (fBltFlags & VS_BLT_USECOLORKEY) {
-    BltVSurfaceRectToRectInternalColorKey(dest, src, &SrcRectCopy, &DestRect);
-  } else {
-    BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect);
+  BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect);
+
+  return (TRUE);
+}
+
+BOOLEAN BltVSurfaceRectToPointColorKey(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
+                                       int32_t iDestY, struct Rect *SrcRect) {
+  // Setup dest rectangle
+  struct Rect DestRect;
+  DestRect.top = (int)iDestY;
+  DestRect.left = (int)iDestX;
+  DestRect.bottom = (int)iDestY + (SrcRect->bottom - SrcRect->top);
+  DestRect.right = (int)iDestX + (SrcRect->right - SrcRect->left);
+
+  struct Rect SrcRectCopy = *SrcRect;
+
+  // Do Clipping of rectangles
+  if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &SrcRectCopy)) {
+    // Returns false because dest start is > dest size
+    return (TRUE);
   }
+
+  // Check values for 0 size
+  if (DestRect.top == DestRect.bottom || DestRect.right == DestRect.left) {
+    return (TRUE);
+  }
+
+  BltVSurfaceRectToRectInternalColorKey(dest, src, &SrcRectCopy, &DestRect);
 
   return (TRUE);
 }

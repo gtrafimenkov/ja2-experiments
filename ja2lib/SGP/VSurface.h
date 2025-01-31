@@ -33,12 +33,6 @@ extern BOOLEAN gfExtraBuffer;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
-// Defines for blitting
-//
-
-#define VS_BLT_USECOLORKEY 0x000000002
-
-//
 // This structure is a video Surface. Contains a HLIST of regions
 //
 
@@ -115,8 +109,10 @@ BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
 
 void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *SrcRect,
                            struct Rect *DestRect);
-BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
-                               int32_t iDestX, int32_t iDestY, struct Rect *SrcRect);
+BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
+                               int32_t iDestY, struct Rect *SrcRect);
+BOOLEAN BltVSurfaceRectToPointColorKey(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
+                                       int32_t iDestY, struct Rect *SrcRect);
 
 void DDBltFastSrcColorKey(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
                           struct Rect *region);

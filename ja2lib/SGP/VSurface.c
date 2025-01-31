@@ -366,7 +366,7 @@ BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src
                                      int32_t destY, struct Rect *srcRect) {
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     if (BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
-      return BltVSurfaceRectToPoint(dest, src, 0, destX, destY, srcRect);
+      return BltVSurfaceRectToPoint(dest, src, destX, destY, srcRect);
     }
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, srcRect);
@@ -412,7 +412,7 @@ BOOLEAN BltVSurfaceToVSurfaceColorKey(struct VSurface *dest, struct VSurface *sr
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     if (BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, &SrcRect)) {
-      return BltVSurfaceRectToPoint(dest, src, VS_BLT_USECOLORKEY, destX, destY, &SrcRect);
+      return BltVSurfaceRectToPointColorKey(dest, src, destX, destY, &SrcRect);
     }
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);

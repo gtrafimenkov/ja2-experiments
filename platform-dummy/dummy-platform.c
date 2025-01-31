@@ -274,9 +274,13 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 
 BOOLEAN DeleteVSurface(struct VSurface *hVSurface) { return FALSE; }
 
-BOOLEAN BltVSurfaceRectToPoint(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                               uint32_t fBltFlags, int32_t iDestX, int32_t iDestY,
-                               struct Rect *SrcRect) {
+BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
+                               int32_t iDestY, struct Rect *SrcRect) {
+  return FALSE;
+}
+
+BOOLEAN BltVSurfaceRectToPointColorKey(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
+                                       int32_t iDestY, struct Rect *SrcRect) {
   return FALSE;
 }
 

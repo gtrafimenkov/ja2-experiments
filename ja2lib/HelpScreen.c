@@ -2006,9 +2006,8 @@ void RenderTextBufferToScreen() {
   SrcRect.right = HLP_SCRN__WIDTH_OF_TEXT_BUFFER;
   SrcRect.bottom = SrcRect.top + HLP_SCRN__HEIGHT_OF_TEXT_AREA - (2 * 8);
 
-  BltVSurfaceRectToPoint(vsFB, vsHelpScreenTextBufferSurface, VS_BLT_USECOLORKEY,
-                         gHelpScreen.usLeftMarginPosX,
-                         (gHelpScreen.usScreenLocY + HELP_SCREEN_TEXT_OFFSET_Y), &SrcRect);
+  BltVSurfaceRectToPointColorKey(vsFB, vsHelpScreenTextBufferSurface, gHelpScreen.usLeftMarginPosX,
+                                 (gHelpScreen.usScreenLocY + HELP_SCREEN_TEXT_OFFSET_Y), &SrcRect);
 
   DisplayHelpScreenTextBufferScrollBox();
 }
