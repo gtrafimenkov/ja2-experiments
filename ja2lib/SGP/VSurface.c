@@ -290,9 +290,9 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
   return (TRUE);
 }
 
-static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struct VSurface *src,
-                                                    int32_t destX, int32_t destY,
-                                                    struct Rect *srcRect, int32_t fBltFlags) {
+static BOOLEAN BltVSurfaceToVSurfaceSubrectClip(struct VSurface *dest, struct VSurface *src,
+                                                int32_t *destX, int32_t *destY,
+                                                struct Rect *srcRect) {
   Assert(dest != NULL);
   Assert(src != NULL);
 
@@ -309,34 +309,45 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struc
   uint32_t uiHeight = srcRect->bottom - srcRect->top;
 
   // check for position entirely off the screen
-  if (destX >= DestRect.right) return (FALSE);
-  if (destY >= DestRect.bottom) return (FALSE);
-  if ((destX + (int32_t)uiWidth) < (int32_t)DestRect.left) return (FALSE);
-  if ((destY + (int32_t)uiHeight) < (int32_t)DestRect.top) return (FALSE);
+  if (*destX >= DestRect.right) return false;
+  if (*destY >= DestRect.bottom) return false;
+  if ((*destX + (int32_t)uiWidth) < (int32_t)DestRect.left) return false;
+  if ((*destY + (int32_t)uiHeight) < (int32_t)DestRect.top) return false;
 
-  if ((destX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
-    srcRect->right -= ((destX + uiWidth) - DestRect.right);
-    uiWidth -= ((destX + uiWidth) - DestRect.right);
+  if ((*destX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
+    srcRect->right -= ((*destX + uiWidth) - DestRect.right);
+    // uiWidth -= ((*destX + uiWidth) - DestRect.right);
   }
-  if ((destY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
-    srcRect->bottom -= ((destY + uiHeight) - DestRect.bottom);
-    uiHeight -= ((destY + uiHeight) - DestRect.bottom);
+  if ((*destY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
+    srcRect->bottom -= ((*destY + uiHeight) - DestRect.bottom);
+    // uiHeight -= ((*destY + uiHeight) - DestRect.bottom);
   }
-  if (destX < DestRect.left) {
-    srcRect->left += (DestRect.left - destX);
-    uiWidth -= (DestRect.left - destX);
-    destX = DestRect.left;
+  if (*destX < DestRect.left) {
+    srcRect->left += (DestRect.left - *destX);
+    // uiWidth -= (DestRect.left - *destX);
+    *destX = DestRect.left;
   }
-  if (destY < (int32_t)DestRect.top) {
-    srcRect->top += (DestRect.top - destY);
-    uiHeight -= (DestRect.top - destY);
-    destY = DestRect.top;
+  if (*destY < (int32_t)DestRect.top) {
+    srcRect->top += (DestRect.top - *destY);
+    // uiHeight -= (DestRect.top - *destY);
+    *destY = DestRect.top;
+  }
+  return true;
+}
+
+static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struct VSurface *src,
+                                                    int32_t destX, int32_t destY,
+                                                    struct Rect *srcRect, int32_t fBltFlags) {
+  if (!BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
+    return FALSE;
   }
 
   // Send dest position, rectangle, etc to DD bltfast function
   // First check BPP values for compatibility
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
-    CHECKF(BltVSurfaceRectToPoint(dest, src, fBltFlags, destX, destY, srcRect));
+    if (!BltVSurfaceRectToPoint(dest, src, fBltFlags, destX, destY, srcRect)) {
+      return FALSE;
+    }
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     uint8_t *pSrcSurface8, *pDestSurface8;
     uint32_t uiSrcPitch, uiDestPitch;
@@ -353,6 +364,8 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struc
       return (FALSE);
     }
 
+    uint32_t uiWidth = srcRect->right - srcRect->left;
+    uint32_t uiHeight = srcRect->bottom - srcRect->top;
     Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, destX, destY, srcRect->left,
                   srcRect->top, uiWidth, uiHeight);
     UnlockVSurface(src);
