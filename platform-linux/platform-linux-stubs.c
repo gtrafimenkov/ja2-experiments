@@ -240,8 +240,8 @@ BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteE
 
 BOOLEAN DeleteVSurface(struct VSurface *hVSurface) { return FALSE; }
 
-BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                              int32_t iDestX, int32_t iDestY, int32_t fBltFlags, SGPRect *srcRect) {
+BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                              int32_t destY, int32_t fBltFlags, SGPRect *srcRect) {
   return FALSE;
 }
 

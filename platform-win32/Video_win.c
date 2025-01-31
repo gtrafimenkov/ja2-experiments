@@ -2158,13 +2158,13 @@ BOOLEAN DeleteVSurface(struct VSurface *vs) {
 // Blt  will use DD Blt or BltFast depending on flags.
 // Will drop down into user-defined blitter if 8->16 BPP blitting is being done
 
-BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *hSrcVSurface,
-                              int32_t iDestX, int32_t iDestY, int32_t fBltFlags, SGPRect *srcRect) {
+BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                              int32_t destY, int32_t fBltFlags, SGPRect *srcRect) {
   uint8_t *pSrcSurface8, *pDestSurface8;
   uint32_t uiSrcPitch, uiDestPitch, uiWidth, uiHeight;
 
   // Assertions
-  Assert(hDestVSurface != NULL);
+  Assert(dest != NULL);
 
   // Check for source coordinate options - from region, specific rect or full src dimensions
   // Use SUBRECT if specified
@@ -2177,12 +2177,12 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
   } else {
     // Here, use default, which is entire Video Surface
     // Check Sizes, SRC size MUST be <= DEST size
-    if (hDestVSurface->usHeight < hSrcVSurface->usHeight) {
+    if (dest->usHeight < src->usHeight) {
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                  String("Incompatible height size given in Video Surface blit"));
       return (FALSE);
     }
-    if (hDestVSurface->usWidth < hSrcVSurface->usWidth) {
+    if (dest->usWidth < src->usWidth) {
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                  String("Incompatible height size given in Video Surface blit"));
       return (FALSE);
@@ -2190,69 +2190,67 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *hDestVSurface, struct VSurface *h
 
     SrcRect.top = (int)0;
     SrcRect.left = (int)0;
-    SrcRect.bottom = (int)hSrcVSurface->usHeight;
-    SrcRect.right = (int)hSrcVSurface->usWidth;
+    SrcRect.bottom = (int)src->usHeight;
+    SrcRect.right = (int)src->usWidth;
   }
 
   // Once here, assert valid Src
-  Assert(hSrcVSurface != NULL);
+  Assert(src != NULL);
 
   // clipping -- added by DB
-  struct Rect DestRect = {
-      .left = 0, .top = 0, .right = hDestVSurface->usWidth, .bottom = hDestVSurface->usHeight};
+  struct Rect DestRect = {.left = 0, .top = 0, .right = dest->usWidth, .bottom = dest->usHeight};
   uiWidth = SrcRect.right - SrcRect.left;
   uiHeight = SrcRect.bottom - SrcRect.top;
 
   // check for position entirely off the screen
-  if (iDestX >= DestRect.right) return (FALSE);
-  if (iDestY >= DestRect.bottom) return (FALSE);
-  if ((iDestX + (int32_t)uiWidth) < (int32_t)DestRect.left) return (FALSE);
-  if ((iDestY + (int32_t)uiHeight) < (int32_t)DestRect.top) return (FALSE);
+  if (destX >= DestRect.right) return (FALSE);
+  if (destY >= DestRect.bottom) return (FALSE);
+  if ((destX + (int32_t)uiWidth) < (int32_t)DestRect.left) return (FALSE);
+  if ((destY + (int32_t)uiHeight) < (int32_t)DestRect.top) return (FALSE);
 
-  if ((iDestX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
-    SrcRect.right -= ((iDestX + uiWidth) - DestRect.right);
-    uiWidth -= ((iDestX + uiWidth) - DestRect.right);
+  if ((destX + (int32_t)uiWidth) >= (int32_t)DestRect.right) {
+    SrcRect.right -= ((destX + uiWidth) - DestRect.right);
+    uiWidth -= ((destX + uiWidth) - DestRect.right);
   }
-  if ((iDestY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
-    SrcRect.bottom -= ((iDestY + uiHeight) - DestRect.bottom);
-    uiHeight -= ((iDestY + uiHeight) - DestRect.bottom);
+  if ((destY + (int32_t)uiHeight) >= (int32_t)DestRect.bottom) {
+    SrcRect.bottom -= ((destY + uiHeight) - DestRect.bottom);
+    uiHeight -= ((destY + uiHeight) - DestRect.bottom);
   }
-  if (iDestX < DestRect.left) {
-    SrcRect.left += (DestRect.left - iDestX);
-    uiWidth -= (DestRect.left - iDestX);
-    iDestX = DestRect.left;
+  if (destX < DestRect.left) {
+    SrcRect.left += (DestRect.left - destX);
+    uiWidth -= (DestRect.left - destX);
+    destX = DestRect.left;
   }
-  if (iDestY < (int32_t)DestRect.top) {
-    SrcRect.top += (DestRect.top - iDestY);
-    uiHeight -= (DestRect.top - iDestY);
-    iDestY = DestRect.top;
+  if (destY < (int32_t)DestRect.top) {
+    SrcRect.top += (DestRect.top - destY);
+    uiHeight -= (DestRect.top - destY);
+    destY = DestRect.top;
   }
 
   // Send dest position, rectangle, etc to DD bltfast function
   // First check BPP values for compatibility
-  if (hDestVSurface->ubBitDepth == 16 && hSrcVSurface->ubBitDepth == 16) {
+  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     struct Rect srcRect = {SrcRect.left, SrcRect.top, SrcRect.right, SrcRect.bottom};
-    CHECKF(
-        BltVSurfaceRectToPoint(hDestVSurface, hSrcVSurface, fBltFlags, iDestX, iDestY, &srcRect));
+    CHECKF(BltVSurfaceRectToPoint(dest, src, fBltFlags, destX, destY, &srcRect));
 
-  } else if (hDestVSurface->ubBitDepth == 8 && hSrcVSurface->ubBitDepth == 8) {
-    if ((pSrcSurface8 = (uint8_t *)LockVSurface(hSrcVSurface, &uiSrcPitch)) == NULL) {
+  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    if ((pSrcSurface8 = (uint8_t *)LockVSurface(src, &uiSrcPitch)) == NULL) {
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                  String("Failed on lock of 8BPP surface for blitting"));
       return (FALSE);
     }
 
-    if ((pDestSurface8 = (uint8_t *)LockVSurface(hDestVSurface, &uiDestPitch)) == NULL) {
-      UnlockVSurface(hSrcVSurface);
+    if ((pDestSurface8 = (uint8_t *)LockVSurface(dest, &uiDestPitch)) == NULL) {
+      UnlockVSurface(src);
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                  String("Failed on lock of 8BPP dest surface for blitting"));
       return (FALSE);
     }
 
-    Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, iDestX, iDestY,
-                  SrcRect.left, SrcRect.top, uiWidth, uiHeight);
-    UnlockVSurface(hSrcVSurface);
-    UnlockVSurface(hDestVSurface);
+    Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, destX, destY, SrcRect.left,
+                  SrcRect.top, uiWidth, uiHeight);
+    UnlockVSurface(src);
+    UnlockVSurface(dest);
     return (TRUE);
   } else {
     DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
