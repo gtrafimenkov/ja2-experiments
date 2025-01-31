@@ -104,6 +104,26 @@ static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) 
 #endif
 }
 
+// Difference between IDirectDrawSurface2_BltFast and IDirectDrawSurface2_Blt:
+//
+// IDirectDrawSurface2::BltFast
+//     Purpose: Optimized for fast, simple blitting operations.
+//     Restrictions:
+//         Cannot handle stretching or clipping.
+//         Cannot apply effects like color keys (unless explicitly allowed).
+//         Only supports source color keying, no destination color keying.
+//     Use case: When you need the fastest possible blitting for simple copies.
+//
+// IDirectDrawSurface2::Blt
+//     Purpose: A more powerful and flexible blitting function.
+//     Capabilities:
+//         Supports stretching and shrinking.
+//         Supports clipping to the destination surface.
+//         Allows source and destination color keying.
+//         Can apply effects such as mirroring, alpha blending (if supported by hardware), and
+//         rotation.
+//     Use case: When you need advanced blitting features.
+
 void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
                struct Rect *region) {
   // DDBLTFAST_NOCOLORKEY
@@ -117,7 +137,6 @@ void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *s
 
   HRESULT ReturnCode;
   do {
-    // STDMETHOD(BltFast)(THIS_ DWORD,DWORD,LPDIRECTDRAWSURFACE2, LPRECT,DWORD)
     ReturnCode = IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dest->_platformData2, x, y,
                                              (LPDIRECTDRAWSURFACE2)src->_platformData2, &r, flags);
     if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
@@ -127,6 +146,21 @@ void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *s
       break;
     }
   } while (ReturnCode != DD_OK);
+}
+
+void DDBlt(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
+           struct Rect *destRect) {
+  RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
+  RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
+
+  uint32_t flags = (src->transparencySet ? DDBLT_KEYSRC : 0) | DDBLT_WAIT;
+
+  HRESULT ReturnCode;
+  do {
+    ReturnCode =
+        IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
+                                (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect, flags, NULL);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
 #define BUFFER_READY 0x00
@@ -2160,21 +2194,6 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
   return (TRUE);
 }
 
-static void BltVSurfaceRectToRectInternal(struct VSurface *dest, struct VSurface *src,
-                                          struct Rect *srcRect, struct Rect *destRect) {
-  RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
-  RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
-
-  uint32_t flags = (src->transparencySet ? DDBLT_KEYSRC : 0) | DDBLT_WAIT;
-
-  HRESULT ReturnCode;
-  do {
-    ReturnCode =
-        IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
-                                (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect, flags, NULL);
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
-}
-
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
                                int32_t iDestY, struct Rect *SrcRect) {
   // Setup dest rectangle
@@ -2197,14 +2216,14 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
     return (TRUE);
   }
 
-  BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect);
+  DDBlt(dest, src, &SrcRectCopy, &DestRect);
 
   return (TRUE);
 }
 
 void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
                            struct Rect *destRect) {
-  BltVSurfaceRectToRectInternal(dest, src, srcRect, destRect);
+  DDBlt(dest, src, srcRect, destRect);
 }
 
 //////////////////////////////////////////////////////////////////
