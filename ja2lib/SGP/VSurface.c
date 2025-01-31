@@ -362,22 +362,16 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct VSurface *dest, s
   return FALSE;
 }
 
-static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struct VSurface *src,
-                                                    int32_t destX, int32_t destY,
-                                                    struct Rect *srcRect, int32_t fBltFlags) {
+BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                                     int32_t destY, struct Rect *srcRect) {
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     if (BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, srcRect)) {
-      return BltVSurfaceRectToPoint(dest, src, fBltFlags, destX, destY, srcRect);
+      return BltVSurfaceRectToPoint(dest, src, 0, destX, destY, srcRect);
     }
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, srcRect);
   }
   return FALSE;
-}
-
-BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
-                                     int32_t destY, struct Rect *srcRect) {
-  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, srcRect, 0);
 }
 
 // Blt  will use DD Blt or BltFast depending on flags.
@@ -386,24 +380,47 @@ BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                   int32_t destY) {
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
-  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect, VS_BLT_FAST);
+  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+    CHECKF(destX >= 0);
+    CHECKF(destY >= 0);
+    DDBltFastNoColorKey(dest, destX, destY, src, &SrcRect);
+    return TRUE;
+  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
+  } else {
+    return FALSE;
+  }
 }
 
 BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface *src,
                                           int32_t destX, int32_t destY) {
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
-  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect,
-                                              VS_BLT_FAST | VS_BLT_USECOLORKEY);
+  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+    CHECKF(destX >= 0);
+    CHECKF(destY >= 0);
+    DDBltFastSrcColorKey(dest, destX, destY, src, &SrcRect);
+    return TRUE;
+  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
+  } else {
+    return FALSE;
+  }
 }
 
 BOOLEAN BltVSurfaceToVSurfaceColorKey(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                       int32_t destY) {
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
-  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect,
-                                              VS_BLT_USECOLORKEY);
+  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+    if (BltVSurfaceToVSurfaceSubrectClip(dest, src, &destX, &destY, &SrcRect)) {
+      return BltVSurfaceRectToPoint(dest, src, VS_BLT_USECOLORKEY, destX, destY, &SrcRect);
+    }
+  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+    return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
+  }
+  return FALSE;
 }
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src) {
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
-  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, 0, 0, &SrcRect, 0);
+  return BltVSurfaceToVSurfaceSubrect(dest, src, 0, 0, &SrcRect);
 }

@@ -128,13 +128,13 @@ static void DDBltFast(struct VSurface *dest, uint32_t x, uint32_t y, struct VSur
   } while (ReturnCode != DD_OK);
 }
 
-static void DDBltFastSrcColorKey(struct VSurface *dest, uint32_t x, uint32_t y,
-                                 struct VSurface *src, struct Rect *region) {
+void DDBltFastSrcColorKey(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
+                          struct Rect *region) {
   DDBltFast(dest, x, y, src, region, DDBLTFAST_SRCCOLORKEY);
 }
 
-static void DDBltFastNoColorKey(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
-                                struct Rect *region) {
+void DDBltFastNoColorKey(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
+                         struct Rect *region) {
   DDBltFast(dest, x, y, src, region, DDBLTFAST_NOCOLORKEY);
 }
 
@@ -2234,50 +2234,35 @@ static void BltVSurfaceRectToRectInternal(struct VSurface *dest, struct VSurface
 
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
                                int32_t iDestX, int32_t iDestY, struct Rect *SrcRect) {
-  // Blit using the correct blitter
-  if (fBltFlags & VS_BLT_FAST) {
-    // Validations
-    CHECKF(iDestX >= 0);
-    CHECKF(iDestY >= 0);
+  // Default flags
+  uint32_t uiDDFlags = 0;
 
-    if (fBltFlags & VS_BLT_USECOLORKEY) {
-      DDBltFastSrcColorKey(dest, iDestX, iDestY, src, SrcRect);
-    } else {
-      DDBltFastNoColorKey(dest, iDestX, iDestY, src, SrcRect);
-    }
-  } else {
-    // Normal, specialized blit for clipping, etc
-
-    // Default flags
-    uint32_t uiDDFlags = 0;
-
-    // Convert flags into DD flags, ( for transparency use, etc )
-    if (fBltFlags & VS_BLT_USECOLORKEY) {
-      uiDDFlags |= DDBLT_KEYSRC;
-    }
-
-    // Setup dest rectangle
-    struct Rect DestRect;
-    DestRect.top = (int)iDestY;
-    DestRect.left = (int)iDestX;
-    DestRect.bottom = (int)iDestY + (SrcRect->bottom - SrcRect->top);
-    DestRect.right = (int)iDestX + (SrcRect->right - SrcRect->left);
-
-    struct Rect SrcRectCopy = *SrcRect;
-
-    // Do Clipping of rectangles
-    if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &SrcRectCopy)) {
-      // Returns false because dest start is > dest size
-      return (TRUE);
-    }
-
-    // Check values for 0 size
-    if (DestRect.top == DestRect.bottom || DestRect.right == DestRect.left) {
-      return (TRUE);
-    }
-
-    BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect, uiDDFlags);
+  // Convert flags into DD flags, ( for transparency use, etc )
+  if (fBltFlags & VS_BLT_USECOLORKEY) {
+    uiDDFlags |= DDBLT_KEYSRC;
   }
+
+  // Setup dest rectangle
+  struct Rect DestRect;
+  DestRect.top = (int)iDestY;
+  DestRect.left = (int)iDestX;
+  DestRect.bottom = (int)iDestY + (SrcRect->bottom - SrcRect->top);
+  DestRect.right = (int)iDestX + (SrcRect->right - SrcRect->left);
+
+  struct Rect SrcRectCopy = *SrcRect;
+
+  // Do Clipping of rectangles
+  if (!ClipReleatedSrcAndDestRectangles(dest, src, &DestRect, &SrcRectCopy)) {
+    // Returns false because dest start is > dest size
+    return (TRUE);
+  }
+
+  // Check values for 0 size
+  if (DestRect.top == DestRect.bottom || DestRect.right == DestRect.left) {
+    return (TRUE);
+  }
+
+  BltVSurfaceRectToRectInternal(dest, src, &SrcRectCopy, &DestRect, uiDDFlags);
 
   return (TRUE);
 }

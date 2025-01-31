@@ -280,6 +280,12 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *hDestVSurface, struct VSurface *
   return FALSE;
 }
 
+void DDBltFastSrcColorKey(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
+                          struct Rect *region) {}
+
+void DDBltFastNoColorKey(struct VSurface *dest, uint32_t x, uint32_t y, struct VSurface *src,
+                         struct Rect *region) {}
+
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
 
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch) { return NULL; }
