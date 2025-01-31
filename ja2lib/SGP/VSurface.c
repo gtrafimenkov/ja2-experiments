@@ -289,3 +289,13 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
   SetClippingRect(&OldClip);
   return (TRUE);
 }
+
+BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                                  int32_t destY, SGPRect *srcRect) {
+  return BltVSurfaceToVSurface(dest, src, destX, destY, VS_BLT_FAST, srcRect);
+}
+
+BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface *src,
+                                          int32_t destX, int32_t destY, SGPRect *srcRect) {
+  return BltVSurfaceToVSurface(dest, src, destX, destY, VS_BLT_FAST | VS_BLT_USECOLORKEY, srcRect);
+}

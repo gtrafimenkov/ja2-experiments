@@ -1675,8 +1675,8 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;
 
-  BltVSurfaceToVSurface(pBlitter->vsDestBuff, vsINTEXT, pBlitter->pBackground->sLeft,
-                        pBlitter->pBackground->sTop, VS_BLT_FAST | VS_BLT_USECOLORKEY, NULL);
+  BltVSurfaceToVSurfaceFastColorKey(pBlitter->vsDestBuff, vsINTEXT, pBlitter->pBackground->sLeft,
+                                    pBlitter->pBackground->sTop, NULL);
 
   pDestBuf = LockVSurface(pBlitter->vsDestBuff, &uiDestPitchBYTES);
 
@@ -2525,7 +2525,9 @@ void CreateTopMessage(struct VSurface *dest, uint8_t ubType, wchar_t *psString) 
   DeleteVideoObjectFromIndex(uiINTBAR);
 
   // if ( gGameOptions.fTurnTimeLimit )
-  { DeleteVideoObjectFromIndex(uiPLAYERBAR); }
+  {
+    DeleteVideoObjectFromIndex(uiPLAYERBAR);
+  }
 
   // Draw text....
   FindFontCenterCoordinates(320, 7, 1, 1, psString, TINYFONT1, &sX, &sY);
