@@ -2151,43 +2151,42 @@ BOOLEAN DeleteVSurface(struct VSurface *vs) {
 
 // UTILITY FUNCTIONS FOR BLITTING
 
-static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *hDestVSurface,
-                                                struct VSurface *hSrcVSurface,
+static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VSurface *src,
                                                 struct Rect *DestRect, struct Rect *SrcRect) {
-  Assert(hDestVSurface != NULL);
-  Assert(hSrcVSurface != NULL);
+  Assert(dest != NULL);
+  Assert(src != NULL);
 
   // Check for invalid start positions and clip by ignoring blit
-  if (DestRect->left >= hDestVSurface->usWidth || DestRect->top >= hDestVSurface->usHeight) {
+  if (DestRect->left >= dest->usWidth || DestRect->top >= dest->usHeight) {
     return (FALSE);
   }
 
-  if (SrcRect->left >= hSrcVSurface->usWidth || SrcRect->top >= hSrcVSurface->usHeight) {
+  if (SrcRect->left >= src->usWidth || SrcRect->top >= src->usHeight) {
     return (FALSE);
   }
 
   // For overruns
   // Clip destination rectangles
-  if (DestRect->right > hDestVSurface->usWidth) {
+  if (DestRect->right > dest->usWidth) {
     // Both have to be modified or by default streching occurs
-    DestRect->right = hDestVSurface->usWidth;
+    DestRect->right = dest->usWidth;
     SrcRect->right = SrcRect->left + (DestRect->right - DestRect->left);
   }
-  if (DestRect->bottom > hDestVSurface->usHeight) {
+  if (DestRect->bottom > dest->usHeight) {
     // Both have to be modified or by default streching occurs
-    DestRect->bottom = hDestVSurface->usHeight;
+    DestRect->bottom = dest->usHeight;
     SrcRect->bottom = SrcRect->top + (DestRect->bottom - DestRect->top);
   }
 
   // Clip src rectangles
-  if (SrcRect->right > hSrcVSurface->usWidth) {
+  if (SrcRect->right > src->usWidth) {
     // Both have to be modified or by default streching occurs
-    SrcRect->right = hSrcVSurface->usWidth;
+    SrcRect->right = src->usWidth;
     DestRect->right = DestRect->left + (SrcRect->right - SrcRect->left);
   }
-  if (SrcRect->bottom > hSrcVSurface->usHeight) {
+  if (SrcRect->bottom > src->usHeight) {
     // Both have to be modified or by default streching occurs
-    SrcRect->bottom = hSrcVSurface->usHeight;
+    SrcRect->bottom = src->usHeight;
     DestRect->bottom = DestRect->top + (SrcRect->bottom - SrcRect->top);
   }
 
@@ -2229,7 +2228,7 @@ static void BltVSurfaceRectToRectInternal(struct VSurface *dest, struct VSurface
   do {
     ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
                                          (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
-                                         ddFlags, NULL);
+                                         ddFlags | DDBLT_WAIT, NULL);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
@@ -2250,7 +2249,7 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
     // Normal, specialized blit for clipping, etc
 
     // Default flags
-    uint32_t uiDDFlags = DDBLT_WAIT;
+    uint32_t uiDDFlags = 0;
 
     // Convert flags into DD flags, ( for transparency use, etc )
     if (fBltFlags & VS_BLT_USECOLORKEY) {
@@ -2285,7 +2284,7 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint
 
 void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
                            struct Rect *destRect) {
-  BltVSurfaceRectToRectInternal(dest, src, srcRect, destRect, DDBLT_WAIT);
+  BltVSurfaceRectToRectInternal(dest, src, srcRect, destRect, 0);
 }
 
 //////////////////////////////////////////////////////////////////
