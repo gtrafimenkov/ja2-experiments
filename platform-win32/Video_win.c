@@ -760,9 +760,8 @@ static void eraseZBuffer(int32_t x, int32_t y, int32_t width, int32_t height) {
   }
 }
 
-static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mouseCursor) {
+static void ScrollJA2Background(uint32_t uiDirection) {
   static RECT Region;
-  uint16_t usMouseXPos, usMouseYPos;
   uint16_t usNumStrips = 0;
   int32_t cnt;
   int32_t uiCountY;
@@ -776,9 +775,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
   StripRegions[0].top = gsVIEWPORT_WINDOW_START_Y;
   StripRegions[0].bottom = gsVIEWPORT_WINDOW_END_Y;
   StripRegions[1] = StripRegions[0];
-
-  usMouseXPos = mouseCursor->usMouseXPos;
-  usMouseYPos = mouseCursor->usMouseYPos;
 
   switch (uiDirection) {
     case SCROLL_LEFT:
@@ -794,7 +790,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
       eraseZBuffer(0, gsVIEWPORT_WINDOW_START_Y, viewportWindowHeight, gsScrollXIncrement);
 
       StripRegions[0].right = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
-      usMouseXPos += gsScrollXIncrement;
 
       usNumStrips = 1;
       break;
@@ -816,7 +811,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
       }
 
       StripRegions[0].left = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
-      usMouseXPos -= gsScrollXIncrement;
 
       usNumStrips = 1;
       break;
@@ -839,8 +833,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
       StripRegions[0].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement);
       usNumStrips = 1;
 
-      usMouseYPos += gsScrollYIncrement;
-
       break;
 
     case SCROLL_DOWN:
@@ -860,8 +852,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
 
       StripRegions[0].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
       usNumStrips = 1;
-
-      usMouseYPos -= gsScrollYIncrement;
 
       break;
 
@@ -889,9 +879,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
       StripRegions[1].bottom = (int16_t)(gsVIEWPORT_WINDOW_START_Y + gsScrollYIncrement);
       StripRegions[1].left = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
       usNumStrips = 2;
-
-      usMouseYPos += gsScrollYIncrement;
-      usMouseXPos += gsScrollXIncrement;
 
       break;
 
@@ -921,9 +908,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
       StripRegions[1].right = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
       usNumStrips = 2;
 
-      usMouseYPos += gsScrollYIncrement;
-      usMouseXPos -= gsScrollXIncrement;
-
       break;
 
     case SCROLL_DOWNLEFT:
@@ -951,9 +935,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
       StripRegions[1].left = (int16_t)(gsVIEWPORT_START_X + gsScrollXIncrement);
       usNumStrips = 2;
 
-      usMouseYPos -= gsScrollYIncrement;
-      usMouseXPos += gsScrollXIncrement;
-
       break;
 
     case SCROLL_DOWNRIGHT:
@@ -980,9 +961,6 @@ static void ScrollJA2Background(uint32_t uiDirection, MouseCursorBackground *mou
       StripRegions[1].top = (int16_t)(gsVIEWPORT_WINDOW_END_Y - gsScrollYIncrement);
       StripRegions[1].right = (int16_t)(gsVIEWPORT_END_X - gsScrollXIncrement);
       usNumStrips = 2;
-
-      usMouseYPos -= gsScrollYIncrement;
-      usMouseXPos -= gsScrollXIncrement;
 
       break;
   }
@@ -1155,7 +1133,7 @@ void RefreshScreen(void *DummyVariable) {
       }
     }
     if (gfRenderScroll) {
-      ScrollJA2Background(guiScrollDirection, &gMouseCursorBackground[PREVIOUS_MOUSE_DATA]);
+      ScrollJA2Background(guiScrollDirection);
     }
     gfIgnoreScrollDueToCenterAdjust = FALSE;
 
