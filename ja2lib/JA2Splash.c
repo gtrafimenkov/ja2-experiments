@@ -30,7 +30,7 @@ void InitJA2SplashScreen() {
       return;
     }
     SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
-    BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0);
+    BltVSurfaceToVSurface(vsFB, hVSurface);
     DeleteVSurface(hVSurface);
 
     InvalidateScreen();
@@ -59,7 +59,7 @@ void InitJA2SplashScreen() {
       return;
     }
     SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
-    BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0, 0);
+    BltVSurfaceToVSurface(vsFB, hVSurface);
     DeleteVSurface(hVSurface);
   }
 

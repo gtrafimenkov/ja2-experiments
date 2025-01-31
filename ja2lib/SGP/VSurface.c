@@ -296,6 +296,13 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal(struct VSurface *dest, struc
   Assert(dest != NULL);
   Assert(src != NULL);
 
+  if (dest->usHeight < src->usHeight) {
+    return (FALSE);
+  }
+  if (dest->usWidth < src->usWidth) {
+    return (FALSE);
+  }
+
   // clipping -- added by DB
   struct Rect DestRect = {.left = 0, .top = 0, .right = dest->usWidth, .bottom = dest->usHeight};
   uint32_t uiWidth = srcRect->right - srcRect->left;
@@ -370,46 +377,25 @@ BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src
 
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                   int32_t destY) {
-  Assert(dest != NULL);
-
-  if (dest->usHeight < src->usHeight) {
-    return (FALSE);
-  }
-  if (dest->usWidth < src->usWidth) {
-    return (FALSE);
-  }
-
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
   return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect, VS_BLT_FAST);
 }
 
 BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface *src,
                                           int32_t destX, int32_t destY) {
-  Assert(dest != NULL);
-
-  if (dest->usHeight < src->usHeight) {
-    return (FALSE);
-  }
-  if (dest->usWidth < src->usWidth) {
-    return (FALSE);
-  }
-
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
   return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect,
                                               VS_BLT_FAST | VS_BLT_USECOLORKEY);
 }
 
-BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
-                              int32_t destY, int32_t fBltFlags) {
-  Assert(dest != NULL);
-
-  if (dest->usHeight < src->usHeight) {
-    return (FALSE);
-  }
-  if (dest->usWidth < src->usWidth) {
-    return (FALSE);
-  }
-
+BOOLEAN BltVSurfaceToVSurfaceColorKey(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                                      int32_t destY) {
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
-  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect, fBltFlags);
+  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, destX, destY, &SrcRect,
+                                              VS_BLT_USECOLORKEY);
+}
+
+BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src) {
+  struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
+  return BltVSurfaceToVSurfaceSubrectInternal(dest, src, 0, 0, &SrcRect, 0);
 }

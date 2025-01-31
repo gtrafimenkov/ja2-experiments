@@ -119,8 +119,9 @@ void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct R
 BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, uint32_t fBltFlags,
                                int32_t iDestX, int32_t iDestY, struct Rect *SrcRect);
 
-BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
-                              int32_t destY, int32_t fBltFlags);
+BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src);
+BOOLEAN BltVSurfaceToVSurfaceColorKey(struct VSurface *dest, struct VSurface *src, int32_t destX,
+                                      int32_t destY);
 BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                      int32_t destY, struct Rect *srcRect);
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,

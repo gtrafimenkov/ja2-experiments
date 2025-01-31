@@ -890,8 +890,7 @@ BOOLEAN DisplayCreditNode(CRDT_NODE *pCurrent) {
     }
   }
 
-  BltVSurfaceToVSurface(vsFB, pCurrent->vsImage, pCurrent->sPosX, pCurrent->sPosY,
-                        VS_BLT_USECOLORKEY);
+  BltVSurfaceToVSurfaceColorKey(vsFB, pCurrent->vsImage, pCurrent->sPosX, pCurrent->sPosY);
 
   return (TRUE);
 }
