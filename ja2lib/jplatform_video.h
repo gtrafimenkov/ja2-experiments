@@ -76,12 +76,8 @@ struct JRect {
 // void JSurface_BlitToPoint(struct JSurface *src, struct JSurface *dst, int32_t destX, int32_t
 // destY);
 
-// void JSurface_BlitRectToPoint(struct JSurface *src, struct JSurface *dst,
-//                               struct JRect const *srcBox, int32_t destX, int32_t destY);
-
-// void JSurface_BlitRectToRect(struct JSurface *src, struct JSurface *dst, struct JRect const
-// *srcBox,
-//                              struct JRect const *destBox);
+void JSurface_BlitRectToPoint(struct VSurface *src, struct VSurface *dst,
+                              struct JRect const *srcBox, int32_t destX, int32_t destY);
 
 void JSurface_BlitRectToRect(struct VSurface *src, struct VSurface *dst, struct JRect const *srcBox,
                              struct JRect const *destBox);

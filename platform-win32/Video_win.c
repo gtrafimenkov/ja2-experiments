@@ -20,6 +20,7 @@
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "Utils/TimerControl.h"
+#include "jplatform_video.h"
 #include "platform.h"
 
 #define INITGUID
@@ -149,36 +150,6 @@ void DDBltFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint
       break;
     }
   } while (ReturnCode != DD_OK);
-}
-
-void DDBlt(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
-           struct Rect *destRect) {
-  int32_t srcWidth = GetRectWidth(srcRect);
-  int32_t srcHeight = GetRectHeight(srcRect);
-  int32_t destWidth = GetRectWidth(destRect);
-  int32_t destHeight = GetRectHeight(destRect);
-
-  if (destWidth <= 0 || destHeight <= 0 || srcWidth <= 0 || srcHeight <= 0) {
-    return;
-  }
-
-  if (destWidth == srcWidth && destHeight == srcHeight) {
-    DDBltFast(dest, src, destRect->left, destRect->top, srcRect);
-  } else {
-    // We need resizing, for example, when opening and closing laptop.
-
-    RECT _srcRect = {srcRect->left, srcRect->top, srcRect->right, srcRect->bottom};
-    RECT _destRect = {destRect->left, destRect->top, destRect->right, destRect->bottom};
-
-    uint32_t flags = (src->transparencySet ? DDBLT_KEYSRC : 0) | DDBLT_WAIT;
-
-    HRESULT ReturnCode;
-    do {
-      ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &_destRect,
-                                           (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
-                                           flags, NULL);
-    } while (ReturnCode == DDERR_WASSTILLDRAWING);
-  }
 }
 
 #define BUFFER_READY 0x00
@@ -2235,14 +2206,31 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
     return (TRUE);
   }
 
-  DDBlt(dest, src, &SrcRectCopy, &DestRect);
+  struct JRect srcBox = {.x = SrcRectCopy.left,
+                         .y = SrcRectCopy.top,
+                         .w = SrcRectCopy.right - SrcRectCopy.left,
+                         .h = SrcRectCopy.bottom - SrcRectCopy.top};
 
+  struct JRect destBox = {.x = DestRect.left,
+                          .y = DestRect.top,
+                          .w = DestRect.right - DestRect.left,
+                          .h = DestRect.bottom - DestRect.top};
+  JSurface_BlitRectToRect(src, dest, &srcBox, &destBox);
   return (TRUE);
 }
 
 void BltVSurfaceRectToRect(struct VSurface *dest, struct VSurface *src, struct Rect *srcRect,
                            struct Rect *destRect) {
-  DDBlt(dest, src, srcRect, destRect);
+  struct JRect srcBox = {.x = srcRect->left,
+                         .y = srcRect->top,
+                         .w = srcRect->right - srcRect->left,
+                         .h = srcRect->bottom - srcRect->top};
+
+  struct JRect destBox = {.x = destRect->left,
+                          .y = destRect->top,
+                          .w = destRect->right - destRect->left,
+                          .h = destRect->bottom - destRect->top};
+  JSurface_BlitRectToRect(src, dest, &srcBox, &destBox);
 }
 
 //////////////////////////////////////////////////////////////////
