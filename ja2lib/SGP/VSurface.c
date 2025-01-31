@@ -383,7 +383,7 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     CHECKF(destX >= 0);
     CHECKF(destY >= 0);
-    DDBltFastNoColorKey(dest, destX, destY, src, &SrcRect);
+    DDBltFast(dest, destX, destY, src, &SrcRect);
     return TRUE;
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
@@ -398,7 +398,7 @@ BOOLEAN BltVSurfaceToVSurfaceFastColorKey(struct VSurface *dest, struct VSurface
   if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
     CHECKF(destX >= 0);
     CHECKF(destY >= 0);
-    DDBltFastSrcColorKey(dest, destX, destY, src, &SrcRect);
+    DDBltFast(dest, destX, destY, src, &SrcRect);
     return TRUE;
   } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);

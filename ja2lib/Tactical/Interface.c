@@ -2238,9 +2238,6 @@ void InternalBeginUIMessage(BOOLEAN fUseSkullIcon, wchar_t *pFontString, ...) {
   // Override it!
   OverrideMercPopupBox(&gpUIMessageOverrideMercBox);
 
-  // SetPrepareMercPopupFlags( MERC_POPUP_PREPARE_FLAGS_TRANS_BACK |
-  // MERC_POPUP_PREPARE_FLAGS_MARGINS );
-
   if (fUseSkullIcon) {
     SetPrepareMercPopupFlags(MERC_POPUP_PREPARE_FLAGS_MARGINS | MERC_POPUP_PREPARE_FLAGS_SKULLICON);
   } else {
