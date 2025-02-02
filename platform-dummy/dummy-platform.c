@@ -9,10 +9,6 @@
 #include "Point.h"
 #include "SGP/Input.h"
 #include "SGP/SoundMan.h"
-#include "SGP/Types.h"
-#include "SGP/VSurface.h"
-#include "SGP/Video.h"
-#include "Utils/Cinematics.h"
 #include "Utils/TimerControl.h"
 #include "platform.h"
 

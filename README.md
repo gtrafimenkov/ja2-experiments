@@ -18,6 +18,7 @@ Other branches contain different experiments.
 
 ```
 ja2lib             - platform-independent part of the game code
+jplatform          - platform abstraction layer with various implementations
 platfrom-dummy     - platform code for win32 for unit tests binary
 platform-linux     - platform code for Linux
 platform-win32     - platform code for win32

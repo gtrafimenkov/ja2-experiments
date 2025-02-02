@@ -45,9 +45,11 @@ endif()
 
 add_subdirectory(ja2lib)
 add_subdirectory(platform-dummy)
+add_subdirectory(jplatform/jplatform-dummy)
 
 if(WIN32)
     add_subdirectory(platform-win32)
+    add_subdirectory(jplatform/jplatform-windd2)
     add_subdirectory(bin-win32)
 else()
     add_subdirectory(platform-linux)
