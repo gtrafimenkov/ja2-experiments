@@ -88,6 +88,13 @@ void JSurface_BlitRectToRect(struct VSurface *src, struct VSurface *dst, struct 
 // // Convert from 16 BPP to RGBvalue
 // uint32_t rgb565_to_rgb32(uint16_t Value16BPP);
 
+void JVideo_GetRGBDistributionMasks(uint32_t *red, uint32_t *green, uint32_t *blue);
+uint32_t JVideo_GetTranslucentMask();
+uint16_t JVideo_PackRGB16(uint8_t r, uint8_t g, uint8_t b);
+void JVideo_UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b);
+
+bool tmp_getRGBDistribution();
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

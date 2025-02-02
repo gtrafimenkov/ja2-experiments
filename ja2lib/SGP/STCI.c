@@ -100,8 +100,10 @@ BOOLEAN STCILoadRGB(HIMAGE hImage, uint16_t fContents, HWFILE hFile, STCIHeader 
     if (pHeader->ubDepth == 16) {
       // ASSUMPTION: file data is 565 R,G,B
 
-      uint16_t redMask, greenMask, blueMask;
-      GetRGB16Masks(&redMask, &greenMask, &blueMask);
+      uint32_t redMask;
+      uint32_t greenMask;
+      uint32_t blueMask;
+      JVideo_GetRGBDistributionMasks(&redMask, &greenMask, &blueMask);
 
       if (redMask != (uint16_t)pHeader->RGB.uiRedMask ||
           greenMask != (uint16_t)pHeader->RGB.uiGreenMask ||

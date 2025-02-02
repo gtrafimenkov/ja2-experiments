@@ -7703,7 +7703,7 @@ uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    usColor = PackColorsToRGB16(r, g, b);
+    usColor = JVideo_PackRGB16(r, g, b);
 
     if ((usColor == 0) && ((r + g + b) != 0)) usColor = 0x0001;
 
@@ -7740,7 +7740,7 @@ uint16_t *CreateEnemyGreyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    usColor = PackColorsToRGB16(r, g, b);
+    usColor = JVideo_PackRGB16(r, g, b);
 
     // Prevent creation of pure black color
     if ((usColor == 0) && ((r + g + b) != 0)) usColor = 0x0001;

@@ -387,7 +387,7 @@ uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette) {
     g = pPalette[cnt].peGreen;
     b = pPalette[cnt].peBlue;
 
-    uint16_t usColor = PackColorsToRGB16(r, g, b);
+    uint16_t usColor = JVideo_PackRGB16(r, g, b);
 
     if (usColor == 0) {
       if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
@@ -450,7 +450,7 @@ uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rs
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
 
-    uint16_t usColor = PackColorsToRGB16(r, g, b);
+    uint16_t usColor = JVideo_PackRGB16(r, g, b);
 
     if (usColor == 0) {
       if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
@@ -469,7 +469,7 @@ uint16_t Get16BPPColor(uint32_t RGBValue) {
   g = SGPGetGValue(RGBValue);
   b = SGPGetBValue(RGBValue);
 
-  uint16_t usColor = PackColorsToRGB16(r, g, b);
+  uint16_t usColor = JVideo_PackRGB16(r, g, b);
 
   // if our color worked out to absolute black, and the original wasn't
   // absolute black, convert it to a VERY dark grey to avoid transparency
@@ -485,7 +485,7 @@ uint16_t Get16BPPColor(uint32_t RGBValue) {
 // Convert from 16 BPP to RGBvalue
 uint32_t GetRGBColor(uint16_t Value16BPP) {
   uint8_t r, g, b;
-  UnpackRGB16(Value16BPP, &r, &g, &b);
+  JVideo_UnpackRGB16(Value16BPP, &r, &g, &b);
   return FROMRGB(r, g, b);
 }
 

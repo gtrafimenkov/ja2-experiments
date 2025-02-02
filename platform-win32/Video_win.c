@@ -121,8 +121,6 @@ static void _blitFast(struct VSurface *dest, struct VSurface *src, uint32_t dest
 
 extern int32_t giNumFrames;
 
-extern BOOLEAN GetRGBDistribution(void);
-
 // Palette Functions
 static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
                             LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter);
@@ -213,13 +211,6 @@ static uint32_t guiDirtyRegionExCount;
 
 static BOOLEAN gfPrintFrameBuffer;
 static uint32_t guiPrintFrameBufferIndex;
-
-static uint16_t gusRedMask;
-static uint16_t gusGreenMask;
-static uint16_t gusBlueMask;
-static int16_t gusRedShift;
-static int16_t gusBlueShift;
-static int16_t gusGreenShift;
 
 static void AddRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
                         uint32_t uiFlags);
@@ -480,7 +471,7 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   // This function must be called to setup RGB information
   //
 
-  GetRGBDistribution();
+  tmp_getRGBDistribution();
 
   return TRUE;
 }
@@ -1155,15 +1146,20 @@ void RefreshScreen(void *DummyVariable) {
       // Copy 16 bit buffer to file
       //
 
+      uint32_t redMask;
+      uint32_t greenMask;
+      uint32_t blueMask;
+      JVideo_GetRGBDistributionMasks(&redMask, &greenMask, &blueMask);
+
       // 5/6/5.. create buffer...
-      if (gusRedMask == 0xF800 && gusGreenMask == 0x07E0 && gusBlueMask == 0x001F) {
+      if (redMask == 0xF800 && greenMask == 0x07E0 && blueMask == 0x001F) {
         p16BPPData = (uint16_t *)MemAlloc(640 * 2);
       }
 
       for (iIndex = 479; iIndex >= 0; iIndex--) {
         // ATE: OK, fix this such that it converts pixel format to 5/5/5
         // if current settings are 5/6/5....
-        if (gusRedMask == 0xF800 && gusGreenMask == 0x07E0 && gusBlueMask == 0x001F) {
+        if (redMask == 0xF800 && greenMask == 0x07E0 && blueMask == 0x001F) {
           // Read into a buffer...
           memcpy(p16BPPData, (data + (iIndex * 640 * 2)), 640 * 2);
 
@@ -1178,7 +1174,7 @@ void RefreshScreen(void *DummyVariable) {
       }
 
       // 5/6/5.. Delete buffer...
-      if (gusRedMask == 0xF800 && gusGreenMask == 0x07E0 && gusBlueMask == 0x001F) {
+      if (redMask == 0xF800 && greenMask == 0x07E0 && blueMask == 0x001F) {
         MemFree(p16BPPData);
       }
 
@@ -1428,69 +1424,6 @@ void RefreshScreen(void *DummyVariable) {
 ENDOFLOOP:
 
   fFirstTime = FALSE;
-}
-
-BOOLEAN GetRGBDistribution(void) {
-  DDSURFACEDESC SurfaceDescription;
-  uint16_t usBit;
-  HRESULT ReturnCode;
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwFlags = DDSD_PIXELFORMAT;
-  ReturnCode = IDirectDrawSurface2_GetSurfaceDesc((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
-                                                  &SurfaceDescription);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return FALSE;
-  }
-
-  //
-  // Ok we now have the surface description, we now can get the information that we need
-  //
-
-  gusRedMask = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwRBitMask;
-  gusGreenMask = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwGBitMask;
-  gusBlueMask = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwBBitMask;
-
-  // RGB 5,5,5
-  if ((gusRedMask == 0x7c00) && (gusGreenMask == 0x03e0) && (gusBlueMask == 0x1f))
-    guiTranslucentMask = 0x3def;
-  // RGB 5,6,5
-  else  // if((gusRedMask==0xf800) && (gusGreenMask==0x03e0) && (gusBlueMask==0x1f))
-    guiTranslucentMask = 0x7bef;
-
-  usBit = 0x8000;
-  gusRedShift = 8;
-  while (!(gusRedMask & usBit)) {
-    usBit >>= 1;
-    gusRedShift--;
-  }
-
-  usBit = 0x8000;
-  gusGreenShift = 8;
-  while (!(gusGreenMask & usBit)) {
-    usBit >>= 1;
-    gusGreenShift--;
-  }
-
-  usBit = 0x8000;
-  gusBlueShift = 8;
-  while (!(gusBlueMask & usBit)) {
-    usBit >>= 1;
-    gusBlueShift--;
-  }
-
-  return TRUE;
-}
-
-BOOLEAN GetPrimaryRGBDistributionMasks(uint32_t *RedBitMask, uint32_t *GreenBitMask,
-                                       uint32_t *BlueBitMask) {
-  *RedBitMask = gusRedMask;
-  *GreenBitMask = gusGreenMask;
-  *BlueBitMask = gusBlueMask;
-
-  return TRUE;
 }
 
 BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint16_t usCursorHeight,
@@ -1849,7 +1782,7 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
       uint32_t uiRBitMask;
       uint32_t uiGBitMask;
       uint32_t uiBBitMask;
-      CHECKF(GetPrimaryRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask));
+      JVideo_GetRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask);
       PixelFormat.dwRBitMask = uiRBitMask;
       PixelFormat.dwGBitMask = uiGBitMask;
       PixelFormat.dwBBitMask = uiBBitMask;
@@ -1907,7 +1840,7 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
       uint32_t uiRBitMask;
       uint32_t uiGBitMask;
       uint32_t uiBBitMask;
-      CHECKF(GetPrimaryRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask));
+      JVideo_GetRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask);
       PixelFormat.dwRBitMask = uiRBitMask;
       PixelFormat.dwGBitMask = uiGBitMask;
       PixelFormat.dwBBitMask = uiBBitMask;
@@ -2145,7 +2078,11 @@ void SmkSetupVideo(void);
 void SmkShutdownVideo(void);
 
 static uint32_t SmkGetPixelFormat() {
-  if ((gusRedMask == 0x7c00) && (gusGreenMask == 0x03e0) && (gusBlueMask == 0x1f)) {
+  uint32_t redMask;
+  uint32_t greenMask;
+  uint32_t blueMask;
+  JVideo_GetRGBDistributionMasks(&redMask, &greenMask, &blueMask);
+  if ((redMask == 0x7c00) && (greenMask == 0x03e0) && (blueMask == 0x1f)) {
     return SMACKBUFFER555;
   } else {
     return SMACKBUFFER565;
@@ -2603,51 +2540,3 @@ static char *DirectXErrorDescription(int32_t iDXReturn) {
 //////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////
-
-uint16_t PackColorsToRGB16(uint8_t r, uint8_t g, uint8_t b) {
-  uint16_t r16, g16, b16;
-
-  if (gusRedShift < 0)
-    r16 = ((uint16_t)r >> abs(gusRedShift));
-  else
-    r16 = ((uint16_t)r << gusRedShift);
-
-  if (gusGreenShift < 0)
-    g16 = ((uint16_t)g >> abs(gusGreenShift));
-  else
-    g16 = ((uint16_t)g << gusGreenShift);
-
-  if (gusBlueShift < 0)
-    b16 = ((uint16_t)b >> abs(gusBlueShift));
-  else
-    b16 = ((uint16_t)b << gusBlueShift);
-
-  return (r16 & gusRedMask) | (g16 & gusGreenMask) | (b16 & gusBlueMask);
-}
-
-void UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {
-  uint16_t r16 = rgb16 & gusRedMask;
-  uint16_t g16 = rgb16 & gusGreenMask;
-  uint16_t b16 = rgb16 & gusBlueMask;
-
-  if (gusRedShift < 0)
-    *r = ((uint32_t)r16 << abs(gusRedShift));
-  else
-    *r = ((uint32_t)r16 >> gusRedShift);
-
-  if (gusGreenShift < 0)
-    *g = ((uint32_t)g16 << abs(gusGreenShift));
-  else
-    *g = ((uint32_t)g16 >> gusGreenShift);
-
-  if (gusBlueShift < 0)
-    *b = ((uint32_t)b16 << abs(gusBlueShift));
-  else
-    *b = ((uint32_t)b16 >> gusBlueShift);
-}
-
-void GetRGB16Masks(uint16_t *red, uint16_t *green, uint16_t *blue) {
-  *red = gusRedMask;
-  *green = gusGreenMask;
-  *blue = gusBlueMask;
-}

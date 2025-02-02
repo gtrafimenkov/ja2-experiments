@@ -223,11 +223,6 @@ void InvalidateScreen(void) {}
 
 void RefreshScreen(void *DummyVariable) {}
 
-BOOLEAN GetPrimaryRGBDistributionMasks(uint32_t *RedBitMask, uint32_t *GreenBitMask,
-                                       uint32_t *BlueBitMask) {
-  return FALSE;
-}
-
 BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint16_t usCursorHeight,
                                  uint16_t usCursorWidth) {
   return FALSE;
@@ -283,14 +278,6 @@ struct SmkFlic *SmkPlayFlic(char *cFilename, uint32_t uiLeft, uint32_t uiTop, BO
 }
 
 void SmkCloseFlic(struct SmkFlic *pSmack) {}
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-/////////////////////////////////////////////////////////////////////////////////
-
-uint16_t PackColorsToRGB16(uint8_t r, uint8_t g, uint8_t b) { return 0; }
-void UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {}
-void GetRGB16Masks(uint16_t *red, uint16_t *green, uint16_t *blue) {}
 
 /////////////////////////////////////////////////////////////////////////////////
 //

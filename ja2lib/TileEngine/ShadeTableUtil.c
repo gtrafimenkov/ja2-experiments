@@ -14,6 +14,7 @@
 #include "SGP/Video.h"
 #include "TileEngine/Lighting.h"
 #include "TileEngine/WorldDat.h"
+#include "jplatform_video.h"
 #include "platform.h"
 
 #define SHADE_TABLE_DIR "ShadeTables"
@@ -75,9 +76,7 @@ void DetermineRGBDistributionSettings() {
     }
   }
 
-  if (!GetPrimaryRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask)) {
-    AssertMsg(0, "Failed to extract the current RGB distribution masks.");
-  }
+  JVideo_GetRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask);
   if (fLoadedPrevRGBDist) {
     if (uiRBitMask != uiPrevRBitMask || uiGBitMask != uiPrevGBitMask ||
         uiBBitMask != uiPrevBBitMask) {  // The user has changed modes since the last time he has
