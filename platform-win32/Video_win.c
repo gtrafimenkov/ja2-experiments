@@ -192,18 +192,18 @@ void ShutdownVideoManager(void) {
   // itself down
   //
 
-  DeleteVSurface(vsMouseBufferOriginal);
+  JSurface_Free(vsMouseBufferOriginal);
   vsMouseBufferOriginal = NULL;
-  DeleteVSurface(vsMouseBuffer);
+  JSurface_Free(vsMouseBuffer);
   vsMouseBuffer = NULL;
-  DeleteVSurface(vsBackBuffer);
+  JSurface_Free(vsBackBuffer);
   vsBackBuffer = NULL;
-  DeleteVSurface(vsPrimary);
+  JSurface_Free(vsPrimary);
   vsPrimary = NULL;
-  DeleteVSurface(vsFB);
+  JSurface_Free(vsFB);
   vsFB = NULL;
 
-  DeleteVSurface(gMouseCursorBackground[0].vs);
+  JSurface_Free(gMouseCursorBackground[0].vs);
   gMouseCursorBackground[0].vs = NULL;
 
   JVideo_Shutdown();
@@ -838,7 +838,7 @@ void RefreshScreen(void *DummyVariable) {
 
     gfPrintFrameBuffer = FALSE;
 
-    DeleteVSurface(vsTmp);
+    JSurface_Free(vsTmp);
   }
 
   //
@@ -1414,41 +1414,6 @@ void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
 #ifndef _MT
 #define _MT
 #endif
-
-// Deletes all palettes, surfaces and region data
-BOOLEAN DeleteVSurface(struct VSurface *vs) {
-  CHECKF(vs != NULL);
-
-  // Release palette
-  if (vs->_platformPalette != NULL) {
-    IDirectDrawPalette_Release((LPDIRECTDRAWPALETTE)vs->_platformPalette);
-    vs->_platformPalette = NULL;
-  }
-
-  // Release surface
-  if (vs->_platformData2 != NULL) {
-    IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)vs->_platformData2);
-    vs->_platformData2 = NULL;
-  }
-
-  if (vs->_platformData1 != NULL) {
-    IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)vs->_platformData1);
-    vs->_platformData1 = NULL;
-  }
-
-  // If there is a 16bpp palette, free it
-  if (vs->p16BPPPalette != NULL) {
-    MemFree(vs->p16BPPPalette);
-    vs->p16BPPPalette = NULL;
-  }
-
-  // Release object
-  MemFree(vs);
-
-  return (TRUE);
-}
-
-// UTILITY FUNCTIONS FOR BLITTING
 
 //////////////////////////////////////////////////////////////////
 // Cinematics

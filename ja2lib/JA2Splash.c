@@ -31,7 +31,7 @@ void InitJA2SplashScreen() {
     }
     JSurface_SetColorKey(hVSurface, FROMRGB(0, 0, 0));
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0);
-    DeleteVSurface(hVSurface);
+    JSurface_Free(hVSurface);
 
     InvalidateScreen();
     RefreshScreen(NULL);
@@ -60,7 +60,7 @@ void InitJA2SplashScreen() {
     }
     JSurface_SetColorKey(hVSurface, FROMRGB(0, 0, 0));
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0);
-    DeleteVSurface(hVSurface);
+    JSurface_Free(hVSurface);
   }
 
   InvalidateScreen();

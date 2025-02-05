@@ -34,3 +34,4 @@ int JSurface_Pitch(struct VSurface *s) { return 0; }
 void *JSurface_GetPixels(struct VSurface *s) { return NULL; }
 void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {}
 bool JSurface_GetPalette(struct VSurface *vs, struct JPaletteEntry *pal) { return false; }
+void JSurface_Free(struct VSurface *s) {}

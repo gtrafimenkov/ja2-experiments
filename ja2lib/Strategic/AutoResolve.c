@@ -1895,7 +1895,7 @@ void RemoveAutoResolveInterface(BOOLEAN fDeleteForGood) {
   DeleteVideoObjectFromIndex(gpAR->iPanelImages);
   DeleteVideoObjectFromIndex(gpAR->iFaces);
   DeleteVideoObjectFromIndex(gpAR->iIndent);
-  DeleteVSurface(gpAR->vsInterfaceBuffer);
+  JSurface_Free(gpAR->vsInterfaceBuffer);
   gpAR->vsInterfaceBuffer = NULL;
 
   if (fDeleteForGood) {  // Delete the soldier instances -- done when we are completely finished.

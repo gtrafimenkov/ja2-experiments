@@ -1982,7 +1982,7 @@ BOOLEAN CreateHelpScreenTextBuffer() {
 }
 
 void DestroyHelpScreenTextBuffer() {
-  DeleteVSurface(vsHelpScreenTextBufferSurface);
+  JSurface_Free(vsHelpScreenTextBufferSurface);
   vsHelpScreenTextBufferSurface = NULL;
 }
 

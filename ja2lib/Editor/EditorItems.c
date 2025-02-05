@@ -565,7 +565,7 @@ void RenderEditorItemsInfo() {
 
 void ClearEditorItemsInfo() {
   if (eInfo.vsBuffer) {
-    DeleteVSurface(eInfo.vsBuffer);
+    JSurface_Free(eInfo.vsBuffer);
     eInfo.vsBuffer = NULL;
     eInfo.vsBuffer = 0;
   }

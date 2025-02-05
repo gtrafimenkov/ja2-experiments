@@ -549,7 +549,7 @@ void DeleteTalkingMenu() {
   }
 
   // Delete save buffer
-  DeleteVSurface(gTalkPanel.vsSaveBuffer);
+  JSurface_Free(gTalkPanel.vsSaveBuffer);
   gTalkPanel.vsSaveBuffer = NULL;
 
   // Remove video object

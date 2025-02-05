@@ -218,8 +218,6 @@ BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iD
   return FALSE;
 }
 
-BOOLEAN DeleteVSurface(struct VSurface *hVSurface) { return FALSE; }
-
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
 
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch) { return NULL; }

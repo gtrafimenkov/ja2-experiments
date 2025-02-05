@@ -605,3 +605,30 @@ bool JSurface_GetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {
                                 (PALETTEENTRY *)pal);
   return true;
 }
+
+void JSurface_Free(struct VSurface *s) {
+  if (s == NULL) {
+    return;
+  }
+  if (s->_platformPalette != NULL) {
+    IDirectDrawPalette_Release((LPDIRECTDRAWPALETTE)s->_platformPalette);
+    s->_platformPalette = NULL;
+  }
+
+  if (s->_platformData2 != NULL) {
+    IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)s->_platformData2);
+    s->_platformData2 = NULL;
+  }
+
+  if (s->_platformData1 != NULL) {
+    IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)s->_platformData1);
+    s->_platformData1 = NULL;
+  }
+
+  if (s->p16BPPPalette != NULL) {
+    free(s->p16BPPPalette);
+    s->p16BPPPalette = NULL;
+  }
+
+  free(s);
+}

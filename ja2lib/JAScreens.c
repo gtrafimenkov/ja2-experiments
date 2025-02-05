@@ -297,7 +297,7 @@ uint32_t InitScreenHandle(void) {
     InvalidateScreen();
 
     // Delete video Surface
-    DeleteVSurface(hVSurface);
+    JSurface_Free(hVSurface);
     // ATE: Set to true to reset before going into main screen!
 
     SetCurrentCursorFromDatabase(VIDEO_NO_CURSOR);

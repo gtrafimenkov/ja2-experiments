@@ -443,7 +443,7 @@ void ExitMercs() {
 
   RemoveMercBackGround();
 
-  DeleteVSurface(vsMercVideoFaceBackground);
+  JSurface_Free(vsMercVideoFaceBackground);
   vsMercVideoFaceBackground = NULL;
 
   gfJustEnteredMercSite = TRUE;

@@ -3845,7 +3845,7 @@ BOOLEAN DisplayTitleBarMaximizeGraphic(BOOLEAN fForward, BOOLEAN fInit, uint16_t
 }
 
 void RemoveTitleBarMaximizeGraphics() {
-  DeleteVSurface(vsTitleBarSurface);
+  JSurface_Free(vsTitleBarSurface);
   vsTitleBarSurface = NULL;
 }
 
@@ -4357,7 +4357,7 @@ BOOLEAN LoadDesktopBackground(void) {
 }
 
 void DeleteDesktopBackground(void) {
-  DeleteVSurface(vsDESKTOP);
+  JSurface_Free(vsDESKTOP);
   vsDESKTOP = NULL;
 }
 

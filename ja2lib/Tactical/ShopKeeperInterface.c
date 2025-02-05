@@ -1090,7 +1090,7 @@ BOOLEAN ExitShopKeeperInterface() {
   // Delete the main shopkeep background
   DeleteVideoObjectFromIndex(guiMainTradeScreenImage);
   DeleteVideoObjectFromIndex(guiItemCrossOut);
-  DeleteVSurface(vsCornerWhereTacticalIsStillSeenImage);
+  JSurface_Free(vsCornerWhereTacticalIsStillSeenImage);
   vsCornerWhereTacticalIsStillSeenImage = NULL;
 
   ShutUpShopKeeper();

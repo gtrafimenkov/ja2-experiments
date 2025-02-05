@@ -582,12 +582,12 @@ void SetAutoFaceInActive(int32_t iFaceIndex) {
   }
 
   if (pFace->fAutoRestoreBuffer) {
-    DeleteVSurface(pFace->autoRestoreBuffer);
+    JSurface_Free(pFace->autoRestoreBuffer);
     pFace->autoRestoreBuffer = NULL;
   }
 
   if (pFace->fAutoDisplayBuffer) {
-    DeleteVSurface(pFace->autoDisplayBuffer);
+    JSurface_Free(pFace->autoDisplayBuffer);
     pFace->autoDisplayBuffer = NULL;
   }
 

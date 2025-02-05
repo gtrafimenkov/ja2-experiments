@@ -7477,7 +7477,7 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
     fCreated = TRUE;
   } else if ((fShowAssignmentMenu == FALSE) && (fCreated == TRUE)) {
     DeleteVideoObjectFromIndex(guiPOPUPBORDERS);
-    DeleteVSurface(vsPOPUPTEX);
+    JSurface_Free(vsPOPUPTEX);
     vsPOPUPTEX = NULL;
 
     RemoveBox(ghAttributeBox);

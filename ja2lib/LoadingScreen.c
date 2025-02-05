@@ -328,7 +328,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
       JSurface_SetColorKey(vs, FROMRGB(0, 0, 0));
       // Blit the background image
       BltVSurfaceToVSurface(vsFB, vs, 0, 0);
-      DeleteVSurface(vs);
+      JSurface_Free(vs);
     } else {  // Failed to load the file, so use a black screen and print out message.
       SetFont(FONT10ARIAL);
       SetFontForeground(FONT_YELLOW);

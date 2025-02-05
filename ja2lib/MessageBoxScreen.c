@@ -820,7 +820,7 @@ uint32_t ExitMsgBox(int8_t ubExitCode) {
   MSYS_RemoveRegion(&(gMsgBox.BackRegion));
 
   // Remove save buffer!
-  DeleteVSurface(gMsgBox.vsSaveBuffer);
+  JSurface_Free(gMsgBox.vsSaveBuffer);
   gMsgBox.vsSaveBuffer = NULL;
 
   switch (gMsgBox.uiExitScreen) {

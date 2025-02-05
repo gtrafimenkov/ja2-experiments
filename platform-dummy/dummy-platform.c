@@ -248,8 +248,6 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
 };
 struct VSurface *CreateVSurfaceFromFile(const char *filepath) { return NULL; };
 
-BOOLEAN DeleteVSurface(struct VSurface *hVSurface) { return FALSE; }
-
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
 
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch) { return NULL; }

@@ -174,7 +174,7 @@ void RemoveTextMercPopupImages() {
   if (gPopUpTextBox) {
     if (gPopUpTextBox->fMercTextPopupInitialized) {
       // the background
-      DeleteVSurface(gPopUpTextBox->vsMercTextPopUpBackground);
+      JSurface_Free(gPopUpTextBox->vsMercTextPopUpBackground);
       gPopUpTextBox->vsMercTextPopUpBackground = NULL;
 
       // the border
@@ -526,7 +526,7 @@ BOOLEAN RemoveMercPopupBox() {
       }
     }
     // yep, get rid of the bloody...
-    DeleteVSurface(gPopUpTextBox->sourceBuffer);
+    JSurface_Free(gPopUpTextBox->sourceBuffer);
 
     // DEF Added 5/26
     // Delete the background and the border

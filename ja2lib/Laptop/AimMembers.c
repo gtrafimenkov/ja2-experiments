@@ -721,7 +721,7 @@ void ExitAIMMembers() {
   gubVideoConferencingMode = AIM_VIDEO_NOT_DISPLAYED_MODE;
   InitDeleteVideoConferencePopUp();
 
-  DeleteVSurface(vsVideoFaceBackground);
+  JSurface_Free(vsVideoFaceBackground);
 
   DeleteVideoObjectFromIndex(guiStats);
   DeleteVideoObjectFromIndex(guiPrice);
@@ -3130,7 +3130,7 @@ BOOLEAN DeleteVideoConfPopUp() {
     }
 
     case AIM_VIDEO_POPUP_MODE: {
-      DeleteVSurface(vsVideoTitleBar);
+      JSurface_Free(vsVideoTitleBar);
       vsVideoTitleBar = NULL;
       break;
     }
@@ -3203,7 +3203,7 @@ BOOLEAN DeleteVideoConfPopUp() {
       }
 
       gfWaitingForMercToStopTalkingOrUserToClick = FALSE;
-      DeleteVSurface(vsVideoTitleBar);
+      JSurface_Free(vsVideoTitleBar);
       vsVideoTitleBar = NULL;
       break;
     }

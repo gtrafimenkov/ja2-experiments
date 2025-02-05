@@ -199,10 +199,10 @@ void CreateEditorBuffers() {
 
 void DeleteEditorBuffers() {
   int32_t i;
-  DeleteVSurface(vsMercTempBuffer);
+  JSurface_Free(vsMercTempBuffer);
   vsMercTempBuffer = NULL;
   for (i = 0; i < 9; i++) {
-    DeleteVSurface(vsMercInvPanelBuffers[i]);
+    JSurface_Free(vsMercInvPanelBuffers[i]);
     vsMercInvPanelBuffers[i] = NULL;
   }
 }
