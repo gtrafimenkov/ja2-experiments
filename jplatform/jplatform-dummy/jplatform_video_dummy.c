@@ -36,3 +36,5 @@ void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {}
 bool JSurface_GetPalette(struct VSurface *vs, struct JPaletteEntry *pal) { return false; }
 void JSurface_Free(struct VSurface *s) {}
 uint8_t JSurface_BPP(struct VSurface *s) { return 0; }
+uint16_t JSurface_Width(struct VSurface *s) { return 0; }
+uint16_t JSurface_Height(struct VSurface *s) { return 0; }

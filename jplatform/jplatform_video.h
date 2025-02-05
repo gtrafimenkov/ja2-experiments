@@ -79,8 +79,8 @@ struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height);
 bool JSurface_Restore(struct VSurface *vs);
 bool JSurface_Flip(struct VSurface *vs);
 
-// uint16_t JSurface_Width(struct JSurface *s);
-// uint16_t JSurface_Height(struct JSurface *s);
+uint16_t JSurface_Width(struct VSurface *s);
+uint16_t JSurface_Height(struct VSurface *s);
 uint8_t JSurface_BPP(struct VSurface *s);
 
 void JSurface_SetColorKey(struct VSurface *s, uint32_t key);

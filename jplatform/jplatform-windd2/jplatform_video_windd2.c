@@ -246,7 +246,7 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
   vs->_platformData2 = (void *)lpDDS2;
 
   vs->usWidth = (uint16_t)descr->dwWidth;
-  vs->usHeight = (uint16_t)descr->dwHeight;
+  vs->height = (uint16_t)descr->dwHeight;
   if (descr->dwFlags & DDSD_PIXELFORMAT) {
     vs->bitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
   } else {
@@ -374,7 +374,7 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
     memset(&DDSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
     DDSurfaceDesc.dwSize = sizeof(DDSURFACEDESC);
     IDirectDrawSurface2_GetSurfaceDesc(backBuffer, &DDSurfaceDesc);
-    vsBackBuffer->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
+    vsBackBuffer->height = (uint16_t)DDSurfaceDesc.dwHeight;
     vsBackBuffer->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
     vsBackBuffer->bitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
     vsBackBuffer->_platformData1 = NULL;
@@ -634,3 +634,5 @@ void JSurface_Free(struct VSurface *s) {
 }
 
 uint8_t JSurface_BPP(struct VSurface *s) { return s->bitDepth; }
+uint16_t JSurface_Width(struct VSurface *s) { return s->usWidth; }
+uint16_t JSurface_Height(struct VSurface *s) { return s->height; }

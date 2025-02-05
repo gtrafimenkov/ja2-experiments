@@ -36,7 +36,7 @@ extern BOOLEAN gfExtraBuffer;
 //
 
 struct VSurface {
-  uint16_t usHeight;        // Height of Video Surface
+  uint16_t height;          // Height of Video Surface
   uint16_t usWidth;         // Width of Video Surface
   uint8_t bitDepth;         // 8 or 16
   void *_platformData1;     // platform-specific data (Direct Draw One Interface)

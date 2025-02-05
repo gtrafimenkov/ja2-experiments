@@ -641,8 +641,8 @@ uint32_t DrawMap(void) {
       clip.iTop = iZoomY - 3;
       clip.iBottom = clip.iTop + MAP_VIEW_HEIGHT - 1;
 
-      if (clip.iBottom > hSrcVSurface->usHeight) {
-        clip.iBottom = hSrcVSurface->usHeight;
+      if (clip.iBottom > JSurface_Height(hSrcVSurface)) {
+        clip.iBottom = JSurface_Height(hSrcVSurface);
       }
 
       if (clip.iRight > hSrcVSurface->usWidth) {

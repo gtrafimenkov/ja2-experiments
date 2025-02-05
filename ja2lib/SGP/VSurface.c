@@ -58,7 +58,7 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
 
   // Get Size of hImage and determine if it can fit
   CHECKF(hImage->usWidth >= hVSurface->usWidth);
-  CHECKF(hImage->usHeight >= hVSurface->usHeight);
+  CHECKF(hImage->usHeight >= JSurface_Height(hVSurface));
 
   // Check BPP and see if they are the same
   if (hImage->ubBitDepth != JSurface_BPP(hVSurface)) {
@@ -106,8 +106,8 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   }
 
   // This HIMAGE function will transparently copy buffer
-  if (!CopyImageToBuffer(hImage, fBufferBPP, pDest, usEffectiveWidth, hVSurface->usHeight, usX, usY,
-                         &aRect)) {
+  if (!CopyImageToBuffer(hImage, fBufferBPP, pDest, usEffectiveWidth, JSurface_Height(hVSurface),
+                         usX, usY, &aRect)) {
     DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                String("Error Occured Copying HIMAGE to struct VSurface*"));
     UnlockVSurface(hVSurface);
@@ -141,11 +141,11 @@ static BOOLEAN InternalShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1,
 
   if (X2 >= dest->usWidth) X2 = dest->usWidth - 1;
 
-  if (Y2 >= dest->usHeight) Y2 = dest->usHeight - 1;
+  if (Y2 >= JSurface_Height(dest)) Y2 = JSurface_Height(dest) - 1;
 
   if (X1 >= dest->usWidth) return (FALSE);
 
-  if (Y1 >= dest->usHeight) return (FALSE);
+  if (Y1 >= JSurface_Height(dest)) return (FALSE);
 
   if ((X2 - X1) <= 0) return (FALSE);
 
@@ -314,7 +314,7 @@ static BOOLEAN clipToDestBounds(struct VSurface *dest, struct VSurface *src, int
   Assert(dest != NULL);
   Assert(src != NULL);
 
-  if (dest->usHeight < src->usHeight) {
+  if (JSurface_Height(dest) < JSurface_Height(src)) {
     return (FALSE);
   }
   if (dest->usWidth < src->usWidth) {
@@ -322,21 +322,22 @@ static BOOLEAN clipToDestBounds(struct VSurface *dest, struct VSurface *src, int
   }
 
   // clipping -- added by DB
-  struct Rect DestRect = {.left = 0, .top = 0, .right = dest->usWidth, .bottom = dest->usHeight};
+  struct Rect DestRect = {
+      .left = 0, .top = 0, .right = dest->usWidth, .bottom = JSurface_Height(dest)};
   int32_t srcWidth = srcRect->right - srcRect->left;
   int32_t srcHeight = srcRect->bottom - srcRect->top;
 
   // check for position entirely off the screen
   if (*destX >= dest->usWidth) return false;
-  if (*destY >= dest->usHeight) return false;
+  if (*destY >= JSurface_Height(dest)) return false;
   if ((*destX + srcWidth) < 0) return false;
   if ((*destY + srcHeight) < 0) return false;
 
   if ((*destX + srcWidth) >= dest->usWidth) {
     srcRect->right -= ((*destX + srcWidth) - dest->usWidth);
   }
-  if ((*destY + srcHeight) >= dest->usHeight) {
-    srcRect->bottom -= ((*destY + srcHeight) - dest->usHeight);
+  if ((*destY + srcHeight) >= JSurface_Height(dest)) {
+    srcRect->bottom -= ((*destY + srcHeight) - JSurface_Height(dest));
   }
   if (*destX < 0) {
     srcRect->left += -*destX;
@@ -383,11 +384,11 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
   Assert(src != NULL);
 
   // Check for invalid start positions and clip by ignoring blit
-  if (DestRect->left >= dest->usWidth || DestRect->top >= dest->usHeight) {
+  if (DestRect->left >= dest->usWidth || DestRect->top >= JSurface_Height(dest)) {
     return (FALSE);
   }
 
-  if (SrcRect->left >= src->usWidth || SrcRect->top >= src->usHeight) {
+  if (SrcRect->left >= src->usWidth || SrcRect->top >= JSurface_Height(src)) {
     return (FALSE);
   }
 
@@ -398,9 +399,9 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
     DestRect->right = dest->usWidth;
     SrcRect->right = SrcRect->left + (DestRect->right - DestRect->left);
   }
-  if (DestRect->bottom > dest->usHeight) {
+  if (DestRect->bottom > JSurface_Height(dest)) {
     // Both have to be modified or by default streching occurs
-    DestRect->bottom = dest->usHeight;
+    DestRect->bottom = JSurface_Height(dest);
     SrcRect->bottom = SrcRect->top + (DestRect->bottom - DestRect->top);
   }
 
@@ -410,9 +411,9 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
     SrcRect->right = src->usWidth;
     DestRect->right = DestRect->left + (SrcRect->right - SrcRect->left);
   }
-  if (SrcRect->bottom > src->usHeight) {
+  if (SrcRect->bottom > JSurface_Height(src)) {
     // Both have to be modified or by default streching occurs
-    SrcRect->bottom = src->usHeight;
+    SrcRect->bottom = JSurface_Height(src);
     DestRect->bottom = DestRect->top + (SrcRect->bottom - SrcRect->top);
   }
 
@@ -483,11 +484,12 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
   if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     CHECKF(destX >= 0);
     CHECKF(destY >= 0);
-    struct JRect srcBox = {.x = 0, .y = 0, .w = src->usWidth, .h = src->usHeight};
+    struct JRect srcBox = {.x = 0, .y = 0, .w = src->usWidth, .h = JSurface_Height(src)};
     JSurface_BlitRectToPoint(src, dest, &srcBox, destX, destY);
     return TRUE;
   } else if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
-    struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
+    struct Rect SrcRect = {
+        .top = 0, .left = 0, .bottom = JSurface_Height(src), .right = src->usWidth};
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
   }
   return FALSE;
@@ -495,7 +497,8 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
 
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
                               int32_t destY) {
-  struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
+  struct Rect SrcRect = {
+      .top = 0, .left = 0, .bottom = JSurface_Height(src), .right = src->usWidth};
   if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     return BltVSurfaceRectToPoint(dest, src, destX, destY, &SrcRect);
   } else if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
@@ -508,7 +511,7 @@ void VSurfaceErase(struct VSurface *vs) {
   uint32_t uiPitch;
   void *pTmpPointer = LockVSurface(vs, &uiPitch);
   if (pTmpPointer) {
-    memset(pTmpPointer, 0, vs->usHeight * uiPitch);
+    memset(pTmpPointer, 0, JSurface_Height(vs) * uiPitch);
     UnlockVSurface(vs);
   }
 }
