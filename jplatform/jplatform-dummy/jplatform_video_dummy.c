@@ -24,3 +24,4 @@ struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) { return N
 struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) { return NULL; };
 void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {};
 bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) { return false; }
+bool JSurface_Restore(struct VSurface *vs) { return false; }

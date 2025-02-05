@@ -502,3 +502,8 @@ bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) {
 
   return (TRUE);
 }
+
+bool JSurface_Restore(struct VSurface *vs) {
+  HRESULT ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2);
+  return ReturnCode == DD_OK;
+}

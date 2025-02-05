@@ -76,6 +76,7 @@ uint16_t JVideo_GetScreenHeight();
 struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height);
 struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height);
 struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height);
+bool JSurface_Restore(struct VSurface *vs);
 
 // uint16_t JSurface_Width(struct JSurface *s);
 // uint16_t JSurface_Height(struct JSurface *s);

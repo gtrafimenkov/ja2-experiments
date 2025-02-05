@@ -228,59 +228,12 @@ void ShutdownVideoManager(void) {
 
 void SuspendVideoManager(void) { guiVideoManagerState = VIDEO_SUSPENDED; }
 
-#define INITGUID
-#include <ddraw.h>
-#include <windows.h>
-
-#include "Smack.h"
-#include "platform_win.h"
-
-#ifndef _MT
-#define _MT
-#endif
-
 BOOLEAN RestoreVideoManager(void) {
-  HRESULT ReturnCode;
-
-  //
-  // Make sure the video manager is indeed suspended before moving on
-  //
-
   if (guiVideoManagerState == VIDEO_SUSPENDED) {
-    //
-    // Restore the Primary and Backbuffer
-    //
-
-    ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2);
-    if (ReturnCode != DD_OK) {
-      return FALSE;
-    }
-
-    ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2);
-    if (ReturnCode != DD_OK) {
-      return FALSE;
-    }
-
-    //
-    // Restore the mouse surfaces
-    //
-
-    ReturnCode = IDirectDrawSurface2_Restore(
-        (LPDIRECTDRAWSURFACE2)gMouseCursorBackground[0].vs->_platformData2);
-    if (ReturnCode != DD_OK) {
-      return FALSE;
-    }
-
-    ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsMouseBuffer->_platformData2);
-    if (ReturnCode != DD_OK) {
-      return FALSE;
-    } else {
-      guiMouseBufferState = BUFFER_DIRTY;
-    }
-
-    //
-    // Set the video state to VIDEO_ON
-    //
+    JSurface_Restore(vsPrimary);
+    JSurface_Restore(vsBackBuffer);
+    JSurface_Restore(gMouseCursorBackground[0].vs);
+    JSurface_Restore(vsMouseBuffer);
 
     guiFrameBufferState = BUFFER_DIRTY;
     guiMouseBufferState = BUFFER_DIRTY;
@@ -662,6 +615,17 @@ static void ScrollJA2Background(uint32_t uiDirection) {
   SaveVideoOverlaysArea(vsBackBuffer);
   ExecuteVideoOverlaysToAlternateBuffer(vsBackBuffer);
 }
+
+#define INITGUID
+#include <ddraw.h>
+#include <windows.h>
+
+#include "Smack.h"
+#include "platform_win.h"
+
+#ifndef _MT
+#define _MT
+#endif
 
 void RefreshScreen(void *DummyVariable) {
   static uint32_t uiRefreshThreadState, uiIndex;
