@@ -211,16 +211,10 @@ BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uin
 
 void EndFrameBufferRender(void) {}
 
-BOOLEAN Set8BPPPalette(struct JPaletteEntry *pPalette) { return FALSE; }
-
 void FatalError(char *pError, ...) {}
 
 BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
                               int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
-  return FALSE;
-}
-
-BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct JPaletteEntry *pSrcPalette) {
   return FALSE;
 }
 

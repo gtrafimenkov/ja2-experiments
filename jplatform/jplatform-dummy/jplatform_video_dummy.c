@@ -11,4 +11,15 @@ uint32_t JVideo_GetTranslucentMask() { return 0; }
 uint16_t JVideo_PackRGB16(uint8_t r, uint8_t g, uint8_t b) { return 0; }
 void JVideo_UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {}
 
-bool tmp_getRGBDistribution() { return false; }
+bool JVideo_Init(const char *unused_title, uint16_t screenWidth, uint16_t screenHeight) {
+  return false;
+}
+void JVideo_Shutdown() {}
+uint16_t JVideo_GetScreenWidth() { return 0; }
+uint16_t JVideo_GetScreenHeight() { return 0; }
+
+struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height) { return NULL; };
+struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) { return NULL; };
+struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) { return NULL; };
+void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {};
+bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) { return false; }

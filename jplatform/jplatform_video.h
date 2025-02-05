@@ -37,13 +37,20 @@ struct JPaletteEntry {
   uint8_t green;
   uint8_t blue;
   uint8_t _unused;
+
+  // Don't change this structure.  On Windows it must be the same as PALETTEENTRY.
 };
 
 // #ifdef __cplusplus
 // extern "C" {
 // #endif  // __cplusplus
 
-// struct JVideoState *JVideo_Init(const char *title, uint16_t width, uint16_t height);
+bool JVideo_Init(const char *unused_title, uint16_t screenWidth, uint16_t screenHeight);
+void JVideo_Shutdown();
+
+uint16_t JVideo_GetScreenWidth();
+uint16_t JVideo_GetScreenHeight();
+
 // void JVideo_ToggleFullScreen(struct JVideoState *v);
 // void JVideo_ToggleMouseGrab(struct JVideoState *v);
 // void JVideo_HideCursor();
@@ -63,9 +70,9 @@ struct JPaletteEntry {
 
 // void *JSurface_GetPixels(struct JSurface *s);
 
-// struct JSurface *JSurface_Create8bpp(uint16_t width, uint16_t height);
-
-// struct JSurface *JSurface_Create16bpp(uint16_t width, uint16_t height);
+struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height);
+struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height);
+struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height);
 
 // uint16_t JSurface_Width(struct JSurface *s);
 // uint16_t JSurface_Height(struct JSurface *s);
@@ -77,6 +84,8 @@ struct JPaletteEntry {
 // void JSurface_FillRect(struct JSurface *s, struct JRect *rect, uint16_t colour);
 
 // void JSurface_Free(struct JSurface *s);
+
+void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal);
 
 // void JSurface_Blit(struct JSurface *src, struct JSurface *dst);
 
@@ -99,8 +108,6 @@ void JVideo_GetRGBDistributionMasks(uint32_t *red, uint32_t *green, uint32_t *bl
 uint32_t JVideo_GetTranslucentMask();
 uint16_t JVideo_PackRGB16(uint8_t r, uint8_t g, uint8_t b);
 void JVideo_UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b);
-
-bool tmp_getRGBDistribution();
 
 #ifdef __cplusplus
 }  // extern "C"

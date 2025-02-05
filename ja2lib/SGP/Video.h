@@ -14,8 +14,6 @@ struct VSurface;
 
 #define VIDEO_NO_CURSOR 0xFFFF
 
-#define MAX_CURSOR_HEIGHT 64
-
 extern int32_t giNumFrames;
 
 struct PlatformInitParams;
@@ -39,7 +37,7 @@ extern BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint
                                         uint16_t usCursorWidth);
 void DirtyCursor();
 
-BOOLEAN Set8BPPPalette(struct JPaletteEntry *pPalette);
+bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette);
 
 void VideoCaptureToggle(void);
 

@@ -498,3 +498,12 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32
   }
   return FALSE;
 }
+
+void VSurfaceErase(struct VSurface *vs) {
+  uint32_t uiPitch;
+  void *pTmpPointer = LockVSurface(vs, &uiPitch);
+  if (pTmpPointer) {
+    memset(pTmpPointer, 0, vs->usHeight * uiPitch);
+    UnlockVSurface(vs);
+  }
+}

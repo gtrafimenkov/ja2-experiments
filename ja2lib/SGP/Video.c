@@ -7,24 +7,10 @@
 #include <string.h>
 
 #include "SGP/VSurface.h"
-#include "SGP/VideoInternal.h"
-
-uint16_t gusScreenWidth;
-uint16_t gusScreenHeight;
-
-uint16_t GetScreenWidth() { return gusScreenWidth; }
-uint16_t GetScreenHeight() { return gusScreenHeight; }
 
 void GetCurrentVideoSettings(uint16_t *usWidth, uint16_t *usHeight) {
-  *usWidth = (uint16_t)gusScreenWidth;
-  *usHeight = (uint16_t)gusScreenHeight;
+  *usWidth = JVideo_GetScreenWidth();
+  *usHeight = JVideo_GetScreenHeight();
 }
 
-void EraseMouseCursor() {
-  uint32_t uiPitch;
-  void *pTmpPointer = LockVSurface(vsMouseBufferOriginal, &uiPitch);
-  if (pTmpPointer) {
-    memset(pTmpPointer, 0, MAX_CURSOR_HEIGHT * uiPitch);
-    UnlockVSurface(vsMouseBufferOriginal);
-  }
-}
+void EraseMouseCursor() { VSurfaceErase(vsMouseBufferOriginal); }

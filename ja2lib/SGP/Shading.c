@@ -295,12 +295,12 @@ void Init8BitTables(void) {
   Pal[0].green = 0;
   Pal[0].blue = 0;
 
-  Set8BPPPalette(Shaded8BPPPalettes[4]);
+  tmp_Set8BPPPalette(Shaded8BPPPalettes[4]);
 }
 
 BOOLEAN Set8BitModePalette(struct JPaletteEntry *pPal) {
   ShadesCalculateTables(pPal);
-  Set8BPPPalette(pPal);
+  tmp_Set8BPPPalette(pPal);
   return (TRUE);
 }
 

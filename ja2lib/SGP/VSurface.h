@@ -78,6 +78,8 @@ struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height);
 struct VSurface *CreateVSurfaceBlank16(uint16_t width, uint16_t height);
 struct VSurface *CreateVSurfaceFromFile(const char *filepath);
 
+void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pSrcPalette);
+
 // Gets the RGB palette entry values
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct JPaletteEntry *pPalette);
 
@@ -93,9 +95,6 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
 
 // Sets Transparency color into HVSurface and the underlying DD surface
 void SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor);
-
-// Sets HVSurface palette, creates if nessessary. Also sets 16BPP palette
-BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct JPaletteEntry *pSrcPalette);
 
 // Deletes all data, including palettes, regions, DD Surfaces
 BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
@@ -129,6 +128,8 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect 
 
 BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_t X1, int32_t Y1,
                                                    int32_t X2, int32_t Y2);
+
+void VSurfaceErase(struct VSurface *vs);
 
 //////////////////////////////////////////////////////////////////////////////
 //

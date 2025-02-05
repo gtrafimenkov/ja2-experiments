@@ -16,94 +16,21 @@
 #include "SGP/VObjectBlitters.h"
 #include "SGP/VSurface.h"
 #include "SGP/Video.h"
-#include "SGP/VideoInternal.h"
 #include "TileEngine/RenderDirty.h"
 #include "TileEngine/RenderWorld.h"
 #include "Utils/TimerControl.h"
 #include "jplatform_video.h"
 #include "platform.h"
 
-#define INITGUID
-#include <ddraw.h>
-#include <windows.h>
+typedef struct {
+  BOOLEAN fRestore;
+  uint16_t usMouseXPos, usMouseYPos;
+  uint16_t usLeft, usTop, usRight, usBottom;
+  struct Rect Region;
+  struct VSurface *vs;
+} MouseCursorBackground;
 
-#include "Smack.h"
-#include "platform_win.h"
-
-#ifndef _MT
-#define _MT
-#endif
-
-static LPDIRECTDRAW _gpDirectDrawObject = NULL;
-static LPDIRECTDRAW2 gpDirectDrawObject = NULL;
-
-static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2) {
-  LPDIRECTDRAWPALETTE pDDPalette;
-  HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
-
-  if (ReturnCode == DD_OK) {
-    vs->_platformPalette = pDDPalette;
-
-    // Create 16-BPP Palette
-    struct JPaletteEntry SGPPalette[256];
-    GetVSurfacePaletteEntries(vs, SGPPalette);
-    vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
-  }
-}
-
-static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPalette) {
-  struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
-  if (vs == NULL) {
-    return NULL;
-  }
-
-  LPDIRECTDRAWSURFACE lpDDS;
-  LPDIRECTDRAWSURFACE2 lpDDS2;
-  {
-    // create the directdraw surface
-    HRESULT ReturnCode = IDirectDraw2_CreateSurface(gpDirectDrawObject, descr, &lpDDS, NULL);
-    if (ReturnCode != DD_OK) {
-      return NULL;
-    }
-
-    // get the direct draw surface 2 interface
-    IID tmpID = IID_IDirectDrawSurface2;
-    ReturnCode = IDirectDrawSurface_QueryInterface(lpDDS, &tmpID, &lpDDS2);
-    if (ReturnCode != DD_OK) {
-      return NULL;
-    }
-  }
-
-  vs->_platformData1 = (void *)lpDDS;
-  vs->_platformData2 = (void *)lpDDS2;
-
-  vs->usWidth = (uint16_t)descr->dwWidth;
-  vs->usHeight = (uint16_t)descr->dwHeight;
-  if (descr->dwFlags & DDSD_PIXELFORMAT) {
-    vs->ubBitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
-  } else {
-    DDSURFACEDESC newDescr;
-    memset(&newDescr, 0, sizeof(LPDDSURFACEDESC));
-    newDescr.dwSize = sizeof(DDSURFACEDESC);
-    IDirectDrawSurface2_GetSurfaceDesc(lpDDS2, &newDescr);
-    vs->ubBitDepth = (uint8_t)newDescr.ddpfPixelFormat.dwRGBBitCount;
-  }
-
-  if (getPalette) {
-    FillVSurfacePalette(vs, lpDDS2);
-  }
-
-  return vs;
-}
-
-static void DirectXAttempt(int32_t iErrorCode, int32_t nLine, char *szFilename) {
-#ifdef _DEBUG
-  if (iErrorCode != DD_OK) {
-    FastDebugMsg("DIRECTX COMMON: DirectX Error\n");
-    FastDebugMsg(DirectXErrorDescription(iErrorCode));
-  }
-#endif
-}
+static MouseCursorBackground gMouseCursorBackground[2];
 
 static void _blitFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
                       struct Rect *srcRect) {
@@ -116,18 +43,9 @@ static void _blitFast(struct VSurface *dest, struct VSurface *src, uint32_t dest
 #define BUFFER_DIRTY 0x02
 #define BUFFER_DISABLED 0x03
 
-#define MAX_CURSOR_WIDTH 64
 #define VIDEO_NO_CURSOR 0xFFFF
 
 extern int32_t giNumFrames;
-
-// Palette Functions
-static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
-                            LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter);
-static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
-                                uint32_t uiStartingEntry, uint32_t uiCount,
-                                LPPALETTEENTRY pEntries);
-static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette);
 
 // local functions
 static char *DirectXErrorDescription(int32_t iDXReturn);
@@ -149,14 +67,6 @@ static char *DirectXErrorDescription(int32_t iDXReturn);
 #define CURRENT_MOUSE_DATA 0
 #define PREVIOUS_MOUSE_DATA 1
 
-typedef struct {
-  BOOLEAN fRestore;
-  uint16_t usMouseXPos, usMouseYPos;
-  uint16_t usLeft, usTop, usRight, usBottom;
-  struct Rect Region;
-  struct VSurface *vs;
-} MouseCursorBackground;
-
 //
 // Video state variables
 //
@@ -177,8 +87,6 @@ static uint16_t gusMouseCursorWidth;
 static uint16_t gusMouseCursorHeight;
 static int16_t gsMouseCursorXOffset;
 static int16_t gsMouseCursorYOffset;
-
-static MouseCursorBackground gMouseCursorBackground[2];
 
 static struct VObject *gpCursorStore;
 
@@ -218,17 +126,26 @@ static void SnapshotSmall(void);
 static void VideoMovieCapture(BOOLEAN fEnable);
 static void RefreshMovieCache();
 
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+#define MAX_CURSOR_WIDTH 64
+#define MAX_CURSOR_HEIGHT 64
+
+#define INITGUID
+#include <ddraw.h>
+#include <windows.h>
+
+#include "Smack.h"
+#include "platform_win.h"
+
+#ifndef _MT
+#define _MT
+#endif
+
 BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
-  uint32_t uiIndex;
-  HRESULT ReturnCode;
   HWND hWindow;
   WNDCLASS WindowClass;
   char ClassName[] = APPLICATION_NAME;
-  DDSURFACEDESC SurfaceDescription;
-
-  //
-  // Register debug topics
-  //
 
   RegisterDebugTopic(TOPIC_VIDEO, "Video");
   DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, "Initializing the video manager");
@@ -274,180 +191,35 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   UpdateWindow(hWindow);
   SetFocus(hWindow);
 
-  ReturnCode = DirectDrawCreate(NULL, &_gpDirectDrawObject, NULL);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
+  if (!JVideo_Init("", SCREEN_WIDTH, SCREEN_HEIGHT)) {
     return FALSE;
   }
 
-  IID tmpID = IID_IDirectDraw2;
-  ReturnCode =
-      IDirectDraw_QueryInterface(_gpDirectDrawObject, &tmpID, (LPVOID *)&gpDirectDrawObject);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return FALSE;
-  }
-
-  //
-  // Set the exclusive mode
-  //
-  ReturnCode = IDirectDraw2_SetCooperativeLevel(gpDirectDrawObject, ghWindow,
-                                                DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return FALSE;
-  }
-
-  //
-  // Set the display mode
-  //
-  ReturnCode =
-      IDirectDraw2_SetDisplayMode(gpDirectDrawObject, SCREEN_WIDTH, SCREEN_HEIGHT, 16, 0, 0);
-  if (ReturnCode != DD_OK) {
-    DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-    return FALSE;
-  }
-
-  gusScreenWidth = SCREEN_WIDTH;
-  gusScreenHeight = SCREEN_HEIGHT;
-
-  //
-  // Initialize Primary Surface along with BackBuffer
-  //
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
-  // DDSCAPS_PRIMARYSURFACE
-  //   This surface is the primary surface. It represents what is visible to the user at the
-  //   moment.
-  //
-  // DDSCAPS_FLIP
-  //   This surface is a part of a surface flipping structure. When this capability is passed to the
-  //   application's CreateSurface method, a front buffer and one or more back buffers are created.
-  //   DirectDraw sets the DDSCAPS_FRONTBUFFER bit on the front-buffer surface and the
-  //   DDSCAPS_BACKBUFFER bit on the surface adjacent to the front-buffer surface. The
-  //   dwBackBufferCount member of the DDSURFACEDESC structure must be set to at least 1 in order
-  //   for the method call to succeed. The DDSCAPS_COMPLEX capability must always be set when
-  //   creating multiple surfaces by using the CreateSurface method.
-  //
-  // DDSCAPS_COMPLEX
-  //   A complex surface is being described. A complex surface results in the creation of more than
-  //   one surface. The additional surfaces are attached to the root surface. The complex structure
-  //   can be destroyed only by destroying the root.
-  SurfaceDescription.dwBackBufferCount = 1;
-  vsPrimary = CreateVSurfaceInternal(&SurfaceDescription, true);
-  if (vsPrimary == NULL) {
-    return FALSE;
-  }
-
-  // getting the back buffer
-  {
-    LPDIRECTDRAWSURFACE2 backBuffer;
-
-    DDSCAPS SurfaceCaps;
-    SurfaceCaps.dwCaps = DDSCAPS_BACKBUFFER;
-    ReturnCode = IDirectDrawSurface2_GetAttachedSurface(
-        (LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2, &SurfaceCaps, &backBuffer);
-    if (ReturnCode != DD_OK) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-      return FALSE;
-    }
-
-    vsBackBuffer = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
-    if (vsBackBuffer == NULL) {
-      return FALSE;
-    }
-    DDSURFACEDESC DDSurfaceDesc;
-    memset(&DDSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
-    DDSurfaceDesc.dwSize = sizeof(DDSURFACEDESC);
-    IDirectDrawSurface2_GetSurfaceDesc(backBuffer, &DDSurfaceDesc);
-    vsBackBuffer->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
-    vsBackBuffer->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
-    vsBackBuffer->ubBitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
-    vsBackBuffer->_platformData1 = NULL;
-    vsBackBuffer->_platformData2 = (void *)backBuffer;
-    FillVSurfacePalette(vsBackBuffer, backBuffer);
-  }
-
-  //
   // Initialize the frame buffer
-  //
-
-  {
-    memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-    SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-    SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-    SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-    SurfaceDescription.dwWidth = SCREEN_WIDTH;
-    SurfaceDescription.dwHeight = SCREEN_HEIGHT;
-    vsFB = CreateVSurfaceInternal(&SurfaceDescription, true);
-    if (vsFB == NULL) {
-      return FALSE;
-    }
+  vsFB = JSurface_CreateWithDefaultBpp(SCREEN_WIDTH, SCREEN_HEIGHT);
+  if (vsFB == NULL) {
+    return FALSE;
   }
 
-  //
   // Initialize the main mouse surfaces
-  //
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-  // DDSCAPS_OFFSCREENPLAIN
-  //   This surface is any offscreen surface that is not an overlay, texture, z-buffer,
-  //   front-buffer, back-buffer, or alpha surface. It is used to identify plain surfaces.
-  // DDSCAPS_SYSTEMMEMORY
-  //   This surface memory was allocated from system memory. If this capability bit is set by the
-  //   Windows 2000 or later driver, DirectDraw is disabled.
-  SurfaceDescription.dwWidth = MAX_CURSOR_WIDTH;
-  SurfaceDescription.dwHeight = MAX_CURSOR_HEIGHT;
-  vsMouseBuffer = CreateVSurfaceInternal(&SurfaceDescription, true);
+  vsMouseBuffer = JSurface_CreateWithDefaultBpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
   if (vsMouseBuffer == NULL) {
     return FALSE;
   }
   SetVideoSurfaceTransparencyColor(vsMouseBuffer, 0);
 
-  //
   // Initialize the main mouse original surface
-  //
-
-  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-  SurfaceDescription.dwWidth = MAX_CURSOR_WIDTH;
-  SurfaceDescription.dwHeight = MAX_CURSOR_HEIGHT;
-  vsMouseBufferOriginal = CreateVSurfaceInternal(&SurfaceDescription, true);
+  vsMouseBufferOriginal = JSurface_CreateWithDefaultBpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
   if (vsMouseBufferOriginal == NULL) {
     return FALSE;
   }
 
-  //
   // Initialize the main mouse background surfaces. There are two of them (one for each of the
   // Primary and Backbuffer surfaces
-  //
-
-  for (uiIndex = 0; uiIndex < 1; uiIndex++) {
-    //
-    // Initialize various mouse background variables
-    //
-
+  for (uint32_t uiIndex = 0; uiIndex < 1; uiIndex++) {
     gMouseCursorBackground[uiIndex].fRestore = FALSE;
-
-    //
-    // Initialize the direct draw surfaces for the mouse background
-    //
-
-    memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-    SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-    SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-    SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-    SurfaceDescription.dwWidth = MAX_CURSOR_WIDTH;
-    SurfaceDescription.dwHeight = MAX_CURSOR_HEIGHT;
-    gMouseCursorBackground[uiIndex].vs = CreateVSurfaceInternal(&SurfaceDescription, true);
+    gMouseCursorBackground[uiIndex].vs =
+        JSurface_CreateWithDefaultBpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
     if (gMouseCursorBackground[uiIndex].vs == NULL) {
       return FALSE;
     }
@@ -467,12 +239,6 @@ BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
   gfPrintFrameBuffer = FALSE;
   guiPrintFrameBufferIndex = 0;
 
-  //
-  // This function must be called to setup RGB information
-  //
-
-  tmp_getRGBDistribution();
-
   return TRUE;
 }
 
@@ -490,8 +256,6 @@ void ShutdownVideoManager(void) {
   vsMouseBufferOriginal = NULL;
   DeleteVSurface(vsMouseBuffer);
   vsMouseBuffer = NULL;
-  DeleteVSurface(gMouseCursorBackground[0].vs);
-  gMouseCursorBackground[0].vs = NULL;
   DeleteVSurface(vsBackBuffer);
   vsBackBuffer = NULL;
   DeleteVSurface(vsPrimary);
@@ -499,9 +263,10 @@ void ShutdownVideoManager(void) {
   DeleteVSurface(vsFB);
   vsFB = NULL;
 
-  IDirectDraw2_RestoreDisplayMode(gpDirectDrawObject);
-  IDirectDraw2_SetCooperativeLevel(gpDirectDrawObject, ghWindow, DDSCL_NORMAL);
-  IDirectDraw2_Release(gpDirectDrawObject);
+  DeleteVSurface(gMouseCursorBackground[0].vs);
+  gMouseCursorBackground[0].vs = NULL;
+
+  JVideo_Shutdown();
 
   // destroy the window
   // DestroyWindow( ghWindow );
@@ -535,13 +300,11 @@ BOOLEAN RestoreVideoManager(void) {
 
     ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2);
     if (ReturnCode != DD_OK) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
       return FALSE;
     }
 
     ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2);
     if (ReturnCode != DD_OK) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
       return FALSE;
     }
 
@@ -552,13 +315,11 @@ BOOLEAN RestoreVideoManager(void) {
     ReturnCode = IDirectDrawSurface2_Restore(
         (LPDIRECTDRAWSURFACE2)gMouseCursorBackground[0].vs->_platformData2);
     if (ReturnCode != DD_OK) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
       return FALSE;
     }
 
     ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsMouseBuffer->_platformData2);
     if (ReturnCode != DD_OK) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
       return FALSE;
     } else {
       guiMouseBufferState = BUFFER_DIRTY;
@@ -707,7 +468,7 @@ static void ScrollJA2Background(uint32_t uiDirection) {
   int32_t cnt;
   int32_t uiCountY;
 
-  uint16_t screenWidth = GetScreenWidth();
+  uint16_t screenWidth = JVideo_GetScreenWidth();
   uint16_t viewportWindowHeight = gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y;
 
   struct Rect StripRegions[2];
@@ -971,8 +732,8 @@ void RefreshScreen(void *DummyVariable) {
       // Excellent, everything is cosher, we continue on
       //
       uiRefreshThreadState = guiRefreshThreadState = THREAD_ON;
-      usScreenWidth = gusScreenWidth;
-      usScreenHeight = gusScreenHeight;
+      usScreenWidth = JVideo_GetScreenWidth();
+      usScreenHeight = JVideo_GetScreenHeight();
       break;
     case VIDEO_OFF:  //
       // Hot damn, the video manager is suddenly off. We have to bugger out of here. Don't forget to
@@ -1100,32 +861,15 @@ void RefreshScreen(void *DummyVariable) {
     int32_t iIndex;
     uint16_t *p16BPPData;
 
-    //
     // Create temporary system memory surface. This is used to correct problems with the backbuffer
     // surface which can be interlaced or have a funky pitch
-    //
+    struct VSurface *vsTmp = JSurface_CreateWithDefaultBpp(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    struct VSurface *vsTmp = NULL;
-    {
-      DDSURFACEDESC SurfaceDescription;
-      memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
-      SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-      SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-      SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-      SurfaceDescription.dwWidth = usScreenWidth;
-      SurfaceDescription.dwHeight = usScreenHeight;
-      vsTmp = CreateVSurfaceInternal(&SurfaceDescription, false);
-    }
-
-    //
     // Copy the primary surface to the temporary surface
-    //
-
     Region.left = 0;
     Region.top = 0;
     Region.right = usScreenWidth;
     Region.bottom = usScreenHeight;
-
     _blitFast(vsTmp, vsPrimary, 0, 0, &Region);
 
     //
@@ -1331,8 +1075,6 @@ void RefreshScreen(void *DummyVariable) {
         IDirectDrawSurface_Flip((LPDIRECTDRAWSURFACE)vsPrimary->_platformData1, NULL, DDFLIP_WAIT);
     //    if ((ReturnCode != DD_OK)&&(ReturnCode != DDERR_WASSTILLDRAWING))
     if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-      DirectXAttempt(ReturnCode, __LINE__, __FILE__);
-
       if (ReturnCode == DDERR_SURFACELOST) {
         goto ENDOFLOOP;
       }
@@ -1481,46 +1223,6 @@ void EndFrameBufferRender(void) { guiFrameBufferState = BUFFER_DIRTY; }
 
 void PrintScreen(void) { gfPrintFrameBuffer = TRUE; }
 
-BOOLEAN Set8BPPPalette(struct JPaletteEntry *pPalette) {
-  HRESULT ReturnCode;
-  struct JPaletteEntry gSgpPalette[256];
-
-  // If we are in 256 colors, then we have to initialize the palette system to 0 (faded out)
-  memcpy(gSgpPalette, pPalette, sizeof(struct JPaletteEntry) * 256);
-
-  LPDIRECTDRAWPALETTE gpDirectDrawPalette;
-  ReturnCode =
-      IDirectDraw_CreatePalette(gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
-                                (LPPALETTEENTRY)(&gSgpPalette[0]), &gpDirectDrawPalette, NULL);
-  if (ReturnCode != DD_OK) {
-    DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, String("Failed to create palette (Rc = %d)", ReturnCode));
-    return (FALSE);
-  }
-  // Apply the palette to the surfaces
-  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
-                                             gpDirectDrawPalette);
-  if (ReturnCode != DD_OK) {
-    DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, String("Failed to apply 8-bit palette to primary surface"));
-    return (FALSE);
-  }
-
-  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2,
-                                             gpDirectDrawPalette);
-  if (ReturnCode != DD_OK) {
-    DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, String("Failed to apply 8-bit palette to back buffer"));
-    return (FALSE);
-  }
-
-  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsFB->_platformData2,
-                                             gpDirectDrawPalette);
-  if (ReturnCode != DD_OK) {
-    DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, String("Failed to apply 8-bit palette to frame buffer"));
-    return (FALSE);
-  }
-
-  return (TRUE);
-}
-
 void FatalError(char *pError, ...) {
   va_list argptr;
 
@@ -1528,8 +1230,7 @@ void FatalError(char *pError, ...) {
   vsprintf(gFatalErrorString, pError, argptr);
   va_end(argptr);
 
-  IDirectDraw2_RestoreDisplayMode(gpDirectDrawObject);
-  IDirectDraw2_Release(gpDirectDrawObject);
+  JVideo_Shutdown();
   ShowWindow(ghWindow, SW_HIDE);
 
   gfProgramIsRunning = FALSE;
@@ -1751,7 +1452,6 @@ BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iD
                                          DDBLT_COLORFILL, &BlitterFX);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
-  DirectXAttempt(ReturnCode, __LINE__, __FILE__);
   return TRUE;
 }
 
@@ -1765,48 +1465,17 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
   Assert(height > 0);
   Assert(width > 0);
 
-  DDPIXELFORMAT PixelFormat;
-  memset(&PixelFormat, 0, sizeof(PixelFormat));
-  PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-
   switch (bitDepth) {
-    case 8: {
-      PixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
-      PixelFormat.dwRGBBitCount = 8;
-    } break;
+    case 8:
+      return JSurface_Create8bpp(width, height);
 
-    case 16: {
-      PixelFormat.dwFlags = DDPF_RGB;
-      PixelFormat.dwRGBBitCount = 16;
-
-      uint32_t uiRBitMask;
-      uint32_t uiGBitMask;
-      uint32_t uiBBitMask;
-      JVideo_GetRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask);
-      PixelFormat.dwRBitMask = uiRBitMask;
-      PixelFormat.dwGBitMask = uiGBitMask;
-      PixelFormat.dwBBitMask = uiBBitMask;
-    } break;
+    case 16:
+      return JSurface_Create16bpp(width, height);
 
     default:
       DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid BPP value, can only be 8 or 16.");
-      return (FALSE);
+      return NULL;
   }
-
-  DDSURFACEDESC SurfaceDescription;
-  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
-  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
-  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwWidth = width;
-  SurfaceDescription.dwHeight = height;
-  SurfaceDescription.ddpfPixelFormat = PixelFormat;
-
-  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription, false);
-
-  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in Creating Video Surface"));
-
-  return (vs);
 }
 
 struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
@@ -1817,48 +1486,14 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
     return (NULL);
   }
 
-  DDSURFACEDESC SurfaceDescription;
-  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
-
   Assert(hImage->usHeight > 0);
   Assert(hImage->usWidth > 0);
 
-  DDPIXELFORMAT PixelFormat;
-  memset(&PixelFormat, 0, sizeof(PixelFormat));
-  PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-
-  switch (hImage->ubBitDepth) {
-    case 8: {
-      PixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
-      PixelFormat.dwRGBBitCount = 8;
-    } break;
-
-    case 16: {
-      PixelFormat.dwFlags = DDPF_RGB;
-      PixelFormat.dwRGBBitCount = 16;
-
-      uint32_t uiRBitMask;
-      uint32_t uiGBitMask;
-      uint32_t uiBBitMask;
-      JVideo_GetRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask);
-      PixelFormat.dwRBitMask = uiRBitMask;
-      PixelFormat.dwGBitMask = uiGBitMask;
-      PixelFormat.dwBBitMask = uiBBitMask;
-    } break;
-
-    default:
-      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid BPP value, can only be 8 or 16.");
-      return (FALSE);
+  struct VSurface *vs = CreateVSurfaceBlank(hImage->usWidth, hImage->usHeight, hImage->ubBitDepth);
+  if (!vs) {
+    DestroyImage(hImage);
+    return NULL;
   }
-
-  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
-  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwWidth = hImage->usWidth;
-  SurfaceDescription.dwHeight = hImage->usHeight;
-  SurfaceDescription.ddpfPixelFormat = PixelFormat;
-
-  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription, false);
 
   SGPRect tempRect;
   tempRect.iLeft = 0;
@@ -1868,7 +1503,7 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   SetVideoSurfaceDataFromHImage(vs, hImage, 0, 0, &tempRect);
 
   if (hImage->ubBitDepth == 8) {
-    SetVideoSurfacePalette(vs, hImage->pPalette);
+    SetVSurfacePalette(vs, hImage->pPalette);
   }
 
   DestroyImage(hImage);
@@ -1913,31 +1548,21 @@ void UnlockVSurface(struct VSurface *vs) {
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette
-BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct JPaletteEntry *pSrcPalette) {
-  Assert(hVSurface != NULL);
+void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
+  Assert(vs != NULL);
 
-  // Create palette object if not already done so
-  if (hVSurface->_platformPalette == NULL) {
-    DDCreatePalette(gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
-                    (LPPALETTEENTRY)(&pSrcPalette[0]),
-                    (LPDIRECTDRAWPALETTE *)&hVSurface->_platformPalette, NULL);
-  } else {
-    // Just Change entries
-    DDSetPaletteEntries((LPDIRECTDRAWPALETTE)hVSurface->_platformPalette, 0, 0, 256,
-                        (PALETTEENTRY *)pSrcPalette);
-  }
+  JSurface_SetPalette(vs, pal);
 
   // Delete 16BPP Palette if one exists
-  if (hVSurface->p16BPPPalette != NULL) {
-    MemFree(hVSurface->p16BPPPalette);
-    hVSurface->p16BPPPalette = NULL;
+  if (vs->p16BPPPalette != NULL) {
+    MemFree(vs->p16BPPPalette);
+    vs->p16BPPPalette = NULL;
   }
 
   // Create 16BPP Palette
-  hVSurface->p16BPPPalette = Create16BPPPalette(pSrcPalette);
+  vs->p16BPPPalette = Create16BPPPalette(pal);
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Video Surface Palette change successfull"));
-  return (TRUE);
 }
 
 // Transparency needs to take RGB value and find best fit and place it into DD Surface
@@ -1978,20 +1603,18 @@ BOOLEAN DeleteVSurface(struct VSurface *vs) {
 
   // Release palette
   if (vs->_platformPalette != NULL) {
-    DDReleasePalette((LPDIRECTDRAWPALETTE)vs->_platformPalette);
+    IDirectDrawPalette_Release((LPDIRECTDRAWPALETTE)vs->_platformPalette);
     vs->_platformPalette = NULL;
   }
 
   // Release surface
   if (vs->_platformData2 != NULL) {
-    DirectXAttempt(IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)vs->_platformData2), __LINE__,
-                   __FILE__);
+    IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)vs->_platformData2);
     vs->_platformData2 = NULL;
   }
 
   if (vs->_platformData1 != NULL) {
-    DirectXAttempt(IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)vs->_platformData1), __LINE__,
-                   __FILE__);
+    IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)vs->_platformData1);
     vs->_platformData1 = NULL;
   }
 
@@ -2250,36 +1873,6 @@ struct SmkFlic *SmkGetFreeFlic(void) {
 void SmkSetupVideo(void) {}
 
 void SmkShutdownVideo(void) {}
-
-//////////////////////////////////////////////////////////////////
-// DirectDrawCalls
-//////////////////////////////////////////////////////////////////
-
-static void DDCreatePalette(LPDIRECTDRAW2 pDirectDraw, uint32_t uiFlags, LPPALETTEENTRY pColorTable,
-                            LPDIRECTDRAWPALETTE FAR *ppDDPalette, IUnknown FAR *pUnkOuter) {
-  Assert(pDirectDraw != NULL);
-
-  DirectXAttempt(
-      IDirectDraw2_CreatePalette(pDirectDraw, uiFlags, pColorTable, ppDDPalette, pUnkOuter),
-      __LINE__, __FILE__);
-}
-
-static void DDSetPaletteEntries(LPDIRECTDRAWPALETTE pPalette, uint32_t uiFlags,
-                                uint32_t uiStartingEntry, uint32_t uiCount,
-                                LPPALETTEENTRY pEntries) {
-  Assert(pPalette != NULL);
-  Assert(pEntries != NULL);
-
-  DirectXAttempt(
-      IDirectDrawPalette_SetEntries(pPalette, uiFlags, uiStartingEntry, uiCount, pEntries),
-      __LINE__, __FILE__);
-}
-
-static void DDReleasePalette(LPDIRECTDRAWPALETTE pPalette) {
-  Assert(pPalette != NULL);
-
-  DirectXAttempt(IDirectDrawPalette_Release(pPalette), __LINE__, __FILE__);
-}
 
 //////////////////////////////////////////////////////////////////
 // DirectXCommon

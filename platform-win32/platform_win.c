@@ -56,9 +56,6 @@ extern uint32_t Plat_GetTickCount() { return GetTickCount(); }
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-// Main window frame for the application.
-HWND ghWindow;
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +79,8 @@ void CALLBACK Clock(HWND hWindow, UINT uMessage, UINT idEvent, DWORD dwTime) {
     guiCurrentTime = guiCurrentTime - guiStartupTime;
   }
 }
+
+extern HWND ghWindow;
 
 BOOLEAN InitializeClockManager(void) {
   // Register the start time (use WIN95 API call)

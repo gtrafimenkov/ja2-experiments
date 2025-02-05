@@ -1,6 +1,10 @@
 #include "SGP/VSurface.h"
 #include "jplatform_video.h"
 
+#define INITGUID
+#include <ddraw.h>
+#include <windows.h>
+
 struct JVideoState {
   uint16_t redMask;
   uint16_t greenMask;
@@ -9,9 +13,18 @@ struct JVideoState {
   int16_t blueShift;
   int16_t greenShift;
   uint32_t translucentMask;
+  LPDIRECTDRAW _gpDirectDrawObject;
+  LPDIRECTDRAW2 gpDirectDrawObject;
 };
 
 static struct JVideoState s_state;
+
+HWND ghWindow;  // Main window frame for the application
+static uint16_t gusScreenWidth;
+static uint16_t gusScreenHeight;
+
+uint16_t JVideo_GetScreenWidth() { return gusScreenWidth; }
+uint16_t JVideo_GetScreenHeight() { return gusScreenHeight; }
 
 void JVideo_GetRGBDistributionMasks(uint32_t *red, uint32_t *green, uint32_t *blue) {
   *red = s_state.redMask;
@@ -62,14 +75,6 @@ void JVideo_UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {
   else
     *b = ((uint32_t)b16 >> s_state.blueShift);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// below stuff that uses windows headers
-/////////////////////////////////////////////////////////////////////////////
-
-#define INITGUID
-#include <ddraw.h>
-#include <windows.h>
 
 // Difference between IDirectDrawSurface2_BltFast and IDirectDrawSurface2_Blt:
 //
@@ -144,7 +149,7 @@ void JSurface_BlitRectToRect(struct VSurface *src, struct VSurface *dst, struct 
   }
 }
 
-bool tmp_getRGBDistribution() {
+static bool getRGBDistribution() {
   DDSURFACEDESC SurfaceDescription;
   uint16_t usBit;
   HRESULT ReturnCode;
@@ -195,4 +200,278 @@ bool tmp_getRGBDistribution() {
   }
 
   return TRUE;
+}
+
+static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2) {
+  LPDIRECTDRAWPALETTE pDDPalette;
+  HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
+
+  if (ReturnCode == DD_OK) {
+    vs->_platformPalette = pDDPalette;
+
+    // Create 16-BPP Palette
+    struct JPaletteEntry SGPPalette[256];
+    GetVSurfacePaletteEntries(vs, SGPPalette);
+    vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
+  }
+}
+
+static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPalette) {
+  struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
+  if (vs == NULL) {
+    return NULL;
+  }
+
+  LPDIRECTDRAWSURFACE lpDDS;
+  LPDIRECTDRAWSURFACE2 lpDDS2;
+  {
+    // create the directdraw surface
+    HRESULT ReturnCode =
+        IDirectDraw2_CreateSurface(s_state.gpDirectDrawObject, descr, &lpDDS, NULL);
+    if (ReturnCode != DD_OK) {
+      return NULL;
+    }
+
+    // get the direct draw surface 2 interface
+    IID tmpID = IID_IDirectDrawSurface2;
+    ReturnCode = IDirectDrawSurface_QueryInterface(lpDDS, &tmpID, &lpDDS2);
+    if (ReturnCode != DD_OK) {
+      return NULL;
+    }
+  }
+
+  vs->_platformData1 = (void *)lpDDS;
+  vs->_platformData2 = (void *)lpDDS2;
+
+  vs->usWidth = (uint16_t)descr->dwWidth;
+  vs->usHeight = (uint16_t)descr->dwHeight;
+  if (descr->dwFlags & DDSD_PIXELFORMAT) {
+    vs->ubBitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
+  } else {
+    DDSURFACEDESC newDescr;
+    memset(&newDescr, 0, sizeof(LPDDSURFACEDESC));
+    newDescr.dwSize = sizeof(DDSURFACEDESC);
+    IDirectDrawSurface2_GetSurfaceDesc(lpDDS2, &newDescr);
+    vs->ubBitDepth = (uint8_t)newDescr.ddpfPixelFormat.dwRGBBitCount;
+  }
+
+  if (getPalette) {
+    FillVSurfacePalette(vs, lpDDS2);
+  }
+
+  return vs;
+}
+
+bool JVideo_Init(const char *unused_title, uint16_t screenWidth, uint16_t screenHeight) {
+  gusScreenWidth = screenWidth;
+  gusScreenHeight = screenHeight;
+  HRESULT ReturnCode = DirectDrawCreate(NULL, &s_state._gpDirectDrawObject, NULL);
+  if (ReturnCode != DD_OK) {
+    return FALSE;
+  }
+
+  IID tmpID = IID_IDirectDraw2;
+  ReturnCode = IDirectDraw_QueryInterface(s_state._gpDirectDrawObject, &tmpID,
+                                          (LPVOID *)&s_state.gpDirectDrawObject);
+  if (ReturnCode != DD_OK) {
+    return FALSE;
+  }
+
+  //
+  // Set the exclusive mode
+  //
+  ReturnCode = IDirectDraw2_SetCooperativeLevel(s_state.gpDirectDrawObject, ghWindow,
+                                                DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+  if (ReturnCode != DD_OK) {
+    return FALSE;
+  }
+
+  //
+  // Set the display mode
+  //
+  ReturnCode =
+      IDirectDraw2_SetDisplayMode(s_state.gpDirectDrawObject, screenWidth, screenHeight, 16, 0, 0);
+  if (ReturnCode != DD_OK) {
+    return FALSE;
+  }
+
+  //
+  // Initialize Primary Surface along with BackBuffer
+  //
+
+  DDSURFACEDESC SurfaceDescription;
+  memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
+  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
+  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
+  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
+  // DDSCAPS_PRIMARYSURFACE
+  //   This surface is the primary surface. It represents what is visible to the user at the
+  //   moment.
+  //
+  // DDSCAPS_FLIP
+  //   This surface is a part of a surface flipping structure. When this capability is passed to the
+  //   application's CreateSurface method, a front buffer and one or more back buffers are created.
+  //   DirectDraw sets the DDSCAPS_FRONTBUFFER bit on the front-buffer surface and the
+  //   DDSCAPS_BACKBUFFER bit on the surface adjacent to the front-buffer surface. The
+  //   dwBackBufferCount member of the DDSURFACEDESC structure must be set to at least 1 in order
+  //   for the method call to succeed. The DDSCAPS_COMPLEX capability must always be set when
+  //   creating multiple surfaces by using the CreateSurface method.
+  //
+  // DDSCAPS_COMPLEX
+  //   A complex surface is being described. A complex surface results in the creation of more than
+  //   one surface. The additional surfaces are attached to the root surface. The complex structure
+  //   can be destroyed only by destroying the root.
+  SurfaceDescription.dwBackBufferCount = 1;
+  vsPrimary = CreateVSurfaceInternal(&SurfaceDescription, true);
+  if (vsPrimary == NULL) {
+    return FALSE;
+  }
+
+  // getting the back buffer
+  {
+    LPDIRECTDRAWSURFACE2 backBuffer;
+
+    DDSCAPS SurfaceCaps;
+    SurfaceCaps.dwCaps = DDSCAPS_BACKBUFFER;
+    ReturnCode = IDirectDrawSurface2_GetAttachedSurface(
+        (LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2, &SurfaceCaps, &backBuffer);
+    if (ReturnCode != DD_OK) {
+      return FALSE;
+    }
+
+    vsBackBuffer = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
+    if (vsBackBuffer == NULL) {
+      return FALSE;
+    }
+    DDSURFACEDESC DDSurfaceDesc;
+    memset(&DDSurfaceDesc, 0, sizeof(LPDDSURFACEDESC));
+    DDSurfaceDesc.dwSize = sizeof(DDSURFACEDESC);
+    IDirectDrawSurface2_GetSurfaceDesc(backBuffer, &DDSurfaceDesc);
+    vsBackBuffer->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
+    vsBackBuffer->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
+    vsBackBuffer->ubBitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
+    vsBackBuffer->_platformData1 = NULL;
+    vsBackBuffer->_platformData2 = (void *)backBuffer;
+    FillVSurfacePalette(vsBackBuffer, backBuffer);
+  }
+
+  getRGBDistribution();
+  return &s_state;
+}
+
+void JVideo_Shutdown() {
+  IDirectDraw2_RestoreDisplayMode(s_state.gpDirectDrawObject);
+  IDirectDraw2_SetCooperativeLevel(s_state.gpDirectDrawObject, ghWindow, DDSCL_NORMAL);
+  IDirectDraw2_Release(s_state.gpDirectDrawObject);
+}
+
+struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height) {
+  DDSURFACEDESC SurfaceDescription;
+  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
+  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
+  // DDSCAPS_OFFSCREENPLAIN
+  //   This surface is any offscreen surface that is not an overlay, texture, z-buffer,
+  //   front-buffer, back-buffer, or alpha surface. It is used to identify plain surfaces.
+  // DDSCAPS_SYSTEMMEMORY
+  //   This surface memory was allocated from system memory. If this capability bit is set by the
+  //   Windows 2000 or later driver, DirectDraw is disabled.
+  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+  SurfaceDescription.dwWidth = width;
+  SurfaceDescription.dwHeight = height;
+  return CreateVSurfaceInternal(&SurfaceDescription, true);
+}
+
+struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) {
+  DDPIXELFORMAT PixelFormat;
+  memset(&PixelFormat, 0, sizeof(PixelFormat));
+  PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+
+  PixelFormat.dwFlags = DDPF_RGB | DDPF_PALETTEINDEXED8;
+  PixelFormat.dwRGBBitCount = 8;
+
+  DDSURFACEDESC SurfaceDescription;
+  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
+  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
+  SurfaceDescription.dwWidth = width;
+  SurfaceDescription.dwHeight = height;
+  SurfaceDescription.ddpfPixelFormat = PixelFormat;
+
+  return CreateVSurfaceInternal(&SurfaceDescription, false);
+}
+
+struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
+  DDPIXELFORMAT PixelFormat;
+  memset(&PixelFormat, 0, sizeof(PixelFormat));
+  PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+
+  PixelFormat.dwFlags = DDPF_RGB;
+  PixelFormat.dwRGBBitCount = 16;
+
+  uint32_t uiRBitMask;
+  uint32_t uiGBitMask;
+  uint32_t uiBBitMask;
+  JVideo_GetRGBDistributionMasks(&uiRBitMask, &uiGBitMask, &uiBBitMask);
+  PixelFormat.dwRBitMask = uiRBitMask;
+  PixelFormat.dwGBitMask = uiGBitMask;
+  PixelFormat.dwBBitMask = uiBBitMask;
+
+  DDSURFACEDESC SurfaceDescription;
+  memset(&SurfaceDescription, 0, sizeof(DDSURFACEDESC));
+  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
+  SurfaceDescription.dwWidth = width;
+  SurfaceDescription.dwHeight = height;
+  SurfaceDescription.ddpfPixelFormat = PixelFormat;
+
+  return CreateVSurfaceInternal(&SurfaceDescription, false);
+}
+
+void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {
+  if (vs->_platformPalette == NULL) {
+    IDirectDraw2_CreatePalette(s_state.gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
+                               (LPPALETTEENTRY)(&pal[0]),
+                               (LPDIRECTDRAWPALETTE *)&vs->_platformPalette, NULL);
+  } else {
+    IDirectDrawPalette_SetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,
+                                  (PALETTEENTRY *)pal);
+  }
+}
+
+bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) {
+  HRESULT ReturnCode;
+  struct JPaletteEntry gSgpPalette[256];
+
+  // If we are in 256 colors, then we have to initialize the palette system to 0 (faded out)
+  memcpy(gSgpPalette, pPalette, sizeof(struct JPaletteEntry) * 256);
+
+  LPDIRECTDRAWPALETTE gpDirectDrawPalette;
+  ReturnCode =
+      IDirectDraw_CreatePalette(s_state.gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
+                                (LPPALETTEENTRY)(&gSgpPalette[0]), &gpDirectDrawPalette, NULL);
+  if (ReturnCode != DD_OK) {
+    return false;
+  }
+  // Apply the palette to the surfaces
+  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
+                                             gpDirectDrawPalette);
+  if (ReturnCode != DD_OK) {
+    return false;
+  }
+
+  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2,
+                                             gpDirectDrawPalette);
+  if (ReturnCode != DD_OK) {
+    return false;
+  }
+
+  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsFB->_platformData2,
+                                             gpDirectDrawPalette);
+  if (ReturnCode != DD_OK) {
+    return false;
+  }
+
+  return (TRUE);
 }
