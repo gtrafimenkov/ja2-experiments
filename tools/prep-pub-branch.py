@@ -8,7 +8,7 @@ import subprocess
 import sys
 import re
 
-REBASE_POINT = "origin/dev"
+REBASE_POINT = "origin/main"
 
 
 def remove_numeric_suffix(text):
@@ -48,8 +48,10 @@ def main():
 
     current_branch_wo_suffix = remove_numeric_suffix(current_branch)
 
-    # Get list of commits between origin/dev and current branch
-    commits = run_command(f"git log --reverse --format=%H origin/dev..{current_branch}")
+    # Get list of commits between REBASE_POINT and current branch
+    commits = run_command(
+        f"git log --reverse --format=%H {REBASE_POINT}..{current_branch}"
+    )
     commit_list = commits.splitlines()
 
     # Define the new branch name
@@ -60,7 +62,7 @@ def main():
     if pub_branch in [b.strip() for b in existing_branches]:
         run_command(f"git branch -D {pub_branch}")
 
-    # Create new pub- branch from origin/dev
+    # Create new pub- branch from REBASE_POINT
     run_command(f"git checkout -b {pub_branch} {REBASE_POINT}")
 
     # Apply commits
