@@ -59,7 +59,7 @@ void SetRGBFontBackground(uint32_t uiRed, uint32_t uiGreen, uint32_t uiBlue);
 void SetRGBFontShadow(uint32_t uiRed, uint32_t uiGreen, uint32_t uiBlue);
 
 BOOLEAN ResetFontObjectPalette(int32_t iFont);
-uint16_t *SetFontObjectPalette8BPP(int32_t iFont, struct SGPPaletteEntry *pPal8);
+uint16_t *SetFontObjectPalette8BPP(int32_t iFont, struct JPaletteEntry *pPal8);
 uint16_t *SetFontObjectPalette16BPP(int32_t iFont, uint16_t *pPal16);
 uint16_t *GetFontObjectPalette16BPP(int32_t iFont);
 

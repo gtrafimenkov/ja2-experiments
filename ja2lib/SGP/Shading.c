@@ -13,6 +13,7 @@
 #include "SGP/VObjectBlitters.h"
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
+#include "jplatform_video.h"
 
 // since some of the code is not complied on Linux
 #ifdef __GCC
@@ -21,15 +22,15 @@
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
-BOOLEAN ShadesCalculateTables(struct SGPPaletteEntry *p8BPPPalette);
-BOOLEAN ShadesCalculatePalette(struct SGPPaletteEntry *pSrcPalette,
-                               struct SGPPaletteEntry *pDestPalette, uint16_t usRed,
-                               uint16_t usGreen, uint16_t usBlue, BOOLEAN fMono);
-void FindIndecies(struct SGPPaletteEntry *pSrcPalette, struct SGPPaletteEntry *pMapPalette,
+BOOLEAN ShadesCalculateTables(struct JPaletteEntry *p8BPPPalette);
+BOOLEAN ShadesCalculatePalette(struct JPaletteEntry *pSrcPalette,
+                               struct JPaletteEntry *pDestPalette, uint16_t usRed, uint16_t usGreen,
+                               uint16_t usBlue, BOOLEAN fMono);
+void FindIndecies(struct JPaletteEntry *pSrcPalette, struct JPaletteEntry *pMapPalette,
                   uint8_t *pTable);
 void FindMaskIndecies(uint8_t *, uint8_t *, uint8_t *);
 
-struct SGPPaletteEntry Shaded8BPPPalettes[HVOBJECT_SHADE_TABLES + 3][256];
+struct JPaletteEntry Shaded8BPPPalettes[HVOBJECT_SHADE_TABLES + 3][256];
 uint8_t ubColorTables[HVOBJECT_SHADE_TABLES + 3][256];
 
 uint16_t IntensityTable[65536];
@@ -38,7 +39,7 @@ uint16_t White16BPPPalette[256];
 float guiShadePercent = (float)0.48;
 float guiBrightPercent = (float)1.1;
 
-BOOLEAN ShadesCalculateTables(struct SGPPaletteEntry *p8BPPPalette) {
+BOOLEAN ShadesCalculateTables(struct JPaletteEntry *p8BPPPalette) {
   uint32_t uiCount;
 
   // Green palette
@@ -82,9 +83,9 @@ BOOLEAN ShadesCalculateTables(struct SGPPaletteEntry *p8BPPPalette) {
   return (TRUE);
 }
 
-BOOLEAN ShadesCalculatePalette(struct SGPPaletteEntry *pSrcPalette,
-                               struct SGPPaletteEntry *pDestPalette, uint16_t usRed,
-                               uint16_t usGreen, uint16_t usBlue, BOOLEAN fMono) {
+BOOLEAN ShadesCalculatePalette(struct JPaletteEntry *pSrcPalette,
+                               struct JPaletteEntry *pDestPalette, uint16_t usRed, uint16_t usGreen,
+                               uint16_t usBlue, BOOLEAN fMono) {
   uint32_t cnt, lumin;
   uint32_t rmod, gmod, bmod;
 
@@ -93,26 +94,26 @@ BOOLEAN ShadesCalculatePalette(struct SGPPaletteEntry *pSrcPalette,
 
   for (cnt = 0; cnt < 256; cnt++) {
     if (fMono) {
-      lumin = (pSrcPalette[cnt].peRed * 299 / 1000) + (pSrcPalette[cnt].peGreen * 587 / 1000) +
-              (pSrcPalette[cnt].peBlue * 114 / 1000);
+      lumin = (pSrcPalette[cnt].red * 299 / 1000) + (pSrcPalette[cnt].green * 587 / 1000) +
+              (pSrcPalette[cnt].blue * 114 / 1000);
       rmod = usRed * lumin / 255;
       gmod = usGreen * lumin / 255;
       bmod = usBlue * lumin / 255;
     } else {
-      rmod = (usRed * pSrcPalette[cnt].peRed / 255);
-      gmod = (usGreen * pSrcPalette[cnt].peGreen / 255);
-      bmod = (usBlue * pSrcPalette[cnt].peBlue / 255);
+      rmod = (usRed * pSrcPalette[cnt].red / 255);
+      gmod = (usGreen * pSrcPalette[cnt].green / 255);
+      bmod = (usBlue * pSrcPalette[cnt].blue / 255);
     }
 
-    pDestPalette[cnt].peRed = (uint8_t)min(rmod, 255);
-    pDestPalette[cnt].peGreen = (uint8_t)min(gmod, 255);
-    pDestPalette[cnt].peBlue = (uint8_t)min(bmod, 255);
+    pDestPalette[cnt].red = (uint8_t)min(rmod, 255);
+    pDestPalette[cnt].green = (uint8_t)min(gmod, 255);
+    pDestPalette[cnt].blue = (uint8_t)min(bmod, 255);
   }
 
   return (TRUE);
 }
 
-void FindIndecies(struct SGPPaletteEntry *pSrcPalette, struct SGPPaletteEntry *pMapPalette,
+void FindIndecies(struct JPaletteEntry *pSrcPalette, struct JPaletteEntry *pMapPalette,
                   uint8_t *pTable) {
   uint16_t usCurIndex, usCurDelta, usCurCount;
   uint32_t *pSavedPtr;
@@ -280,24 +281,24 @@ void SetShadeTablePercent(float uiShadePercent) {
 }
 
 void Init8BitTables(void) {
-  struct SGPPaletteEntry Pal[256];
+  struct JPaletteEntry Pal[256];
   uint32_t uiCount;
 
   // calculate a grey-scale table for the default palette
   for (uiCount = 0; uiCount < 256; uiCount++) {
-    Pal[uiCount].peRed = (uint8_t)(uiCount % 128) + 128;
-    Pal[uiCount].peGreen = (uint8_t)(uiCount % 128) + 128;
-    Pal[uiCount].peBlue = (uint8_t)(uiCount % 128) + 128;
+    Pal[uiCount].red = (uint8_t)(uiCount % 128) + 128;
+    Pal[uiCount].green = (uint8_t)(uiCount % 128) + 128;
+    Pal[uiCount].blue = (uint8_t)(uiCount % 128) + 128;
   }
 
-  Pal[0].peRed = 0;
-  Pal[0].peGreen = 0;
-  Pal[0].peBlue = 0;
+  Pal[0].red = 0;
+  Pal[0].green = 0;
+  Pal[0].blue = 0;
 
   Set8BPPPalette(Shaded8BPPPalettes[4]);
 }
 
-BOOLEAN Set8BitModePalette(struct SGPPaletteEntry *pPal) {
+BOOLEAN Set8BitModePalette(struct JPaletteEntry *pPal) {
   ShadesCalculateTables(pPal);
   Set8BPPPalette(pPal);
   return (TRUE);

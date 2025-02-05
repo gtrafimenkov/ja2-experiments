@@ -45,7 +45,7 @@ static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2
     vs->_platformPalette = pDDPalette;
 
     // Create 16-BPP Palette
-    struct SGPPaletteEntry SGPPalette[256];
+    struct JPaletteEntry SGPPalette[256];
     GetVSurfacePaletteEntries(vs, SGPPalette);
     vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
   }
@@ -1481,12 +1481,12 @@ void EndFrameBufferRender(void) { guiFrameBufferState = BUFFER_DIRTY; }
 
 void PrintScreen(void) { gfPrintFrameBuffer = TRUE; }
 
-BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) {
+BOOLEAN Set8BPPPalette(struct JPaletteEntry *pPalette) {
   HRESULT ReturnCode;
-  struct SGPPaletteEntry gSgpPalette[256];
+  struct JPaletteEntry gSgpPalette[256];
 
   // If we are in 256 colors, then we have to initialize the palette system to 0 (faded out)
-  memcpy(gSgpPalette, pPalette, sizeof(struct SGPPaletteEntry) * 256);
+  memcpy(gSgpPalette, pPalette, sizeof(struct JPaletteEntry) * 256);
 
   LPDIRECTDRAWPALETTE gpDirectDrawPalette;
   ReturnCode =
@@ -1913,7 +1913,7 @@ void UnlockVSurface(struct VSurface *vs) {
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette
-BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette) {
+BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct JPaletteEntry *pSrcPalette) {
   Assert(hVSurface != NULL);
 
   // Create palette object if not already done so
@@ -1964,7 +1964,7 @@ void SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) 
                                   &ColorKey);
 }
 
-BOOLEAN GetVSurfacePaletteEntries(struct VSurface *vs, struct SGPPaletteEntry *pPalette) {
+BOOLEAN GetVSurfacePaletteEntries(struct VSurface *vs, struct JPaletteEntry *pPalette) {
   CHECKF(vs->_platformPalette != NULL);
   Assert(pPalette != NULL);
   IDirectDrawPalette_GetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,

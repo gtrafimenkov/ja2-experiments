@@ -38,14 +38,6 @@
 #define IMAGE_ALLIMAGEDATA 0x000C
 #define IMAGE_ALLDATA 0x001C
 
-// Palette structure, mimics that of Win32
-struct SGPPaletteEntry {
-  uint8_t peRed;
-  uint8_t peGreen;
-  uint8_t peBlue;
-  uint8_t peFlags;
-};
-
 #define AUX_FULL_TILE 0x01
 #define AUX_ANIMATED_TILE 0x02
 #define AUX_DYNAMIC_TILE 0x04
@@ -95,7 +87,7 @@ typedef struct {
   uint16_t fFlags;
   SGPFILENAME ImageFile;
   uint32_t iFileLoader;
-  struct SGPPaletteEntry *pPalette;
+  struct JPaletteEntry *pPalette;
   uint16_t *pui16BPPPalette;
   uint8_t *pAppData;
   uint32_t uiAppDataSize;
@@ -167,13 +159,13 @@ BOOLEAN GetETRLEImageData(HIMAGE hImage, ETRLEData *pBuffer);
 // UTILITY FUNCTIONS
 
 // Used to create a 16BPP Palette from an 8 bit palette, found in himage.c
-uint16_t *Create16BPPPaletteShaded(struct SGPPaletteEntry *pPalette, uint32_t rscale,
-                                   uint32_t gscale, uint32_t bscale, BOOLEAN mono);
-uint16_t *Create16BPPPalette(struct SGPPaletteEntry *pPalette);
+uint16_t *Create16BPPPaletteShaded(struct JPaletteEntry *pPalette, uint32_t rscale, uint32_t gscale,
+                                   uint32_t bscale, BOOLEAN mono);
+uint16_t *Create16BPPPalette(struct JPaletteEntry *pPalette);
 uint16_t Get16BPPColor(uint32_t RGBValue);
 uint32_t GetRGBColor(uint16_t Value16BPP);
-struct SGPPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd,
-                                                 uint8_t *pOldPalette);
+struct JPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd,
+                                               uint8_t *pOldPalette);
 
 // used to convert 565 RGB data into different bit-formats
 void ConvertRGBDistribution565To555(uint16_t *p16BPPData, uint32_t uiNumberOfPixels);

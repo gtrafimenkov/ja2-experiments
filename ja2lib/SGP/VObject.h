@@ -61,10 +61,10 @@ typedef struct {
 // This structure is a video object.
 // The video object contains different data based on it's type, compressed or not
 struct VObject {
-  uint32_t fFlags;                        // Special flags
-  uint32_t uiSizePixData;                 // ETRLE data size
-  struct SGPPaletteEntry *pPaletteEntry;  // 8BPP Palette
-  uint16_t *p16BPPPalette;                // A 16BPP palette used for 8->16 blits
+  uint32_t fFlags;                      // Special flags
+  uint32_t uiSizePixData;               // ETRLE data size
+  struct JPaletteEntry *pPaletteEntry;  // 8BPP Palette
+  uint16_t *p16BPPPalette;              // A 16BPP palette used for 8->16 blits
 
   void *pPixData;             // ETRLE pixel data
   ETRLEObject *pETRLEObject;  // Object offset data etc
@@ -125,7 +125,7 @@ struct VObject *CreateVObjectFromMLGFile(uint16_t usMLGGraphicID);
 struct VObject *CreateVObjectFromHImage(HIMAGE hImage);
 
 // Sets struct VObject* palette, creates if nessessary. Also sets 16BPP palette
-BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct SGPPaletteEntry *pSrcPalette);
+BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct JPaletteEntry *pSrcPalette);
 
 // Deletes all data
 BOOLEAN DeleteVideoObject(struct VObject *hVObject);
@@ -182,7 +182,7 @@ BOOLEAN GetVideoObjectETRLEPropertiesFromIndex(uint32_t uiVideoObject, ETRLEObje
 BOOLEAN GetVideoObjectETRLESubregionProperties(uint32_t uiVideoObject, uint16_t usIndex,
                                                uint16_t *pusWidth, uint16_t *pusHeight);
 
-BOOLEAN SetVideoObjectPalette8BPP(int32_t uiVideoObject, struct SGPPaletteEntry *pPal8);
+BOOLEAN SetVideoObjectPalette8BPP(int32_t uiVideoObject, struct JPaletteEntry *pPal8);
 BOOLEAN SetVideoObjectPalette16BPP(int32_t uiVideoObject, uint16_t *pPal16);
 BOOLEAN GetVideoObjectPalette16BPP(int32_t uiVideoObject, uint16_t **ppPal16);
 BOOLEAN CopyVideoObjectPalette16BPP(int32_t uiVideoObject, uint16_t *ppPal16);

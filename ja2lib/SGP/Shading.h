@@ -9,16 +9,16 @@
 
 struct VSurface;
 
-BOOLEAN ShadesCalculateTables(struct SGPPaletteEntry *p8BPPPalette);
+BOOLEAN ShadesCalculateTables(struct JPaletteEntry *p8BPPPalette);
 
 void BuildShadeTable(void);
 void BuildIntensityTable(void);
 void SetShadeTablePercent(float uiShadePercent);
 
 void Init8BitTables(void);
-BOOLEAN Set8BitModePalette(struct SGPPaletteEntry *pPal);
+BOOLEAN Set8BitModePalette(struct JPaletteEntry *pPal);
 
-extern struct SGPPaletteEntry Shaded8BPPPalettes[HVOBJECT_SHADE_TABLES + 3][256];
+extern struct JPaletteEntry Shaded8BPPPalettes[HVOBJECT_SHADE_TABLES + 3][256];
 extern uint8_t ubColorTables[HVOBJECT_SHADE_TABLES + 3][256];
 
 extern uint16_t IntensityTable[65536];

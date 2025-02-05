@@ -200,7 +200,7 @@ int32_t InternalInitFace(uint8_t usMercProfileID, uint8_t ubSoldierID, uint32_t 
   ETRLEObject ETRLEObject;
   struct VObject *hVObject;
   uint32_t uiCount;
-  struct SGPPaletteEntry Pal[256];
+  struct JPaletteEntry Pal[256];
 
   if ((iFaceIndex = GetFreeFace()) == (-1)) return (-1);
 
@@ -287,9 +287,9 @@ int32_t InternalInitFace(uint8_t usMercProfileID, uint8_t ubSoldierID, uint32_t 
   if (GetVideoObject(&hVObject, uiVideoObject)) {
     // Build a grayscale palette! ( for testing different looks )
     for (uiCount = 0; uiCount < 256; uiCount++) {
-      Pal[uiCount].peRed = 255;
-      Pal[uiCount].peGreen = 255;
-      Pal[uiCount].peBlue = 255;
+      Pal[uiCount].red = 255;
+      Pal[uiCount].green = 255;
+      Pal[uiCount].blue = 255;
     }
 
     hVObject->pShades[FLASH_PORTRAIT_NOSHADE] =
@@ -304,9 +304,9 @@ int32_t InternalInitFace(uint8_t usMercProfileID, uint8_t ubSoldierID, uint32_t 
         Create16BPPPaletteShaded(hVObject->pPaletteEntry, 100, 100, 100, FALSE);
 
     for (uiCount = 0; uiCount < 256; uiCount++) {
-      Pal[uiCount].peRed = (uint8_t)(uiCount % 128) + 128;
-      Pal[uiCount].peGreen = (uint8_t)(uiCount % 128) + 128;
-      Pal[uiCount].peBlue = (uint8_t)(uiCount % 128) + 128;
+      Pal[uiCount].red = (uint8_t)(uiCount % 128) + 128;
+      Pal[uiCount].green = (uint8_t)(uiCount % 128) + 128;
+      Pal[uiCount].blue = (uint8_t)(uiCount % 128) + 128;
     }
     hVObject->pShades[FLASH_PORTRAIT_GRAYSHADE] =
         Create16BPPPaletteShaded(Pal, 255, 255, 255, FALSE);

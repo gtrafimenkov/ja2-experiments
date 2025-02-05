@@ -9,7 +9,7 @@
 
 #include "SGP/Types.h"
 
-struct SGPPaletteEntry;
+struct JPaletteEntry;
 struct VSurface;
 
 #define VIDEO_NO_CURSOR 0xFFFF
@@ -39,7 +39,7 @@ extern BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint
                                         uint16_t usCursorWidth);
 void DirtyCursor();
 
-BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette);
+BOOLEAN Set8BPPPalette(struct JPaletteEntry *pPalette);
 
 void VideoCaptureToggle(void);
 

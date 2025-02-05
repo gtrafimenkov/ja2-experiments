@@ -13,6 +13,7 @@
 #include "SGP/PCX.h"
 #include "SGP/Types.h"
 #include "SGP/WCheck.h"
+#include "jplatform_video.h"
 
 // CONVERT_TO_16_BIT
 BOOLEAN ConvertToETRLE(uint8_t **ppDest, uint32_t *puiDestLen, uint8_t **ppSubImageBuffer,
@@ -93,7 +94,7 @@ void ConvertRGBDistribution555To565(uint16_t *p16BPPData, uint32_t uiNumberOfPix
   }
 }
 
-void WriteSTIFile(uint8_t *pData, struct SGPPaletteEntry *pPalette, int16_t sWidth, int16_t sHeight,
+void WriteSTIFile(uint8_t *pData, struct JPaletteEntry *pPalette, int16_t sWidth, int16_t sHeight,
                   char *cOutputName, uint32_t fFlags, uint32_t uiAppDataSize) {
   FILE *pOutput;
 
@@ -105,7 +106,7 @@ void WriteSTIFile(uint8_t *pData, struct SGPPaletteEntry *pPalette, int16_t sWid
   uint32_t uiLoop;
   image_type Image;
 
-  struct SGPPaletteEntry *pSGPPaletteEntry;
+  struct JPaletteEntry *pSGPPaletteEntry;
   STCIPaletteElement STCIPaletteEntry;
 
   STCISubImage *pSubImageBuffer;
@@ -166,9 +167,9 @@ void WriteSTIFile(uint8_t *pData, struct SGPPaletteEntry *pPalette, int16_t sWid
       // have to convert palette to STCI format!
       pSGPPaletteEntry = pPalette;
       for (uiLoop = 0; uiLoop < 256; uiLoop++) {
-        STCIPaletteEntry.ubRed = pSGPPaletteEntry[uiLoop].peRed;
-        STCIPaletteEntry.ubGreen = pSGPPaletteEntry[uiLoop].peGreen;
-        STCIPaletteEntry.ubBlue = pSGPPaletteEntry[uiLoop].peBlue;
+        STCIPaletteEntry.ubRed = pSGPPaletteEntry[uiLoop].red;
+        STCIPaletteEntry.ubGreen = pSGPPaletteEntry[uiLoop].green;
+        STCIPaletteEntry.ubBlue = pSGPPaletteEntry[uiLoop].blue;
         fwrite(&STCIPaletteEntry, STCI_PALETTE_ELEMENT_SIZE, 1, pOutput);
       }
     }

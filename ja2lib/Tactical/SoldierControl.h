@@ -479,7 +479,7 @@ struct SOLDIERTYPE {
   uint16_t usFrontArcFullTileList[MAX_FULLTILE_DIRECTIONS];
   int16_t usFrontArcFullTileGridNos[MAX_FULLTILE_DIRECTIONS];
 
-  struct SGPPaletteEntry *p8BPPPalette;  // 4
+  struct JPaletteEntry *p8BPPPalette;  // 4
   uint16_t *p16BPPPalette;
   uint16_t *pShades[NUM_SOLDIER_SHADES];  // Shading tables
   uint16_t *pGlowShades[20];              //
@@ -1012,7 +1012,7 @@ void ReviveSoldier(struct SOLDIERTYPE *pSoldier);
 // Palette functions for soldiers
 BOOLEAN CreateSoldierPalettes(struct SOLDIERTYPE *pSoldier);
 BOOLEAN GetPaletteRepIndexFromID(PaletteRepID aPalRep, uint8_t *pubPalIndex);
-BOOLEAN SetPaletteReplacement(struct SGPPaletteEntry *p8BPPPalette, PaletteRepID aPalRep);
+BOOLEAN SetPaletteReplacement(struct JPaletteEntry *p8BPPPalette, PaletteRepID aPalRep);
 BOOLEAN LoadPaletteData();
 BOOLEAN DeletePaletteData();
 

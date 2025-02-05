@@ -22,7 +22,7 @@
 
 void FilenameForBPP(char* pFilename, char* pDestination) { strcpy(pDestination, pFilename); }
 
-BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry* pPalette, SGPFILENAME ColFile) {
+BOOLEAN CreateSGPPaletteFromCOLFile(struct JPaletteEntry* pPalette, SGPFILENAME ColFile) {
   HWFILE hFileHandle;
   uint8_t bColHeader[8];
   uint32_t cnt;
@@ -46,9 +46,9 @@ BOOLEAN CreateSGPPaletteFromCOLFile(struct SGPPaletteEntry* pPalette, SGPFILENAM
 
   // Read in a palette entry at a time
   for (cnt = 0; cnt < 256; cnt++) {
-    FileMan_Read(hFileHandle, &pPalette[cnt].peRed, sizeof(uint8_t), NULL);
-    FileMan_Read(hFileHandle, &pPalette[cnt].peGreen, sizeof(uint8_t), NULL);
-    FileMan_Read(hFileHandle, &pPalette[cnt].peBlue, sizeof(uint8_t), NULL);
+    FileMan_Read(hFileHandle, &pPalette[cnt].red, sizeof(uint8_t), NULL);
+    FileMan_Read(hFileHandle, &pPalette[cnt].green, sizeof(uint8_t), NULL);
+    FileMan_Read(hFileHandle, &pPalette[cnt].blue, sizeof(uint8_t), NULL);
   }
 
   // Close file

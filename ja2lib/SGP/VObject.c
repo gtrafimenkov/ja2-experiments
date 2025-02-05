@@ -350,23 +350,22 @@ struct VObject *CreateVObjectFromFile(const char *filename) {
 }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette
-BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct SGPPaletteEntry *pSrcPalette) {
+BOOLEAN SetVideoObjectPalette(struct VObject *hVObject, struct JPaletteEntry *pSrcPalette) {
   Assert(hVObject != NULL);
   Assert(pSrcPalette != NULL);
 
   // Create palette object if not already done so
   if (hVObject->pPaletteEntry == NULL) {
     // Create palette
-    hVObject->pPaletteEntry =
-        (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
+    hVObject->pPaletteEntry = (struct JPaletteEntry *)MemAlloc(sizeof(struct JPaletteEntry) * 256);
     CHECKF(hVObject->pPaletteEntry != NULL);
 
     // Copy src into palette
-    memcpy(hVObject->pPaletteEntry, pSrcPalette, sizeof(struct SGPPaletteEntry) * 256);
+    memcpy(hVObject->pPaletteEntry, pSrcPalette, sizeof(struct JPaletteEntry) * 256);
 
   } else {
     // Just Change entries
-    memcpy(hVObject->pPaletteEntry, pSrcPalette, sizeof(struct SGPPaletteEntry) * 256);
+    memcpy(hVObject->pPaletteEntry, pSrcPalette, sizeof(struct JPaletteEntry) * 256);
   }
 
   // Delete 16BPP Palette if one exists
@@ -716,7 +715,7 @@ BOOLEAN GetVideoObjectETRLEPropertiesFromIndex(uint32_t uiVideoObject, ETRLEObje
   return (TRUE);
 }
 
-BOOLEAN SetVideoObjectPalette8BPP(int32_t uiVideoObject, struct SGPPaletteEntry *pPal8) {
+BOOLEAN SetVideoObjectPalette8BPP(int32_t uiVideoObject, struct JPaletteEntry *pPal8) {
   struct VObject *hVObject;
 
 // Get video object

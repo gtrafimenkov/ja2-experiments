@@ -239,9 +239,9 @@ uint8_t CalcScreamVolume(struct SOLDIERTYPE *pSoldier, uint8_t ubCombinedLoss);
 void PlaySoldierFootstepSound(struct SOLDIERTYPE *pSoldier);
 void HandleSystemNewAISituation(struct SOLDIERTYPE *pSoldier, BOOLEAN fResetABC);
 
-uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t rscale,
+uint16_t *CreateEnemyGlow16BPPPalette(struct JPaletteEntry *pPalette, uint32_t rscale,
                                       uint32_t gscale, BOOLEAN fAdjustGreen);
-uint16_t *CreateEnemyGreyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t rscale,
+uint16_t *CreateEnemyGreyGlow16BPPPalette(struct JPaletteEntry *pPalette, uint32_t rscale,
                                           uint32_t gscale, BOOLEAN fAdjustGreen);
 
 void SoldierBleed(struct SOLDIERTYPE *pSoldier, BOOLEAN fBandagedBleed);
@@ -3950,7 +3950,9 @@ void EVENT_SetSoldierDirection(struct SOLDIERTYPE *pSoldier, uint16_t usNewDirec
 
   // Update structure info!
   //	 if ( pSoldier->uiStatusFlags & SOLDIER_MULTITILE )
-  { UpdateMercStructureInfo(pSoldier); }
+  {
+    UpdateMercStructureInfo(pSoldier);
+  }
 
   // Handle Profile data for hit locations
   HandleAnimationProfile(pSoldier, pSoldier->usAnimState, TRUE);
@@ -4563,7 +4565,7 @@ BOOLEAN CreateSoldierPalettes(struct SOLDIERTYPE *pSoldier) {
   int32_t iWhich;
   int32_t cnt;
   int8_t bBodyTypePalette;
-  struct SGPPaletteEntry Temp8BPPPalette[256];
+  struct JPaletteEntry Temp8BPPPalette[256];
 
   // NT32 uiCount;
   // PPaletteEntry Pal[256];
@@ -4574,8 +4576,8 @@ BOOLEAN CreateSoldierPalettes(struct SOLDIERTYPE *pSoldier) {
   }
 
   // Allocate mem for new palette
-  pSoldier->p8BPPPalette = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
-  memset(pSoldier->p8BPPPalette, 0, sizeof(struct SGPPaletteEntry) * 256);
+  pSoldier->p8BPPPalette = (struct JPaletteEntry *)MemAlloc(sizeof(struct JPaletteEntry) * 256);
+  memset(pSoldier->p8BPPPalette, 0, sizeof(struct JPaletteEntry) * 256);
 
   CHECKF(pSoldier->p8BPPPalette != NULL);
 
@@ -4593,7 +4595,7 @@ BOOLEAN CreateSoldierPalettes(struct SOLDIERTYPE *pSoldier) {
       // Use palette from struct VObject*, then use substitution for pants, etc
       memcpy(pSoldier->p8BPPPalette,
              gAnimSurfaceDatabase[usPaletteAnimSurface].hVideoObject->pPaletteEntry,
-             sizeof(struct SGPPaletteEntry) * 256);
+             sizeof(struct JPaletteEntry) * 256);
 
       // Substitute based on head, etc
       SetPaletteReplacement(pSoldier->p8BPPPalette, pSoldier->HeadPal);
@@ -4604,17 +4606,17 @@ BOOLEAN CreateSoldierPalettes(struct SOLDIERTYPE *pSoldier) {
   } else if (bBodyTypePalette == 0) {
     // Use palette from hvobject
     memcpy(pSoldier->p8BPPPalette, gAnimSurfaceDatabase[usAnimSurface].hVideoObject->pPaletteEntry,
-           sizeof(struct SGPPaletteEntry) * 256);
+           sizeof(struct JPaletteEntry) * 256);
   } else {
     // Use col file
     if (CreateSGPPaletteFromCOLFile(Temp8BPPPalette, zColFilename)) {
       // Copy into palette
-      memcpy(pSoldier->p8BPPPalette, Temp8BPPPalette, sizeof(struct SGPPaletteEntry) * 256);
+      memcpy(pSoldier->p8BPPPalette, Temp8BPPPalette, sizeof(struct JPaletteEntry) * 256);
     } else {
       // Use palette from hvobject
       memcpy(pSoldier->p8BPPPalette,
              gAnimSurfaceDatabase[usAnimSurface].hVideoObject->pPaletteEntry,
-             sizeof(struct SGPPaletteEntry) * 256);
+             sizeof(struct JPaletteEntry) * 256);
     }
   }
 
@@ -4652,9 +4654,9 @@ BOOLEAN CreateSoldierPalettes(struct SOLDIERTYPE *pSoldier) {
   // Build a grayscale palette for testing grayout of mercs
   // for(uiCount=0; uiCount < 256; uiCount++)
   //{
-  //	Pal[uiCount].peRed=(uint8_t)(uiCount%128)+128;
-  //	Pal[uiCount].peGreen=(uint8_t)(uiCount%128)+128;
-  //	Pal[uiCount].peBlue=(uint8_t)(uiCount%128)+128;
+  //	Pal[uiCount].red=(uint8_t)(uiCount%128)+128;
+  //	Pal[uiCount].green=(uint8_t)(uiCount%128)+128;
+  //	Pal[uiCount].blue=(uint8_t)(uiCount%128)+128;
   //}
   pSoldier->pEffectShades[0] =
       Create16BPPPaletteShaded(pSoldier->p8BPPPalette, 100, 100, 100, TRUE);
@@ -4956,7 +4958,7 @@ BOOLEAN LoadPaletteData() {
   return (TRUE);
 }
 
-BOOLEAN SetPaletteReplacement(struct SGPPaletteEntry *p8BPPPalette, PaletteRepID aPalRep) {
+BOOLEAN SetPaletteReplacement(struct JPaletteEntry *p8BPPPalette, PaletteRepID aPalRep) {
   uint32_t cnt2;
   uint8_t ubType;
   uint8_t ubPalIndex;
@@ -4968,9 +4970,9 @@ BOOLEAN SetPaletteReplacement(struct SGPPaletteEntry *p8BPPPalette, PaletteRepID
 
   for (cnt2 = gpPaletteSubRanges[ubType].ubStart; cnt2 <= gpPaletteSubRanges[ubType].ubEnd;
        cnt2++) {
-    p8BPPPalette[cnt2].peRed = gpPalRep[ubPalIndex].r[cnt2 - gpPaletteSubRanges[ubType].ubStart];
-    p8BPPPalette[cnt2].peGreen = gpPalRep[ubPalIndex].g[cnt2 - gpPaletteSubRanges[ubType].ubStart];
-    p8BPPPalette[cnt2].peBlue = gpPalRep[ubPalIndex].b[cnt2 - gpPaletteSubRanges[ubType].ubStart];
+    p8BPPPalette[cnt2].red = gpPalRep[ubPalIndex].r[cnt2 - gpPaletteSubRanges[ubType].ubStart];
+    p8BPPPalette[cnt2].green = gpPalRep[ubPalIndex].g[cnt2 - gpPaletteSubRanges[ubType].ubStart];
+    p8BPPPalette[cnt2].blue = gpPalRep[ubPalIndex].b[cnt2 - gpPaletteSubRanges[ubType].ubStart];
   }
 
   return (TRUE);
@@ -5284,7 +5286,9 @@ void HandleTakeDamageDeath(struct SOLDIERTYPE *pSoldier, uint8_t bOldLife, uint8
         CheckForAndHandleSoldierDyingNotFromHit(pSoldier);
       }
 
-      { HandleSoldierTakeDamageFeedback(pSoldier); }
+      {
+        HandleSoldierTakeDamageFeedback(pSoldier);
+      }
 
       if ((IsMapScreen()) || !pSoldier->bInSector) {
         if (pSoldier->bLife == 0 && !(pSoldier->uiStatusFlags & SOLDIER_DEAD)) {
@@ -7678,7 +7682,7 @@ void ReLoadSoldierAnimationDueToHandItemChange(struct SOLDIERTYPE *pSoldier, uin
   }
 }
 
-uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t rscale,
+uint16_t *CreateEnemyGlow16BPPPalette(struct JPaletteEntry *pPalette, uint32_t rscale,
                                       uint32_t gscale, BOOLEAN fAdjustGreen) {
   uint16_t *p16BPPPalette, usColor;
   uint32_t cnt;
@@ -7690,13 +7694,13 @@ uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t
   p16BPPPalette = (uint16_t *)MemAlloc(sizeof(uint16_t) * 256);
 
   for (cnt = 0; cnt < 256; cnt++) {
-    gmod = (pPalette[cnt].peGreen);
-    bmod = (pPalette[cnt].peBlue);
+    gmod = (pPalette[cnt].green);
+    bmod = (pPalette[cnt].blue);
 
-    rmod = max(rscale, (pPalette[cnt].peRed));
+    rmod = max(rscale, (pPalette[cnt].red));
 
     if (fAdjustGreen) {
-      gmod = max(gscale, (pPalette[cnt].peGreen));
+      gmod = max(gscale, (pPalette[cnt].green));
     }
 
     r = (uint8_t)min(rmod, 255);
@@ -7712,7 +7716,7 @@ uint16_t *CreateEnemyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t
   return (p16BPPPalette);
 }
 
-uint16_t *CreateEnemyGreyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint32_t rscale,
+uint16_t *CreateEnemyGreyGlow16BPPPalette(struct JPaletteEntry *pPalette, uint32_t rscale,
                                           uint32_t gscale, BOOLEAN fAdjustGreen) {
   uint16_t *p16BPPPalette, usColor;
   uint32_t cnt, lumin;
@@ -7724,8 +7728,8 @@ uint16_t *CreateEnemyGreyGlow16BPPPalette(struct SGPPaletteEntry *pPalette, uint
   p16BPPPalette = (uint16_t *)MemAlloc(sizeof(uint16_t) * 256);
 
   for (cnt = 0; cnt < 256; cnt++) {
-    lumin = (pPalette[cnt].peRed * 299 / 1000) + (pPalette[cnt].peGreen * 587 / 1000) +
-            (pPalette[cnt].peBlue * 114 / 1000);
+    lumin = (pPalette[cnt].red * 299 / 1000) + (pPalette[cnt].green * 587 / 1000) +
+            (pPalette[cnt].blue * 114 / 1000);
     rmod = (100 * lumin) / 256;
     gmod = (100 * lumin) / 256;
     bmod = (100 * lumin) / 256;

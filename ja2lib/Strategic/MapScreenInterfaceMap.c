@@ -1398,7 +1398,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
 BOOLEAN InitializePalettesForMap(void) {
   // init palettes
-  struct SGPPaletteEntry pPalette[256];
+  struct JPaletteEntry pPalette[256];
 
   GetVSurfacePaletteEntries(vsBigMap, pPalette);
 
@@ -3596,7 +3596,9 @@ void DisplayDistancesForHelicopter(void) {
           }
           else
   */
-  { SetFontForeground(FONT_LTGREEN); }
+  {
+    SetFontForeground(FONT_LTGREEN);
+  }
 
   swprintf(sString, ARR_SIZE(sString), L"%d", sTotalOfTrip);
   FindFontRightCoordinates(MAP_HELICOPTER_ETA_POPUP_X + 5, MAP_HELICOPTER_ETA_POPUP_Y + 5,

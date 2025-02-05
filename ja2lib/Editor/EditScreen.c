@@ -268,7 +268,7 @@ uint32_t EditScreenShutdown(void) {
 BOOLEAN EditModeInit(void) {
   uint32_t x;
   int32_t i;
-  struct SGPPaletteEntry LColors[2];
+  struct JPaletteEntry LColors[2];
 
   DebugPrint("Entering editor mode...\n");
 

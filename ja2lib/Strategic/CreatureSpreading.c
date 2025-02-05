@@ -35,6 +35,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/Message.h"
 #include "Utils/MusicControl.h"
+#include "jplatform_video.h"
 
 #ifdef JA2BETAVERSION
 BOOLEAN gfClearCreatureQuest = FALSE;
@@ -1076,7 +1077,7 @@ void DetermineCreatureTownCompositionBasedOnTacticalInformation(uint8_t *pubNumC
 BOOLEAN PrepareCreaturesForBattle() {
   UNDERGROUND_SECTORINFO *pSector;
   int32_t i, iRandom;
-  struct SGPPaletteEntry LColors[3];
+  struct JPaletteEntry LColors[3];
   BOOLEAN fQueen;
   uint8_t ubLarvaePercentage;
   uint8_t ubInfantPercentage;
@@ -1101,7 +1102,7 @@ BOOLEAN PrepareCreaturesForBattle() {
     // By default, we only play creature music in the cave levels (the creature levels all
     // consistently have blue lights while human occupied mines have red lights.  We always play
     // creature music when creatures are in the level.
-    if (LColors->peBlue)
+    if (LColors->blue)
       gfUseCreatureMusic = TRUE;
     else
       gfUseCreatureMusic = FALSE;

@@ -70,6 +70,7 @@
 #include "Utils/FontControl.h"
 #include "Utils/MusicControl.h"
 #include "Utils/Utilities.h"
+#include "jplatform_video.h"
 #include "platform.h"
 
 #define SET_MOVEMENTCOST(a, b, c, d) \
@@ -421,13 +422,13 @@ void BuildTileShadeTables() {
     gfForceBuildShadeTables = FALSE;
   }
   // now, determine if we are using specialized colors.
-  if (gpLightColors[0].peRed || gpLightColors[0].peGreen ||
-      gpLightColors[0].peBlue) {  // we are, which basically means we force build the shadetables.
-                                  // However, the one
+  if (gpLightColors[0].red || gpLightColors[0].green ||
+      gpLightColors[0].blue) {  // we are, which basically means we force build the shadetables.
+                                // However, the one
     // exception is if we are loading another map and the colors are the same.
-    if (gpLightColors[0].peRed != ubLastRed || gpLightColors[0].peGreen != ubLastGreen ||
-        gpLightColors[0].peBlue != ubLastBlue) {  // Same tileset, but colors are different, so set
-                                                  // things up to regenerate the shadetables.
+    if (gpLightColors[0].red != ubLastRed || gpLightColors[0].green != ubLastGreen ||
+        gpLightColors[0].blue != ubLastBlue) {  // Same tileset, but colors are different, so set
+                                                // things up to regenerate the shadetables.
       gfForceBuildShadeTables = TRUE;
     } else {  // same colors, same tileset, so don't rebuild shadetables -- much faster!
       gfForceBuildShadeTables = FALSE;
@@ -469,9 +470,9 @@ void BuildTileShadeTables() {
   // Restore the data directory once we are finished.
   Plat_SetCurrentDirectory(DataDir);
 
-  ubLastRed = gpLightColors[0].peRed;
-  ubLastGreen = gpLightColors[0].peGreen;
-  ubLastBlue = gpLightColors[0].peBlue;
+  ubLastRed = gpLightColors[0].red;
+  ubLastGreen = gpLightColors[0].green;
+  ubLastBlue = gpLightColors[0].blue;
 
 #ifdef JA2TESTVERSION
   uiBuildShadeTableTime = GetJA2Clock() - uiStartTime;
@@ -2022,7 +2023,7 @@ BOOLEAN EvaluateWorld(char *pSector, uint8_t ubLevel) {
     // RenderProgressBar( 1, 92 );
     // skip number of light palette entries
     LOADDATA(&ubTemp, pBuffer, 1);
-    pBuffer += sizeof(struct SGPPaletteEntry) * ubTemp;
+    pBuffer += sizeof(struct JPaletteEntry) * ubTemp;
     // get number of lights
     LOADDATA(&pSummary->usNumLights, pBuffer, 2);
     // skip the light loading
@@ -3419,7 +3420,7 @@ void ReloadTileset(uint8_t ubID) {
 
 void SaveMapLights(HWFILE hfile) {
   struct SOLDIERTYPE *pSoldier;
-  struct SGPPaletteEntry LColors[3];
+  struct JPaletteEntry LColors[3];
   uint8_t ubNumColors;
   BOOLEAN fSoldierLight;
   uint16_t usNumLights = 0;
@@ -3431,7 +3432,7 @@ void SaveMapLights(HWFILE hfile) {
 
   // Save the current light colors!
   FileMan_Write(hfile, &ubNumColors, 1, &uiBytesWritten);
-  FileMan_Write(hfile, LColors, sizeof(struct SGPPaletteEntry) * ubNumColors, &uiBytesWritten);
+  FileMan_Write(hfile, LColors, sizeof(struct JPaletteEntry) * ubNumColors, &uiBytesWritten);
 
   // count number of non-merc lights.
   for (cnt = 0; cnt < MAX_LIGHT_SPRITES; cnt++) {
@@ -3471,7 +3472,7 @@ void SaveMapLights(HWFILE hfile) {
 }
 
 void LoadMapLights(int8_t **hBuffer) {
-  struct SGPPaletteEntry LColors[3];
+  struct JPaletteEntry LColors[3];
   uint8_t ubNumColors;
   uint16_t usNumLights;
   int32_t cnt;
@@ -3487,16 +3488,16 @@ void LoadMapLights(int8_t **hBuffer) {
 
   // read in the light colors!
   LOADDATA(&ubNumColors, *hBuffer, 1);
-  LOADDATA(LColors, *hBuffer, sizeof(struct SGPPaletteEntry) * ubNumColors);
+  LOADDATA(LColors, *hBuffer, sizeof(struct JPaletteEntry) * ubNumColors);
 
   LOADDATA(&usNumLights, *hBuffer, 2);
 
   ubNumColors = 1;
 
   // ATE: OK, only regenrate if colors are different.....
-  // if ( LColors[0].peRed != gpLightColors[0].peRed ||
-  //		 LColors[0].peGreen != gpLightColors[0].peGreen ||
-  //		 LColors[0].peBlue != gpLightColors[0].peBlue )
+  // if ( LColors[0].red != gpLightColors[0].red ||
+  //		 LColors[0].green != gpLightColors[0].green ||
+  //		 LColors[0].blue != gpLightColors[0].blue )
   {
     LightSetColors(LColors, ubNumColors);
   }

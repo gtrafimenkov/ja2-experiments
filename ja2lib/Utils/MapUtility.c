@@ -81,7 +81,7 @@ uint32_t MapUtilScreenHandle() {
 
   float dX, dY, dStartX, dStartY;
   int32_t iX, iY, iSubX1, iSubY1, iSubX2, iSubY2, iWindowX, iWindowY, iCount;
-  struct SGPPaletteEntry pPalette[256];
+  struct JPaletteEntry pPalette[256];
 
   sDest16BPPColor = -1;
   bAvR = bAvG = bAvB = 0;
@@ -251,7 +251,7 @@ uint32_t MapUtilScreenHandle() {
 
     for (cnt = 0; cnt < 256; cnt++) {
       usLineColor =
-          Get16BPPColor(FROMRGB(pPalette[cnt].peRed, pPalette[cnt].peGreen, pPalette[cnt].peBlue));
+          Get16BPPColor(FROMRGB(pPalette[cnt].red, pPalette[cnt].green, pPalette[cnt].blue));
       RectangleDraw(TRUE, sX, sY, sX, (int16_t)(sY + 10), usLineColor, (uint8_t *)pDestBuf);
       sX++;
       RectangleDraw(TRUE, sX, sY, sX, (int16_t)(sY + 10), usLineColor, (uint8_t *)pDestBuf);

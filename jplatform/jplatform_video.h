@@ -32,6 +32,13 @@ struct JRect {
 // #define RGB565_GREEN_MASK 0x07E0
 // #define RGB565_BLUE_MASK 0x001F
 
+struct JPaletteEntry {
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+  uint8_t _unused;
+};
+
 // #ifdef __cplusplus
 // extern "C" {
 // #endif  // __cplusplus

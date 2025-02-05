@@ -47,6 +47,7 @@
 #include "Utils/Message.h"
 #include "Utils/SoundControl.h"
 #include "Utils/Utilities.h"
+#include "jplatform_video.h"
 
 #define CORPSE_WARNING_MAX 5
 #define CORPSE_WARNING_DIST 5
@@ -60,7 +61,7 @@
 #define MAX_NUM_CROWS 6
 
 // From lighting
-extern struct SGPPaletteEntry gpLightColors[3];
+extern struct JPaletteEntry gpLightColors[3];
 extern uint16_t gusShadeLevels[16][3];
 
 void MakeCorpseVisible(struct SOLDIERTYPE *pSoldier, ROTTING_CORPSE *pCorpse);
@@ -342,7 +343,7 @@ int32_t giNumRottingCorpse = 0;
 
 BOOLEAN CreateCorpsePalette(ROTTING_CORPSE *pCorpse);
 BOOLEAN CreateCorpseShadedPalette(ROTTING_CORPSE *pCorpse, uint32_t uiBase,
-                                  struct SGPPaletteEntry *pShadePal);
+                                  struct JPaletteEntry *pShadePal);
 
 void ReduceAmmoDroppedByNonPlayerSoldiers(struct SOLDIERTYPE *pSoldier, int32_t iInvSlot);
 
@@ -633,9 +634,9 @@ void RemoveCorpse(int32_t iCorpseID) {
 BOOLEAN CreateCorpsePalette(ROTTING_CORPSE *pCorpse) {
   char zColFilename[100];
   int8_t bBodyTypePalette;
-  struct SGPPaletteEntry Temp8BPPPalette[256];
+  struct JPaletteEntry Temp8BPPPalette[256];
 
-  pCorpse->p8BPPPalette = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
+  pCorpse->p8BPPPalette = (struct JPaletteEntry *)MemAlloc(sizeof(struct JPaletteEntry) * 256);
 
   CHECKF(pCorpse->p8BPPPalette != NULL);
 
@@ -668,11 +669,11 @@ BOOLEAN CreateCorpsePalette(ROTTING_CORPSE *pCorpse) {
     // Use col file
     if (CreateSGPPaletteFromCOLFile(Temp8BPPPalette, zColFilename)) {
       // Copy into palette
-      memcpy(pCorpse->p8BPPPalette, Temp8BPPPalette, sizeof(struct SGPPaletteEntry) * 256);
+      memcpy(pCorpse->p8BPPPalette, Temp8BPPPalette, sizeof(struct JPaletteEntry) * 256);
     } else {
       // Use palette from hvobject
       memcpy(pCorpse->p8BPPPalette, gpTileCache[pCorpse->iCachedTileID].pImagery->vo->pPaletteEntry,
-             sizeof(struct SGPPaletteEntry) * 256);
+             sizeof(struct JPaletteEntry) * 256);
     }
   }
 
@@ -840,7 +841,9 @@ BOOLEAN TurnSoldierIntoCorpse(struct SOLDIERTYPE *pSoldier, BOOLEAN fRemoveMerc,
 
   // If this is our guy......make visible...
   // if ( pSoldier->bTeam == gbPlayerNum )
-  { MakeCorpseVisible(pSoldier, &(gRottingCorpse[iCorpseID])); }
+  {
+    MakeCorpseVisible(pSoldier, &(gRottingCorpse[iCorpseID]));
+  }
 
   return (TRUE);
 }
@@ -1165,19 +1168,18 @@ void RebuildAllCorpseShadeTables() {
 }
 
 uint16_t CreateCorpsePaletteTables(ROTTING_CORPSE *pCorpse) {
-  struct SGPPaletteEntry LightPal[256];
+  struct JPaletteEntry LightPal[256];
   uint32_t uiCount;
 
   // create the basic shade table
   for (uiCount = 0; uiCount < 256; uiCount++) {
     // combine the rgb of the light color with the object's palette
-    LightPal[uiCount].peRed = (uint8_t)(min(
-        (uint16_t)pCorpse->p8BPPPalette[uiCount].peRed + (uint16_t)gpLightColors[0].peRed, 255));
-    LightPal[uiCount].peGreen = (uint8_t)(min(
-        (uint16_t)pCorpse->p8BPPPalette[uiCount].peGreen + (uint16_t)gpLightColors[0].peGreen,
-        255));
-    LightPal[uiCount].peBlue = (uint8_t)(min(
-        (uint16_t)pCorpse->p8BPPPalette[uiCount].peBlue + (uint16_t)gpLightColors[0].peBlue, 255));
+    LightPal[uiCount].red = (uint8_t)(min(
+        (uint16_t)pCorpse->p8BPPPalette[uiCount].red + (uint16_t)gpLightColors[0].red, 255));
+    LightPal[uiCount].green = (uint8_t)(min(
+        (uint16_t)pCorpse->p8BPPPalette[uiCount].green + (uint16_t)gpLightColors[0].green, 255));
+    LightPal[uiCount].blue = (uint8_t)(min(
+        (uint16_t)pCorpse->p8BPPPalette[uiCount].blue + (uint16_t)gpLightColors[0].blue, 255));
   }
   // build the shade tables
   CreateCorpseShadedPalette(pCorpse, 0, LightPal);
@@ -1189,7 +1191,7 @@ uint16_t CreateCorpsePaletteTables(ROTTING_CORPSE *pCorpse) {
 }
 
 BOOLEAN CreateCorpseShadedPalette(ROTTING_CORPSE *pCorpse, uint32_t uiBase,
-                                  struct SGPPaletteEntry *pShadePal) {
+                                  struct JPaletteEntry *pShadePal) {
   uint32_t uiCount;
 
   pCorpse->pShades[uiBase] = Create16BPPPaletteShaded(

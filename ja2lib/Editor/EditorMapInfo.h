@@ -15,7 +15,7 @@ void ExtractAndUpdateMapInfo();
 BOOLEAN ApplyNewExitGridValuesToTextFields();
 void UpdateMapInfoFields();
 
-extern struct SGPPaletteEntry gEditorLightColor;
+extern struct JPaletteEntry gEditorLightColor;
 
 extern BOOLEAN gfEditorForceShadeTableRebuild;
 

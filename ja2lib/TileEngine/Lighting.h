@@ -131,9 +131,9 @@ BOOLEAN LightSave(int32_t uiLight, char *pFilename);
 int32_t LightLoad(char *pFilename);
 
 // Sets the RGB values and number of light colors (1/2)
-BOOLEAN LightSetColors(struct SGPPaletteEntry *pPal, uint8_t ubNumColors);
+BOOLEAN LightSetColors(struct JPaletteEntry *pPal, uint8_t ubNumColors);
 // Returns the number of colors active (1/2) and the palette colors
-uint8_t LightGetColors(struct SGPPaletteEntry *pPal);
+uint8_t LightGetColors(struct JPaletteEntry *pPal);
 
 // High-Level Sprite Interface
 
@@ -166,7 +166,7 @@ BOOLEAN LightHideRays(int16_t iX, int16_t iY);
 // makes the 16-bit palettes
 uint16_t CreateTilePaletteTables(struct VObject *pObj, uint32_t uiType, BOOLEAN fForce);
 BOOLEAN CreateSoldierShadedPalette(struct SOLDIERTYPE *pSoldier, uint32_t uiBase,
-                                   struct SGPPaletteEntry *pShadePal);
+                                   struct JPaletteEntry *pShadePal);
 uint16_t CreateSoldierPaletteTables(struct SOLDIERTYPE *pSoldier, uint32_t uiType);
 
 // returns the true light value at a tile (ignoring fake/merc lights)
@@ -196,7 +196,7 @@ extern uint8_t gubNumLightColors;
 
 // Lighting colors
 extern uint8_t gubNumLightColors;
-extern struct SGPPaletteEntry gpLightColors[3];
+extern struct JPaletteEntry gpLightColors[3];
 
 // macros
 #define LightSpriteGetType(x) (LightSprites[x].uiLightType)

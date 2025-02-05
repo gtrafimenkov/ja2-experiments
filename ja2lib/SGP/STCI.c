@@ -302,8 +302,8 @@ BOOLEAN STCISetPalette(void *pSTCIPalette, HIMAGE hImage) {
   pubPalette = (STCIPaletteElement *)pSTCIPalette;
 
   // Allocate memory for palette
-  hImage->pPalette = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
-  memset(hImage->pPalette, 0, (sizeof(struct SGPPaletteEntry) * 256));
+  hImage->pPalette = (struct JPaletteEntry *)MemAlloc(sizeof(struct JPaletteEntry) * 256);
+  memset(hImage->pPalette, 0, (sizeof(struct JPaletteEntry) * 256));
 
   if (hImage->pPalette == NULL) {
     return (FALSE);
@@ -311,10 +311,10 @@ BOOLEAN STCISetPalette(void *pSTCIPalette, HIMAGE hImage) {
 
   // Initialize the proper palette entries
   for (usIndex = 0; usIndex < 256; usIndex++) {
-    hImage->pPalette[usIndex].peRed = pubPalette->ubRed;
-    hImage->pPalette[usIndex].peGreen = pubPalette->ubGreen;
-    hImage->pPalette[usIndex].peBlue = pubPalette->ubBlue;
-    hImage->pPalette[usIndex].peFlags = 0;
+    hImage->pPalette[usIndex].red = pubPalette->ubRed;
+    hImage->pPalette[usIndex].green = pubPalette->ubGreen;
+    hImage->pPalette[usIndex].blue = pubPalette->ubBlue;
+    hImage->pPalette[usIndex]._unused = 0;
     pubPalette++;
   }
   return TRUE;

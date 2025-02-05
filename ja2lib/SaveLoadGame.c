@@ -2177,7 +2177,7 @@ BOOLEAN LoadSavedMercProfiles(HWFILE hFile) {
 //];
 ////
 //	uint16_t *pShades[ NUM_SOLDIER_SHADES ]; // Shading tables 	uint16_t *p16BPPPalette;
-// struct SGPPaletteEntry *p8BPPPalette 	struct OBJECTTYPE *pTempObject;
+// struct JPaletteEntry *p8BPPPalette 	struct OBJECTTYPE *pTempObject;
 
 BOOLEAN SaveSoldierStructure(HWFILE hFile) {
   uint16_t cnt;

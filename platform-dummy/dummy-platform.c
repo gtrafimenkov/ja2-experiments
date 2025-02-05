@@ -236,7 +236,7 @@ BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uin
 
 void EndFrameBufferRender(void) {}
 
-BOOLEAN Set8BPPPalette(struct SGPPaletteEntry *pPalette) { return FALSE; }
+BOOLEAN Set8BPPPalette(struct JPaletteEntry *pPalette) { return FALSE; }
 
 void FatalError(char *pError, ...) {}
 
@@ -252,11 +252,11 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
 };
 struct VSurface *CreateVSurfaceFromFile(const char *filepath) { return NULL; };
 
-BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct SGPPaletteEntry *pSrcPalette) {
+BOOLEAN SetVideoSurfacePalette(struct VSurface *hVSurface, struct JPaletteEntry *pSrcPalette) {
   return FALSE;
 }
 
-BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct SGPPaletteEntry *pPalette) {
+BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct JPaletteEntry *pPalette) {
   return FALSE;
 }
 

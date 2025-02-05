@@ -120,7 +120,7 @@ typedef struct {
 
   ANITILE *pAniTile;
 
-  struct SGPPaletteEntry *p8BPPPalette;
+  struct JPaletteEntry *p8BPPPalette;
   uint16_t *p16BPPPalette;
   uint16_t *pShades[NUM_CORPSE_SHADES];
   int16_t sGraphicNum;

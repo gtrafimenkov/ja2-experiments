@@ -9,6 +9,7 @@
 #include "SGP/HImage.h"
 #include "SGP/Types.h"
 #include "TileEngine/PhysMath.h"
+#include "jplatform_video.h"
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Quantize.h
@@ -212,7 +213,7 @@ typedef struct {
 } RGBValues;
 
 BOOLEAN QuantizeImage(uint8_t* pDest, uint8_t* pSrc, int16_t sWidth, int16_t sHeight,
-                      struct SGPPaletteEntry* pPalette) {
+                      struct JPaletteEntry* pPalette) {
   int16_t sNumColors;
 
   // FIRST CREATE PALETTE
@@ -223,7 +224,7 @@ BOOLEAN QuantizeImage(uint8_t* pDest, uint8_t* pSrc, int16_t sWidth, int16_t sHe
 
   sNumColors = CQuantizer_GetColorCount(&q);
 
-  memset(pPalette, 0, sizeof(struct SGPPaletteEntry) * 256);
+  memset(pPalette, 0, sizeof(struct JPaletteEntry) * 256);
 
   CQuantizer_GetColorTable(&q, (RGBQUAD*)pPalette);
 
@@ -235,7 +236,7 @@ BOOLEAN QuantizeImage(uint8_t* pDest, uint8_t* pSrc, int16_t sWidth, int16_t sHe
 }
 
 void MapPalette(uint8_t* pDest, uint8_t* pSrc, int16_t sWidth, int16_t sHeight, int16_t sNumColors,
-                struct SGPPaletteEntry* pTable) {
+                struct JPaletteEntry* pTable) {
   int32_t cX, cY, cnt, bBest;
   real dLowestDist;
   real dCubeDist;
@@ -257,9 +258,9 @@ void MapPalette(uint8_t* pDest, uint8_t* pSrc, int16_t sWidth, int16_t sHeight, 
         vSrcVal.y = pRGBData[(cY * sWidth) + cX].g;
         vSrcVal.z = pRGBData[(cY * sWidth) + cX].b;
 
-        vTableVal.x = pTable[cnt].peRed;
-        vTableVal.y = pTable[cnt].peGreen;
-        vTableVal.z = pTable[cnt].peBlue;
+        vTableVal.x = pTable[cnt].red;
+        vTableVal.y = pTable[cnt].green;
+        vTableVal.z = pTable[cnt].blue;
 
         // Get Dist
         vDiffVal = VSubtract(&vSrcVal, &vTableVal);

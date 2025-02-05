@@ -9,6 +9,7 @@
 
 #include "SGP/FileMan.h"
 #include "SGP/MemMan.h"
+#include "jplatform_video.h"
 
 // Local typedefs
 
@@ -305,7 +306,7 @@ BOOLEAN SetPcxPalette(PcxObject *pCurrentPcxObject, HIMAGE hImage) {
   pubPalette = &(pCurrentPcxObject->ubPalette[0]);
 
   // Allocate memory for palette
-  hImage->pPalette = (struct SGPPaletteEntry *)MemAlloc(sizeof(struct SGPPaletteEntry) * 256);
+  hImage->pPalette = (struct JPaletteEntry *)MemAlloc(sizeof(struct JPaletteEntry) * 256);
 
   if (hImage->pPalette == NULL) {
     return (FALSE);
@@ -313,10 +314,10 @@ BOOLEAN SetPcxPalette(PcxObject *pCurrentPcxObject, HIMAGE hImage) {
 
   // Initialize the proper palette entries
   for (Index = 0; Index < 256; Index++) {
-    hImage->pPalette[Index].peRed = *(pubPalette + (Index * 3));
-    hImage->pPalette[Index].peGreen = *(pubPalette + (Index * 3) + 1);
-    hImage->pPalette[Index].peBlue = *(pubPalette + (Index * 3) + 2);
-    hImage->pPalette[Index].peFlags = 0;
+    hImage->pPalette[Index].red = *(pubPalette + (Index * 3));
+    hImage->pPalette[Index].green = *(pubPalette + (Index * 3) + 1);
+    hImage->pPalette[Index].blue = *(pubPalette + (Index * 3) + 2);
+    hImage->pPalette[Index]._unused = 0;
   }
 
   return TRUE;
