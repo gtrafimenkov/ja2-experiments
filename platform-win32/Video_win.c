@@ -131,69 +131,11 @@ static void RefreshMovieCache();
 #define MAX_CURSOR_WIDTH 64
 #define MAX_CURSOR_HEIGHT 64
 
-#define INITGUID
-#include <ddraw.h>
-#include <windows.h>
-
-#include "Smack.h"
-#include "platform_win.h"
-
-#ifndef _MT
-#define _MT
-#endif
-
-BOOLEAN InitializeVideoManager(struct PlatformInitParams *params) {
-  HWND hWindow;
-  WNDCLASS WindowClass;
-  char ClassName[] = APPLICATION_NAME;
-
+BOOLEAN InitializeVideoManager() {
   RegisterDebugTopic(TOPIC_VIDEO, "Video");
   DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, "Initializing the video manager");
 
-  WindowClass.style = CS_HREDRAW | CS_VREDRAW;
-  WindowClass.lpfnWndProc = (WNDPROC)params->WindowProc;
-  WindowClass.cbClsExtra = 0;
-  WindowClass.cbWndExtra = 0;
-  WindowClass.hInstance = params->hInstance;
-  WindowClass.hIcon = LoadIcon(params->hInstance, MAKEINTRESOURCE(params->iconID));
-  WindowClass.hCursor = NULL;
-  WindowClass.hbrBackground = NULL;
-  WindowClass.lpszMenuName = NULL;
-  WindowClass.lpszClassName = ClassName;
-  RegisterClass(&WindowClass);
-
-  //
-  // Get a window handle for our application (gotta have on of those)
-  // Don't change this
-  //
-  hWindow = CreateWindowEx(WS_EX_TOPMOST, ClassName, ClassName, WS_POPUP | WS_VISIBLE, 0, 0,
-                           GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL,
-                           params->hInstance, NULL);
-  if (hWindow == NULL) {
-    DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, "Failed to create window frame for Direct Draw");
-    return FALSE;
-  }
-
-  //
-  // Excellent. Now we record the hWindow variable for posterity (not)
-  //
-
   memset(gpFrameData, 0, sizeof(gpFrameData));
-
-  ghWindow = hWindow;
-
-  //
-  // Display our full screen window
-  //
-
-  ShowCursor(FALSE);
-  ShowWindow(hWindow, params->usCommandShow);
-  UpdateWindow(hWindow);
-  SetFocus(hWindow);
-
-  if (!JVideo_Init("", SCREEN_WIDTH, SCREEN_HEIGHT)) {
-    return FALSE;
-  }
 
   // Initialize the frame buffer
   vsFB = JSurface_CreateWithDefaultBpp(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -285,6 +227,17 @@ void ShutdownVideoManager(void) {
 }
 
 void SuspendVideoManager(void) { guiVideoManagerState = VIDEO_SUSPENDED; }
+
+#define INITGUID
+#include <ddraw.h>
+#include <windows.h>
+
+#include "Smack.h"
+#include "platform_win.h"
+
+#ifndef _MT
+#define _MT
+#endif
 
 BOOLEAN RestoreVideoManager(void) {
   HRESULT ReturnCode;

@@ -11,7 +11,8 @@ uint32_t JVideo_GetTranslucentMask() { return 0; }
 uint16_t JVideo_PackRGB16(uint8_t r, uint8_t g, uint8_t b) { return 0; }
 void JVideo_UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {}
 
-bool JVideo_Init(const char *unused_title, uint16_t screenWidth, uint16_t screenHeight) {
+bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
+                 struct JVideoInitParams *initParams) {
   return false;
 }
 void JVideo_Shutdown() {}

@@ -39,6 +39,7 @@
 #include "Tactical/InterfacePanels.h"
 #include "Utils/TimerControl.h"
 #include "Utils/Utilities.h"
+#include "jplatform-windd2/jplatform_video_windd2.h"
 #include "platform.h"
 #include "platform_strings.h"
 #include "platform_win.h"
@@ -263,9 +264,9 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
   ShowCursor(FALSE);
 
   // Inititialize the SGP
-  struct PlatformInitParams params = {hInstance, (uint16_t)sCommandShow, (void *)WindowProcedure,
-                                      IDI_ICON1};
-  if (InitializeStandardGamingPlatform(&params, cmdLineArgs.datadir) == FALSE) {
+  struct JVideoInitParams videoInitParams = {hInstance, (uint16_t)sCommandShow,
+                                             (void *)WindowProcedure, IDI_ICON1};
+  if (InitializeStandardGamingPlatform(&videoInitParams, cmdLineArgs.datadir) == FALSE) {
     return 0;
   }
 

@@ -41,11 +41,14 @@ struct JPaletteEntry {
   // Don't change this structure.  On Windows it must be the same as PALETTEENTRY.
 };
 
-// #ifdef __cplusplus
-// extern "C" {
-// #endif  // __cplusplus
+#ifdef __cplusplus
+extern "C" {
+#endif  // __cplusplus
 
-bool JVideo_Init(const char *unused_title, uint16_t screenWidth, uint16_t screenHeight);
+struct JVideoInitParams;
+
+bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
+                 struct JVideoInitParams *initParams);
 void JVideo_Shutdown();
 
 uint16_t JVideo_GetScreenWidth();

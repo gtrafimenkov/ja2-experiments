@@ -1,3 +1,5 @@
+#include "jplatform_video_windd2.h"
+
 #include "SGP/VSurface.h"
 #include "jplatform_video.h"
 
@@ -262,7 +264,36 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
   return vs;
 }
 
-bool JVideo_Init(const char *unused_title, uint16_t screenWidth, uint16_t screenHeight) {
+bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
+                 struct JVideoInitParams *videoInitParams) {
+  HINSTANCE hInstance = (HINSTANCE)videoInitParams->hInstance;
+  char *ClassName = appName;
+
+  WNDCLASS WindowClass;
+  WindowClass.style = CS_HREDRAW | CS_VREDRAW;
+  WindowClass.lpfnWndProc = (WNDPROC)videoInitParams->WindowProc;
+  WindowClass.cbClsExtra = 0;
+  WindowClass.cbWndExtra = 0;
+  WindowClass.hInstance = hInstance;
+  WindowClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(videoInitParams->iconID));
+  WindowClass.hCursor = NULL;
+  WindowClass.hbrBackground = NULL;
+  WindowClass.lpszMenuName = NULL;
+  WindowClass.lpszClassName = ClassName;
+  RegisterClass(&WindowClass);
+
+  ghWindow = CreateWindowEx(WS_EX_TOPMOST, ClassName, ClassName, WS_POPUP | WS_VISIBLE, 0, 0,
+                            GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL,
+                            NULL, hInstance, NULL);
+  if (ghWindow == NULL) {
+    return FALSE;
+  }
+
+  ShowCursor(FALSE);
+  ShowWindow(ghWindow, videoInitParams->usCommandShow);
+  UpdateWindow(ghWindow);
+  SetFocus(ghWindow);
+
   gusScreenWidth = screenWidth;
   gusScreenHeight = screenHeight;
   HRESULT ReturnCode = DirectDrawCreate(NULL, &s_state._gpDirectDrawObject, NULL);
@@ -277,18 +308,14 @@ bool JVideo_Init(const char *unused_title, uint16_t screenWidth, uint16_t screen
     return FALSE;
   }
 
-  //
   // Set the exclusive mode
-  //
   ReturnCode = IDirectDraw2_SetCooperativeLevel(s_state.gpDirectDrawObject, ghWindow,
                                                 DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
   if (ReturnCode != DD_OK) {
     return FALSE;
   }
 
-  //
   // Set the display mode
-  //
   ReturnCode =
       IDirectDraw2_SetDisplayMode(s_state.gpDirectDrawObject, screenWidth, screenHeight, 16, 0, 0);
   if (ReturnCode != DD_OK) {

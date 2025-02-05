@@ -16,8 +16,7 @@ struct VSurface;
 
 extern int32_t giNumFrames;
 
-struct PlatformInitParams;
-extern BOOLEAN InitializeVideoManager(struct PlatformInitParams *params);
+extern BOOLEAN InitializeVideoManager();
 
 extern void ShutdownVideoManager(void);
 extern void SuspendVideoManager(void);

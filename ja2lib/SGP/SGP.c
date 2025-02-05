@@ -31,7 +31,8 @@
 
 void SGPExit(void);
 
-BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams* params, const char* dataDir) {
+BOOLEAN InitializeStandardGamingPlatform(struct JVideoInitParams* videoInitParams,
+                                         const char* dataDir) {
   // now required by all (even JA2) in order to call ShutdownSGP
   atexit(SGPExit);
 
@@ -68,9 +69,13 @@ BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams* params, cons
     return FALSE;
   }
 
+  if (!JVideo_Init(APPLICATION_NAME, SCREEN_WIDTH, SCREEN_HEIGHT, videoInitParams)) {
+    return FALSE;
+  }
+
   FastDebugMsg("Initializing Video Manager");
   // Initialize DirectDraw (DirectX 2)
-  if (InitializeVideoManager(params) == FALSE) {
+  if (InitializeVideoManager() == FALSE) {
     FastDebugMsg("FAILED : Initializing Video Manager");
     return FALSE;
   }

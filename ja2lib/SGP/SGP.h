@@ -6,10 +6,9 @@
 #define __SGP_H
 
 #include "SGP/Types.h"
+#include "jplatform_video.h"
 
-struct PlatformInitParams;
-
-extern BOOLEAN InitializeStandardGamingPlatform(struct PlatformInitParams* params,
+extern BOOLEAN InitializeStandardGamingPlatform(struct JVideoInitParams* videoInitParams,
                                                 const char* dataDir);
 extern void ShutdownStandardGamingPlatform(void);
 
