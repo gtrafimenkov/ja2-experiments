@@ -248,10 +248,6 @@ struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bi
 };
 struct VSurface *CreateVSurfaceFromFile(const char *filepath) { return NULL; };
 
-BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct JPaletteEntry *pPalette) {
-  return FALSE;
-}
-
 BOOLEAN DeleteVSurface(struct VSurface *hVSurface) { return FALSE; }
 
 void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}

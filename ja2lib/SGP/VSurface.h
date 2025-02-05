@@ -85,9 +85,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath);
 
 void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pSrcPalette);
 
-// Gets the RGB palette entry values
-BOOLEAN GetVSurfacePaletteEntries(struct VSurface *hVSurface, struct JPaletteEntry *pPalette);
-
 // Returns a flat pointer for direct manipulation of data
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch);
 

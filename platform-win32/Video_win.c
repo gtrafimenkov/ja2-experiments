@@ -1415,14 +1415,6 @@ void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
 #define _MT
 #endif
 
-BOOLEAN GetVSurfacePaletteEntries(struct VSurface *vs, struct JPaletteEntry *pPalette) {
-  CHECKF(vs->_platformPalette != NULL);
-  Assert(pPalette != NULL);
-  IDirectDrawPalette_GetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,
-                                (PALETTEENTRY *)pPalette);
-  return TRUE;
-}
-
 // Deletes all palettes, surfaces and region data
 BOOLEAN DeleteVSurface(struct VSurface *vs) {
   CHECKF(vs != NULL);

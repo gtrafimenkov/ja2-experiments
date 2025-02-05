@@ -1400,7 +1400,7 @@ BOOLEAN InitializePalettesForMap(void) {
   // init palettes
   struct JPaletteEntry pPalette[256];
 
-  GetVSurfacePaletteEntries(vsBigMap, pPalette);
+  JSurface_GetPalette(vsBigMap, pPalette);
 
   // set up various palettes
   pMapLTRedPalette = Create16BPPPaletteShaded(pPalette, 400, 0, 0, TRUE);
@@ -3596,9 +3596,7 @@ void DisplayDistancesForHelicopter(void) {
           }
           else
   */
-  {
-    SetFontForeground(FONT_LTGREEN);
-  }
+  { SetFontForeground(FONT_LTGREEN); }
 
   swprintf(sString, ARR_SIZE(sString), L"%d", sTotalOfTrip);
   FindFontRightCoordinates(MAP_HELICOPTER_ETA_POPUP_X + 5, MAP_HELICOPTER_ETA_POPUP_Y + 5,

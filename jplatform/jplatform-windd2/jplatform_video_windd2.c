@@ -213,7 +213,7 @@ static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2
 
     // Create 16-BPP Palette
     struct JPaletteEntry SGPPalette[256];
-    GetVSurfacePaletteEntries(vs, SGPPalette);
+    JSurface_GetPalette(vs, SGPPalette);
     vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
   }
 }
@@ -595,4 +595,13 @@ void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {
 
   IDirectDrawSurface2_SetColorKey((LPDIRECTDRAWSURFACE2)s->_platformData2, DDCKEY_SRCBLT,
                                   &ColorKey);
+}
+
+bool JSurface_GetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {
+  if (vs->_platformPalette == NULL) {
+    return false;
+  }
+  IDirectDrawPalette_GetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,
+                                (PALETTEENTRY *)pal);
+  return true;
 }
