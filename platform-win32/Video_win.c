@@ -616,22 +616,10 @@ static void ScrollJA2Background(uint32_t uiDirection) {
   ExecuteVideoOverlaysToAlternateBuffer(vsBackBuffer);
 }
 
-#define INITGUID
-#include <ddraw.h>
-#include <windows.h>
-
-#include "Smack.h"
-#include "platform_win.h"
-
-#ifndef _MT
-#define _MT
-#endif
-
 void RefreshScreen(void *DummyVariable) {
   static uint32_t uiRefreshThreadState, uiIndex;
   uint16_t usScreenWidth, usScreenHeight;
   static BOOLEAN fShowMouse;
-  HRESULT ReturnCode;
   static struct Rect Region;
   static BOOLEAN fFirstTime = TRUE;
   uint32_t uiTime;
@@ -641,6 +629,8 @@ void RefreshScreen(void *DummyVariable) {
   if (fFirstTime) {
     fShowMouse = FALSE;
   }
+
+  fFirstTime = FALSE;
 
   // DebugMsg(TOPIC_VIDEO, DBG_LEVEL_0, "Looping in refresh");
 
@@ -984,20 +974,10 @@ void RefreshScreen(void *DummyVariable) {
     gMouseCursorBackground[CURRENT_MOUSE_DATA].fRestore = FALSE;
   }
 
-  //
   // Step (1) - Flip pages
-  //
-  do {
-    ReturnCode =
-        IDirectDrawSurface_Flip((LPDIRECTDRAWSURFACE)vsPrimary->_platformData1, NULL, DDFLIP_WAIT);
-    //    if ((ReturnCode != DD_OK)&&(ReturnCode != DDERR_WASSTILLDRAWING))
-    if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
-      if (ReturnCode == DDERR_SURFACELOST) {
-        goto ENDOFLOOP;
-      }
-    }
-
-  } while (ReturnCode != DD_OK);
+  if (!JSurface_Flip(vsPrimary)) {
+    return;
+  }
 
   //
   // Step (2) - Copy Primary Surface to the Back Buffer
@@ -1079,10 +1059,6 @@ void RefreshScreen(void *DummyVariable) {
   }
 
   guiDirtyRegionExCount = 0;
-
-ENDOFLOOP:
-
-  fFirstTime = FALSE;
 }
 
 BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint16_t usCursorHeight,
@@ -1139,6 +1115,17 @@ BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uin
 void EndFrameBufferRender(void) { guiFrameBufferState = BUFFER_DIRTY; }
 
 void PrintScreen(void) { gfPrintFrameBuffer = TRUE; }
+
+#define INITGUID
+#include <ddraw.h>
+#include <windows.h>
+
+#include "Smack.h"
+#include "platform_win.h"
+
+#ifndef _MT
+#define _MT
+#endif
 
 void FatalError(char *pError, ...) {
   va_list argptr;

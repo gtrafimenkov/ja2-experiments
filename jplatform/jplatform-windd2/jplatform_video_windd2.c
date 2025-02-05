@@ -504,6 +504,21 @@ bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) {
 }
 
 bool JSurface_Restore(struct VSurface *vs) {
-  HRESULT ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2);
+  HRESULT ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vs->_platformData2);
   return ReturnCode == DD_OK;
+}
+
+bool JSurface_Flip(struct VSurface *vs) {
+  HRESULT ReturnCode;
+  do {
+    ReturnCode =
+        IDirectDrawSurface_Flip((LPDIRECTDRAWSURFACE)vs->_platformData1, NULL, DDFLIP_WAIT);
+    if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
+      if (ReturnCode == DDERR_SURFACELOST) {
+        return false;
+      }
+    }
+
+  } while (ReturnCode != DD_OK);
+  return true;
 }
