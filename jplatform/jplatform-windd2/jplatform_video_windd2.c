@@ -522,3 +522,21 @@ bool JSurface_Flip(struct VSurface *vs) {
   } while (ReturnCode != DD_OK);
   return true;
 }
+
+void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color) {
+  RECT r = {
+      .left = rect->x,
+      .top = rect->y,
+      .right = rect->x + rect->w,
+      .bottom = rect->y + rect->h,
+  };
+
+  DDBLTFX BlitterFX;
+  BlitterFX.dwSize = sizeof(DDBLTFX);
+  BlitterFX.dwFillColor = color;
+  HRESULT ReturnCode;
+  do {
+    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)vs->_platformData2, &r, NULL, NULL,
+                                         DDBLT_COLORFILL, &BlitterFX);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
+}

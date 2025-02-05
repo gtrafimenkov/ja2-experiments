@@ -26,3 +26,4 @@ void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {};
 bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) { return false; }
 bool JSurface_Restore(struct VSurface *vs) { return false; }
 bool JSurface_Flip(struct VSurface *vs) { return false; }
+void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color) {}

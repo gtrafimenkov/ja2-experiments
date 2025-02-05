@@ -1324,21 +1324,8 @@ BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iD
 
   if ((iDestX2 <= iDestX1) || (iDestY2 <= iDestY1)) return (FALSE);
 
-  RECT r;
-  r.left = iDestX1;
-  r.top = iDestY1;
-  r.right = iDestX2;
-  r.bottom = iDestY2;
-
-  DDBLTFX BlitterFX;
-  BlitterFX.dwSize = sizeof(DDBLTFX);
-  BlitterFX.dwFillColor = Color16BPP;
-  HRESULT ReturnCode;
-  do {
-    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dest->_platformData2, &r, NULL, NULL,
-                                         DDBLT_COLORFILL, &BlitterFX);
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
-
+  struct JRect r = {.x = iDestX1, .y = iDestY1, .w = iDestX2 - iDestX1, .h = iDestY2 - iDestY1};
+  JSurface_FillRect(dest, &r, Color16BPP);
   return TRUE;
 }
 
