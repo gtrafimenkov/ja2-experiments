@@ -81,7 +81,7 @@ bool JSurface_Flip(struct VSurface *vs);
 
 // uint16_t JSurface_Width(struct JSurface *s);
 // uint16_t JSurface_Height(struct JSurface *s);
-// uint8_t JSurface_BPP(struct JSurface *s);
+uint8_t JSurface_BPP(struct VSurface *s);
 
 void JSurface_SetColorKey(struct VSurface *s, uint32_t key);
 // bool JSurface_IsColorKeySet(struct JSurface *s);

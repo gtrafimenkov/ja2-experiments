@@ -61,9 +61,9 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   CHECKF(hImage->usHeight >= hVSurface->usHeight);
 
   // Check BPP and see if they are the same
-  if (hImage->ubBitDepth != hVSurface->ubBitDepth) {
+  if (hImage->ubBitDepth != JSurface_BPP(hVSurface)) {
     // They are not the same, but we can go from 8->16 without much cost
-    if (hImage->ubBitDepth == 8 && hVSurface->ubBitDepth == 16) {
+    if (hImage->ubBitDepth == 8 && JSurface_BPP(hVSurface) == 16) {
       fBufferBPP = BUFFER_16BPP;
     }
   } else {
@@ -87,7 +87,7 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   pDest = LockVSurface(hVSurface, &uiPitch);
 
   // Effective width ( in PIXELS ) is Pitch ( in bytes ) converted to pitch ( IN PIXELS )
-  usEffectiveWidth = (uint16_t)(uiPitch / (hVSurface->ubBitDepth / 8));
+  usEffectiveWidth = (uint16_t)(uiPitch / (JSurface_BPP(hVSurface) / 8));
 
   CHECKF(pDest != NULL);
 
@@ -196,7 +196,7 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_
 // If the 2 images are not 16 Bpp, it returns false.
 BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect *SrcRect,
                            SGPRect *DestRect) {
-  if ((dest->ubBitDepth != 16) && (src->ubBitDepth != 16)) {
+  if ((JSurface_BPP(dest) != 16) && (JSurface_BPP(src) != 16)) {
     return FALSE;
   };
   struct JRect srcBox = sgpr2jr(SrcRect);
@@ -352,7 +352,7 @@ static BOOLEAN clipToDestBounds(struct VSurface *dest, struct VSurface *src, int
 static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct VSurface *dest, struct VSurface *src,
                                                         int32_t destX, int32_t destY,
                                                         struct Rect *srcRect) {
-  if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+  if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
     if (!clipToDestBounds(dest, src, &destX, &destY, srcRect)) {
       return FALSE;
     }
@@ -468,11 +468,11 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
 
 BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                      int32_t destY, struct Rect *srcRect) {
-  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+  if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     if (clipToDestBounds(dest, src, &destX, &destY, srcRect)) {
       return BltVSurfaceRectToPoint(dest, src, destX, destY, srcRect);
     }
-  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+  } else if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, srcRect);
   }
   return FALSE;
@@ -480,13 +480,13 @@ BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src
 
 BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
                                   int32_t destY) {
-  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+  if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     CHECKF(destX >= 0);
     CHECKF(destY >= 0);
     struct JRect srcBox = {.x = 0, .y = 0, .w = src->usWidth, .h = src->usHeight};
     JSurface_BlitRectToPoint(src, dest, &srcBox, destX, destY);
     return TRUE;
-  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+  } else if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
     struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
   }
@@ -496,9 +496,9 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
                               int32_t destY) {
   struct Rect SrcRect = {.top = 0, .left = 0, .bottom = src->usHeight, .right = src->usWidth};
-  if (dest->ubBitDepth == 16 && src->ubBitDepth == 16) {
+  if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     return BltVSurfaceRectToPoint(dest, src, destX, destY, &SrcRect);
-  } else if (dest->ubBitDepth == 8 && src->ubBitDepth == 8) {
+  } else if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
   }
   return FALSE;

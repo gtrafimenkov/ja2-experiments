@@ -248,13 +248,13 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
   vs->usWidth = (uint16_t)descr->dwWidth;
   vs->usHeight = (uint16_t)descr->dwHeight;
   if (descr->dwFlags & DDSD_PIXELFORMAT) {
-    vs->ubBitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
+    vs->bitDepth = (uint8_t)descr->ddpfPixelFormat.dwRGBBitCount;
   } else {
     DDSURFACEDESC newDescr;
     memset(&newDescr, 0, sizeof(LPDDSURFACEDESC));
     newDescr.dwSize = sizeof(DDSURFACEDESC);
     IDirectDrawSurface2_GetSurfaceDesc(lpDDS2, &newDescr);
-    vs->ubBitDepth = (uint8_t)newDescr.ddpfPixelFormat.dwRGBBitCount;
+    vs->bitDepth = (uint8_t)newDescr.ddpfPixelFormat.dwRGBBitCount;
   }
 
   if (getPalette) {
@@ -376,7 +376,7 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
     IDirectDrawSurface2_GetSurfaceDesc(backBuffer, &DDSurfaceDesc);
     vsBackBuffer->usHeight = (uint16_t)DDSurfaceDesc.dwHeight;
     vsBackBuffer->usWidth = (uint16_t)DDSurfaceDesc.dwWidth;
-    vsBackBuffer->ubBitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
+    vsBackBuffer->bitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
     vsBackBuffer->_platformData1 = NULL;
     vsBackBuffer->_platformData2 = (void *)backBuffer;
     FillVSurfacePalette(vsBackBuffer, backBuffer);
@@ -581,7 +581,7 @@ void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {
   s->transparencySet = true;
 
   DDCOLORKEY ColorKey;
-  switch (s->ubBitDepth) {
+  switch (s->bitDepth) {
     case 8:
       ColorKey.dwColorSpaceLowValue = key;
       ColorKey.dwColorSpaceHighValue = key;
@@ -632,3 +632,5 @@ void JSurface_Free(struct VSurface *s) {
 
   free(s);
 }
+
+uint8_t JSurface_BPP(struct VSurface *s) { return s->bitDepth; }
