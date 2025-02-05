@@ -10,6 +10,7 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "Errors.h"
 #include "GameRes.h"
 #include "Globals.h"
 #include "SGP/Debug.h"

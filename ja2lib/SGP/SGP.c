@@ -8,6 +8,7 @@
 
 #include "BuildDefines.h"
 #include "DebugLog.h"
+#include "Errors.h"
 #include "GameLoop.h"
 #include "GameRes.h"
 #include "Globals.h"

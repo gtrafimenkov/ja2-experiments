@@ -318,3 +318,19 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCommandL
   // return wParam of the last message received
   return Message.wParam;
 }
+
+void FatalError(char *pError, ...) {
+  static char fatalErrorString[512];
+  va_list argptr;
+
+  va_start(argptr, pError);  // Set up variable argument pointer
+  vsprintf(fatalErrorString, pError, argptr);
+  va_end(argptr);
+
+  JVideo_Shutdown();
+  ShowWindow(ghWindow, SW_HIDE);
+
+  gfProgramIsRunning = FALSE;
+
+  MessageBox(ghWindow, fatalErrorString, "JA2 Fatal Error", MB_OK | MB_TASKMODAL);
+}

@@ -90,8 +90,6 @@ static int16_t gsMouseCursorYOffset;
 
 static struct VObject *gpCursorStore;
 
-static char gFatalErrorString[512];
-
 //
 // Refresh thread based variables
 //
@@ -1116,32 +1114,6 @@ void EndFrameBufferRender(void) { guiFrameBufferState = BUFFER_DIRTY; }
 
 void PrintScreen(void) { gfPrintFrameBuffer = TRUE; }
 
-#define INITGUID
-#include <ddraw.h>
-#include <windows.h>
-
-#include "Smack.h"
-#include "platform_win.h"
-
-#ifndef _MT
-#define _MT
-#endif
-
-void FatalError(char *pError, ...) {
-  va_list argptr;
-
-  va_start(argptr, pError);  // Set up variable argument pointer
-  vsprintf(gFatalErrorString, pError, argptr);
-  va_end(argptr);
-
-  JVideo_Shutdown();
-  ShowWindow(ghWindow, SW_HIDE);
-
-  gfProgramIsRunning = FALSE;
-
-  MessageBox(ghWindow, gFatalErrorString, "JA2 Fatal Error", MB_OK | MB_TASKMODAL);
-}
-
 /*********************************************************************************
  * SnapshotSmall
  *
@@ -1233,7 +1205,7 @@ static void RefreshMovieCache() {
   TARGA_HEADER Header;
   int32_t iCountX, iCountY;
   FILE *disk;
-  char cFilename[_MAX_PATH];
+  char cFilename[260];
   static uint32_t uiPicNum = 0;
   uint16_t *pDest;
   int32_t cnt;
@@ -1311,6 +1283,17 @@ BOOLEAN ShutdownVideoSurfaceManager() {
   UnRegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Objects");
   return TRUE;
 }
+
+#define INITGUID
+#include <ddraw.h>
+#include <windows.h>
+
+#include "Smack.h"
+#include "platform_win.h"
+
+#ifndef _MT
+#define _MT
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -45,6 +45,4 @@ void InvalidateRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBo
 
 void RefreshScreen(void *DummyVariable);
 
-void FatalError(char *pError, ...);
-
 #endif
