@@ -184,57 +184,7 @@ uint32_t SoundUnlockSample(char *pFilename) { return (NO_SAMPLE); }
 void SoundRemoveSampleFlags(uint32_t uiSample, uint32_t uiFlags) {}
 
 /////////////////////////////////////////////////////////////////////////////////
-// Video
-/////////////////////////////////////////////////////////////////////////////////
-
-int32_t giNumFrames = 0;
-
-void InvalidateRegion(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom) {}
-
-void InvalidateRegionEx(int32_t iLeft, int32_t iTop, int32_t iRight, int32_t iBottom,
-                        uint32_t uiFlags) {}
-
-void InvalidateScreen(void) {}
-
-void RefreshScreen(void *DummyVariable) {}
-
-BOOLEAN SetMouseCursorProperties(int16_t sOffsetX, int16_t sOffsetY, uint16_t usCursorHeight,
-                                 uint16_t usCursorWidth) {
-  return FALSE;
-}
-
-void DirtyCursor() {}
-
-BOOLEAN SetCurrentCursor(uint16_t usVideoObjectSubIndex, uint16_t usOffsetX, uint16_t usOffsetY) {
-  return FALSE;
-}
-
-void EndFrameBufferRender(void) {}
-
-void FatalError(char *pError, ...) {}
-
-BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
-                              int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
-  return FALSE;
-}
-
-void DumpVSurfaceInfoIntoFile(char *filename, BOOLEAN fAppend) {}
-
-uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch) { return NULL; }
-void UnlockVSurface(struct VSurface *hVSurface) {}
-
-BOOLEAN SmkPollFlics(void) { return FALSE; }
-
-void SmkInitialize(uint32_t uiWidth, uint32_t uiHeight) {}
-
-void SmkShutdown(void) {}
-
-struct SmkFlic *SmkPlayFlic(char *cFilename, uint32_t uiLeft, uint32_t uiTop, BOOLEAN fClose) {
-  return NULL;
-}
-
-void SmkCloseFlic(struct SmkFlic *pSmack) {}
-
-/////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
+
+void FatalError(char *pError, ...) {}

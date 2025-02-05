@@ -3,6 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
+                "${workspaceFolder}/bin-win32",
+                "${workspaceFolder}/platform-win32",
                 "${workspaceFolder}/ja2lib",
                 "${workspaceFolder}/jplatform",
                 "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\",

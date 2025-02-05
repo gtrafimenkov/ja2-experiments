@@ -14,8 +14,6 @@
 struct VObject;
 struct VSurface;
 
-typedef uint32_t VSurfID;
-
 extern struct VSurface *vsPrimary;
 extern struct VSurface *vsBackBuffer;
 extern struct VSurface *vsFB;

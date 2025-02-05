@@ -4,14 +4,19 @@
 
 #include "VSurface.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "Rect.h"
 #include "SGP/Debug.h"
 #include "SGP/HImage.h"
 #include "SGP/VObject.h"
 #include "SGP/VObjectBlitters.h"
+#include "SGP/Video.h"
 #include "SGP/WCheck.h"
 #include "StrUtils.h"
 #include "jplatform_video.h"
+#include "platform_strings.h"
 
 struct VSurface *vsPrimary = NULL;
 struct VSurface *vsBackBuffer = NULL;
@@ -506,4 +511,141 @@ void VSurfaceErase(struct VSurface *vs) {
     memset(pTmpPointer, 0, vs->usHeight * uiPitch);
     UnlockVSurface(vs);
   }
+}
+
+extern void SetClippingRect(SGPRect *clip);
+extern void GetClippingRect(SGPRect *clip);
+
+#define DEFAULT_NUM_REGIONS 5
+#define DEFAULT_VIDEO_SURFACE_LIST_SIZE 10
+
+BOOLEAN InitializeVideoSurfaceManager() {
+  RegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Surface Manager");
+  return TRUE;
+}
+
+BOOLEAN ShutdownVideoSurfaceManager() {
+  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_0, "Shutting down the Video Surface manager");
+  UnRegisterDebugTopic(TOPIC_VIDEOSURFACE, "Video Objects");
+  return TRUE;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Fills an rectangular area with a specified color value.
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
+                              int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
+  SGPRect Clip;
+  GetClippingRect(&Clip);
+
+  if (iDestX1 < Clip.iLeft) iDestX1 = Clip.iLeft;
+
+  if (iDestX1 > Clip.iRight) return (FALSE);
+
+  if (iDestX2 > Clip.iRight) iDestX2 = Clip.iRight;
+
+  if (iDestX2 < Clip.iLeft) return (FALSE);
+
+  if (iDestY1 < Clip.iTop) iDestY1 = Clip.iTop;
+
+  if (iDestY1 > Clip.iBottom) return (FALSE);
+
+  if (iDestY2 > Clip.iBottom) iDestY2 = Clip.iBottom;
+
+  if (iDestY2 < Clip.iTop) return (FALSE);
+
+  if ((iDestX2 <= iDestX1) || (iDestY2 <= iDestY1)) return (FALSE);
+
+  struct JRect r = {.x = iDestX1, .y = iDestY1, .w = iDestX2 - iDestX1, .h = iDestY2 - iDestY1};
+  JSurface_FillRect(dest, &r, Color16BPP);
+  return TRUE;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Video Surface Manipulation Functions
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bitDepth) {
+  Assert(height > 0);
+  Assert(width > 0);
+
+  switch (bitDepth) {
+    case 8:
+      return JSurface_Create8bpp(width, height);
+
+    case 16:
+      return JSurface_Create16bpp(width, height);
+
+    default:
+      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid BPP value, can only be 8 or 16.");
+      return NULL;
+  }
+}
+
+struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
+  HIMAGE hImage = CreateImage(filepath, IMAGE_ALLIMAGEDATA);
+
+  if (hImage == NULL) {
+    DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid Image Filename given");
+    return (NULL);
+  }
+
+  Assert(hImage->usHeight > 0);
+  Assert(hImage->usWidth > 0);
+
+  struct VSurface *vs = CreateVSurfaceBlank(hImage->usWidth, hImage->usHeight, hImage->ubBitDepth);
+  if (!vs) {
+    DestroyImage(hImage);
+    return NULL;
+  }
+
+  SGPRect tempRect;
+  tempRect.iLeft = 0;
+  tempRect.iTop = 0;
+  tempRect.iRight = hImage->usWidth - 1;
+  tempRect.iBottom = hImage->usHeight - 1;
+  SetVideoSurfaceDataFromHImage(vs, hImage, 0, 0, &tempRect);
+
+  if (hImage->ubBitDepth == 8) {
+    SetVSurfacePalette(vs, hImage->pPalette);
+  }
+
+  DestroyImage(hImage);
+
+  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Success in CreateVSurfaceFromFile"));
+
+  return vs;
+}
+
+uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
+  if (!JSurface_Lock(vs)) {
+    return NULL;
+  }
+  *pPitch = JSurface_Pitch(vs);
+  return (uint8_t *)JSurface_GetPixels(vs);
+}
+
+void UnlockVSurface(struct VSurface *vs) { JSurface_Unlock(vs); }
+
+// Palette setting is expensive, need to set both DDPalette and create 16BPP palette
+void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
+  Assert(vs != NULL);
+
+  JSurface_SetPalette(vs, pal);
+
+  // Delete 16BPP Palette if one exists
+  if (vs->p16BPPPalette != NULL) {
+    MemFree(vs->p16BPPPalette);
+    vs->p16BPPPalette = NULL;
+  }
+
+  // Create 16BPP Palette
+  vs->p16BPPPalette = Create16BPPPalette(pal);
+
+  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Video Surface Palette change successfull"));
 }

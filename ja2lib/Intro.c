@@ -34,6 +34,7 @@
 #include "Utils/Text.h"
 #include "Utils/Utilities.h"
 #include "Utils/WordWrap.h"
+#include "smk.h"
 
 extern wchar_t *gzIntroScreen[];
 
