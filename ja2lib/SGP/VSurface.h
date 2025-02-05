@@ -46,6 +46,11 @@ struct VSurface {
   void *_platformPalette;   // platform-specific data (LPDIRECTDRAWPALETTE)
   uint16_t *p16BPPPalette;  // A 16BPP palette used for 8->16 blits
   bool transparencySet;
+
+  // Raw pixels.  Available only when the surface is locked.
+  void *pixels;
+  // Size of single line of pixels in bytes.  Available only when the surface is locked.
+  uint32_t pitch;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

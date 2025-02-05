@@ -63,15 +63,15 @@ uint16_t JVideo_GetScreenHeight();
 
 // void JVideo_SimulateMouseMovement(struct JVideoState *v, uint32_t newPosX, uint32_t newPosY);
 
-// // Lock the surface to get access to raw pixels.
-// bool JSurface_Lock(struct JSurface *s);
+// Lock the surface to get access to raw pixels.
+bool JSurface_Lock(struct VSurface *s);
 
-// // Unlock the previously locked surface.
-// void JSurface_Unlock(struct JSurface *s);
+// Unlock the previously locked surface.
+void JSurface_Unlock(struct VSurface *s);
 
-// int JSurface_Pitch(struct JSurface *s);
+int JSurface_Pitch(struct VSurface *s);
 
-// void *JSurface_GetPixels(struct JSurface *s);
+void *JSurface_GetPixels(struct VSurface *s);
 
 struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height);
 struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height);

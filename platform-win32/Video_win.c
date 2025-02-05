@@ -1284,17 +1284,6 @@ BOOLEAN ShutdownVideoSurfaceManager() {
   return TRUE;
 }
 
-#define INITGUID
-#include <ddraw.h>
-#include <windows.h>
-
-#include "Smack.h"
-#include "platform_win.h"
-
-#ifndef _MT
-#define _MT
-#endif
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Fills an rectangular area with a specified color value.
@@ -1387,39 +1376,15 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   return vs;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Called when surface is lost, for the most part called by utility functions
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
 uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
-  if (vs == NULL) {
-    *pPitch = 0;
+  if (!JSurface_Lock(vs)) {
     return NULL;
   }
-
-  DDSURFACEDESC descr;
-  memset(&descr, 0, sizeof(DDSURFACEDESC));
-  descr.dwSize = sizeof(DDSURFACEDESC);
-
-  HRESULT ReturnCode;
-  do {
-    ReturnCode =
-        IDirectDrawSurface2_Lock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL, &descr, 0, NULL);
-  } while (ReturnCode == DDERR_WASSTILLDRAWING);
-
-  *pPitch = descr.lPitch;
-
-  return (uint8_t *)descr.lpSurface;
+  *pPitch = JSurface_Pitch(vs);
+  return (uint8_t *)JSurface_GetPixels(vs);
 }
 
-void UnlockVSurface(struct VSurface *vs) {
-  if (vs == NULL) {
-    return;
-  }
-  IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)vs->_platformData2, NULL);
-}
+void UnlockVSurface(struct VSurface *vs) { JSurface_Unlock(vs); }
 
 // Palette setting is expensive, need to set both DDPalette and create 16BPP palette
 void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
@@ -1438,6 +1403,17 @@ void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Video Surface Palette change successfull"));
 }
+
+#define INITGUID
+#include <ddraw.h>
+#include <windows.h>
+
+#include "Smack.h"
+#include "platform_win.h"
+
+#ifndef _MT
+#define _MT
+#endif
 
 // Transparency needs to take RGB value and find best fit and place it into DD Surface
 // colorkey value.

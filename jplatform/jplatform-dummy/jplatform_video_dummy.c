@@ -27,3 +27,8 @@ bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) { return false; }
 bool JSurface_Restore(struct VSurface *vs) { return false; }
 bool JSurface_Flip(struct VSurface *vs) { return false; }
 void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color) {}
+
+bool JSurface_Lock(struct VSurface *s) { return false; }
+void JSurface_Unlock(struct VSurface *s) {}
+int JSurface_Pitch(struct VSurface *s) { return 0; }
+void *JSurface_GetPixels(struct VSurface *s) { return NULL; }

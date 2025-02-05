@@ -540,3 +540,39 @@ void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color) 
                                          DDBLT_COLORFILL, &BlitterFX);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
+
+bool JSurface_Lock(struct VSurface *s) {
+  if (s == NULL) {
+    return false;
+  }
+
+  DDSURFACEDESC descr;
+  memset(&descr, 0, sizeof(DDSURFACEDESC));
+  descr.dwSize = sizeof(DDSURFACEDESC);
+
+  HRESULT ReturnCode;
+  do {
+    ReturnCode =
+        IDirectDrawSurface2_Lock((LPDIRECTDRAWSURFACE2)s->_platformData2, NULL, &descr, 0, NULL);
+  } while (ReturnCode == DDERR_WASSTILLDRAWING);
+
+  if (descr.lpSurface == NULL) {
+    return false;
+  }
+
+  s->pitch = descr.lPitch;
+  s->pixels = descr.lpSurface;
+  return true;
+}
+
+void JSurface_Unlock(struct VSurface *s) {
+  if (s == NULL) {
+    return;
+  }
+  IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)s->_platformData2, NULL);
+  s->pitch = 0;
+  s->pixels = NULL;
+}
+
+int JSurface_Pitch(struct VSurface *s) { return s->pitch; }
+void *JSurface_GetPixels(struct VSurface *s) { return s->pixels; }
