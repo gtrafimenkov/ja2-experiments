@@ -729,7 +729,7 @@ BOOLEAN AddCreditNode(uint32_t uiType, uint32_t uiFlags, wchar_t *pString) {
         CreateVSurfaceBlank16(CRDT_WIDTH_OF_TEXT_AREA, pNodeToAdd->sHeightOfString);
 
     // Set transparency
-    SetVideoSurfaceTransparencyColor(pNodeToAdd->vsImage, 0);
+    JSurface_SetColorKey(pNodeToAdd->vsImage, 0);
 
     // fill the surface with a transparent color
     ColorFillVSurfaceArea(pNodeToAdd->vsImage, 0, 0, CRDT_WIDTH_OF_TEXT_AREA,

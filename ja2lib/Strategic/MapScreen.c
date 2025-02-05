@@ -2647,7 +2647,7 @@ uint32_t MapScreenHandle(void) {
       if (vsPOPUPTEX == NULL) {
         return FALSE;
       }
-      SetVideoSurfaceTransparencyColor(vsPOPUPTEX, FROMRGB(0, 0, 0));
+      JSurface_SetColorKey(vsPOPUPTEX, FROMRGB(0, 0, 0));
 
       CHECKF(AddVObject(CreateVObjectFromFile("INTERFACE\\SAM.sti"), &guiSAMICON));
 
@@ -5149,9 +5149,7 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   }
 
   //	if((!fStationary)||(!fZoomFlag))
-  {
-    GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY);
-  }
+  { GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY); }
 
   // blit in the highlighted sector
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);

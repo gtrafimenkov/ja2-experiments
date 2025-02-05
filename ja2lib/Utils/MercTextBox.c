@@ -154,7 +154,7 @@ BOOLEAN LoadTextMercPopupImages(uint8_t ubBackgroundIndex, uint8_t ubBorderIndex
   if (gPopUpTextBox->vsMercTextPopUpBackground == NULL) {
     return FALSE;
   }
-  SetVideoSurfaceTransparencyColor(gPopUpTextBox->vsMercTextPopUpBackground, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(gPopUpTextBox->vsMercTextPopUpBackground, FROMRGB(0, 0, 0));
 
   // border
   CHECKF(AddVObject(CreateVObjectFromFile(zMercBorderPopupFilenames[ubBorderIndex]),
@@ -380,7 +380,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
   if (pPopUpTextBox->uiFlags & MERC_POPUP_PREPARE_FLAGS_TRANS_BACK) {
     // Zero with yellow,
     // Set source transparcenty
-    SetVideoSurfaceTransparencyColor(pPopUpTextBox->sourceBuffer, FROMRGB(255, 255, 0));
+    JSurface_SetColorKey(pPopUpTextBox->sourceBuffer, FROMRGB(255, 255, 0));
 
     pDestBuf = (uint16_t *)LockVSurface(pPopUpTextBox->sourceBuffer, &uiDestPitchBYTES);
 

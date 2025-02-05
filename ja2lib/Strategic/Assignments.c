@@ -7462,7 +7462,7 @@ BOOLEAN CreateDestroyAssignmentPopUpBoxes(void) {
     if (vsPOPUPTEX == NULL) {
       return FALSE;
     }
-    SetVideoSurfaceTransparencyColor(vsPOPUPTEX, FROMRGB(0, 0, 0));
+    JSurface_SetColorKey(vsPOPUPTEX, FROMRGB(0, 0, 0));
 
     // these boxes are always created while in mapscreen...
     CreateEPCBox();

@@ -32,7 +32,7 @@ BOOLEAN InitializeGameVideoObjects() {
   if (vsSaveBuffer == NULL) {
     return FALSE;
   }
-  SetVideoSurfaceTransparencyColor(vsSaveBuffer, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(vsSaveBuffer, FROMRGB(0, 0, 0));
 
   vsExtraBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
   gfExtraBuffer = TRUE;

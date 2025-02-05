@@ -29,7 +29,7 @@ void InitJA2SplashScreen() {
       AssertMsg(0, String("Failed to load %s", "LOADSCREENS\\Notification.sti"));
       return;
     }
-    SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
+    JSurface_SetColorKey(hVSurface, FROMRGB(0, 0, 0));
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0);
     DeleteVSurface(hVSurface);
 
@@ -58,7 +58,7 @@ void InitJA2SplashScreen() {
       AssertMsg(0, String("Failed to load %s", ImageFile));
       return;
     }
-    SetVideoSurfaceTransparencyColor(hVSurface, FROMRGB(0, 0, 0));
+    JSurface_SetColorKey(hVSurface, FROMRGB(0, 0, 0));
     BltVSurfaceToVSurface(vsFB, hVSurface, 0, 0);
     DeleteVSurface(hVSurface);
   }

@@ -980,7 +980,7 @@ void BuildInterfaceBuffer() {
   if (gpAR->vsInterfaceBuffer == NULL) {
     AssertMsg(0, "Failed to allocate memory for autoresolve interface buffer.");
   }
-  SetVideoSurfaceTransparencyColor(gpAR->vsInterfaceBuffer, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(gpAR->vsInterfaceBuffer, FROMRGB(0, 0, 0));
 
   GetClippingRect(&ClipRect);
   SetClippingRect(&DestRect);

@@ -597,7 +597,7 @@ BOOLEAN EnterAIMMembers() {
   if (vsVideoFaceBackground == NULL) {
     return FALSE;
   }
-  SetVideoSurfaceTransparencyColor(vsVideoFaceBackground, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(vsVideoFaceBackground, FROMRGB(0, 0, 0));
 
   // load the stats graphic and add it
   CHECKF(AddVObject(CreateVObjectFromFile("LAPTOP\\stats.sti"), &guiStats));
@@ -2883,7 +2883,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
       if (vsVideoTitleBar == NULL) {
         return FALSE;
       }
-      SetVideoSurfaceTransparencyColor(vsVideoTitleBar, FROMRGB(0, 0, 0));
+      JSurface_SetColorKey(vsVideoTitleBar, FROMRGB(0, 0, 0));
 
       gfAimMemberCanMercSayOpeningQuote = TRUE;
 
@@ -3099,7 +3099,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
     // Create a background video surface to blt the face onto
     vsVideoTitleBar =
         CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT);
-    SetVideoSurfaceTransparencyColor(vsVideoTitleBar, FROMRGB(0, 0, 0));
+    JSurface_SetColorKey(vsVideoTitleBar, FROMRGB(0, 0, 0));
     if (vsVideoTitleBar == NULL) {
       return FALSE;
     }

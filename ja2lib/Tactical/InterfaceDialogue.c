@@ -475,7 +475,7 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   if (gTalkPanel.vsSaveBuffer == NULL) {
     return FALSE;
   }
-  SetVideoSurfaceTransparencyColor(gTalkPanel.vsSaveBuffer, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(gTalkPanel.vsSaveBuffer, FROMRGB(0, 0, 0));
 
   // Set face to auto
   SetAutoFaceActive(gTalkPanel.vsSaveBuffer, NULL, iFaceIndex, 0, 0);

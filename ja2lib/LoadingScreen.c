@@ -325,7 +325,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
   } else {
     struct VSurface* vs = CreateVSurfaceFromFile(filepath);
     if (vs) {
-      SetVideoSurfaceTransparencyColor(vs, FROMRGB(0, 0, 0));
+      JSurface_SetColorKey(vs, FROMRGB(0, 0, 0));
       // Blit the background image
       BltVSurfaceToVSurface(vsFB, vs, 0, 0);
       DeleteVSurface(vs);

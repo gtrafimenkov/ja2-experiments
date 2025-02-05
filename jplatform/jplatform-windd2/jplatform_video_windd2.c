@@ -576,3 +576,23 @@ void JSurface_Unlock(struct VSurface *s) {
 
 int JSurface_Pitch(struct VSurface *s) { return s->pitch; }
 void *JSurface_GetPixels(struct VSurface *s) { return s->pixels; }
+
+void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {
+  s->transparencySet = true;
+
+  DDCOLORKEY ColorKey;
+  switch (s->ubBitDepth) {
+    case 8:
+      ColorKey.dwColorSpaceLowValue = key;
+      ColorKey.dwColorSpaceHighValue = key;
+      break;
+
+    case 16:
+      ColorKey.dwColorSpaceLowValue = Get16BPPColor(key);
+      ColorKey.dwColorSpaceHighValue = ColorKey.dwColorSpaceLowValue;
+      break;
+  }
+
+  IDirectDrawSurface2_SetColorKey((LPDIRECTDRAWSURFACE2)s->_platformData2, DDCKEY_SRCBLT,
+                                  &ColorKey);
+}

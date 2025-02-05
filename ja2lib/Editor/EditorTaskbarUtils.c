@@ -187,13 +187,13 @@ void DeleteEditorImages() {
 void CreateEditorBuffers() {
   int32_t i;
   vsMercTempBuffer = CreateVSurfaceBlank16(60, 25);
-  SetVideoSurfaceTransparencyColor(vsMercTempBuffer, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(vsMercTempBuffer, FROMRGB(0, 0, 0));
 
   // create the nine buffers for the merc's inventory slots.
   for (i = 0; i < 9; i++) {
     vsMercInvPanelBuffers[i] = CreateVSurfaceBlank16(
         MERCINV_SLOT_HEIGHT, i < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH);
-    SetVideoSurfaceTransparencyColor(vsMercInvPanelBuffers[i], FROMRGB(0, 0, 0));
+    JSurface_SetColorKey(vsMercInvPanelBuffers[i], FROMRGB(0, 0, 0));
   }
 }
 

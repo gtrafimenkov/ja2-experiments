@@ -291,7 +291,7 @@ BOOLEAN InitializeTacticalInterface() {
   if (vsINTEXT == NULL) {
     AssertMsg(0, "Missing INTERFACE\\In_text.sti");
   }
-  SetVideoSurfaceTransparencyColor(vsINTEXT, FROMRGB(255, 0, 0));
+  JSurface_SetColorKey(vsINTEXT, FROMRGB(255, 0, 0));
 
   // LOAD CLOSE ANIM
   if (!AddVObject(CreateVObjectFromFile("INTERFACE\\p_close.sti"), &guiCLOSE))
@@ -2522,9 +2522,7 @@ void CreateTopMessage(struct VSurface *dest, uint8_t ubType, wchar_t *psString) 
   DeleteVideoObjectFromIndex(uiINTBAR);
 
   // if ( gGameOptions.fTurnTimeLimit )
-  {
-    DeleteVideoObjectFromIndex(uiPLAYERBAR);
-  }
+  { DeleteVideoObjectFromIndex(uiPLAYERBAR); }
 
   // Draw text....
   FindFontCenterCoordinates(320, 7, 1, 1, psString, TINYFONT1, &sX, &sY);

@@ -492,7 +492,7 @@ static void InternalSetAutoFaceActive(struct VSurface *displayBuffer,
     if (pFace->autoRestoreBuffer == NULL) {
       return;
     }
-    SetVideoSurfaceTransparencyColor(pFace->autoRestoreBuffer, FROMRGB(0, 0, 0));
+    JSurface_SetColorKey(pFace->autoRestoreBuffer, FROMRGB(0, 0, 0));
   } else {
     pFace->fAutoRestoreBuffer = FALSE;
     pFace->autoRestoreBuffer = restoreBuffer;

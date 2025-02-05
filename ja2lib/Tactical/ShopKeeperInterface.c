@@ -776,7 +776,7 @@ BOOLEAN EnterShopKeeperInterface() {
     ScreenMsg(FONT_MCOLOR_WHITE, MSG_BETAVERSION,
               L"Failed to create Surface where tactical map shows through");
 #endif
-    SetVideoSurfaceTransparencyColor(vsCornerWhereTacticalIsStillSeenImage, FROMRGB(0, 0, 0));
+    JSurface_SetColorKey(vsCornerWhereTacticalIsStillSeenImage, FROMRGB(0, 0, 0));
 
     return (FALSE);
   }

@@ -98,9 +98,6 @@ void UnlockVSurface(struct VSurface *hVSurface);
 BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage, uint16_t usX,
                                       uint16_t usY, SGPRect *pSrcRect);
 
-// Sets Transparency color into HVSurface and the underlying DD surface
-void SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor);
-
 // Deletes all data, including palettes, regions, DD Surfaces
 BOOLEAN DeleteVSurface(struct VSurface *hVSurface);
 

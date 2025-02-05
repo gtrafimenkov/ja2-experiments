@@ -32,3 +32,4 @@ bool JSurface_Lock(struct VSurface *s) { return false; }
 void JSurface_Unlock(struct VSurface *s) {}
 int JSurface_Pitch(struct VSurface *s) { return 0; }
 void *JSurface_GetPixels(struct VSurface *s) { return NULL; }
+void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {}

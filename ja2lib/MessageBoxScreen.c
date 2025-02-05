@@ -253,7 +253,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   if (gMsgBox.vsSaveBuffer == NULL) {
     return -1;
   }
-  SetVideoSurfaceTransparencyColor(gMsgBox.vsSaveBuffer, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(gMsgBox.vsSaveBuffer, FROMRGB(0, 0, 0));
 
   // Save what we have under here...
   pDestBuf = LockVSurface(gMsgBox.vsSaveBuffer, &uiDestPitchBYTES);

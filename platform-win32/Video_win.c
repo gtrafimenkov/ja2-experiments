@@ -146,7 +146,7 @@ BOOLEAN InitializeVideoManager() {
   if (vsMouseBuffer == NULL) {
     return FALSE;
   }
-  SetVideoSurfaceTransparencyColor(vsMouseBuffer, 0);
+  JSurface_SetColorKey(vsMouseBuffer, 0);
 
   // Initialize the main mouse original surface
   vsMouseBufferOriginal = JSurface_CreateWithDefaultBpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
@@ -1414,30 +1414,6 @@ void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
 #ifndef _MT
 #define _MT
 #endif
-
-// Transparency needs to take RGB value and find best fit and place it into DD Surface
-// colorkey value.
-void SetVideoSurfaceTransparencyColor(struct VSurface *vs, COLORVAL TransColor) {
-  vs->transparencySet = true;
-
-  DDCOLORKEY ColorKey;
-  switch (vs->ubBitDepth) {
-    case 8:
-      // Use color directly
-      ColorKey.dwColorSpaceLowValue = TransColor;
-      ColorKey.dwColorSpaceHighValue = TransColor;
-      break;
-
-    case 16:
-      // fFlags now contains our closest match
-      ColorKey.dwColorSpaceLowValue = Get16BPPColor(TransColor);
-      ColorKey.dwColorSpaceHighValue = ColorKey.dwColorSpaceLowValue;
-      break;
-  }
-
-  IDirectDrawSurface2_SetColorKey((LPDIRECTDRAWSURFACE2)vs->_platformData2, DDCKEY_SRCBLT,
-                                  &ColorKey);
-}
 
 BOOLEAN GetVSurfacePaletteEntries(struct VSurface *vs, struct JPaletteEntry *pPalette) {
   CHECKF(vs->_platformPalette != NULL);

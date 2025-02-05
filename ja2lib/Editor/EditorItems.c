@@ -282,7 +282,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
     eInfo.fActive = FALSE;
     return;
   }
-  SetVideoSurfaceTransparencyColor(eInfo.vsBuffer, FROMRGB(0, 0, 0));
+  JSurface_SetColorKey(eInfo.vsBuffer, FROMRGB(0, 0, 0));
 
   pDestBuf = LockVSurface(eInfo.vsBuffer, &uiDestPitchBYTES);
   pSrcBuf = LockVSurface(vsFB, &uiSrcPitchBYTES);
