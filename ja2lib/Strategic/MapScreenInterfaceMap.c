@@ -1078,12 +1078,11 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   uint16_t *pDestBuf;
   uint8_t *pSrcBuf;
   SGPRect clip;
-  uint16_t *pOriginalPallette;
 
   // get original video surface palette
   hSrcVSurface = vsBigMap;
 
-  pOriginalPallette = hSrcVSurface->p16BPPPalette;
+  const uint16_t *pOriginalPallette = JSurface_GetPalette16(hSrcVSurface);
 
   if (fZoomFlag)
     ShadeMapElemZoomIn(sMapX, sMapY, iColor);
@@ -1129,7 +1128,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
 
-        hSrcVSurface->p16BPPPalette = pMapLTGreenPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapLTGreenPalette);
         // hMineSurface->p16BPPPalette = pMapLTGreenPalette;
         // hSAMSurface->p16BPPPalette = pMapLTGreenPalette;
 
@@ -1153,7 +1152,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
       case (MAP_SHADE_DK_GREEN):
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
-        hSrcVSurface->p16BPPPalette = pMapDKGreenPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapDKGreenPalette);
         // hMineSurface->p16BPPPalette = pMapDKGreenPalette;
         // hSAMSurface->p16BPPPalette = pMapDKGreenPalette;
 
@@ -1177,7 +1176,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
       case (MAP_SHADE_LT_RED):
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
-        hSrcVSurface->p16BPPPalette = pMapLTRedPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapLTRedPalette);
         // hMineSurface->p16BPPPalette = pMapLTRedPalette;
         // hSAMSurface->p16BPPPalette = pMapLTRedPalette;
 
@@ -1201,7 +1200,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
       case (MAP_SHADE_DK_RED):
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
-        hSrcVSurface->p16BPPPalette = pMapDKRedPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapDKRedPalette);
         // hMineSurface->p16BPPPalette = pMapDKRedPalette;
         // hSAMSurface->p16BPPPalette = pMapDKRedPalette;
 
@@ -1225,7 +1224,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
     // restore original palette
     hSrcVSurface = vsBigMap;
-    hSrcVSurface->p16BPPPalette = pOriginalPallette;
+    JSurface_SetPalette16(hSrcVSurface, pOriginalPallette);
   }
 
   return (TRUE);
@@ -1241,7 +1240,6 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   // uint8_t *pDestBuf2;
   uint8_t *pSrcBuf;
   SGPRect clip;
-  uint16_t *pOriginalPallette;
 
   // trabslate to screen co-ords for zoomed
   GetScreenXYFromMapXYStationary(sMapX, sMapY, &sScreenX, &sScreenY);
@@ -1252,7 +1250,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
   // get original video surface palette
   hSrcVSurface = vsBigMap;
-  pOriginalPallette = hSrcVSurface->p16BPPPalette;
+  const uint16_t *pOriginalPallette = JSurface_GetPalette16(hSrcVSurface);
 
   if ((iX > MapScreenRect.iLeft - MAP_GRID_X * 2) && (iX < MapScreenRect.iRight) &&
       (iY > MapScreenRect.iTop - MAP_GRID_Y * 2) && (iY < MapScreenRect.iBottom)) {
@@ -1310,7 +1308,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
       case (MAP_SHADE_LT_GREEN):
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
-        hSrcVSurface->p16BPPPalette = pMapLTGreenPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapLTGreenPalette);
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
@@ -1330,7 +1328,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
       case (MAP_SHADE_DK_GREEN):
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
-        hSrcVSurface->p16BPPPalette = pMapDKGreenPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapDKGreenPalette);
 
         /// lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
@@ -1350,7 +1348,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
       case (MAP_SHADE_LT_RED):
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
-        hSrcVSurface->p16BPPPalette = pMapLTRedPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapLTRedPalette);
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
@@ -1370,7 +1368,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
       case (MAP_SHADE_DK_RED):
         // grab video surface and set palette
         hSrcVSurface = vsBigMap;
-        hSrcVSurface->p16BPPPalette = pMapDKRedPalette;
+        JSurface_SetPalette16(hSrcVSurface, pMapDKRedPalette);
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
@@ -1391,7 +1389,7 @@ BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
   // restore original palette
   hSrcVSurface = vsBigMap;
-  hSrcVSurface->p16BPPPalette = pOriginalPallette;
+  JSurface_SetPalette16(hSrcVSurface, pOriginalPallette);
 
   return (TRUE);
 }
@@ -1400,7 +1398,7 @@ BOOLEAN InitializePalettesForMap(void) {
   // init palettes
   struct JPaletteEntry pPalette[256];
 
-  JSurface_GetPalette(vsBigMap, pPalette);
+  JSurface_GetPalette32(vsBigMap, pPalette);
 
   // set up various palettes
   pMapLTRedPalette = Create16BPPPaletteShaded(pPalette, 400, 0, 0, TRUE);

@@ -36,13 +36,13 @@ extern BOOLEAN gfExtraBuffer;
 //
 
 struct VSurface {
-  uint16_t height;          // Height of Video Surface
-  uint16_t width;           // Width of Video Surface
-  uint8_t bitDepth;         // 8 or 16
-  void *_platformData1;     // platform-specific data (Direct Draw One Interface)
-  void *_platformData2;     // platform-specific data (Direct Draw Two Interface)
-  void *_platformPalette;   // platform-specific data (LPDIRECTDRAWPALETTE)
-  uint16_t *p16BPPPalette;  // A 16BPP palette used for 8->16 blits
+  uint16_t height;            // Height of Video Surface
+  uint16_t width;             // Width of Video Surface
+  uint8_t bitDepth;           // 8 or 16
+  void *_platformData1;       // platform-specific data (Direct Draw One Interface)
+  void *_platformData2;       // platform-specific data (Direct Draw Two Interface)
+  void *_platformPalette;     // platform-specific data (LPDIRECTDRAWPALETTE)
+  const uint16_t *palette16;  // A 16BPP palette used for 8->16 blits
   bool transparencySet;
 
   // Raw pixels.  Available only when the surface is locked.

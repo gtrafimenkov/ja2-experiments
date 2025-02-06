@@ -5347,7 +5347,6 @@ BlitDone:
 BOOLEAN Blt8BPPDataSubTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
                                     struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                     uint32_t uiSrcPitch, int32_t iX, int32_t iY, SGPRect *pRect) {
-  uint16_t *p16BPPPalette;
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
   uint32_t LineSkip, LeftSkip, RightSkip, TopSkip, BlitLength, SrcSkip, BlitHeight;
@@ -5379,7 +5378,7 @@ BOOLEAN Blt8BPPDataSubTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES
 
   SrcPtr = (uint8_t *)(pSrcBuffer + TopSkip + LeftSkip);
   DestPtr = ((uint8_t *)pBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2));
-  p16BPPPalette = hSrcVSurface->p16BPPPalette;
+  const uint16_t *p16BPPPalette = JSurface_GetPalette16(hSrcVSurface);
   LineSkip = (uiDestPitchBYTES - (BlitLength * 2));
 
 #ifdef _WINDOWS
@@ -5434,12 +5433,9 @@ BlitLoop:
 BOOLEAN Blt8BPPDataTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
                                  struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer, int32_t iX,
                                  int32_t iY) {
-  uint16_t *p16BPPPalette;
-  //	uint32_t uiOffset;
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
   uint32_t LineSkip;
-  //	ETRLEObject *pTrav;
   int32_t iTempX, iTempY;
   uint32_t rows;
 
@@ -5462,7 +5458,7 @@ BOOLEAN Blt8BPPDataTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
 
   SrcPtr = (uint8_t *)pSrcBuffer;
   DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2);
-  p16BPPPalette = hSrcVSurface->p16BPPPalette;
+  const uint16_t *p16BPPPalette = JSurface_GetPalette16(hSrcVSurface);
   LineSkip = (uiDestPitchBYTES - (usWidth * 2));
 
 #ifdef _WINDOWS
@@ -5576,7 +5572,6 @@ exactly half the size.
 BOOLEAN Blt8BPPDataTo16BPPBufferHalf(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
                                      struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                      uint32_t uiSrcPitch, int32_t iX, int32_t iY) {
-  uint16_t *p16BPPPalette;
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
   uint32_t LineSkip;
@@ -5602,7 +5597,7 @@ BOOLEAN Blt8BPPDataTo16BPPBufferHalf(uint16_t *pBuffer, uint32_t uiDestPitchBYTE
 
   SrcPtr = (uint8_t *)pSrcBuffer;
   DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2);
-  p16BPPPalette = hSrcVSurface->p16BPPPalette;
+  const uint16_t *p16BPPPalette = JSurface_GetPalette16(hSrcVSurface);
   LineSkip = (uiDestPitchBYTES - (usWidth & 0xfffffffe));
   uiSrcSkip = (uiSrcPitch * 2) - (usWidth & 0xfffffffe);
 
@@ -5669,7 +5664,6 @@ BOOLEAN Blt8BPPDataTo16BPPBufferHalfRect(uint16_t *pBuffer, uint32_t uiDestPitch
                                          struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                          uint32_t uiSrcPitch, int32_t iX, int32_t iY,
                                          SGPRect *pRect) {
-  uint16_t *p16BPPPalette;
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
   uint32_t LineSkip;
@@ -5700,7 +5694,7 @@ BOOLEAN Blt8BPPDataTo16BPPBufferHalfRect(uint16_t *pBuffer, uint32_t uiDestPitch
 
   SrcPtr = (uint8_t *)pSrcBuffer + (uiSrcPitch * pRect->iTop) + (pRect->iLeft);
   DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2);
-  p16BPPPalette = hSrcVSurface->p16BPPPalette;
+  const uint16_t *p16BPPPalette = JSurface_GetPalette16(hSrcVSurface);
   LineSkip = (uiDestPitchBYTES - (usWidth & 0xfffffffe));
   uiSrcSkip = (uiSrcPitch * 2) - (usWidth & 0xfffffffe);
 

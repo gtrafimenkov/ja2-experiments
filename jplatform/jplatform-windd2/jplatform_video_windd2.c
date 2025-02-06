@@ -213,8 +213,8 @@ static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2
 
     // Create 16-BPP Palette
     struct JPaletteEntry SGPPalette[256];
-    JSurface_GetPalette(vs, SGPPalette);
-    vs->p16BPPPalette = Create16BPPPalette(SGPPalette);
+    JSurface_GetPalette32(vs, SGPPalette);
+    vs->palette16 = Create16BPPPalette(SGPPalette);
   }
 }
 
@@ -597,7 +597,7 @@ void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {
                                   &ColorKey);
 }
 
-bool JSurface_GetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {
+bool JSurface_GetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
   if (vs->_platformPalette == NULL) {
     return false;
   }
@@ -625,9 +625,9 @@ void JSurface_Free(struct VSurface *s) {
     s->_platformData1 = NULL;
   }
 
-  if (s->p16BPPPalette != NULL) {
-    free(s->p16BPPPalette);
-    s->p16BPPPalette = NULL;
+  if (s->palette16 != NULL) {
+    free((void *)s->palette16);
+    s->palette16 = NULL;
   }
 
   free(s);
@@ -636,3 +636,7 @@ void JSurface_Free(struct VSurface *s) {
 uint8_t JSurface_BPP(struct VSurface *s) { return s->bitDepth; }
 uint16_t JSurface_Width(struct VSurface *s) { return s->width; }
 uint16_t JSurface_Height(struct VSurface *s) { return s->height; }
+const uint16_t *JSurface_GetPalette16(struct VSurface *s) { return s->palette16; }
+void JSurface_SetPalette16(struct VSurface *s, const uint16_t *palette16) {
+  s->palette16 = palette16;
+}

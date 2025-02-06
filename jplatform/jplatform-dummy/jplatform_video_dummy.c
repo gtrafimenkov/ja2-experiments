@@ -33,8 +33,10 @@ void JSurface_Unlock(struct VSurface *s) {}
 int JSurface_Pitch(struct VSurface *s) { return 0; }
 void *JSurface_GetPixels(struct VSurface *s) { return NULL; }
 void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {}
-bool JSurface_GetPalette(struct VSurface *vs, struct JPaletteEntry *pal) { return false; }
+bool JSurface_GetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) { return false; }
 void JSurface_Free(struct VSurface *s) {}
 uint8_t JSurface_BPP(struct VSurface *s) { return 0; }
 uint16_t JSurface_Width(struct VSurface *s) { return 0; }
 uint16_t JSurface_Height(struct VSurface *s) { return 0; }
+const uint16_t *JSurface_GetPalette16(struct VSurface *s) { return NULL; }
+void JSurface_SetPalette16(struct VSurface *s, const uint16_t *palette16) {}
