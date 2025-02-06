@@ -637,6 +637,3 @@ uint8_t JSurface_BPP(struct VSurface *s) { return s->bitDepth; }
 uint16_t JSurface_Width(struct VSurface *s) { return s->width; }
 uint16_t JSurface_Height(struct VSurface *s) { return s->height; }
 const uint16_t *JSurface_GetPalette16(struct VSurface *s) { return s->palette16; }
-void JSurface_SetPalette16(struct VSurface *s, const uint16_t *palette16) {
-  s->palette16 = palette16;
-}
