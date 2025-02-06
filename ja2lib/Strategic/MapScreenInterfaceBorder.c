@@ -56,30 +56,12 @@ BOOLEAN fShowMilitia = FALSE;
 BOOLEAN fShowAircraftFlag = FALSE;
 BOOLEAN fShowItemsFlag = FALSE;
 
-BOOLEAN fZoomFlag = FALSE;
-// BOOLEAN fShowVehicleFlag = FALSE;
-
-// BOOLEAN fMapScrollDueToPanelButton = FALSE;
-// BOOLEAN fCursorIsOnMapScrollButtons = FALSE;
-// BOOLEAN fDisabledMapBorder = FALSE;
-
 // buttons & button images
 int32_t giMapBorderButtons[6] = {-1, -1, -1, -1, -1, -1};
 int32_t giMapBorderButtonsImage[6] = {-1, -1, -1, -1, -1, -1};
 
-// uint32_t guiMapBorderScrollButtons[ 4 ] = { -1, -1, -1, -1 };
-// uint32_t guiMapBorderScrollButtonsImage[ 4 ];
-
-// raise/lower land buttons
-// uint32_t guiMapBorderLandRaiseButtons[ 2 ] = { -1, -1 };
-// uint32_t guiMapBorderLandRaiseButtonsImage[ 2 ];
-
 void DeleteMapBorderButtons(void);
 BOOLEAN CreateButtonsForMapBorder(void);
-
-// void MapScrollButtonMvtCheck( void );
-// BOOLEAN ScrollButtonsDisplayingHelpMessage( void );
-// void UpdateScrollButtonStatesWhileScrolling( void );
 
 // set button states to match map flags
 void InitializeMapBorderButtonStates(void);
@@ -474,55 +456,6 @@ void BtnItemCallback(GUI_BUTTON *btn, int32_t reason) {
     CommonBtnCallbackBtnDownChecks();
   }
 }
-
-/*
-void BtnZoomCallback(GUI_BUTTON *btn,int32_t reason)
-{
-        uint16_t sTempXOff=0;
-        uint16_t sTempYOff=0;
-
-
-        if(reason & MSYS_CALLBACK_REASON_LBUTTON_DWN )
-        {
-                CommonBtnCallbackBtnDownChecks();
-
-                if (btn->uiFlags & BUTTON_CLICKED_ON)
-                {
-      btn->uiFlags&=~(BUTTON_CLICKED_ON);
-      fZoomFlag=FALSE;
-                }
-                else
-                {
-                 btn->uiFlags|=(BUTTON_CLICKED_ON);
-                 fZoomFlag=TRUE;
-                 if( sSelMapX > 14 )
-                 {
-                         iZoomX = ( ( sSelMapX + 2 ) / 2 ) * ( MAP_GRID_X * 2 );
-                 }
-                 else
-                 {
-                         iZoomX=sSelMapX/2*MAP_GRID_X*2;
-                 }
-
-                 if( sOldSelMapY > 14 )
-                 {
-                         iZoomY = ( ( sSelMapY + 2 ) / 2 ) * ( MAP_GRID_Y * 2 );
-                 }
-                 else
-                 {
-                         iZoomY=sSelMapY/2*MAP_GRID_Y*2;
-                 }
-
-                }
-
-                fMapPanelDirty=TRUE;
-        }
-        else if(reason & MSYS_CALLBACK_REASON_RBUTTON_DWN )
-        {
-                CommonBtnCallbackBtnDownChecks();
-        }
-}
-*/
 
 void ToggleShowTownsMode(void) {
   if (fShowTownFlag == TRUE) {

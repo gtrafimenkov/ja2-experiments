@@ -65,8 +65,6 @@ extern BOOLEAN gfTransitionMapscreenToAutoResolve;
 extern BOOLEAN gfExitViewer;
 #endif
 
-// zoom flag
-extern BOOLEAN fZoomFlag;
 extern BOOLEAN fMapScreenBottomDirty;
 
 BOOLEAN gfTacticalTraversal = FALSE;

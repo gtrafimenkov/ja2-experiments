@@ -629,7 +629,7 @@ uint32_t DrawMap(void) {
     // clip blits to mapscreen region
     // ClipBlitsToMapViewRegion( );
 
-    if (fZoomFlag) {
+    if (FALSE) {
       // set up bounds
       if (iZoomX < WEST_ZOOM_BOUND) iZoomX = WEST_ZOOM_BOUND;
       if (iZoomX > EAST_ZOOM_BOUND) iZoomX = EAST_ZOOM_BOUND;
@@ -775,7 +775,7 @@ uint32_t DrawMap(void) {
 void GetScreenXYFromMapXY(uint8_t sMapX, uint8_t sMapY, int16_t *psX, int16_t *psY) {
   int16_t sXTempOff = 1;
   int16_t sYTempOff = 1;
-  if (fZoomFlag) {
+  if (FALSE) {
     *psX = ((sMapX / 2 + sXTempOff) * MAP_GRID_ZOOM_X) + MAP_VIEW_START_X;
     *psY = ((sMapY / 2 + sYTempOff) * MAP_GRID_ZOOM_Y) + MAP_VIEW_START_Y;
   } else {
@@ -825,7 +825,7 @@ void ShowTownText(void) {
         wcscpy(sStringA, L"");
       }
 
-      if (!fZoomFlag) {
+      if (!FALSE) {
         usX = (uint16_t)(MAP_VIEW_START_X + MAP_GRID_X + (pTownPoints[bTown].x * MAP_GRID_X) / 10);
         usY = (uint16_t)(MAP_VIEW_START_Y + MAP_GRID_Y +
                          ((pTownPoints[bTown].y * MAP_GRID_Y) / 10) + 1);
@@ -881,7 +881,7 @@ void DrawTownLabels(wchar_t *pString, wchar_t *pStringA, uint16_t usFirstX, uint
                                &sSecondY, pStringA);
 
   // make sure we don't go past left edge (Grumm)
-  if (!fZoomFlag) {
+  if (!FALSE) {
     sPastEdge = (MAP_VIEW_START_X + 23) - sSecondX;
 
     if (sPastEdge > 0) sSecondX += sPastEdge;
@@ -1022,7 +1022,7 @@ void ShowUncertainNumberEnemiesInSector(uint8_t sSectorX, uint8_t sSectorY) {
   GetVideoObject(&hIconHandle, guiCHARICONS);
 
   // check if we are zoomed in...need to offset in case for scrolling purposes
-  if (!fZoomFlag) {
+  if (!FALSE) {
     sXPosition =
         (int16_t)(MAP_X_ICON_OFFSET + (MAP_VIEW_START_X + (sSectorX * MAP_GRID_X + 1)) - 1);
     sYPosition = (int16_t)(((MAP_VIEW_START_Y + (sSectorY * MAP_GRID_Y) + 1)));
@@ -1086,7 +1086,7 @@ static drawBigMapWithCustomPalette(int16_t x, int16_t y, SGPRect *clip,
 }
 
 BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
-  if (fZoomFlag)
+  if (FALSE)
     ShadeMapElemZoomIn(sMapX, sMapY, iColor);
   else {
     int16_t sScreenX, sScreenY;
@@ -1780,7 +1780,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
         fSpeedFlag = FALSE;
       else
         fSpeedFlag = TRUE;
-      if (!fZoomFlag) {
+      if (!FALSE) {
         iX = (SectorID16_X(pNode->uiSectorId));
         iY = (SectorID16_Y(pNode->uiSectorId));
         iX = (iX * MAP_GRID_X) + MAP_VIEW_START_X;
@@ -1826,7 +1826,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
           else
             fSpeedFlag = FALSE;
 
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = S_TO_N_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_NORTH_ARROW;
@@ -1844,7 +1844,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += NORTH_OFFSET_Y;
           }
         } else if (pPastNode->uiSectorId - WORLD_MAP_X == pNode->uiSectorId) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = N_TO_S_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_SOUTH_ARROW;
@@ -1862,7 +1862,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += SOUTH_OFFSET_Y;
           }
         } else if (pPastNode->uiSectorId + 1 == pNode->uiSectorId) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = E_TO_W_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_WEST_ARROW;
@@ -1880,7 +1880,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += WEST_OFFSET_Y;
           }
         } else {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = W_TO_E_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_EAST_ARROW;
@@ -1907,7 +1907,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
                                                   }
 
           */
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = WEST_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_WEST_ARROW;
@@ -1925,7 +1925,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += WEST_OFFSET_Y;
           }
         } else if ((iDeltaA == 1) && (iDeltaB == -1)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = EAST_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_EAST_ARROW;
@@ -1943,7 +1943,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += EAST_OFFSET_Y;
           }
         } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == WORLD_MAP_X)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = NORTH_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_NORTH_ARROW;
@@ -1961,7 +1961,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += NORTH_OFFSET_Y;
           }
         } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -WORLD_MAP_X)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = SOUTH_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_SOUTH_ARROW;
@@ -1979,7 +1979,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += SOUTH_OFFSET_Y;
           }
         } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == -1)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = N_TO_E_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_EAST_ARROW;
@@ -1997,7 +1997,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += EAST_OFFSET_Y;
           }
         } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == 1)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = S_TO_W_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_WEST_ARROW;
@@ -2015,7 +2015,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += WEST_OFFSET_Y;
           }
         } else if ((iDeltaA == 1) && (iDeltaB == -WORLD_MAP_X)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = E_TO_S_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_SOUTH_ARROW;
@@ -2033,7 +2033,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += SOUTH_OFFSET_Y;
           }
         } else if ((iDeltaA == -1) && (iDeltaB == WORLD_MAP_X)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = W_TO_N_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_NORTH_ARROW;
@@ -2051,7 +2051,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += NORTH_OFFSET_Y;
           }
         } else if ((iDeltaA == -1) && (iDeltaB == -WORLD_MAP_X)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = W_TO_S_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_SOUTH_ARROW;
@@ -2069,7 +2069,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y);
           }
         } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == 1)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = N_TO_W_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_WEST_ARROW;
@@ -2087,7 +2087,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += WEST_OFFSET_Y;
           }
         } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -1)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = S_TO_E_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_EAST_ARROW;
@@ -2105,7 +2105,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iArrowY += EAST_OFFSET_Y;
           }
         } else if ((iDeltaA == 1) && (iDeltaB == WORLD_MAP_X)) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = E_TO_N_ZOOM_LINE;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_NORTH_ARROW;
@@ -2125,7 +2125,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
         }
       }
     } else {
-      if (!fZoomFlag) {
+      if (!FALSE) {
         iX = (SectorID16_X(pNode->uiSectorId));
         iY = (SectorID16_Y(pNode->uiSectorId));
         iX = (iX * MAP_GRID_X) + MAP_VIEW_START_X;
@@ -2148,7 +2148,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
         fUTurnFlag = TRUE;
         iDeltaA = (int16_t)pNode->uiSectorId - (int16_t)pPastNode->uiSectorId;
         if (iDeltaA == -1) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_RED_X_WEST;
             // iX-=MAP_GRID_X;
             // iY-=MAP_GRID_Y;
@@ -2156,19 +2156,19 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             iDirection = RED_X_WEST;
           // iX+=RED_WEST_OFF_X;
         } else if (iDeltaA == 1) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_RED_X_EAST;
           } else
             iDirection = RED_X_EAST;
           // iX+=RED_EAST_OFF_X;
         } else if (iDeltaA == -WORLD_MAP_X) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_RED_X_NORTH;
           } else
             iDirection = RED_X_NORTH;
           // iY+=RED_NORTH_OFF_Y;
         } else {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_RED_X_SOUTH;
           } else
             iDirection = RED_X_SOUTH;
@@ -2184,7 +2184,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
           fSpeedFlag = TRUE;
 
         if (iDeltaB == -1) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_GREEN_X_EAST;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_EAST_ARROW;
@@ -2205,7 +2205,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
           }
           // iX+=RED_EAST_OFF_X;
         } else if (iDeltaB == 1) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_GREEN_X_WEST;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_WEST_ARROW;
@@ -2224,7 +2224,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
           }
           // iX+=RED_WEST_OFF_X;
         } else if (iDeltaB == WORLD_MAP_X) {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_GREEN_X_NORTH;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_NORTH_ARROW;
@@ -2243,7 +2243,7 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
             // iY+=RED_NORTH_OFF_Y;
           }
         } else {
-          if (fZoomFlag) {
+          if (FALSE) {
             iDirection = ZOOM_GREEN_X_SOUTH;
             if (fSpeedFlag)
               iArrow = ZOOM_Y_SOUTH_ARROW;
@@ -2265,9 +2265,8 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
       }
     }
     if ((iDirection != -1)) {
-      if ((!fZoomFlag) ||
-          ((fZoomFlag) && (iX > MAP_VIEW_START_X) && (iY > MAP_VIEW_START_Y) &&
-           (iX < 640 - MAP_GRID_X * 2) && (iY < MAP_VIEW_START_Y + MAP_VIEW_HEIGHT))) {
+      if ((!FALSE) || ((FALSE) && (iX > MAP_VIEW_START_X) && (iY > MAP_VIEW_START_Y) &&
+                       (iX < 640 - MAP_GRID_X * 2) && (iY < MAP_VIEW_START_Y + MAP_VIEW_HEIGHT))) {
         BltVideoObject(vsFB, hMapHandle, (uint16_t)iDirection, iX, iY);
 
         if (!fUTurnFlag) {
@@ -2486,7 +2485,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
     else
       fSpeedFlag = FALSE;
     if (iDeltaA == 0) return FALSE;
-    if (!fZoomFlag) {
+    if (!FALSE) {
       iX = (SectorID16_X(pNode->uiSectorId));
       iY = (SectorID16_Y(pNode->uiSectorId));
       iX = (iX * MAP_GRID_X) + MAP_VIEW_START_X;
@@ -2526,7 +2525,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
 
     if ((pPastNode->uiSectorId == pNextNode->uiSectorId)) {
       if (pPastNode->uiSectorId + WORLD_MAP_X == pNode->uiSectorId) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = S_TO_N_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_NORTH_ARROW;
@@ -2549,7 +2548,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += NORTH_OFFSET_Y;
         }
       } else if (pPastNode->uiSectorId - WORLD_MAP_X == pNode->uiSectorId) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = N_TO_S_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_SOUTH_ARROW;
@@ -2571,7 +2570,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += SOUTH_OFFSET_Y;
         }
       } else if (pPastNode->uiSectorId + 1 == pNode->uiSectorId) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = E_TO_W_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_WEST_ARROW;
@@ -2593,7 +2592,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += WEST_OFFSET_Y;
         }
       } else {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = W_TO_E_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_EAST_ARROW;
@@ -2617,7 +2616,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
       }
     } else {
       if ((iDeltaA == -1) && (iDeltaB == 1)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = WEST_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_WEST_ARROW;
@@ -2641,7 +2640,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += WEST_OFFSET_Y;
         }
       } else if ((iDeltaA == 1) && (iDeltaB == -1)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = EAST_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_EAST_ARROW;
@@ -2663,7 +2662,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += EAST_OFFSET_Y;
         }
       } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == WORLD_MAP_X)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = NORTH_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_NORTH_ARROW;
@@ -2687,7 +2686,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += NORTH_OFFSET_Y;
         }
       } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -WORLD_MAP_X)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = SOUTH_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_SOUTH_ARROW;
@@ -2711,7 +2710,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += SOUTH_OFFSET_Y;
         }
       } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == -1)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = N_TO_E_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_EAST_ARROW;
@@ -2735,7 +2734,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += EAST_OFFSET_Y;
         }
       } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == 1)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = S_TO_W_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_WEST_ARROW;
@@ -2759,7 +2758,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += WEST_OFFSET_Y;
         }
       } else if ((iDeltaA == 1) && (iDeltaB == -WORLD_MAP_X)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = E_TO_S_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_SOUTH_ARROW;
@@ -2783,7 +2782,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += SOUTH_OFFSET_Y;
         }
       } else if ((iDeltaA == -1) && (iDeltaB == WORLD_MAP_X)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = W_TO_N_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_NORTH_ARROW;
@@ -2807,7 +2806,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += NORTH_OFFSET_Y;
         }
       } else if ((iDeltaA == -1) && (iDeltaB == -WORLD_MAP_X)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = W_TO_S_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_SOUTH_ARROW;
@@ -2830,7 +2829,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y);
         }
       } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == 1)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = N_TO_W_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_WEST_ARROW;
@@ -2854,7 +2853,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += WEST_OFFSET_Y;
         }
       } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -1)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = S_TO_E_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_EAST_ARROW;
@@ -2876,7 +2875,7 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
           iArrowY += EAST_OFFSET_Y;
         }
       } else if ((iDeltaA == 1) && (iDeltaB == WORLD_MAP_X)) {
-        if (fZoomFlag) {
+        if (FALSE) {
           iDirection = E_TO_N_ZOOM_LINE;
           if (!ubCounter)
             iArrow = ZOOM_W_NORTH_ARROW;
@@ -3000,10 +2999,9 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
   }
   if ((iDirection != -1) && (iArrow != -1)) {
     if (!fUTurnFlag) {
-      if ((!fZoomFlag) ||
-          ((fZoomFlag) && (iX > MAP_VIEW_START_X) && (iY > MAP_VIEW_START_Y) &&
-           (iX < 640 - MAP_GRID_X * 2) && (iY < MAP_VIEW_START_Y + MAP_VIEW_HEIGHT))) {
-        // if(!fZoomFlag)
+      if ((!FALSE) || ((FALSE) && (iX > MAP_VIEW_START_X) && (iY > MAP_VIEW_START_Y) &&
+                       (iX < 640 - MAP_GRID_X * 2) && (iY < MAP_VIEW_START_Y + MAP_VIEW_HEIGHT))) {
+        // if(!FALSE)
         // RestoreExternBackgroundRect(((int16_t)iArrowX),((int16_t)iArrowY),DMAP_GRID_X,
         // DMAP_GRID_Y); else RestoreExternBackgroundRect(((int16_t)iArrowX),
         // ((int16_t)iArrowY),DMAP_GRID_ZOOM_X, DMAP_GRID_ZOOM_Y);
@@ -3128,7 +3126,7 @@ void SetUpBadSectorsList(void) {
 void RestoreBackgroundForMapGrid(uint8_t sMapX, uint8_t sMapY) {
   int16_t sX, sY;
 
-  if (!fZoomFlag) {
+  if (!FALSE) {
     // screen values
     sX = (sMapX * MAP_GRID_X) + MAP_VIEW_START_X;
     sY = (sMapY * MAP_GRID_Y) + MAP_VIEW_START_Y;
@@ -3160,7 +3158,7 @@ void ClipBlitsToMapViewRegion(void) {
                                      MAP_VIEW_START_Y + MAP_VIEW_HEIGHT + MAP_GRID_Y - 10};
   SGPRect *pRectToUse;
 
-  if (fZoomFlag)
+  if (FALSE)
     pRectToUse = &ZoomedMapScreenClipRect;
   else
     pRectToUse = &MapScreenRect;
@@ -3179,7 +3177,7 @@ void ClipBlitsToMapViewRegionForRectangleAndABit(uint32_t uiDestPitchBYTES) {
   // clip blits to map view region
   // because MC's map coordinates system is so screwy, these had to be hand-tuned to work right...
   // ARM
-  if (fZoomFlag)
+  if (FALSE)
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, MapScreenRect.iLeft + 2, MapScreenRect.iTop,
                                    MapScreenRect.iRight - MapScreenRect.iLeft,
                                    MapScreenRect.iBottom - MapScreenRect.iTop);
@@ -3297,36 +3295,36 @@ void ShowPeopleInMotion(uint8_t sX, uint8_t sY) {
           // guys going north or south
           if (sEntering > 0) {
             // more than one coming in, offset from middle
-            sOffsetX = (!iCounter ? (!fZoomFlag ? NORTH_X_MVT_OFFSET : NORTH_X_MVT_OFFSET_ZOOM)
-                                  : (!fZoomFlag ? SOUTH_X_MVT_OFFSET : SOUTH_X_MVT_OFFSET_ZOOM));
+            sOffsetX = (!iCounter ? (!FALSE ? NORTH_X_MVT_OFFSET : NORTH_X_MVT_OFFSET_ZOOM)
+                                  : (!FALSE ? SOUTH_X_MVT_OFFSET : SOUTH_X_MVT_OFFSET_ZOOM));
           } else {
-            sOffsetX = (!fZoomFlag ? NORTH_SOUTH_CENTER_OFFSET : NORTH_SOUTH_CENTER_OFFSET_ZOOM);
+            sOffsetX = (!FALSE ? NORTH_SOUTH_CENTER_OFFSET : NORTH_SOUTH_CENTER_OFFSET_ZOOM);
           }
 
           if (!iCounter) {
             // going north
-            sOffsetY = (!fZoomFlag ? NORTH_Y_MVT_OFFSET : NORTH_Y_MVT_OFFSET_ZOOM);
+            sOffsetY = (!FALSE ? NORTH_Y_MVT_OFFSET : NORTH_Y_MVT_OFFSET_ZOOM);
           } else {
             // going south
-            sOffsetY = (!fZoomFlag ? SOUTH_Y_MVT_OFFSET : SOUTH_Y_MVT_OFFSET_ZOOM);
+            sOffsetY = (!FALSE ? SOUTH_Y_MVT_OFFSET : SOUTH_Y_MVT_OFFSET_ZOOM);
           }
         } else {
           // going east/west
 
           if (sEntering > 0) {
             // people also entering, offset from middle
-            sOffsetY = (iCounter == 1 ? (!fZoomFlag ? EAST_Y_MVT_OFFSET : EAST_Y_MVT_OFFSET_ZOOM)
-                                      : (!fZoomFlag ? WEST_Y_MVT_OFFSET : WEST_Y_MVT_OFFSET_ZOOM));
+            sOffsetY = (iCounter == 1 ? (!FALSE ? EAST_Y_MVT_OFFSET : EAST_Y_MVT_OFFSET_ZOOM)
+                                      : (!FALSE ? WEST_Y_MVT_OFFSET : WEST_Y_MVT_OFFSET_ZOOM));
           } else {
-            sOffsetY = (!fZoomFlag ? EAST_WEST_CENTER_OFFSET : EAST_WEST_CENTER_OFFSET_ZOOM);
+            sOffsetY = (!FALSE ? EAST_WEST_CENTER_OFFSET : EAST_WEST_CENTER_OFFSET_ZOOM);
           }
 
           if (iCounter == 1) {
             // going east
-            sOffsetX = (!fZoomFlag ? EAST_X_MVT_OFFSET : EAST_X_MVT_OFFSET_ZOOM);
+            sOffsetX = (!FALSE ? EAST_X_MVT_OFFSET : EAST_X_MVT_OFFSET_ZOOM);
           } else {
             // going west
-            sOffsetX = (!fZoomFlag ? WEST_X_MVT_OFFSET : WEST_X_MVT_OFFSET_ZOOM);
+            sOffsetX = (!FALSE ? WEST_X_MVT_OFFSET : WEST_X_MVT_OFFSET_ZOOM);
           }
         }
 
@@ -3373,7 +3371,7 @@ void ShowPeopleInMotion(uint8_t sX, uint8_t sY) {
         }
 
         // zoomed in or not?
-        if (!fZoomFlag) {
+        if (!FALSE) {
           iX = MAP_VIEW_START_X + (iX * MAP_GRID_X) + sOffsetX;
           iY = MAP_Y_ICON_OFFSET + MAP_VIEW_START_Y + (iY * MAP_GRID_Y) + sOffsetY;
 
@@ -3452,7 +3450,7 @@ void DisplayDistancesForHelicopter(void) {
   int16_t sNumUnSafeSectors;
   uint32_t uiTripCost;
 
-  if (GetMouseMapXY(&sMapX, &sMapY) && !fZoomFlag && (sMapY >= 13)) {
+  if (GetMouseMapXY(&sMapX, &sMapY) && !FALSE && (sMapY >= 13)) {
     sYPosition = MAP_HELICOPTER_UPPER_ETA_POPUP_Y;
   } else {
     sYPosition = MAP_HELICOPTER_ETA_POPUP_Y;
@@ -3628,7 +3626,6 @@ void DisplayPositionOfHelicopter(void) {
         flRatio = 100;
       }
 
-      //			if( !fZoomFlag )
       {
         // grab min and max locations to interpolate sub sector position
         minX = MAP_VIEW_START_X + MAP_GRID_X * (pGroup->ubSectorX);
@@ -3636,28 +3633,6 @@ void DisplayPositionOfHelicopter(void) {
         minY = MAP_VIEW_START_Y + MAP_GRID_Y * (pGroup->ubSectorY);
         maxY = MAP_VIEW_START_Y + MAP_GRID_Y * (pGroup->ubNextY);
       }
-      /*
-                              else
-                              {
-
-                                      // grab coords for nextx,y and current x,y
-
-                                      // zoomed in, takes a little more work
-                                      GetScreenXYFromMapXYStationary(
-         ((uint16_t)(pGroup->ubSectorX)),((uint16_t)(pGroup->ubSectorY)) , &sX, &sY );
-         sY=sY-MAP_GRID_Y; sX=sX-MAP_GRID_X;
-
-                                      minX = ( sX );
-                                      minY = ( sY );
-
-                                      GetScreenXYFromMapXYStationary(
-         ((uint16_t)(pGroup->ubNextX)),((uint16_t)(pGroup->ubNextY)) , &sX, &sY ); sY=sY-MAP_GRID_Y;
-                                      sX=sX-MAP_GRID_X;
-
-                                      maxX = ( sX );
-                                      maxY = ( sY );
-                              }
-      */
 
       AssertMsg((minX >= 0) && (minX < 640),
                 String("DisplayPositionOfHelicopter: Invalid minX = %d", minX));
@@ -3673,7 +3648,7 @@ void DisplayPositionOfHelicopter(void) {
       y = (uint32_t)(minY + flRatio * ((int16_t)maxY - (int16_t)minY));
 
       /*
-                              if( fZoomFlag )
+                              if( FALSE )
                               {
                                       x += 13;
                                       y += 8;
@@ -3846,7 +3821,7 @@ void BlitMineIcon(uint8_t sMapX, uint8_t sMapY) {
                                  MAP_VIEW_HEIGHT - 9);
   UnlockVSurface(vsSaveBuffer);
 
-  if (fZoomFlag) {
+  if (FALSE) {
     GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
     // when zoomed, the x,y returned is the CENTER of the map square in question
     BltVideoObject(vsSaveBuffer, hHandle, 0, sScreenX - MAP_GRID_ZOOM_X / 4,
@@ -3864,7 +3839,7 @@ void BlitMineText(uint8_t sMapX, uint8_t sMapY) {
   uint8_t ubMineIndex;
   uint8_t ubLineCnt = 0;
 
-  if (fZoomFlag) {
+  if (FALSE) {
     GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
 
     // set coordinates for start of mine text
@@ -3958,7 +3933,7 @@ void BlitMineText(uint8_t sMapX, uint8_t sMapY) {
 void AdjustXForLeftMapEdge(wchar_t *wString, int16_t *psX) {
   int16_t sStartingX, sPastEdge;
 
-  if (fZoomFlag)
+  if (FALSE)
     // it's ok to cut strings off in zoomed mode
     return;
 
@@ -3994,7 +3969,7 @@ void BlitTownGridMarkers(void) {
     // skip Orta/Tixa until found
     if (((fFoundOrta != FALSE) || (townID != ORTA)) &&
         ((townID != TIXA) || (fFoundTixa != FALSE))) {
-      if (fZoomFlag) {
+      if (FALSE) {
         GetScreenXYFromMapXYStationary(SectorID16_X(sectorID), SectorID16_Y(sectorID), &sScreenX,
                                        &sScreenY);
         sScreenX -= MAP_GRID_X - 1;
@@ -4062,7 +4037,7 @@ void BlitMineGridMarkers(void) {
   ClipBlitsToMapViewRegionForRectangleAndABit(uiDestPitchBYTES);
 
   for (iCounter = 0; iCounter < MAX_NUMBER_OF_MINES; iCounter++) {
-    if (fZoomFlag) {
+    if (FALSE) {
       GetScreenXYFromMapXYStationary((int16_t)(gMineLocation[iCounter].sSectorX),
                                      (int16_t)(gMineLocation[iCounter].sSectorY), &sScreenX,
                                      &sScreenY);
@@ -5120,7 +5095,7 @@ void DrawTownMilitiaForcesOnMap(void) {
       iTotalNumberOfTroops = milCount.green + milCount.regular + milCount.elite;
 
       for (iCounterB = 0; iCounterB < iTotalNumberOfTroops; iCounterB++) {
-        if (fZoomFlag) {
+        if (FALSE) {
           // LARGE icon offset in the .sti
           iIconValue = 11;
         } else {
@@ -5155,7 +5130,7 @@ void DrawTownMilitiaForcesOnMap(void) {
       iTotalNumberOfTroops = milCount.green + milCount.regular + milCount.elite;
 
       for (iCounterB = 0; iCounterB < iTotalNumberOfTroops; iCounterB++) {
-        if (fZoomFlag) {
+        if (FALSE) {
           // LARGE icon offset in the .sti
           iIconValue = 11;
         } else {
@@ -5499,7 +5474,7 @@ void ShowSAMSitesOnStrategicMap(void) {
     sSectorX = gpSamSectorX[iCounter];
     sSectorY = gpSamSectorY[iCounter];
 
-    if (fZoomFlag) {
+    if (FALSE) {
       LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
       SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                      MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
@@ -5524,7 +5499,7 @@ void ShowSAMSitesOnStrategicMap(void) {
     if (fShowAircraftFlag) {
       // write "SAM Site" centered underneath
 
-      if (fZoomFlag) {
+      if (FALSE) {
         sX += 9;
         sY += 19;
       } else {
@@ -5588,7 +5563,7 @@ void BlitSAMGridMarkers(void) {
       continue;
     }
 
-    if (fZoomFlag) {
+    if (FALSE) {
       GetScreenXYFromMapXYStationary(gpSamSectorX[iCounter], gpSamSectorY[iCounter], &sScreenX,
                                      &sScreenY);
       sScreenX -= MAP_GRID_X;
@@ -5722,7 +5697,7 @@ void DrawMapBoxIcon(struct VObject *hIconHandle, uint16_t usVOIndex, uint8_t sMa
   iColumnNumber = ubIconPosition % MERC_ICONS_PER_LINE;
   iRowNumber = ubIconPosition / MERC_ICONS_PER_LINE;
 
-  if (!fZoomFlag) {
+  if (!FALSE) {
     iX = MAP_VIEW_START_X + (sMapX * MAP_GRID_X) + MAP_X_ICON_OFFSET + (3 * iColumnNumber);
     iY = MAP_VIEW_START_Y + (sMapY * MAP_GRID_Y) + MAP_Y_ICON_OFFSET + (3 * iRowNumber);
 
@@ -5737,7 +5712,7 @@ void DrawOrta() {
   uint8_t ubVidObjIndex;
   struct VObject *hHandle;
 
-  if (fZoomFlag) {
+  if (FALSE) {
     LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                    MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
@@ -5766,7 +5741,7 @@ void DrawTixa() {
   uint8_t ubVidObjIndex;
   struct VObject *hHandle;
 
-  if (fZoomFlag) {
+  if (FALSE) {
     LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                    MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
