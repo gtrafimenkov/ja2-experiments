@@ -237,7 +237,7 @@ uint32_t MapUtilScreenHandle() {
   pDataPtr = (uint8_t *)LockVSurface(vs8BitMiniMap, &uiSrcPitchBYTES);
   pDestBuf = (uint16_t *)LockVSurface(vsFB, &uiDestPitchBYTES);
   QuantizeImage(pDataPtr, p24BitDest, MINIMAP_X_SIZE, MINIMAP_Y_SIZE, pPalette);
-  SetVSurfacePalette(vs8BitMiniMap, pPalette);
+  VSurface_SetPalette32(vs8BitMiniMap, pPalette);
   // Blit!
   Blt8BPPDataTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, vs8BitMiniMap, pDataPtr, 300, 360);
 

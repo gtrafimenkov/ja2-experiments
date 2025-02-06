@@ -456,7 +456,7 @@ struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
   return CreateVSurfaceInternal(&SurfaceDescription, false);
 }
 
-void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {
+void JSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
   if (vs->_platformPalette == NULL) {
     IDirectDraw2_CreatePalette(s_state.gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
                                (LPPALETTEENTRY)(&pal[0]),

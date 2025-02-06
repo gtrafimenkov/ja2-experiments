@@ -22,7 +22,7 @@ uint16_t JVideo_GetScreenHeight() { return 0; }
 struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height) { return NULL; };
 struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) { return NULL; };
 struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) { return NULL; };
-void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal) {};
+void JSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {};
 bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) { return false; }
 bool JSurface_Restore(struct VSurface *vs) { return false; }
 bool JSurface_Flip(struct VSurface *vs) { return false; }

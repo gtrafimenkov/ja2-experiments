@@ -93,7 +93,7 @@ void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color);
 
 void JSurface_Free(struct VSurface *s);
 
-void JSurface_SetPalette(struct VSurface *vs, struct JPaletteEntry *pal);
+void JSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal);
 bool JSurface_GetPalette32(struct VSurface *vs, struct JPaletteEntry *pal);
 
 // void JSurface_Blit(struct JSurface *src, struct JSurface *dst);
