@@ -640,15 +640,7 @@ void SetVSurfacePalette(struct VSurface *vs, struct JPaletteEntry *pal) {
   Assert(vs != NULL);
 
   JSurface_SetPalette(vs, pal);
-
-  // Delete 16BPP Palette if one exists
-  if (vs->palette16 != NULL) {
-    MemFree((void *)vs->palette16);
-    vs->palette16 = NULL;
-  }
-
-  // Create 16BPP Palette
-  vs->palette16 = Create16BPPPalette(pal);
+  JSurface_SetPalette16(vs, Create16BPPPalette(pal));
 
   DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Video Surface Palette change successfull"));
 }
