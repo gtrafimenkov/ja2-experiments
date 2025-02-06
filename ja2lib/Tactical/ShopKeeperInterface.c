@@ -2762,7 +2762,7 @@ void DrawHatchOnInventory(struct VSurface *vs, uint16_t usPosX, uint16_t usPosY,
 
   pDestBuf = LockVSurface(vs, &uiDestPitchBYTES);
   Blt16BPPBufferPixelateRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect, Pattern);
-  UnlockVSurface(vs);
+  JSurface_Unlock(vs);
 }
 
 uint32_t CalcShopKeeperItemPrice(BOOLEAN fDealerSelling, BOOLEAN fUnitPriceOnly, uint16_t usItemID,

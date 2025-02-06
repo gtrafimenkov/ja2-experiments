@@ -1349,7 +1349,7 @@ void DisplaySectionLine() {
            pDestBuf);
 
   // unlock frame buffer
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void DisplayQuestInformation() {
@@ -2052,7 +2052,7 @@ void DrawQdsScrollRectangle()  // int16_t sSelectedEntry, uint16_t usStartPosX, 
            Get16BPPColor(FROMRGB(112, 110, 112)), pDestBuf);
 
   // unlock frame buffer
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void ScrollArrowsRegionCallBack(struct MOUSE_REGION *pRegion, int32_t iReason) {

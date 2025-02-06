@@ -102,12 +102,12 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
                          usX, usY, &aRect)) {
     DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
                String("Error Occured Copying HIMAGE to struct VSurface*"));
-    UnlockVSurface(hVSurface);
+    JSurface_Unlock(hVSurface);
     return (FALSE);
   }
 
   // All is OK
-  UnlockVSurface(hVSurface);
+  JSurface_Unlock(hVSurface);
 
   return (TRUE);
 }
@@ -169,7 +169,7 @@ static BOOLEAN InternalShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1,
     }
   }
 
-  UnlockVSurface(dest);
+  JSurface_Unlock(dest);
   return (TRUE);
 }
 
@@ -357,14 +357,14 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct VSurface *dest, s
     }
 
     if ((pDestSurface8 = (uint8_t *)LockVSurface(dest, &uiDestPitch)) == NULL) {
-      UnlockVSurface(src);
+      JSurface_Unlock(src);
       return FALSE;
     }
 
     Blt8BPPTo8BPP(pDestSurface8, uiDestPitch, pSrcSurface8, uiSrcPitch, destX, destY, srcRect);
 
-    UnlockVSurface(src);
-    UnlockVSurface(dest);
+    JSurface_Unlock(src);
+    JSurface_Unlock(dest);
     return TRUE;
   }
   return FALSE;
@@ -504,7 +504,7 @@ void VSurfaceErase(struct VSurface *vs) {
   void *pTmpPointer = LockVSurface(vs, &uiPitch);
   if (pTmpPointer) {
     memset(pTmpPointer, 0, JSurface_Height(vs) * uiPitch);
-    UnlockVSurface(vs);
+    JSurface_Unlock(vs);
   }
 }
 
@@ -617,5 +617,3 @@ uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
   *pPitch = JSurface_Pitch(vs);
   return (uint8_t *)JSurface_GetPixels(vs);
 }
-
-void UnlockVSurface(struct VSurface *vs) { JSurface_Unlock(vs); }

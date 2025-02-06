@@ -833,7 +833,7 @@ void RefreshScreen(void *DummyVariable) {
 
       fclose(OutputFile);
 
-      UnlockVSurface(vsTmp);
+      JSurface_Unlock(vsTmp);
     }
 
     //
@@ -1172,7 +1172,7 @@ static void SnapshotSmall(void) {
     RefreshMovieCache();
   }
 
-  UnlockVSurface(vsPrimary);
+  JSurface_Unlock(vsPrimary);
 }
 
 void VideoCaptureToggle(void) {

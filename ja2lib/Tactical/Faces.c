@@ -734,7 +734,7 @@ static void HandleFaceHilights(FACETYPE *pFace, struct VSurface *buffer, int16_t
 
         SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-        UnlockVSurface(buffer);
+        JSurface_Unlock(buffer);
       } else if ((pFace->uiFlags & FACE_SHOW_MOVING_HILIGHT)) {
         if (pFace->ubSoldierID != NOBODY) {
           if (MercPtrs[pFace->ubSoldierID]->bLife >= OKLIFE) {
@@ -754,7 +754,7 @@ static void HandleFaceHilights(FACETYPE *pFace, struct VSurface *buffer, int16_t
 
             SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-            UnlockVSurface(buffer);
+            JSurface_Unlock(buffer);
           }
         }
       } else {
@@ -772,7 +772,7 @@ static void HandleFaceHilights(FACETYPE *pFace, struct VSurface *buffer, int16_t
 
         SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-        UnlockVSurface(pFace->autoDisplayBuffer);
+        JSurface_Unlock(pFace->autoDisplayBuffer);
       }
     }
   }
@@ -790,7 +790,7 @@ static void HandleFaceHilights(FACETYPE *pFace, struct VSurface *buffer, int16_t
 
     SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
-    UnlockVSurface(buffer);
+    JSurface_Unlock(buffer);
   }
 }
 
@@ -1118,7 +1118,7 @@ void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEA
         usLineColor = Get16BPPColor(FROMRGB(105, 8, 9));
         RectangleDraw(TRUE, sX1, sY1, sX2, sY2, usLineColor, pDestBuf);
 
-        UnlockVSurface(renderBuffer);
+        JSurface_Unlock(renderBuffer);
       }
 
       if ((MercPtrs[pFace->ubSoldierID]->bInSector &&
@@ -1754,8 +1754,8 @@ BOOLEAN FaceRestoreSavedBackgroundRect(int32_t iFaceIndex, int16_t sDestLeft, in
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sDestLeft, sDestTop, sSrcLeft, sSrcTop, sWidth, sHeight);
 
-  UnlockVSurface(pFace->autoDisplayBuffer);
-  UnlockVSurface(pFace->autoRestoreBuffer);
+  JSurface_Unlock(pFace->autoDisplayBuffer);
+  JSurface_Unlock(pFace->autoRestoreBuffer);
 
   // Add rect to frame buffer queue
   if (pFace->autoDisplayBuffer == vsFB) {

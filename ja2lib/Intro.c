@@ -418,7 +418,7 @@ void DisplaySirtechSplashScreen() {
   // CLEAR THE FRAME BUFFER
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   if (!AddVObject(CreateVObjectFromFile("INTERFACE\\SirtechSplash.sti"), &uiLogoID)) {
     AssertMsg(0, "Failed to load INTERFACE\\SirtechSplash.sti");

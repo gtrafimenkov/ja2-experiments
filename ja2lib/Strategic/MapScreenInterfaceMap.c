@@ -627,8 +627,8 @@ uint32_t DrawMap(void) {
     Blt8BPPDataTo16BPPBufferHalf(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
                                  MAP_VIEW_START_X + 1, MAP_VIEW_START_Y);
 
-    UnlockVSurface(vsBigMap);
-    UnlockVSurface(vsSaveBuffer);
+    JSurface_Unlock(vsBigMap);
+    JSurface_Unlock(vsSaveBuffer);
 
     // shade map sectors (must be done after Tixa/Orta/Mine icons have been blitted, but before
     // icons!)
@@ -1029,8 +1029,8 @@ static drawBigMapWithCustomPalette(int16_t x, int16_t y, SGPRect *clip,
   Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, customPalette, pSrcBuf,
                                    uiSrcPitchBYTES, x, y, clip);
 
-  UnlockVSurface(vsBigMap);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsBigMap);
+  JSurface_Unlock(vsSaveBuffer);
 }
 
 BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
@@ -2793,9 +2793,7 @@ void DisplayDistancesForHelicopter(void) {
           }
           else
   */
-  {
-    SetFontForeground(FONT_LTGREEN);
-  }
+  { SetFontForeground(FONT_LTGREEN); }
 
   swprintf(sString, ARR_SIZE(sString), L"%d", sTotalOfTrip);
   FindFontRightCoordinates(MAP_HELICOPTER_ETA_POPUP_X + 5, MAP_HELICOPTER_ETA_POPUP_Y + 5,
@@ -3113,7 +3111,7 @@ void BlitMineIcon(uint8_t sMapX, uint8_t sMapY) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
                                  MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
                                  MAP_VIEW_HEIGHT - 9);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsSaveBuffer);
 
   GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
   // when zoomed, the x,y returned is the CENTER of the map square in question
@@ -3285,7 +3283,7 @@ void BlitTownGridMarkers(void) {
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
 
   // unlock surface
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsSaveBuffer);
 
   return;
 }
@@ -3323,7 +3321,7 @@ void BlitMineGridMarkers(void) {
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
 
   // unlock surface
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsSaveBuffer);
 
   return;
 }
@@ -4808,7 +4806,7 @@ void BlitSAMGridMarkers(void) {
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
 
   // unlock surface
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsSaveBuffer);
 
   return;
 }

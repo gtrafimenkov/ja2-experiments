@@ -207,7 +207,7 @@ void DisplayActivationStringCursor(void) {
            pDestBuf);
 
   // unlock frame buffer
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   InvalidateRegion((uint16_t)uiCursorPosition, CURSOR_Y, (uint16_t)uiCursorPosition + 1,
                    CURSOR_Y + CURSOR_HEIGHT + 1);

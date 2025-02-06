@@ -211,16 +211,16 @@ BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16
   }
 
   if (!GetVideoObject(&hSrcVObject, uiSrcVObject)) {
-    UnlockVSurface(dest);
+    JSurface_Unlock(dest);
     return FALSE;
   }
 
   if (!BltVideoObjectToBuffer(pBuffer, uiPitch, hSrcVObject, usRegionIndex, iDestX, iDestY)) {
-    UnlockVSurface(dest);
+    JSurface_Unlock(dest);
     return FALSE;
   }
 
-  UnlockVSurface(dest);
+  JSurface_Unlock(dest);
   return (TRUE);
 }
 
@@ -282,11 +282,11 @@ BOOLEAN BltVideoObject(struct VSurface *dest, struct VObject *voSrc, uint16_t us
   }
 
   if (!BltVideoObjectToBuffer(pBuffer, uiPitch, voSrc, usRegionIndex, iDestX, iDestY)) {
-    UnlockVSurface(dest);
+    JSurface_Unlock(dest);
     return (FALSE);
   }
 
-  UnlockVSurface(dest);
+  JSurface_Unlock(dest);
   return (TRUE);
 }
 
@@ -934,7 +934,7 @@ BOOLEAN BltVideoObjectOutlineFromIndex(struct VSurface *dest, uint32_t uiSrcVObj
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnlockVSurface(dest);
+  JSurface_Unlock(dest);
   return (TRUE);
 }
 
@@ -960,7 +960,7 @@ BOOLEAN BltVideoObjectOutline(struct VSurface *dest, struct VObject *hSrcVObject
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnlockVSurface(dest);
+  JSurface_Unlock(dest);
   return (TRUE);
 }
 
@@ -993,7 +993,7 @@ BOOLEAN BltVideoObjectOutlineShadowFromIndex(struct VSurface *dest, uint32_t uiS
 
   // Now we have the video object and surface, call the VO blitter function
 
-  UnlockVSurface(dest);
+  JSurface_Unlock(dest);
   return (TRUE);
 }
 

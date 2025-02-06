@@ -1786,7 +1786,7 @@ void DrawGoldRectangle(int8_t bCityNum) {
            Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
 
   // unlock frame buffer
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 uint32_t CalcCostFromWeightOfPackage(uint8_t ubTypeOfService) {

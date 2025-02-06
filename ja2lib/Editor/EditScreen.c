@@ -937,7 +937,7 @@ void ShowCurrentDrawingMode(void) {
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   RectangleDraw(FALSE, 0, 400, 99, 458, usFillColor, pDestBuf);
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   InvalidateRegion(0, 400, 100, 458);
   SetClippingRect(&ClipRect);

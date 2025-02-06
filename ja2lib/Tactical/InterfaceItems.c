@@ -5055,9 +5055,7 @@ void ItemDescCallback(struct MOUSE_REGION *pRegion, int32_t iReason) {
       // Only exit the screen if we are NOT in the money interface.  Only the DONE button should
       // exit the money interface.
       //			if( gpItemDescObject->usItem != MONEY )
-      {
-        DeleteItemDescriptionBox();
-      }
+      { DeleteItemDescriptionBox(); }
     }
   }
 }
@@ -5807,7 +5805,7 @@ void RenderItemPickupMenu() {
 
     SetFontShadow(DEFAULT_SHADOW);
 
-    UnlockVSurface(vsFB);
+    JSurface_Unlock(vsFB);
 
     InvalidateRegion(gItemPickupMenu.sX, gItemPickupMenu.sY,
                      gItemPickupMenu.sX + gItemPickupMenu.sWidth,

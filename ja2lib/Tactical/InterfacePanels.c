@@ -1766,7 +1766,7 @@ void RenderSMPanel(BOOLEAN *pfDirty) {
     ClipRect.iBottom = 480;
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnlockVSurface(vsFB);
+    JSurface_Unlock(vsFB);
   }
 }
 

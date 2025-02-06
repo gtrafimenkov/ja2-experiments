@@ -80,7 +80,7 @@ bool SmkPollFlics() {
                         SmkList[uiCount].uiTop, pitch, SmkList[uiCount].SmackHandle->Height, data,
                         SmkGetPixelFormat());
           SmackDoFrame(SmkList[uiCount].SmackHandle);
-          UnlockVSurface(vsFB);
+          JSurface_Unlock(vsFB);
           // temp til I figure out what to do with it
           // InvalidateRegion(0,0, 640, 480, FALSE);
 

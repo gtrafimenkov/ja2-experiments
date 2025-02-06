@@ -1597,7 +1597,7 @@ void DrawBarsInUIBox(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   RectangleDraw(TRUE, sXPos + 3, sYPos + 4, (int32_t)(sXPos + dWidth + 3), sYPos + 4, usLineColor,
                 pDestBuf);
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void EndDeadlockMsg() {
@@ -1687,7 +1687,7 @@ void BlitPopupText(VIDEO_OVERLAY *pBlitter) {
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                  pBlitter->zText);
 
-  UnlockVSurface(pBlitter->vsDestBuff);
+  JSurface_Unlock(pBlitter->vsDestBuff);
 }
 
 void DirtyMercPanelInterface(struct SOLDIERTYPE *pSoldier, uint8_t ubDirtyLevel) {

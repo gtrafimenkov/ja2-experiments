@@ -2571,7 +2571,7 @@ void DrawRect(SGPRect *pRect, int16_t color) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, pRect->iLeft + MERCPANEL_X, pRect->iTop + MERCPANEL_Y,
                 pRect->iRight + MERCPANEL_X, pRect->iBottom + MERCPANEL_Y, color, pDestBuf);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
   // InvalidateRegion( pRect->iLeft+175, pRect->iTop+361, pRect->iRight+176, pRect->iBottom+362 );
 }
 
@@ -2591,8 +2591,8 @@ void RenderSelectedMercsInventory() {
       pSrc = LockVSurface(vsMercInvPanelBuffers[i], &uiSrcPitchBYTES);
       Blt16BPPTo16BPPTrans((uint16_t *)pDst, uiDstPitchBYTES, (uint16_t *)pSrc, uiSrcPitchBYTES, xp,
                            yp, 0, 0, i < 3 ? 22 : 44, 15, 0);
-      UnlockVSurface(vsFB);
-      UnlockVSurface(vsMercInvPanelBuffers[i]);
+      JSurface_Unlock(vsFB);
+      JSurface_Unlock(vsMercInvPanelBuffers[i]);
       LoadItemInfo(gpMercSlotItem[i]->usItem, pItemName, NULL);
       // Render the text
       switch (i) {

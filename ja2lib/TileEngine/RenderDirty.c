@@ -276,8 +276,8 @@ BOOLEAN RestoreBackgroundRects(void) {
     }
   }
 
-  UnlockVSurface(vsFB);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsFB);
+  JSurface_Unlock(vsSaveBuffer);
 
   EmptyBackgroundRects();
 
@@ -364,8 +364,8 @@ BOOLEAN SaveBackgroundRects(void) {
     }
   }
 
-  UnlockVSurface(vsFB);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsFB);
+  JSurface_Unlock(vsSaveBuffer);
 
   return (TRUE);
 }
@@ -467,8 +467,8 @@ BOOLEAN UpdateSaveBuffer(void) {
                   gsVIEWPORT_WINDOW_START_Y, 0, gsVIEWPORT_WINDOW_START_Y, usWidth,
                   (gsVIEWPORT_WINDOW_END_Y - gsVIEWPORT_WINDOW_START_Y));
 
-  UnlockVSurface(vsFB);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsFB);
+  JSurface_Unlock(vsSaveBuffer);
 
   return (TRUE);
 }
@@ -484,8 +484,8 @@ BOOLEAN RestoreExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth,
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
-  UnlockVSurface(vsFB);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsFB);
+  JSurface_Unlock(vsSaveBuffer);
 
   // Add rect to frame buffer queue
   InvalidateRegionEx(sLeft, sTop, (sLeft + sWidth), (sTop + sHeight), 0);
@@ -514,8 +514,8 @@ BOOLEAN RestoreExternBackgroundRectGivenID(int32_t iBack) {
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
-  UnlockVSurface(vsFB);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsFB);
+  JSurface_Unlock(vsSaveBuffer);
 
   // Add rect to frame buffer queue
   InvalidateRegionEx(sLeft, sTop, (sLeft + sWidth), (sTop + sHeight), 0);
@@ -534,8 +534,8 @@ BOOLEAN CopyExternBackgroundRect(int16_t sLeft, int16_t sTop, int16_t sWidth, in
 
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                   sLeft, sTop, sLeft, sTop, sWidth, sHeight);
-  UnlockVSurface(vsSaveBuffer);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsSaveBuffer);
+  JSurface_Unlock(vsFB);
 
   return (TRUE);
 }
@@ -930,7 +930,7 @@ void SaveVideoOverlaysArea(struct VSurface *src) {
     }
   }
 
-  UnlockVSurface(src);
+  JSurface_Unlock(src);
 }
 
 void DeleteVideoOverlaysArea() {
@@ -1026,7 +1026,7 @@ BOOLEAN RestoreShiftedVideoOverlays(int16_t sShiftX, int16_t sShiftY) {
     }
   }
 
-  UnlockVSurface(vsBackBuffer);
+  JSurface_Unlock(vsBackBuffer);
 
   return (TRUE);
 }
@@ -1059,7 +1059,7 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter) {
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                  pBlitter->zText);
 
-  UnlockVSurface(pBlitter->vsDestBuff);
+  JSurface_Unlock(pBlitter->vsDestBuff);
 }
 
 BOOLEAN BlitBufferToBuffer(struct VSurface *src, struct VSurface *dest, uint16_t usSrcX,
@@ -1074,8 +1074,8 @@ BOOLEAN BlitBufferToBuffer(struct VSurface *src, struct VSurface *dest, uint16_t
   fRetVal = Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf,
                             uiSrcPitchBYTES, usSrcX, usSrcY, usSrcX, usSrcY, usWidth, usHeight);
 
-  UnlockVSurface(dest);
-  UnlockVSurface(src);
+  JSurface_Unlock(dest);
+  JSurface_Unlock(src);
 
   return (fRetVal);
 }

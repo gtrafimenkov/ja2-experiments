@@ -230,8 +230,8 @@ uint32_t MapUtilScreenHandle() {
     dX += gdXStep;
   }
 
-  UnlockVSurface(vsMiniMap);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsMiniMap);
+  JSurface_Unlock(vsFB);
 
   // QUantize!
   pDataPtr = (uint8_t *)LockVSurface(vs8BitMiniMap, &uiSrcPitchBYTES);
@@ -261,7 +261,7 @@ uint32_t MapUtilScreenHandle() {
     }
   }
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   // Remove extension
   for (cnt = strlen(zFilename) - 1; cnt >= 0; cnt--) {
@@ -274,7 +274,7 @@ uint32_t MapUtilScreenHandle() {
   WriteSTIFile(pDataPtr, pPalette, MINIMAP_X_SIZE, MINIMAP_Y_SIZE, zFilename2,
                CONVERT_ETRLE_COMPRESS, 0);
 
-  UnlockVSurface(vs8BitMiniMap);
+  JSurface_Unlock(vs8BitMiniMap);
 
   SetFont(TINYFONT1);
   SetFontBackground(FONT_MCOLOR_BLACK);

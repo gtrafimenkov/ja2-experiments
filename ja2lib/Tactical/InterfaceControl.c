@@ -444,7 +444,7 @@ void RenderRubberBanding() {
     SetBackgroundRectFilled(iBack);
   }
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void RenderTopmostTacticalInterface() {

@@ -391,7 +391,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
       pDestBuf[i] = usColorVal;
     }
 
-    UnlockVSurface(pPopUpTextBox->sourceBuffer);
+    JSurface_Unlock(pPopUpTextBox->sourceBuffer);
 
   } else {
     if (pPopUpTextBox->vsMercTextPopUpBackground == NULL) {
@@ -405,8 +405,8 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
                                 pPopUpTextBox->vsMercTextPopUpBackground, pSrcBuf, uiSrcPitchBYTES,
                                 0, 0, &DestRect);
 
-    UnlockVSurface(pPopUpTextBox->vsMercTextPopUpBackground);
-    UnlockVSurface(pPopUpTextBox->sourceBuffer);
+    JSurface_Unlock(pPopUpTextBox->vsMercTextPopUpBackground);
+    JSurface_Unlock(pPopUpTextBox->sourceBuffer);
   }
 
   GetVideoObject(&hImageHandle, pPopUpTextBox->uiMercTextPopUpBorder);

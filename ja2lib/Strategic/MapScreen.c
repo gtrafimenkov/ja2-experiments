@@ -1042,7 +1042,7 @@ void ContractListRegionBoxGlow(uint16_t usCount) {
                 usY + GetFontHeight(MAP_SCREEN_FONT) + 2, usColor, pDestBuf);
   InvalidateRegion(TIME_REMAINING_X - 1, usY, TIME_REMAINING_X + TIME_REMAINING_WIDTH + 1,
                    usY + GetFontHeight(MAP_SCREEN_FONT) + 3);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   /*
           // restore background
@@ -1096,7 +1096,7 @@ void GlowFace(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 9, 18, 60, 63, usColor, pDestBuf);
   InvalidateRegion(9, 18, 61, 64);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   // restore background
   if ((iColorNum == 0) || (iColorNum == 1))
@@ -1153,7 +1153,7 @@ void GlowItem(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
   RectangleDraw(TRUE, 3, 80, 64, 104, usColor, pDestBuf);
   InvalidateRegion(3, 80, 65, 105);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void GlowTrashCan(void) {
@@ -1194,7 +1194,7 @@ void GlowTrashCan(void) {
                 TRASH_CAN_Y + TRASH_CAN_HEIGHT, usColor, pDestBuf);
   InvalidateRegion(TRASH_CAN_X, TRASH_CAN_Y, TRASH_CAN_X + TRASH_CAN_WIDTH + 1,
                    TRASH_CAN_Y + TRASH_CAN_HEIGHT + 1);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   // restore background
   if ((iColorNum == 0) || (iColorNum == 1))
@@ -2185,7 +2185,7 @@ void HighLightAssignLine() {
     }
   }
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void HighLightDestLine() {
@@ -2263,7 +2263,7 @@ void HighLightDestLine() {
   }
   // InvalidateRegion( usX+4, usY, DEST_ETA_WIDTH-10, usY+GetFontHeight(MAP_SCREEN_FONT)+3);
   // InvalidateRegion( usX+10, usY, usX+ASSIGN_WIDTH, usY+GetFontHeight(MAP_SCREEN_FONT)+3);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void HighLightSleepLine() {
@@ -2340,7 +2340,7 @@ void HighLightSleepLine() {
       InvalidateRegion(usX, usY, usX2 + 5, usY + GetFontHeight(MAP_SCREEN_FONT) + 3);
     }
   }
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void AddCharacter(struct SOLDIERTYPE *pCharacter) {
@@ -5152,7 +5152,7 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   InvalidateRegion(sScreenX, sScreenY - 2, sScreenX + DMAP_GRID_X + 1, sScreenY + DMAP_GRID_Y - 1);
 
   RestoreClipRegionToFullScreenForRectangle(uiDestPitchBYTES);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void PollLeftButtonInMapView(uint32_t *puiNewEvent) {
@@ -5359,7 +5359,7 @@ void PopupText(wchar_t *pFontString, ...) {
 
   mprintf_buffer(pDestBuf, uiDestPitchBYTES, LARGEFONT1, sX, sY, PopupString);
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   InvalidateScreen();
 }
@@ -5423,7 +5423,7 @@ void BltCharInvPanel() {
   GetVideoObject(&hCharListHandle, guiMAPINV);
   Blt8BPPDataTo16BPPBufferTransparent(pDestBuf, uiDestPitchBYTES, hCharListHandle, PLAYER_INFO_X,
                                       PLAYER_INFO_Y, 0);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsSaveBuffer);
 
   Assert(pSoldier);
   CreateDestroyMapInvButton();
@@ -8987,7 +8987,7 @@ void CheckForAndRenderNewMailOverlay() {
 
           pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
           Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &area);
-          UnlockVSurface(vsFB);
+          JSurface_Unlock(vsFB);
         }
         InvalidateRegion(463, 417, 481, 430);
       }

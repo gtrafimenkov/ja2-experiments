@@ -568,7 +568,7 @@ void OptDisplayLine(uint16_t usStartX, uint16_t usStartY, uint16_t EndX, uint16_
   LineDraw(FALSE, usStartX, usStartY, EndX, EndY, iColor, pDestBuf);
 
   // unlock frame buffer
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void CalculateNewSliderBoxPosition(SLIDER *pSlider) {

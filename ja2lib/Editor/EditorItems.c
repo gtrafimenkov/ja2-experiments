@@ -293,8 +293,8 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
                     0 + i, 0, 100, 360, 60, 80);
   }
 
-  UnlockVSurface(eInfo.vsBuffer);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(eInfo.vsBuffer);
+  JSurface_Unlock(vsFB);
 
   x = 0;
   y = 0;
@@ -503,8 +503,8 @@ void RenderEditorItemsInfo() {
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 110,
                   360, 60 * eInfo.sScrollIndex, 0, 360, 80);
 
-  UnlockVSurface(eInfo.vsBuffer);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(eInfo.vsBuffer);
+  JSurface_Unlock(vsFB);
 
   // calculate the min and max index that is currently shown.  This determines
   // if the highlighted and/or selected items are drawn with the outlines.

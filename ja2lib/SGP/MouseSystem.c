@@ -1091,7 +1091,7 @@ void DisplayFastHelp(struct MOUSE_REGION *region) {
                     Get16BPPColor(FROMRGB(65, 57, 15)), pDestBuf);
       RectangleDraw(TRUE, iX, iY, iX + iW - 2, iY + iH - 2, Get16BPPColor(FROMRGB(227, 198, 88)),
                     pDestBuf);
-      UnlockVSurface(vsFB);
+      JSurface_Unlock(vsFB);
       ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
       ShadowVideoSurfaceRect(vsFB, iX + 2, iY + 2, iX + iW - 3, iY + iH - 3);
 

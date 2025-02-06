@@ -608,12 +608,12 @@ BOOLEAN EnterSaveLoadScreen() {
     // CLEAR THE FRAME BUFFER
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnlockVSurface(vsFB);
+    JSurface_Unlock(vsFB);
 
     // CLEAR THE vsFB
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-    UnlockVSurface(vsFB);
+    JSurface_Unlock(vsFB);
   }
 
   gfGettingNameFromSaveLoadScreen = FALSE;

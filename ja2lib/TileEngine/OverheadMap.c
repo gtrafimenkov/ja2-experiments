@@ -892,7 +892,7 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       } while (!fEndRenderCol);
     }
 
-    UnlockVSurface(vsFB);
+    JSurface_Unlock(vsFB);
 
     // OK, blacken out edges of smaller maps...
     if (gMapInformation.ubRestrictedScrollID != 0) {
@@ -929,8 +929,8 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
       Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES,
                       0, 0, 0, 0, usWidth, usHeight);
 
-      UnlockVSurface(vsFB);
-      UnlockVSurface(vsSaveBuffer);
+      JSurface_Unlock(vsFB);
+      JSurface_Unlock(vsSaveBuffer);
     }
   }
 }
@@ -1093,7 +1093,7 @@ void RenderOverheadOverlays() {
     }
   }
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void MoveInOverheadRegionCallback(struct MOUSE_REGION *reg, int32_t reason) {

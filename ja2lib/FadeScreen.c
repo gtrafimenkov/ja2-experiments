@@ -315,7 +315,7 @@ void FadeFrameBufferVersionOne() {
     }
   }
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void FadeInBackBufferVersionOne() {
@@ -356,8 +356,8 @@ void FadeInBackBufferVersionOne() {
     }
   }
 
-  UnlockVSurface(vsFB);
-  UnlockVSurface(vsBackBuffer);
+  JSurface_Unlock(vsFB);
+  JSurface_Unlock(vsBackBuffer);
 }
 
 void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
@@ -405,7 +405,7 @@ void FadeFrameBufferVersionFaster(int8_t bFadeValue) {
     }
   }
 
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 }
 
 void FadeFrameBufferSide() {
@@ -564,8 +564,8 @@ BOOLEAN UpdateSaveBufferWithBackbuffer(void) {
   Blt16BPPTo16BPP((uint16_t *)pDestBuf, uiDestPitchBYTES, (uint16_t *)pSrcBuf, uiSrcPitchBYTES, 0,
                   0, 0, 0, 640, 480);
 
-  UnlockVSurface(vsFB);
-  UnlockVSurface(vsSaveBuffer);
+  JSurface_Unlock(vsFB);
+  JSurface_Unlock(vsSaveBuffer);
 
   return (TRUE);
 }

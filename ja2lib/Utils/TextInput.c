@@ -1172,7 +1172,7 @@ void RenderInactiveTextFieldNode(TEXTINPUTNODE *pNode) {
     ClipRect.iBottom = pNode->region.RegionBottomRightY;
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
     Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-    UnlockVSurface(vsFB);
+    JSurface_Unlock(vsFB);
   }
 }
 

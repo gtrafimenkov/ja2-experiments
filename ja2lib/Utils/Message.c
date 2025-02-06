@@ -265,7 +265,7 @@ void BlitString(VIDEO_OVERLAY *pBlitter) {
   SetFontShadow(DEFAULT_SHADOW);
   mprintf_buffer_coded(pDestBuf, uiDestPitchBYTES, pBlitter->uiFontID, pBlitter->sX, pBlitter->sY,
                        pBlitter->zText);
-  UnlockVSurface(pBlitter->vsDestBuff);
+  JSurface_Unlock(pBlitter->vsDestBuff);
 }
 
 void EnableStringVideoOverlay(ScrollStringStPtr pStringSt, BOOLEAN fEnable) {

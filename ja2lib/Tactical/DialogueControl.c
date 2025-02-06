@@ -2020,8 +2020,8 @@ void RenderFaceOverlay(VIDEO_OVERLAY *pBlitter) {
                     (int16_t)(pBlitter->sX + 14), (int16_t)(pBlitter->sY + 6), 0, 0,
                     gpCurrentTalkingFace->usFaceWidth, gpCurrentTalkingFace->usFaceHeight);
 
-    UnlockVSurface(pBlitter->vsDestBuff);
-    UnlockVSurface(gpCurrentTalkingFace->autoDisplayBuffer);
+    JSurface_Unlock(pBlitter->vsDestBuff);
+    JSurface_Unlock(gpCurrentTalkingFace->autoDisplayBuffer);
 
     InvalidateRegion(pBlitter->sX, pBlitter->sY, pBlitter->sX + 99, pBlitter->sY + 98);
   }

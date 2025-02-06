@@ -672,8 +672,8 @@ void RenderTalkingMenu() {
                     (int16_t)(gTalkPanel.sY + TALK_PANEL_FACE_Y), 0, 0, pFace->usFaceWidth,
                     pFace->usFaceHeight);
 
-    UnlockVSurface(vsFB);
-    UnlockVSurface(gTalkPanel.vsSaveBuffer);
+    JSurface_Unlock(vsFB);
+    JSurface_Unlock(gTalkPanel.vsSaveBuffer);
 
     MarkButtonsDirty();
 

@@ -81,9 +81,6 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath);
 // Returns a flat pointer for direct manipulation of data
 uint8_t *LockVSurface(struct VSurface *hVSurface, uint32_t *pPitch);
 
-// Must be called after Locking buffer call above
-void UnlockVSurface(struct VSurface *hVSurface);
-
 // Set data from HIMAGE.
 BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage, uint16_t usX,
                                       uint16_t usY, SGPRect *pSrcRect);

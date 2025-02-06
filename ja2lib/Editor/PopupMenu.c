@@ -247,7 +247,7 @@ void RenderPopupMenu() {
     }
     usStart += (uint16_t)gPopup.ubColumnWidth[ubColumn];
   }
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   // Set up the text attributes.
   SetFont(gPopup.usFont);

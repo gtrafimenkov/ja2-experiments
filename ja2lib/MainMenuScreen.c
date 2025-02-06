@@ -276,9 +276,7 @@ void ExitMainMenu() {
   //*pDestBuf;
 
   //	if( !gfDoHelpScreen )
-  {
-    CreateDestroyBackGroundMouseMask(FALSE);
-  }
+  { CreateDestroyBackGroundMouseMask(FALSE); }
 
   CreateDestroyMainMenuButtons(FALSE);
 
@@ -396,7 +394,7 @@ void ClearMainMenu() {
   // CLEAR THE FRAME BUFFER
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   memset(pDestBuf, 0, SCREEN_HEIGHT * uiDestPitchBYTES);
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
   InvalidateScreen();
 }
 

@@ -2640,7 +2640,7 @@ void DrawHatchOnButton(GUI_BUTTON *b) {
   ClipRect.iBottom = b->Area.RegionBottomRightY - 1;
   pDestBuf = LockVSurface(vsButtonDest, &uiDestPitchBYTES);
   Blt16BPPBufferHatchRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnlockVSurface(vsButtonDest);
+  JSurface_Unlock(vsButtonDest);
 }
 
 void DrawShadeOnButton(GUI_BUTTON *b) {
@@ -2653,7 +2653,7 @@ void DrawShadeOnButton(GUI_BUTTON *b) {
   ClipRect.iBottom = b->Area.RegionBottomRightY - 1;
   pDestBuf = LockVSurface(vsButtonDest, &uiDestPitchBYTES);
   Blt16BPPBufferShadowRect((uint16_t *)pDestBuf, uiDestPitchBYTES, &ClipRect);
-  UnlockVSurface(vsButtonDest);
+  JSurface_Unlock(vsButtonDest);
 }
 
 void DrawDefaultOnButton(GUI_BUTTON *b) {
@@ -2685,7 +2685,7 @@ void DrawDefaultOnButton(GUI_BUTTON *b) {
   if (b->bDefaultStatus == DEFAULT_STATUS_DOTTEDINTERIOR ||
       b->bDefaultStatus == DEFAULT_STATUS_WINDOWS95) {  // Draw an internal dotted rectangle.
   }
-  UnlockVSurface(vsButtonDest);
+  JSurface_Unlock(vsButtonDest);
 }
 
 void DrawCheckBoxButtonOn(int32_t iButtonID) {
@@ -3153,7 +3153,7 @@ void DrawGenericButton(GUI_BUTTON *b) {
   }
 
   // Unlock buffer
-  UnlockVSurface(vsButtonDest);
+  JSurface_Unlock(vsButtonDest);
 }
 
 //=======================================================================================================

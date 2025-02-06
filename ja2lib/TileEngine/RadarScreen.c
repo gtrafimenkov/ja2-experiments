@@ -448,7 +448,7 @@ void RenderRadarScreen() {
       }
     }
   }
-  UnlockVSurface(vsFB);
+  JSurface_Unlock(vsFB);
 
   if ((IsMapScreen()) && (fShowMapInventoryPool == TRUE)) {
     InvalidateRegion(RADAR_WINDOW_X, gsRadarY, RADAR_WINDOW_X + RADAR_WINDOW_WIDTH,

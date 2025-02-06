@@ -2035,7 +2035,7 @@ void ClearHelpScreenTextBuffer() {
   // CLEAR THE FRAME BUFFER
   pDestBuf = LockVSurface(vsHelpScreenTextBufferSurface, &uiDestPitchBYTES);
   memset(pDestBuf, 0, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER * uiDestPitchBYTES);
-  UnlockVSurface(vsHelpScreenTextBufferSurface);
+  JSurface_Unlock(vsHelpScreenTextBufferSurface);
   InvalidateScreen();
 }
 
@@ -2129,7 +2129,7 @@ void DisplayHelpScreenTextBufferScrollBox() {
              Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
 
     // unlock frame buffer
-    UnlockVSurface(vsFB);
+    JSurface_Unlock(vsFB);
   }
 }
 
