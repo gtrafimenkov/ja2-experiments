@@ -192,7 +192,8 @@ BOOLEAN Blt8BPPDataTo16BPPBufferHalf(uint16_t *pBuffer, uint32_t uiDestPitchBYTE
                                      struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                      uint32_t uiSrcPitch, int32_t iX, int32_t iY);
 BOOLEAN Blt8BPPDataTo16BPPBufferHalfRect(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                         struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
+                                         struct VSurface *hSrcVSurface,
+                                         const uint16_t *customPalette, uint8_t *pSrcBuffer,
                                          uint32_t uiSrcPitch, int32_t iX, int32_t iY,
                                          SGPRect *pRect);
 

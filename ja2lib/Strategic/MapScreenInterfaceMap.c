@@ -1068,25 +1068,35 @@ void ShowTeamAndVehicles(int32_t fShowFlags) {
   }
 }
 
-BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
-  int16_t sScreenX, sScreenY;
+static drawBigMapWithCustomPalette(int16_t x, int16_t y, SGPRect *clip,
+                                   const uint16_t *customPalette) {
   uint32_t uiDestPitchBYTES;
   uint32_t uiSrcPitchBYTES;
   uint16_t *pDestBuf;
   uint8_t *pSrcBuf;
-  SGPRect clip;
 
-  const uint16_t *pOriginalPallette = JSurface_GetPalette16(vsBigMap);
+  pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
+  pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
+  Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, customPalette, pSrcBuf,
+                                   uiSrcPitchBYTES, x, y, clip);
+
+  UnlockVSurface(vsBigMap);
+  UnlockVSurface(vsSaveBuffer);
+}
+
+BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   if (fZoomFlag)
     ShadeMapElemZoomIn(sMapX, sMapY, iColor);
   else {
+    int16_t sScreenX, sScreenY;
     GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY);
 
     // compensate for original BIG_MAP blit being done at MAP_VIEW_START_X + 1
     sScreenX += 1;
 
     // compensate for original BIG_MAP blit being done at MAP_VIEW_START_X + 1
+    SGPRect clip;
     clip.iLeft = 2 * (sScreenX - (MAP_VIEW_START_X + 1));
     clip.iTop = 2 * (sScreenY - MAP_VIEW_START_Y);
     clip.iRight = clip.iLeft + (2 * MAP_GRID_X);
@@ -1107,71 +1117,21 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         break;
 
       case (MAP_SHADE_LT_GREEN):
-        JSurface_SetPalette16(vsBigMap, pMapLTGreenPalette);
-
-        // lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
-                                         uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
+        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapLTGreenPalette);
         break;
 
       case (MAP_SHADE_DK_GREEN):
-        // grab video surface and set palette
-        JSurface_SetPalette16(vsBigMap, pMapDKGreenPalette);
-
-        /// lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
-                                         uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
+        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapDKGreenPalette);
         break;
 
       case (MAP_SHADE_LT_RED):
-        // grab video surface and set palette
-        JSurface_SetPalette16(vsBigMap, pMapLTRedPalette);
-
-        // lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
-                                         uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
+        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapLTRedPalette);
         break;
 
       case (MAP_SHADE_DK_RED):
-        // grab video surface and set palette
-        JSurface_SetPalette16(vsBigMap, pMapDKRedPalette);
-
-        // lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
-                                         uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
+        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapDKRedPalette);
         break;
     }
-
-    // restore original palette
-    JSurface_SetPalette16(vsBigMap, pOriginalPallette);
   }
 
   return (TRUE);
