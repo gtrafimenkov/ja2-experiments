@@ -615,7 +615,6 @@ uint32_t DrawMap(void) {
   uint32_t uiSrcPitchBYTES;
   uint16_t *pDestBuf;
   uint8_t *pSrcBuf;
-  SGPRect clip;
   uint8_t cnt, cnt2;
   int32_t iCounter = 0;
 
@@ -625,36 +624,8 @@ uint32_t DrawMap(void) {
     hSrcVSurface = vsBigMap;
     pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
-    // clip blits to mapscreen region
-    // ClipBlitsToMapViewRegion( );
-
-    if (FALSE) {
-      // set up bounds
-      if (iZoomX < WEST_ZOOM_BOUND) iZoomX = WEST_ZOOM_BOUND;
-      if (iZoomX > EAST_ZOOM_BOUND) iZoomX = EAST_ZOOM_BOUND;
-      if (iZoomY < NORTH_ZOOM_BOUND + 1) iZoomY = NORTH_ZOOM_BOUND;
-      if (iZoomY > SOUTH_ZOOM_BOUND) iZoomY = SOUTH_ZOOM_BOUND;
-
-      clip.iLeft = iZoomX - 2;
-      clip.iRight = clip.iLeft + MAP_VIEW_WIDTH + 2;
-      clip.iTop = iZoomY - 3;
-      clip.iBottom = clip.iTop + MAP_VIEW_HEIGHT - 1;
-
-      if (clip.iBottom > JSurface_Height(hSrcVSurface)) {
-        clip.iBottom = JSurface_Height(hSrcVSurface);
-      }
-
-      if (clip.iRight > JSurface_Width(hSrcVSurface)) {
-        clip.iRight = JSurface_Width(hSrcVSurface);
-      }
-
-      Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
-                                  uiSrcPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X,
-                                  MAP_VIEW_START_Y + MAP_GRID_Y - 2, &clip);
-    } else {
-      Blt8BPPDataTo16BPPBufferHalf(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
-                                   uiSrcPitchBYTES, MAP_VIEW_START_X + 1, MAP_VIEW_START_Y);
-    }
+    Blt8BPPDataTo16BPPBufferHalf(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf, uiSrcPitchBYTES,
+                                 MAP_VIEW_START_X + 1, MAP_VIEW_START_Y);
 
     UnlockVSurface(vsBigMap);
     UnlockVSurface(vsSaveBuffer);
@@ -774,13 +745,8 @@ uint32_t DrawMap(void) {
 void GetScreenXYFromMapXY(uint8_t sMapX, uint8_t sMapY, int16_t *psX, int16_t *psY) {
   int16_t sXTempOff = 1;
   int16_t sYTempOff = 1;
-  if (FALSE) {
-    *psX = ((sMapX / 2 + sXTempOff) * MAP_GRID_ZOOM_X) + MAP_VIEW_START_X;
-    *psY = ((sMapY / 2 + sYTempOff) * MAP_GRID_ZOOM_Y) + MAP_VIEW_START_Y;
-  } else {
-    *psX = (sMapX * MAP_GRID_X) + MAP_VIEW_START_X;
-    *psY = (sMapY * MAP_GRID_Y) + MAP_VIEW_START_Y;
-  }
+  *psX = (sMapX * MAP_GRID_X) + MAP_VIEW_START_X;
+  *psY = (sMapY * MAP_GRID_Y) + MAP_VIEW_START_Y;
 }
 
 void GetScreenXYFromMapXYStationary(uint8_t sMapX, uint8_t sMapY, int16_t *psX, int16_t *psY) {
@@ -1657,302 +1623,135 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
           else
             fSpeedFlag = FALSE;
 
-          if (FALSE) {
-            iDirection = S_TO_N_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_NORTH_ARROW;
-            else
-              iArrow = ZOOM_NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X * 2;
-            iArrowY += NORTH_OFFSET_Y * 2;
-          } else {
-            iDirection = S_TO_N_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_NORTH_ARROW;
-            else
-              iArrow = NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X;
-            iArrowY += NORTH_OFFSET_Y;
-          }
+          iDirection = S_TO_N_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_NORTH_ARROW;
+          else
+            iArrow = NORTH_ARROW;
+          iArrowX += NORTH_OFFSET_X;
+          iArrowY += NORTH_OFFSET_Y;
         } else if (pPastNode->uiSectorId - WORLD_MAP_X == pNode->uiSectorId) {
-          if (FALSE) {
-            iDirection = N_TO_S_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_SOUTH_ARROW;
-            else
-              iArrow = ZOOM_SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X * 2;
-            iArrowY += SOUTH_OFFSET_Y * 2;
-          } else {
-            iDirection = N_TO_S_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_SOUTH_ARROW;
-            else
-              iArrow = SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X;
-            iArrowY += SOUTH_OFFSET_Y;
-          }
+          iDirection = N_TO_S_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_SOUTH_ARROW;
+          else
+            iArrow = SOUTH_ARROW;
+          iArrowX += SOUTH_OFFSET_X;
+          iArrowY += SOUTH_OFFSET_Y;
         } else if (pPastNode->uiSectorId + 1 == pNode->uiSectorId) {
-          if (FALSE) {
-            iDirection = E_TO_W_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_WEST_ARROW;
-            else
-              iArrow = ZOOM_WEST_ARROW;
-            iArrowX += WEST_OFFSET_X * 2;
-            iArrowY += WEST_OFFSET_Y * 2;
-          } else {
-            iDirection = E_TO_W_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_WEST_ARROW;
-            else
-              iArrow = WEST_ARROW;
-            iArrowX += WEST_OFFSET_X;
-            iArrowY += WEST_OFFSET_Y;
-          }
+          iDirection = E_TO_W_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_WEST_ARROW;
+          else
+            iArrow = WEST_ARROW;
+          iArrowX += WEST_OFFSET_X;
+          iArrowY += WEST_OFFSET_Y;
         } else {
-          if (FALSE) {
-            iDirection = W_TO_E_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_EAST_ARROW;
-            else
-              iArrow = ZOOM_EAST_ARROW;
-            iArrowX += EAST_OFFSET_X * 2;
-            iArrowY += EAST_OFFSET_Y * 2;
-          } else {
-            iDirection = W_TO_E_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_EAST_ARROW;
-            else
-              iArrow = EAST_ARROW;
-            iArrowX += EAST_OFFSET_X;
-            iArrowY += EAST_OFFSET_Y;
-          }
+          iDirection = W_TO_E_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_EAST_ARROW;
+          else
+            iArrow = EAST_ARROW;
+          iArrowX += EAST_OFFSET_X;
+          iArrowY += EAST_OFFSET_Y;
         }
       } else {
         if ((iDeltaA == -1) && (iDeltaB == 1)) {
-          /*
-                                                  if( pPastNode == NULL )
-                                                  {
-                                                          fSpeedFlag = !fSpeedFlag;
-                                                  }
-
-          */
-          if (FALSE) {
-            iDirection = WEST_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_WEST_ARROW;
-            else
-              iArrow = ZOOM_WEST_ARROW;
-            iArrowX += WEST_OFFSET_X * 2;
-            iArrowY += WEST_OFFSET_Y * 2;
-          } else {
-            iDirection = WEST_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_WEST_ARROW;
-            else
-              iArrow = WEST_ARROW;
-            iArrowX += WEST_OFFSET_X;
-            iArrowY += WEST_OFFSET_Y;
-          }
+          iDirection = WEST_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_WEST_ARROW;
+          else
+            iArrow = WEST_ARROW;
+          iArrowX += WEST_OFFSET_X;
+          iArrowY += WEST_OFFSET_Y;
         } else if ((iDeltaA == 1) && (iDeltaB == -1)) {
-          if (FALSE) {
-            iDirection = EAST_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_EAST_ARROW;
-            else
-              iArrow = ZOOM_EAST_ARROW;
-            iArrowX += EAST_OFFSET_X * 2;
-            iArrowY += EAST_OFFSET_Y * 2;
-          } else {
-            iDirection = EAST_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_EAST_ARROW;
-            else
-              iArrow = EAST_ARROW;
-            iArrowX += EAST_OFFSET_X;
-            iArrowY += EAST_OFFSET_Y;
-          }
+          iDirection = EAST_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_EAST_ARROW;
+          else
+            iArrow = EAST_ARROW;
+          iArrowX += EAST_OFFSET_X;
+          iArrowY += EAST_OFFSET_Y;
         } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == WORLD_MAP_X)) {
-          if (FALSE) {
-            iDirection = NORTH_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_NORTH_ARROW;
-            else
-              iArrow = ZOOM_NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X * 2;
-            iArrowY += NORTH_OFFSET_Y * 2;
-          } else {
-            iDirection = NORTH_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_NORTH_ARROW;
-            else
-              iArrow = NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X;
-            iArrowY += NORTH_OFFSET_Y;
-          }
+          iDirection = NORTH_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_NORTH_ARROW;
+          else
+            iArrow = NORTH_ARROW;
+          iArrowX += NORTH_OFFSET_X;
+          iArrowY += NORTH_OFFSET_Y;
         } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -WORLD_MAP_X)) {
-          if (FALSE) {
-            iDirection = SOUTH_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_SOUTH_ARROW;
-            else
-              iArrow = ZOOM_SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X * 2;
-            iArrowY += SOUTH_OFFSET_Y * 2;
-          } else {
-            iDirection = SOUTH_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_SOUTH_ARROW;
-            else
-              iArrow = SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X;
-            iArrowY += SOUTH_OFFSET_Y;
-          }
+          iDirection = SOUTH_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_SOUTH_ARROW;
+          else
+            iArrow = SOUTH_ARROW;
+          iArrowX += SOUTH_OFFSET_X;
+          iArrowY += SOUTH_OFFSET_Y;
         } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == -1)) {
-          if (FALSE) {
-            iDirection = N_TO_E_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_EAST_ARROW;
-            else
-              iArrow = ZOOM_EAST_ARROW;
-            iArrowX += EAST_OFFSET_X * 2;
-            iArrowY += EAST_OFFSET_Y * 2;
-          } else {
-            iDirection = N_TO_E_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_EAST_ARROW;
-            else
-              iArrow = EAST_ARROW;
-            iArrowX += EAST_OFFSET_X;
-            iArrowY += EAST_OFFSET_Y;
-          }
+          iDirection = N_TO_E_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_EAST_ARROW;
+          else
+            iArrow = EAST_ARROW;
+          iArrowX += EAST_OFFSET_X;
+          iArrowY += EAST_OFFSET_Y;
         } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == 1)) {
-          if (FALSE) {
-            iDirection = S_TO_W_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_WEST_ARROW;
-            else
-              iArrow = ZOOM_WEST_ARROW;
-            iArrowX += WEST_OFFSET_X * 2;
-            iArrowY += WEST_OFFSET_Y * 2;
-          } else {
-            iDirection = S_TO_W_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_WEST_ARROW;
-            else
-              iArrow = WEST_ARROW;
-            iArrowX += WEST_OFFSET_X;
-            iArrowY += WEST_OFFSET_Y;
-          }
+          iDirection = S_TO_W_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_WEST_ARROW;
+          else
+            iArrow = WEST_ARROW;
+          iArrowX += WEST_OFFSET_X;
+          iArrowY += WEST_OFFSET_Y;
         } else if ((iDeltaA == 1) && (iDeltaB == -WORLD_MAP_X)) {
-          if (FALSE) {
-            iDirection = E_TO_S_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_SOUTH_ARROW;
-            else
-              iArrow = ZOOM_SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X * 2;
-            iArrowY += SOUTH_OFFSET_Y * 2;
-          } else {
-            iDirection = E_TO_S_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_SOUTH_ARROW;
-            else
-              iArrow = SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X;
-            iArrowY += SOUTH_OFFSET_Y;
-          }
+          iDirection = E_TO_S_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_SOUTH_ARROW;
+          else
+            iArrow = SOUTH_ARROW;
+          iArrowX += SOUTH_OFFSET_X;
+          iArrowY += SOUTH_OFFSET_Y;
         } else if ((iDeltaA == -1) && (iDeltaB == WORLD_MAP_X)) {
-          if (FALSE) {
-            iDirection = W_TO_N_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_NORTH_ARROW;
-            else
-              iArrow = ZOOM_NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X * 2;
-            iArrowY += NORTH_OFFSET_Y * 2;
-          } else {
-            iDirection = W_TO_N_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_NORTH_ARROW;
-            else
-              iArrow = NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X;
-            iArrowY += NORTH_OFFSET_Y;
-          }
+          iDirection = W_TO_N_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_NORTH_ARROW;
+          else
+            iArrow = NORTH_ARROW;
+          iArrowX += NORTH_OFFSET_X;
+          iArrowY += NORTH_OFFSET_Y;
         } else if ((iDeltaA == -1) && (iDeltaB == -WORLD_MAP_X)) {
-          if (FALSE) {
-            iDirection = W_TO_S_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_SOUTH_ARROW;
-            else
-              iArrow = ZOOM_SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X * 2;
-            iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y) * 2;
-          } else {
-            iDirection = W_TO_S_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_SOUTH_ARROW;
-            else
-              iArrow = SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X;
-            iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y);
-          }
+          iDirection = W_TO_S_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_SOUTH_ARROW;
+          else
+            iArrow = SOUTH_ARROW;
+          iArrowX += SOUTH_OFFSET_X;
+          iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y);
         } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == 1)) {
-          if (FALSE) {
-            iDirection = N_TO_W_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_WEST_ARROW;
-            else
-              iArrow = ZOOM_WEST_ARROW;
-            iArrowX += WEST_OFFSET_X * 2;
-            iArrowY += WEST_OFFSET_Y * 2;
-          } else {
-            iDirection = N_TO_W_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_WEST_ARROW;
-            else
-              iArrow = WEST_ARROW;
-            iArrowX += WEST_OFFSET_X;
-            iArrowY += WEST_OFFSET_Y;
-          }
+          iDirection = N_TO_W_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_WEST_ARROW;
+          else
+            iArrow = WEST_ARROW;
+          iArrowX += WEST_OFFSET_X;
+          iArrowY += WEST_OFFSET_Y;
         } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -1)) {
-          if (FALSE) {
-            iDirection = S_TO_E_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_EAST_ARROW;
-            else
-              iArrow = ZOOM_EAST_ARROW;
-            iArrowX += EAST_OFFSET_X * 2;
-            iArrowY += EAST_OFFSET_Y * 2;
-          } else {
-            iDirection = S_TO_E_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_EAST_ARROW;
-            else
-              iArrow = EAST_ARROW;
-            iArrowX += EAST_OFFSET_X;
-            iArrowY += EAST_OFFSET_Y;
-          }
+          iDirection = S_TO_E_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_EAST_ARROW;
+          else
+            iArrow = EAST_ARROW;
+          iArrowX += EAST_OFFSET_X;
+          iArrowY += EAST_OFFSET_Y;
         } else if ((iDeltaA == 1) && (iDeltaB == WORLD_MAP_X)) {
-          if (FALSE) {
-            iDirection = E_TO_N_ZOOM_LINE;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_NORTH_ARROW;
-            else
-              iArrow = ZOOM_NORTH_ARROW;
-            iArrowX += (NORTH_OFFSET_X * 2);
-            iArrowY += (NORTH_OFFSET_Y + EAST_TO_NORTH_OFFSET_Y) * 2;
-          } else {
-            iDirection = E_TO_N_LINE;
-            if (fSpeedFlag)
-              iArrow = Y_NORTH_ARROW;
-            else
-              iArrow = NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X;
-            iArrowY += NORTH_OFFSET_Y + EAST_TO_NORTH_OFFSET_Y;
-          }
+          iDirection = E_TO_N_LINE;
+          if (fSpeedFlag)
+            iArrow = Y_NORTH_ARROW;
+          else
+            iArrow = NORTH_ARROW;
+          iArrowX += NORTH_OFFSET_X;
+          iArrowY += NORTH_OFFSET_Y + EAST_TO_NORTH_OFFSET_Y;
         }
       }
     } else {
@@ -1979,31 +1778,13 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
         fUTurnFlag = TRUE;
         iDeltaA = (int16_t)pNode->uiSectorId - (int16_t)pPastNode->uiSectorId;
         if (iDeltaA == -1) {
-          if (FALSE) {
-            iDirection = ZOOM_RED_X_WEST;
-            // iX-=MAP_GRID_X;
-            // iY-=MAP_GRID_Y;
-          } else
-            iDirection = RED_X_WEST;
-          // iX+=RED_WEST_OFF_X;
+          iDirection = RED_X_WEST;
         } else if (iDeltaA == 1) {
-          if (FALSE) {
-            iDirection = ZOOM_RED_X_EAST;
-          } else
-            iDirection = RED_X_EAST;
-          // iX+=RED_EAST_OFF_X;
+          iDirection = RED_X_EAST;
         } else if (iDeltaA == -WORLD_MAP_X) {
-          if (FALSE) {
-            iDirection = ZOOM_RED_X_NORTH;
-          } else
-            iDirection = RED_X_NORTH;
-          // iY+=RED_NORTH_OFF_Y;
+          iDirection = RED_X_NORTH;
         } else {
-          if (FALSE) {
-            iDirection = ZOOM_RED_X_SOUTH;
-          } else
-            iDirection = RED_X_SOUTH;
-          //	iY+=RED_SOUTH_OFF_Y;
+          iDirection = RED_X_SOUTH;
         }
       }
       if (pNextNode) {
@@ -2015,83 +1796,37 @@ BOOLEAN TracePathRoute(BOOLEAN fCheckFlag, BOOLEAN fForceUpDate, struct path *pP
           fSpeedFlag = TRUE;
 
         if (iDeltaB == -1) {
-          if (FALSE) {
-            iDirection = ZOOM_GREEN_X_EAST;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_EAST_ARROW;
-            else
-              iArrow = ZOOM_EAST_ARROW;
-            iX -= 0;
-            iY -= 0;
-            iArrowX += EAST_OFFSET_X * 2;
-            iArrowY += EAST_OFFSET_Y * 2;
-          } else {
-            iDirection = GREEN_X_EAST;
-            if (fSpeedFlag)
-              iArrow = Y_EAST_ARROW;
-            else
-              iArrow = EAST_ARROW;
-            iArrowX += EAST_OFFSET_X;
-            iArrowY += EAST_OFFSET_Y;
-          }
-          // iX+=RED_EAST_OFF_X;
+          iDirection = GREEN_X_EAST;
+          if (fSpeedFlag)
+            iArrow = Y_EAST_ARROW;
+          else
+            iArrow = EAST_ARROW;
+          iArrowX += EAST_OFFSET_X;
+          iArrowY += EAST_OFFSET_Y;
         } else if (iDeltaB == 1) {
-          if (FALSE) {
-            iDirection = ZOOM_GREEN_X_WEST;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_WEST_ARROW;
-            else
-              iArrow = ZOOM_WEST_ARROW;
-            iArrowX += WEST_OFFSET_X * 2;
-            iArrowY += WEST_OFFSET_Y * 2;
-          } else {
-            iDirection = GREEN_X_WEST;
-            if (fSpeedFlag)
-              iArrow = Y_WEST_ARROW;
-            else
-              iArrow = WEST_ARROW;
-            iArrowX += WEST_OFFSET_X;
-            iArrowY += WEST_OFFSET_Y;
-          }
-          // iX+=RED_WEST_OFF_X;
+          iDirection = GREEN_X_WEST;
+          if (fSpeedFlag)
+            iArrow = Y_WEST_ARROW;
+          else
+            iArrow = WEST_ARROW;
+          iArrowX += WEST_OFFSET_X;
+          iArrowY += WEST_OFFSET_Y;
         } else if (iDeltaB == WORLD_MAP_X) {
-          if (FALSE) {
-            iDirection = ZOOM_GREEN_X_NORTH;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_NORTH_ARROW;
-            else
-              iArrow = ZOOM_NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X * 2;
-            iArrowY += NORTH_OFFSET_Y * 2;
-          } else {
-            iDirection = GREEN_X_NORTH;
-            if (fSpeedFlag)
-              iArrow = Y_NORTH_ARROW;
-            else
-              iArrow = NORTH_ARROW;
-            iArrowX += NORTH_OFFSET_X;
-            iArrowY += NORTH_OFFSET_Y;
-            // iY+=RED_NORTH_OFF_Y;
-          }
+          iDirection = GREEN_X_NORTH;
+          if (fSpeedFlag)
+            iArrow = Y_NORTH_ARROW;
+          else
+            iArrow = NORTH_ARROW;
+          iArrowX += NORTH_OFFSET_X;
+          iArrowY += NORTH_OFFSET_Y;
         } else {
-          if (FALSE) {
-            iDirection = ZOOM_GREEN_X_SOUTH;
-            if (fSpeedFlag)
-              iArrow = ZOOM_Y_SOUTH_ARROW;
-            else
-              iArrow = ZOOM_SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X * 2;
-            iArrowY += SOUTH_OFFSET_Y * 2;
-          } else {
-            iDirection = GREEN_X_SOUTH;
-            if (fSpeedFlag)
-              iArrow = Y_SOUTH_ARROW;
-            else
-              iArrow = SOUTH_ARROW;
-            iArrowX += SOUTH_OFFSET_X;
-            iArrowY += SOUTH_OFFSET_Y;
-            // iY+=RED_SOUTH_OFF_Y;
-          }
+          iDirection = GREEN_X_SOUTH;
+          if (fSpeedFlag)
+            iArrow = Y_SOUTH_ARROW;
+          else
+            iArrow = SOUTH_ARROW;
+          iArrowX += SOUTH_OFFSET_X;
+          iArrowY += SOUTH_OFFSET_Y;
         }
       }
     }
@@ -2356,378 +2091,178 @@ BOOLEAN TraceCharAnimatedRoute(struct path *pPath, BOOLEAN fCheckFlag, BOOLEAN f
 
     if ((pPastNode->uiSectorId == pNextNode->uiSectorId)) {
       if (pPastNode->uiSectorId + WORLD_MAP_X == pNode->uiSectorId) {
-        if (FALSE) {
-          iDirection = S_TO_N_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_NORTH_ARROW;
-          else
-            iArrow = ZOOM_NORTH_ARROW;
-          iArrowX += NORTH_OFFSET_X * 2;
-          iArrowY += NORTH_OFFSET_Y * 2;
-        } else {
-          iDirection = S_TO_N_LINE;
-          if (!ubCounter)
-            iArrow = W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_NORTH_ARROW;
-          else
-            iArrow = NORTH_ARROW;
+        iDirection = S_TO_N_LINE;
+        if (!ubCounter)
+          iArrow = W_NORTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_NORTH_ARROW;
+        else
+          iArrow = NORTH_ARROW;
 
-          iArrowX += NORTH_OFFSET_X;
-          iArrowY += NORTH_OFFSET_Y;
-        }
+        iArrowX += NORTH_OFFSET_X;
+        iArrowY += NORTH_OFFSET_Y;
       } else if (pPastNode->uiSectorId - WORLD_MAP_X == pNode->uiSectorId) {
-        if (FALSE) {
-          iDirection = N_TO_S_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_SOUTH_ARROW;
-          else
-            iArrow = ZOOM_SOUTH_ARROW;
-          iArrowX += SOUTH_OFFSET_X * 2;
-          iArrowY += SOUTH_OFFSET_Y * 2;
-        } else {
-          iDirection = N_TO_S_LINE;
-          if (!ubCounter)
-            iArrow = W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_SOUTH_ARROW;
-          else
-            iArrow = SOUTH_ARROW;
-          iArrowX += SOUTH_OFFSET_X;
-          iArrowY += SOUTH_OFFSET_Y;
-        }
+        iDirection = N_TO_S_LINE;
+        if (!ubCounter)
+          iArrow = W_SOUTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_SOUTH_ARROW;
+        else
+          iArrow = SOUTH_ARROW;
+        iArrowX += SOUTH_OFFSET_X;
+        iArrowY += SOUTH_OFFSET_Y;
       } else if (pPastNode->uiSectorId + 1 == pNode->uiSectorId) {
-        if (FALSE) {
-          iDirection = E_TO_W_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_WEST_ARROW;
-          else
-            iArrow = ZOOM_WEST_ARROW;
-          iArrowX += WEST_OFFSET_X * 2;
-          iArrowY += WEST_OFFSET_Y * 2;
-        } else {
-          iDirection = E_TO_W_LINE;
-          if (!ubCounter)
-            iArrow = W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_WEST_ARROW;
-          else
-            iArrow = WEST_ARROW;
-          iArrowX += WEST_OFFSET_X;
-          iArrowY += WEST_OFFSET_Y;
-        }
+        iDirection = E_TO_W_LINE;
+        if (!ubCounter)
+          iArrow = W_WEST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_WEST_ARROW;
+        else
+          iArrow = WEST_ARROW;
+        iArrowX += WEST_OFFSET_X;
+        iArrowY += WEST_OFFSET_Y;
       } else {
-        if (FALSE) {
-          iDirection = W_TO_E_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_EAST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_EAST_ARROW;
-          else
-            iArrow = ZOOM_EAST_ARROW;
-          iArrowX += EAST_OFFSET_X * 2;
-          iArrowY += EAST_OFFSET_Y * 2;
-        } else {
-          iDirection = W_TO_E_LINE;
-          if (!ubCounter)
-            iArrow = W_EAST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_EAST_ARROW;
-          else
-            iArrow = EAST_ARROW;
-          iArrowX += EAST_OFFSET_X;
-          iArrowY += EAST_OFFSET_Y;
-        }
+        iDirection = W_TO_E_LINE;
+        if (!ubCounter)
+          iArrow = W_EAST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_EAST_ARROW;
+        else
+          iArrow = EAST_ARROW;
+        iArrowX += EAST_OFFSET_X;
+        iArrowY += EAST_OFFSET_Y;
       }
     } else {
       if ((iDeltaA == -1) && (iDeltaB == 1)) {
-        if (FALSE) {
-          iDirection = WEST_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_WEST_ARROW;
-          else
-            iArrow = ZOOM_WEST_ARROW;
+        iDirection = WEST_LINE;
+        if (!ubCounter)
+          iArrow = W_WEST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_WEST_ARROW;
+        else
+          iArrow = WEST_ARROW;
 
-          iArrowX += WEST_OFFSET_X * 2;
-          iArrowY += WEST_OFFSET_Y * 2;
-        } else {
-          iDirection = WEST_LINE;
-          if (!ubCounter)
-            iArrow = W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_WEST_ARROW;
-          else
-            iArrow = WEST_ARROW;
-
-          iArrowX += WEST_OFFSET_X;
-          iArrowY += WEST_OFFSET_Y;
-        }
+        iArrowX += WEST_OFFSET_X;
+        iArrowY += WEST_OFFSET_Y;
       } else if ((iDeltaA == 1) && (iDeltaB == -1)) {
-        if (FALSE) {
-          iDirection = EAST_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_EAST_ARROW;
-          else
-            iArrow = ZOOM_EAST_ARROW;
+        iDirection = EAST_LINE;
+        if (!ubCounter)
+          iArrow = W_EAST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_EAST_ARROW;
+        else
+          iArrow = EAST_ARROW;
 
-          iArrowX += EAST_OFFSET_X * 2;
-          iArrowY += EAST_OFFSET_Y * 2;
-        } else {
-          iDirection = EAST_LINE;
-          if (!ubCounter)
-            iArrow = W_EAST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_EAST_ARROW;
-          else
-            iArrow = EAST_ARROW;
-
-          iArrowX += EAST_OFFSET_X;
-          iArrowY += EAST_OFFSET_Y;
-        }
+        iArrowX += EAST_OFFSET_X;
+        iArrowY += EAST_OFFSET_Y;
       } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == WORLD_MAP_X)) {
-        if (FALSE) {
-          iDirection = NORTH_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_NORTH_ARROW;
-          else
-            iArrow = ZOOM_NORTH_ARROW;
+        iDirection = NORTH_LINE;
+        if (!ubCounter)
+          iArrow = W_NORTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_NORTH_ARROW;
+        else
+          iArrow = NORTH_ARROW;
 
-          iArrowX += NORTH_OFFSET_X * 2;
-          iArrowY += NORTH_OFFSET_Y * 2;
-        } else {
-          iDirection = NORTH_LINE;
-          if (!ubCounter)
-            iArrow = W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_NORTH_ARROW;
-          else
-            iArrow = NORTH_ARROW;
-
-          iArrowX += NORTH_OFFSET_X;
-          iArrowY += NORTH_OFFSET_Y;
-        }
+        iArrowX += NORTH_OFFSET_X;
+        iArrowY += NORTH_OFFSET_Y;
       } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -WORLD_MAP_X)) {
-        if (FALSE) {
-          iDirection = SOUTH_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_SOUTH_ARROW;
-          else
-            iArrow = ZOOM_SOUTH_ARROW;
+        iDirection = SOUTH_LINE;
+        if (!ubCounter)
+          iArrow = W_SOUTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_SOUTH_ARROW;
+        else
+          iArrow = SOUTH_ARROW;
 
-          iArrowX += SOUTH_OFFSET_X * 2;
-          iArrowY += SOUTH_OFFSET_Y * 2;
-        } else {
-          iDirection = SOUTH_LINE;
-          if (!ubCounter)
-            iArrow = W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_SOUTH_ARROW;
-          else
-            iArrow = SOUTH_ARROW;
-
-          iArrowX += SOUTH_OFFSET_X;
-          iArrowY += SOUTH_OFFSET_Y;
-        }
+        iArrowX += SOUTH_OFFSET_X;
+        iArrowY += SOUTH_OFFSET_Y;
       } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == -1)) {
-        if (FALSE) {
-          iDirection = N_TO_E_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_EAST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_EAST_ARROW;
-          else
-            iArrow = ZOOM_EAST_ARROW;
+        iDirection = N_TO_E_LINE;
+        if (!ubCounter)
+          iArrow = W_EAST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_EAST_ARROW;
+        else
+          iArrow = EAST_ARROW;
 
-          iArrowX += EAST_OFFSET_X * 2;
-          iArrowY += EAST_OFFSET_Y * 2;
-        } else {
-          iDirection = N_TO_E_LINE;
-          if (!ubCounter)
-            iArrow = W_EAST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_EAST_ARROW;
-          else
-            iArrow = EAST_ARROW;
-
-          iArrowX += EAST_OFFSET_X;
-          iArrowY += EAST_OFFSET_Y;
-        }
+        iArrowX += EAST_OFFSET_X;
+        iArrowY += EAST_OFFSET_Y;
       } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == 1)) {
-        if (FALSE) {
-          iDirection = S_TO_W_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_WEST_ARROW;
-          else
-            iArrow = ZOOM_WEST_ARROW;
+        iDirection = S_TO_W_LINE;
+        if (!ubCounter)
+          iArrow = W_WEST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_WEST_ARROW;
+        else
+          iArrow = WEST_ARROW;
 
-          iArrowX += WEST_OFFSET_X * 2;
-          iArrowY += WEST_OFFSET_Y * 2;
-        } else {
-          iDirection = S_TO_W_LINE;
-          if (!ubCounter)
-            iArrow = W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_WEST_ARROW;
-          else
-            iArrow = WEST_ARROW;
-
-          iArrowX += WEST_OFFSET_X;
-          iArrowY += WEST_OFFSET_Y;
-        }
+        iArrowX += WEST_OFFSET_X;
+        iArrowY += WEST_OFFSET_Y;
       } else if ((iDeltaA == 1) && (iDeltaB == -WORLD_MAP_X)) {
-        if (FALSE) {
-          iDirection = E_TO_S_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_SOUTH_ARROW;
-          else
-            iArrow = ZOOM_SOUTH_ARROW;
+        iDirection = E_TO_S_LINE;
+        if (!ubCounter)
+          iArrow = W_SOUTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_SOUTH_ARROW;
+        else
+          iArrow = SOUTH_ARROW;
 
-          iArrowX += SOUTH_OFFSET_X * 2;
-          iArrowY += SOUTH_OFFSET_Y * 2;
-        } else {
-          iDirection = E_TO_S_LINE;
-          if (!ubCounter)
-            iArrow = W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_SOUTH_ARROW;
-          else
-            iArrow = SOUTH_ARROW;
-
-          iArrowX += SOUTH_OFFSET_X;
-          iArrowY += SOUTH_OFFSET_Y;
-        }
+        iArrowX += SOUTH_OFFSET_X;
+        iArrowY += SOUTH_OFFSET_Y;
       } else if ((iDeltaA == -1) && (iDeltaB == WORLD_MAP_X)) {
-        if (FALSE) {
-          iDirection = W_TO_N_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_NORTH_ARROW;
-          else
-            iArrow = ZOOM_NORTH_ARROW;
+        iDirection = W_TO_N_LINE;
+        if (!ubCounter)
+          iArrow = W_NORTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_NORTH_ARROW;
+        else
+          iArrow = NORTH_ARROW;
 
-          iArrowX += NORTH_OFFSET_X * 2;
-          iArrowY += NORTH_OFFSET_Y * 2;
-        } else {
-          iDirection = W_TO_N_LINE;
-          if (!ubCounter)
-            iArrow = W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_NORTH_ARROW;
-          else
-            iArrow = NORTH_ARROW;
-
-          iArrowX += NORTH_OFFSET_X;
-          iArrowY += NORTH_OFFSET_Y;
-        }
+        iArrowX += NORTH_OFFSET_X;
+        iArrowY += NORTH_OFFSET_Y;
       } else if ((iDeltaA == -1) && (iDeltaB == -WORLD_MAP_X)) {
-        if (FALSE) {
-          iDirection = W_TO_S_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_SOUTH_ARROW;
-          else
-            iArrow = ZOOM_SOUTH_ARROW;
-
-          iArrowX += SOUTH_OFFSET_X * 2;
-          iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y) * 2;
-        } else {
-          iDirection = W_TO_S_LINE;
-          if (!ubCounter)
-            iArrow = W_SOUTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_SOUTH_ARROW;
-          else
-            iArrow = SOUTH_ARROW;
-          iArrowX += SOUTH_OFFSET_X;
-          iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y);
-        }
+        iDirection = W_TO_S_LINE;
+        if (!ubCounter)
+          iArrow = W_SOUTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_SOUTH_ARROW;
+        else
+          iArrow = SOUTH_ARROW;
+        iArrowX += SOUTH_OFFSET_X;
+        iArrowY += (SOUTH_OFFSET_Y + WEST_TO_SOUTH_OFFSET_Y);
       } else if ((iDeltaA == -WORLD_MAP_X) && (iDeltaB == 1)) {
-        if (FALSE) {
-          iDirection = N_TO_W_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_WEST_ARROW;
-          else
-            iArrow = ZOOM_WEST_ARROW;
+        iDirection = N_TO_W_LINE;
+        if (!ubCounter)
+          iArrow = W_WEST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_WEST_ARROW;
+        else
+          iArrow = WEST_ARROW;
 
-          iArrowX += WEST_OFFSET_X * 2;
-          iArrowY += WEST_OFFSET_Y * 2;
-        } else {
-          iDirection = N_TO_W_LINE;
-          if (!ubCounter)
-            iArrow = W_WEST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_WEST_ARROW;
-          else
-            iArrow = WEST_ARROW;
-
-          iArrowX += WEST_OFFSET_X;
-          iArrowY += WEST_OFFSET_Y;
-        }
+        iArrowX += WEST_OFFSET_X;
+        iArrowY += WEST_OFFSET_Y;
       } else if ((iDeltaA == WORLD_MAP_X) && (iDeltaB == -1)) {
-        if (FALSE) {
-          iDirection = S_TO_E_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_EAST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_EAST_ARROW;
-          else
-            iArrow = ZOOM_EAST_ARROW;
-          iArrowX += EAST_OFFSET_X * 2;
-          iArrowY += EAST_OFFSET_Y * 2;
-        } else {
-          iDirection = S_TO_E_LINE;
-          if (!ubCounter)
-            iArrow = W_EAST_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_EAST_ARROW;
-          else
-            iArrow = EAST_ARROW;
-          iArrowX += EAST_OFFSET_X;
-          iArrowY += EAST_OFFSET_Y;
-        }
+        iDirection = S_TO_E_LINE;
+        if (!ubCounter)
+          iArrow = W_EAST_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_EAST_ARROW;
+        else
+          iArrow = EAST_ARROW;
+        iArrowX += EAST_OFFSET_X;
+        iArrowY += EAST_OFFSET_Y;
       } else if ((iDeltaA == 1) && (iDeltaB == WORLD_MAP_X)) {
-        if (FALSE) {
-          iDirection = E_TO_N_ZOOM_LINE;
-          if (!ubCounter)
-            iArrow = ZOOM_W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = ZOOM_Y_NORTH_ARROW;
-          else
-            iArrow = ZOOM_NORTH_ARROW;
-          iArrowX += (NORTH_OFFSET_X * 2);
-          iArrowY += (NORTH_OFFSET_Y + EAST_TO_NORTH_OFFSET_Y) * 2;
-        } else {
-          iDirection = E_TO_N_LINE;
-          if (!ubCounter)
-            iArrow = W_NORTH_ARROW;
-          else if (fSpeedFlag)
-            iArrow = Y_NORTH_ARROW;
-          else
-            iArrow = NORTH_ARROW;
+        iDirection = E_TO_N_LINE;
+        if (!ubCounter)
+          iArrow = W_NORTH_ARROW;
+        else if (fSpeedFlag)
+          iArrow = Y_NORTH_ARROW;
+        else
+          iArrow = NORTH_ARROW;
 
-          iArrowX += NORTH_OFFSET_X;
-          iArrowY += NORTH_OFFSET_Y + EAST_TO_NORTH_OFFSET_Y;
-        }
+        iArrowX += NORTH_OFFSET_X;
+        iArrowY += NORTH_OFFSET_Y + EAST_TO_NORTH_OFFSET_Y;
       }
     }
 
@@ -3652,16 +3187,10 @@ void BlitMineIcon(uint8_t sMapX, uint8_t sMapY) {
                                  MAP_VIEW_HEIGHT - 9);
   UnlockVSurface(vsSaveBuffer);
 
-  if (FALSE) {
-    GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
-    // when zoomed, the x,y returned is the CENTER of the map square in question
-    BltVideoObject(vsSaveBuffer, hHandle, 0, sScreenX - MAP_GRID_ZOOM_X / 4,
-                   sScreenY - MAP_GRID_ZOOM_Y / 4);
-  } else {
-    GetScreenXYFromMapXY((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
-    // when not zoomed, the x,y returned is the top left CORNER of the map square in question
-    BltVideoObject(vsSaveBuffer, hHandle, 1, sScreenX + MAP_GRID_X / 4, sScreenY + MAP_GRID_Y / 4);
-  }
+  GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
+  // when zoomed, the x,y returned is the CENTER of the map square in question
+  BltVideoObject(vsSaveBuffer, hHandle, 0, sScreenX - MAP_GRID_ZOOM_X / 4,
+                 sScreenY - MAP_GRID_ZOOM_Y / 4);
 }
 
 void BlitMineText(uint8_t sMapX, uint8_t sMapY) {
@@ -3670,18 +3199,11 @@ void BlitMineText(uint8_t sMapX, uint8_t sMapY) {
   uint8_t ubMineIndex;
   uint8_t ubLineCnt = 0;
 
-  if (FALSE) {
-    GetScreenXYFromMapXYStationary((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
+  GetScreenXYFromMapXY((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
 
-    // set coordinates for start of mine text
-    sScreenY += MAP_GRID_ZOOM_Y / 2 + 1;  // slightly below
-  } else {
-    GetScreenXYFromMapXY((int16_t)(sMapX), (int16_t)(sMapY), &sScreenX, &sScreenY);
-
-    // set coordinates for start of mine text
-    sScreenX += MAP_GRID_X / 2;  // centered around middle of mine square
-    sScreenY += MAP_GRID_Y + 1;  // slightly below
-  }
+  // set coordinates for start of mine text
+  sScreenX += MAP_GRID_X / 2;  // centered around middle of mine square
+  sScreenY += MAP_GRID_Y + 1;  // slightly below
 
   // show detailed mine info (name, production rate, daily production)
 
@@ -3800,22 +3322,12 @@ void BlitTownGridMarkers(void) {
     // skip Orta/Tixa until found
     if (((fFoundOrta != FALSE) || (townID != ORTA)) &&
         ((townID != TIXA) || (fFoundTixa != FALSE))) {
-      if (FALSE) {
-        GetScreenXYFromMapXYStationary(SectorID16_X(sectorID), SectorID16_Y(sectorID), &sScreenX,
-                                       &sScreenY);
-        sScreenX -= MAP_GRID_X - 1;
-        sScreenY -= MAP_GRID_Y;
+      // get location on screen
+      GetScreenXYFromMapXY(SectorID16_X(sectorID), SectorID16_Y(sectorID), &sScreenX, &sScreenY);
+      sWidth = MAP_GRID_X - 1;
+      sHeight = MAP_GRID_Y;
 
-        sWidth = 2 * MAP_GRID_X;
-        sHeight = 2 * MAP_GRID_Y;
-      } else {
-        // get location on screen
-        GetScreenXYFromMapXY(SectorID16_X(sectorID), SectorID16_Y(sectorID), &sScreenX, &sScreenY);
-        sWidth = MAP_GRID_X - 1;
-        sHeight = MAP_GRID_Y;
-
-        sScreenX += 2;
-      }
+      sScreenX += 2;
 
       if (StrategicMap[sectorID - MAP_WORLD_X].townID == BLANK_SECTOR) {
         LineDraw(TRUE, sScreenX - 1, sScreenY - 1, sScreenX + sWidth - 1, sScreenY - 1, usColor,
@@ -3868,22 +3380,11 @@ void BlitMineGridMarkers(void) {
   ClipBlitsToMapViewRegionForRectangleAndABit(uiDestPitchBYTES);
 
   for (iCounter = 0; iCounter < MAX_NUMBER_OF_MINES; iCounter++) {
-    if (FALSE) {
-      GetScreenXYFromMapXYStationary((int16_t)(gMineLocation[iCounter].sSectorX),
-                                     (int16_t)(gMineLocation[iCounter].sSectorY), &sScreenX,
-                                     &sScreenY);
-      sScreenX -= MAP_GRID_X;
-      sScreenY -= MAP_GRID_Y;
-
-      sWidth = 2 * MAP_GRID_X;
-      sHeight = 2 * MAP_GRID_Y;
-    } else {
-      // get location on screen
-      GetScreenXYFromMapXY((int16_t)(gMineLocation[iCounter].sSectorX),
-                           (int16_t)(gMineLocation[iCounter].sSectorY), &sScreenX, &sScreenY);
-      sWidth = MAP_GRID_X;
-      sHeight = MAP_GRID_Y;
-    }
+    // get location on screen
+    GetScreenXYFromMapXY((int16_t)(gMineLocation[iCounter].sSectorX),
+                         (int16_t)(gMineLocation[iCounter].sSectorY), &sScreenX, &sScreenY);
+    sWidth = MAP_GRID_X;
+    sHeight = MAP_GRID_Y;
 
     // draw rectangle
     RectangleDraw(TRUE, sScreenX, sScreenY - 1, sScreenX + sWidth, sScreenY + sHeight - 1, usColor,
@@ -4926,13 +4427,8 @@ void DrawTownMilitiaForcesOnMap(void) {
       iTotalNumberOfTroops = milCount.green + milCount.regular + milCount.elite;
 
       for (iCounterB = 0; iCounterB < iTotalNumberOfTroops; iCounterB++) {
-        if (FALSE) {
-          // LARGE icon offset in the .sti
-          iIconValue = 11;
-        } else {
-          // SMALL icon offset in the .sti
-          iIconValue = 5;
-        }
+        // SMALL icon offset in the .sti
+        iIconValue = 5;
 
         // get the offset further into the .sti
         if (iCounterB < milCount.green) {
@@ -4961,13 +4457,8 @@ void DrawTownMilitiaForcesOnMap(void) {
       iTotalNumberOfTroops = milCount.green + milCount.regular + milCount.elite;
 
       for (iCounterB = 0; iCounterB < iTotalNumberOfTroops; iCounterB++) {
-        if (FALSE) {
-          // LARGE icon offset in the .sti
-          iIconValue = 11;
-        } else {
-          // SMALL icon offset in the .sti
-          iIconValue = 5;
-        }
+        // SMALL icon offset in the .sti
+        iIconValue = 5;
 
         // get the offset further into the .sti
         if (iCounterB < milCount.green) {
@@ -5288,7 +4779,6 @@ void ShowSAMSitesOnStrategicMap(void) {
   int16_t sX = 0, sY = 0;
   struct VObject *hHandle;
   int8_t ubVidObjIndex = 0;
-  uint32_t uiDestPitchBYTES;
   wchar_t wString[40];
 
   if (fShowAircraftFlag) {
@@ -5305,23 +4795,10 @@ void ShowSAMSitesOnStrategicMap(void) {
     sSectorX = gpSamSectorX[iCounter];
     sSectorY = gpSamSectorY[iCounter];
 
-    if (FALSE) {
-      LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-      SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
-                                     MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
-                                     MAP_VIEW_HEIGHT - 9);
-      UnlockVSurface(vsSaveBuffer);
-
-      GetScreenXYFromMapXYStationary(sSectorX, sSectorY, &sX, &sY);
-      sX -= 8;
-      sY -= 10;
-      ubVidObjIndex = 0;
-    } else {
-      GetScreenXYFromMapXY(sSectorX, sSectorY, &sX, &sY);
-      sX += 5;
-      sY += 3;
-      ubVidObjIndex = 1;
-    }
+    GetScreenXYFromMapXY(sSectorX, sSectorY, &sX, &sY);
+    sX += 5;
+    sY += 3;
+    ubVidObjIndex = 1;
 
     // draw SAM site icon
     GetVideoObject(&hHandle, guiSAMICON);
@@ -5330,13 +4807,8 @@ void ShowSAMSitesOnStrategicMap(void) {
     if (fShowAircraftFlag) {
       // write "SAM Site" centered underneath
 
-      if (FALSE) {
-        sX += 9;
-        sY += 19;
-      } else {
-        sX += 6;
-        sY += 16;
-      }
+      sX += 6;
+      sY += 16;
 
       wcscpy(wString, pLandTypeStrings[SAM_SITE]);
 
@@ -5394,20 +4866,10 @@ void BlitSAMGridMarkers(void) {
       continue;
     }
 
-    if (FALSE) {
-      GetScreenXYFromMapXYStationary(gpSamSectorX[iCounter], gpSamSectorY[iCounter], &sScreenX,
-                                     &sScreenY);
-      sScreenX -= MAP_GRID_X;
-      sScreenY -= MAP_GRID_Y;
-
-      sWidth = 2 * MAP_GRID_X;
-      sHeight = 2 * MAP_GRID_Y;
-    } else {
-      // get location on screen
-      GetScreenXYFromMapXY(gpSamSectorX[iCounter], gpSamSectorY[iCounter], &sScreenX, &sScreenY);
-      sWidth = MAP_GRID_X;
-      sHeight = MAP_GRID_Y;
-    }
+    // get location on screen
+    GetScreenXYFromMapXY(gpSamSectorX[iCounter], gpSamSectorY[iCounter], &sScreenX, &sScreenY);
+    sWidth = MAP_GRID_X;
+    sHeight = MAP_GRID_Y;
 
     // draw rectangle
     RectangleDraw(TRUE, sScreenX, sScreenY - 1, sScreenX + sWidth, sScreenY + sHeight - 1, usColor,
@@ -5538,28 +5000,14 @@ void DrawMapBoxIcon(struct VObject *hIconHandle, uint16_t usVOIndex, uint8_t sMa
 }
 
 void DrawOrta() {
-  uint32_t uiDestPitchBYTES;
   int16_t sX, sY;
   uint8_t ubVidObjIndex;
   struct VObject *hHandle;
 
-  if (FALSE) {
-    LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-    SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
-                                   MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
-                                   MAP_VIEW_HEIGHT - 9);
-    UnlockVSurface(vsSaveBuffer);
-
-    GetScreenXYFromMapXYStationary(ORTA_SECTOR_X, ORTA_SECTOR_Y, &sX, &sY);
-    sX += -MAP_GRID_X + 2;
-    sY += -MAP_GRID_Y - 6;
-    ubVidObjIndex = 0;
-  } else {
-    GetScreenXYFromMapXY(ORTA_SECTOR_X, ORTA_SECTOR_Y, &sX, &sY);
-    sX += +2;
-    sY += -3;
-    ubVidObjIndex = 1;
-  }
+  GetScreenXYFromMapXY(ORTA_SECTOR_X, ORTA_SECTOR_Y, &sX, &sY);
+  sX += +2;
+  sY += -3;
+  ubVidObjIndex = 1;
 
   // draw Orta in its sector
   GetVideoObject(&hHandle, guiORTAICON);
@@ -5567,27 +5015,13 @@ void DrawOrta() {
 }
 
 void DrawTixa() {
-  uint32_t uiDestPitchBYTES;
   int16_t sX, sY;
   uint8_t ubVidObjIndex;
   struct VObject *hHandle;
 
-  if (FALSE) {
-    LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-    SetClippingRegionAndImageWidth(uiDestPitchBYTES, MAP_VIEW_START_X + MAP_GRID_X - 1,
-                                   MAP_VIEW_START_Y + MAP_GRID_Y - 1, MAP_VIEW_WIDTH + 1,
-                                   MAP_VIEW_HEIGHT - 9);
-    UnlockVSurface(vsSaveBuffer);
-
-    GetScreenXYFromMapXYStationary(TIXA_SECTOR_X, TIXA_SECTOR_Y, &sX, &sY);
-    sX += -MAP_GRID_X + 3;
-    sY += -MAP_GRID_Y + 6;
-    ubVidObjIndex = 0;
-  } else {
-    GetScreenXYFromMapXY(TIXA_SECTOR_X, TIXA_SECTOR_Y, &sX, &sY);
-    sY += +2;
-    ubVidObjIndex = 1;
-  }
+  GetScreenXYFromMapXY(TIXA_SECTOR_X, TIXA_SECTOR_Y, &sX, &sY);
+  sY += +2;
+  ubVidObjIndex = 1;
 
   // draw Tixa in its sector
   GetVideoObject(&hHandle, guiTIXAICON);
