@@ -5104,10 +5104,8 @@ static BOOLEAN GetMapXY(int16_t sX, int16_t sY, uint8_t *psMapWorldX, uint8_t *p
   int16_t x = sX - MAP_VIEW_START_X;
   int16_t y = sY - MAP_VIEW_START_Y;
 
-  if (!FALSE) {
-    if (x < MAP_GRID_X || y < MAP_GRID_Y) {
-      return (FALSE);
-    }
+  if (x < MAP_GRID_X || y < MAP_GRID_Y) {
+    return (FALSE);
   }
   if (x < 0 || y < 0) {
     return (FALSE);
@@ -5136,7 +5134,7 @@ static void RenderMapHighlight(uint8_t sMapX, uint8_t sMapY, uint16_t usLineColo
   Assert((sMapY >= 1) && (sMapY <= 16));
 
   // if we are not allowed to highlight, leave
-  if ((IsTheCursorAllowedToHighLightThisSector(sMapX, sMapY) == FALSE) && (FALSE == FALSE)) {
+  if ((IsTheCursorAllowedToHighLightThisSector(sMapX, sMapY) == FALSE)) {
     return;
   }
 
