@@ -368,9 +368,9 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
     vsBackBuffer->_platformData1 = NULL;
     vsBackBuffer->_platformData2 = (void *)backBuffer;
 
-    struct JPaletteEntry SGPPalette[256];
-    JSurface_GetPalette32(vsBackBuffer, SGPPalette);
-    JSurface_SetPalette16(vsBackBuffer, Create16BPPPalette(SGPPalette));
+    // struct JPaletteEntry SGPPalette[256];
+    // JSurface_GetPalette32(vsBackBuffer, SGPPalette);
+    // JSurface_SetPalette16(vsBackBuffer, Create16BPPPalette(SGPPalette));
   }
 
   getRGBDistribution();
