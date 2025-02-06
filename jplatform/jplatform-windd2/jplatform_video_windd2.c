@@ -569,7 +569,7 @@ void JSurface_SetColorKey(struct JSurface *s, uint32_t key) {
       break;
 
     case 16:
-      ColorKey.dwColorSpaceLowValue = Get16BPPColor(key);
+      ColorKey.dwColorSpaceLowValue = rgb32_to_rgb16(key);
       ColorKey.dwColorSpaceHighValue = ColorKey.dwColorSpaceLowValue;
       break;
   }
@@ -635,4 +635,30 @@ void JSurface_SetPalette16(struct JSurface *s, const uint16_t *palette16) {
     s->palette16 = NULL;
   }
   s->palette16 = palette16;
+}
+
+#define BLACK_SUBSTITUTE 0x0001
+
+uint16_t rgb32_to_rgb16(uint32_t color32) {
+  uint8_t r = color32;
+  uint8_t g = color32 >> 8;
+  uint8_t b = color32 >> 16;
+
+  uint16_t color16 = JVideo_PackRGB16(r, g, b);
+
+  // if our color worked out to absolute black, and the original wasn't
+  // absolute black, convert it to a VERY dark grey to avoid transparency
+  // problems
+
+  if (color16 == 0 && color32 != 0) {
+    return BLACK_SUBSTITUTE;
+  }
+
+  return color16;
+}
+
+uint32_t rgb16_to_rgb32(uint16_t color16) {
+  uint8_t r, g, b;
+  JVideo_UnpackRGB16(color16, &r, &g, &b);
+  return ((uint32_t)r) | (((uint32_t)g) << 8) | (((uint32_t)b) << 16);
 }

@@ -162,8 +162,6 @@ BOOLEAN GetETRLEImageData(HIMAGE hImage, ETRLEData *pBuffer);
 uint16_t *Create16BPPPaletteShaded(struct JPaletteEntry *pPalette, uint32_t rscale, uint32_t gscale,
                                    uint32_t bscale, BOOLEAN mono);
 uint16_t *Create16BPPPalette(struct JPaletteEntry *pPalette);
-uint16_t Get16BPPColor(uint32_t RGBValue);
-uint32_t GetRGBColor(uint16_t Value16BPP);
 struct JPaletteEntry *ConvertRGBToPaletteEntry(uint8_t sbStart, uint8_t sbEnd,
                                                uint8_t *pOldPalette);
 

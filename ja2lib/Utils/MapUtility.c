@@ -88,7 +88,7 @@ uint32_t MapUtilScreenHandle() {
 
   // Zero out area!
   ColorFillVSurfaceArea(vsFB, 0, 0, (int16_t)(640), (int16_t)(480),
-                        Get16BPPColor(FROMRGB(0, 0, 0)));
+                        rgb32_to_rgb16(FROMRGB(0, 0, 0)));
 
   if (fNewMap) {
     fNewMap = FALSE;
@@ -195,7 +195,7 @@ uint32_t MapUtilScreenHandle() {
           if (iWindowX >= 0 && iWindowX < 640 && iWindowY >= 0 && iWindowY < 320) {
             s16BPPSrc = pSrcBuf[(iWindowY * (uiSrcPitchBYTES / 2)) + iWindowX];
 
-            uiRGBColor = GetRGBColor(s16BPPSrc);
+            uiRGBColor = rgb16_to_rgb32(s16BPPSrc);
 
             bR += SGPGetRValue(uiRGBColor);
             bG += SGPGetGValue(uiRGBColor);
@@ -212,7 +212,7 @@ uint32_t MapUtilScreenHandle() {
         bAvG = bG / (uint8_t)iCount;
         bAvB = bB / (uint8_t)iCount;
 
-        sDest16BPPColor = Get16BPPColor(FROMRGB(bAvR, bAvG, bAvB));
+        sDest16BPPColor = rgb32_to_rgb16(FROMRGB(bAvR, bAvG, bAvB));
       }
 
       // Write into dest!
@@ -253,7 +253,7 @@ uint32_t MapUtilScreenHandle() {
 
     for (cnt = 0; cnt < 256; cnt++) {
       usLineColor =
-          Get16BPPColor(FROMRGB(pPalette[cnt].red, pPalette[cnt].green, pPalette[cnt].blue));
+          rgb32_to_rgb16(FROMRGB(pPalette[cnt].red, pPalette[cnt].green, pPalette[cnt].blue));
       RectangleDraw(TRUE, sX, sY, sX, (int16_t)(sY + 10), usLineColor, (uint8_t *)pDestBuf);
       sX++;
       RectangleDraw(TRUE, sX, sY, sX, (int16_t)(sY + 10), usLineColor, (uint8_t *)pDestBuf);

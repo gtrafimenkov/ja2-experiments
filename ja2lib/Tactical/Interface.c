@@ -1566,7 +1566,7 @@ void DrawBarsInUIBox(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   if (pSoldier->bBleeding) {
     dPercentage = (float)(pSoldier->bBleeding + pSoldier->bLife + bBandage) / (float)100;
     dWidth = dPercentage * sWidth;
-    usLineColor = Get16BPPColor(FROMRGB(240, 240, 20));
+    usLineColor = rgb32_to_rgb16(FROMRGB(240, 240, 20));
     RectangleDraw(TRUE, sXPos + 3, sYPos + 1, (int32_t)(sXPos + dWidth + 3), sYPos + 1, usLineColor,
                   pDestBuf);
   }
@@ -1574,26 +1574,26 @@ void DrawBarsInUIBox(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
   if (bBandage) {
     dPercentage = (float)(pSoldier->bLife + bBandage) / (float)100;
     dWidth = dPercentage * sWidth;
-    usLineColor = Get16BPPColor(FROMRGB(222, 132, 132));
+    usLineColor = rgb32_to_rgb16(FROMRGB(222, 132, 132));
     RectangleDraw(TRUE, sXPos + 3, sYPos + 1, (int32_t)(sXPos + dWidth + 3), sYPos + 1, usLineColor,
                   pDestBuf);
   }
 
   dPercentage = (float)pSoldier->bLife / (float)100;
   dWidth = dPercentage * sWidth;
-  usLineColor = Get16BPPColor(FROMRGB(200, 0, 0));
+  usLineColor = rgb32_to_rgb16(FROMRGB(200, 0, 0));
   RectangleDraw(TRUE, sXPos + 3, sYPos + 1, (int32_t)(sXPos + dWidth + 3), sYPos + 1, usLineColor,
                 pDestBuf);
 
   dPercentage = (float)(pSoldier->bBreathMax) / (float)100;
   dWidth = dPercentage * sWidth;
-  usLineColor = Get16BPPColor(FROMRGB(20, 20, 150));
+  usLineColor = rgb32_to_rgb16(FROMRGB(20, 20, 150));
   RectangleDraw(TRUE, sXPos + 3, sYPos + 4, (int32_t)(sXPos + dWidth + 3), sYPos + 4, usLineColor,
                 pDestBuf);
 
   dPercentage = (float)(pSoldier->bBreath) / (float)100;
   dWidth = dPercentage * sWidth;
-  usLineColor = Get16BPPColor(FROMRGB(100, 100, 220));
+  usLineColor = rgb32_to_rgb16(FROMRGB(100, 100, 220));
   RectangleDraw(TRUE, sXPos + 3, sYPos + 4, (int32_t)(sXPos + dWidth + 3), sYPos + 4, usLineColor,
                 pDestBuf);
 

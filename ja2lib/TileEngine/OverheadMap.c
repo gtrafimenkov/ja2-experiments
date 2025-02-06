@@ -897,16 +897,16 @@ void RenderOverheadMap(int16_t sStartPointX_M, int16_t sStartPointY_M, int16_t s
     // OK, blacken out edges of smaller maps...
     if (gMapInformation.ubRestrictedScrollID != 0) {
       CalculateRestrictedMapCoords(NORTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb16(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(WEST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb16(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(SOUTH, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb16(FROMRGB(0, 0, 0)));
 
       CalculateRestrictedMapCoords(EAST, &sX1, &sY1, &sX2, &sY2, sEndXS, sEndYS);
-      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, Get16BPPColor(FROMRGB(0, 0, 0)));
+      ColorFillVSurfaceArea(vsFB, sX1, sY1, sX2, sY2, rgb32_to_rgb16(FROMRGB(0, 0, 0)));
     }
 
     if (!fFromMapUtility) {
@@ -1063,28 +1063,28 @@ void RenderOverheadOverlays() {
       sY += (gsRenderHeight / 5);
 
       if (gfRadarCurrentGuyFlash) {
-        usLineColor = Get16BPPColor(FROMRGB(0, 0, 0));
+        usLineColor = rgb32_to_rgb16(FROMRGB(0, 0, 0));
       } else
         switch (pWorldItem->bVisible) {
           case HIDDEN_ITEM:
-            usLineColor = Get16BPPColor(FROMRGB(0, 0, 255));
+            usLineColor = rgb32_to_rgb16(FROMRGB(0, 0, 255));
             break;
           case BURIED:
-            usLineColor = Get16BPPColor(FROMRGB(255, 0, 0));
+            usLineColor = rgb32_to_rgb16(FROMRGB(255, 0, 0));
             break;
           case HIDDEN_IN_OBJECT:
-            usLineColor = Get16BPPColor(FROMRGB(0, 0, 255));
+            usLineColor = rgb32_to_rgb16(FROMRGB(0, 0, 255));
             break;
           case INVISIBLE:
-            usLineColor = Get16BPPColor(FROMRGB(0, 255, 0));
+            usLineColor = rgb32_to_rgb16(FROMRGB(0, 255, 0));
             break;
           case VISIBLE:
-            usLineColor = Get16BPPColor(FROMRGB(255, 255, 255));
+            usLineColor = rgb32_to_rgb16(FROMRGB(255, 255, 255));
             break;
         }
 
       if (gfOverItemPool && gsOveritemPoolGridNo == pWorldItem->sGridNo) {
-        usLineColor = Get16BPPColor(FROMRGB(255, 0, 0));
+        usLineColor = rgb32_to_rgb16(FROMRGB(255, 0, 0));
       }
 
       PixelDraw(FALSE, sX, sY, usLineColor, pDestBuf);

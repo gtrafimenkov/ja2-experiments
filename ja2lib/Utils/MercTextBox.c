@@ -384,7 +384,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
 
     pDestBuf = (uint16_t *)LockVSurface(pPopUpTextBox->sourceBuffer, &uiDestPitchBYTES);
 
-    usColorVal = Get16BPPColor(FROMRGB(255, 255, 0));
+    usColorVal = rgb32_to_rgb16(FROMRGB(255, 255, 0));
     usLoopEnd = (usWidth * usHeight);
 
     for (i = 0; i < usLoopEnd; i++) {

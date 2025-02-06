@@ -200,11 +200,12 @@ void DisplayActivationStringCursor(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
-  LineDraw(TRUE, (uint16_t)uiCursorPosition, CURSOR_Y, (uint16_t)uiCursorPosition,
-           CURSOR_Y + CURSOR_HEIGHT,
-           Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                                 GlowColorsList[iCurrentState][2])),
-           pDestBuf);
+  LineDraw(
+      TRUE, (uint16_t)uiCursorPosition, CURSOR_Y, (uint16_t)uiCursorPosition,
+      CURSOR_Y + CURSOR_HEIGHT,
+      rgb32_to_rgb16(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                             GlowColorsList[iCurrentState][2])),
+      pDestBuf);
 
   // unlock frame buffer
   JSurface_Unlock(vsFB);

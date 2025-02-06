@@ -57,5 +57,5 @@ void RenderBrokenLink() {
 
 void DrawBrokenLinkWhiteBackground() {
   ColorFillVSurfaceArea(vsFB, LAPTOP_SCREEN_UL_X, LAPTOP_SCREEN_WEB_UL_Y, LAPTOP_SCREEN_LR_X,
-                        LAPTOP_SCREEN_WEB_LR_Y, Get16BPPColor(FROMRGB(255, 255, 255)));
+                        LAPTOP_SCREEN_WEB_LR_Y, rgb32_to_rgb16(FROMRGB(255, 255, 255)));
 }

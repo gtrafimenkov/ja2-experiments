@@ -174,8 +174,8 @@ void InitTextInputModeWithScheme(uint8_t ubSchemeID) {
   switch (ubSchemeID) {
     case DEFAULT_SCHEME:  // yellow boxes with black text, with bluish bevelling
       SetTextInputFont((uint16_t)FONT12POINT1);
-      Set16BPPTextFieldColor(Get16BPPColor(FROMRGB(250, 240, 188)));
-      SetBevelColors(Get16BPPColor(FROMRGB(136, 138, 135)), Get16BPPColor(FROMRGB(24, 61, 81)));
+      Set16BPPTextFieldColor(rgb32_to_rgb16(FROMRGB(250, 240, 188)));
+      SetBevelColors(rgb32_to_rgb16(FROMRGB(136, 138, 135)), rgb32_to_rgb16(FROMRGB(24, 61, 81)));
       SetTextInputRegularColors(FONT_BLACK, FONT_BLACK);
       SetTextInputHilitedColors(FONT_GRAY2, FONT_GRAY2, FONT_METALGRAY);
       break;

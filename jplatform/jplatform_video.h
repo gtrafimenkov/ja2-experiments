@@ -106,11 +106,11 @@ void JSurface_BlitRectToPoint(struct JSurface *src, struct JSurface *dst,
 void JSurface_BlitRectToRect(struct JSurface *src, struct JSurface *dst, struct JRect const *srcBox,
                              struct JRect const *destBox);
 
-// // Convert from RGB to 16 bit value
-// uint16_t rgb32_to_rgb565(uint32_t RGBValue);
+// Convert from 32 bit color to 16 bit
+uint16_t rgb32_to_rgb16(uint32_t color32);
 
-// // Convert from 16 BPP to RGBvalue
-// uint32_t rgb565_to_rgb32(uint16_t Value16BPP);
+// Convert from 16 bit color to 32 bit
+uint32_t rgb16_to_rgb32(uint16_t color16);
 
 void JVideo_GetRGBDistributionMasks(uint32_t *red, uint32_t *green, uint32_t *blue);
 uint32_t JVideo_GetTranslucentMask();

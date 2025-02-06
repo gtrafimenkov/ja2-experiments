@@ -461,34 +461,6 @@ uint16_t *Create16BPPPaletteShaded(struct JPaletteEntry *pPalette, uint32_t rsca
   return (p16BPPPalette);
 }
 
-// Convert from RGB to 16 bit value
-uint16_t Get16BPPColor(uint32_t RGBValue) {
-  uint8_t r, g, b;
-
-  r = SGPGetRValue(RGBValue);
-  g = SGPGetGValue(RGBValue);
-  b = SGPGetBValue(RGBValue);
-
-  uint16_t usColor = JVideo_PackRGB16(r, g, b);
-
-  // if our color worked out to absolute black, and the original wasn't
-  // absolute black, convert it to a VERY dark grey to avoid transparency
-  // problems
-
-  if (usColor == 0) {
-    if (RGBValue != 0) usColor = BLACK_SUBSTITUTE;
-  }
-
-  return usColor;
-}
-
-// Convert from 16 BPP to RGBvalue
-uint32_t GetRGBColor(uint16_t Value16BPP) {
-  uint8_t r, g, b;
-  JVideo_UnpackRGB16(Value16BPP, &r, &g, &b);
-  return FROMRGB(r, g, b);
-}
-
 //*****************************************************************************
 //
 // ConvertToPaletteEntry
@@ -635,7 +607,7 @@ void ConvertRGBDistribution565ToAny(uint16_t *p16BPPData, uint32_t uiNumberOfPix
     uiBlue = (*pPixel & 0x001F);
     uiTemp = FROMRGB(uiRed, uiGreen, uiBlue);
     // then convert the 32-bit RGB value to whatever 16 bit format is used
-    *pPixel = Get16BPPColor(uiTemp);
+    *pPixel = rgb32_to_rgb16(uiTemp);
     pPixel++;
   }
 }

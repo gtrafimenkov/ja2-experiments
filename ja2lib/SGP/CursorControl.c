@@ -68,7 +68,7 @@ BOOLEAN BltToMouseCursorFromVObjectWithOutline(struct VObject *hVObject,
   sYPos += ((gsCurMouseHeight - pTrav->usHeight) / 2);
 
   ReturnValue = BltVideoObjectOutline(vsMouseBufferOriginal, hVObject, usVideoObjectSubIndex, sXPos,
-                                      sYPos, Get16BPPColor(FROMRGB(0, 255, 0)), TRUE);
+                                      sYPos, rgb32_to_rgb16(FROMRGB(0, 255, 0)), TRUE);
 
   return ReturnValue;
 }

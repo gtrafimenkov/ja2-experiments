@@ -576,11 +576,12 @@ void DisplayFullNameStringCursor(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
-  LineDraw(TRUE, (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y - 3,
-           (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y + CURSOR_HEIGHT - 2,
-           Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                                 GlowColorsList[iCurrentState][2])),
-           pDestBuf);
+  LineDraw(
+      TRUE, (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y - 3,
+      (uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y + CURSOR_HEIGHT - 2,
+      rgb32_to_rgb16(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                             GlowColorsList[iCurrentState][2])),
+      pDestBuf);
 
   InvalidateRegion((uint16_t)uiFullNameCursorPosition, FULL_NAME_CURSOR_Y - 3,
                    (uint16_t)uiFullNameCursorPosition + 1,
@@ -632,11 +633,12 @@ void DisplayNickNameStringCursor(void) {
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, 640, 480);
 
   // draw line in current state
-  LineDraw(TRUE, (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y,
-           (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y + CURSOR_HEIGHT,
-           Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                                 GlowColorsList[iCurrentState][2])),
-           pDestBuf);
+  LineDraw(
+      TRUE, (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y,
+      (uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y + CURSOR_HEIGHT,
+      rgb32_to_rgb16(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                             GlowColorsList[iCurrentState][2])),
+      pDestBuf);
 
   InvalidateRegion((uint16_t)uiNickNameCursorPosition, NICK_NAME_CURSOR_Y,
                    (uint16_t)uiNickNameCursorPosition + 1, NICK_NAME_CURSOR_Y + CURSOR_HEIGHT + 1);
@@ -739,8 +741,8 @@ void DisplayMaleGlowCursor(void) {
   // draw rectangle
   RectangleDraw(
       TRUE, MALE_BOX_X, MALE_BOX_Y, MALE_BOX_X + MALE_BOX_WIDTH, MALE_BOX_Y + MALE_BOX_HEIGHT,
-      Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                            GlowColorsList[iCurrentState][2])),
+      rgb32_to_rgb16(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                             GlowColorsList[iCurrentState][2])),
       pDestBuf);
 
   InvalidateRegion((uint16_t)MALE_BOX_X, MALE_BOX_Y, MALE_BOX_X + MALE_BOX_WIDTH + 1,
@@ -794,8 +796,8 @@ void DisplayFemaleGlowCursor(void) {
   // draw rectangle
   RectangleDraw(
       TRUE, FEMALE_BOX_X, MALE_BOX_Y, FEMALE_BOX_X + MALE_BOX_WIDTH, MALE_BOX_Y + MALE_BOX_HEIGHT,
-      Get16BPPColor(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
-                            GlowColorsList[iCurrentState][2])),
+      rgb32_to_rgb16(FROMRGB(GlowColorsList[iCurrentState][0], GlowColorsList[iCurrentState][1],
+                             GlowColorsList[iCurrentState][2])),
       pDestBuf);
 
   InvalidateRegion((uint16_t)FEMALE_BOX_X, MALE_BOX_Y, FEMALE_BOX_X + MALE_BOX_WIDTH + 1,

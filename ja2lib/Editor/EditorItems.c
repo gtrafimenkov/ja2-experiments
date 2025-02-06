@@ -524,7 +524,7 @@ void RenderEditorItemsInfo() {
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
         BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
-                                       Get16BPPColor(FROMRGB(250, 250, 0)), TRUE);
+                                       rgb32_to_rgb16(FROMRGB(250, 250, 0)), TRUE);
       }
     }
   }
@@ -541,7 +541,7 @@ void RenderEditorItemsInfo() {
       sStart = x + (60 - sWidth - sOffset * 2) / 2;
       if (sWidth) {
         BltVideoObjectOutlineFromIndex(vsFB, uiVideoObjectIndex, item->ubGraphicNum, sStart, y + 2,
-                                       Get16BPPColor(FROMRGB(250, 0, 0)), TRUE);
+                                       rgb32_to_rgb16(FROMRGB(250, 0, 0)), TRUE);
       }
     }
   }

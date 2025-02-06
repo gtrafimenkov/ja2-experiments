@@ -231,13 +231,13 @@ uint32_t EditScreenInit(void) {
 
   // Set the editor colors.
   // gusEditorTaskbarColor = 9581;
-  // gusEditorTaskbarColor =		Get16BPPColor( FROMRGB(  72,  88, 104 ) );
-  // gusEditorTaskbarHiColor = Get16BPPColor( FROMRGB( 136, 138, 135 ) );
-  // gusEditorTaskbarLoColor = Get16BPPColor( FROMRGB(  24,  61,  81 ) );
+  // gusEditorTaskbarColor =		rgb32_to_rgb16( FROMRGB(  72,  88, 104 ) );
+  // gusEditorTaskbarHiColor = rgb32_to_rgb16( FROMRGB( 136, 138, 135 ) );
+  // gusEditorTaskbarLoColor = rgb32_to_rgb16( FROMRGB(  24,  61,  81 ) );
 
-  gusEditorTaskbarColor = Get16BPPColor(FROMRGB(65, 79, 94));
-  gusEditorTaskbarHiColor = Get16BPPColor(FROMRGB(122, 124, 121));
-  gusEditorTaskbarLoColor = Get16BPPColor(FROMRGB(22, 55, 73));
+  gusEditorTaskbarColor = rgb32_to_rgb16(FROMRGB(65, 79, 94));
+  gusEditorTaskbarHiColor = rgb32_to_rgb16(FROMRGB(122, 124, 121));
+  gusEditorTaskbarLoColor = rgb32_to_rgb16(FROMRGB(22, 55, 73));
 
   InitClipboard();
 
@@ -2204,8 +2204,8 @@ uint32_t WaitForHelpScreenResponse(void) {
   InputAtom DummyEvent;
   BOOLEAN fLeaveScreen;
 
-  ColorFillVSurfaceArea(vsFB, 50, 50, 590, 310, Get16BPPColor(FROMRGB(136, 138, 135)));
-  ColorFillVSurfaceArea(vsFB, 51, 51, 590, 310, Get16BPPColor(FROMRGB(24, 61, 81)));
+  ColorFillVSurfaceArea(vsFB, 50, 50, 590, 310, rgb32_to_rgb16(FROMRGB(136, 138, 135)));
+  ColorFillVSurfaceArea(vsFB, 51, 51, 590, 310, rgb32_to_rgb16(FROMRGB(24, 61, 81)));
   ColorFillVSurfaceArea(vsFB, 51, 51, 589, 309, GenericButtonFillColors[0]);
 
   SetFont(gp12PointFont1);

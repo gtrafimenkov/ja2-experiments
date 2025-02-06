@@ -2108,7 +2108,7 @@ void DisplayHelpScreenTextBufferScrollBox() {
   if (!(gHelpScreen.usTotalNumberOfLinesInBuffer <=
         HLP_SCRN__MAX_NUMBER_DISPLAYED_LINES_IN_BUFFER)) {
     ColorFillVSurfaceArea(vsFB, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
-                          iTopPosScrollBox + iSizeOfBox - 1, Get16BPPColor(FROMRGB(227, 198, 88)));
+                          iTopPosScrollBox + iSizeOfBox - 1, rgb32_to_rgb16(FROMRGB(227, 198, 88)));
 
     // display the line
     pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
@@ -2116,17 +2116,17 @@ void DisplayHelpScreenTextBufferScrollBox() {
 
     // draw the gold highlite line on the top and left
     LineDraw(FALSE, usPosX, iTopPosScrollBox, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA,
-             iTopPosScrollBox, Get16BPPColor(FROMRGB(235, 222, 171)), pDestBuf);
+             iTopPosScrollBox, rgb32_to_rgb16(FROMRGB(235, 222, 171)), pDestBuf);
     LineDraw(FALSE, usPosX, iTopPosScrollBox, usPosX, iTopPosScrollBox + iSizeOfBox - 1,
-             Get16BPPColor(FROMRGB(235, 222, 171)), pDestBuf);
+             rgb32_to_rgb16(FROMRGB(235, 222, 171)), pDestBuf);
 
     // draw the shadow line on the bottom and right
     LineDraw(FALSE, usPosX, iTopPosScrollBox + iSizeOfBox - 1,
              usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA, iTopPosScrollBox + iSizeOfBox - 1,
-             Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
+             rgb32_to_rgb16(FROMRGB(65, 49, 6)), pDestBuf);
     LineDraw(FALSE, usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA, iTopPosScrollBox,
              usPosX + HLP_SCRN__WIDTH_OF_SCROLL_AREA, iTopPosScrollBox + iSizeOfBox - 1,
-             Get16BPPColor(FROMRGB(65, 49, 6)), pDestBuf);
+             rgb32_to_rgb16(FROMRGB(65, 49, 6)), pDestBuf);
 
     // unlock frame buffer
     JSurface_Unlock(vsFB);

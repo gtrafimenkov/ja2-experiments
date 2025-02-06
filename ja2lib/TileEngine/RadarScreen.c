@@ -323,7 +323,7 @@ void RenderRadarScreen() {
                                  (gsRadarY + RADAR_WINDOW_HEIGHT - 1));
 
   if (!(IsMapScreen())) {
-    usLineColor = Get16BPPColor(FROMRGB(0, 255, 0));
+    usLineColor = rgb32_to_rgb16(FROMRGB(0, 255, 0));
     RectangleDraw(TRUE, sRadarTLX, sRadarTLY, sRadarBRX, sRadarBRY - 1, usLineColor, pDestBuf);
   }
 
@@ -357,11 +357,11 @@ void RenderRadarScreen() {
 
       // if we are in 16 bit mode....kind of redundant
       if ((fFlashHighLightInventoryItemOnradarMap)) {
-        usLineColor = Get16BPPColor(FROMRGB(0, 255, 0));
+        usLineColor = rgb32_to_rgb16(FROMRGB(0, 255, 0));
 
       } else {
         // DB Need to add a radar color for 8-bit
-        usLineColor = Get16BPPColor(FROMRGB(255, 255, 255));
+        usLineColor = rgb32_to_rgb16(FROMRGB(255, 255, 255));
       }
 
       if (iCurrentlyHighLightedItem == iCounter) {
@@ -418,28 +418,28 @@ void RenderRadarScreen() {
           } else {
             // If on roof, make darker....
             if (pSoldier->bLevel > 0) {
-              usLineColor = Get16BPPColor(FROMRGB(150, 150, 0));
+              usLineColor = rgb32_to_rgb16(FROMRGB(150, 150, 0));
             } else {
-              usLineColor = Get16BPPColor(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
+              usLineColor = rgb32_to_rgb16(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
             }
           }
         } else {
-          usLineColor = Get16BPPColor(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
+          usLineColor = rgb32_to_rgb16(gTacticalStatus.Team[pSoldier->bTeam].RadarColor);
 
           // Override civ team with red if hostile...
           if (pSoldier->bTeam == CIV_TEAM && !pSoldier->bNeutral &&
               (pSoldier->bSide != gbPlayerNum)) {
-            usLineColor = Get16BPPColor(FROMRGB(255, 0, 0));
+            usLineColor = rgb32_to_rgb16(FROMRGB(255, 0, 0));
           }
 
           // Render different color if an enemy and he's unconscious
           if (pSoldier->bTeam != gbPlayerNum && pSoldier->bLife < OKLIFE) {
-            usLineColor = Get16BPPColor(FROMRGB(128, 128, 128));
+            usLineColor = rgb32_to_rgb16(FROMRGB(128, 128, 128));
           }
 
           // If on roof, make darker....
           if (pSoldier->bTeam == gbPlayerNum && pSoldier->bLevel > 0) {
-            usLineColor = Get16BPPColor(FROMRGB(150, 150, 0));
+            usLineColor = rgb32_to_rgb16(FROMRGB(150, 150, 0));
           }
         }
 
@@ -611,7 +611,7 @@ void RenderSquadList(void) {
   // fill area
   ColorFillVSurfaceArea(vsFB, RADAR_WINDOW_X, RADAR_WINDOW_TM_Y,
                         RADAR_WINDOW_X + RADAR_WINDOW_WIDTH,
-                        RADAR_WINDOW_TM_Y + SQUAD_REGION_HEIGHT, Get16BPPColor(FROMRGB(0, 0, 0)));
+                        RADAR_WINDOW_TM_Y + SQUAD_REGION_HEIGHT, rgb32_to_rgb16(FROMRGB(0, 0, 0)));
 
   // set font
   SetFont(SQUAD_FONT);

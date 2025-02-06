@@ -79,8 +79,8 @@ BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
     sBRY = sTLY + 20;
 
     us16BPPColor =
-        Get16BPPColor(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
-                              gpPalRep[ubPaletteRep].b[cnt1]));
+        rgb32_to_rgb16(FROMRGB(gpPalRep[ubPaletteRep].r[cnt1], gpPalRep[ubPaletteRep].g[cnt1],
+                               gpPalRep[ubPaletteRep].b[cnt1]));
 
     ColorFillVSurfaceArea(dest, sTLX, sTLY, sBRX, sBRY, us16BPPColor);
   }

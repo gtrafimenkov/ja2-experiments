@@ -819,13 +819,13 @@ void RenderViewer() {
   if (gsHiSectorX > 0) {
     x = VIEWER_LEFT + (gsHiSectorX - 1) * 26;
     y = VIEWER_TOP + (gsHiSectorY - 1) * 22;
-    RectangleDraw(TRUE, x, y, x + 26, y + 22, Get16BPPColor(FROMRGB(200, 200, 50)), pDestBuf);
+    RectangleDraw(TRUE, x, y, x + 26, y + 22, rgb32_to_rgb16(FROMRGB(200, 200, 50)), pDestBuf);
   }
   // Render the grid for the sector currently in focus (red).
   if (gsSelSectorX > 0) {
     x = VIEWER_LEFT + (gsSelSectorX - 1) * 26;
     y = VIEWER_TOP + (gsSelSectorY - 1) * 22;
-    RectangleDraw(TRUE, x, y, x + 26, y + 22, Get16BPPColor(FROMRGB(200, 50, 50)), pDestBuf);
+    RectangleDraw(TRUE, x, y, x + 26, y + 22, rgb32_to_rgb16(FROMRGB(200, 50, 50)), pDestBuf);
   }
   JSurface_Unlock(vsFB);
 }
@@ -994,9 +994,9 @@ void ViewerMapClickCallback(struct MOUSE_REGION *reg, int32_t reason) {
 
 uint32_t AIViewerScreenInit() {
   gfViewerEntry = TRUE;
-  gusBlue = Get16BPPColor(FROMRGB(65, 79, 94));
-  gusLtBlue = Get16BPPColor(FROMRGB(122, 124, 121));
-  gusDkBlue = Get16BPPColor(FROMRGB(22, 55, 73));
+  gusBlue = rgb32_to_rgb16(FROMRGB(65, 79, 94));
+  gusLtBlue = rgb32_to_rgb16(FROMRGB(122, 124, 121));
+  gusDkBlue = rgb32_to_rgb16(FROMRGB(22, 55, 73));
   return TRUE;
 }
 

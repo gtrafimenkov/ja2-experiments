@@ -380,7 +380,7 @@ void RenderRubberBanding() {
   pDestBuf = LockVSurface(vsFB, &uiDestPitchBYTES);
   SetClippingRegionAndImageWidth(uiDestPitchBYTES, 0, 0, gsVIEWPORT_END_X, gsVIEWPORT_WINDOW_END_Y);
 
-  usLineColor = Get16BPPColor(guiColors[iFlashColor]);
+  usLineColor = rgb32_to_rgb16(guiColors[iFlashColor]);
 
   if ((iRight - iLeft) > 0) {
     LineDraw(TRUE, iLeft, iTop, iRight, iTop, usLineColor, pDestBuf);
