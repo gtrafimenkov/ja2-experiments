@@ -106,6 +106,8 @@ void JSurface_BlitRectToPoint(struct JSurface *src, struct JSurface *dst,
 void JSurface_BlitRectToRect(struct JSurface *src, struct JSurface *dst, struct JRect const *srcBox,
                              struct JRect const *destBox);
 
+uint16_t rgb_to_rgb16(uint8_t r, uint8_t g, uint8_t b);
+
 // Convert from 32 bit color to 16 bit
 uint16_t rgb32_to_rgb16(uint32_t color32);
 

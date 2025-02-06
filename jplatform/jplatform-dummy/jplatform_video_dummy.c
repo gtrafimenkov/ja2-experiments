@@ -40,5 +40,6 @@ uint16_t JSurface_Height(struct JSurface *s) { return 0; }
 const uint16_t *JSurface_GetPalette16(struct JSurface *s) { return NULL; }
 void JSurface_SetPalette16(struct JSurface *s, const uint16_t *palette16) {}
 
+uint16_t rgb_to_rgb16(uint8_t r, uint8_t g, uint8_t b) { return 0; }
 uint16_t rgb32_to_rgb16(uint32_t color32) { return 0; }
 uint32_t rgb16_to_rgb32(uint16_t color16) { return 0; }

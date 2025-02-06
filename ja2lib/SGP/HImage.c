@@ -20,11 +20,6 @@
 #include "StrUtils.h"
 #include "platform_strings.h"
 
-// This is the color substituted to keep a 24bpp -> 16bpp color
-// from going transparent (0x0000) -- DB
-
-#define BLACK_SUBSTITUTE 0x0001
-
 // this funky union is used for fast 16-bit pixel format conversions
 typedef union {
   struct {
@@ -376,24 +371,13 @@ BOOLEAN Copy8BPPImageTo16BPPBuffer(HIMAGE hImage, uint8_t *pDestBuf, uint16_t us
 uint16_t *Create16BPPPalette(struct JPaletteEntry *pPalette) {
   uint16_t *p16BPPPalette;
   uint32_t cnt;
-  uint8_t r, g, b;
 
   Assert(pPalette != NULL);
 
   p16BPPPalette = (uint16_t *)MemAlloc(sizeof(uint16_t) * 256);
 
   for (cnt = 0; cnt < 256; cnt++) {
-    r = pPalette[cnt].red;
-    g = pPalette[cnt].green;
-    b = pPalette[cnt].blue;
-
-    uint16_t usColor = JVideo_PackRGB16(r, g, b);
-
-    if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
-    }
-
-    p16BPPPalette[cnt] = usColor;
+    p16BPPPalette[cnt] = rgb_to_rgb16(pPalette[cnt].red, pPalette[cnt].green, pPalette[cnt].blue);
   }
 
   return (p16BPPPalette);
@@ -449,14 +433,7 @@ uint16_t *Create16BPPPaletteShaded(struct JPaletteEntry *pPalette, uint32_t rsca
     r = (uint8_t)min(rmod, 255);
     g = (uint8_t)min(gmod, 255);
     b = (uint8_t)min(bmod, 255);
-
-    uint16_t usColor = JVideo_PackRGB16(r, g, b);
-
-    if (usColor == 0) {
-      if ((r + g + b) != 0) usColor = BLACK_SUBSTITUTE;
-    }
-
-    p16BPPPalette[cnt] = usColor;
+    p16BPPPalette[cnt] = rgb_to_rgb16(r, g, b);
   }
   return (p16BPPPalette);
 }

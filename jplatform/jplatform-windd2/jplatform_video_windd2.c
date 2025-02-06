@@ -639,21 +639,24 @@ void JSurface_SetPalette16(struct JSurface *s, const uint16_t *palette16) {
 
 #define BLACK_SUBSTITUTE 0x0001
 
-uint16_t rgb32_to_rgb16(uint32_t color32) {
-  uint8_t r = color32;
-  uint8_t g = color32 >> 8;
-  uint8_t b = color32 >> 16;
-
+uint16_t rgb_to_rgb16(uint8_t r, uint8_t g, uint8_t b) {
   uint16_t color16 = JVideo_PackRGB16(r, g, b);
 
   // if our color worked out to absolute black, and the original wasn't
   // absolute black, convert it to a VERY dark grey to avoid transparency
   // problems
 
+  if (color16 == 0 && (r != 0 || g != 0 || b != 0)) {
+    return BLACK_SUBSTITUTE;
+  }
+  return color16;
+}
+
+uint16_t rgb32_to_rgb16(uint32_t color32) {
+  uint16_t color16 = JVideo_PackRGB16(color32, color32 >> 8, color32 >> 16);
   if (color16 == 0 && color32 != 0) {
     return BLACK_SUBSTITUTE;
   }
-
   return color16;
 }
 
