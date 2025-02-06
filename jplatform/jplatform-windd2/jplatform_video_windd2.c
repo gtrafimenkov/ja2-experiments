@@ -204,20 +204,6 @@ static bool getRGBDistribution() {
   return TRUE;
 }
 
-static void FillVSurfacePalette(struct VSurface *vs, LPDIRECTDRAWSURFACE2 lpDDS2) {
-  LPDIRECTDRAWPALETTE pDDPalette;
-  HRESULT ReturnCode = IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)lpDDS2, &pDDPalette);
-
-  if (ReturnCode == DD_OK) {
-    vs->_platformPalette = pDDPalette;
-
-    // Create 16-BPP Palette
-    struct JPaletteEntry SGPPalette[256];
-    JSurface_GetPalette32(vs, SGPPalette);
-    JSurface_SetPalette16(vs, Create16BPPPalette(SGPPalette));
-  }
-}
-
 static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPalette) {
   struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
   if (vs == NULL) {
@@ -258,7 +244,9 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
   }
 
   if (getPalette) {
-    FillVSurfacePalette(vs, lpDDS2);
+    struct JPaletteEntry SGPPalette[256];
+    JSurface_GetPalette32(vs, SGPPalette);
+    JSurface_SetPalette16(vs, Create16BPPPalette(SGPPalette));
   }
 
   return vs;
@@ -379,7 +367,10 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
     vsBackBuffer->bitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
     vsBackBuffer->_platformData1 = NULL;
     vsBackBuffer->_platformData2 = (void *)backBuffer;
-    FillVSurfacePalette(vsBackBuffer, backBuffer);
+
+    struct JPaletteEntry SGPPalette[256];
+    JSurface_GetPalette32(vsBackBuffer, SGPPalette);
+    JSurface_SetPalette16(vsBackBuffer, Create16BPPPalette(SGPPalette));
   }
 
   getRGBDistribution();
@@ -599,8 +590,17 @@ void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {
 
 bool JSurface_GetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
   if (vs->_platformPalette == NULL) {
-    return false;
+    LPDIRECTDRAWPALETTE pDDPalette;
+    HRESULT ReturnCode =
+        IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)vs->_platformData2, &pDDPalette);
+
+    if (ReturnCode == DD_OK) {
+      vs->_platformPalette = pDDPalette;
+    } else {
+      return false;
+    }
   }
+
   IDirectDrawPalette_GetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,
                                 (PALETTEENTRY *)pal);
   return true;
