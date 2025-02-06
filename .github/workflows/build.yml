@@ -5,7 +5,7 @@ on:
     branches:
       - 'main'
       - 'dev'
-      - 'video-cleanup-2412'
+      - 'video-platform-2502'
   pull_request:
 
 jobs:
