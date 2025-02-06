@@ -1070,19 +1070,13 @@ void ShowTeamAndVehicles(int32_t fShowFlags) {
 
 BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   int16_t sScreenX, sScreenY;
-  struct VSurface *hSrcVSurface;
-  // struct VSurface* hSAMSurface;
-  // struct VSurface* hMineSurface;
   uint32_t uiDestPitchBYTES;
   uint32_t uiSrcPitchBYTES;
   uint16_t *pDestBuf;
   uint8_t *pSrcBuf;
   SGPRect clip;
 
-  // get original video surface palette
-  hSrcVSurface = vsBigMap;
-
-  const uint16_t *pOriginalPallette = JSurface_GetPalette16(hSrcVSurface);
+  const uint16_t *pOriginalPallette = JSurface_GetPalette16(vsBigMap);
 
   if (fZoomFlag)
     ShadeMapElemZoomIn(sMapX, sMapY, iColor);
@@ -1100,18 +1094,6 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
     if (iColor != MAP_SHADE_BLACK) {
       // airspace
-      /*
-                              if( sMapX == 1 )
-                              {
-                                      clip.iLeft -= 4;
-                                      clip.iRight += 4;
-                                      sScreenX -= 2;
-                              }
-                              else
-                              {
-                                      sScreenX += 1;
-                              }
-      */
     } else {
       // non-airspace
       sScreenY -= 1;
@@ -1125,24 +1107,14 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
         break;
 
       case (MAP_SHADE_LT_GREEN):
-        // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-
-        JSurface_SetPalette16(hSrcVSurface, pMapLTGreenPalette);
-        // hMineSurface->p16BPPPalette = pMapLTGreenPalette;
-        // hSAMSurface->p16BPPPalette = pMapLTGreenPalette;
+        JSurface_SetPalette16(vsBigMap, pMapLTGreenPalette);
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
         pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
+        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // now blit
-        // Blt8BPPDataSubTo16BPPBuffer( pDestBuf, uiDestPitchBYTES, hSrcVSurface,
-        // pSrcBuf,uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
 
         // unlock source and dest buffers
         UnlockVSurface(vsBigMap);
@@ -1151,22 +1123,14 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
       case (MAP_SHADE_DK_GREEN):
         // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-        JSurface_SetPalette16(hSrcVSurface, pMapDKGreenPalette);
-        // hMineSurface->p16BPPPalette = pMapDKGreenPalette;
-        // hSAMSurface->p16BPPPalette = pMapDKGreenPalette;
+        JSurface_SetPalette16(vsBigMap, pMapDKGreenPalette);
 
         /// lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
         pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
+        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // now blit
-        // Blt8BPPDataSubTo16BPPBuffer( pDestBuf, uiDestPitchBYTES, hSrcVSurface,
-        // pSrcBuf,uiSrcPitchBYTES, sScreenX , sScreenY , &clip);
 
         // unlock source and dest buffers
         UnlockVSurface(vsBigMap);
@@ -1175,22 +1139,14 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
       case (MAP_SHADE_LT_RED):
         // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-        JSurface_SetPalette16(hSrcVSurface, pMapLTRedPalette);
-        // hMineSurface->p16BPPPalette = pMapLTRedPalette;
-        // hSAMSurface->p16BPPPalette = pMapLTRedPalette;
+        JSurface_SetPalette16(vsBigMap, pMapLTRedPalette);
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
         pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
+        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // now blit
-        // Blt8BPPDataSubTo16BPPBuffer( pDestBuf, uiDestPitchBYTES, hSrcVSurface,
-        // pSrcBuf,uiSrcPitchBYTES, sScreenX , sScreenY , &clip);
 
         // unlock source and dest buffers
         UnlockVSurface(vsBigMap);
@@ -1199,22 +1155,14 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
 
       case (MAP_SHADE_DK_RED):
         // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-        JSurface_SetPalette16(hSrcVSurface, pMapDKRedPalette);
-        // hMineSurface->p16BPPPalette = pMapDKRedPalette;
-        // hSAMSurface->p16BPPPalette = pMapDKRedPalette;
+        JSurface_SetPalette16(vsBigMap, pMapDKRedPalette);
 
         // lock source and dest buffers
         pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
         pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
 
-        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
+        Blt8BPPDataTo16BPPBufferHalfRect(pDestBuf, uiDestPitchBYTES, vsBigMap, pSrcBuf,
                                          uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // now blit
-        // Blt8BPPDataSubTo16BPPBuffer( pDestBuf, uiDestPitchBYTES, hSrcVSurface,
-        // pSrcBuf,uiSrcPitchBYTES, sScreenX , sScreenY , &clip);
 
         // unlock source and dest buffers
         UnlockVSurface(vsBigMap);
@@ -1223,8 +1171,7 @@ BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
     }
 
     // restore original palette
-    hSrcVSurface = vsBigMap;
-    JSurface_SetPalette16(hSrcVSurface, pOriginalPallette);
+    JSurface_SetPalette16(vsBigMap, pOriginalPallette);
   }
 
   return (TRUE);
@@ -3594,7 +3541,9 @@ void DisplayDistancesForHelicopter(void) {
           }
           else
   */
-  { SetFontForeground(FONT_LTGREEN); }
+  {
+    SetFontForeground(FONT_LTGREEN);
+  }
 
   swprintf(sString, ARR_SIZE(sString), L"%d", sTotalOfTrip);
   FindFontRightCoordinates(MAP_HELICOPTER_ETA_POPUP_X + 5, MAP_HELICOPTER_ETA_POPUP_Y + 5,
