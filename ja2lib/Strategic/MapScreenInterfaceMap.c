@@ -478,7 +478,6 @@ void ShowTownText(void);
 void DrawTownLabels(wchar_t *pString, wchar_t *pStringA, uint16_t usFirstX, uint16_t usFirstY);
 void ShowTeamAndVehicles(int32_t fShowFlags);
 BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor);
-BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor);
 void AdjustXForLeftMapEdge(wchar_t *wString, int16_t *psX);
 static void BlitTownGridMarkers(void);
 void BlitMineGridMarkers(void);
@@ -1086,217 +1085,49 @@ static drawBigMapWithCustomPalette(int16_t x, int16_t y, SGPRect *clip,
 }
 
 BOOLEAN ShadeMapElem(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
-  if (FALSE)
-    ShadeMapElemZoomIn(sMapX, sMapY, iColor);
-  else {
-    int16_t sScreenX, sScreenY;
-    GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY);
-
-    // compensate for original BIG_MAP blit being done at MAP_VIEW_START_X + 1
-    sScreenX += 1;
-
-    // compensate for original BIG_MAP blit being done at MAP_VIEW_START_X + 1
-    SGPRect clip;
-    clip.iLeft = 2 * (sScreenX - (MAP_VIEW_START_X + 1));
-    clip.iTop = 2 * (sScreenY - MAP_VIEW_START_Y);
-    clip.iRight = clip.iLeft + (2 * MAP_GRID_X);
-    clip.iBottom = clip.iTop + (2 * MAP_GRID_Y);
-
-    if (iColor != MAP_SHADE_BLACK) {
-      // airspace
-    } else {
-      // non-airspace
-      sScreenY -= 1;
-    }
-
-    switch (iColor) {
-      case (MAP_SHADE_BLACK):
-        // simply shade darker
-        ShadowVideoSurfaceRect(vsSaveBuffer, sScreenX, sScreenY, sScreenX + MAP_GRID_X - 1,
-                               sScreenY + MAP_GRID_Y - 1);
-        break;
-
-      case (MAP_SHADE_LT_GREEN):
-        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapLTGreenPalette);
-        break;
-
-      case (MAP_SHADE_DK_GREEN):
-        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapDKGreenPalette);
-        break;
-
-      case (MAP_SHADE_LT_RED):
-        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapLTRedPalette);
-        break;
-
-      case (MAP_SHADE_DK_RED):
-        drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapDKRedPalette);
-        break;
-    }
-  }
-
-  return (TRUE);
-}
-
-BOOLEAN ShadeMapElemZoomIn(uint8_t sMapX, uint8_t sMapY, int32_t iColor) {
   int16_t sScreenX, sScreenY;
-  int32_t iX, iY;
-  struct VSurface *hSrcVSurface;
-  uint32_t uiDestPitchBYTES;
-  uint32_t uiSrcPitchBYTES;
-  uint16_t *pDestBuf;
-  // uint8_t *pDestBuf2;
-  uint8_t *pSrcBuf;
+  GetScreenXYFromMapXY(sMapX, sMapY, &sScreenX, &sScreenY);
+
+  // compensate for original BIG_MAP blit being done at MAP_VIEW_START_X + 1
+  sScreenX += 1;
+
+  // compensate for original BIG_MAP blit being done at MAP_VIEW_START_X + 1
   SGPRect clip;
+  clip.iLeft = 2 * (sScreenX - (MAP_VIEW_START_X + 1));
+  clip.iTop = 2 * (sScreenY - MAP_VIEW_START_Y);
+  clip.iRight = clip.iLeft + (2 * MAP_GRID_X);
+  clip.iBottom = clip.iTop + (2 * MAP_GRID_Y);
 
-  // trabslate to screen co-ords for zoomed
-  GetScreenXYFromMapXYStationary(sMapX, sMapY, &sScreenX, &sScreenY);
-
-  // shift left by one sector
-  iY = (int32_t)sScreenY - MAP_GRID_Y;
-  iX = (int32_t)sScreenX - MAP_GRID_X;
-
-  // get original video surface palette
-  hSrcVSurface = vsBigMap;
-  const uint16_t *pOriginalPallette = JSurface_GetPalette16(hSrcVSurface);
-
-  if ((iX > MapScreenRect.iLeft - MAP_GRID_X * 2) && (iX < MapScreenRect.iRight) &&
-      (iY > MapScreenRect.iTop - MAP_GRID_Y * 2) && (iY < MapScreenRect.iBottom)) {
-    sScreenX = (int16_t)iX;
-    sScreenY = (int16_t)iY;
-
-    if (iColor == MAP_SHADE_BLACK) {
-      clip.iLeft = sScreenX + 1;
-      clip.iRight = sScreenX + MAP_GRID_X * 2 - 1;
-      clip.iTop = sScreenY;
-      clip.iBottom = sScreenY + MAP_GRID_Y * 2 - 1;
-    } else {
-      clip.iLeft = iZoomX + sScreenX - MAP_VIEW_START_X - MAP_GRID_X;
-      clip.iRight = clip.iLeft + MAP_GRID_X * 2;
-      clip.iTop = iZoomY + sScreenY - MAP_VIEW_START_Y - MAP_GRID_Y;
-      clip.iBottom = clip.iTop + MAP_GRID_Y * 2;
-
-      if (sScreenY <= MapScreenRect.iTop + 10) {
-        clip.iTop -= 5;
-        sScreenY -= 5;
-      }
-
-      if (sMapX == 1) {
-        clip.iLeft -= 5;
-        sScreenX -= 4;
-      } else {
-        sScreenX += 1;
-      }
-    }
-
-    if (sScreenX >= MapScreenRect.iRight - 2 * MAP_GRID_X) {
-      clip.iRight++;
-    }
-
-    if (sScreenY >= MapScreenRect.iBottom - 2 * MAP_GRID_X) {
-      clip.iBottom++;
-    }
-
-    sScreenX += 1;
-    sScreenY += 1;
-
-    if ((sScreenX > MapScreenRect.iRight) || (sScreenY > MapScreenRect.iBottom)) {
-      return (FALSE);
-    }
-
-    switch (iColor) {
-      case (MAP_SHADE_BLACK):
-        // simply shade darker
-        if (iCurrentMapSectorZ > 0) {
-          ShadowVideoSurfaceRect(vsSaveBuffer, clip.iLeft, clip.iTop, clip.iRight, clip.iBottom);
-        }
-        ShadowVideoSurfaceRect(vsSaveBuffer, clip.iLeft, clip.iTop, clip.iRight, clip.iBottom);
-        break;
-
-      case (MAP_SHADE_LT_GREEN):
-        // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-        JSurface_SetPalette16(hSrcVSurface, pMapLTGreenPalette);
-
-        // lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        // now blit
-        Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
-                                    uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
-
-        break;
-
-      case (MAP_SHADE_DK_GREEN):
-        // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-        JSurface_SetPalette16(hSrcVSurface, pMapDKGreenPalette);
-
-        /// lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        // now blit
-        Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
-                                    uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
-
-        break;
-
-      case (MAP_SHADE_LT_RED):
-        // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-        JSurface_SetPalette16(hSrcVSurface, pMapLTRedPalette);
-
-        // lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        // now blit
-        Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
-                                    uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
-
-        break;
-
-      case (MAP_SHADE_DK_RED):
-        // grab video surface and set palette
-        hSrcVSurface = vsBigMap;
-        JSurface_SetPalette16(hSrcVSurface, pMapDKRedPalette);
-
-        // lock source and dest buffers
-        pDestBuf = (uint16_t *)LockVSurface(vsSaveBuffer, &uiDestPitchBYTES);
-        hSrcVSurface = vsBigMap;
-        pSrcBuf = LockVSurface(vsBigMap, &uiSrcPitchBYTES);
-
-        // now blit
-        Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,
-                                    uiSrcPitchBYTES, sScreenX, sScreenY, &clip);
-
-        // unlock source and dest buffers
-        UnlockVSurface(vsBigMap);
-        UnlockVSurface(vsSaveBuffer);
-
-        break;
-    }
+  if (iColor != MAP_SHADE_BLACK) {
+    // airspace
+  } else {
+    // non-airspace
+    sScreenY -= 1;
   }
 
-  // restore original palette
-  hSrcVSurface = vsBigMap;
-  JSurface_SetPalette16(hSrcVSurface, pOriginalPallette);
+  switch (iColor) {
+    case (MAP_SHADE_BLACK):
+      // simply shade darker
+      ShadowVideoSurfaceRect(vsSaveBuffer, sScreenX, sScreenY, sScreenX + MAP_GRID_X - 1,
+                             sScreenY + MAP_GRID_Y - 1);
+      break;
+
+    case (MAP_SHADE_LT_GREEN):
+      drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapLTGreenPalette);
+      break;
+
+    case (MAP_SHADE_DK_GREEN):
+      drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapDKGreenPalette);
+      break;
+
+    case (MAP_SHADE_LT_RED):
+      drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapLTRedPalette);
+      break;
+
+    case (MAP_SHADE_DK_RED):
+      drawBigMapWithCustomPalette(sScreenX, sScreenY, &clip, pMapDKRedPalette);
+      break;
+  }
 
   return (TRUE);
 }
