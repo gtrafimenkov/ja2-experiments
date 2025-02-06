@@ -18,9 +18,6 @@
 #include "jplatform_video.h"
 #include "platform_strings.h"
 
-struct JSurface *vsPrimary = NULL;
-struct JSurface *vsBackBuffer = NULL;
-struct JSurface *vsFB = NULL;
 struct JSurface *vsMouseBuffer = NULL;
 struct JSurface *vsMouseBufferOriginal = NULL;
 

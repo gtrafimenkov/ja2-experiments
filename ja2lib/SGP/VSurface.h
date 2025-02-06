@@ -12,11 +12,7 @@
 #include "jplatform_video.h"
 
 struct VObject;
-struct JSurface;
 
-extern struct JSurface *vsPrimary;
-extern struct JSurface *vsBackBuffer;
-extern struct JSurface *vsFB;
 extern struct JSurface *vsMouseBuffer;
 extern struct JSurface *vsMouseBufferOriginal;
 

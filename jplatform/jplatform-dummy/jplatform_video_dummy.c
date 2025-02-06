@@ -1,5 +1,9 @@
 #include "jplatform_video.h"
 
+struct JSurface *vsPrimary = NULL;
+struct JSurface *vsBackBuffer = NULL;
+struct JSurface *vsFB = NULL;
+
 void JSurface_BlitRectToPoint(struct JSurface *src, struct JSurface *dst,
                               struct JRect const *srcBox, int32_t destX, int32_t destY) {}
 

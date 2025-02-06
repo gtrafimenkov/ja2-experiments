@@ -25,6 +25,10 @@ struct JRect {
 // Square collection of pixels
 struct JSurface;
 
+extern struct JSurface *vsPrimary;
+extern struct JSurface *vsBackBuffer;
+extern struct JSurface *vsFB;
+
 // // Internal video state
 // struct JVideoState;
 

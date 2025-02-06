@@ -1,6 +1,5 @@
 #include "jplatform_video_windd2.h"
 
-#include "SGP/VSurface.h"
 #include "jplatform_video.h"
 
 #define INITGUID
@@ -22,6 +21,10 @@ struct JSurface {
   // Size of single line of pixels in bytes.  Available only when the surface is locked.
   uint32_t pitch;
 };
+
+struct JSurface *vsPrimary = NULL;
+struct JSurface *vsBackBuffer = NULL;
+struct JSurface *vsFB = NULL;
 
 struct JVideoState {
   uint16_t redMask;
@@ -220,8 +223,16 @@ static bool getRGBDistribution() {
   return TRUE;
 }
 
+static void *mallocZero(size_t size) {
+  void *p = malloc(size);
+  if (p != NULL) {
+    memset(p, 0, size);
+  }
+  return p;
+}
+
 static struct JSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
-  struct JSurface *vs = (struct JSurface *)MemAllocZero(sizeof(struct JSurface));
+  struct JSurface *vs = (struct JSurface *)mallocZero(sizeof(struct JSurface));
   if (vs == NULL) {
     return NULL;
   }
@@ -364,7 +375,7 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
       return FALSE;
     }
 
-    vsBackBuffer = (struct JSurface *)MemAllocZero(sizeof(struct JSurface));
+    vsBackBuffer = (struct JSurface *)mallocZero(sizeof(struct JSurface));
     if (vsBackBuffer == NULL) {
       return FALSE;
     }
