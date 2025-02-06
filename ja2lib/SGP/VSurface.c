@@ -36,11 +36,11 @@ struct JRect sgpr2jr(const SGPRect *r) {
 }
 
 struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height) {
-  return CreateVSurfaceBlank(width, height, 8);
+  return JSurface_Create8bpp(width, height);
 }
 
 struct VSurface *CreateVSurfaceBlank16(uint16_t width, uint16_t height) {
-  return CreateVSurfaceBlank(width, height, 16);
+  return JSurface_Create16bpp(width, height);
 }
 
 // Given an HIMAGE object, blit imagery into existing Video Surface. Can be from 8->16 BPP
@@ -573,23 +573,6 @@ BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iD
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *CreateVSurfaceBlank(uint16_t width, uint16_t height, uint8_t bitDepth) {
-  Assert(height > 0);
-  Assert(width > 0);
-
-  switch (bitDepth) {
-    case 8:
-      return JSurface_Create8bpp(width, height);
-
-    case 16:
-      return JSurface_Create16bpp(width, height);
-
-    default:
-      DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2, "Invalid BPP value, can only be 8 or 16.");
-      return NULL;
-  }
-}
-
 struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   HIMAGE hImage = CreateImage(filepath, IMAGE_ALLIMAGEDATA);
 
@@ -601,7 +584,16 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   Assert(hImage->usHeight > 0);
   Assert(hImage->usWidth > 0);
 
-  struct VSurface *vs = CreateVSurfaceBlank(hImage->usWidth, hImage->usHeight, hImage->ubBitDepth);
+  struct VSurface *vs = NULL;
+  switch (hImage->ubBitDepth) {
+    case 8:
+      vs = JSurface_Create8bpp(hImage->usWidth, hImage->usHeight);
+      break;
+
+    case 16:
+      vs = JSurface_Create16bpp(hImage->usWidth, hImage->usHeight);
+      break;
+  }
   if (!vs) {
     DestroyImage(hImage);
     return NULL;
