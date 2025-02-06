@@ -57,7 +57,7 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   Assert(hImage != NULL);
 
   // Get Size of hImage and determine if it can fit
-  CHECKF(hImage->usWidth >= hVSurface->usWidth);
+  CHECKF(hImage->usWidth >= JSurface_Width(hVSurface));
   CHECKF(hImage->usHeight >= JSurface_Height(hVSurface));
 
   // Check BPP and see if they are the same
@@ -139,11 +139,11 @@ static BOOLEAN InternalShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1,
 
   if (Y1 < 0) Y1 = 0;
 
-  if (X2 >= dest->usWidth) X2 = dest->usWidth - 1;
+  if (X2 >= JSurface_Width(dest)) X2 = JSurface_Width(dest) - 1;
 
   if (Y2 >= JSurface_Height(dest)) Y2 = JSurface_Height(dest) - 1;
 
-  if (X1 >= dest->usWidth) return (FALSE);
+  if (X1 >= JSurface_Width(dest)) return (FALSE);
 
   if (Y1 >= JSurface_Height(dest)) return (FALSE);
 
@@ -317,24 +317,24 @@ static BOOLEAN clipToDestBounds(struct VSurface *dest, struct VSurface *src, int
   if (JSurface_Height(dest) < JSurface_Height(src)) {
     return (FALSE);
   }
-  if (dest->usWidth < src->usWidth) {
+  if (JSurface_Width(dest) < JSurface_Width(src)) {
     return (FALSE);
   }
 
   // clipping -- added by DB
   struct Rect DestRect = {
-      .left = 0, .top = 0, .right = dest->usWidth, .bottom = JSurface_Height(dest)};
+      .left = 0, .top = 0, .right = JSurface_Width(dest), .bottom = JSurface_Height(dest)};
   int32_t srcWidth = srcRect->right - srcRect->left;
   int32_t srcHeight = srcRect->bottom - srcRect->top;
 
   // check for position entirely off the screen
-  if (*destX >= dest->usWidth) return false;
+  if (*destX >= JSurface_Width(dest)) return false;
   if (*destY >= JSurface_Height(dest)) return false;
   if ((*destX + srcWidth) < 0) return false;
   if ((*destY + srcHeight) < 0) return false;
 
-  if ((*destX + srcWidth) >= dest->usWidth) {
-    srcRect->right -= ((*destX + srcWidth) - dest->usWidth);
+  if ((*destX + srcWidth) >= JSurface_Width(dest)) {
+    srcRect->right -= ((*destX + srcWidth) - JSurface_Width(dest));
   }
   if ((*destY + srcHeight) >= JSurface_Height(dest)) {
     srcRect->bottom -= ((*destY + srcHeight) - JSurface_Height(dest));
@@ -384,19 +384,19 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
   Assert(src != NULL);
 
   // Check for invalid start positions and clip by ignoring blit
-  if (DestRect->left >= dest->usWidth || DestRect->top >= JSurface_Height(dest)) {
+  if (DestRect->left >= JSurface_Width(dest) || DestRect->top >= JSurface_Height(dest)) {
     return (FALSE);
   }
 
-  if (SrcRect->left >= src->usWidth || SrcRect->top >= JSurface_Height(src)) {
+  if (SrcRect->left >= JSurface_Width(src) || SrcRect->top >= JSurface_Height(src)) {
     return (FALSE);
   }
 
   // For overruns
   // Clip destination rectangles
-  if (DestRect->right > dest->usWidth) {
+  if (DestRect->right > JSurface_Width(dest)) {
     // Both have to be modified or by default streching occurs
-    DestRect->right = dest->usWidth;
+    DestRect->right = JSurface_Width(dest);
     SrcRect->right = SrcRect->left + (DestRect->right - DestRect->left);
   }
   if (DestRect->bottom > JSurface_Height(dest)) {
@@ -406,9 +406,9 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
   }
 
   // Clip src rectangles
-  if (SrcRect->right > src->usWidth) {
+  if (SrcRect->right > JSurface_Width(src)) {
     // Both have to be modified or by default streching occurs
-    SrcRect->right = src->usWidth;
+    SrcRect->right = JSurface_Width(src);
     DestRect->right = DestRect->left + (SrcRect->right - SrcRect->left);
   }
   if (SrcRect->bottom > JSurface_Height(src)) {
@@ -484,12 +484,12 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
   if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     CHECKF(destX >= 0);
     CHECKF(destY >= 0);
-    struct JRect srcBox = {.x = 0, .y = 0, .w = src->usWidth, .h = JSurface_Height(src)};
+    struct JRect srcBox = {.x = 0, .y = 0, .w = JSurface_Width(src), .h = JSurface_Height(src)};
     JSurface_BlitRectToPoint(src, dest, &srcBox, destX, destY);
     return TRUE;
   } else if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
     struct Rect SrcRect = {
-        .top = 0, .left = 0, .bottom = JSurface_Height(src), .right = src->usWidth};
+        .top = 0, .left = 0, .bottom = JSurface_Height(src), .right = JSurface_Width(src)};
     return BltVSurfaceToVSurfaceSubrectInternal_8_8(dest, src, destX, destY, &SrcRect);
   }
   return FALSE;
@@ -498,7 +498,7 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
 BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
                               int32_t destY) {
   struct Rect SrcRect = {
-      .top = 0, .left = 0, .bottom = JSurface_Height(src), .right = src->usWidth};
+      .top = 0, .left = 0, .bottom = JSurface_Height(src), .right = JSurface_Width(src)};
   if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     return BltVSurfaceRectToPoint(dest, src, destX, destY, &SrcRect);
   } else if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {

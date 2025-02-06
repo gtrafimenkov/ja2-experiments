@@ -645,8 +645,8 @@ uint32_t DrawMap(void) {
         clip.iBottom = JSurface_Height(hSrcVSurface);
       }
 
-      if (clip.iRight > hSrcVSurface->usWidth) {
-        clip.iRight = hSrcVSurface->usWidth;
+      if (clip.iRight > JSurface_Width(hSrcVSurface)) {
+        clip.iRight = JSurface_Width(hSrcVSurface);
       }
 
       Blt8BPPDataSubTo16BPPBuffer(pDestBuf, uiDestPitchBYTES, hSrcVSurface, pSrcBuf,

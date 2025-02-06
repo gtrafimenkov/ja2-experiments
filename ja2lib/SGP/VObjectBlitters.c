@@ -5360,7 +5360,7 @@ BOOLEAN Blt8BPPDataSubTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES
 
   // Get Offsets from Index into structure
   usHeight = (uint32_t)JSurface_Height(hSrcVSurface);
-  usWidth = (uint32_t)hSrcVSurface->usWidth;
+  usWidth = (uint32_t)JSurface_Width(hSrcVSurface);
 
   // Add to start position of dest buffer
   iTempX = iX;
@@ -5450,7 +5450,7 @@ BOOLEAN Blt8BPPDataTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
 
   // Get Offsets from Index into structure
   usHeight = (uint32_t)JSurface_Height(hSrcVSurface);
-  usWidth = (uint32_t)hSrcVSurface->usWidth;
+  usWidth = (uint32_t)JSurface_Width(hSrcVSurface);
 
   // Add to start position of dest buffer
   iTempX = iX;
@@ -5590,7 +5590,7 @@ BOOLEAN Blt8BPPDataTo16BPPBufferHalf(uint16_t *pBuffer, uint32_t uiDestPitchBYTE
 
   // Get Offsets from Index into structure
   usHeight = (uint32_t)JSurface_Height(hSrcVSurface);
-  usWidth = (uint32_t)hSrcVSurface->usWidth;
+  usWidth = (uint32_t)JSurface_Width(hSrcVSurface);
 
   // Add to start position of dest buffer
   iTempX = iX;
@@ -5696,7 +5696,7 @@ BOOLEAN Blt8BPPDataTo16BPPBufferHalfRect(uint16_t *pBuffer, uint32_t uiDestPitch
   CHECKF(usWidth > 0);
   CHECKF(usHeight > 0);
   CHECKF(usHeight <= JSurface_Height(hSrcVSurface));
-  CHECKF(usWidth <= hSrcVSurface->usWidth);
+  CHECKF(usWidth <= JSurface_Width(hSrcVSurface));
 
   SrcPtr = (uint8_t *)pSrcBuffer + (uiSrcPitch * pRect->iTop) + (pRect->iLeft);
   DestPtr = (uint8_t *)pBuffer + (uiDestPitchBYTES * iTempY) + (iTempX * 2);
