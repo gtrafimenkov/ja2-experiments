@@ -7,12 +7,12 @@
 #include <windows.h>
 
 struct JSurface {
-  uint16_t height;            // Height of Video Surface
-  uint16_t width;             // Width of Video Surface
-  uint8_t bitDepth;           // 8 or 16
-  void *_platformData1;       // platform-specific data (Direct Draw One Interface)
-  void *_platformData2;       // platform-specific data (Direct Draw Two Interface)
-  void *_platformPalette;     // platform-specific data (LPDIRECTDRAWPALETTE)
+  uint16_t height;   // Height of Video Surface
+  uint16_t width;    // Width of Video Surface
+  uint8_t bitDepth;  // 8 or 16
+  LPDIRECTDRAWSURFACE dds;
+  LPDIRECTDRAWSURFACE2 dds2;
+  LPDIRECTDRAWPALETTE ddPalette;
   const uint16_t *palette16;  // A 16BPP palette used for 8->16 blits
   bool transparencySet;
 
@@ -130,9 +130,7 @@ void JSurface_BlitRectToPoint(struct JSurface *src, struct JSurface *dst,
 
   HRESULT ReturnCode;
   do {
-    ReturnCode =
-        IDirectDrawSurface2_BltFast((LPDIRECTDRAWSURFACE2)dst->_platformData2, destX, destY,
-                                    (LPDIRECTDRAWSURFACE2)src->_platformData2, &r, flags);
+    ReturnCode = IDirectDrawSurface2_BltFast(dst->dds2, destX, destY, src->dds2, &r, flags);
     if (ReturnCode == DDERR_SURFACELOST) {
       break;
     }
@@ -163,9 +161,8 @@ void JSurface_BlitRectToRect(struct JSurface *src, struct JSurface *dst, struct 
 
     HRESULT ReturnCode;
     do {
-      ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)dst->_platformData2, &_destRect,
-                                           (LPDIRECTDRAWSURFACE2)src->_platformData2, &_srcRect,
-                                           flags, NULL);
+      ReturnCode =
+          IDirectDrawSurface2_Blt(dst->dds2, &_destRect, src->dds2, &_srcRect, flags, NULL);
     } while (ReturnCode == DDERR_WASSTILLDRAWING);
   }
 }
@@ -178,8 +175,7 @@ static bool getRGBDistribution() {
   memset(&SurfaceDescription, 0, sizeof(SurfaceDescription));
   SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
   SurfaceDescription.dwFlags = DDSD_PIXELFORMAT;
-  ReturnCode = IDirectDrawSurface2_GetSurfaceDesc((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
-                                                  &SurfaceDescription);
+  ReturnCode = IDirectDrawSurface2_GetSurfaceDesc(vsPrimary->dds2, &SurfaceDescription);
   if (ReturnCode != DD_OK) {
     return FALSE;
   }
@@ -255,8 +251,8 @@ static struct JSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
     }
   }
 
-  vs->_platformData1 = (void *)lpDDS;
-  vs->_platformData2 = (void *)lpDDS2;
+  vs->dds = lpDDS;
+  vs->dds2 = lpDDS2;
 
   vs->width = (uint16_t)descr->dwWidth;
   vs->height = (uint16_t)descr->dwHeight;
@@ -369,8 +365,7 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
 
     DDSCAPS SurfaceCaps;
     SurfaceCaps.dwCaps = DDSCAPS_BACKBUFFER;
-    ReturnCode = IDirectDrawSurface2_GetAttachedSurface(
-        (LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2, &SurfaceCaps, &backBuffer);
+    ReturnCode = IDirectDrawSurface2_GetAttachedSurface(vsPrimary->dds2, &SurfaceCaps, &backBuffer);
     if (ReturnCode != DD_OK) {
       return FALSE;
     }
@@ -386,8 +381,8 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
     vsBackBuffer->height = (uint16_t)DDSurfaceDesc.dwHeight;
     vsBackBuffer->width = (uint16_t)DDSurfaceDesc.dwWidth;
     vsBackBuffer->bitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
-    vsBackBuffer->_platformData1 = NULL;
-    vsBackBuffer->_platformData2 = (void *)backBuffer;
+    vsBackBuffer->dds = NULL;
+    vsBackBuffer->dds2 = (void *)backBuffer;
   }
 
   getRGBDistribution();
@@ -449,13 +444,11 @@ struct JSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
 }
 
 void JSurface_SetPalette32(struct JSurface *vs, struct JPaletteEntry *pal) {
-  if (vs->_platformPalette == NULL) {
+  if (vs->ddPalette == NULL) {
     IDirectDraw2_CreatePalette(s_state.gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
-                               (LPPALETTEENTRY)(&pal[0]),
-                               (LPDIRECTDRAWPALETTE *)&vs->_platformPalette, NULL);
+                               (LPPALETTEENTRY)(&pal[0]), &vs->ddPalette, NULL);
   } else {
-    IDirectDrawPalette_SetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,
-                                  (PALETTEENTRY *)pal);
+    IDirectDrawPalette_SetEntries(vs->ddPalette, 0, 0, 256, (PALETTEENTRY *)pal);
   }
 }
 
@@ -474,20 +467,17 @@ bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) {
     return false;
   }
   // Apply the palette to the surfaces
-  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsPrimary->_platformData2,
-                                             gpDirectDrawPalette);
+  ReturnCode = IDirectDrawSurface_SetPalette(vsPrimary->dds2, gpDirectDrawPalette);
   if (ReturnCode != DD_OK) {
     return false;
   }
 
-  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsBackBuffer->_platformData2,
-                                             gpDirectDrawPalette);
+  ReturnCode = IDirectDrawSurface_SetPalette(vsBackBuffer->dds2, gpDirectDrawPalette);
   if (ReturnCode != DD_OK) {
     return false;
   }
 
-  ReturnCode = IDirectDrawSurface_SetPalette((LPDIRECTDRAWSURFACE2)vsFB->_platformData2,
-                                             gpDirectDrawPalette);
+  ReturnCode = IDirectDrawSurface_SetPalette(vsFB->dds2, gpDirectDrawPalette);
   if (ReturnCode != DD_OK) {
     return false;
   }
@@ -496,15 +486,14 @@ bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) {
 }
 
 bool JSurface_Restore(struct JSurface *vs) {
-  HRESULT ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vs->_platformData2);
+  HRESULT ReturnCode = IDirectDrawSurface2_Restore(vs->dds2);
   return ReturnCode == DD_OK;
 }
 
 bool JSurface_Flip(struct JSurface *vs) {
   HRESULT ReturnCode;
   do {
-    ReturnCode =
-        IDirectDrawSurface_Flip((LPDIRECTDRAWSURFACE)vs->_platformData1, NULL, DDFLIP_WAIT);
+    ReturnCode = IDirectDrawSurface_Flip(vs->dds, NULL, DDFLIP_WAIT);
     if ((ReturnCode != DD_OK) && (ReturnCode != DDERR_WASSTILLDRAWING)) {
       if (ReturnCode == DDERR_SURFACELOST) {
         return false;
@@ -528,8 +517,7 @@ void JSurface_FillRect(struct JSurface *vs, struct JRect *rect, uint16_t color) 
   BlitterFX.dwFillColor = color;
   HRESULT ReturnCode;
   do {
-    ReturnCode = IDirectDrawSurface2_Blt((LPDIRECTDRAWSURFACE2)vs->_platformData2, &r, NULL, NULL,
-                                         DDBLT_COLORFILL, &BlitterFX);
+    ReturnCode = IDirectDrawSurface2_Blt(vs->dds2, &r, NULL, NULL, DDBLT_COLORFILL, &BlitterFX);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
@@ -544,8 +532,7 @@ bool JSurface_Lock(struct JSurface *s) {
 
   HRESULT ReturnCode;
   do {
-    ReturnCode =
-        IDirectDrawSurface2_Lock((LPDIRECTDRAWSURFACE2)s->_platformData2, NULL, &descr, 0, NULL);
+    ReturnCode = IDirectDrawSurface2_Lock(s->dds2, NULL, &descr, 0, NULL);
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 
   if (descr.lpSurface == NULL) {
@@ -561,7 +548,7 @@ void JSurface_Unlock(struct JSurface *s) {
   if (s == NULL) {
     return;
   }
-  IDirectDrawSurface2_Unlock((LPDIRECTDRAWSURFACE2)s->_platformData2, NULL);
+  IDirectDrawSurface2_Unlock(s->dds2, NULL);
   s->pitch = 0;
   s->pixels = NULL;
 }
@@ -585,25 +572,22 @@ void JSurface_SetColorKey(struct JSurface *s, uint32_t key) {
       break;
   }
 
-  IDirectDrawSurface2_SetColorKey((LPDIRECTDRAWSURFACE2)s->_platformData2, DDCKEY_SRCBLT,
-                                  &ColorKey);
+  IDirectDrawSurface2_SetColorKey(s->dds2, DDCKEY_SRCBLT, &ColorKey);
 }
 
 bool JSurface_GetPalette32(struct JSurface *vs, struct JPaletteEntry *pal) {
-  if (vs->_platformPalette == NULL) {
+  if (vs->ddPalette == NULL) {
     LPDIRECTDRAWPALETTE pDDPalette;
-    HRESULT ReturnCode =
-        IDirectDrawSurface2_GetPalette((LPDIRECTDRAWSURFACE2)vs->_platformData2, &pDDPalette);
+    HRESULT ReturnCode = IDirectDrawSurface2_GetPalette(vs->dds2, &pDDPalette);
 
     if (ReturnCode == DD_OK) {
-      vs->_platformPalette = pDDPalette;
+      vs->ddPalette = pDDPalette;
     } else {
       return false;
     }
   }
 
-  IDirectDrawPalette_GetEntries((LPDIRECTDRAWPALETTE)vs->_platformPalette, 0, 0, 256,
-                                (PALETTEENTRY *)pal);
+  IDirectDrawPalette_GetEntries(vs->ddPalette, 0, 0, 256, (PALETTEENTRY *)pal);
   return true;
 }
 
@@ -611,19 +595,19 @@ void JSurface_Free(struct JSurface *s) {
   if (s == NULL) {
     return;
   }
-  if (s->_platformPalette != NULL) {
-    IDirectDrawPalette_Release((LPDIRECTDRAWPALETTE)s->_platformPalette);
-    s->_platformPalette = NULL;
+  if (s->ddPalette != NULL) {
+    IDirectDrawPalette_Release(s->ddPalette);
+    s->ddPalette = NULL;
   }
 
-  if (s->_platformData2 != NULL) {
-    IDirectDrawSurface2_Release((LPDIRECTDRAWSURFACE2)s->_platformData2);
-    s->_platformData2 = NULL;
+  if (s->dds2 != NULL) {
+    IDirectDrawSurface2_Release(s->dds2);
+    s->dds2 = NULL;
   }
 
-  if (s->_platformData1 != NULL) {
-    IDirectDrawSurface_Release((LPDIRECTDRAWSURFACE)s->_platformData1);
-    s->_platformData1 = NULL;
+  if (s->dds != NULL) {
+    IDirectDrawSurface_Release(s->dds);
+    s->dds = NULL;
   }
 
   if (s->palette16 != NULL) {
