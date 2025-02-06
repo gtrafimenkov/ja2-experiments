@@ -189,7 +189,7 @@ void RemoveTextMercPopupImages() {
 }
 
 BOOLEAN RenderMercPopUpBoxFromIndex(int32_t iBoxId, int16_t sDestX, int16_t sDestY,
-                                    struct VSurface *dest) {
+                                    struct JSurface *dest) {
   // set the current box
   if (SetCurrentPopUpBox(iBoxId) == FALSE) {
     return (FALSE);
@@ -199,7 +199,7 @@ BOOLEAN RenderMercPopUpBoxFromIndex(int32_t iBoxId, int16_t sDestX, int16_t sDes
   return (RenderMercPopupBox(sDestX, sDestY, dest));
 }
 
-BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, struct VSurface *dest) {
+BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, struct JSurface *dest) {
   // will render/transfer the image from the buffer in the data structure to the buffer specified by
   // user
   BOOLEAN fReturnValue = TRUE;

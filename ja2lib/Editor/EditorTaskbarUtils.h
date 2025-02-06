@@ -59,8 +59,8 @@ extern uint32_t guiMercInventoryPanel;
 extern uint32_t guiOmertaMap;
 extern uint32_t guiExclamation;
 extern uint32_t guiKeyImage;
-extern struct VSurface* vsMercInvPanelBuffers[9];
-extern struct VSurface* vsMercTempBuffer;
+extern struct JSurface* vsMercInvPanelBuffers[9];
+extern struct JSurface* vsMercTempBuffer;
 extern int32_t giEditMercImage[2];
 
 #endif

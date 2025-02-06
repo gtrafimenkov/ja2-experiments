@@ -10,7 +10,7 @@
 #include "SGP/Types.h"
 
 struct JPaletteEntry;
-struct VSurface;
+struct JSurface;
 
 #define VIDEO_NO_CURSOR 0xFFFF
 

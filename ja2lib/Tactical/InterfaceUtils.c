@@ -105,7 +105,7 @@ void UnLoadCarPortraits(void) {
 }
 
 void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
-                     int16_t sHeight, BOOLEAN fErase, struct VSurface *dest) {
+                     int16_t sHeight, BOOLEAN fErase, struct JSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -190,7 +190,7 @@ void DrawLifeUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos,
 }
 
 void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
-                       int16_t sHeight, BOOLEAN fErase, struct VSurface *dest) {
+                       int16_t sHeight, BOOLEAN fErase, struct JSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -292,7 +292,7 @@ void DrawBreathUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
 }
 
 void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPos, int16_t sWidth,
-                       int16_t sHeight, BOOLEAN fErase, struct VSurface *dest) {
+                       int16_t sHeight, BOOLEAN fErase, struct JSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 
@@ -335,7 +335,7 @@ void DrawMoraleUIBarEx(struct SOLDIERTYPE *pSoldier, int16_t sXPos, int16_t sYPo
 
 void DrawItemUIBarEx(struct OBJECTTYPE *pObject, uint8_t ubStatus, int16_t sXPos, int16_t sYPos,
                      int16_t sWidth, int16_t sHeight, int16_t sColor1, int16_t sColor2,
-                     struct VSurface *dest) {
+                     struct JSurface *dest) {
   float dStart, dEnd, dPercentage;
   // uint16_t usLineColor;
 

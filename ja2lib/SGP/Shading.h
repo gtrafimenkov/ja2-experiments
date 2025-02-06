@@ -7,7 +7,7 @@
 
 #include "SGP/VObject.h"
 
-struct VSurface;
+struct JSurface;
 
 BOOLEAN ShadesCalculateTables(struct JPaletteEntry *p8BPPPalette);
 

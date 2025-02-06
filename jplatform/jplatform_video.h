@@ -22,8 +22,8 @@ struct JRect {
 //   r->h = h;
 // }
 
-// // Square collection of pixels
-// struct JSurface;
+// Square collection of pixels
+struct JSurface;
 
 // // Internal video state
 // struct JVideoState;
@@ -64,46 +64,46 @@ uint16_t JVideo_GetScreenHeight();
 // void JVideo_SimulateMouseMovement(struct JVideoState *v, uint32_t newPosX, uint32_t newPosY);
 
 // Lock the surface to get access to raw pixels.
-bool JSurface_Lock(struct VSurface *s);
+bool JSurface_Lock(struct JSurface *s);
 
 // Unlock the previously locked surface.
-void JSurface_Unlock(struct VSurface *s);
+void JSurface_Unlock(struct JSurface *s);
 
-int JSurface_Pitch(struct VSurface *s);
+int JSurface_Pitch(struct JSurface *s);
 
-void *JSurface_GetPixels(struct VSurface *s);
+void *JSurface_GetPixels(struct JSurface *s);
 
-struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height);
-struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height);
-bool JSurface_Restore(struct VSurface *vs);
-bool JSurface_Flip(struct VSurface *vs);
+struct JSurface *JSurface_Create8bpp(uint16_t width, uint16_t height);
+struct JSurface *JSurface_Create16bpp(uint16_t width, uint16_t height);
+bool JSurface_Restore(struct JSurface *vs);
+bool JSurface_Flip(struct JSurface *vs);
 
-uint16_t JSurface_Width(struct VSurface *s);
-uint16_t JSurface_Height(struct VSurface *s);
-uint8_t JSurface_BPP(struct VSurface *s);
+uint16_t JSurface_Width(struct JSurface *s);
+uint16_t JSurface_Height(struct JSurface *s);
+uint8_t JSurface_BPP(struct JSurface *s);
 
-const uint16_t *JSurface_GetPalette16(struct VSurface *s);
-void JSurface_SetPalette16(struct VSurface *s, const uint16_t *palette16);
+const uint16_t *JSurface_GetPalette16(struct JSurface *s);
+void JSurface_SetPalette16(struct JSurface *s, const uint16_t *palette16);
 
-void JSurface_SetColorKey(struct VSurface *s, uint32_t key);
+void JSurface_SetColorKey(struct JSurface *s, uint32_t key);
 // bool JSurface_IsColorKeySet(struct JSurface *s);
 // void JSurface_Fill(struct JSurface *s, uint16_t color);
-void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color);
+void JSurface_FillRect(struct JSurface *vs, struct JRect *rect, uint16_t color);
 
-void JSurface_Free(struct VSurface *s);
+void JSurface_Free(struct JSurface *s);
 
-void JSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal);
-bool JSurface_GetPalette32(struct VSurface *vs, struct JPaletteEntry *pal);
+void JSurface_SetPalette32(struct JSurface *vs, struct JPaletteEntry *pal);
+bool JSurface_GetPalette32(struct JSurface *vs, struct JPaletteEntry *pal);
 
 // void JSurface_Blit(struct JSurface *src, struct JSurface *dst);
 
 // void JSurface_BlitToPoint(struct JSurface *src, struct JSurface *dst, int32_t destX, int32_t
 // destY);
 
-void JSurface_BlitRectToPoint(struct VSurface *src, struct VSurface *dst,
+void JSurface_BlitRectToPoint(struct JSurface *src, struct JSurface *dst,
                               struct JRect const *srcBox, int32_t destX, int32_t destY);
 
-void JSurface_BlitRectToRect(struct VSurface *src, struct VSurface *dst, struct JRect const *srcBox,
+void JSurface_BlitRectToRect(struct JSurface *src, struct JSurface *dst, struct JRect const *srcBox,
                              struct JRect const *destBox);
 
 // // Convert from RGB to 16 bit value

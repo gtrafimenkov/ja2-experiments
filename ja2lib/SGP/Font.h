@@ -81,7 +81,7 @@ uint32_t mprintf_buffer_coded(uint8_t *pDestBuf, uint32_t uiDestPitchBYTES, uint
                               int32_t x, int32_t y, wchar_t *pFontString, ...);
 uint32_t mprintf_coded(int32_t x, int32_t y, wchar_t *pFontString, ...);
 
-extern BOOLEAN SetFontDestBuffer(struct VSurface *DestBuffer, int32_t x1, int32_t y1, int32_t x2,
+extern BOOLEAN SetFontDestBuffer(struct JSurface *DestBuffer, int32_t x1, int32_t y1, int32_t x2,
                                  int32_t y2, BOOLEAN wrap);
 extern BOOLEAN SetFont(int32_t iFontIndex);
 

@@ -8,7 +8,7 @@
 #include "Rect.h"
 #include "SGP/Types.h"
 
-struct VSurface;
+struct JSurface;
 struct VObject;
 
 extern SGPRect ClippingRect;
@@ -181,18 +181,18 @@ BOOLEAN Blt8BPPDataTo16BPPBufferShadow(uint16_t *pBuffer, uint32_t uiDestPitchBY
                                        uint16_t usIndex);
 
 BOOLEAN Blt8BPPDataTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                 struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer, int32_t iX,
+                                 struct JSurface *hSrcVSurface, uint8_t *pSrcBuffer, int32_t iX,
                                  int32_t iY);
 BOOLEAN Blt8BPPDataSubTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                    struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
+                                    struct JSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                     uint32_t uiSrcPitch, int32_t iX, int32_t iY, SGPRect *pRect);
 
 // Blits from flat 8bpp source, to 16bpp dest, divides in half
 BOOLEAN Blt8BPPDataTo16BPPBufferHalf(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                     struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
+                                     struct JSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                      uint32_t uiSrcPitch, int32_t iX, int32_t iY);
 BOOLEAN Blt8BPPDataTo16BPPBufferHalfRect(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                         struct VSurface *hSrcVSurface,
+                                         struct JSurface *hSrcVSurface,
                                          const uint16_t *customPalette, uint8_t *pSrcBuffer,
                                          uint32_t uiSrcPitch, int32_t iX, int32_t iY,
                                          SGPRect *pRect);

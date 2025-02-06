@@ -89,8 +89,8 @@ typedef struct {
   uint16_t usFaceY;  // Y location to render face
   uint16_t usFaceWidth;
   uint16_t usFaceHeight;
-  struct VSurface *autoDisplayBuffer;  // Display buffer for face
-  struct VSurface *autoRestoreBuffer;  // Restore buffer
+  struct JSurface *autoDisplayBuffer;  // Display buffer for face
+  struct JSurface *autoRestoreBuffer;  // Restore buffer
   BOOLEAN fAutoRestoreBuffer;          // Flag to indicate our own restorebuffer or not
   BOOLEAN fAutoDisplayBuffer;          // Flag to indicate our own display buffer or not
   BOOLEAN fDisplayTextOver;            // Boolean indicating to display text on face
@@ -175,7 +175,7 @@ int32_t InternalInitFace(uint8_t usMercProfileID, uint8_t ubSoldierID, uint32_t 
 void DeleteFace(int32_t iFaceIndex);
 
 // IF you want to setup the face for automatic eye blinking, mouth movement, you need to call
-void SetAutoFaceActive(struct VSurface *displayBuffer, struct VSurface *restoreBuffer,
+void SetAutoFaceActive(struct JSurface *displayBuffer, struct JSurface *restoreBuffer,
                        int32_t iFaceIndex, uint16_t usFaceX, uint16_t usFaceY);
 // The first paramter is the display buffer you wish the face to be rendered on. The second is the
 // Internal savebuffer which is used to facilitate the rendering of only things which have changed
@@ -223,7 +223,7 @@ void SetAllAutoFacesInactive();
 
 // To render an allocated face but one that is indipendent of it's active status, ant does not
 // require eye blinking or mouth movements, call
-BOOLEAN ExternRenderFace(struct VSurface *buffer, int32_t iFaceIndex, int16_t sX, int16_t sY);
+BOOLEAN ExternRenderFace(struct JSurface *buffer, int32_t iFaceIndex, int16_t sX, int16_t sY);
 
 // FUnctions usually not needed for most uses, but give a finer control over rendering if needed
 void BlinkAutoFace(int32_t iFaceIndex);
@@ -234,11 +234,11 @@ void HandleTalkingAutoFaces();
 // Same Functions but taking soldier ID first to get profile ID
 int32_t InitSoldierFace(struct SOLDIERTYPE *pSoldier);
 void DeleteSoldierFace(struct SOLDIERTYPE *pSoldier);
-void SetAutoFaceActiveFromSoldier(struct VSurface *buffer, struct VSurface *restoreBuffer,
+void SetAutoFaceActiveFromSoldier(struct JSurface *buffer, struct JSurface *restoreBuffer,
                                   uint8_t ubSoldierID, uint16_t usFaceX, uint16_t usFaceY);
 void SetAutoFaceInActiveFromSoldier(uint8_t ubSoldierID);
 BOOLEAN RenderAutoFaceFromSoldier(uint8_t ubSoldierID);
-BOOLEAN ExternRenderFaceFromSoldier(struct VSurface *buffer, uint8_t ubSoldierID, int16_t sX,
+BOOLEAN ExternRenderFaceFromSoldier(struct JSurface *buffer, uint8_t ubSoldierID, int16_t sX,
                                     int16_t sY);
 
 #endif

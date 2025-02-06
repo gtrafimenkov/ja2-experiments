@@ -199,7 +199,7 @@ extern uint8_t gsHighlightSectorX;
 extern uint8_t gsHighlightSectorY;
 
 // the big map
-extern struct VSurface *vsBigMap;
+extern struct JSurface *vsBigMap;
 
 // the orta icon
 extern uint32_t guiORTAICON;

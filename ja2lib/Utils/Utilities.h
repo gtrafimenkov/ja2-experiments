@@ -12,7 +12,7 @@ struct JPaletteEntry;
 
 BOOLEAN CreateSGPPaletteFromCOLFile(struct JPaletteEntry* pPalette, SGPFILENAME ColFile);
 BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
-                          struct VSurface* dest);
+                          struct JSurface* dest);
 
 void FilenameForBPP(char* pFilename, char* pDestination);
 

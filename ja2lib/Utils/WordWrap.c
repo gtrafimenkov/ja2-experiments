@@ -1549,7 +1549,7 @@ int32_t GetNewTotalYPositionOfThisString(int32_t iTotalYPosition, int32_t iPageS
   return (iNewYPosition);
 }
 
-void ShadowText(struct VSurface *dest, wchar_t *pString, uint32_t uiFont, uint16_t usPosX,
+void ShadowText(struct JSurface *dest, wchar_t *pString, uint32_t uiFont, uint16_t usPosX,
                 uint16_t usPosY) {
   uint32_t uiLength = StringPixLength(pString, uiFont);
   uint16_t usFontHeight = WFGetFontHeight(uiFont);

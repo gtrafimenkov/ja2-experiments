@@ -14,7 +14,7 @@ typedef struct {
   BOOLEAN fKill;              // flagged for deallocation.
   BOOLEAN fActive;            // currently active
   uint16_t* pusItemIndex;     // a dynamic array of Item indices
-  struct VSurface* vsBuffer;  // index of buffer
+  struct JSurface* vsBuffer;  // index of buffer
   uint32_t uiItemType;        // Weapons, ammo, armour, explosives, equipment
   int16_t sWidth, sHeight;    // width and height of buffer
   int16_t sNumItems;          // total number of items in the current class of item.

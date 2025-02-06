@@ -92,7 +92,7 @@ struct _GUI_BUTTON;
 #define GUI_SND_DCLK BUTTON_SOUND_DISABLED_CLICK
 #define GUI_SND_DMOV BUTTON_SOUND_DISABLED_MOVED_ONTO
 
-extern struct VSurface* vsButtonDest;
+extern struct JSurface* vsButtonDest;
 
 // GUI_BUTTON callback function type
 typedef void (*GUI_CALLBACK)(struct _GUI_BUTTON*, int32_t);

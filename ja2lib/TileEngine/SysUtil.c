@@ -15,8 +15,8 @@
 #include "SGP/Video.h"
 #include "SGP/WCheck.h"
 
-struct VSurface *vsSaveBuffer = NULL;
-struct VSurface *vsExtraBuffer = NULL;
+struct JSurface *vsSaveBuffer = NULL;
+struct JSurface *vsExtraBuffer = NULL;
 
 BOOLEAN gfExtraBuffer = FALSE;
 

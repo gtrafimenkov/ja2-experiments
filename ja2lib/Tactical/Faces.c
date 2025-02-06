@@ -62,7 +62,7 @@ void NewMouth(FACETYPE *pFace);
 int32_t GetFreeFace(void);
 void RecountFaces(void);
 static void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer,
-                                        BOOLEAN fUseExternBuffer, struct VSurface *buffer,
+                                        BOOLEAN fUseExternBuffer, struct JSurface *buffer,
                                         int16_t sFaceX, int16_t sFaceY, uint16_t usEyesX,
                                         uint16_t usEyesY);
 
@@ -386,7 +386,7 @@ void DeleteFace(int32_t iFaceIndex) {
   RecountFaces();
 }
 
-void SetAutoFaceActiveFromSoldier(struct VSurface *buffer, struct VSurface *restoreBuffer,
+void SetAutoFaceActiveFromSoldier(struct JSurface *buffer, struct JSurface *restoreBuffer,
                                   uint8_t ubSoldierID, uint16_t usFaceX, uint16_t usFaceY) {
   if (ubSoldierID == NOBODY) {
     return;
@@ -439,12 +439,12 @@ void GetFaceRelativeCoordinates(FACETYPE *pFace, uint16_t *pusEyesX, uint16_t *p
 
 // Same as above, yet used mostly internally. Is compatible with the fact that a soldier profile ID
 // is not required...
-static void InternalSetAutoFaceActive(struct VSurface *displayBuffer,
-                                      struct VSurface *restoreBuffer, int32_t iFaceIndex,
+static void InternalSetAutoFaceActive(struct JSurface *displayBuffer,
+                                      struct JSurface *restoreBuffer, int32_t iFaceIndex,
                                       uint16_t usFaceX, uint16_t usFaceY, uint16_t usEyesX,
                                       uint16_t usEyesY, uint16_t usMouthX, uint16_t usMouthY);
 
-void SetAutoFaceActive(struct VSurface *displayBuffer, struct VSurface *restoreBuffer,
+void SetAutoFaceActive(struct JSurface *displayBuffer, struct JSurface *restoreBuffer,
                        int32_t iFaceIndex, uint16_t usFaceX, uint16_t usFaceY) {
   uint16_t usEyesX;
   uint16_t usEyesY;
@@ -463,8 +463,8 @@ void SetAutoFaceActive(struct VSurface *displayBuffer, struct VSurface *restoreB
                             usEyesY, usMouthX, usMouthY);
 }
 
-static void InternalSetAutoFaceActive(struct VSurface *displayBuffer,
-                                      struct VSurface *restoreBuffer, int32_t iFaceIndex,
+static void InternalSetAutoFaceActive(struct JSurface *displayBuffer,
+                                      struct JSurface *restoreBuffer, int32_t iFaceIndex,
                                       uint16_t usFaceX, uint16_t usFaceY, uint16_t usEyesX,
                                       uint16_t usEyesY, uint16_t usMouthX, uint16_t usMouthY) {
   FACETYPE *pFace;
@@ -709,7 +709,7 @@ void BlinkAutoFace(int32_t iFaceIndex) {
   }
 }
 
-static void HandleFaceHilights(FACETYPE *pFace, struct VSurface *buffer, int16_t sFaceX,
+static void HandleFaceHilights(FACETYPE *pFace, struct JSurface *buffer, int16_t sFaceX,
                                int16_t sFaceY) {
   uint32_t uiDestPitchBYTES;
   uint8_t *pDestBuf;
@@ -1005,7 +1005,7 @@ void GetXYForRightIconPlacement(FACETYPE *pFace, uint16_t ubIndex, int16_t sFace
   *psY = sY;
 }
 
-static void DoRightIcon(struct VSurface *renderBuffer, FACETYPE *pFace, int16_t sFaceX,
+static void DoRightIcon(struct JSurface *renderBuffer, FACETYPE *pFace, int16_t sFaceX,
                         int16_t sFaceY, int8_t bNumIcons, int8_t sIconIndex) {
   int16_t sIconX, sIconY;
 
@@ -1015,12 +1015,12 @@ static void DoRightIcon(struct VSurface *renderBuffer, FACETYPE *pFace, int16_t 
 }
 
 void HandleRenderFaceAdjustments(FACETYPE *pFace, BOOLEAN fDisplayBuffer, BOOLEAN fUseExternBuffer,
-                                 struct VSurface *buffer, int16_t sFaceX, int16_t sFaceY,
+                                 struct JSurface *buffer, int16_t sFaceX, int16_t sFaceY,
                                  uint16_t usEyesX, uint16_t usEyesY) {
   int16_t sIconX, sIconY;
   int16_t sIconIndex = -1;
   BOOLEAN fDoIcon = FALSE;
-  struct VSurface *renderBuffer;
+  struct JSurface *renderBuffer;
   int16_t sPtsAvailable = 0;
   uint16_t usMaximumPts = 0;
   wchar_t sString[32];
@@ -1367,7 +1367,7 @@ BOOLEAN RenderAutoFace(int32_t iFaceIndex) {
   return (TRUE);
 }
 
-BOOLEAN ExternRenderFaceFromSoldier(struct VSurface *buffer, uint8_t ubSoldierID, int16_t sX,
+BOOLEAN ExternRenderFaceFromSoldier(struct JSurface *buffer, uint8_t ubSoldierID, int16_t sX,
                                     int16_t sY) {
   // Check for valid soldier
   CHECKF(ubSoldierID != NOBODY);
@@ -1375,7 +1375,7 @@ BOOLEAN ExternRenderFaceFromSoldier(struct VSurface *buffer, uint8_t ubSoldierID
   return (ExternRenderFace(buffer, MercPtrs[ubSoldierID]->iFaceIndex, sX, sY));
 }
 
-BOOLEAN ExternRenderFace(struct VSurface *buffer, int32_t iFaceIndex, int16_t sX, int16_t sY) {
+BOOLEAN ExternRenderFace(struct JSurface *buffer, int32_t iFaceIndex, int16_t sX, int16_t sY) {
   uint16_t usEyesX;
   uint16_t usEyesY;
   uint16_t usMouthX;

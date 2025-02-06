@@ -7,7 +7,7 @@
 
 #include "SGP/Types.h"
 
-struct VSurface;
+struct JSurface;
 struct _VIDEO_OVERLAY;
 
 // DEFINES
@@ -68,7 +68,7 @@ typedef struct _VIDEO_OVERLAY {
   uint8_t ubFontBack;
   uint8_t ubFontFore;
   wchar_t zText[200];
-  struct VSurface *vsDestBuff;
+  struct JSurface *vsDestBuff;
   OVERLAY_CALLBACK BltCallback;
 
 } VIDEO_OVERLAY;
@@ -133,10 +133,10 @@ int32_t RegisterVideoOverlay(uint32_t uiFlags, VIDEO_OVERLAY_DESC *pTopmostDesc)
 void ExecuteVideoOverlays();
 BOOLEAN UpdateVideoOverlay(VIDEO_OVERLAY_DESC *pTopmostDesc, uint32_t iBlitterIndex,
                            BOOLEAN fForceAll);
-void SaveVideoOverlaysArea(struct VSurface *src);
+void SaveVideoOverlaysArea(struct JSurface *src);
 void DeleteVideoOverlaysArea();
 void AllocateVideoOverlaysArea();
-void ExecuteVideoOverlaysToAlternateBuffer(struct VSurface *dest);
+void ExecuteVideoOverlaysToAlternateBuffer(struct JSurface *dest);
 void RemoveVideoOverlay(int32_t iVideoOverlay);
 BOOLEAN RestoreShiftedVideoOverlays(int16_t sShiftX, int16_t sShiftY);
 BOOLEAN SetOverlayUserData(int32_t iVideoOverlay, uint8_t ubNum, uint32_t uiData);
@@ -144,7 +144,7 @@ void EnableVideoOverlay(BOOLEAN fEnable, int32_t iOverlayIndex);
 
 void BlitMFont(VIDEO_OVERLAY *pBlitter);
 
-BOOLEAN BlitBufferToBuffer(struct VSurface *src, struct VSurface *dest, uint16_t usSrcX,
+BOOLEAN BlitBufferToBuffer(struct JSurface *src, struct JSurface *dest, uint16_t usSrcX,
                            uint16_t usSrcY, uint16_t usWidth, uint16_t usHeight);
 
 #endif

@@ -114,7 +114,7 @@ typedef struct AUTORESOLVE_STRUCT {
   int32_t iFaces;          // for generic civs and enemies
   int32_t iMercFaces[20];  // for each merc face
   int32_t iIndent;
-  struct VSurface *vsInterfaceBuffer;
+  struct JSurface *vsInterfaceBuffer;
   int32_t iNumMercFaces;
   int32_t iActualMercFaces;  // this represents the real number of merc faces.  Because
                              // my debug mode allows to freely add and subtract mercs, we

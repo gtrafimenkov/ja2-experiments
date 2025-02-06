@@ -52,7 +52,7 @@ int32_t FontsLoaded = 0;
 
 // Destination printing parameters
 int32_t FontDefault = (-1);
-static struct VSurface *vsFontDestBuffer;
+static struct JSurface *vsFontDestBuffer;
 uint32_t FontDestPitch = 640 * 2;
 uint32_t FontDestBPP = 16;
 SGPRect FontDestRegion = {0, 0, 640, 480};
@@ -65,7 +65,7 @@ uint8_t FontBackground8 = 0;
 
 // Temp, for saving printing parameters
 int32_t SaveFontDefault = (-1);
-static struct VSurface *vsSaveFontDestBuffer;
+static struct JSurface *vsSaveFontDestBuffer;
 uint32_t SaveFontDestPitch = 640 * 2;
 uint32_t SaveFontDestBPP = 16;
 SGPRect SaveFontDestRegion = {0, 0, 640, 480};
@@ -590,7 +590,7 @@ BOOLEAN SetFont(int32_t iFontIndex) {
 // sets the line wrap on/off. DestBuffer is a VOBJECT handle, not a pointer.
 //
 //*****************************************************************************
-BOOLEAN SetFontDestBuffer(struct VSurface *DestBuffer, int32_t x1, int32_t y1, int32_t x2,
+BOOLEAN SetFontDestBuffer(struct JSurface *DestBuffer, int32_t x1, int32_t y1, int32_t x2,
                           int32_t y2, BOOLEAN wrap) {
   Assert(x2 > x1);
   Assert(y2 > y1);

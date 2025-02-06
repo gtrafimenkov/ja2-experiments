@@ -323,7 +323,7 @@ void DisplayLoadScreenWithID(uint8_t ubLoadScreenID) {
     ColorFillVSurfaceArea(vsFB, 0, 0, 640, 480, 0);
     mprintf(5, 5, L"Error loading save, attempting to patch save to version 1.02...", filepath);
   } else {
-    struct VSurface* vs = CreateVSurfaceFromFile(filepath);
+    struct JSurface* vs = CreateVSurfaceFromFile(filepath);
     if (vs) {
       JSurface_SetColorKey(vs, FROMRGB(0, 0, 0));
       // Blit the background image

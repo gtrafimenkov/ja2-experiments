@@ -34,7 +34,7 @@ typedef struct {
   BOOLEAN fTextRegionOn;
   BOOLEAN fOnName;
   BOOLEAN fDirtyLevel;
-  struct VSurface *vsSaveBuffer;
+  struct JSurface *vsSaveBuffer;
   BOOLEAN fHandled;
   BOOLEAN fHandledTalkingVal;
   BOOLEAN fHandledCanDeleteVal;

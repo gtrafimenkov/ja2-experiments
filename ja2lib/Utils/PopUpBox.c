@@ -230,7 +230,7 @@ void UnSecondaryShadeStringInBox(int32_t hBoxHandle, int32_t iLineNumber) {
   return;
 }
 
-void SetBoxBuffer(int32_t hBoxHandle, struct VSurface *vsBuffer) {
+void SetBoxBuffer(int32_t hBoxHandle, struct JSurface *vsBuffer) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
@@ -299,7 +299,7 @@ void SetBorderType(int32_t hBoxHandle, int32_t iBorderObjectIndex) {
   return;
 }
 
-void SetBackGroundSurface(int32_t hBoxHandle, struct VSurface *BackGroundSurface) {
+void SetBackGroundSurface(int32_t hBoxHandle, struct JSurface *BackGroundSurface) {
   if ((hBoxHandle < 0) || (hBoxHandle >= MAX_POPUP_BOX_COUNT)) return;
 
   Assert(PopUpBoxList[hBoxHandle]);
@@ -986,7 +986,7 @@ void SetCurrentBox(int32_t hBoxHandle) {
 
 void GetCurrentBox(int32_t *hBoxHandle) { *hBoxHandle = guiCurrentBox; }
 
-void DisplayBoxes(struct VSurface *vsBuffer) {
+void DisplayBoxes(struct JSurface *vsBuffer) {
   uint32_t uiCounter;
 
   for (uiCounter = 0; uiCounter < MAX_POPUP_BOX_COUNT; uiCounter++) {
@@ -995,7 +995,7 @@ void DisplayBoxes(struct VSurface *vsBuffer) {
   return;
 }
 
-void DisplayOnePopupBox(uint32_t uiIndex, struct VSurface *vsBuffer) {
+void DisplayOnePopupBox(uint32_t uiIndex, struct JSurface *vsBuffer) {
   if ((uiIndex < 0) || (uiIndex >= MAX_POPUP_BOX_COUNT)) return;
 
   if (PopUpBoxList[uiIndex] != NULL) {

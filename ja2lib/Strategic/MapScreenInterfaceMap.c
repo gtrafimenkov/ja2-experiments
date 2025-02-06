@@ -267,7 +267,7 @@ enum {
   MAP_SHADE_DK_RED,
 };
 // the big map .pcx
-struct VSurface *vsBigMap;
+struct JSurface *vsBigMap;
 
 // orta .sti icon
 uint32_t guiORTAICON;
@@ -610,7 +610,7 @@ void HandleShowingOfEnemiesWithMilitiaOn(void) {
 }
 
 uint32_t DrawMap(void) {
-  struct VSurface *hSrcVSurface;
+  struct JSurface *hSrcVSurface;
   uint32_t uiDestPitchBYTES;
   uint32_t uiSrcPitchBYTES;
   uint16_t *pDestBuf;

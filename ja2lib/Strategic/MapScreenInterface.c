@@ -247,7 +247,7 @@ int32_t giContractHighLine = -1;
 int32_t giSleepHighLine = -1;
 
 // pop up box textures
-struct VSurface *vsPOPUPTEX;
+struct JSurface *vsPOPUPTEX;
 uint32_t guiPOPUPBORDERS;
 
 // the currently selected character arrow

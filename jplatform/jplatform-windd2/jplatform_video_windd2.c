@@ -7,6 +7,22 @@
 #include <ddraw.h>
 #include <windows.h>
 
+struct JSurface {
+  uint16_t height;            // Height of Video Surface
+  uint16_t width;             // Width of Video Surface
+  uint8_t bitDepth;           // 8 or 16
+  void *_platformData1;       // platform-specific data (Direct Draw One Interface)
+  void *_platformData2;       // platform-specific data (Direct Draw Two Interface)
+  void *_platformPalette;     // platform-specific data (LPDIRECTDRAWPALETTE)
+  const uint16_t *palette16;  // A 16BPP palette used for 8->16 blits
+  bool transparencySet;
+
+  // Raw pixels.  Available only when the surface is locked.
+  void *pixels;
+  // Size of single line of pixels in bytes.  Available only when the surface is locked.
+  uint32_t pitch;
+};
+
 struct JVideoState {
   uint16_t redMask;
   uint16_t greenMask;
@@ -98,7 +114,7 @@ void JVideo_UnpackRGB16(uint16_t rgb16, uint8_t *r, uint8_t *g, uint8_t *b) {
 //         rotation.
 //     Use case: When you need advanced blitting features.
 
-void JSurface_BlitRectToPoint(struct VSurface *src, struct VSurface *dst,
+void JSurface_BlitRectToPoint(struct JSurface *src, struct JSurface *dst,
                               struct JRect const *srcBox, int32_t destX, int32_t destY) {
   // using IDirectDrawSurface2_BltFast since scaling is not necessary
 
@@ -120,7 +136,7 @@ void JSurface_BlitRectToPoint(struct VSurface *src, struct VSurface *dst,
   } while (ReturnCode != DD_OK);
 }
 
-void JSurface_BlitRectToRect(struct VSurface *src, struct VSurface *dst, struct JRect const *srcBox,
+void JSurface_BlitRectToRect(struct JSurface *src, struct JSurface *dst, struct JRect const *srcBox,
                              struct JRect const *destBox) {
   if (destBox->w <= 0 || destBox->h <= 0 || srcBox->w <= 0 || srcBox->h <= 0) {
     return;
@@ -204,8 +220,8 @@ static bool getRGBDistribution() {
   return TRUE;
 }
 
-static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
-  struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
+static struct JSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
+  struct JSurface *vs = (struct JSurface *)MemAllocZero(sizeof(struct JSurface));
   if (vs == NULL) {
     return NULL;
   }
@@ -348,7 +364,7 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
       return FALSE;
     }
 
-    vsBackBuffer = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
+    vsBackBuffer = (struct JSurface *)MemAllocZero(sizeof(struct JSurface));
     if (vsBackBuffer == NULL) {
       return FALSE;
     }
@@ -373,7 +389,7 @@ void JVideo_Shutdown() {
   IDirectDraw2_Release(s_state.gpDirectDrawObject);
 }
 
-struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) {
+struct JSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) {
   DDPIXELFORMAT PixelFormat;
   memset(&PixelFormat, 0, sizeof(PixelFormat));
   PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
@@ -393,7 +409,7 @@ struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) {
   return CreateVSurfaceInternal(&SurfaceDescription);
 }
 
-struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
+struct JSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
   DDPIXELFORMAT PixelFormat;
   memset(&PixelFormat, 0, sizeof(PixelFormat));
   PixelFormat.dwSize = sizeof(DDPIXELFORMAT);
@@ -421,7 +437,7 @@ struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
   return CreateVSurfaceInternal(&SurfaceDescription);
 }
 
-void JSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
+void JSurface_SetPalette32(struct JSurface *vs, struct JPaletteEntry *pal) {
   if (vs->_platformPalette == NULL) {
     IDirectDraw2_CreatePalette(s_state.gpDirectDrawObject, (DDPCAPS_8BIT | DDPCAPS_ALLOW256),
                                (LPPALETTEENTRY)(&pal[0]),
@@ -468,12 +484,12 @@ bool tmp_Set8BPPPalette(struct JPaletteEntry *pPalette) {
   return (TRUE);
 }
 
-bool JSurface_Restore(struct VSurface *vs) {
+bool JSurface_Restore(struct JSurface *vs) {
   HRESULT ReturnCode = IDirectDrawSurface2_Restore((LPDIRECTDRAWSURFACE2)vs->_platformData2);
   return ReturnCode == DD_OK;
 }
 
-bool JSurface_Flip(struct VSurface *vs) {
+bool JSurface_Flip(struct JSurface *vs) {
   HRESULT ReturnCode;
   do {
     ReturnCode =
@@ -488,7 +504,7 @@ bool JSurface_Flip(struct VSurface *vs) {
   return true;
 }
 
-void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color) {
+void JSurface_FillRect(struct JSurface *vs, struct JRect *rect, uint16_t color) {
   RECT r = {
       .left = rect->x,
       .top = rect->y,
@@ -506,7 +522,7 @@ void JSurface_FillRect(struct VSurface *vs, struct JRect *rect, uint16_t color) 
   } while (ReturnCode == DDERR_WASSTILLDRAWING);
 }
 
-bool JSurface_Lock(struct VSurface *s) {
+bool JSurface_Lock(struct JSurface *s) {
   if (s == NULL) {
     return false;
   }
@@ -530,7 +546,7 @@ bool JSurface_Lock(struct VSurface *s) {
   return true;
 }
 
-void JSurface_Unlock(struct VSurface *s) {
+void JSurface_Unlock(struct JSurface *s) {
   if (s == NULL) {
     return;
   }
@@ -539,10 +555,10 @@ void JSurface_Unlock(struct VSurface *s) {
   s->pixels = NULL;
 }
 
-int JSurface_Pitch(struct VSurface *s) { return s->pitch; }
-void *JSurface_GetPixels(struct VSurface *s) { return s->pixels; }
+int JSurface_Pitch(struct JSurface *s) { return s->pitch; }
+void *JSurface_GetPixels(struct JSurface *s) { return s->pixels; }
 
-void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {
+void JSurface_SetColorKey(struct JSurface *s, uint32_t key) {
   s->transparencySet = true;
 
   DDCOLORKEY ColorKey;
@@ -562,7 +578,7 @@ void JSurface_SetColorKey(struct VSurface *s, uint32_t key) {
                                   &ColorKey);
 }
 
-bool JSurface_GetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
+bool JSurface_GetPalette32(struct JSurface *vs, struct JPaletteEntry *pal) {
   if (vs->_platformPalette == NULL) {
     LPDIRECTDRAWPALETTE pDDPalette;
     HRESULT ReturnCode =
@@ -580,7 +596,7 @@ bool JSurface_GetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
   return true;
 }
 
-void JSurface_Free(struct VSurface *s) {
+void JSurface_Free(struct JSurface *s) {
   if (s == NULL) {
     return;
   }
@@ -607,13 +623,13 @@ void JSurface_Free(struct VSurface *s) {
   free(s);
 }
 
-uint8_t JSurface_BPP(struct VSurface *s) { return s->bitDepth; }
-uint16_t JSurface_Width(struct VSurface *s) { return s->width; }
-uint16_t JSurface_Height(struct VSurface *s) { return s->height; }
+uint8_t JSurface_BPP(struct JSurface *s) { return s->bitDepth; }
+uint16_t JSurface_Width(struct JSurface *s) { return s->width; }
+uint16_t JSurface_Height(struct JSurface *s) { return s->height; }
 
-const uint16_t *JSurface_GetPalette16(struct VSurface *s) { return s->palette16; }
+const uint16_t *JSurface_GetPalette16(struct JSurface *s) { return s->palette16; }
 
-void JSurface_SetPalette16(struct VSurface *s, const uint16_t *palette16) {
+void JSurface_SetPalette16(struct JSurface *s, const uint16_t *palette16) {
   if (s->palette16 != NULL) {
     free((void *)s->palette16);
     s->palette16 = NULL;

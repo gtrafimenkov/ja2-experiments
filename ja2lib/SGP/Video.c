@@ -37,12 +37,12 @@ typedef struct {
   uint16_t usMouseXPos, usMouseYPos;
   uint16_t usLeft, usTop, usRight, usBottom;
   struct Rect Region;
-  struct VSurface *vs;
+  struct JSurface *vs;
 } MouseCursorBackground;
 
 static MouseCursorBackground gMouseCursorBackground[2];
 
-static void _blitFast(struct VSurface *dest, struct VSurface *src, uint32_t destX, uint32_t destY,
+static void _blitFast(struct JSurface *dest, struct JSurface *src, uint32_t destX, uint32_t destY,
                       struct Rect *srcRect) {
   struct JRect srcBox = r2jr(srcRect);
   JSurface_BlitRectToPoint(src, dest, &srcBox, destX, destY);
@@ -772,7 +772,7 @@ void RefreshScreen(void *DummyVariable) {
 
     // Create temporary system memory surface. This is used to correct problems with the backbuffer
     // surface which can be interlaced or have a funky pitch
-    struct VSurface *vsTmp = JSurface_Create16bpp(SCREEN_WIDTH, SCREEN_HEIGHT);
+    struct JSurface *vsTmp = JSurface_Create16bpp(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     // Copy the primary surface to the temporary surface
     Region.left = 0;

@@ -197,7 +197,7 @@ static BOOLEAN BltVideoObjectToBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYT
                                       struct VObject *vsSrc, uint16_t usIndex, int32_t iDestX,
                                       int32_t iDestY);
 
-BOOLEAN BltVObjectFromIndex(struct VSurface *dest, uint32_t uiSrcVObject, uint16_t usRegionIndex,
+BOOLEAN BltVObjectFromIndex(struct JSurface *dest, uint32_t uiSrcVObject, uint16_t usRegionIndex,
                             int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
@@ -270,7 +270,7 @@ BOOLEAN DeleteVideoObjectFromIndex(uint32_t uiVObject) {
   return FALSE;
 }
 
-BOOLEAN BltVideoObject(struct VSurface *dest, struct VObject *voSrc, uint16_t usRegionIndex,
+BOOLEAN BltVideoObject(struct JSurface *dest, struct VObject *voSrc, uint16_t usRegionIndex,
                        int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;
@@ -904,7 +904,7 @@ BOOLEAN ConvertVObjectRegionTo16BPP(struct VObject *hVObject, uint16_t usRegionI
   return (TRUE);
 }
 
-BOOLEAN BltVideoObjectOutlineFromIndex(struct VSurface *dest, uint32_t uiSrcVObject,
+BOOLEAN BltVideoObjectOutlineFromIndex(struct JSurface *dest, uint32_t uiSrcVObject,
                                        uint16_t usIndex, int32_t iDestX, int32_t iDestY,
                                        int16_t s16BPPColor, BOOLEAN fDoOutline) {
   uint16_t *pBuffer;
@@ -938,7 +938,7 @@ BOOLEAN BltVideoObjectOutlineFromIndex(struct VSurface *dest, uint32_t uiSrcVObj
   return (TRUE);
 }
 
-BOOLEAN BltVideoObjectOutline(struct VSurface *dest, struct VObject *hSrcVObject, uint16_t usIndex,
+BOOLEAN BltVideoObjectOutline(struct JSurface *dest, struct VObject *hSrcVObject, uint16_t usIndex,
                               int32_t iDestX, int32_t iDestY, int16_t s16BPPColor,
                               BOOLEAN fDoOutline) {
   uint16_t *pBuffer;
@@ -964,7 +964,7 @@ BOOLEAN BltVideoObjectOutline(struct VSurface *dest, struct VObject *hSrcVObject
   return (TRUE);
 }
 
-BOOLEAN BltVideoObjectOutlineShadowFromIndex(struct VSurface *dest, uint32_t uiSrcVObject,
+BOOLEAN BltVideoObjectOutlineShadowFromIndex(struct JSurface *dest, uint32_t uiSrcVObject,
                                              uint16_t usIndex, int32_t iDestX, int32_t iDestY) {
   uint16_t *pBuffer;
   uint32_t uiPitch;

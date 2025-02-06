@@ -80,7 +80,7 @@ void DebugRenderHook();
 BOOLEAN DebugKeyboardHook(InputAtom *pInputEvent);
 int8_t gCurDebugPage = 0;
 
-struct VSurface *hVAnims[7];
+struct JSurface *hVAnims[7];
 int8_t bTitleAnimFrame = 0;
 uint32_t uiTitleAnimTime = 0;
 uint32_t uiDoTitleAnimTime = 0;
@@ -258,7 +258,7 @@ uint32_t ErrorScreenShutdown(void) { return (TRUE); }
 uint32_t InitScreenInitialize(void) { return (TRUE); }
 
 uint32_t InitScreenHandle(void) {
-  static struct VSurface *hVSurface;
+  static struct JSurface *hVSurface;
   static uint8_t ubCurrentScreen = 255;
 
   if (ubCurrentScreen == 255) {

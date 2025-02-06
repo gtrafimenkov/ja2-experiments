@@ -833,13 +833,13 @@ void ExecuteVideoOverlays() {
   }
 }
 
-void ExecuteVideoOverlaysToAlternateBuffer(struct VSurface *dest) {
+void ExecuteVideoOverlaysToAlternateBuffer(struct JSurface *dest) {
   uint32_t uiCount;
 
   for (uiCount = 0; uiCount < guiNumVideoOverlays; uiCount++) {
     if (gVideoOverlays[uiCount].fAllocated && !gVideoOverlays[uiCount].fDisabled) {
       if (gVideoOverlays[uiCount].fActivelySaving) {
-        struct VSurface *old = gVideoOverlays[uiCount].vsDestBuff;
+        struct JSurface *old = gVideoOverlays[uiCount].vsDestBuff;
 
         gVideoOverlays[uiCount].vsDestBuff = dest;
 
@@ -900,7 +900,7 @@ void AllocateVideoOverlayArea(uint32_t uiCount) {
   }
 }
 
-void SaveVideoOverlaysArea(struct VSurface *src) {
+void SaveVideoOverlaysArea(struct JSurface *src) {
   if (src == NULL) {
     return;
   }
@@ -1062,7 +1062,7 @@ void BlitMFont(VIDEO_OVERLAY *pBlitter) {
   JSurface_Unlock(pBlitter->vsDestBuff);
 }
 
-BOOLEAN BlitBufferToBuffer(struct VSurface *src, struct VSurface *dest, uint16_t usSrcX,
+BOOLEAN BlitBufferToBuffer(struct JSurface *src, struct JSurface *dest, uint16_t usSrcX,
                            uint16_t usSrcY, uint16_t usWidth, uint16_t usHeight) {
   uint32_t uiDestPitchBYTES, uiSrcPitchBYTES;
   uint8_t *pDestBuf, *pSrcBuf;

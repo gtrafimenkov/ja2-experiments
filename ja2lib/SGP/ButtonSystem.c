@@ -109,7 +109,7 @@ BOOLEAN gfRenderHilights = TRUE;
 BUTTON_PICS ButtonPictures[MAX_BUTTON_PICS];
 int32_t ButtonPicsLoaded;
 
-struct VSurface *vsButtonDest;
+struct JSurface *vsButtonDest;
 uint32_t ButtonDestPitch = 640 * 2;
 uint32_t ButtonDestBPP = 16;
 

@@ -241,7 +241,7 @@ enum {
 // the wait time for closing of laptop animation/delay
 #define EXIT_LAPTOP_DELAY_TIME 100
 
-static struct VSurface *vsTitleBarSurface;
+static struct JSurface *vsTitleBarSurface;
 BOOLEAN gfTitleBarSurfaceAlreadyActive = FALSE;
 
 #define LAPTOP__NEW_FILE_ICON_X 83
@@ -354,7 +354,7 @@ uint32_t guiDOWNLOADBOT;
 uint32_t guiTITLEBARLAPTOP;
 uint32_t guiLIGHTS;
 uint32_t guiTITLEBARICONS;
-static struct VSurface *vsDESKTOP;
+static struct JSurface *vsDESKTOP;
 
 // email notification
 uint32_t guiUNREAD;

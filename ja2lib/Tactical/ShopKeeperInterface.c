@@ -274,7 +274,7 @@ SKIRGBCOLOR SkiGlowColorsA[] = {
 uint32_t guiMainTradeScreenImage;
 
 // This image is for where the corner of tactical is still seen through the shop keeper interface
-static struct VSurface *vsCornerWhereTacticalIsStillSeenImage;
+static struct JSurface *vsCornerWhereTacticalIsStillSeenImage;
 
 // ATM:
 // uint32_t		guiSkiAtmImage;
@@ -2745,7 +2745,7 @@ BOOLEAN RepairIsDone(uint16_t usItemIndex, uint8_t ubElement) {
   return (TRUE);
 }
 
-void DrawHatchOnInventory(struct VSurface *vs, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
+void DrawHatchOnInventory(struct JSurface *vs, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
                           uint16_t usHeight) {
   uint8_t *pDestBuf;
   uint32_t uiDestPitchBYTES;

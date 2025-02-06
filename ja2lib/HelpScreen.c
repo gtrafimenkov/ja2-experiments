@@ -339,7 +339,7 @@ BOOLEAN gfHelpScreenEntry = TRUE;
 BOOLEAN gfHelpScreenExit = FALSE;
 
 uint32_t guiHelpScreenBackGround;
-struct VSurface *vsHelpScreenTextBufferSurface;
+struct JSurface *vsHelpScreenTextBufferSurface;
 
 BOOLEAN gfScrollBoxIsScrolling = FALSE;
 

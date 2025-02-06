@@ -28,21 +28,21 @@ BOOLEAN RemoveMercPopupBox();
 BOOLEAN RemoveMercPopupBoxFromIndex(uint32_t uiId);
 
 // render the current pop up box
-BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, struct VSurface *dest);
+BOOLEAN RenderMercPopupBox(int16_t sDestX, int16_t sDestY, struct JSurface *dest);
 
 // render pop up box with this index value
 BOOLEAN RenderMercPopUpBoxFromIndex(int32_t iBoxId, int16_t sDestX, int16_t sDestY,
-                                    struct VSurface *dest);
+                                    struct JSurface *dest);
 
 void RemoveTextMercPopupImages();
 
 typedef struct {
-  struct VSurface *sourceBuffer;  // uiSourceBufferIndex;
+  struct JSurface *sourceBuffer;  // uiSourceBufferIndex;
   uint16_t sWidth;
   uint16_t sHeight;
   uint8_t ubBackgroundIndex;
   uint8_t ubBorderIndex;
-  struct VSurface *vsMercTextPopUpBackground;
+  struct JSurface *vsMercTextPopUpBackground;
   uint32_t uiMercTextPopUpBorder;
   BOOLEAN fMercTextPopupInitialized;
   BOOLEAN fMercTextPopupSurfaceInitialized;

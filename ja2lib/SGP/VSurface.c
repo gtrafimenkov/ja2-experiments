@@ -18,11 +18,11 @@
 #include "jplatform_video.h"
 #include "platform_strings.h"
 
-struct VSurface *vsPrimary = NULL;
-struct VSurface *vsBackBuffer = NULL;
-struct VSurface *vsFB = NULL;
-struct VSurface *vsMouseBuffer = NULL;
-struct VSurface *vsMouseBufferOriginal = NULL;
+struct JSurface *vsPrimary = NULL;
+struct JSurface *vsBackBuffer = NULL;
+struct JSurface *vsFB = NULL;
+struct JSurface *vsMouseBuffer = NULL;
+struct JSurface *vsMouseBufferOriginal = NULL;
 
 struct JRect r2jr(const struct Rect *r) {
   struct JRect box = {.x = r->left, .y = r->top, .w = r->right - r->left, .h = r->bottom - r->top};
@@ -36,7 +36,7 @@ struct JRect sgpr2jr(const SGPRect *r) {
 }
 
 // Given an HIMAGE object, blit imagery into existing Video Surface. Can be from 8->16 BPP
-BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage, uint16_t usX,
+BOOLEAN SetVideoSurfaceDataFromHImage(struct JSurface *hVSurface, HIMAGE hImage, uint16_t usX,
                                       uint16_t usY, SGPRect *pSrcRect) {
   uint8_t *pDest;
   uint32_t fBufferBPP = 0;
@@ -101,7 +101,7 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   if (!CopyImageToBuffer(hImage, fBufferBPP, pDest, usEffectiveWidth, JSurface_Height(hVSurface),
                          usX, usY, &aRect)) {
     DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_2,
-               String("Error Occured Copying HIMAGE to struct VSurface*"));
+               String("Error Occured Copying HIMAGE to struct JSurface*"));
     JSurface_Unlock(hVSurface);
     return (FALSE);
   }
@@ -112,7 +112,7 @@ BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage,
   return (TRUE);
 }
 
-static BOOLEAN InternalShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1, int32_t Y1,
+static BOOLEAN InternalShadowVideoSurfaceRect(struct JSurface *dest, int32_t X1, int32_t Y1,
                                               int32_t X2, int32_t Y2,
                                               BOOLEAN fLowPercentShadeTable) {
   if (dest == NULL) {
@@ -173,12 +173,12 @@ static BOOLEAN InternalShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1,
   return (TRUE);
 }
 
-BOOLEAN ShadowVideoSurfaceRect(struct VSurface *dest, int32_t X1, int32_t Y1, int32_t X2,
+BOOLEAN ShadowVideoSurfaceRect(struct JSurface *dest, int32_t X1, int32_t Y1, int32_t X2,
                                int32_t Y2) {
   return (InternalShadowVideoSurfaceRect(dest, X1, Y1, X2, Y2, FALSE));
 }
 
-BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_t X1, int32_t Y1,
+BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct JSurface *dest, int32_t X1, int32_t Y1,
                                                    int32_t X2, int32_t Y2) {
   return (InternalShadowVideoSurfaceRect(dest, X1, Y1, X2, Y2, TRUE));
 }
@@ -186,7 +186,7 @@ BOOLEAN ShadowVideoSurfaceRectUsingLowPercentTable(struct VSurface *dest, int32_
 //
 // This function will stretch the source image to the size of the dest rect.
 // If the 2 images are not 16 Bpp, it returns false.
-BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect *SrcRect,
+BOOLEAN BltStretchVSurface(struct JSurface *dest, struct JSurface *src, SGPRect *SrcRect,
                            SGPRect *DestRect) {
   if ((JSurface_BPP(dest) != 16) && (JSurface_BPP(src) != 16)) {
     return FALSE;
@@ -197,7 +197,7 @@ BOOLEAN BltStretchVSurface(struct VSurface *dest, struct VSurface *src, SGPRect 
   return TRUE;
 }
 
-BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHandle, int32_t iPosX,
+BOOLEAN ShadowVideoSurfaceImage(struct JSurface *dest, struct VObject *hImageHandle, int32_t iPosX,
                                 int32_t iPosY) {
   // Horizontal shadow
   ShadowVideoSurfaceRect(dest, iPosX + 3, iPosY + hImageHandle->pETRLEObject->usHeight,
@@ -212,7 +212,7 @@ BOOLEAN ShadowVideoSurfaceImage(struct VSurface *dest, struct VObject *hImageHan
 }
 
 // Fills an rectangular area with a specified image value.
-BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
+BOOLEAN ImageFillVideoSurfaceArea(struct JSurface *dest, int32_t iDestX1, int32_t iDestY1,
                                   int32_t iDestX2, int32_t iDestY2, struct VObject *BkgrndImg,
                                   uint16_t Index, int16_t Ox, int16_t Oy) {
   int16_t xc, yc, hblits, wblits, aw, pw, ah, ph, w, h, xo, yo;
@@ -301,7 +301,7 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
 
 // Update srcRect and destX, destY so that the resulting target
 // rectangle is inside of dest bounds.
-static BOOLEAN clipToDestBounds(struct VSurface *dest, struct VSurface *src, int32_t *destX,
+static BOOLEAN clipToDestBounds(struct JSurface *dest, struct JSurface *src, int32_t *destX,
                                 int32_t *destY, struct Rect *srcRect) {
   Assert(dest != NULL);
   Assert(src != NULL);
@@ -342,7 +342,7 @@ static BOOLEAN clipToDestBounds(struct VSurface *dest, struct VSurface *src, int
   return true;
 }
 
-static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct VSurface *dest, struct VSurface *src,
+static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct JSurface *dest, struct JSurface *src,
                                                         int32_t destX, int32_t destY,
                                                         struct Rect *srcRect) {
   if (JSurface_BPP(dest) == 8 && JSurface_BPP(src) == 8) {
@@ -370,7 +370,7 @@ static BOOLEAN BltVSurfaceToVSurfaceSubrectInternal_8_8(struct VSurface *dest, s
   return FALSE;
 }
 
-static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VSurface *src,
+static BOOLEAN ClipReleatedSrcAndDestRectangles(struct JSurface *dest, struct JSurface *src,
                                                 struct Rect *DestRect, struct Rect *SrcRect) {
   Assert(dest != NULL);
   Assert(src != NULL);
@@ -437,7 +437,7 @@ static BOOLEAN ClipReleatedSrcAndDestRectangles(struct VSurface *dest, struct VS
   return (TRUE);
 }
 
-BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int32_t iDestX,
+BOOLEAN BltVSurfaceRectToPoint(struct JSurface *dest, struct JSurface *src, int32_t iDestX,
                                int32_t iDestY, struct Rect *SrcRect) {
   // Setup dest rectangle
   struct Rect DestRect;
@@ -459,7 +459,7 @@ BOOLEAN BltVSurfaceRectToPoint(struct VSurface *dest, struct VSurface *src, int3
   return (TRUE);
 }
 
-BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src, int32_t destX,
+BOOLEAN BltVSurfaceToVSurfaceSubrect(struct JSurface *dest, struct JSurface *src, int32_t destX,
                                      int32_t destY, struct Rect *srcRect) {
   if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     if (clipToDestBounds(dest, src, &destX, &destY, srcRect)) {
@@ -471,7 +471,7 @@ BOOLEAN BltVSurfaceToVSurfaceSubrect(struct VSurface *dest, struct VSurface *src
   return FALSE;
 }
 
-BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, int32_t destX,
+BOOLEAN BltVSurfaceToVSurfaceFast(struct JSurface *dest, struct JSurface *src, int32_t destX,
                                   int32_t destY) {
   if (JSurface_BPP(dest) == 16 && JSurface_BPP(src) == 16) {
     CHECKF(destX >= 0);
@@ -487,7 +487,7 @@ BOOLEAN BltVSurfaceToVSurfaceFast(struct VSurface *dest, struct VSurface *src, i
   return FALSE;
 }
 
-BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32_t destX,
+BOOLEAN BltVSurfaceToVSurface(struct JSurface *dest, struct JSurface *src, int32_t destX,
                               int32_t destY) {
   struct Rect SrcRect = {
       .top = 0, .left = 0, .bottom = JSurface_Height(src), .right = JSurface_Width(src)};
@@ -499,7 +499,7 @@ BOOLEAN BltVSurfaceToVSurface(struct VSurface *dest, struct VSurface *src, int32
   return FALSE;
 }
 
-void VSurfaceErase(struct VSurface *vs) {
+void VSurfaceErase(struct JSurface *vs) {
   uint32_t uiPitch;
   void *pTmpPointer = LockVSurface(vs, &uiPitch);
   if (pTmpPointer) {
@@ -531,7 +531,7 @@ BOOLEAN ShutdownVideoSurfaceManager() {
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iDestY1,
+BOOLEAN ColorFillVSurfaceArea(struct JSurface *dest, int32_t iDestX1, int32_t iDestY1,
                               int32_t iDestX2, int32_t iDestY2, uint16_t Color16BPP) {
   SGPRect Clip;
   GetClippingRect(&Clip);
@@ -565,7 +565,7 @@ BOOLEAN ColorFillVSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_t iD
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
+struct JSurface *CreateVSurfaceFromFile(const char *filepath) {
   HIMAGE hImage = CreateImage(filepath, IMAGE_ALLIMAGEDATA);
 
   if (hImage == NULL) {
@@ -576,7 +576,7 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   Assert(hImage->usHeight > 0);
   Assert(hImage->usWidth > 0);
 
-  struct VSurface *vs = NULL;
+  struct JSurface *vs = NULL;
   switch (hImage->ubBitDepth) {
     case 8:
       vs = JSurface_Create8bpp(hImage->usWidth, hImage->usHeight);
@@ -610,7 +610,7 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   return vs;
 }
 
-uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
+uint8_t *LockVSurface(struct JSurface *vs, uint32_t *pPitch) {
   if (!JSurface_Lock(vs)) {
     return NULL;
   }

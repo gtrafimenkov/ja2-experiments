@@ -24,7 +24,7 @@ uint32_t guiSplashStartTime = 0;
 void InitJA2SplashScreen() {
 #if defined(JA2TESTVERSION)
   if (!UsingEnglishResources()) {
-    struct VSurface* hVSurface = CreateVSurfaceFromFile("LOADSCREENS\\Notification.sti");
+    struct JSurface* hVSurface = CreateVSurfaceFromFile("LOADSCREENS\\Notification.sti");
     if (hVSurface == NULL) {
       AssertMsg(0, String("Failed to load %s", "LOADSCREENS\\Notification.sti"));
       return;
@@ -53,7 +53,7 @@ void InitJA2SplashScreen() {
   } else {
     SGPFILENAME ImageFile;
     GetMLGFilename(ImageFile, MLG_SPLASH);
-    struct VSurface* hVSurface = CreateVSurfaceFromFile(ImageFile);
+    struct JSurface* hVSurface = CreateVSurfaceFromFile(ImageFile);
     if (hVSurface == NULL) {
       AssertMsg(0, String("Failed to load %s", ImageFile));
       return;

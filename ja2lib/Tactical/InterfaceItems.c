@@ -1080,7 +1080,7 @@ void INVRenderINVPanelItem(struct SOLDIERTYPE *pSoldier, int16_t sPocket, uint8_
   }
 
   if (fHatchItOut) {
-    struct VSurface *buffer = (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? vsSaveBuffer : vsFB;
+    struct JSurface *buffer = (guiCurrentItemDescriptionScreen == MAP_SCREEN) ? vsSaveBuffer : vsFB;
     DrawHatchOnInventory(buffer, sX, sY, (uint16_t)(gSMInvData[sPocket].sWidth - 1),
                          (uint16_t)(gSMInvData[sPocket].sHeight - 1));
   }
@@ -1669,7 +1669,7 @@ void InitItemInterface() {
   }
 }
 
-void INVRenderItem(struct VSurface *buffer, struct SOLDIERTYPE *pSoldier,
+void INVRenderItem(struct JSurface *buffer, struct SOLDIERTYPE *pSoldier,
                    struct OBJECTTYPE *pObject, int16_t sX, int16_t sY, int16_t sWidth,
                    int16_t sHeight, uint8_t fDirtyLevel, uint8_t *pubHighlightCounter,
                    uint8_t ubStatusIndex, BOOLEAN fOutline, int16_t sOutlineColor) {

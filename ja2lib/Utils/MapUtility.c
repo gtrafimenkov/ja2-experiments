@@ -35,8 +35,8 @@
 #define WINDOW_SIZE 2
 
 float gdXStep, gdYStep;
-static struct VSurface *vsMiniMap;
-static struct VSurface *vs8BitMiniMap;
+static struct JSurface *vsMiniMap;
+static struct JSurface *vs8BitMiniMap;
 
 extern BOOLEAN gfOverheadMapDirty;
 

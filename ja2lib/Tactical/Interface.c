@@ -87,7 +87,7 @@ uint8_t gubProgNumEnemies = 0;
 uint8_t gubProgCurEnemy = 0;
 
 typedef struct {
-  struct VSurface *dest;
+  struct JSurface *dest;
   int8_t bCurrentMessage;
   uint32_t uiTimeOfLastUpdate;
   uint32_t uiTimeSinceLastBeep;
@@ -102,7 +102,7 @@ typedef struct {
 static TOP_MESSAGE gTopMessage;
 BOOLEAN gfTopMessageDirty = FALSE;
 
-void CreateTopMessage(struct VSurface *dest, uint8_t ubType, wchar_t *psString);
+void CreateTopMessage(struct JSurface *dest, uint8_t ubType, wchar_t *psString);
 extern uint16_t GetAnimStateForInteraction(struct SOLDIERTYPE *pSoldier, BOOLEAN fDoor,
                                            uint16_t usAnimState);
 
@@ -195,7 +195,7 @@ enum {
 int32_t iActionIcons[NUM_ICONS];
 
 // GLOBAL INTERFACE SURFACES
-struct VSurface *vsINTEXT;
+struct JSurface *vsINTEXT;
 uint32_t guiCLOSE;
 uint32_t guiDEAD;
 uint32_t guiHATCH;
@@ -2407,7 +2407,7 @@ BOOLEAN AddTopMessage(uint8_t ubType, wchar_t *pzString) {
   return (FALSE);
 }
 
-void CreateTopMessage(struct VSurface *dest, uint8_t ubType, wchar_t *psString) {
+void CreateTopMessage(struct JSurface *dest, uint8_t ubType, wchar_t *psString) {
   uint32_t uiBAR, uiPLAYERBAR, uiINTBAR;
   int16_t sX, sY;
   int32_t cnt2;

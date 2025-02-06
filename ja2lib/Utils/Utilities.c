@@ -58,7 +58,7 @@ BOOLEAN CreateSGPPaletteFromCOLFile(struct JPaletteEntry* pPalette, SGPFILENAME 
 }
 
 BOOLEAN DisplayPaletteRep(PaletteRepID aPalRep, uint8_t ubXPos, uint8_t ubYPos,
-                          struct VSurface* dest) {
+                          struct JSurface* dest) {
   uint16_t us16BPPColor;
   uint32_t cnt1;
   uint8_t ubSize;

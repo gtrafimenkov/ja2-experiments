@@ -5851,7 +5851,7 @@ void HandleMapInventoryCursor() {
 }
 
 // will place down the upper left hand corner attribute strings
-static void RenderAttributeStringsForUpperLeftHandCorner(struct VSurface *vsBufferToRenderTo) {
+static void RenderAttributeStringsForUpperLeftHandCorner(struct JSurface *vsBufferToRenderTo) {
   int32_t iCounter = 0;
   struct SOLDIERTYPE *pSoldier = NULL;
 

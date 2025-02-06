@@ -248,7 +248,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -270,7 +270,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -764,7 +764,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -786,7 +786,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -795,16 +795,16 @@ RSLoop1:
 		or		al, al
 		jnz		RSLoop1
 
-         // check for incrementing of z level
+        // check for incrementing of z level
 		dec		usZLinesToGo
 		jnz		RSLoop2
 
-             //		mov		ax, usZLevel
-             //		add		ax, Z_SUBLEVELS
-             //		mov		usZLevel, ax
+            //		mov		ax, usZLevel
+            //		add		ax, Z_SUBLEVELS
+            //		mov		usZLevel, ax
 
-             //		mov		ax, WORLD_TILE_Y
-             //		mov		usZLinesToGo, ax
+            //		mov		ax, WORLD_TILE_Y
+            //		mov		usZLinesToGo, ax
 
 RSLoop2:
 		dec		BlitHeight
@@ -1040,10 +1040,10 @@ BlitNTL1:
 		cmp		al, 1
 		jne		BlitNTL3
 
-         // write shadow pixel
+        // write shadow pixel
 		mov		ax, usShadow
 
-         // only write if not zero
+        // only write if not zero
 		cmp		ax, 0
 		je		BlitNTL2
 
@@ -1054,7 +1054,7 @@ BlitNTL3:
 		or		al, al
 		jz		BlitNTL4
 
-         // write foreground pixel
+        // write foreground pixel
 		mov		ax, usForeground
 		mov		[edi], ax
 		jmp		BlitNTL2
@@ -1072,7 +1072,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -1095,13 +1095,13 @@ BTrans1:
 		jmp		BlitDispatch
 
 BTrans2:
-    //		shl		ecx, 1
+        //		shl		ecx, 1
 		add   ecx, ecx
 		add		edi, ecx
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -1531,7 +1531,7 @@ BlitDispatch:
 
 BlitNTL4:
 
-    // TEST FOR Z FIRST!
+        // TEST FOR Z FIRST!
 		mov		ax, [ebx]
 		cmp		ax, usZValue
 		jae		BlitNTL8
@@ -1554,18 +1554,18 @@ BlitNTL6:
 
 BlitNTL7:
 
-    // Write normal z value
+        // Write normal z value
 		mov		ax, usZValue
 		mov		[ebx], ax
         // jmp   BlitNTL10
 
 BlitNTL9:
 
-    // Write no z
-    // mov		ax, 32767
-    // mov		[ebx], ax
+        // Write no z
+        // mov		ax, 32767
+        // mov		[ebx], ax
 
-    // BlitNTL10:
+        // BlitNTL10:
 
 		xor		eax, eax
 		mov		al, [esi]
@@ -1697,9 +1697,9 @@ BlitNTL7:
 		cmp		ax, usZValue
 		ja		BlitNTL5
 
-         // ATE: DONOT WRITE Z VALUE
-         // mov		ax, usZValue
-         // mov		[ebx], ax
+        // ATE: DONOT WRITE Z VALUE
+        // mov		ax, usZValue
+        // mov		[ebx], ax
 
 		xor		eax, eax
 		mov		al, [esi]
@@ -1950,8 +1950,8 @@ BlitNTL7:
 		cmp		ax, usZValue
 		ja		BlitNTL2
 
-         // mov		ax, usZValue
-         // mov		[ebx], ax
+        // mov		ax, usZValue
+        // mov		[ebx], ax
 
 		xor		eax, eax
 
@@ -1966,7 +1966,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -1988,7 +1988,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -2997,7 +2997,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -3019,7 +3019,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -3247,7 +3247,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -3268,7 +3268,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -3508,7 +3508,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -3530,7 +3530,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -3793,7 +3793,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -3815,7 +3815,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -4056,7 +4056,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -4078,7 +4078,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -4424,7 +4424,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -4446,7 +4446,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -4787,7 +4787,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -4809,7 +4809,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -5040,7 +5040,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -5062,7 +5062,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -5290,7 +5290,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -5312,7 +5312,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -5345,7 +5345,7 @@ BlitDone:
 
 **********************************************************************************************/
 BOOLEAN Blt8BPPDataSubTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                    struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
+                                    struct JSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                     uint32_t uiSrcPitch, int32_t iX, int32_t iY, SGPRect *pRect) {
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
@@ -5431,7 +5431,7 @@ BlitLoop:
 
 **********************************************************************************************/
 BOOLEAN Blt8BPPDataTo16BPPBuffer(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                 struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer, int32_t iX,
+                                 struct JSurface *hSrcVSurface, uint8_t *pSrcBuffer, int32_t iX,
                                  int32_t iY) {
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
@@ -5570,7 +5570,7 @@ exactly half the size.
 
 **********************************************************************************************/
 BOOLEAN Blt8BPPDataTo16BPPBufferHalf(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                     struct VSurface *hSrcVSurface, uint8_t *pSrcBuffer,
+                                     struct JSurface *hSrcVSurface, uint8_t *pSrcBuffer,
                                      uint32_t uiSrcPitch, int32_t iX, int32_t iY) {
   uint32_t usHeight, usWidth;
   uint8_t *SrcPtr, *DestPtr;
@@ -5631,7 +5631,7 @@ ReadMask:
 		dec		ecx
 		jnz		ReadMask
 
-                     // DoneRow:
+                    // DoneRow:
 
 		add		esi, uiSrcSkip  // move source pointer down one line
 		add		edi, LineSkip
@@ -5661,7 +5661,7 @@ exactly half the size, from a sub-region.
 
 **********************************************************************************************/
 BOOLEAN Blt8BPPDataTo16BPPBufferHalfRect(uint16_t *pBuffer, uint32_t uiDestPitchBYTES,
-                                         struct VSurface *hSrcVSurface,
+                                         struct JSurface *hSrcVSurface,
                                          const uint16_t *customPalette, uint8_t *pSrcBuffer,
                                          uint32_t uiSrcPitch, int32_t iX, int32_t iY,
                                          SGPRect *pRect) {
@@ -5729,7 +5729,7 @@ ReadMask:
 		dec		ecx
 		jnz		ReadMask
 
-                     // DoneRow:
+                    // DoneRow:
 
 		add		esi, uiSrcSkip  // move source pointer down one line
 		add		edi, LineSkip
@@ -6588,7 +6588,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -7198,7 +7198,7 @@ BlitTransparent:
 		jmp		BlitDispatch
 
 BTrans1:
-    //		shl		ecx, 1
+        //		shl		ecx, 1
 		add   ecx, ecx
 		add		edi, ecx
 		jmp		BlitDispatch
@@ -7644,8 +7644,8 @@ BlitNTL1:
 		cmp		al, 254
 		jne		BlitNTL3
 
-         //		DO OUTLINE
-         //		ONLY IF WE WANT IT!
+        //		DO OUTLINE
+        //		ONLY IF WE WANT IT!
 		mov		al, fDoOutline;
 		cmp		al,	1
 		jne		BlitNTL2
@@ -7664,7 +7664,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -7685,7 +7685,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -7908,7 +7908,7 @@ BlitNTL1:
 
 BlitNTL3:
 
-    // Write to z-buffer
+        // Write to z-buffer
 		mov		[ebx], ax
 
 		xor		eax, eax
@@ -7925,7 +7925,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -7947,7 +7947,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -8179,7 +8179,7 @@ BlitNTL7:
 
 BlitNTL9:
 
-    // CHECK FOR OUTLINE...
+        // CHECK FOR OUTLINE...
 		mov		al, [esi]
 		cmp		al, 254
 		jne		BlitNTL3
@@ -8196,7 +8196,7 @@ BlitNTL9:
 
 BlitNTL3:
 
-    // Write to z-buffer
+        // Write to z-buffer
 		mov		[ebx], ax
 
 		xor		eax, eax
@@ -8213,7 +8213,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -8235,7 +8235,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -8723,7 +8723,7 @@ BlitNTL4:
 
 BlitNTL6:
 
-    // Donot write to z-buffer
+        // Donot write to z-buffer
 		mov		[ebx], ax
 
 		xor		ah, ah
@@ -8864,7 +8864,7 @@ BlitNTL7:
 
 BlitNTL9:
 
-    // CHECK FOR OUTLINE, BLIT DIFFERENTLY IF WE WANT IT TO!
+        // CHECK FOR OUTLINE, BLIT DIFFERENTLY IF WE WANT IT TO!
 		mov		al, [esi]
 		cmp		al, 254
 		jne		BlitNTL12
@@ -9011,8 +9011,8 @@ BlitNTL4:
 
 BlitNTL6:
 
-    // Donot write to z-buffer
-    // mov		[ebx], ax
+        // Donot write to z-buffer
+        // mov		[ebx], ax
 
 		xor		ah, ah
 		mov		al, [esi]
@@ -9380,7 +9380,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -9402,7 +9402,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:
@@ -10155,7 +10155,7 @@ BNTrans1:
 
 BlitNTL1:
 
-    // OK, DO CHECK FOR Z FIRST!
+        // OK, DO CHECK FOR Z FIRST!
 		mov		ax, [ebx]
 		cmp		ax, usZValue
 		jae		BlitNTL8
@@ -10192,7 +10192,7 @@ BlitNTL2:
 		dec		cl
 		jnz		BlitNTL1
 
-         // BlitLineEnd:
+        // BlitLineEnd:
 		add		esi, Unblitted
 		jmp		BlitDispatch
 
@@ -10214,7 +10214,7 @@ BTrans1:
 		jmp		BlitDispatch
 
 
-RightSkipLoop:  // skip along until we hit and end-of-line marker
+RightSkipLoop:    // skip along until we hit and end-of-line marker
 
 
 RSLoop1:

@@ -376,14 +376,14 @@ uint32_t guiFace;
 uint32_t guiVideoConfPopup;
 uint32_t guiVideoConfTerminal;
 uint32_t guiPopUpBox;
-static struct VSurface *vsVideoFaceBackground;
+static struct JSurface *vsVideoFaceBackground;
 uint32_t guiBWSnow;
 uint32_t guiFuzzLine;
 uint32_t guiStraightLine;
 uint32_t guiTransSnow;
 uint32_t guiVideoContractCharge;
 // uint32_t		guiAnsweringMachineImage;
-static struct VSurface *vsVideoTitleBar;
+static struct JSurface *vsVideoTitleBar;
 int32_t iAimMembersBoxId = -1;
 
 uint8_t gbCurrentSoldier = 0;

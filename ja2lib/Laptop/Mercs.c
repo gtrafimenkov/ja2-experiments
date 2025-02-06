@@ -160,7 +160,7 @@ uint32_t guiFilesBox;
 uint32_t guiMercSymbol;
 uint32_t guiSpecPortrait;
 uint32_t guiMercBackGround;
-static struct VSurface *vsMercVideoFaceBackground;
+static struct JSurface *vsMercVideoFaceBackground;
 uint32_t guiMercVideoPopupBackground;
 
 uint8_t gubMercArray[NUMBER_OF_MERCS];

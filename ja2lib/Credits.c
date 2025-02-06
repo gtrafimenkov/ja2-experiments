@@ -51,7 +51,7 @@ typedef struct _CRDT_NODE {
 
   uint32_t uiLastTime;  // The last time the node was udated
 
-  struct VSurface *vsImage;
+  struct JSurface *vsImage;
 
   struct _CRDT_NODE *pPrev;
   struct _CRDT_NODE *pNext;

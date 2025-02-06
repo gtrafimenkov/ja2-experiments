@@ -77,7 +77,7 @@ uint32_t ShopKeeperScreenShutdown(void);
 
 void EnterShopKeeperInterfaceScreen(uint8_t ubArmsDealer);
 
-void DrawHatchOnInventory(struct VSurface *vs, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
+void DrawHatchOnInventory(struct JSurface *vs, uint16_t usPosX, uint16_t usPosY, uint16_t usWidth,
                           uint16_t usHeight);
 BOOLEAN ShouldSoldierDisplayHatchOnItem(uint8_t ubProfileID, int16_t sSlotNum);
 int8_t AddItemToPlayersOfferArea(uint8_t ubProfileID, INVENTORY_IN_SLOT *pInvSlot,
