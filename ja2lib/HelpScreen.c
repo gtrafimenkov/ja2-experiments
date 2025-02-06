@@ -1975,7 +1975,7 @@ int8_t HelpScreenDetermineWhichMapScreenHelpToShow() {
 BOOLEAN CreateHelpScreenTextBuffer() {
   // Create a background video surface to blt the face onto
   vsHelpScreenTextBufferSurface =
-      CreateVSurfaceBlank16(HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER);
+      JSurface_Create16bpp(HLP_SCRN__WIDTH_OF_TEXT_BUFFER, HLP_SCRN__HEIGHT_OF_TEXT_BUFFER);
   JSurface_SetColorKey(vsHelpScreenTextBufferSurface, FROMRGB(0, 0, 0));
 
   return (TRUE);

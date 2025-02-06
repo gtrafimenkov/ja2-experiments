@@ -363,7 +363,7 @@ int32_t PrepareMercPopupBox(int32_t iBoxId, uint8_t ubBackgroundIndex, uint8_t u
     return (-1);
   }
   // Create a background video surface to blt the face onto
-  pPopUpTextBox->sourceBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
+  pPopUpTextBox->sourceBuffer = JSurface_Create16bpp(usWidth, usHeight);
   pPopUpTextBox->fMercTextPopupSurfaceInitialized = TRUE;
 
   pPopUpTextBox->sWidth = usWidth;

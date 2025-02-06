@@ -769,7 +769,7 @@ BOOLEAN EnterShopKeeperInterface() {
             "Selected merc can't interact with shopkeeper.  Send save AM-1");
 
   // Create a video surface to blt corner of the tactical screen that still shines through
-  vsCornerWhereTacticalIsStillSeenImage = CreateVSurfaceBlank16(
+  vsCornerWhereTacticalIsStillSeenImage = JSurface_Create16bpp(
       SKI_TACTICAL_BACKGROUND_START_WIDTH, SKI_TACTICAL_BACKGROUND_START_HEIGHT);
   if (vsCornerWhereTacticalIsStillSeenImage == NULL) {
 #ifdef JA2BETAVERSION

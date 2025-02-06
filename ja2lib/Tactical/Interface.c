@@ -363,7 +363,7 @@ BOOLEAN InitializeTacticalInterface() {
     AssertMsg(0, "Missing INTERFACE\\communicationpopup_2.sti");
 
   // Alocate message surfaces
-  gTopMessage.dest = CreateVSurfaceBlank16(640, 20);
+  gTopMessage.dest = JSurface_Create16bpp(640, 20);
   if (gTopMessage.dest == NULL) {
     return FALSE;
   }

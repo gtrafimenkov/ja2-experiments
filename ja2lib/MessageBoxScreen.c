@@ -249,7 +249,7 @@ int32_t DoMessageBox(uint8_t ubStyle, wchar_t *zString, uint32_t uiExitScreen, u
   SetPendingNewScreen(MSG_BOX_SCREEN);
 
   // Init save buffer
-  gMsgBox.vsSaveBuffer = CreateVSurfaceBlank16(usTextBoxWidth, usTextBoxHeight);
+  gMsgBox.vsSaveBuffer = JSurface_Create16bpp(usTextBoxWidth, usTextBoxHeight);
   if (gMsgBox.vsSaveBuffer == NULL) {
     return -1;
   }

@@ -95,7 +95,7 @@ uint32_t MapUtilScreenHandle() {
 
     // Create render buffer
     GetCurrentVideoSettings(&usWidth, &usHeight);
-    vsMiniMap = CreateVSurfaceBlank16(88, 44);
+    vsMiniMap = JSurface_Create16bpp(88, 44);
     JSurface_SetColorKey(vsMiniMap, FROMRGB(0, 0, 0));
     if (vsMiniMap == NULL) {
       return (ERROR_SCREEN);
@@ -118,7 +118,7 @@ uint32_t MapUtilScreenHandle() {
     p24BitValues = (RGBValues *)MemAlloc(MINIMAP_X_SIZE * MINIMAP_Y_SIZE * sizeof(RGBValues));
     p24BitDest = (uint8_t *)p24BitValues;
 
-    vs8BitMiniMap = CreateVSurfaceBlank8(88, 44);
+    vs8BitMiniMap = JSurface_Create8bpp(88, 44);
     JSurface_SetColorKey(vs8BitMiniMap, FROMRGB(0, 0, 0));
     if (vs8BitMiniMap == NULL) {
       return (ERROR_SCREEN);

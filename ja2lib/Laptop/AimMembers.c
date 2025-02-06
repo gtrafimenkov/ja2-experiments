@@ -593,7 +593,7 @@ void EnterInitAimMembers() {
 BOOLEAN EnterAIMMembers() {
   // Create a background video surface to blt the face onto
   vsVideoFaceBackground =
-      CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_FACE_WIDTH, AIM_MEMBER_VIDEO_FACE_HEIGHT);
+      JSurface_Create16bpp(AIM_MEMBER_VIDEO_FACE_WIDTH, AIM_MEMBER_VIDEO_FACE_HEIGHT);
   if (vsVideoFaceBackground == NULL) {
     return FALSE;
   }
@@ -2878,8 +2878,8 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
                         &uiVideoBackgroundGraphic));
 
       // Create a background video surface to blt the face onto
-      vsVideoTitleBar = CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH,
-                                              AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT);
+      vsVideoTitleBar =
+          JSurface_Create16bpp(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT);
       if (vsVideoTitleBar == NULL) {
         return FALSE;
       }
@@ -3098,7 +3098,7 @@ BOOLEAN InitDeleteVideoConferencePopUp() {
 
     // Create a background video surface to blt the face onto
     vsVideoTitleBar =
-        CreateVSurfaceBlank16(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT);
+        JSurface_Create16bpp(AIM_MEMBER_VIDEO_TITLE_BAR_WIDTH, AIM_MEMBER_VIDEO_TITLE_BAR_HEIGHT);
     JSurface_SetColorKey(vsVideoTitleBar, FROMRGB(0, 0, 0));
     if (vsVideoTitleBar == NULL) {
       return FALSE;

@@ -380,7 +380,7 @@ BOOLEAN EnterMercs() {
   //
 
   // Create a background video surface to blt the face onto
-  vsMercVideoFaceBackground = CreateVSurfaceBlank16(MERC_VIDEO_FACE_WIDTH, MERC_VIDEO_FACE_HEIGHT);
+  vsMercVideoFaceBackground = JSurface_Create16bpp(MERC_VIDEO_FACE_WIDTH, MERC_VIDEO_FACE_HEIGHT);
   JSurface_SetColorKey(vsMercVideoFaceBackground, FROMRGB(0, 0, 0));
 
   RenderMercs();

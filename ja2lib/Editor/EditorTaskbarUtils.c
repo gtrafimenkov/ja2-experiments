@@ -186,12 +186,12 @@ void DeleteEditorImages() {
 
 void CreateEditorBuffers() {
   int32_t i;
-  vsMercTempBuffer = CreateVSurfaceBlank16(60, 25);
+  vsMercTempBuffer = JSurface_Create16bpp(60, 25);
   JSurface_SetColorKey(vsMercTempBuffer, FROMRGB(0, 0, 0));
 
   // create the nine buffers for the merc's inventory slots.
   for (i = 0; i < 9; i++) {
-    vsMercInvPanelBuffers[i] = CreateVSurfaceBlank16(
+    vsMercInvPanelBuffers[i] = JSurface_Create16bpp(
         MERCINV_SLOT_HEIGHT, i < 3 ? MERCINV_SMSLOT_WIDTH : MERCINV_LGSLOT_WIDTH);
     JSurface_SetColorKey(vsMercInvPanelBuffers[i], FROMRGB(0, 0, 0));
   }

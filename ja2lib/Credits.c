@@ -726,7 +726,7 @@ BOOLEAN AddCreditNode(uint32_t uiType, uint32_t uiFlags, wchar_t *pString) {
   if (pNodeToAdd->uiType == CRDT_NODE_DEFAULT) {
     // Create a background video surface to blt the face onto
     pNodeToAdd->vsImage =
-        CreateVSurfaceBlank16(CRDT_WIDTH_OF_TEXT_AREA, pNodeToAdd->sHeightOfString);
+        JSurface_Create16bpp(CRDT_WIDTH_OF_TEXT_AREA, pNodeToAdd->sHeightOfString);
 
     // Set transparency
     JSurface_SetColorKey(pNodeToAdd->vsImage, 0);

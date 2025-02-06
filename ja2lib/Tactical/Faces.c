@@ -488,7 +488,7 @@ static void InternalSetAutoFaceActive(struct VSurface *displayBuffer,
 
   if (restoreBuffer == NULL /*FACE_AUTO_RESTORE_BUFFER*/) {
     pFace->fAutoRestoreBuffer = TRUE;
-    pFace->autoRestoreBuffer = CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight);
+    pFace->autoRestoreBuffer = JSurface_Create16bpp(pFace->usFaceWidth, pFace->usFaceHeight);
     if (pFace->autoRestoreBuffer == NULL) {
       return;
     }
@@ -500,7 +500,7 @@ static void InternalSetAutoFaceActive(struct VSurface *displayBuffer,
 
   if (displayBuffer == NULL) {
     pFace->fAutoDisplayBuffer = TRUE;
-    pFace->autoDisplayBuffer = CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight);
+    pFace->autoDisplayBuffer = JSurface_Create16bpp(pFace->usFaceWidth, pFace->usFaceHeight);
     if (pFace->autoDisplayBuffer == NULL) {
       return;
     }

@@ -76,8 +76,6 @@ BOOLEAN ImageFillVideoSurfaceArea(struct VSurface *dest, int32_t iDestX1, int32_
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height);
-struct VSurface *CreateVSurfaceBlank16(uint16_t width, uint16_t height);
 struct VSurface *CreateVSurfaceFromFile(const char *filepath);
 
 // Returns a flat pointer for direct manipulation of data

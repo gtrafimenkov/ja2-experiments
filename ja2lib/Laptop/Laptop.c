@@ -3711,7 +3711,7 @@ BOOLEAN InitTitleBarMaximizeGraphics(uint32_t uiBackgroundGraphic, wchar_t *pTit
   Assert(uiBackgroundGraphic);
 
   // Create a background video surface to blt the title bar onto
-  vsTitleBarSurface = CreateVSurfaceBlank16(LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT);
+  vsTitleBarSurface = JSurface_Create16bpp(LAPTOP_TITLE_BAR_WIDTH, LAPTOP_TITLE_BAR_HEIGHT);
   JSurface_SetColorKey(vsTitleBarSurface, FROMRGB(0, 0, 0));
 
   // blit the toolbar grapgucs onto the surface

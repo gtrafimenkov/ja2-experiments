@@ -276,7 +276,7 @@ void InitEditorItemsInfo(uint32_t uiItemType) {
   eInfo.sHeight = 80;
   // Create item buffer
   //!!!Memory check.  Create the item buffer
-  eInfo.vsBuffer = CreateVSurfaceBlank16(eInfo.sWidth, eInfo.sHeight);
+  eInfo.vsBuffer = JSurface_Create16bpp(eInfo.sWidth, eInfo.sHeight);
   if (eInfo.vsBuffer == NULL) {
     eInfo.fKill = TRUE;
     eInfo.fActive = FALSE;

@@ -471,7 +471,7 @@ BOOLEAN InternalInitTalkingMenu(uint8_t ubCharacterNum, int16_t sX, int16_t sY) 
   // Build save buffer
   // Create a buffer for him to go!
   // OK, ignore screen widths, height, only use BPP
-  gTalkPanel.vsSaveBuffer = CreateVSurfaceBlank16(pFace->usFaceWidth, pFace->usFaceHeight);
+  gTalkPanel.vsSaveBuffer = JSurface_Create16bpp(pFace->usFaceWidth, pFace->usFaceHeight);
   if (gTalkPanel.vsSaveBuffer == NULL) {
     return FALSE;
   }

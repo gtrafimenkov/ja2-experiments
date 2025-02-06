@@ -35,14 +35,6 @@ struct JRect sgpr2jr(const SGPRect *r) {
   return box;
 }
 
-struct VSurface *CreateVSurfaceBlank8(uint16_t width, uint16_t height) {
-  return JSurface_Create8bpp(width, height);
-}
-
-struct VSurface *CreateVSurfaceBlank16(uint16_t width, uint16_t height) {
-  return JSurface_Create16bpp(width, height);
-}
-
 // Given an HIMAGE object, blit imagery into existing Video Surface. Can be from 8->16 BPP
 BOOLEAN SetVideoSurfaceDataFromHImage(struct VSurface *hVSurface, HIMAGE hImage, uint16_t usX,
                                       uint16_t usY, SGPRect *pSrcRect) {

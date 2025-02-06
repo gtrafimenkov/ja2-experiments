@@ -976,7 +976,7 @@ void BuildInterfaceBuffer() {
   DestRect.iRight = gpAR->sWidth;
   DestRect.iBottom = gpAR->sHeight;
 
-  gpAR->vsInterfaceBuffer = CreateVSurfaceBlank16(gpAR->sWidth, gpAR->sHeight);
+  gpAR->vsInterfaceBuffer = JSurface_Create16bpp(gpAR->sWidth, gpAR->sHeight);
   if (gpAR->vsInterfaceBuffer == NULL) {
     AssertMsg(0, "Failed to allocate memory for autoresolve interface buffer.");
   }

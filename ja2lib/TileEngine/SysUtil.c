@@ -28,13 +28,13 @@ BOOLEAN InitializeGameVideoObjects() {
 
   GetCurrentVideoSettings(&usWidth, &usHeight);
 
-  vsSaveBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
+  vsSaveBuffer = JSurface_Create16bpp(usWidth, usHeight);
   if (vsSaveBuffer == NULL) {
     return FALSE;
   }
   JSurface_SetColorKey(vsSaveBuffer, FROMRGB(0, 0, 0));
 
-  vsExtraBuffer = CreateVSurfaceBlank16(usWidth, usHeight);
+  vsExtraBuffer = JSurface_Create16bpp(usWidth, usHeight);
   gfExtraBuffer = TRUE;
 
   return (TRUE);
