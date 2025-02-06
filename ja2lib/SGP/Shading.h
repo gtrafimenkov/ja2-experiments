@@ -6,8 +6,7 @@
 #define _SHADING_H_
 
 #include "SGP/VObject.h"
-
-struct JSurface;
+#include "jplatform_video.h"
 
 BOOLEAN ShadesCalculateTables(struct JPaletteEntry *p8BPPPalette);
 

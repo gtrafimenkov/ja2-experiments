@@ -7,6 +7,7 @@
 
 #include "Laptop/StoreInventory.h"
 #include "SGP/Types.h"
+#include "jplatform_video.h"
 
 #define SKI_NUM_TRADING_INV_SLOTS 12
 #define SKI_NUM_TRADING_INV_ROWS 2

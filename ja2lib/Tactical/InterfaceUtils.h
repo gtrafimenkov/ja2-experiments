@@ -6,6 +6,7 @@
 #define __INTERFACE_UTILS_H
 
 #include "SGP/Types.h"
+#include "jplatform_video.h"
 
 struct OBJECTTYPE;
 struct SOLDIERTYPE;

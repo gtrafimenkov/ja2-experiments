@@ -3,6 +3,7 @@
 // of Strategy First Inc. Source Code License Agreement. See SFI-SCLA.txt.
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 bool SmkPollFlics() { return false; }

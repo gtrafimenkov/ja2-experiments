@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include "jplatform_video.h"
 
 struct JSurface *vsPrimary = NULL;

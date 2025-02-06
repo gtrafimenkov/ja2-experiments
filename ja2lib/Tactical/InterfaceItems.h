@@ -8,6 +8,7 @@
 #include "SGP/MouseSystem.h"
 #include "Tactical/HandleItems.h"
 #include "Tactical/Items.h"
+#include "jplatform_video.h"
 
 // DEFINES FOR ITEM SLOT SIZES IN PIXELS
 #define BIG_INV_SLOT_WIDTH 61

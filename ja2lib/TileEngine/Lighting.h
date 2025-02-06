@@ -7,6 +7,7 @@
 
 #include "SGP/HImage.h"
 #include "SGP/Types.h"
+#include "jplatform_video.h"
 
 struct SOLDIERTYPE;
 struct VObject;
