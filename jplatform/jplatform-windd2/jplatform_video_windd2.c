@@ -188,12 +188,13 @@ static bool getRGBDistribution() {
   s_state.greenMask = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwGBitMask;
   s_state.blueMask = (uint16_t)SurfaceDescription.ddpfPixelFormat.dwBBitMask;
 
-  // RGB 5,5,5
-  if ((s_state.redMask == 0x7c00) && (s_state.greenMask == 0x03e0) && (s_state.blueMask == 0x1f))
+  if ((s_state.redMask == 0x7c00) && (s_state.greenMask == 0x03e0) && (s_state.blueMask == 0x1f)) {
+    // RGB 5,5,5
     s_state.translucentMask = 0x3def;
-  // RGB 5,6,5
-  else  // if((redMask==0xf800) && (greenMask==0x03e0) && (blueMask==0x1f))
+  } else {
+    // RGB 5,6,5
     s_state.translucentMask = 0x7bef;
+  }
 
   usBit = 0x8000;
   s_state.redShift = 8;
