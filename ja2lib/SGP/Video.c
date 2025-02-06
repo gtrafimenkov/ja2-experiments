@@ -141,20 +141,20 @@ BOOLEAN InitializeVideoManager() {
   memset(gpFrameData, 0, sizeof(gpFrameData));
 
   // Initialize the frame buffer
-  vsFB = JSurface_CreateWithDefaultBpp(SCREEN_WIDTH, SCREEN_HEIGHT);
+  vsFB = JSurface_Create16bpp(SCREEN_WIDTH, SCREEN_HEIGHT);
   if (vsFB == NULL) {
     return FALSE;
   }
 
   // Initialize the main mouse surfaces
-  vsMouseBuffer = JSurface_CreateWithDefaultBpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
+  vsMouseBuffer = JSurface_Create16bpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
   if (vsMouseBuffer == NULL) {
     return FALSE;
   }
   JSurface_SetColorKey(vsMouseBuffer, 0);
 
   // Initialize the main mouse original surface
-  vsMouseBufferOriginal = JSurface_CreateWithDefaultBpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
+  vsMouseBufferOriginal = JSurface_Create16bpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
   if (vsMouseBufferOriginal == NULL) {
     return FALSE;
   }
@@ -163,8 +163,7 @@ BOOLEAN InitializeVideoManager() {
   // Primary and Backbuffer surfaces
   for (uint32_t uiIndex = 0; uiIndex < 1; uiIndex++) {
     gMouseCursorBackground[uiIndex].fRestore = FALSE;
-    gMouseCursorBackground[uiIndex].vs =
-        JSurface_CreateWithDefaultBpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
+    gMouseCursorBackground[uiIndex].vs = JSurface_Create16bpp(MAX_CURSOR_WIDTH, MAX_CURSOR_HEIGHT);
     if (gMouseCursorBackground[uiIndex].vs == NULL) {
       return FALSE;
     }
@@ -773,7 +772,7 @@ void RefreshScreen(void *DummyVariable) {
 
     // Create temporary system memory surface. This is used to correct problems with the backbuffer
     // surface which can be interlaced or have a funky pitch
-    struct VSurface *vsTmp = JSurface_CreateWithDefaultBpp(SCREEN_WIDTH, SCREEN_HEIGHT);
+    struct VSurface *vsTmp = JSurface_Create16bpp(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     // Copy the primary surface to the temporary surface
     Region.left = 0;
