@@ -336,11 +336,6 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
     return FALSE;
   }
 
-  // // TODO: Is this needed?
-  // struct JPaletteEntry SGPPalette[256];
-  // JSurface_GetPalette32(vsPrimary, SGPPalette);
-  // JSurface_SetPalette16(vsPrimary, Create16BPPPalette(SGPPalette));
-
   // getting the back buffer
   {
     LPDIRECTDRAWSURFACE2 backBuffer;
@@ -366,10 +361,6 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
     vsBackBuffer->bitDepth = (uint8_t)DDSurfaceDesc.ddpfPixelFormat.dwRGBBitCount;
     vsBackBuffer->_platformData1 = NULL;
     vsBackBuffer->_platformData2 = (void *)backBuffer;
-
-    // struct JPaletteEntry SGPPalette[256];
-    // JSurface_GetPalette32(vsBackBuffer, SGPPalette);
-    // JSurface_SetPalette16(vsBackBuffer, Create16BPPPalette(SGPPalette));
   }
 
   getRGBDistribution();

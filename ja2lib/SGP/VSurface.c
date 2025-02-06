@@ -615,7 +615,8 @@ struct VSurface *CreateVSurfaceFromFile(const char *filepath) {
   SetVideoSurfaceDataFromHImage(vs, hImage, 0, 0, &tempRect);
 
   if (hImage->ubBitDepth == 8) {
-    VSurface_SetPalette32(vs, hImage->pPalette);
+    JSurface_SetPalette32(vs, hImage->pPalette);
+    JSurface_SetPalette16(vs, Create16BPPPalette(hImage->pPalette));
   }
 
   DestroyImage(hImage);
@@ -634,13 +635,3 @@ uint8_t *LockVSurface(struct VSurface *vs, uint32_t *pPitch) {
 }
 
 void UnlockVSurface(struct VSurface *vs) { JSurface_Unlock(vs); }
-
-// Palette setting is expensive, need to set both DDPalette and create 16BPP palette
-void VSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
-  Assert(vs != NULL);
-
-  JSurface_SetPalette32(vs, pal);
-  JSurface_SetPalette16(vs, Create16BPPPalette(pal));
-
-  DbgMessage(TOPIC_VIDEOSURFACE, DBG_LEVEL_3, String("Video Surface Palette change successfull"));
-}
