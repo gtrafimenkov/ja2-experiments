@@ -204,7 +204,7 @@ static bool getRGBDistribution() {
   return TRUE;
 }
 
-static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPalette) {
+static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr) {
   struct VSurface *vs = (struct VSurface *)MemAllocZero(sizeof(struct VSurface));
   if (vs == NULL) {
     return NULL;
@@ -241,12 +241,6 @@ static struct VSurface *CreateVSurfaceInternal(DDSURFACEDESC *descr, bool getPal
     newDescr.dwSize = sizeof(DDSURFACEDESC);
     IDirectDrawSurface2_GetSurfaceDesc(lpDDS2, &newDescr);
     vs->bitDepth = (uint8_t)newDescr.ddpfPixelFormat.dwRGBBitCount;
-  }
-
-  if (getPalette) {
-    struct JPaletteEntry SGPPalette[256];
-    JSurface_GetPalette32(vs, SGPPalette);
-    JSurface_SetPalette16(vs, Create16BPPPalette(SGPPalette));
   }
 
   return vs;
@@ -337,10 +331,15 @@ bool JVideo_Init(char *appName, uint16_t screenWidth, uint16_t screenHeight,
   //   one surface. The additional surfaces are attached to the root surface. The complex structure
   //   can be destroyed only by destroying the root.
   SurfaceDescription.dwBackBufferCount = 1;
-  vsPrimary = CreateVSurfaceInternal(&SurfaceDescription, true);
+  vsPrimary = CreateVSurfaceInternal(&SurfaceDescription);
   if (vsPrimary == NULL) {
     return FALSE;
   }
+
+  // TODO: Is this needed?
+  struct JPaletteEntry SGPPalette[256];
+  JSurface_GetPalette32(vsPrimary, SGPPalette);
+  JSurface_SetPalette16(vsPrimary, Create16BPPPalette(SGPPalette));
 
   // getting the back buffer
   {
@@ -396,7 +395,13 @@ struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height) 
   SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
   SurfaceDescription.dwWidth = width;
   SurfaceDescription.dwHeight = height;
-  return CreateVSurfaceInternal(&SurfaceDescription, true);
+  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription);
+
+  // TODO: Is this needed?
+  struct JPaletteEntry SGPPalette[256];
+  JSurface_GetPalette32(vs, SGPPalette);
+  JSurface_SetPalette16(vs, Create16BPPPalette(SGPPalette));
+  return vs;
 }
 
 struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) {
@@ -416,7 +421,7 @@ struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) {
   SurfaceDescription.dwHeight = height;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-  return CreateVSurfaceInternal(&SurfaceDescription, false);
+  return CreateVSurfaceInternal(&SurfaceDescription);
 }
 
 struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
@@ -444,7 +449,7 @@ struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) {
   SurfaceDescription.dwHeight = height;
   SurfaceDescription.ddpfPixelFormat = PixelFormat;
 
-  return CreateVSurfaceInternal(&SurfaceDescription, false);
+  return CreateVSurfaceInternal(&SurfaceDescription);
 }
 
 void JSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {
