@@ -73,7 +73,6 @@ int JSurface_Pitch(struct VSurface *s);
 
 void *JSurface_GetPixels(struct VSurface *s);
 
-struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height);
 struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height);
 struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height);
 bool JSurface_Restore(struct VSurface *vs);

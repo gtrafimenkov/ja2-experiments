@@ -19,7 +19,6 @@ void JVideo_Shutdown() {}
 uint16_t JVideo_GetScreenWidth() { return 0; }
 uint16_t JVideo_GetScreenHeight() { return 0; }
 
-struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height) { return NULL; };
 struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) { return NULL; };
 struct VSurface *JSurface_Create16bpp(uint16_t width, uint16_t height) { return NULL; };
 void JSurface_SetPalette32(struct VSurface *vs, struct JPaletteEntry *pal) {};

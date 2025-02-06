@@ -382,28 +382,6 @@ void JVideo_Shutdown() {
   IDirectDraw2_Release(s_state.gpDirectDrawObject);
 }
 
-struct VSurface *JSurface_CreateWithDefaultBpp(uint16_t width, uint16_t height) {
-  DDSURFACEDESC SurfaceDescription;
-  SurfaceDescription.dwSize = sizeof(DDSURFACEDESC);
-  SurfaceDescription.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-  // DDSCAPS_OFFSCREENPLAIN
-  //   This surface is any offscreen surface that is not an overlay, texture, z-buffer,
-  //   front-buffer, back-buffer, or alpha surface. It is used to identify plain surfaces.
-  // DDSCAPS_SYSTEMMEMORY
-  //   This surface memory was allocated from system memory. If this capability bit is set by the
-  //   Windows 2000 or later driver, DirectDraw is disabled.
-  SurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-  SurfaceDescription.dwWidth = width;
-  SurfaceDescription.dwHeight = height;
-  struct VSurface *vs = CreateVSurfaceInternal(&SurfaceDescription);
-
-  // TODO: Is this needed?
-  struct JPaletteEntry SGPPalette[256];
-  JSurface_GetPalette32(vs, SGPPalette);
-  JSurface_SetPalette16(vs, Create16BPPPalette(SGPPalette));
-  return vs;
-}
-
 struct VSurface *JSurface_Create8bpp(uint16_t width, uint16_t height) {
   DDPIXELFORMAT PixelFormat;
   memset(&PixelFormat, 0, sizeof(PixelFormat));
