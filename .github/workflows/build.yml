@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'dev'
       - 'video-platform-2502'
+      - 'bugfix'
   pull_request:
 
 jobs:
