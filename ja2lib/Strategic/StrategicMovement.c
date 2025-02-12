@@ -2829,9 +2829,9 @@ BOOLEAN PlayersBetweenTheseSectors(int16_t sSource, int16_t sDest, int32_t *iCou
                 (fMayRetreatFromBattle == TRUE)) {
               *fAboutToArriveEnter = TRUE;
             }
-          } else if ((GetSectorID8(curr->ubSectorX, curr->ubSectorY) == sDest) &&
-                     ((GetSectorID8(curr->ubNextX, curr->ubNextY) == sSource) ||
-                      (fRetreatingFromBattle == TRUE))) {
+          } else if (((GetSectorID8(curr->ubSectorX, curr->ubSectorY) == sDest) &&
+                      (GetSectorID8(curr->ubNextX, curr->ubNextY) == sSource)) ||
+                     (fRetreatingFromBattle == TRUE)) {
             // if it's a valid vehicle, but not the helicopter (which can fly empty)
             if (curr->fVehicle && !fHelicopterGroup &&
                 (GivenMvtGroupIdFindVehicleId(curr->ubGroupID) != -1)) {

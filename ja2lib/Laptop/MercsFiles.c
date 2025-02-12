@@ -445,8 +445,8 @@ BOOLEAN DisplayMercFace(uint8_t ubMercID) {
   }
 
   // if the merc is hired already, say it
-  else if (!IsMercHireable(ubMercID) &&
-           (pMerc->bMercStatus == MERC_HIRED_BUT_NOT_ARRIVED_YET || pMerc->bMercStatus > 0)) {
+  else if ((!IsMercHireable(ubMercID) && pMerc->bMercStatus == MERC_HIRED_BUT_NOT_ARRIVED_YET) ||
+           pMerc->bMercStatus > 0) {
     ShadowVideoSurfaceRect(vsFB, MERC_FACE_X, MERC_FACE_Y, MERC_FACE_X + MERC_FACE_WIDTH,
                            MERC_FACE_Y + MERC_FACE_HEIGHT);
     DisplayWrappedString(MERC_FACE_X, MERC_FACE_Y + MERC_PORTRAIT_TEXT_OFFSET_Y, MERC_FACE_WIDTH, 2,

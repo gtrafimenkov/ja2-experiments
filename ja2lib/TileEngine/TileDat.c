@@ -584,10 +584,9 @@ void SetSpecificDatabaseValues(uint16_t usType, uint16_t uiDatabaseElem, TILE_EL
     // TileElement->sOffsetHeight = WALL_HEIGHT;
   }
 
-  if (uiDatabaseElem >= REGWATERTEXTURE18 &&
-      (uiDatabaseElem <= REGWATERTEXTURE50 || uiDatabaseElem == REGWATERTEXTURE ||
-       uiDatabaseElem == REGWATERTEXTURE12 || uiDatabaseElem == REGWATERTEXTURE14 ||
-       uiDatabaseElem == REGWATERTEXTURE16)) {
+  if ((uiDatabaseElem >= REGWATERTEXTURE18 && uiDatabaseElem <= REGWATERTEXTURE50) ||
+      uiDatabaseElem == REGWATERTEXTURE || uiDatabaseElem == REGWATERTEXTURE12 ||
+      uiDatabaseElem == REGWATERTEXTURE14 || uiDatabaseElem == REGWATERTEXTURE16) {
     TileElement->ubTerrainID = FLAT_GROUND;
   }
 
