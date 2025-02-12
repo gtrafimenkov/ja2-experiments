@@ -3875,8 +3875,8 @@ void ProcessBattleFrame() {
         return;
       }
     CONTINUE_BATTLE:
-      if ((IsBattleOver() || gubEnemyEncounterCode != CREATURE_ATTACK_CODE) &&
-          AttemptPlayerCapture())
+      if (IsBattleOver() || (gubEnemyEncounterCode != CREATURE_ATTACK_CODE &&
+          AttemptPlayerCapture()))
         return;
 
       iRandom = PreRandom(iTotal);
