@@ -1,6 +1,6 @@
 # List of significant changes
 
-## 2025-xx
+## 2025-02
 
 - Direct Draw 2 drawing code is abstracted behind jplatform_video.h interface, making it
   easier to switch to another graphics implementation, for example, SDL2
