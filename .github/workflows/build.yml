@@ -14,7 +14,7 @@ jobs:
   build-on-ubuntu-2204:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
     - run: python xx.py build-debug
     - run: python xx.py build-release
     - run: python xx.py test
@@ -22,7 +22,7 @@ jobs:
   build-on-ubuntu-2404:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
     - run: python xx.py build-debug
     - run: python xx.py build-release
     - run: python xx.py test
@@ -30,7 +30,7 @@ jobs:
   build-on-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
     - run: python xx.py build-debug
     - run: python xx.py build-release
     - run: python xx.py test
