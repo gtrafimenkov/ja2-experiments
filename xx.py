@@ -178,8 +178,6 @@ def get_configure_build_command(release):
     if platform.system() == "Windows":
         return [
             "cmake",
-            "-G",
-            "Visual Studio 17 2022",
             "-A",
             "Win32",
             "-B",
